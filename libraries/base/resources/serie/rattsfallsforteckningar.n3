@@ -1,0 +1,79 @@
+#=======================================================================
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix prism: <http://prismstandard.org/namespaces/1.2/basic/> .
+@prefix : <http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#> .
+#=======================================================================
+
+# TODO: prism:issn <urn:ISSN:0000-0000>;
+# TODO: skos:prefLabel "namnet"; skos:altLabel "förkortn"
+
+
+# Anges tillsammans med målnummer
+#     Högsta domstolen (HD, NJA)
+#     Hovrätterna (HR, RH)
+#     Miljööverdomstolen (MÖD)
+#     Regeringsrätten (REG, RÅ)
+#     Kammarrätterna (KR)
+#     Migrationsöverdomstolen (MIG)
+#     Patentbesvärsrätten (PBR)
+#
+# Anges tillsammans med domsnummer
+#     Arbetsdomstolen (AD)
+#     Marknadsdomstolen (MD)
+#
+# Anges tillsammans med diarienummer
+#     Domstolsverket (DV)
+#     Rättshjälpsnämnden (RN)
+
+
+# TODO: uttrycka hur?
+<http://rinfo.lagrummet.se/ref/rff/>
+    rdfs:label "Rättsfallsförteckningar" .
+
+
+<http://rinfo.lagrummet.se/ref/rff/nja> a :Rattsfallsforteckning;
+    rdfs:label "NJA"@sv;
+    rdfs:comment "Nytt Juridiskt Arkiv"@sv .
+
+<http://rinfo.lagrummet.se/ref/rff/rh> a :Rattsfallsforteckning;
+    rdfs:label "RH"@sv;
+    rdfs:comment "Rättsfall från hovrätterna"@sv .
+
+<http://rinfo.lagrummet.se/ref/rff/mod> a :Rattsfallsforteckning;
+    rdfs:label "MÖD"@sv;
+    rdfs:comment "Miljööverdomstolen"@sv .
+
+<http://rinfo.lagrummet.se/ref/rff/ra> a :Rattsfallsforteckning;
+    rdfs:label "RÅ"@sv;
+    rdfs:comment "Regeringsrättens årsbok"@sv .
+
+<http://rinfo.lagrummet.se/ref/rff/mig> a :Rattsfallsforteckning;
+    rdfs:label "MIG"@sv;
+    rdfs:comment "Migrationsöverdomstolen"@sv .
+
+<http://rinfo.lagrummet.se/ref/rff/ad> a :Rattsfallsforteckning;
+    rdfs:label "AD"@sv;
+    rdfs:comment "Arbetsdomstolen"@sv .
+
+<http://rinfo.lagrummet.se/ref/rff/md> a :Rattsfallsforteckning;
+    rdfs:label "MD"@sv;
+    rdfs:comment "Marknadsdomstolen"@sv .
+
+<http://rinfo.lagrummet.se/ref/rff/fod> a :Rattsfallsforteckning;
+    rdfs:label "FÖD"@sv;
+    rdfs:comment "Försäkringsöverdomstolen"@sv .
+
+# TODO: vad är detta för slags förteckning; vilken status har den?
+#<...>;
+#    rdfs:label "ARN"@sv;
+#    rdfs:comment "Allmänna Reklamationsnämnden"@sv .
+
+
+
+
+# KR = Kammarrätterna (inga referat)
+# PBR = Patentbesvärsrätten (inga referat)
+# RN = Rättshjälpsnämnden (inga referat)
+

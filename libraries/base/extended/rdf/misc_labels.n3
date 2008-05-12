@@ -1,0 +1,40 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+rdfs:Literal
+    rdfs:label "Text"@sv; .
+
+rdfs:Resource
+    rdfs:label "Resurs"@sv; .
+
+rdfs:seeAlso
+    rdfs:label "Se även"@sv;
+    rdfs:comment "Ytterligare information om given resurs."@sv; .
+
+xsd:date
+    rdfs:label "Datum"@sv .
+
+xsd:dateTime
+    rdfs:label "Datum och tid"@sv; .
+
+xsd:gYear
+    rdfs:label "År"@sv; .
+
+xsd:nonNegativeInteger
+    rdfs:label "Ej negativt heltal"@sv; .
+
+#---------------------------------------
+
+@prefix pvsetime: <http://pervasive.semanticweb.org/ont/2004/01/time#> .
+
+pvsetime:dateTimeValue
+    rdfs:label "Datum"@sv; .
+
+pvsetime:startDateTimeValue
+    rdfs:label "Startdatum"@sv; .
+
+pvsetime:endDateTimeValue
+    rdfs:label "Slutdatum"@sv; .
+

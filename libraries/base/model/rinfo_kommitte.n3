@@ -1,0 +1,254 @@
+#=======================================================================
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix protege: <http://protege.stanford.edu/plugins/owl/protege#> .
+@prefix pvsetime: <http://pervasive.semanticweb.org/ont/2004/01/time#> .
+@prefix ripub: <http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#> .
+@prefix : <http://rinfo.lagrummet.se/taxo/2007/09/rinfo/kommitte#> .
+#=======================================================================
+
+
+# Ontology
+#-----------------------------------------------------------------------
+
+: a owl:Ontology;
+     dc:title "Svenska rättsinformationssystemets kommittémodell."@sv;
+     dc:description """En begreppsmodell som beskriver den kommittéinformation,
+                    inklusive egenskaper, som ingår i det svenska
+                    rättsinformationssystemet."""@sv;
+     owl:versionInfo "0.1 rev 1";
+     owl:imports dc:, dct:, skos:, foaf:, vcard:, protege:, pvsetime:, ripub: .
+
+
+##
+# Kommittéinfo
+#-----------------------------------------------------------------------
+
+
+:Kommittebeskrivning a owl:Class;
+    #rdfs:subClassOf foaf:Group;
+    rdfs:label "Kommittébeskrivning"@sv;
+    rdfs:comment """En kommittés ursprungliga beskrivning."""@sv;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :ursprungsdepartement;
+            owl:allValuesFrom foaf:Organization;
+            owl:cardinality 1
+        ],
+        [ a owl:Restriction;
+            owl:onProperty :kommittedirektiv;
+            owl:minCardinality 0
+        ],
+        # TODO: om inget kommittedirektiv finns kan dock ett beslutsdatum finnas
+        #       som kommer från protokollet. Referera till anonymt(?) protokoll
+        #       med beslutsdatum, eller ange t.ex. beslutsdatumFranProtokoll?
+        [ a owl:Restriction;
+            owl:onProperty :departement;
+            owl:allValuesFrom foaf:Organization;
+            owl:minCardinality 0
+        ],
+        [ a owl:Restriction;
+            owl:onProperty :lokal;
+        ],
+        [ a owl:Restriction;
+            owl:onProperty :deltagande;
+            owl:minCardinality 1
+        ],
+        [ a owl:Restriction;
+            owl:onProperty :kommittenummer;
+            owl:cardinality 1
+        ],
+        [ a owl:Restriction;
+            owl:onProperty :kommittenamn;
+            owl:cardinality 1
+        ];
+    rdfs:isDefinedBy : .
+
+    # TODO: *här* kan dock dc:subject (som råa sökord) finnas
+
+
+:ursprungsdepartement a owl:ObjectProperty;
+    # TODO: a owl:FunctionalProperty; ?
+    rdfs:isDefinedBy : ;
+    rdfs:label "Ursprungsdepartement"@sv;
+    rdfs:comment "Departement att rapportera till."@sv; .
+
+:departement a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Departement"@sv;
+    rdfs:comment "Departement att rapportera till."@sv; .
+
+:kommittenummer a owl:DatatypeProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf :rattsdokumentnummer;
+    rdfs:label "Kommitténummer"@sv;
+    rdfs:comment """Nummer för en kommitté på formen "1998:04". Ibland med bokstavsordinal, t.ex. "1998:A"."""@sv; .
+
+:kommittenamn a rdf:Property;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf foaf:name;
+    rdfs:label "Kommitténs namn"@sv;
+    rdfs:range rdfs:Literal .
+
+:kommittedirektiv a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Kommittédirektiv"@sv;
+    rdfs:comment "Det direktiv som aktuell kommitté har att arbeta efter."@sv;
+    rdfs:range ripub:Kommittedirektiv;
+    owl:inverseOf [ rdfs:label "Kommittedirektiv för"@sv ]; .
+
+:deltagande a rdf:Property;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Deltagande"@sv;
+    rdfs:comment "En ledamot i en kommitté."@sv; .
+
+:lokal a rdf:Property;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Lokal"@sv;
+    rdfs:comment "Anger geografisk plats."@sv; .
+
+# TODO: ingen statusflagga; ny sak Kommitteavslut
+#   - när slutbetänkande avgetts är kommittén klar..
+#       - då görs *även* ett Kommitteavslut
+#   - *eller* ny Kommitteavslut subClassOf Kommitteandring
+:kommittestatus a rdf:Property;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Status"@sv;
+    rdfs:comment ""@sv; .
+
+
+
+#---------------------------------------
+
+# TODO: val av tidstaxonomi..
+#   - anv. <http://www.w3.org/2006/time#>
+#     .. + ev. <http://purl.org/NET/c4dm/event.owl#>?
+#           .. <http://motools.sourceforge.net/event/event.html>
+#           .. kombo med <http://motools.sourceforge.net/timeline/timeline.html>
+#           .. förvisso framtagen för musik, men är ju generell.. Tipsades om i <>
+#       .. eller .. <http://purl.org/NET/c4dm/timeline.owl#>..?
+#           .. 071228: såg lovande ut nu?
+#       .. denna verkar *klart* enklast:
+#           - <http://pervasive.semanticweb.org/ont/2004/01/time>
+#               pvsetime:dateTimeValue, pvsetime:startDateTimeValue, pvsetime:endDateTimeValue
+#   - se <http://www.w3.org/TR/owl-time>
+#       @prefix timeentry: <http://www.w3.org/2006/time-entry#> .
+#     och <http://wiki.bibliontology.com/index.php/Ontology_Working_Draft>
+
+
+:Kommittedetalj a owl:Class;
+    rdfs:label "Kommittédetalj"@sv;
+    rdfs:comment ""@sv;
+    protege:abstract "true";
+    # TODO: enough with this "lax" time property list?
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :andrarKommittebeskrivning;
+            owl:cardinality 1
+        ],
+        [ a owl:Restriction;
+            owl:onProperty pvsetime:dateTimeValue;
+            owl:minCardinality 0; owl:maxCardinality 1;
+        ],
+        [ a owl:Restriction;
+            owl:onProperty pvsetime:startDateTimeValue;
+            owl:minCardinality 0; owl:maxCardinality 1;
+        ],
+        [ a owl:Restriction;
+            owl:onProperty pvsetime:endDateTimeValue;
+            owl:minCardinality 0; owl:maxCardinality 1;
+        ];
+    rdfs:isDefinedBy : .
+
+:andrarKommittebeskrivning a rdf:Property;
+    rdfs:label "Ändrar kommittebeskrivning"@sv;
+    #rdfs:comment "En ledamot i en kommitté."@sv;
+    rdfs:domain :Kommittedetalj;
+    rdfs:range :Kommittebeskrivning;
+    rdfs:isDefinedBy : .
+
+
+#---------------------------------------
+
+# TODO:
+#   - deltagande
+#       - tillkommer (person, roll, startdatum)
+#       .. ev. ändrar (person, roll, slutdatum) (subtyp av tillkommer?)
+#       - upphör (person, slutdatum)
+#   - namnändring, lokaländring.. (startdatum)
+#
+# TODO: peka ut vcard-egenskaper?
+
+:Kommittedeltagande a owl:Class;
+    rdfs:subClassOf :Kommittedetalj;
+    rdfs:label "Kommittédeltagande"@sv;
+    #rdfs:comment ""@sv;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :deltagare;
+            owl:cardinality 1
+        ],
+        [ a owl:Restriction;
+            owl:onProperty :nuvarandePersontitel;
+            owl:minCardinality 0; owl:maxCardinality 1;
+        ],
+        [ a owl:Restriction;
+            owl:onProperty :deltagarroll;
+            owl:minCardinality 0; owl:maxCardinality 1;
+        ];
+    rdfs:isDefinedBy : .
+
+
+:deltagare a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf foaf:member;
+    rdfs:label "Deltagare"@sv;
+    rdfs:comment ""@sv;
+    rdfs:range foaf:Person .
+
+:deltagarroll a rdf:Property;
+    rdfs:label "Deltagarroll"@sv;
+    rdfs:comment "Den roll en kommittéledamot har i kommittén."@sv;
+    rdfs:isDefinedBy : .
+
+:nuvarandePersontitel a rdf:Property;
+    rdfs:label "Personens titel vid tillfället"@sv;
+    rdfs:comment ""@sv;
+    rdfs:isDefinedBy : .
+
+
+#---------------------------------------
+
+:Kommittelokal a owl:Class;
+    rdfs:subClassOf :Kommittedetalj;
+    rdfs:label "Kommittélokal"@sv;
+    #rdfs:comment ""@sv;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :lokal;
+            owl:cardinality 1
+        ];
+    rdfs:isDefinedBy : .
+
+
+#---------------------------------------
+
+:Kommittenamnbyte a owl:Class;
+    rdfs:subClassOf :Kommittedetalj;
+    rdfs:label "Kommitténamnbyte"@sv;
+    #rdfs:comment ""@sv;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :kommittenamn;
+            owl:cardinality 1
+        ];
+    rdfs:isDefinedBy : .
+
+

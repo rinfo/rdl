@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:dct="http://purl.org/dc/terms/"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xml:base="http://example.org/publ/partition/entry_1">
+
+    <foaf:Document rdf:about="">
+        <dc:title xml:lang="en">Entry One</dc:title>
+        <dc:identifier>Partition Entry:1</dc:identifier>
+        <dc:publisher rdf:resource="http://example.org/org/123456789"/>
+        <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-02-02</dct:issued>
+    </foaf:Document>
+
+</rdf:RDF>

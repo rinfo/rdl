@@ -1,0 +1,136 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX sioc: <http://rdfs.org/sioc/ns#>
+PREFIX ripub: <http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#>
+PREFIX rikm: <http://rinfo.lagrummet.se/taxo/2007/09/rinfo/kommitte#>
+
+
+SELECT
+    ?about ?containerId
+    ?rattsdokumentnummer
+    ?konsoliderar ?konsDatum
+
+#FROM <current.rdf>
+#FROM <http://rinfo.lagrummet.se/ns/2008/01/containers>
+
+WHERE {
+
+
+    #== By membership in some publication series ==
+
+    {
+        ?about a ?type; # ripub:FSDokument
+            ripub:forfattningssamling ?_fs;
+            ripub:fsNummer ?rattsdokumentnummer .
+        ?containerUri a sioc:Container;
+            sioc:has_host <http://rinfo.lagrummet.se>;
+            foaf:primaryTopic ?_fs;
+            sioc:id ?containerId .
+    }
+
+    UNION
+    {
+        ?about a ?type; # ripub:Utredningsbetankande
+            ripub:utrSerie ?_utrSerie;
+            ripub:utrSerienummer ?rattsdokumentnummer .
+        ?containerUri
+            foaf:primaryTopic ?_utrSerie;
+            sioc:id ?containerId .
+    }
+
+    UNION
+    {
+        ?about a ripub:Rattsfallsreferat;
+            ripub:rattsfallspublikation ?_rfpubl;
+            ripub:publikationsordinal ?rattsdokumentnummer .
+            # FIXME: eventuellt även arsutgava, sidnummer?
+            # *men* ibland publiceras de inte som referat; då referera som
+            # domstol+målnummer+datum.. (se modellens kommentarer)
+        ?containerUri
+            foaf:primaryTopic ?_rfpubl;
+            sioc:id ?containerId .
+    }
+
+
+    #== By relationship to other doc and date ==
+    UNION
+    {
+        ?about a ripub:KonsolideradGrundforfattning;
+            ripub:konsoliderar ?konsoliderar;
+            ripub:utfardandedatum ?konsDatum .
+            # FIXME: utkomFranTryck? kosolideringsdatum? dc:issued? Någon slags ordinal?
+    }
+
+
+    #== By publisher and subPropertyOf rattsdokumentnummer ==
+    UNION
+    {
+        ?about a ripub:VagledandeMyndighetsavgorande;
+            dc:publisher ?_publisher;
+            ripub:diarienummer ?rattsdokumentnummer .
+        ?containerUri
+            # TODO: more specific? by type or property?
+            # TODO: by specific type for sub-partitions?
+            foaf:primaryTopic ?_publisher;
+            #sioc:topic dc:publisher;
+            foaf:topic foaf:Document;
+            sioc:id ?containerId .
+    }
+
+
+    #== By publisher and special number property ==
+    UNION
+    {
+        ?about a ripub:VagledandeDomstolsavgorande;
+            dc:publisher ?_publisher;
+            ripub:malnummer ?rattsdokumentnummer .
+        ?containerUri
+            foaf:primaryTopic ?_publisher;
+            # FIXME: more specific topic? by type or property?
+            foaf:topic foaf:Document;
+            sioc:id ?containerId .
+    }
+
+
+    #== By type and subPropertyOf rattsdokumentnummer ==
+
+    UNION
+    {
+        ?about a ripub:Proposition;
+            ripub:propositionsnummer ?rattsdokumentnummer .
+        ?containerUri
+            foaf:primaryTopic ripub:Proposition;
+            sioc:id ?containerId .
+    }
+
+    UNION
+    {
+        ?about a ripub:Forordningsmotiv;
+            ripub:fmNummer ?rattsdokumentnummer .
+        ?containerUri
+            foaf:primaryTopic ripub:Forordningsmotiv;
+            sioc:id ?containerId .
+    }
+
+    UNION
+    {
+        ?about a ripub:Kommittedirektiv;
+            ripub:direktivnummer ?rattsdokumentnummer .
+        ?containerUri
+            foaf:primaryTopic ripub:Kommittedirektiv;
+            sioc:id ?containerId .
+    }
+
+    UNION
+    {
+        ?about a ripub:InternationellOverenskommelse;
+            ripub:soNummer ?rattsdokumentnummer .
+        ?containerUri
+            foaf:primaryTopic ripub:InternationellOverenskommelse;
+            sioc:id ?containerId .
+    }
+
+
+}
+

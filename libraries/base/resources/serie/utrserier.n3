@@ -1,0 +1,18 @@
+#=======================================================================
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix : <http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#> .
+#=======================================================================
+
+<http://rinfo.lagrummet.se/ref/utr/ds> a :Utredningsserie;
+    rdfs:label "Departementsserien"@sv;
+    skos:altLabel "Ds"@sv .
+
+<http://rinfo.lagrummet.se/ref/utr/sou> a :Utredningsserie;
+    rdfs:label "Statens offentliga utredningar"@sv;
+    skos:altLabel "SOU"@sv .
+
+# TODO: FM?
+
