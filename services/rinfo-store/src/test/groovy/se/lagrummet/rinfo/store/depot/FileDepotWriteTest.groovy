@@ -5,8 +5,6 @@ import org.junit.AfterClass
 import org.junit.BeforeClass
 import static org.junit.Assert.*
 
-import org.apache.commons.io.FileUtils
-
 
 class FileDepotWriteTest {
 
@@ -16,29 +14,15 @@ class FileDepotWriteTest {
 
     @BeforeClass
     static void setupClass() {
-        def manualTempDepotDir = System.properties["rinfo.manualTempDepotDir"]
-        if (manualTempDepotDir) {
-            tempDepotDir = new File(manualTempDepotDir)
-        } else {
-            def tempDir = new File(System.getProperty("java.io.tmpdir"))
-            tempDepotDir = File.createTempFile("rinfodepot", "", tempDir)
-            assert tempDepotDir.delete() // remove file to create dir..
-            assert tempDepotDir.mkdir()
-        }
         depotSrc = new File("src/test/resources/exampledepot/storage")
-        FileUtils.copyDirectoryToDirectory(depotSrc, tempDepotDir)
-        fileDepot = new FileDepot(
-                new URI("http://example.org"),
+        tempDepotDir = TempDirUtil.createTempDir(depotSrc)
+        fileDepot = new FileDepot(new URI("http://example.org"),
                 new File(tempDepotDir, depotSrc.name))
     }
 
     @AfterClass
     static void tearDownClass() {
-        // NOTE: to keep test depot dir, use:
-        //  $ groovy -Drinfo.manualTempDepotDir=<depot-dir> <this-file>
-        if (!System.properties["rinfo.manualTempDepotDir"]) {
-            FileUtils.forceDelete(tempDepotDir)
-        }
+        TempDirUtil.removeTempDir(tempDepotDir)
     }
 
 
@@ -103,28 +87,6 @@ class FileDepotWriteTest {
         entry = fileDepot.getEntry(DEL_IDENTIFIER_1)
         assertEquals entry.edited, deleted
         assertEquals entry.deleted, true
-    }
-
-
-    @Test
-    void shouldGenerateAtomEntry() {
-        def entry = fileDepot.getEntry("/publ/1901:100")
-        assertEquals 0, entry.findContents(fileDepot.uriStrategy.
-                hintForMediaType("application/atom+xml;type=entry")).size()
-        entry.generateAtomEntryContent()
-        //fileDepot.indexEntry(entry)
-        def atomContent = entry.findContents(fileDepot.uriStrategy.
-                hintForMediaType("application/atom+xml;type=entry"))[0]
-        assert atomContent.file.isFile()
-    }
-
-    // TODO: shouldGenerateAtomEntryIfManifestModified
-    // TODO: shouldGenerateAtomEntryWhenIndexingNewEntry ?
-
-    @Test
-    void shouldGenerateIndex() {
-        fileDepot.generateIndex()
-        // TODO: list feeds..
     }
 
 

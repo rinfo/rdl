@@ -15,7 +15,15 @@ class FileDepotReadTest extends GroovyTestCase {
     void testShouldContainEntry() {
         def entry = fileDepot.getEntry("/publ/1901/100")
         assertNotNull entry
+        // TODO: inspect
     }
 
+    void testShouldFindEntryContent() {
+        // TODO
+    }
+
+    void testShouldFindEnclosedContent() {
+        // TODO
+    }
 
 }

@@ -130,7 +130,7 @@ class DepotEntry {
 
     //==== TODO: in separate DepotEntryWriter? ====
     // Also: verify mtype on content, and derive mtype from
-    // enclosures? Or do as user of filedepot?
+    // enclosures? Or do in use of filedepot (the collector)?
 
     void create(Date created,
             List<DepotContent> contents,
