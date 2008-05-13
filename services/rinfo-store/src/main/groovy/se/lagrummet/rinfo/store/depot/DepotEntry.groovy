@@ -1,5 +1,7 @@
 package se.lagrummet.rinfo.store.depot
 
+import org.apache.commons.io.FileUtils
+
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.Entry
 import org.apache.abdera.i18n.iri.IRI
@@ -18,15 +20,13 @@ class DepotEntry {
     protected File entryDir
     protected File entryContentDir
 
-    private Entry entryManifest
+    private Entry manifest
 
     DepotEntry(depot, entryDir, knownUriPath=null) {
         this.depot = depot
         this.entryDir = entryDir
         this.entryUriPath = knownUriPath
         entryContentDir = new File(entryDir, ENTRY_CONTENT_DIR_NAME)
-        // TODO: reintroduce EntryNotFoundException on !entryContentDir.isDir()?
-        //  .. and/or EntryDeletedException?
     }
 
     static boolean isEntryDir(File dir) {
@@ -70,13 +70,13 @@ class DepotEntry {
     }
 
     String computeEntryUriPath() {
-        def uri = new URI(getId())
+        def uri = getId()
         assert depot.withinBaseUri(uri)
         return uri.path
     }
 
-    String getId() {
-        return getEntryManifest().id.toString()
+    URI getId() {
+        return getEntryManifest().id.toURI()
     }
 
     Date getPublished() {
@@ -93,11 +93,11 @@ class DepotEntry {
     }
 
     protected Entry getEntryManifest() {
-        if (!entryManifest) {
-            entryManifest = Abdera.instance.parser.parse(
+        if (!manifest) {
+            manifest = Abdera.instance.parser.parse(
                     new FileInputStream(getManifestFile())).root
         }
-        return entryManifest
+        return manifest
     }
 
     protected getManifestFile() {
@@ -132,48 +132,127 @@ class DepotEntry {
     // Also: verify mtype on content, and derive mtype from
     // enclosures? Or do as user of filedepot?
 
-    void update(timestamp, contents=null, enclosures=null) {
-        depot.handleEntryModification(this)
+    void create(Date created,
+            List<DepotContent> contents,
+            List<DepotContent> enclosures=null) {
+        assert !entryContentDir.exists()
+        entryContentDir.mkdir()
+        def manifestFile = getManifestFile()
+        assert !manifestFile.exists()
+        def manifest = Abdera.instance.newEntry()
+        // TODO: unify with rest of getId/entryPath stuff!
+        manifest.id = depot.baseUri.resolve(getEntryUriPath())
+        manifest.published = created
+        manifest.updated = created
+        if (contents.size() > 0) {
+            def content = contents[0]
+            manifest.setContent(null, content.mediaType)
+            if (content.lang) {
+                manifest.contentElement.language = content.lang
+            }
+        }
+        manifest.writeTo(new FileOutputStream(manifestFile))
+        for (content in contents) { addContent(content) }
+        if (enclosures) {
+            for (encl in enclosures) { addEnclosure(encl) }
+        }
+        depot.onEntryModified(this)
     }
 
-    void delete(timestamp) {
-        // TODO: move content and enclosures into ENTRY_DELETED_DIR?
-        depot.handleEntryModification(this)
+    void addContent(DepotContent content, boolean replace=false) {
+        def file = newContentFile(content.mediaType, content.lang)
+        if (!replace) {
+            assert !file.exists()
+        }
+        FileUtils.copyFile(content.file, file)
     }
+
+    protected File newContentFile(String mediaType, String lang=null) {
+        def filename = "content"
+        if (lang) {
+            filename += "-" + lang
+        }
+        def suffix = depot.uriStrategy.hintForMediaType(
+                mediaType)
+        assert suffix // TODO: throw NotAllowedContentMediaTypeException?
+        filename += ("." + suffix)
+        return new File(entryContentDir, filename)
+    }
+
+    void addEnclosure(DepotContent enclosure, boolean replace=false) {
+        if (!replace) {
+            assert !file.exists()
+        }
+        // FIXME: ... add in path..
+    }
+
+    void update(Date updated,
+            List<DepotContent> contents=null,
+            List<DepotContent> enclosures=null) {
+        def manifest = getEntryManifest()
+        manifest.updated = updated
+        manifest.writeTo(new FileOutputStream(getManifestFile()))
+        if (contents) {
+            for (content in contents) { addContent(content, true) }
+        }
+        if (enclosures) {
+            for (encl in enclosures) { addEnclosure(encl, true) }
+        }
+        depot.onEntryModified(this)
+    }
+
+    void delete(Date deleted) {
+        // assert !isDeleted()
+        def manifest = getEntryManifest()
+        manifest.edited = deleted
+        manifest.writeTo(new FileOutputStream(getManifestFile()))
+        // FIXME: move content and enclosures into ENTRY_DELETED_DIR?
+        depot.onEntryModified(this)
+        // TODO: how to "410 Gone" for enclosures..?
+    }
+
+    //==== TODO: in separate FileDepotAtomIndexer? ====
 
     void generateAtomEntryContent() {
-        /* TODO:
-            - how tombstones are represented!
-        */
-        def entry = Abdera.instance.newEntry()
+        // TODO: how to represent deleted tombstones!
+        def atomEntry = Abdera.instance.newEntry()
         // TODO: getEntryManifest().clone() ?
-        entry.id = getId()
+        atomEntry.id = getId()
         def publDate = getPublished()
         if (publDate) {
-            entry.published = publDate
+            atomEntry.published = publDate
         }
-        entry.updated = getUpdated()
+        atomEntry.updated = getUpdated()
 
         // TODO: what to use as values?
-        entry.setTitle(getId())
-        entry.setSummary(getId())
+        atomEntry.setTitle(getId().toString())
+        atomEntry.setSummary(getId().toString())
 
         def selfUriPath = depot.uriStrategy.makeNegotiatedUriPath(
                 getEntryUriPath(), ATOM_ENTRY_MEDIA_TYPE)
-        entry.addLink(selfUriPath, "self")
+        atomEntry.addLink(selfUriPath, "self")
 
         // TODO: add md5 (link extension) or sha (xml-dsig)?
+
+        // TODO: is this a reasonable mediaType()+lang) control?
+        def contentMediaType = getEntryManifest().contentMimeType.toString()
+        def contentLang = getEntryManifest().contentElement?.language.toString()
         def contentIsSet = false
         for (content in findContents()) {
             if (content.mediaType == ATOM_ENTRY_MEDIA_TYPE) {
                 continue
             }
-            if (!contentIsSet && content.mediaType == null) {
-                // FIXME: which mediaType()+lang) is content?
-                entry.setContent(new IRI(content.depotUriPath), content.mediaType)
+            if (!contentIsSet
+                && content.mediaType == contentMediaType
+                && content.lang == contentLang) {
+                atomEntry.setContent(new IRI(content.depotUriPath),
+                        content.mediaType)
+                if (content.lang) {
+                    atomEntry.contentElement.language = content.lang
+                }
                 contentIsSet = true
             } else {
-                entry.addLink(content.depotUriPath,
+                atomEntry.addLink(content.depotUriPath,
                         "alternate",
                         content.mediaType,
                         null, // title
@@ -182,21 +261,18 @@ class DepotEntry {
             }
         }
         for (enclContent in findEnclosures()) {
-            entry.addLink(enclContent.depotUriPath,
+            atomEntry.addLink(enclContent.depotUriPath,
                     "enclosure",
                     enclContent.mediaType,
                     null, // title
                     enclContent.lang,
                     enclContent.file.length())
         }
-        entry.writeTo(new FileOutputStream(getAtomEntryFile()))
+        atomEntry.writeTo(new FileOutputStream(getAtomEntryFile()))
     }
 
     protected File getAtomEntryFile() {
-        def atomHint = depot.uriStrategy.hintForMediaType(
-                ATOM_ENTRY_MEDIA_TYPE)
-        def atomEntryFileName = "content." + atomHint
-        return new File(entryContentDir, atomEntryFileName)
+        return newContentFile(ATOM_ENTRY_MEDIA_TYPE)
     }
 
     Entry getParsedAtomEntry() {

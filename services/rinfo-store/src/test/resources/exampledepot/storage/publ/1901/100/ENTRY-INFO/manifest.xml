@@ -3,4 +3,5 @@
     <id>http://example.org/publ/1901:100</id>
     <updated>1901-01-01T01:01:01Z</updated>
     <published>1901-01-01T01:01:01Z</published>
+    <content xml:lang="sv" type="application/pdf"/>
 </entry>

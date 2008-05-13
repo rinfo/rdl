@@ -53,23 +53,28 @@ class DepotUriStrategyTest extends GroovyTestCase {
 
 
     static final PATHS_TO_MAKE = [
-        [["/things/item/one", "xhtml", null], "/things/item/one/xhtml"],
-        [["/things/item/one", "xhtml", "en"], "/things/item/one/xhtml,en"],
-        [["/things/item/one", "UNKNOWN", "sv"], null],
+        [["/things/item/one", "application/xhtml+xml", null],
+            "/things/item/one/xhtml"],
+
+        [["/things/item/one", "application/xhtml+xml", "en"],
+            "/things/item/one/xhtml,en"],
+
+        [["/things/item/one", "UNKNOWN", "sv"],
+                null],
     ]
 
     void testShouldMakeNegotiatedPaths() {
         PATHS_TO_MAKE.each {
             def params = it[0]
             def expected = it[1]
-            def path = params[0], hint = params[1], lang = params[2]
+            def path = params[0], mtype = params[1], lang = params[2]
             if (expected) {
                 def results = uriStrategy.makeNegotiatedUriPath(
-                    path, hint, lang)
+                    path, mtype, lang)
                 assertEquals expected, results
             } else {
                 try {
-                    uriStrategy.makeNegotiatedUriPath(path, hint, lang)
+                    uriStrategy.makeNegotiatedUriPath(path, mtype, lang)
                     fail()
                 } catch (AssertionError e) {
                     // ok

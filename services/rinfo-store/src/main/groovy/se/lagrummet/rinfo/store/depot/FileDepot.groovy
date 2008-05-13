@@ -70,12 +70,19 @@ class FileDepot {
         return results
     }
 
+    // TODO: reintroduce EntryNotFoundException on !entryContentDir.isDir()?
+    //  .. and/or EntryDeletedException?
     DepotEntry getEntry(String uriPath) {
-        def entryDir = new File(baseDir, toFilePath(uriPath))
+        def entryDir = getEntryDir(uriPath)
         if (DepotEntry.isEntryDir(entryDir)) {
             return new DepotEntry(this, entryDir, uriPath)
         }
         return null
+    }
+
+    DepotEntry getEntry(URI entryUri) {
+        assert withinBaseUri(entryUri) // TODO: UriNotWithinDepotException?
+        return getEntry(entryUri.path)
     }
 
     DepotContent getContent(String uriPath) {
@@ -86,23 +93,6 @@ class FileDepot {
         def mediaType = computeMediaType(file)
         return new DepotContent(file, uriPath, mediaType)
     }
-
-    /* TODO: Not used; remove? Or move to DepotContent?
-        .. could be used for e.g. "GET enclosure, accept only atom-entry"?
-        .. and (opt. but disabled?) "410 Gone" also for enclosures..
-    DepotEntry findOwnerEntry(String uriPath) {
-        def dir = new File(baseDir, toFilePath(uriPath))
-        while (dir != baseDir) {
-            dir = dir.parentFile
-            if (DepotEntry.isEntryDir(dir)) {
-                return new DepotEntry(this, dir)
-            }
-        }
-        return null
-    }
-    // boolean isEntryContent() { ... }
-    */
-
 
     //========================================
 
@@ -115,11 +105,15 @@ class FileDepot {
     // FIXME: Knows *very* little! Configurable?
     String computeMediaType(File file) {
         def mtype = URLConnection.fileNameMap.getContentTypeFor(file.name)
-        // TODO: this is too dirty
+        // TODO: this is too simple. Unify or only via some fileExtensionUtil..
         if (!mtype) {
             mtype = uriStrategy.mediaTypeForHint(file.name.split(/\./)[-1] )
         }
         return mtype
+    }
+
+    protected File getEntryDir(String uriPath) {
+        return new File(baseDir, toFilePath(uriPath))
     }
 
     protected String toFilePath(String uriPath) {
@@ -134,14 +128,20 @@ class FileDepot {
 
     //========================================
 
-    DepotEntry createEntry(entryId, timestamp, contents, enclosures=null) {
-        def entry = null
-        // TODO
-        handleEntryModification(entry)
+    DepotEntry createEntry(URI entryUri, Date created,
+            List<DepotContent> contents,
+            List<DepotContent> enclosures=null) {
+        assert withinBaseUri(entryUri)
+        def uriPath = entryUri.path
+        def entryDir = getEntryDir(uriPath)
+        assert !entryDir.exists() // TODO: DuplicateEntryException?
+        FileUtils.forceMkdir(entryDir)
+        def entry = new DepotEntry(this, entryDir, uriPath)
+        entry.create(created, contents, enclosures)
         return entry
     }
 
-    void handleEntryModification(DepotEntry entry) {
+    void onEntryModified(DepotEntry entry) {
         entry.generateAtomEntryContent()
         // TODO: update latest feed index file (may create new file and modify
         // next-to-last?)
@@ -211,7 +211,7 @@ class FileDepot {
         feed.title = null
         for (entry in batch) {
             // FIXME: logger.info!
-            println "Adding entry: <${entry.id}> [${entry.updated}]"
+            println "Indexing entry: <${entry.id}> [${entry.updated}]"
             // TODO; if entry.deleted ... !
             feed.insertEntry(entry.parsedAtomEntry)
         }

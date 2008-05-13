@@ -38,10 +38,9 @@ class DepotUriStrategy {
         def collection = g(2)
         def depotUriPath = g(1)
         def mediaHint = g(4)
-        if (!NAMED_MEDIA_TYPES.containsKey(mediaHint)) {
-            if (mediaHint) { // re-add as path leaf
-                depotUriPath += "/" + mediaHint
-            }
+        if (mediaHint != null && !NAMED_MEDIA_TYPES.containsKey(mediaHint)) {
+            // re-add as path leaf
+            depotUriPath += "/" + mediaHint
             mediaHint = null
         }
         def lang = g(5)
@@ -60,7 +59,7 @@ class DepotUriStrategy {
     String makeNegotiatedUriPath(String entryUriPath, String mediaType,
             String lang=null) {
         def mediaHint = hintForMediaType(mediaType)
-        assert mediaHint
+        assert mediaHint, mediaType
         def uri = "${entryUriPath}/${mediaHint}"
         if (lang) {
             uri += ",${lang}"
