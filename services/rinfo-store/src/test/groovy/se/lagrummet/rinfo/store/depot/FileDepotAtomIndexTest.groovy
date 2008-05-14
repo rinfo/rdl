@@ -1,5 +1,10 @@
 package se.lagrummet.rinfo.store.depot
 
+import org.junit.Test
+import org.junit.AfterClass
+import org.junit.BeforeClass
+import static org.junit.Assert.*
+
 
 class FileDepotAtomIndexTest {
 

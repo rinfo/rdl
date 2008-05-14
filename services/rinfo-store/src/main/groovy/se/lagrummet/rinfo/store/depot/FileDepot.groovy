@@ -1,17 +1,25 @@
 package se.lagrummet.rinfo.store.depot
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.Collection
 import org.apache.abdera.model.Entry
 import org.apache.abdera.model.Service
 import org.apache.abdera.model.Workspace
+import org.apache.abdera.ext.history.FeedPagingHelper as FPH
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.filefilter.DirectoryFileFilter
 import org.apache.commons.io.filefilter.NameFileFilter
 
+import static org.apache.commons.lang.time.DateFormatUtils.ISO_DATE_FORMAT
+
 
 class FileDepot {
+
+    final logger = LoggerFactory.getLogger(FileDepot)
 
     URI baseUri
     File baseDir
@@ -94,6 +102,35 @@ class FileDepot {
         return new DepotContent(file, uriPath, mediaType)
     }
 
+    Iterator<DepotEntry> iterateEntries() {
+        def manifestIter = FileUtils.iterateFiles(baseDir,
+                new NameFileFilter("manifest.xml"), DirectoryFileFilter.INSTANCE)
+
+        return [
+
+            hasNext: { manifestIter.hasNext() },
+
+            next: {
+                def entryDir
+                while (manifestIter.hasNext()) {
+                    def file = manifestIter.next()
+                    def parentParent = file.parentFile.parentFile
+                    if (DepotEntry.isEntryDir(parentParent)) {
+                        entryDir = parentParent
+                        break
+                    }
+                }
+                if (!entryDir) {
+                    throw new NoSuchElementException()
+                }
+                return new DepotEntry(this, entryDir)
+            },
+
+            remove: { throw new UnsupportedOperationException() }
+
+        ] as Iterator<DepotEntry>
+    }
+
     //========================================
 
     boolean withinBaseUri(URI uri) {
@@ -134,7 +171,6 @@ class FileDepot {
         assert withinBaseUri(entryUri)
         def uriPath = entryUri.path
         def entryDir = getEntryDir(uriPath)
-        assert !entryDir.exists() // TODO: DuplicateEntryException?
         FileUtils.forceMkdir(entryDir)
         def entry = new DepotEntry(this, entryDir, uriPath)
         entry.create(created, contents, enclosures)
@@ -147,80 +183,140 @@ class FileDepot {
         // next-to-last?)
     }
 
+    //==== TODO: in separate FileDepotAtomIndexer? ====
 
-    //========================================
-
-    Iterator<DepotEntry> iterateEntries() {
-        def manifestIter = FileUtils.iterateFiles(baseDir,
-                new NameFileFilter("manifest.xml"), DirectoryFileFilter.INSTANCE)
-
-        return [
-
-            hasNext: { manifestIter.hasNext() },
-
-            next: {
-                def entryDir
-                while (manifestIter.hasNext()) {
-                    def file = manifestIter.next()
-                    def parentParent = file.parentFile.parentFile
-                    if (DepotEntry.isEntryDir(parentParent)) {
-                        entryDir = parentParent
-                        break
-                    }
-                }
-                if (!entryDir) {
-                    throw new NoSuchElementException()
-                }
-                return new DepotEntry(this, entryDir)
-            },
-
-            remove: { throw new UnsupportedOperationException() }
-
-        ] as Iterator<DepotEntry>
-    }
+    static final FEED_BATCH_SIZE = 25
 
     void generateIndex() {
-        // TODO: write feed index files.
 
-        def entryPathDates = [:]
-        for (entry in iterateEntries()) {
-            entryPathDates[entry.entryUriPath] = entry.updated
+        if (!feedDir.exists()) {
+            feedDir.mkdir()
         }
-        // TODO: entryPathDates as some Sorted..
-        def ascendingEntryPaths = entryPathDates.
-                entrySet().sort{ it.value }.collect{ it.key }
 
+        def ascDateSortedEntries = new TreeSet(
+                { a, b ->
+                    if (a.date == b.date) {
+                        return a.path.compareTo(b.path)
+                    }
+                    return a.date.compareTo(b.date)
+                } as Comparator
+            )
+
+        for (entry in iterateEntries()) {
+            ascDateSortedEntries.add(
+                    [ path: entry.entryUriPath,
+                      date: entry.updated ]
+                )
+        }
+
+        def totalEntryCount = ascDateSortedEntries.size()
+
+        // FIXME: refactor and test algorithm in isolation!
+        // FIXME: this totally doesn't work properly yet:
+        //  - needs "prev+next", perhaps prevBatch, batch, nextBatch?
+        //  - doesn't yet output complete subscriptionPath
+
+        def subscriptionPath = "/${uriStrategy.FEED_DIR_NAME}/current"
         def batch = []
-        def batchSize = 100
-        for (entryPath in ascendingEntryPaths) {
-            batch << getEntry(entryPath)
-            if (batch.size() == batchSize) {
-                writeEntryBatch(batch)
+        def nextBatch = []
+        def lastWrittenArchivePath = null
+        def onLastBatch = false
+        for (entryInfo in ascDateSortedEntries) {
+            if (batch.size() < FEED_BATCH_SIZE) {
+                batch << getEntry(entryInfo.path)
+            } else {
+                nextBatch << getEntry(entryInfo.path)
+            }
+            if (nextBatch.size() == FEED_BATCH_SIZE) {
+                lastWrittenArchivePath = writeEntryBatchPair(
+                        subscriptionPath, lastWrittenArchivePath,
+                        batch, nextBatch, onLastBatch)
                 batch = []
+                nextBatch = []
             }
         }
         if (batch) {
-            writeEntryBatch(batch)
+            lastWrittenArchivePath = writeEntryBatchPair(
+                    subscriptionPath, lastWrittenArchivePath,
+                    batch, nextBatch, true)
         }
     }
 
-    void writeEntryBatch(List<DepotEntry> batch) {
+    protected String writeEntryBatchPair(
+            String subscriptionPath,
+            String lastWrittenArchivePath,
+            List<DepotEntry> batch,
+            List<DepotEntry> nextBatch,
+            boolean onLastBatch) {
+        if (onLastBatch) {
+            writeEntryBatch(batch,
+                    subscriptionPath,
+                    pathToBatch(batch[-1].updated),
+                    lastWrittenArchivePath,
+                    null
+                )
+            return null
+        } else {
+            def pathToNextBatch = nextBatch ?
+                    pathToBatch(nextBatch[-1].updated) : null
+            writeEntryBatch(batch,
+                    subscriptionPath,
+                    pathToBatch(batch[-1].updated),
+                    lastWrittenArchivePath,
+                    pathToNextBatch,
+                )
+            writeEntryBatch(nextBatch,
+                    subscriptionPath,
+                    pathToNextBatch,
+                    pathToBatch(batch[-1].updated),
+                    null // TODO: from next round (unless next is subsc)
+                )
+            return pathToNextBatch
+        }
+    }
+
+    protected String pathToBatch(Date youngestDate) {
+        // TODO: offset in batch "in date".. And date as subdirs?
+        def isoDate = ISO_DATE_FORMAT.format(youngestDate)
+        return "/${uriStrategy.FEED_DIR_NAME}/${isoDate}"
+    }
+
+    protected void writeEntryBatch(List<DepotEntry> batch,
+            String subscriptionPath,
+            String thisArchivePath,
+            String prevArchivePath,
+            String nextArchivePath) {
         def feed = Abdera.instance.newFeed()
+
         // FIXME: metadata for feed basics: baseFeed.clone()
         feed.id = baseUri
         feed.title = null
+
+        def selfPath = thisArchivePath ?: subscriptionPath
+        feed.addLink("self", selfPath)
+
+        if (thisArchivePath) {
+            logger.info "Writing feed: <${selfPath}>"
+            FPH.setArchive(feed, true)
+            FPH.setCurrent(feed, subscriptionPath)
+            if (nextArchivePath) {
+                FPH.setNextArchive(feed, nextArchivePath)
+            }
+        }
+        if (prevArchivePath) {
+            FPH.setPreviousArchive(feed, prevArchivePath)
+        }
+
         for (entry in batch) {
-            // FIXME: logger.info!
-            println "Indexing entry: <${entry.id}> [${entry.updated}]"
+            logger.info "Indexing entry: <${entry.id}> [${entry.updated}]"
             // TODO; if entry.deleted ... !
             feed.insertEntry(entry.parsedAtomEntry)
         }
-        // TODO: filename from ... first date? + offset in batch "in date"..
-        def feedFileName = "latest.atom"
-        feed.writeTo(new FileOutputStream(new File(feedDir, feedFileName)))
+        def feedFileName = toFilePath(selfPath) + ".atom"
+        feed.writeTo(new FileOutputStream(new File(baseDir, feedFileName)))
     }
 
-    void indexEntry(DepotEntry entry) {
+    protected void indexEntry(DepotEntry entry) {
         // TODO
     }
 

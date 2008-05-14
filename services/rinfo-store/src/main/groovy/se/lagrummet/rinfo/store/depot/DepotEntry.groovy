@@ -135,15 +135,16 @@ class DepotEntry {
     void create(Date created,
             List<DepotContent> contents,
             List<DepotContent> enclosures=null) {
-        assert !entryContentDir.exists()
+        if(entryContentDir.exists()) {
+            throw new DuplicateDepotEntryException(this)
+        }
         entryContentDir.mkdir()
         def manifestFile = getManifestFile()
-        assert !manifestFile.exists()
         def manifest = Abdera.instance.newEntry()
         // TODO: unify with rest of getId/entryPath stuff!
         manifest.id = depot.baseUri.resolve(getEntryUriPath())
-        manifest.published = created
-        manifest.updated = created
+        manifest.setPublished(created)
+        manifest.setUpdated(created)
         if (contents.size() > 0) {
             def content = contents[0]
             manifest.setContent(null, content.mediaType)
@@ -190,7 +191,7 @@ class DepotEntry {
             List<DepotContent> contents=null,
             List<DepotContent> enclosures=null) {
         def manifest = getEntryManifest()
-        manifest.updated = updated
+        manifest.setUpdated(updated)
         manifest.writeTo(new FileOutputStream(getManifestFile()))
         if (contents) {
             for (content in contents) { addContent(content, true) }
@@ -220,9 +221,9 @@ class DepotEntry {
         atomEntry.id = getId()
         def publDate = getPublished()
         if (publDate) {
-            atomEntry.published = publDate
+            atomEntry.setPublished(publDate)
         }
-        atomEntry.updated = getUpdated()
+        atomEntry.setUpdated(getUpdated())
 
         // TODO: what to use as values?
         atomEntry.setTitle(getId().toString())
@@ -236,7 +237,11 @@ class DepotEntry {
 
         // TODO: is this a reasonable mediaType()+lang) control?
         def contentMediaType = getEntryManifest().contentMimeType.toString()
-        def contentLang = getEntryManifest().contentElement?.language.toString()
+        def contentLang
+        def contentElem = getEntryManifest().contentElement
+        if (contentElem && contentElem.language) {
+            contentLang = contentElem.language.toString()
+        }
         def contentIsSet = false
         for (content in findContents()) {
             if (content.mediaType == ATOM_ENTRY_MEDIA_TYPE) {
@@ -260,6 +265,7 @@ class DepotEntry {
                         content.file.length())
             }
         }
+
         for (enclContent in findEnclosures()) {
             atomEntry.addLink(enclContent.depotUriPath,
                     "enclosure",
@@ -268,6 +274,7 @@ class DepotEntry {
                     enclContent.lang,
                     enclContent.file.length())
         }
+
         atomEntry.writeTo(new FileOutputStream(getAtomEntryFile()))
     }
 
