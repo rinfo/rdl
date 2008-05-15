@@ -200,12 +200,12 @@ class FileDepot {
             feedDir.mkdir()
         }
         def ascDateSortedEntries = new TreeSet(
-                { a, b ->
+                [compare: { a, b ->
                     if (a.date == b.date) {
                         return a.path.compareTo(b.path)
                     }
                     return a.date.compareTo(b.date)
-                } as Comparator
+                }] as Comparator
             )
         // only adding necessary data to minimize memory use
         for (entry in iterateEntries()) {
@@ -216,8 +216,12 @@ class FileDepot {
         indexEntries(ascDateSortedEntries)
     }
 
-    void indexEntries(List entries) {
-        // TODO: refactor and test algorithm in isolation
+    int getFeedBatchSize() {
+        return FEED_BATCH_SIZE
+    }
+
+    // TODO: refactor and test algorithm in isolation?
+    void indexEntries(Collection entries) {
 
         // TODO: less hard-coded..
         def subscriptionPath = "/${uriStrategy.FEED_DIR_NAME}/current"
@@ -226,7 +230,6 @@ class FileDepot {
         if (currFeed == null) {
             currFeed = newFeed(subscriptionPath)
         }
-
         def youngestArchFeed = getPrevArchiveAsFeed(currFeed)
 
         def batchCount = 0
@@ -240,7 +243,7 @@ class FileDepot {
             // FIXME: handle entry.deleted ... !
             currFeed.insertEntry(entry.parsedAtomEntry)
 
-            if (batchCount == FEED_BATCH_SIZE) { // save as archive
+            if (batchCount == getFeedBatchSize()) { // save as archive
                 batchCount = 0
                 FPH.setArchive(currFeed, true)
                 def archPath = pathToArchiveFeed(entry.updated) // youngest entry..
@@ -264,7 +267,7 @@ class FileDepot {
         // FIXME: metadata for feed basics: baseFeed.clone()
         feed.id = baseUri
         feed.title = null
-        feed.setUpdated(new Date()) // TODO: whar utcDateTime?
+        feed.setUpdated(new Date()) // TODO: which utcDateTime?
         feed.addLink(uriPath, "self")
         return feed
     }

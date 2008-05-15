@@ -25,11 +25,15 @@ class EntryNegotiator extends Finder {
     @Override
     Handler createTarget(Request request, Response response) {
         def results = fileDepot.find(request.resourceRef.path as String)
+
         if (!results) {
             // TODO: if (results == null)? Or on an exception? EntryDeletedException?
             //    response.setStatus(Status.CLIENT_ERROR_GONE, "Gone")
             return null
         }
+        // TODO: some kind of result which 303:s (use-case: resource path
+        // subsumed by entry above which descibes it ("/ref/fs/sfs"..)..)
+
         // perhaps: def resource = new SupplyResource(results)
         def resource = new Resource(context, request, response)
         def reps = results.collect { makeRepresentation(it) }

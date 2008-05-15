@@ -116,3 +116,27 @@ Enclosure:
     [Body]
 
 
+The Atom Feed Archive
+========================================================================
+
+Finding the subscription feed:
+
+    >>> http_get("http://localhost:8182/")
+    TODO: index.xhtml; with link to "/feed/current"
+
+
+Getting the subscription feed:
+
+    >>> http_get("http://localhost:8182/feed/current")
+    ...
+    200 The request has succeeded
+    Content-Type: application/atom+xml;type=feed
+    [Body]
+    >>> body(parse=True, to_depth=0)
+    <feed xmlns="http://www.w3.org/2005/Atom"/>
+
+
+Climbing the subscription feed:
+    TODO
+
+
