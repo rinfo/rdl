@@ -4,10 +4,13 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import org.apache.abdera.Abdera
-import org.apache.abdera.model.Collection
+import org.apache.abdera.model.Feed
 import org.apache.abdera.model.Entry
+/*
+import org.apache.abdera.model.Collection
 import org.apache.abdera.model.Service
 import org.apache.abdera.model.Workspace
+*/
 import org.apache.abdera.ext.history.FeedPagingHelper as FPH
 
 import org.apache.commons.io.FileUtils
@@ -162,6 +165,11 @@ class FileDepot {
         return path
     }
 
+    protected String toFilePath(URI uri) {
+        assert withinBaseUri(uri) // TODO: UriNotWithinDepotException?
+        return toFilePath(uri.path)
+    }
+
 
     //========================================
 
@@ -180,19 +188,17 @@ class FileDepot {
     void onEntryModified(DepotEntry entry) {
         entry.generateAtomEntryContent()
         // TODO: update latest feed index file (may create new file and modify
-        // next-to-last?)
+        // next-to-last (add next-archive)?)
     }
 
-    //==== TODO: in separate FileDepotAtomIndexer? ====
+    //==== TODO: delegate to separate FileDepotAtomIndexer? ====
 
     static final FEED_BATCH_SIZE = 25
 
     void generateIndex() {
-
         if (!feedDir.exists()) {
             feedDir.mkdir()
         }
-
         def ascDateSortedEntries = new TreeSet(
                 { a, b ->
                     if (a.date == b.date) {
@@ -201,123 +207,105 @@ class FileDepot {
                     return a.date.compareTo(b.date)
                 } as Comparator
             )
-
+        // only adding necessary data to minimize memory use
         for (entry in iterateEntries()) {
             ascDateSortedEntries.add(
                     [ path: entry.entryUriPath,
-                      date: entry.updated ]
-                )
+                      date: entry.updated ] )
         }
+        indexEntries(ascDateSortedEntries)
+    }
 
-        def totalEntryCount = ascDateSortedEntries.size()
+    void indexEntries(List entries) {
+        // TODO: refactor and test algorithm in isolation
 
-        // FIXME: refactor and test algorithm in isolation!
-        // FIXME: this totally doesn't work properly yet:
-        //  - needs "prev+next", perhaps prevBatch, batch, nextBatch?
-        //  - doesn't yet output complete subscriptionPath
-
+        // TODO: less hard-coded..
         def subscriptionPath = "/${uriStrategy.FEED_DIR_NAME}/current"
-        def batch = []
-        def nextBatch = []
-        def lastWrittenArchivePath = null
-        def onLastBatch = false
-        for (entryInfo in ascDateSortedEntries) {
-            if (batch.size() < FEED_BATCH_SIZE) {
-                batch << getEntry(entryInfo.path)
-            } else {
-                nextBatch << getEntry(entryInfo.path)
+
+        def currFeed = getFeed(subscriptionPath)
+        if (currFeed == null) {
+            currFeed = newFeed(subscriptionPath)
+        }
+
+        def youngestArchFeed = getPrevArchiveAsFeed(currFeed)
+
+        def batchCount = 0
+        for (entryInfo in entries) {
+            batchCount++
+            if (youngestArchFeed) {
+                FPH.setPreviousArchive(currFeed, uriPathFromFeed(youngestArchFeed))
             }
-            if (nextBatch.size() == FEED_BATCH_SIZE) {
-                lastWrittenArchivePath = writeEntryBatchPair(
-                        subscriptionPath, lastWrittenArchivePath,
-                        batch, nextBatch, onLastBatch)
-                batch = []
-                nextBatch = []
+            def entry = getEntry(entryInfo.path)
+            logger.info "Indexing entry: <${entry.id}> [${entry.updated}]"
+            // FIXME: handle entry.deleted ... !
+            currFeed.insertEntry(entry.parsedAtomEntry)
+
+            if (batchCount == FEED_BATCH_SIZE) { // save as archive
+                batchCount = 0
+                FPH.setArchive(currFeed, true)
+                def archPath = pathToArchiveFeed(entry.updated) // youngest entry..
+                currFeed.getSelfLink().setHref(archPath)
+                FPH.setCurrent(currFeed, subscriptionPath)
+                if (youngestArchFeed) {
+                    FPH.setNextArchive(youngestArchFeed, uriPathFromFeed(currFeed))
+                    writeFeed(youngestArchFeed) // re-write..
+                }
+                writeFeed(currFeed)
+                youngestArchFeed = currFeed
+                currFeed = newFeed(subscriptionPath)
             }
         }
-        if (batch) {
-            lastWrittenArchivePath = writeEntryBatchPair(
-                    subscriptionPath, lastWrittenArchivePath,
-                    batch, nextBatch, true)
-        }
+        writeFeed(currFeed) // as subscription feed
+
     }
 
-    protected String writeEntryBatchPair(
-            String subscriptionPath,
-            String lastWrittenArchivePath,
-            List<DepotEntry> batch,
-            List<DepotEntry> nextBatch,
-            boolean onLastBatch) {
-        if (onLastBatch) {
-            writeEntryBatch(batch,
-                    subscriptionPath,
-                    pathToBatch(batch[-1].updated),
-                    lastWrittenArchivePath,
-                    null
-                )
+    protected Feed newFeed(String uriPath) {
+        def feed = Abdera.instance.newFeed()
+        // FIXME: metadata for feed basics: baseFeed.clone()
+        feed.id = baseUri
+        feed.title = null
+        feed.setUpdated(new Date()) // TODO: whar utcDateTime?
+        feed.addLink(uriPath, "self")
+        return feed
+    }
+
+    protected Feed getFeed(String uriPath) {
+        def file = new File(baseDir, toFilePath(uriPath))
+        if (!file.exists()) {
             return null
-        } else {
-            def pathToNextBatch = nextBatch ?
-                    pathToBatch(nextBatch[-1].updated) : null
-            writeEntryBatch(batch,
-                    subscriptionPath,
-                    pathToBatch(batch[-1].updated),
-                    lastWrittenArchivePath,
-                    pathToNextBatch,
-                )
-            writeEntryBatch(nextBatch,
-                    subscriptionPath,
-                    pathToNextBatch,
-                    pathToBatch(batch[-1].updated),
-                    null // TODO: from next round (unless next is subsc)
-                )
-            return pathToNextBatch
         }
+        return Abdera.instance.parser.parse(new FileInputStream(file)).root
     }
 
-    protected String pathToBatch(Date youngestDate) {
+    protected Feed getPrevArchiveAsFeed(Feed feed) {
+        def prev = FPH.getNextArchive(feed)
+        if (!prev) {
+            return null
+        }
+        return getFeed(prev.toString())
+    }
+
+    protected String uriPathFromFeed(Feed feed) {
+        return feed.getSelfLink().getHref().toString()
+    }
+
+    protected String pathToArchiveFeed(Date youngestDate) {
         // TODO: offset in batch "in date".. And date as subdirs?
         def isoDate = ISO_DATE_FORMAT.format(youngestDate)
         return "/${uriStrategy.FEED_DIR_NAME}/${isoDate}"
     }
 
-    protected void writeEntryBatch(List<DepotEntry> batch,
-            String subscriptionPath,
-            String thisArchivePath,
-            String prevArchivePath,
-            String nextArchivePath) {
-        def feed = Abdera.instance.newFeed()
-
-        // FIXME: metadata for feed basics: baseFeed.clone()
-        feed.id = baseUri
-        feed.title = null
-
-        def selfPath = thisArchivePath ?: subscriptionPath
-        feed.addLink("self", selfPath)
-
-        if (thisArchivePath) {
-            logger.info "Writing feed: <${selfPath}>"
-            FPH.setArchive(feed, true)
-            FPH.setCurrent(feed, subscriptionPath)
-            if (nextArchivePath) {
-                FPH.setNextArchive(feed, nextArchivePath)
-            }
-        }
-        if (prevArchivePath) {
-            FPH.setPreviousArchive(feed, prevArchivePath)
-        }
-
-        for (entry in batch) {
-            logger.info "Indexing entry: <${entry.id}> [${entry.updated}]"
-            // TODO; if entry.deleted ... !
-            feed.insertEntry(entry.parsedAtomEntry)
-        }
-        def feedFileName = toFilePath(selfPath) + ".atom"
+    protected void writeFeed(Feed feed) {
+        def uriPath = uriPathFromFeed(feed)
+        logger.info "Writing feed: <${uriPath}>"
+        // TODO: less hard-coded..
+        def feedFileName = toFilePath(uriPath) + ".atom"
         feed.writeTo(new FileOutputStream(new File(baseDir, feedFileName)))
     }
 
+    /* TODO: convenience method to write a batch of one entry?
+        .. For onEntryModified? .. */
     protected void indexEntry(DepotEntry entry) {
-        // TODO
     }
 
 }

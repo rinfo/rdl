@@ -35,6 +35,7 @@ class DepotEntry {
 
     List<DepotContent> findContents(String forMediaHint=null, String forLang=null) {
         def found = []
+        // TODO: if both qualifiers given, look for file with newContentFile?
         for (File file : entryContentDir.listFiles()) {
             def match = CONTENT_FILE_PATTERN.matcher(file.name)
             if (!match.matches()) {
@@ -160,6 +161,31 @@ class DepotEntry {
         depot.onEntryModified(this)
     }
 
+    void update(Date updated,
+            List<DepotContent> contents=null,
+            List<DepotContent> enclosures=null) {
+        def manifest = getEntryManifest()
+        manifest.setUpdated(updated)
+        manifest.writeTo(new FileOutputStream(getManifestFile()))
+        if (contents) {
+            for (content in contents) { addContent(content, true) }
+        }
+        if (enclosures) {
+            for (encl in enclosures) { addEnclosure(encl, true) }
+        }
+        depot.onEntryModified(this)
+    }
+
+    void delete(Date deleted) {
+        // assert !isDeleted()
+        def manifest = getEntryManifest()
+        manifest.edited = deleted
+        manifest.writeTo(new FileOutputStream(getManifestFile()))
+        // FIXME: move content and enclosures into ENTRY_DELETED_DIR?
+        depot.onEntryModified(this)
+        // TODO: how to "410 Gone" for enclosures..?
+    }
+
     void addContent(DepotContent content, boolean replace=false) {
         def file = newContentFile(content.mediaType, content.lang)
         if (!replace) {
@@ -185,31 +211,6 @@ class DepotEntry {
             assert !file.exists()
         }
         // FIXME: ... add in path..
-    }
-
-    void update(Date updated,
-            List<DepotContent> contents=null,
-            List<DepotContent> enclosures=null) {
-        def manifest = getEntryManifest()
-        manifest.setUpdated(updated)
-        manifest.writeTo(new FileOutputStream(getManifestFile()))
-        if (contents) {
-            for (content in contents) { addContent(content, true) }
-        }
-        if (enclosures) {
-            for (encl in enclosures) { addEnclosure(encl, true) }
-        }
-        depot.onEntryModified(this)
-    }
-
-    void delete(Date deleted) {
-        // assert !isDeleted()
-        def manifest = getEntryManifest()
-        manifest.edited = deleted
-        manifest.writeTo(new FileOutputStream(getManifestFile()))
-        // FIXME: move content and enclosures into ENTRY_DELETED_DIR?
-        depot.onEntryModified(this)
-        // TODO: how to "410 Gone" for enclosures..?
     }
 
     //==== TODO: in separate FileDepotAtomIndexer? ====
