@@ -237,7 +237,7 @@ class FileDepot {
         // .. if not, fail or re-index? Flag for this? *May* be critical
         // (Business-logic may *never* allow adding "older" ones)!
 
-        def batchCount = 0 // FIXME: set to entries.size() in currFeed!
+        def batchCount = currFeed.getEntries().size()
         for (entryInfo in entries) {
             batchCount++
             if (youngestArchFeed) {

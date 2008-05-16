@@ -33,8 +33,7 @@ class FileDepotAtomIndexTest {
                 hintForMediaType("application/atom+xml;type=entry")).size()
         entry.generateAtomEntryContent()
         //fileDepot.indexEntry(entry)
-        def atomContent = entry.findContents(fileDepot.uriStrategy.
-                hintForMediaType("application/atom+xml;type=entry"))[0]
+        def atomContent = entry.findContents("application/atom+xml;type=entry")[0]
         assert atomContent.file.isFile()
         // TODO: specify content, alternatives, enclosures, size, md5(?)
     }
