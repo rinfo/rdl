@@ -121,8 +121,8 @@ The Atom Feed Archive
 
 Finding the subscription feed:
 
-    >>> http_get("http://localhost:8182/")
-    TODO: index.xhtml; with link to "/feed/current"
+    .. >>> http_get("http://localhost:8182/")
+    .. TODO: index.xhtml; with link to "/feed/current"
 
 
 Getting the subscription feed:
