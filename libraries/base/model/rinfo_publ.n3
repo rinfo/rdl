@@ -17,9 +17,10 @@
 #   - Vi tillåter termerna i URI:erna att vara på svenska.
 
 # TODO: dokumentera - saknas en del comments (och ev. skosifiera mer; prefLabel, scopeNote..)
-# skos:prefLabel? eller iaf skos:altLabel? skos:note? m.fl...
+# - skos:prefLabel? eller iaf skos:altLabel? skos:note? m.fl...
 # .. fler owl:inverseOf labels för (åtmistone Object)Properties?
 # .. En *god* idé är att för vissa typer/egenskaper hänvisa till "Gröna boken" <Ds. 1998:66>!
+# - Definiera plural-egenskaper med (förslagsvis): <http://purl.org/net/vocab/2004/03/label#>
 
 # TODO: fsNummer och liknande är rimligen owl:FunctionalProperty (kombineras med DatatypeProperty eller ObjectProperty!)
 
@@ -39,12 +40,13 @@
 #-----------------------------------------------------------------------
 
 : a owl:Ontology;
-     dc:title "Svenska rättsinformationssystemets dokumentmodell."@sv;
-     dc:description """En begreppsmodell som beskriver de dokumenttyper och
+    dc:title "Svenska rättsinformationssystemets dokumentmodell."@sv;
+    dc:description """En begreppsmodell som beskriver de dokumenttyper och
                     andra relaterade ting, inklusive egenskaper, som ingår i det svenska
                     rättsinformationssystemet."""@sv;
-     owl:versionInfo "0.4 rev 1";
-     owl:imports dc:, dct:, skos:, foaf:, protege: .
+    dct:created "2006-12-05"^^xsd:date;
+    owl:versionInfo "0.4 rev 1";
+    owl:imports dc:, dct:, skos:, foaf:, protege: .
 
 
 ##
@@ -270,6 +272,10 @@
 # Observera att detta kan innebära att :andrar skulle kunna härledas om ett
 # dokument innehåller (dc:hasPart) något som är en :nyRevisionAv. :)
 
+# TODO: 2. andrar (o.dyl.) som implicerar (den ännu virtuella typen)
+# ":Andringsforfattning".. Dessa dokument har *inte egna paragrafer* osv, de
+# innehåller statements *om den resurs de ändrar*.
+
 
 #---------------------------------------
 
@@ -384,6 +390,7 @@
     rdfs:label "Förarbete"@sv;
     rdfs:comment "Relaterat förarbete till en författning."@sv;
     owl:inverseOf [ rdfs:label "Förarbete till"@sv ]; .
+
 
 :ikrafttradanderegel a rdf:Property;
     rdfs:label "Ikraftträdanderegel"@sv;
@@ -609,7 +616,7 @@
 :konsolideringsunderlag a rdf:Property;
     rdfs:isDefinedBy : ;
     rdfs:label "Konsolideringsunderlag"@sv;
-    rdfs:comment """Information om vilka dokument, rättelseblad m.m. som ingått i
+    rdfs:comment """Information om vilka dokument som ingått i
                     konsolideringsunderlaget. Kan t.ex. utgå från en tidigare
                     konsoliderad version. Samling med referenser till
                     dokument."""@sv; .
@@ -918,7 +925,7 @@
 #---------------------------------------
 
 # TODO: URI:n till denna kan rimligen *inte* baseras på publikationsegenskaper
-#       här; då referatet är fullständing och "användbart" långt innan det trycks.
+#       här; då referatet är fullständigt och "användbart" långt innan det trycks.
 #   - då är den "sammansatta nyckeln" är publikationsbeteckning (rattsfallspublikation + publikationsordinal alt. publikationsplatsangivelse)
 #   - dvs. om referaten publiceras på någon form går det att referera till denna
 #       - publikationsID = rättsfallsförteckning eller myndighetens/domstolens "egennamn"
