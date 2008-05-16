@@ -233,7 +233,8 @@ class FileDepot {
         }
         def youngestArchFeed = getPrevArchiveAsFeed(currFeed)
 
-        // TODO: assure added entries are younger than latest in currFeed!
+        // TODO: assure added entries are younger than latest in currFeed?
+        // Currently, indexEntries re-indexes *if the same* are added..
         // .. if not, fail or re-index? Flag for this? *May* be critical
         // (Business-logic may *never* allow adding "older" ones)!
 
