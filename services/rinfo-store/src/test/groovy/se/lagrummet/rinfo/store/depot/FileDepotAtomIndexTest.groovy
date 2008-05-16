@@ -36,16 +36,22 @@ class FileDepotAtomIndexTest {
         def atomContent = entry.findContents(fileDepot.uriStrategy.
                 hintForMediaType("application/atom+xml;type=entry"))[0]
         assert atomContent.file.isFile()
+        // TODO: specify content, alternatives, enclosures, size, md5(?)
     }
 
-    // TODO: shouldGenerateAtomEntryIfManifestModified
-    // TODO: shouldGenerateAtomEntryWhenIndexingNewEntry ?
+    // TODO: shouldGenerateAtomEntryWhenIndexingNewEntry / or WhenCreating?
+    // TODO: shouldGenerateAtomEntryWhenModified
 
     @Test
     void shouldGenerateIndex() {
         fileDepot.generateIndex()
         // TODO: list feeds..
+        // - writesFeedByLatestDateInBatch
+        // - confirmDoesFullIndexing
+        // - archiveFeedsChain
     }
 
+    // TODO: shouldInsertInSubscriptionFeed
+    // TODO: shouldCutOffSubscriptionToArchiveAtBatchSize
 
 }

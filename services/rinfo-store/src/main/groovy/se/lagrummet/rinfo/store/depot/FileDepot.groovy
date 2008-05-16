@@ -71,7 +71,8 @@ class FileDepot {
 
         def entry = getEntry(parsed.depotUriPath)
         if (entry) {
-            results = entry.findContents(parsed.mediaHint, parsed.lang)
+            def mediaType = uriStrategy.mediaTypeForHint(parsed.mediaHint)
+            results = entry.findContents(mediaType, parsed.lang)
         } else { // enclosure..
             def content = getContent(parsed.depotUriPath)
             if (content) {
@@ -232,7 +233,11 @@ class FileDepot {
         }
         def youngestArchFeed = getPrevArchiveAsFeed(currFeed)
 
-        def batchCount = 0
+        // TODO: assure added entries are younger than latest in currFeed!
+        // .. if not, fail or re-index? Flag for this? *May* be critical
+        // (Business-logic may *never* allow adding "older" ones)!
+
+        def batchCount = 0 // FIXME: set to entries.size() in currFeed!
         for (entryInfo in entries) {
             batchCount++
             if (youngestArchFeed) {

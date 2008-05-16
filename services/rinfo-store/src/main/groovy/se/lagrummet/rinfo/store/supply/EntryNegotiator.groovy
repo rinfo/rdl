@@ -33,6 +33,8 @@ class EntryNegotiator extends Finder {
         }
         // TODO: some kind of result which 303:s (use-case: resource path
         // subsumed by entry above which descibes it ("/ref/fs/sfs"..)..)
+        // Also, possible to have "symlink" resources, which at some point in
+        // time become owl:sameAs, and thus needs e.g. file://.../name-SYMLINK?
 
         // perhaps: def resource = new SupplyResource(results)
         def resource = new Resource(context, request, response)

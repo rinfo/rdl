@@ -33,7 +33,7 @@ class DepotEntry {
         return new File(dir, ENTRY_CONTENT_DIR_NAME).isDirectory()
     }
 
-    List<DepotContent> findContents(String forMediaHint=null, String forLang=null) {
+    List<DepotContent> findContents(String forMediaType=null, String forLang=null) {
         def found = []
         // TODO: if both qualifiers given, look for file with newContentFile?
         for (File file : entryContentDir.listFiles()) {
@@ -42,20 +42,20 @@ class DepotEntry {
                 continue
             }
             def mediaHint = match.group(2)
-            if (forMediaHint && mediaHint != forMediaHint) {
+            def mediaType = depot.uriStrategy.mediaTypeForHint(mediaHint)
+            if (forMediaType && mediaType != forMediaType) {
                 continue
             }
             def lang = match.group(1) ?: null
             if (forLang && lang != forLang) {
                 continue
             }
-            // TODO: possibly decouple suffix and hint logic by:
-            //  .. (although this reintroduces map->remap->back-to-map..!)
-            //  .. (and mediaHint *is* very concise)
+            // TODO: we now decouple suffix and hint logic:
+            //  .. although this reintroduces map->remap->back-to-map..!
+            //  .. and mediaHint *is* very concise.
             //  - receiving forMediaType in findContents
             //  - calling depot.mediaTypeForSuffix that forwards to mediaTypeForHint..
             //  .. could allow mediaHint to be collection-dependent in uriStrategy..
-            def mediaType = depot.uriStrategy.mediaTypeForHint(mediaHint)
             def uriPath = depot.uriStrategy.makeNegotiatedUriPath(
                     getEntryUriPath(), mediaType, lang)
             found << new DepotContent(file, uriPath, mediaType, lang)
@@ -90,7 +90,8 @@ class DepotEntry {
 
     Date getDeleted() {
         // FIXME: date from where? feedsync? app:edited?
-        return false
+        // .. or use updated (edited?) and isDeleted?
+        return null
     }
 
     protected Entry getEntryManifest() {
