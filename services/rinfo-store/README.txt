@@ -5,6 +5,13 @@ README - RInfo Core
 Common Maven Uses
 ========================================================================
 
+Environments (see usage of "environment" in pom.xml)::
+
+    # Use inferred environment (default or e.g. by OS):
+    $ mvn <...>
+    # Use config in src/environments/prod/:
+    $ mvn -Pprod <...>
+
 Testing::
 
     # All:
@@ -24,7 +31,11 @@ Running Groovy outside of maven with declared dependencies
 
 To put dependencies in classpath, use (see inside for details)::
 
-    $ . setclasspath.sh -b
+    $ . src/scripts/setclasspath.sh -b
+
+To use a named environment, use (se environments in pom.xml)::
+
+    $ . src/scripts/setclasspath.sh prod
 
 Then run with:
 
