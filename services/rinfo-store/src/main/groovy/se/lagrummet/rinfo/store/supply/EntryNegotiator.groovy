@@ -15,6 +15,7 @@ import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.depot.DepotContent
 
 
+// TODO: rename to DepotFinder? (entry, content, "subsumer")
 class EntryNegotiator extends Finder {
 
     FileDepot fileDepot
@@ -23,8 +24,12 @@ class EntryNegotiator extends Finder {
     EntryNegotiator(context) { super(context) }
 
     @Override
-    Handler createTarget(Request request, Response response) {
+    Handler findTarget(Request request, Response response) {
         def results = fileDepot.find(request.resourceRef.path as String)
+
+        /* TODO: should perhaps wrap "odd" results in GoneHandler,
+        SeeOtherHandler? null is "not found".
+        */
 
         if (!results) {
             // TODO: if (results == null)? Or on an exception? EntryDeletedException?

@@ -91,6 +91,8 @@ class DepotEntry {
     Date getDeleted() {
         // FIXME: date from where? feedsync? app:edited?
         // .. or use updated (edited?) and isDeleted?
+        // *not* updated - deleteds *may* de desirable to
+        // "dry out" even in archive docs!
         return null
     }
 
