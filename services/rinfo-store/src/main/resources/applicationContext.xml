@@ -7,7 +7,7 @@
             http://www.springframework.org/schema/context
             http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-    <context:property-placeholder location="classpath:se/lagrummet/rinfo/store/config.properties"/>
+    <context:property-placeholder location="config.properties"/>
 
     <bean id="fileDepot" class="se.lagrummet.rinfo.store.depot.FileDepot" scope="singleton">
         <property name="baseUri" value="${rinfo.depotBaseUri}"/>
