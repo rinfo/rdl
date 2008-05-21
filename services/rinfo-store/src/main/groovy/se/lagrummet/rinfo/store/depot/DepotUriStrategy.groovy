@@ -5,7 +5,7 @@ package se.lagrummet.rinfo.store.depot
 
 class DepotUriStrategy {
 
-    static final URI_PATTERN = ~/(\/([a-z0-9_-]+)\/[a-z0-9_\-\/:,\.]+?)(?:(\/)|(?:\/([a-z0-9]+)(?:,([a-z]{2}))?))?/
+    static final URI_PATTERN = ~/(\/([a-z0-9_-]+)\/[a-z0-9_\-\/:,\.]+?)(?:(\/)|(?:\/([^\/,]+)(?:,([a-z]{2}))?))?/
 
     static final FEED_DIR_NAME = "feed"
 

@@ -36,13 +36,13 @@ class FileDepotWriteTest {
         def timestamp = new Date()
         fileDepot.createEntry(NEW_IDENTIFIER_1, timestamp,
                 [
-                    new DepotContent(exampleContentFile("content-en.pdf"),
-                            null, "application/pdf", "en"),
-                    new DepotContent(exampleContentFile("content.rdf"),
-                            null, "application/rdf+xml")
+                    new SourceContent(exampleContentFile("content-en.pdf"),
+                            "application/pdf", "en"),
+                    new SourceContent(exampleContentFile("content.rdf"),
+                            "application/rdf+xml")
                 ],
                 // TODO: with enclosures..
-                //[ new DepotContent(exampleFile("icon.png"), "icon.png", null) ]
+                //[ new SourceContent(exampleFile("icon.png"), "icon.png", null) ]
             )
 
         def entry = fileDepot.getEntry(NEW_IDENTIFIER_1)
@@ -67,8 +67,8 @@ class FileDepotWriteTest {
         def entry = fileDepot.getEntry(NEW_IDENTIFIER_1)
         def timestamp = new Date()
         entry.update(timestamp,
-                [ new DepotContent(exampleContentFile("content-en.pdf"),
-                            null, "application/pdf", "en") ]
+                [ new SourceContent(exampleContentFile("content-en.pdf"),
+                            "application/pdf", "en") ]
             )
         // TODO: assert..
     }

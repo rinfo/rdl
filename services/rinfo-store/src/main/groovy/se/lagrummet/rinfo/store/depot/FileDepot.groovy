@@ -22,7 +22,7 @@ import static org.apache.commons.lang.time.DateFormatUtils.ISO_DATE_FORMAT
 
 class FileDepot {
 
-    final logger = LoggerFactory.getLogger(FileDepot)
+    private final logger = LoggerFactory.getLogger(FileDepot)
 
     URI baseUri
     File baseDir
@@ -175,8 +175,8 @@ class FileDepot {
     //========================================
 
     DepotEntry createEntry(URI entryUri, Date created,
-            List<DepotContent> contents,
-            List<DepotContent> enclosures=null) {
+            List<SourceContent> contents,
+            List<SourceContent> enclosures=null) {
         assert withinBaseUri(entryUri)
         def uriPath = entryUri.path
         def entryDir = getEntryDir(uriPath)
@@ -192,37 +192,37 @@ class FileDepot {
         // next-to-last (add next-archive)?)
     }
 
-    //==== TODO: delegate to separate FileDepotAtomIndexer? ====
+    //==== TODO: delegate to separate FileDepotAtomIndexStrategy? ====
 
-    static final FEED_BATCH_SIZE = 25
+    static final DEFAULT_FEED_BATCH_SIZE = 25
 
     void generateIndex() {
         if (!feedDir.exists()) {
             feedDir.mkdir()
         }
-        def ascDateSortedEntries = new TreeSet(
+        def ascDateSortedEntryRefs = new TreeSet(
                 [compare: { a, b ->
                     if (a.date == b.date) {
-                        return a.path.compareTo(b.path)
+                        return a.uriPath.compareTo(b.uriPath)
                     }
                     return a.date.compareTo(b.date)
                 }] as Comparator
             )
         // only adding necessary data to minimize memory use
         for (entry in iterateEntries()) {
-            ascDateSortedEntries.add(
-                    [ path: entry.entryUriPath,
-                      date: entry.updated ] )
+            ascDateSortedEntryRefs.add(
+                    new EntryRef(uriPath: entry.entryUriPath,
+                            date: entry.updated) )
         }
-        indexEntries(ascDateSortedEntries)
+        indexEntryRefs(ascDateSortedEntryRefs)
     }
 
     int getFeedBatchSize() {
-        return FEED_BATCH_SIZE
+        return DEFAULT_FEED_BATCH_SIZE
     }
 
     // TODO: refactor and test algorithm in isolation?
-    void indexEntries(Collection entries) {
+    void indexEntryRefs(Collection<EntryRef> entryRefs) {
 
         // TODO: less hard-coded..
         def subscriptionPath = "/${uriStrategy.FEED_DIR_NAME}/current"
@@ -234,17 +234,17 @@ class FileDepot {
         def youngestArchFeed = getPrevArchiveAsFeed(currFeed)
 
         // TODO: assure added entries are younger than latest in currFeed?
-        // Currently, indexEntries re-indexes *if the same* are added..
+        // Currently, indexEntryRefs re-indexes *if the same* are added..
         // .. if not, fail or re-index? Flag for this? *May* be critical
         // (Business-logic may *never* allow adding "older" ones)!
 
         def batchCount = currFeed.getEntries().size()
-        for (entryInfo in entries) {
+        for (EntryRef entryRef : entryRefs) {
             batchCount++
             if (youngestArchFeed) {
                 FPH.setPreviousArchive(currFeed, uriPathFromFeed(youngestArchFeed))
             }
-            def entry = getEntry(entryInfo.path)
+            def entry = getEntry(entryRef.uriPath)
             logger.info "Indexing entry: <${entry.id}> [${entry.updated}]"
             // FIXME: handle entry.deleted ... !
             currFeed.insertEntry(entry.parsedAtomEntry)
@@ -317,4 +317,9 @@ class FileDepot {
     protected void indexEntry(DepotEntry entry) {
     }
 
+}
+
+protected class EntryRef {
+    String uriPath
+    Date date
 }

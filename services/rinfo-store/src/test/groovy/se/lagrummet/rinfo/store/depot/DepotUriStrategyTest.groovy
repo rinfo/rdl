@@ -39,6 +39,9 @@ class DepotUriStrategyTest extends GroovyTestCase {
         ["/publ/sfs/1999:175/image.png",
             new ParsedPath("publ", "/publ/sfs/1999:175/image.png")],
 
+        ["/data/example.org-ap-1234/A-5678",
+            new ParsedPath("data", "/data/example.org-ap-1234/A-5678")],
+
         // .. edge case: "/coll/item/called/rdf" => "/coll/item/called/rdf/rdf" ..
     ]
 

@@ -1,5 +1,6 @@
 package se.lagrummet.rinfo.store.depot
 
+
 class DepotContent {
     File file
     String depotUriPath

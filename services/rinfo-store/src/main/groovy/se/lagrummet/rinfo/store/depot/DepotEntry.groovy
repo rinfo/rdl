@@ -1,7 +1,5 @@
 package se.lagrummet.rinfo.store.depot
 
-import org.apache.commons.io.FileUtils
-
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.Entry
 import org.apache.abdera.i18n.iri.IRI
@@ -137,8 +135,8 @@ class DepotEntry {
     // enclosures? Or do in use of filedepot (the collector)?
 
     void create(Date created,
-            List<DepotContent> contents,
-            List<DepotContent> enclosures=null) {
+            List<SourceContent> sourceContents,
+            List<SourceContent> sourceEnclosures=null) {
         if(entryContentDir.exists()) {
             throw new DuplicateDepotEntryException(this)
         }
@@ -149,32 +147,32 @@ class DepotEntry {
         manifest.id = depot.baseUri.resolve(getEntryUriPath())
         manifest.setPublished(created)
         manifest.setUpdated(created)
-        if (contents.size() > 0) {
-            def content = contents[0]
+        if (sourceContents.size() > 0) {
+            def content = sourceContents[0]
             manifest.setContent(null, content.mediaType)
             if (content.lang) {
                 manifest.contentElement.language = content.lang
             }
         }
         manifest.writeTo(new FileOutputStream(manifestFile))
-        for (content in contents) { addContent(content) }
-        if (enclosures) {
-            for (encl in enclosures) { addEnclosure(encl) }
+        for (content in sourceContents) { addContent(content) }
+        if (sourceEnclosures) {
+            for (encl in sourceEnclosures) { addEnclosure(encl) }
         }
         depot.onEntryModified(this)
     }
 
     void update(Date updated,
-            List<DepotContent> contents=null,
-            List<DepotContent> enclosures=null) {
+            List<SourceContent> sourceContents=null,
+            List<SourceContent> sourceEnclosures=null) {
         def manifest = getEntryManifest()
         manifest.setUpdated(updated)
         manifest.writeTo(new FileOutputStream(getManifestFile()))
-        if (contents) {
-            for (content in contents) { addContent(content, true) }
+        if (sourceContents) {
+            for (content in sourceContents) { addContent(content, true) }
         }
-        if (enclosures) {
-            for (encl in enclosures) { addEnclosure(encl, true) }
+        if (sourceEnclosures) {
+            for (encl in sourceEnclosures) { addEnclosure(encl, true) }
         }
         depot.onEntryModified(this)
     }
@@ -189,12 +187,12 @@ class DepotEntry {
         // TODO: how to "410 Gone" for enclosures..?
     }
 
-    void addContent(DepotContent content, boolean replace=false) {
-        def file = newContentFile(content.mediaType, content.lang)
+    void addContent(SourceContent srcContent, boolean replace=false) {
+        def file = newContentFile(srcContent.mediaType, srcContent.lang)
         if (!replace) {
             assert !file.exists()
         }
-        FileUtils.copyFile(content.file, file)
+        srcContent.writeTo(file)
     }
 
     protected File newContentFile(String mediaType, String lang=null) {
@@ -209,14 +207,14 @@ class DepotEntry {
         return new File(entryContentDir, filename)
     }
 
-    void addEnclosure(DepotContent enclosure, boolean replace=false) {
+    void addEnclosure(SourceContent srcContent, boolean replace=false) {
         if (!replace) {
             assert !file.exists()
         }
         // FIXME: ... add in path..
     }
 
-    //==== TODO: in separate FileDepotAtomIndexer? ====
+    //==== TODO: in separate FileDepotAtomIndexStrategy? ====
 
     void generateAtomEntryContent() {
         // TODO: how to represent deleted tombstones!

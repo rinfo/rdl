@@ -21,6 +21,7 @@ MVN_DEPS=$(cat classpath.txt)
 GROOVY_JARS=$(for jar in $(ls $GROOVY_HOME/lib/*.jar); do echo -n "$jar:"; done)
 # Add resources and groovy src:
 EXTRAS=src/main/resources:src/main/groovy:src/test/resources:src/test/groovy
+#EXTRAS=target/classes/
 
 # Then define classpath, including main sources and resources:
 export CLASSPATH=$GROOVY_JARS:$EXTRAS:$MVN_DEPS:$ENV_DIR
