@@ -29,13 +29,19 @@ class FeedCollector {
     }
 
     void readFeed(URL url, Date haltAt=null) {
-        // TODO: Read backwards in time until last read date..
-        // TODO: Use e.g. depot.startSession(), session.doIndex() ?
-
-        // TODO: storage safety and history:
-        // * Verify length and md5.
-        // * Store all collected stuff separately(?)
-        //   .. or just feeds and pre-rewritten RDF?
+        /* TODO:
+            - Read backwards in time until last read date..
+            - Use e.g. depot.startSession(), session.doIndex() ?
+            - we also need error recovery (rollback? store "atDate"?)
+              to prevent a state of having read half-way!
+            - perhaps get all feeds until haltAt, then read entries
+              forwards in time?
+        */
+        /* TODO: storage safety and history:
+            - Verify length and md5.
+            - Store all collected stuff separately(?)
+              .. or just feeds and pre-rewritten RDF?
+        */
 
         def followingUrl = url
         while (followingUrl) {
@@ -67,7 +73,7 @@ class FeedCollector {
     }
 
     void storeEntry(Entry entry) {
-        def entryId = entry.id.toString()
+        def entryId = entry.id.toURI()
         def timestamp= new Date()
         def contents = []
         def enclosures = []
@@ -80,35 +86,32 @@ class FeedCollector {
         def contentLang = contentElem.language
         contents << createDepotContent(
                 contentUrlPath, contentMimeType, contentLang)
+
         for (link in entry.links) {
             def urlPath = link.resolvedHref.toString()
-            def mimeType = link.mimeType.toString()
+            def mediaType = link.mimeType.toString()
             def lang = link.hrefLang
             if (link.rel == "alternate") {
-                contents << createDepotContent(urlPath, mimeType, lang)
+                contents << createDepotContent(urlPath, mediaType, lang)
             }
             if (link.rel == "enclosure") {
                 assert urlPath.startsWith(entryId)
                 def slug = urlPath.replaceFirst(entryId, "")
-                enclosures << createDepotContent(urlPath, mimeType, null, slug)
+                enclosures << createDepotContent(urlPath, mediaType, null, slug)
             }
         }
         logger.info "Saving Entry <${entryId}>"
-        println "    " + entryId
-        println "    " + timestamp
-        println "    " + contents
-        println "    " + enclosures
-        // FIXME: depot.createEntry(entryId, timestamp, contents, enclosures)
+        depot.createEntry(entryId, timestamp, contents, enclosures)
     }
 
-    SourceContent createDepotContent(urlPath, mimeType, lang, slug=null) {
-        // TODO: find RDF with suitable mimeType and URIMint new ID (with
+    SourceContent createDepotContent(urlPath, mediaType, lang, slug=null) {
+        // TODO: find RDF with suitable mediaType and URIMint new ID (with
         //       rewritten RDF!)
         // FIXME: we have ":" url-escaped here. Is this a symptom of a brittle
         // URI strategy in general?
         urlPath = urlPath.replace(URLEncoder.encode(":", "utf-8"), ":")
         def inStream = new URL(urlPath).openStream()
-        return new SourceContent(inStream, slug, mimeType, lang)
+        return new SourceContent(inStream, mediaType, lang, slug)
     }
 
     static main(args) {
@@ -120,6 +123,7 @@ class FeedCollector {
         def fileDepot = context.getBean("fileDepot")
         def collector = new FeedCollector(fileDepot)
         collector.readFeed new URL(args[0])
+        fileDepot.generateIndex()
     }
 
 }

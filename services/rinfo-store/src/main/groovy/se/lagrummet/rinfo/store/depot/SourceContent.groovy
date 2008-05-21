@@ -31,23 +31,27 @@ class SourceContent {
 
     void writeTo(File file) throws IOException, IllegalStateException {
         def destOutStream = new FileOutputStream(file)
-        if (sourceFile != null) {
-            def srcChannel = new FileInputStream(sourceFile).getChannel()
-            def destChannel = destOutStream.getChannel()
-            destChannel.transferFrom(srcChannel, 0, srcChannel.size())
-        } else if (sourceStream != null) {
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            srcStream.close();
-            destStream.close();
-        } else {
-            throw new IllegalStateException(
-                    "Neither sourceStream nor sourceFile is set.")
-        }
+        try {
+            if (sourceFile != null) {
+                def srcChannel = new FileInputStream(sourceFile).getChannel()
+                def destChannel = destOutStream.getChannel()
+                destChannel.transferFrom(srcChannel, 0, srcChannel.size())
 
+            } else if (sourceStream != null) {
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = sourceStream.read(buf)) > 0) {
+                    destOutStream.write(buf, 0, len);
+                }
+                sourceStream.close()
+
+            } else {
+                throw new IllegalStateException(
+                        "Neither sourceStream nor sourceFile is set.")
+            }
+        } finally {
+            destOutStream.close()
+        }
     }
 
 }

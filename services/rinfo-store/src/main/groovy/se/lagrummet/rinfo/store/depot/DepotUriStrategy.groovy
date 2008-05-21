@@ -5,7 +5,7 @@ package se.lagrummet.rinfo.store.depot
 
 class DepotUriStrategy {
 
-    static final URI_PATTERN = ~/(\/([a-z0-9_-]+)\/[a-z0-9_\-\/:,\.]+?)(?:(\/)|(?:\/([^\/,]+)(?:,([a-z]{2}))?))?/
+    static final URI_PATTERN = ~"(/([^/]+)\\S+?)(?:/([^/,]+)(?:,([a-z]{2}))?)?"
 
     static final FEED_DIR_NAME = "feed"
 
@@ -34,17 +34,29 @@ class DepotUriStrategy {
         if (!matcher.matches()) {
             return null
         }
+        def collection
+        def depotUriPath
+        def mediaHint = null
+        def lang = null
+        def asDir = false
+
         def g = matcher.&group
-        def collection = g(2)
-        def depotUriPath = g(1)
-        def mediaHint = g(4)
-        if (mediaHint != null && !NAMED_MEDIA_TYPES.containsKey(mediaHint)) {
-            // re-add as path leaf
-            depotUriPath += "/" + mediaHint
-            mediaHint = null
+        depotUriPath = g(1)
+        collection = g(2)
+        def lastSansLang = g(3)
+        lang = g(4)
+
+        if (NAMED_MEDIA_TYPES.containsKey(lastSansLang)) {
+            mediaHint = lastSansLang
+        } else {
+            // re-combine
+            if (lastSansLang)
+                depotUriPath += "/" + lastSansLang
         }
-        def lang = g(5)
-        def asDir = uriPath.endsWith("/")
+        if (depotUriPath.endsWith("/")) {
+            asDir = true
+            depotUriPath = depotUriPath.substring(0, depotUriPath.length()-1)
+        }
         return new ParsedPath(collection, depotUriPath, asDir, mediaHint, lang)
     }
 
