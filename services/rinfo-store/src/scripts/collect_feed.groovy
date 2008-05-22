@@ -1,5 +1,7 @@
 //package ...
 
+import java.nio.channels.Channels
+
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -45,34 +47,44 @@ class FeedCollector {
 
         def followingUrl = url
         while (followingUrl) {
-            def feed = readFeedPage(followingUrl)
-            def followingHref = feed?.getLinkResolvedHref("prev-archive")
-            followingUrl = followingHref? new URL(followingHref.toString()) : null
+            followingUrl = readFeedPage(followingUrl)
             if (followingUrl)
                 logger.info ".. following: <${followingUrl}>"
         }
         logger.info "Done."
     }
 
-    Feed readFeedPage(URL url) {
+    URL readFeedPage(URL url) {
         logger.info "Reading Feed <${url}> ..."
         def feed
+        def followingUrl
+        def inChannel = Channels.newChannel(url.openStream())
         try {
-            feed = Abdera.instance.parser.parse(url.openStream(),
+            feed = Abdera.instance.parser.parse(inChannel,
                     url.toString()).root
+            logger.info "Title: ${feed.title}"
+            // TODO: Check for tombstones; if so, delete.
+            for (entry in feed.entries) {
+                storeEntry(entry)
+            }
+            def followingHref = feed.getLinkResolvedHref("prev-archive")
+            followingUrl = followingHref? followingHref.toURL() : null
         } catch (Exception e) {
             logger.exception "Error parsing feed!", e
-            return null
+            followingUrl = null
+        } finally {
+            inChannel.close()
         }
-        logger.info "Title: ${feed.title}"
-        // TODO: Check for tombstones; if so, delete.
-        for (entry in feed.entries) {
-            storeEntry(entry)
-        }
-        return feed
+        return followingUrl
     }
 
     void storeEntry(Entry entry) {
+        /* TODO:
+            - new entryId from URIMinter
+            - and find RDF with suitable mediaType and URIMint new ID (with
+              rewritten RDF!)
+        */
+
         def entryId = entry.id.toURI()
         def timestamp= new Date()
         def contents = []
@@ -105,8 +117,6 @@ class FeedCollector {
     }
 
     SourceContent createDepotContent(urlPath, mediaType, lang, slug=null) {
-        // TODO: find RDF with suitable mediaType and URIMint new ID (with
-        //       rewritten RDF!)
         // FIXME: we have ":" url-escaped here. Is this a symptom of a brittle
         // URI strategy in general?
         urlPath = urlPath.replace(URLEncoder.encode(":", "utf-8"), ":")

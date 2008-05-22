@@ -23,6 +23,11 @@ class SourceContent {
         this.sourceFile = sourceFile
     }
 
+    // TODO: URL instead? Perhaps allow sourceStream too, but not closing it?
+    /**
+     * @param sourceStream. An open InputStream. This will be closed when
+     * {@link #writeTo} is called.
+     */
     SourceContent(InputStream sourceStream,
             mediaType, lang=null, enclosedUriPath=null) {
         this(mediaType, lang, enclosedUriPath)
