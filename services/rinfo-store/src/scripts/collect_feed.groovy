@@ -80,9 +80,11 @@ class FeedCollector {
 
     void storeEntry(Entry entry) {
         /* TODO:
-            - new entryId from URIMinter
-            - and find RDF with suitable mediaType and URIMint new ID (with
-              rewritten RDF!)
+            // find RDF with suitable mediaType
+            def graph = SesameUtil.parseResource(rdfDocument)
+            def newUri = URIMinter.computeOfficialUri(graph, entryId)
+            def newGraph = SesameUtil.replaceURI(entryId, newUri)
+            // TODO: replace resource with serialized newGraph (rewritten RDF)
         */
 
         def entryId = entry.id.toURI()
