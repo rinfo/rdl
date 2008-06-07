@@ -42,6 +42,7 @@ Artiklar som beskriver sunda URL-strategier generellt:
     http://www.jenitennison.com/blog/node/47
     PRESTO:
         http://www.oreillynet.com/xml/blog/2008/02/presto_a_www_information_archi.html
+        http://www.jenitennison.com/blog/node/80
     "[..] bringing the European Constitution to the people":
         http://idealliance.org/proceedings/xtech05/papers/02-06-04/
 
