@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:fh="http://purl.org/syndication/history/1.0"
+      xmlns:le="http://purl.org/atompub/link-extensions/1.0"
+      xml:lang="sv">
+
+  <id>http://rinfo.verva.se/feed</id>
+  <title>Vervas föreskrifter</title>
+  <updated>2008-06-09T09:46:00.000+0200</updated>
+
+  <author>
+    <name>Verva</name>
+    <uri>http://verva.se/</uri>
+    <email>rinfo@verva.se</email>
+  </author>
+
+  <link href="/feed/current.atom" rel="self"/>
+  <link href="/feed/archive/2007/index.atom" rel="prev-archive"/>
+
+  <entry>
+    <id>http://rinfo.verva.se/publ/vervafs/2007/2</id>
+    <updated>2007-11-19T00:00:00.000Z</updated>
+    <published>2007-11-19T00:00:00.000Z</published>
+    <title>Vervas föreskrift om statliga myndigheters arbete med säkert elektroniskt informationsutbyte, VERVAFS 2007:2</title>
+    <summary>Föreskrift om statliga myndigheters arbete med säkert elektroniskt informationsutbyten ...</summary>
+    <content type="application/pdf" src="/publ/vervafs/2007/2/data.pdf"
+             le:md5="234039401d3a90b55640f75decc6c274"/>
+    <link rel="alternate" href="/publ/vervafs/2007/2/data.rdf" type="application/rdf+xml"
+          length="4321" le:md5="564131d0dbf344bac82a52ad7d2acf1a"/>
+    <link rel="alternate" href="/publ/vervafs/2007/2/data.xhtml" hreflang="sv" type="application/xhtml+xml"
+          length="12345" le:md5="7b7fc831c784e78926aec193ff8d399b"/>
+  </entry>
+
+  <entry>
+    <id>http://rinfo.verva.se/publ/vervafs/2007/1</id>
+    <updated>2007-01-12T00:00:00.000Z</updated>
+    <published>2007-01-12T00:00:00.000Z</published>
+    <title>Vervas föreskrifter om statliga myndigheters elektroniska fakturor, VERVAFS 2007:1</title>
+    <summary>Föreskrift och allmänna råd som pdf-filer Föreskrifter om statliga myndigheters elektroniska ...</summary>
+    <content type="application/pdf" src="/publ/vervafs/2007/1/data.pdf"
+             le:md5="bf16399b5df53bc2431cc7b49c2db470"/>
+    <link rel="alternate" href="/publ/vervafs/2007/1/data.rdf" type="application/rdf+xml"
+          length="4321" le:md5="8d4a228b03891c8f3774470a86e97c4a"/>
+    <link rel="alternate" href="/publ/vervafs/2007/1/data.xhtml" hreflang="sv" type="application/xhtml+xml"
+          length="12345" le:md5="db2ab4bb25c4bd825604023f019ec033"/>
+  </entry>
+
+</feed>

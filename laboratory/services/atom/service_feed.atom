@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:os="http://a9.com/-/spec/opensearchrss/1.0/"
+      xmlns:le="http://purl.org/atompub/link-extensions/1.0"
+      xmlns:gd="http://schemas.google.com/g/2005"
+      xml:lang="sv">
+    <!-- lang is important. Without it, certain atom constructs won't work
+         (attrs for text - albeit in themselves poor for e.g. bibi), but more
+         pressingly, a massively multilingual view will become *extremely*
+         bloated. Perhaps recommend rel="alternate" parallell to self, with
+         hreflang per available lang?  -->
+
+  <id>http://rdata.lagrummet.se/feeds/publ</id>
+  <title>RInfo - RData Service - Publikationer</title>
+  <updated>2007-11-10T16:54:26.191Z</updated>
+
+  <!-- TODO: For labels.. But: require true RDF like this? See thoughts in <relation-labels.xmlf>.. -->
+  <link rel="http://www.w3.org/2000/01/rdf-schema#seeAlso"
+        href="http://www.w3.org/2000/01/rdf-schema#" type="application/rdf+xml"/>
+  <link rel="http://www.w3.org/2000/01/rdf-schema#seeAlso"
+        href="http://purl.org/dc/elements/1.1/" type="application/rdf+xml"/>
+  <link rel="http://www.w3.org/2000/01/rdf-schema#seeAlso"
+        href="http://rinfo.lagrummet.se/ns/2008/04/publ#" type="application/rdf+xml"/>
+
+  <link rel="self" href="http://rdata.lagrummet.se/feeds/publ,sv/-/1999/SFS/Document?max-results=25" type="application/atom+xml"/>
+
+  <link rel="first" href="http://rdata.lagrummet.se/feeds/publ,sv/-/1999/SFS/Document?max-results=25" type="application/atom+xml"/>
+  <link rel="next" href="http://rdata.lagrummet.se/feeds/publ,sv/-/1999/SFS/Document?max-results=25&amp;start-index=26" type="application/atom+xml"/>
+
+  <os:startIndex>1</os:startIndex>
+  <os:totalResults>208</os:totalResults>
+  <os:itemsPerPage>25</os:itemsPerPage>
+
+  <entry>
+
+    <id>http://rinfo.lagrummet.se/publ/sfs/1999:175</id>
+    <!-- TODO: Controversial: entry/id as Resource URI? Too smudged? Alts: -->
+    <link href="http://rinfo.lagrummet.se/publ/sfs/1999:175"/>
+    <link rel="[foaf:primaryTopicOf]" href="http://rinfo.lagrummet.se/publ/sfs/1999:175"/>
+    <!-- or dc:identifier? Too loose? Not an ObjectProperty... (may be a plus: "canonical URI string") -->
+
+    <updated>2006-08-28T12:54:59.393Z</updated>
+    <published>1999-12-12T23:59:59Z</published>
+    <title>SFS 1999:175</title>
+    <subtitle>Rättsinformationsförordning</subtitle>
+    <summary>[...]</summary>
+    <content src="http://rinfo.lagrummet.se/publ/sfs/1999:175/xhtml,sv" type="text/html"/>
+    <link rel="self" href="http://rdata.lagrummet.se/feeds/publ/sfs/1999:175/entry" type="application/atom+xml;type=entry"/>
+    <link rel="via" href="http://rinfo.lagrummet.se/publ/sfs/1999:175/entry" type="application/atom+xml;type=entry"/>
+    <link rel="alternate" href="http://rinfo.lagrummet.se/publ/sfs/1999:175/pdf,sv" hreflang="sv" type="application/pdf"
+          length="123456" le:md5="32b688987d471b311b3e1fbdc1c929c3"/>
+    <link rel="alternate" href="http://rinfo.lagrummet.se/publ/sfs/1999:175/rdf" type="application/rdf+xml"
+          length="123456" le:md5="ba9d577d66b6bc9e3823ed223a67c40c"/>
+    <category scheme="http://purl.org/dc/elements/1.1/" term="Document" label="Dokument"/>
+    <category scheme="http://rinfo.lagrummet.se/ns/2008/05/publ#" term="Forordning" label="Förordning"/>
+    <category scheme="http://rdata.lagrummet.se/categories/inferred/publishers" term="Regeringskansliet"/>
+    <category scheme="http://rdata.lagrummet.se/categories/inferred/memberships" term="SFS"/>
+    <category scheme="http://rdata.lagrummet.se/categories/inferred/years" term="1999"/>
+    <!-- TODO:
+        - needs something more than <link>, since it contains undefinedContent, which excludes atom:*.
+        - now uses gdata:s entryLink <http://code.google.com/apis/gdata/elements.html#gdEntryLink>..
+        - Really? @relLabel and @pluralRelLabel? (Perhaps just title?)
+    -->
+    <gd:entryLink rel="http://rinfo.lagrummet.se/ns/2008/05/publ#forarbete"
+                  href="http://rinfo.lagrummet.se/publ/sfs/1999:00/entry" type="application/atom+xml;type=entry"
+                  relLabel="förarbete" pluralRelLabel="förarbeten">
+        <entry>
+            <id>http://rinfo.lagrummet.se/publ/sfs/1999:00</id>
+            <title>SFS 1999:00</title>
+            <subtitle>Rättsdataförordningen</subtitle>
+        </entry>
+    </gd:entryLink>
+    <!--
+    <link rev="..." href="..." type="..."/>
+    -->
+    <author>
+      <name>Regeringskansliet</name>
+      <uri>http://regeringen.se/</uri>
+    </author>
+  </entry>
+
+  <entry>
+    <!-- ... -->
+  </entry>
+
+  <!-- ... -->
+
+</feed>
