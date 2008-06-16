@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:fh="http://purl.org/syndication/history/1.0"
+      xmlns:le="http://purl.org/atompub/link-extensions/1.0"
+      xmlns:sx="http://feedsync.org/2007/feedsync"
+      xml:base="http://example.org/">
+
+    <id>http://example.org/feed</id>
+    <title xml:lang="sv">Exempelkällans RInfo-feed</title>
+    <updated>2008-06-09T08:24:20Z</updated>
+
+    <author>
+        <name>Exempelkällan</name>
+        <uri>http://example.org/</uri>
+        <email>rinfo@example.org</email>
+    </author>
+
+    <link href="/feed/current" rel="self"/>
+    <link href="/feed/2008-06-09" rel="prev-archive"/>
+
+    <entry>
+        <id>http://example.org/data/01fs/1911:42</id>
+        <updated>2008-06-09T08:24:19Z</updated>
+        <published>1911-11-11T11:11:11Z</published>
+
+        <title type="text">http://example.org/data/01fs/1911:42</title>
+        <summary type="text">http://example.org/data/01fs/1911:42</summary>
+        <content type="application/rdf+xml" src="/data/01fs/1911:42/rdf"
+                 le:md5="234039401d3a90b55640f75decc6c274"/>
+        <link rel="alternate" href="/data/01fs/1911:42/pdf,sv" type="application/pdf"
+              le:md5="7b7fc831c784e78926aec193ff8d399b" />
+
+        <link href="/data/01fs/1911:42/entry" rel="self"/>
+
+        <!-- TODO: Unless it's ok to change @deleted post-mortem in archives,
+             use this as internal data only? How to indicated deleted entries
+             in archives then? With deleted-entry there too? GData:s gd:deleted? -->
+        <sx:sync id="http://example.org/data/01fs/1911:42/entry#sx-3" updates="3" deleted="false">
+            <sx:history sequence="3" when="2008-06-09T08:24:19Z" />
+            <sx:history sequence="2" when="2008-01-01T01:01:00Z" />
+            <sx:history sequence="1" when="1911-11-11T11:11:11Z" />
+        </sx:sync>
+    </entry>
+
+</feed>
