@@ -2,6 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom"
       xmlns:fh="http://purl.org/syndication/history/1.0"
       xmlns:le="http://purl.org/atompub/link-extensions/1.0"
+      xml:base="http://rinfo.verva.se/"
       xml:lang="sv">
 
   <id>http://rinfo.verva.se/feed</id>
