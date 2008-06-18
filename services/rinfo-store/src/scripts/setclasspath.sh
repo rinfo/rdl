@@ -6,6 +6,7 @@ ENV_DIR=$ENV_BASE/default
 for arg in $@; do
     if [ "$arg" == "-b" ]; then
         mvn dependency:build-classpath -Dmdep.outputFile=classpath.txt
+        continue
     fi
     env_candidate="$ENV_BASE/$arg"
     if [ -d $env_candidate ]; then
