@@ -1,7 +1,6 @@
 package se.lagrummet.rinfo.base
 
 
-/*
 import org.openrdf.repository.Repository
 import org.openrdf.repository.RepositoryConnection
 import org.openrdf.repository.sail.SailRepository
@@ -19,15 +18,14 @@ import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.dom.DOMResult
-import org.apache.xpath.XPathAPI
-*/
+import javax.xml.xpath.XPathFactory
+import javax.xml.xpath.XPathConstants
 
 
 class URIMinter {
-/* TODO
 
     // TODO: put into property file
-    static final String BASE_DATA_FPATH = "rdf_data/resources/containers.n3"
+    static final String BASE_DATA_FPATH = "resources/containers.n3"
     static final String COLLECT_URI_DATA_SPARQL = "uri_strategy/collect-uri-data.rq"
     static final String CREATE_URI_XSLT = "uri_strategy/create-uri.xslt"
 
@@ -54,7 +52,7 @@ class URIMinter {
     }
 
 
-    String computeOfficialUri(fpath, format) {
+    String computeOfficialUri(String fpath, RDFFormat format) {
         def mergedRepo = mergeWithBaseRepo(fpath, format)
         def officialUri = null
         try {
@@ -84,7 +82,9 @@ class URIMinter {
         def sourceOut = new PipedOutputStream(sourceIn)
         tupleQuery.evaluate(new SPARQLResultsXMLWriter(sourceOut))
         sourceOut.close()
-        def builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+        def docBuilderFactory = DocumentBuilderFactory.newInstance()
+        docBuilderFactory.setNamespaceAware(true)
+        def builder = docBuilderFactory.newDocumentBuilder()
         return builder.parse(sourceIn)
     }
 
@@ -92,19 +92,22 @@ class URIMinter {
         def domResult = new DOMResult()
         createUriStylesheet.newTransformer().transform(new DOMSource(rqDoc), domResult)
         //printDoc domResult.node
-        def nodeList = XPathAPI.selectNodeList(domResult.node, '/entry/id/text()')
-        if (nodeList.length == 0) {
+        def xpathExpr = XPathFactory.newInstance().
+                newXPath().compile('/entry/id/text()')
+
+        def value = xpathExpr.evaluate(domResult.node)
+        if (!value) {
             // TODO: throw new URIComputationException
         }
-        return nodeList.item(0).nodeValue
+        return value
     }
 
-    private pathToCoreFile(localFPath) {
+    private String pathToCoreFile(String localFPath) {
         new File(rinfoBaseDir, localFPath) as String
     }
 
 
-    static void addFile(repo, fpath, RDFFormat format) {
+    static void addFile(Repository repo, String fpath, RDFFormat format) {
         def file = new File(fpath)
         String baseURI = file.toURI()
         def conn = repo.connection
@@ -131,5 +134,4 @@ class URIMinter {
         }
     }
 
-*/
 }
