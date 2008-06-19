@@ -1,6 +1,3 @@
-//package ...
-
-import java.nio.channels.Channels
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -14,8 +11,32 @@ import org.springframework.context.support.ClassPathXmlApplicationContext as Ctx
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.depot.SourceContent
 
+import se.lagrummet.rinfo.base.URIMinter
 
-class FeedCollector {
+import se.lagrummet.rinfo.util.rdf.RDFUtil
+import se.lagrummet.rinfo.util.atom.FeedArchiveReader
+
+/* TODO:
+
+    - Read backwards in time until last read date..
+    - Use e.g. collector.startSession(), session.doIndex() ?
+    - we also need error recovery (rollback? store "atDate"?)
+        to prevent a state of having read half-way!
+    - perhaps get all feeds until minDateTime, then read entries
+        forwards in time?
+        - and/or just store entries in a "temp session locally",
+        and wipe if errors.
+    .. Reasonably; all entries read will have new timestamps
+        based on their actual (successful) addition into this depot.
+
+    - storage safety and history:
+        - Verify length and md5.
+        - Store all collected stuff separately(?)
+            .. or just feeds and pre-rewritten RDF?
+
+*/
+
+class FeedCollector extends FeedArchiveReader {
 
     private final logger = LoggerFactory.getLogger(FeedCollector)
 
@@ -30,65 +51,22 @@ class FeedCollector {
         this.depot = depot
     }
 
-    void readFeed(URL url, Date haltAt=null) {
-        /* TODO:
-            - Read backwards in time until last read date..
-            - Use e.g. depot.startSession(), session.doIndex() ?
-            - we also need error recovery (rollback? store "atDate"?)
-              to prevent a state of having read half-way!
-            - perhaps get all feeds until haltAt, then read entries
-              forwards in time?
-        */
-        /* TODO: storage safety and history:
-            - Verify length and md5.
-            - Store all collected stuff separately(?)
-              .. or just feeds and pre-rewritten RDF?
-        */
-
-        def followingUrl = url
-        while (followingUrl) {
-            followingUrl = readFeedPage(followingUrl)
-            if (followingUrl)
-                logger.info ".. following: <${followingUrl}>"
+    boolean processFeedPage(URL pageUrl, Feed feed) {
+        logger.info "Title: ${feed.title}"
+        // TODO: Check for tombstones; if so, delete in depot.
+        for (entry in feed.entries) {
+            storeEntry(entry)
         }
-        logger.info "Done."
-    }
-
-    URL readFeedPage(URL url) {
-        logger.info "Reading Feed <${url}> ..."
-        def feed
-        def followingUrl
-        def inChannel = Channels.newChannel(url.openStream())
-        try {
-            feed = Abdera.instance.parser.parse(inChannel,
-                    url.toString()).root
-            logger.info "Title: ${feed.title}"
-            // TODO: Check for tombstones; if so, delete.
-            for (entry in feed.entries) {
-                storeEntry(entry)
-            }
-            def followingHref = feed.getLinkResolvedHref("prev-archive")
-            followingUrl = followingHref? followingHref.toURL() : null
-        } catch (Exception e) {
-            logger.exception "Error parsing feed!", e
-            followingUrl = null
-        } finally {
-            inChannel.close()
-        }
-        return followingUrl
+        // TODO: stop at feed with entry at minDateTime..
+        //Date minDateTime=null
+        return true
     }
 
     void storeEntry(Entry entry) {
-        /* TODO:
-            // find RDF with suitable mediaType
-            def graph = SesameUtil.parseResource(rdfDocument)
-            def newUri = URIMinter.computeOfficialUri(graph, entryId)
-            def newGraph = SesameUtil.replaceURI(entryId, newUri)
-            // TODO: replace resource with serialized newGraph (rewritten RDF)
-        */
 
         def entryId = entry.id.toURI()
-        def timestamp= new Date()
+        //def timestamp = new Date() // FIXME: depot doesn't yet handle lots in same day
+        def timestamp = entry.updated
         def contents = []
         def enclosures = []
 
@@ -98,6 +76,7 @@ class FeedCollector {
         def contentUrlPath = contentElem.resolvedSrc.toString()
         def contentMimeType = contentElem.mimeType.toString()
         def contentLang = contentElem.language
+
         contents << createDepotContent(
                 contentUrlPath, contentMimeType, contentLang)
 
@@ -114,6 +93,17 @@ class FeedCollector {
                 enclosures << createDepotContent(urlPath, mediaType, null, slug)
             }
         }
+
+        // TODO: find RDF with suitable mediaType (don't assume first content!)
+        // TODO: and *don't read URL twice! .. more support from SourceContent?
+        //def repo = RDFUtil.createMemoryRepository()
+        //RDFUtil.loadDataFromURL(repo, new URL(contentUrlPath), contentMimeType)
+        //def newUri = URIMinter.computeOfficialUri(repo, entryId)
+        // TODO: replace resource with serialized newRepo (rewritten RDF)
+        //def newRepo = RDFUtil.replaceURI(entryId, newUri)
+        //def doc = RDFUtil.serialize(newRepo, format)
+        // ...
+
         logger.info "Saving Entry <${entryId}>"
         depot.createEntry(entryId, timestamp, contents, enclosures)
     }
@@ -134,7 +124,7 @@ class FeedCollector {
         def context = new Ctxt("applicationContext.xml")
         def fileDepot = context.getBean("fileDepot")
         def collector = new FeedCollector(fileDepot)
-        collector.readFeed new URL(args[0])
+        collector.readFeed(new URL(args[0]))
         fileDepot.generateIndex()
     }
 

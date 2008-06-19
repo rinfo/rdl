@@ -192,7 +192,7 @@ class FileDepot {
         // next-to-last (add next-archive)?)
     }
 
-    //==== TODO: delegate to separate FileDepotAtomIndexStrategy? ====
+    //==== TODO: in separate FileDepotAtomIndexStrategy / ...FeedIndexer? ====
 
     static final DEFAULT_FEED_BATCH_SIZE = 25
 
@@ -292,6 +292,13 @@ class FileDepot {
             return null
         }
         return getFeed(prev.toString())
+    }
+
+    protected Feed getFeedForDateTime(Date date) {
+        // TODO: to use for e.g. "emptying" deleted entries
+        // - search in feed folder by date, time; opt. offset (can there be many in same same instant?)
+        // .. getFeedForDateTime(pathToArchiveFeed(date))
+        return null
     }
 
     protected String uriPathFromFeed(Feed feed) {

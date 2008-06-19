@@ -24,8 +24,8 @@ import javax.xml.xpath.XPathConstants
 
 class URIMinter {
 
-    // TODO: put into property file
-    static final String BASE_DATA_FPATH = "resources/containers.n3"
+    // TODO: paths in property file? Set each?
+    static final String BASE_DATA_FPATH = "datasets/containers.n3"
     static final String COLLECT_URI_DATA_SPARQL = "uri_strategy/collect-uri-data.rq"
     static final String CREATE_URI_XSLT = "uri_strategy/create-uri.xslt"
 
@@ -98,6 +98,7 @@ class URIMinter {
         def value = xpathExpr.evaluate(domResult.node)
         if (!value) {
             // TODO: throw new URIComputationException
+            // .. eventual error "hint" in results?
         }
         return value
     }
@@ -109,9 +110,9 @@ class URIMinter {
 
     static void addFile(Repository repo, String fpath, RDFFormat format) {
         def file = new File(fpath)
-        String baseURI = file.toURI()
+        String baseUri = file.toURI()
         def conn = repo.connection
-        conn.add(file, baseURI, format)
+        conn.add(file, baseUri, format)
         conn.commit()
     }
 
