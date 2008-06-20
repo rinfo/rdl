@@ -1,18 +1,32 @@
 package se.lagrummet.rinfo.util.rdf
 
+import org.openrdf.model.Resource
 import org.openrdf.model.Statement
 import org.openrdf.model.URI
+import org.openrdf.model.Value
 import org.openrdf.model.ValueFactory
 import org.openrdf.repository.Repository
 import org.openrdf.repository.RepositoryConnection
 import org.openrdf.repository.RepositoryException
 import org.openrdf.repository.sail.SailRepository
 import org.openrdf.rio.RDFFormat
-import org.openrdf.rio.rdfxml.RDFXMLParser
+import org.openrdf.rio.RDFWriterRegistry
+import org.openrdf.rio.rdfxml.util.RDFXMLPrettyWriter
 import org.openrdf.sail.memory.MemoryStore
 
 
 class RDFUtil {
+
+    static Repository replaceURI(Repository repo,
+            java.net.URI oldUri,
+            java.net.URI newUri,
+            replacePredicates=false) {
+        def vf = repo.valueFactory
+        return replaceURI(repo,
+                vf.createURI(oldUri.toString()),
+                vf.createURI(newUri.toString()),
+                replacePredicates)
+    }
 
     static Repository replaceURI(Repository repo,
             URI oldUri, URI newUri,
@@ -34,10 +48,12 @@ class RDFUtil {
         def stmtIter = repoConn.getStatements(null, null, null, true)
         while (stmtIter.hasNext()) {
             def stmt = stmtIter.next()
-
-            def subject = changeURI(vf, stmt.subject, oldUri, newUri)
+            def subject = stmt.subject
             def predicate = stmt.predicate
             def object = stmt.object
+            if (subject instanceof URI) {
+                subject = changeURI(vf, stmt.subject, oldUri, newUri)
+            }
             if (replacePredicates) {
                 predicate = changeURI(vf, predicate, oldUri, newUri)
             }
@@ -84,19 +100,48 @@ class RDFUtil {
             InputStream stream, String baseUri, String mimeType) {
         def parser = null
         // TODO: more formats, e.g. RDFa (opt. guess from url?)
-        assert mimeType == "application/rdf+xml"
-        parser = new RDFXMLParser(repository.valueFactory)
+        def format = RDFFormat.forMIMEType(mimeType)
 
         def conn = repository.connection
         try {
             conn.autoCommit = false
-            parser.parse(stream, baseUri)
+            conn.add(stream, baseUri, format)
             conn.commit()
         } catch (RepositoryException e) {
             conn.rollback()
         } finally {
             conn.close()
         }
+    }
+
+    static addToRepo(targetRepo, repoToAdd) {
+        def targetConn = targetRepo.connection
+        def connToAdd = repoToAdd.connection
+        targetConn.add(connToAdd.getStatements(null, null, null, true))
+    }
+
+    static void addFile(Repository repo, String fpath, RDFFormat format) {
+        def file = new File(fpath)
+        String baseUri = file.toURI()
+        def conn = repo.connection
+        conn.add(file, baseUri, format)
+        conn.commit()
+    }
+
+    static void serialize(
+            Repository repository, String mimeType, OutputStream outStream) {
+        def format = RDFFormat.forMIMEType(mimeType)
+        def writer
+        if (format == RDFFormat.RDFXML) {
+            writer = new RDFXMLPrettyWriter(outStream)
+        } else {
+            def factory = RDFWriterRegistry.instance.get(format)
+            writer = factory.getWriter(outStream)
+        }
+        def conn = repository.connection
+        conn.exportStatements(null, null, null, false, writer)
+        conn.close()
+        writer.close()
     }
 
 }

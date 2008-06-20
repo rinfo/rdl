@@ -14,4 +14,8 @@
         <property name="baseDir" value="${rinfo.fileDepotDir}"/>
     </bean>
 
+    <bean id="uriMinter" class="se.lagrummet.rinfo.base.URIMinter" scope="singleton">
+        <property name="rinfoBaseDir" value="${rinfo.baseDir}"/>
+    </bean>
+
 </beans>

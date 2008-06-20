@@ -35,18 +35,23 @@ class SourceContent {
     }
 
     void writeTo(File file) throws IOException, IllegalStateException {
-        def destOutStream = new FileOutputStream(file)
+        def outStream = new FileOutputStream(file)
+        writeTo(outStream)
+    }
+
+    void writeTo(OutputStream outStream)
+            throws IOException, IllegalStateException {
         try {
             if (sourceFile != null) {
                 def srcChannel = new FileInputStream(sourceFile).getChannel()
-                def destChannel = destOutStream.getChannel()
+                def destChannel = outStream.getChannel()
                 destChannel.transferFrom(srcChannel, 0, srcChannel.size())
 
             } else if (sourceStream != null) {
                 byte[] buf = new byte[1024];
                 int len;
                 while ((len = sourceStream.read(buf)) > 0) {
-                    destOutStream.write(buf, 0, len);
+                    outStream.write(buf, 0, len);
                 }
                 sourceStream.close()
 
@@ -55,7 +60,7 @@ class SourceContent {
                         "Neither sourceStream nor sourceFile is set.")
             }
         } finally {
-            destOutStream.close()
+            outStream.close()
         }
     }
 

@@ -9,6 +9,7 @@ import org.apache.abdera.model.Entry
 import org.springframework.context.support.ClassPathXmlApplicationContext as Ctxt
 
 import se.lagrummet.rinfo.store.depot.FileDepot
+import se.lagrummet.rinfo.store.depot.DuplicateDepotEntryException
 import se.lagrummet.rinfo.store.depot.SourceContent
 
 import se.lagrummet.rinfo.base.URIMinter
@@ -41,14 +42,16 @@ class FeedCollector extends FeedArchiveReader {
     private final logger = LoggerFactory.getLogger(FeedCollector)
 
     FileDepot depot
+    URIMinter uriMinter
 
     def rdfMimeTypes = [
         "application/rdf+xml",
         // "application/xhtml+xml" TODO: scan for RDFa
     ]
 
-    FeedCollector(depot) {
+    FeedCollector(depot, uriMinter) {
         this.depot = depot
+        this.uriMinter = uriMinter
     }
 
     boolean processFeedPage(URL pageUrl, Feed feed) {
@@ -94,21 +97,48 @@ class FeedCollector extends FeedArchiveReader {
             }
         }
 
-        // TODO: find RDF with suitable mediaType (don't assume first content!)
-        // TODO: and *don't read URL twice! .. more support from SourceContent?
-        //def repo = RDFUtil.createMemoryRepository()
-        //RDFUtil.loadDataFromURL(repo, new URL(contentUrlPath), contentMimeType)
-        //def newUri = URIMinter.computeOfficialUri(repo, entryId)
-        // TODO: replace resource with serialized newRepo (rewritten RDF)
-        //def newRepo = RDFUtil.replaceURI(entryId, newUri)
-        //def doc = RDFUtil.serialize(newRepo, format)
-        // ...
+        def newUri = computeOfficialUriInPlace(entryId, contents)
+        logger.info "New URI: <${newUri}>"
 
-        logger.info "Saving Entry <${entryId}>"
-        depot.createEntry(entryId, timestamp, contents, enclosures)
+        logger.info "Saving Entry <${newUri}>"
+        // FIXME: duplicates are hard errors; but *updates* to existing
+        // must be possible! How to detect "benign" updates from source? Alts:
+        // - require published to be kept; use as is and only diff on updated?
+        // - save orig.url (if different from this, error is in minting)
+        // - require publishers to compute URI? (and req. published + updated..)
+        try {
+            depot.createEntry(newUri, timestamp, contents, enclosures)
+        } catch (DuplicateDepotEntryException e) {
+            logger.error "Duplicate entry <${newUri}>!"
+            logger.warn "Updating anyway."
+            def depotEntry = depot.getEntry(newUri)
+            depotEntry.update(timestamp, contents, enclosures)
+        }
     }
 
-    SourceContent createDepotContent(urlPath, mediaType, lang, slug=null) {
+    protected URI computeOfficialUriInPlace(
+            URI entryId, List<SourceContent> contents) {
+        def repo = RDFUtil.createMemoryRepository()
+
+        // TODO: find RDF with suitable mediaType (don't assume first content!)
+        // FIXME: RDFa must be handled more manually (getting, esp. serializing!)
+        def content = contents[0]
+        // TODO: "" is baseURI; should be passed (via SourceContent?)?
+        RDFUtil.loadDataFromStream(repo, content.sourceStream, "", content.mediaType)
+
+        def newUri = uriMinter.computeOfficialUri(repo) // TODO: give entryId for subj?
+
+        def newRepo = RDFUtil.replaceURI(repo, entryId, newUri)
+
+        def outStream = new ByteArrayOutputStream()
+        RDFUtil.serialize(newRepo, content.mediaType, outStream)
+        outStream.close()
+        content.sourceStream = new ByteArrayInputStream(outStream.toByteArray())
+
+        return newUri
+    }
+
+    protected SourceContent createDepotContent(urlPath, mediaType, lang, slug=null) {
         // FIXME: we have ":" url-escaped here. Is this a symptom of a brittle
         // URI strategy in general?
         urlPath = urlPath.replace(URLEncoder.encode(":", "utf-8"), ":")
@@ -123,8 +153,11 @@ class FeedCollector extends FeedArchiveReader {
         }
         def context = new Ctxt("applicationContext.xml")
         def fileDepot = context.getBean("fileDepot")
-        def collector = new FeedCollector(fileDepot)
+        def uriMinter = context.getBean("uriMinter")
+
+        def collector = new FeedCollector(fileDepot, uriMinter)
         collector.readFeed(new URL(args[0]))
+
         fileDepot.generateIndex()
     }
 

@@ -21,6 +21,8 @@ import javax.xml.transform.dom.DOMResult
 import javax.xml.xpath.XPathFactory
 import javax.xml.xpath.XPathConstants
 
+import se.lagrummet.rinfo.util.rdf.RDFUtil
+
 
 class URIMinter {
 
@@ -34,7 +36,14 @@ class URIMinter {
     String queryString
     Templates createUriStylesheet
 
+    URIMinter() {
+    }
+
     URIMinter(String rinfoBaseDir) {
+        this.setRinfoBaseDir(rinfoBaseDir)
+    }
+
+    void setRinfoBaseDir(String rinfoBaseDir) {
         this.rinfoBaseDir = rinfoBaseDir
         def baseDataFpath = pathToCoreFile(BASE_DATA_FPATH)
         def collectUriDataSparql = pathToCoreFile(COLLECT_URI_DATA_SPARQL)
@@ -48,12 +57,25 @@ class URIMinter {
         baseRepo = new SailRepository(new MemoryStore())
         baseRepo.initialize()
         //baseRepo.shutDown()
-        addFile(baseRepo, baseDataFpath, RDFFormat.N3)
+        RDFUtil.addFile(baseRepo, baseDataFpath, RDFFormat.N3)
     }
 
 
-    String computeOfficialUri(String fpath, RDFFormat format) {
-        def mergedRepo = mergeWithBaseRepo(fpath, format)
+    URI computeOfficialUri(Repository repo) {
+        def mergedRepo = RDFUtil.createMemoryRepository()
+        RDFUtil.addToRepo(mergedRepo, repo)
+        RDFUtil.addToRepo(mergedRepo, baseRepo)
+        return computeFromMerged(mergedRepo)
+    }
+
+    URI computeOfficialUri(String fpath, RDFFormat format) {
+        def repo = RDFUtil.createMemoryRepository()
+        RDFUtil.addFile(repo, fpath, format)
+        RDFUtil.addToRepo(repo, baseRepo)
+        return computeFromMerged(repo)
+    }
+
+    protected URI computeFromMerged(Repository mergedRepo) {
         def officialUri = null
         try {
             def rqDoc = runQueryToDoc(mergedRepo, queryString)
@@ -64,28 +86,19 @@ class URIMinter {
             //throw new URIComputationException(
             //        "Could not compute canonical URI for: ${fpath}", e)
         }
-        return officialUri
-    }
-
-    private Repository mergeWithBaseRepo(fpath, format) {
-        def docRepo = new SailRepository(new MemoryStore())
-        docRepo.initialize()
-        addFile(docRepo, fpath, format)
-        addToRepo(docRepo, baseRepo)
-        return docRepo
+        return new URI(officialUri)
     }
 
     private Document runQueryToDoc(repo, queryString) {
         def conn = repo.connection
         def tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString)
-        def sourceIn = new PipedInputStream()
-        def sourceOut = new PipedOutputStream(sourceIn)
-        tupleQuery.evaluate(new SPARQLResultsXMLWriter(sourceOut))
-        sourceOut.close()
+        def outStream = new ByteArrayOutputStream()
+        tupleQuery.evaluate(new SPARQLResultsXMLWriter(outStream))
+        outStream.close()
         def docBuilderFactory = DocumentBuilderFactory.newInstance()
         docBuilderFactory.setNamespaceAware(true)
         def builder = docBuilderFactory.newDocumentBuilder()
-        return builder.parse(sourceIn)
+        return builder.parse(new ByteArrayInputStream(outStream.toByteArray()))
     }
 
     private String resultsToUri(rqDoc) {
@@ -107,20 +120,6 @@ class URIMinter {
         new File(rinfoBaseDir, localFPath) as String
     }
 
-
-    static void addFile(Repository repo, String fpath, RDFFormat format) {
-        def file = new File(fpath)
-        String baseUri = file.toURI()
-        def conn = repo.connection
-        conn.add(file, baseUri, format)
-        conn.commit()
-    }
-
-    static addToRepo(targetRepo, repoToAdd) {
-        def targetConn = targetRepo.connection
-        def connToAdd = repoToAdd.connection
-        targetConn.add(connToAdd.getStatements(null, null, null, true))
-    }
 
     static printDoc(node) {
         TransformerFactory.newInstance().newTransformer().transform(
