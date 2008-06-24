@@ -11,8 +11,10 @@ Getting Started
 Repository Contents
 ========================================================================
 
-The top-level directories separate packages by intrinsic purpose. Naming needs
-in each partition may differ as well.
+The top-level directories separate packages by intrinsic purpose.
+
+Shared code modules/libraries should live under directories named by
+implementation platform/language (e.g. "java/rinfo-util").
 
 applications/
     Complete (client and/or server) applications who interact with the RInfo
@@ -21,11 +23,11 @@ applications/
 
 laboratory/
     Designs, data examples, tools, experiments etc. Things here should either
-    graduate into applications, libraries or services, become documentation, or
-    eventually be removed.
+    graduate into resources, code modules, become documentation or eventually
+    be removed.
 
-libraries/
-    Shared data and code that other things depend on.
+resources/
+    Shared data (and platform-independent code) that other things depend on.
 
     base/
         The most important library, containing the core model, support data and
@@ -33,10 +35,7 @@ libraries/
 
     external/
         Code maintained by other parties but put here for convenience. Keep
-        this to a minimum!
-
-    *Proper code libraries should live under directories named by implementation
-    language (e.g. "libraries/java/rinfo-util").*
+        this to a minimum.
 
 README.txt
     This file.

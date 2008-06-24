@@ -15,7 +15,7 @@ try {
 final MTYPE_RDF = "application/rdf+xml"
 
 context = new Ctxt("applicationContext.xml")
-fileDepot = context.getBean("fileDepot")
+depot = context.getBean("fileDepot")
 
 FileUtils.iterateFiles(sourceRdfDir, ["rdf"] as String[], true).each {
     def entryFile = new File(it.parentFile, "entry.atom")
@@ -24,7 +24,7 @@ FileUtils.iterateFiles(sourceRdfDir, ["rdf"] as String[], true).each {
     def date = entry.updated
     println "Importing rdf file <${it}> as <${id}> [${date}]"
     try {
-        fileDepot.createEntry(id, date, [new SourceContent(it, MTYPE_RDF)])
+        depot.createEntry(id, date, [new SourceContent(it, MTYPE_RDF)])
     } catch (DuplicateDepotEntryException e) {
         println "Couldn't add duplicate: ${e.message}"
     }

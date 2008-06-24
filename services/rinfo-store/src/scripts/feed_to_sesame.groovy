@@ -13,6 +13,7 @@ import org.openrdf.sail.memory.MemoryStore
 import org.openrdf.sail.nativerdf.NativeStore
 
 import se.lagrummet.rinfo.util.atom.FeedArchiveReader
+import se.lagrummet.rinfo.util.rdf.RDFUtil
 
 
 class SesameFeeder extends FeedArchiveReader {
@@ -59,7 +60,7 @@ class SesameFeeder extends FeedArchiveReader {
         if (args.length > 1) {
             def path = args[1]
             if (path =~ /^https?:/) {
-                repo = new HTTPRepository(path)
+                repo = new HTTPRepository(path, args[2])
             } else {
                 def dataDir = new File(path)
                 repo = new SailRepository(new NativeStore(dataDir))
@@ -71,6 +72,12 @@ class SesameFeeder extends FeedArchiveReader {
 
         def reader = new SesameFeeder(repo)
         reader.readFeed new URL(args[0])
+
+        if (repo instanceof SailRepository && repo.sail instanceof MemoryStore) {
+            //def mtype = "application/x-turtle"
+            def mtype = "application/rdf+xml"
+            RDFUtil.serialize(repo, mtype, System.out)
+        }
 
         repo.shutDown()
     }

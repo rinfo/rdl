@@ -104,6 +104,7 @@ class FeedCollector extends FeedArchiveReader {
         // FIXME: duplicates are hard errors; but *updates* to existing
         // must be possible! How to detect "benign" updates from source? Alts:
         // - require published to be kept; use as is and only diff on updated?
+        // - .. <batch:operation type="update">
         // - save orig.url (if different from this, error is in minting)
         // - require publishers to compute URI? (and req. published + updated..)
         try {
