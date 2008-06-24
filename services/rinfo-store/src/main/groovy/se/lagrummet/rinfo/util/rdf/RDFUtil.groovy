@@ -141,7 +141,7 @@ class RDFUtil {
         def conn = repository.connection
         conn.exportStatements(null, null, null, false, writer)
         conn.close()
-        writer.close()
+        //writer.close()
     }
 
 }
