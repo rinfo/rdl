@@ -271,8 +271,8 @@ class FileDepot {
     protected Feed newFeed(String uriPath) {
         def feed = Abdera.instance.newFeed()
         // FIXME: metadata for feed basics: baseFeed.clone()
-        feed.id = baseUri
-        feed.title = null
+        //feed.id = baseUri
+        //feed.title = null
         feed.setUpdated(new Date()) // TODO: which utcDateTime?
         feed.addLink(uriPath, "self")
         return feed

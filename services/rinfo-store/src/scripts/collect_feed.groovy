@@ -131,10 +131,8 @@ class FeedCollector extends FeedArchiveReader {
 
         def newRepo = RDFUtil.replaceURI(repo, entryId, newUri)
 
-        def outStream = new ByteArrayOutputStream()
-        RDFUtil.serialize(newRepo, content.mediaType, outStream)
-        outStream.close()
-        content.sourceStream = new ByteArrayInputStream(outStream.toByteArray())
+        content.sourceStream = RDFUtil.serializeAsInputStream(
+                newRepo, content.mediaType)
 
         return newUri
     }

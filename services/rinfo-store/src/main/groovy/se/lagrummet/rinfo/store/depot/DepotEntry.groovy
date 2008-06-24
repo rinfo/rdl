@@ -208,10 +208,16 @@ class DepotEntry {
     }
 
     void addEnclosure(SourceContent srcContent, boolean replace=false) {
+        // TODO: how shall enclosedUriPath be given? As full path?
+        def enclUriPath = srcContent.enclosedUriPath
+        assert enclUriPath.startsWith(entryUriPath)
+        def enclPath = enclUriPath.replaceFirst(entryUriPath, "")
+        def file = new File(entryDir, enclPath)
         if (!replace) {
             assert !file.exists()
         }
-        // FIXME: ... add in path..
+        // TODO: ... add in path..
+        srcContent.writeTo(file)
     }
 
     //==== TODO: in separate FileDepotAtomIndexStrategy? ====
@@ -228,8 +234,8 @@ class DepotEntry {
         atomEntry.setUpdated(getUpdated())
 
         // TODO: what to use as values?
-        atomEntry.setTitle(getId().toString())
-        atomEntry.setSummary(getId().toString())
+        atomEntry.setTitle("")//getId().toString())
+        atomEntry.setSummary("")//getId().toString())
 
         def selfUriPath = depot.uriStrategy.makeNegotiatedUriPath(
                 getEntryUriPath(), ATOM_ENTRY_MEDIA_TYPE)
