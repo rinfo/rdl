@@ -92,6 +92,15 @@ class URIMinter {
     private Document runQueryToDoc(repo, queryString) {
         def conn = repo.connection
         def tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString)
+
+        // TODO: use to wire in the known subject URI
+        //def about = "http://example.org/data/sfs/1999:175"
+        /*
+        if (about != null) {
+            tupleQuery.setBinding("about", repo.valueFactory.createURI(about))
+        }
+        */
+
         def outStream = new ByteArrayOutputStream()
         tupleQuery.evaluate(new SPARQLResultsXMLWriter(outStream))
         outStream.close()
