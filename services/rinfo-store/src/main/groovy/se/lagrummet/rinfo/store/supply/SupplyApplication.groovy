@@ -37,9 +37,9 @@ class SupplyApplication extends Application {
 
         def fileDepot = (FileDepot) springContext.getBean("fileDepot")
 
-        def negotiator = new EntryNegotiator(context)
-        negotiator.fileDepot = fileDepot
-        return negotiator
+        def depotFinder = new DepotFinder(context)
+        depotFinder.fileDepot = fileDepot
+        return depotFinder
     }
 
     static void main(args) {

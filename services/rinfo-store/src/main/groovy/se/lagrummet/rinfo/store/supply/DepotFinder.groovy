@@ -15,13 +15,12 @@ import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.depot.DepotContent
 
 
-// TODO: rename to DepotFinder? (entry, content, "subsumer")
-class EntryNegotiator extends Finder {
+class DepotFinder extends Finder {
 
     FileDepot fileDepot
 
-    EntryNegotiator() { super() }
-    EntryNegotiator(context) { super(context) }
+    DepotFinder() { super() }
+    DepotFinder(context) { super(context) }
 
     @Override
     Handler findTarget(Request request, Response response) {
