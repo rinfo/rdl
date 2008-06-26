@@ -26,10 +26,12 @@ class FileDepot {
 
     URI baseUri
     File baseDir
+    String feedPath
+
+    // TODO: configure via metadata.. (IoC? Data in baseDir?)
+    private UriPathProcessor pathProcessor = new UriPathProcessor()
 
     private File feedDir
-    // TODO: configure via metadata.. (IoC? Data in baseDir?)
-    private DepotUriStrategy uriStrategy = new DepotUriStrategy()
 
     FileDepot() { }
 
@@ -37,9 +39,10 @@ class FileDepot {
         this.baseUri = baseUri
     }
 
-    FileDepot(URI baseUri, File baseDir) {
+    FileDepot(URI baseUri, File baseDir, String feedPath) {
         this(baseUri)
         this.setBaseDir(baseDir)
+        this.setFeedPath(feedPath)
     }
 
     void setBaseDir(File baseDir) {
@@ -48,20 +51,23 @@ class FileDepot {
             throw new ConfigurationException(
                     "Directory ${baseDir} does not exist.")
         }
-        // TODO: how to configure?
-        this.feedDir = new File(baseDir, uriStrategy.FEED_DIR_NAME)
+    }
+
+    void setFeedPath(String feedPath) {
+        this.feedPath = feedPath
+        this.feedDir = new File(baseDir, feedPath)
     }
 
     List<DepotContent> find(String uriPath) {
         def results = []
 
-        def parsed = uriStrategy.parseUriPath(uriPath)
+        def parsed = pathProcessor.parseUriPath(uriPath)
         if (!parsed) {
             return null
         }
 
-        // TODO: very crude; rework how?
-        if (parsed.collection == uriStrategy.FEED_DIR_NAME) {
+        // TODO: Require suffix in req? And/or conneg?
+        if (parsed.collection == feedPath) {
             def feed = getContent(uriPath + ".atom")
             if (!feed) {
                 return null
@@ -71,7 +77,7 @@ class FileDepot {
 
         def entry = getEntry(parsed.depotUriPath)
         if (entry) {
-            def mediaType = uriStrategy.mediaTypeForHint(parsed.mediaHint)
+            def mediaType = pathProcessor.mediaTypeForHint(parsed.mediaHint)
             results = entry.findContents(mediaType, parsed.lang)
         } else { // enclosure..
             def content = getContent(parsed.depotUriPath)
@@ -148,7 +154,7 @@ class FileDepot {
         def mtype = URLConnection.fileNameMap.getContentTypeFor(file.name)
         // TODO: this is too simple. Unify or only via some fileExtensionUtil..
         if (!mtype) {
-            mtype = uriStrategy.mediaTypeForHint(file.name.split(/\./)[-1] )
+            mtype = pathProcessor.mediaTypeForHint(file.name.split(/\./)[-1] )
         }
         return mtype
     }
@@ -195,6 +201,7 @@ class FileDepot {
     //==== TODO: in separate FileDepotAtomIndexStrategy / ...FeedIndexer? ====
 
     static final DEFAULT_FEED_BATCH_SIZE = 25
+    int feedBatchSize
 
     void generateIndex() {
         if (!feedDir.exists()) {
@@ -208,7 +215,7 @@ class FileDepot {
                     return a.date.compareTo(b.date)
                 }] as Comparator
             )
-        // only adding necessary data to minimize memory use
+        // only keeping necessary data to minimize memory use
         for (entry in iterateEntries()) {
             ascDateSortedEntryRefs.add(
                     new EntryRef(uriPath: entry.entryUriPath,
@@ -218,15 +225,18 @@ class FileDepot {
     }
 
     int getFeedBatchSize() {
-        return DEFAULT_FEED_BATCH_SIZE
+        return feedBatchSize ?: DEFAULT_FEED_BATCH_SIZE
     }
 
     // TODO: refactor and test algorithm in isolation?
     void indexEntryRefs(Collection<EntryRef> entryRefs) {
 
-        // TODO: less hard-coded..
-        def subscriptionPath = "/${uriStrategy.FEED_DIR_NAME}/current"
+        def subscriptionPath = getSubscriptionPath()
 
+        // FIXME: skip entries already indexed!
+        //  how? climb all? Wipe and re-index (thus ignoring these "get existing")?
+        // .. wiping controlled from generateIndex, this method should then add
+        //    only new -- see "assure added entries younger" below
         def currFeed = getFeed(subscriptionPath)
         if (currFeed == null) {
             currFeed = newFeed(subscriptionPath)
@@ -241,16 +251,10 @@ class FileDepot {
         def batchCount = currFeed.getEntries().size()
         for (EntryRef entryRef : entryRefs) {
             batchCount++
-            if (youngestArchFeed) {
-                FPH.setPreviousArchive(currFeed, uriPathFromFeed(youngestArchFeed))
-            }
             def entry = getEntry(entryRef.uriPath)
-            logger.info "Indexing entry: <${entry.id}> [${entry.updated}]"
-            // FIXME: handle entry.deleted ... !
-            currFeed.insertEntry(entry.parsedAtomEntry)
 
-            if (batchCount == getFeedBatchSize()) { // save as archive
-                batchCount = 0
+            if (batchCount > getFeedBatchSize()) { // save as archive
+                batchCount = 1 // popping added, but we have one new
                 FPH.setArchive(currFeed, true)
                 def archPath = pathToArchiveFeed(entry.updated) // youngest entry..
                 currFeed.getSelfLink().setHref(archPath)
@@ -263,9 +267,31 @@ class FileDepot {
                 youngestArchFeed = currFeed
                 currFeed = newFeed(subscriptionPath)
             }
+
+            if (youngestArchFeed) {
+                FPH.setPreviousArchive(currFeed, uriPathFromFeed(youngestArchFeed))
+            }
+
+            logger.info "Indexing entry: <${entry.id}> [${entry.updated}]"
+
+            indexEntry(currFeed, entry)
+
         }
         writeFeed(currFeed) // as subscription feed
 
+    }
+
+    String getSubscriptionPath() {
+        // TODO: less hard-coded..
+        "/${feedPath}/current"
+    }
+
+    void indexEntry(Feed feed, DepotEntry entry) {
+        // FIXME: handle entry.deleted ... !
+        def entryFile = entry.generateAtomEntryContent(false)
+        def atomEntry = Abdera.instance.parser.parse(
+                new FileInputStream(entryFile)).root
+        feed.insertEntry(atomEntry)
     }
 
     protected Feed newFeed(String uriPath) {
@@ -279,7 +305,7 @@ class FileDepot {
     }
 
     protected Feed getFeed(String uriPath) {
-        def file = new File(baseDir, toFilePath(uriPath))
+        def file = new File(baseDir, toFeedFilePath(uriPath))
         if (!file.exists()) {
             return null
         }
@@ -308,20 +334,19 @@ class FileDepot {
     protected String pathToArchiveFeed(Date youngestDate) {
         // TODO: offset in batch "in date".. And date as subdirs?
         def isoDate = ISO_DATE_FORMAT.format(youngestDate)
-        return "/${uriStrategy.FEED_DIR_NAME}/${isoDate}"
+        return "/${feedPath}/${isoDate}"
+    }
+
+    protected String toFeedFilePath(String uriPath) {
+        // TODO: less hard-coded..
+        return toFilePath(uriPath) + ".atom"
     }
 
     protected void writeFeed(Feed feed) {
         def uriPath = uriPathFromFeed(feed)
         logger.info "Writing feed: <${uriPath}>"
-        // TODO: less hard-coded..
-        def feedFileName = toFilePath(uriPath) + ".atom"
+        def feedFileName = toFeedFilePath(uriPath)
         feed.writeTo(new FileOutputStream(new File(baseDir, feedFileName)))
-    }
-
-    /* TODO: convenience method to write a batch of one entry?
-        .. For onEntryModified? .. */
-    protected void indexEntry(DepotEntry entry) {
     }
 
 }

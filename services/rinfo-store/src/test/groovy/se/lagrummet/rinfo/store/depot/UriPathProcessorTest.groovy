@@ -1,12 +1,12 @@
 package se.lagrummet.rinfo.store.depot
 
 
-class DepotUriStrategyTest extends GroovyTestCase {
+class UriPathProcessorTest extends GroovyTestCase {
 
-    def uriStrategy
+    def pathProcessor
 
     void setUp() {
-        uriStrategy = new DepotUriStrategy()
+        pathProcessor = new UriPathProcessor()
     }
 
 
@@ -52,7 +52,7 @@ class DepotUriStrategyTest extends GroovyTestCase {
         PATHS_TO_PARSE.each {
             def path = it[0]
             def expected = it[1]
-            def results = uriStrategy.parseUriPath(path)
+            def results = pathProcessor.parseUriPath(path)
             assertEquals expected, results
         }
     }
@@ -75,12 +75,12 @@ class DepotUriStrategyTest extends GroovyTestCase {
             def expected = it[1]
             def path = params[0], mtype = params[1], lang = params[2]
             if (expected) {
-                def results = uriStrategy.makeNegotiatedUriPath(
+                def results = pathProcessor.makeNegotiatedUriPath(
                     path, mtype, lang)
                 assertEquals expected, results
             } else {
                 try {
-                    uriStrategy.makeNegotiatedUriPath(path, mtype, lang)
+                    pathProcessor.makeNegotiatedUriPath(path, mtype, lang)
                     fail()
                 } catch (AssertionError e) {
                     // ok
@@ -91,11 +91,11 @@ class DepotUriStrategyTest extends GroovyTestCase {
 
 
     void testMediaTypeForHint() {
-        assertEquals uriStrategy.mediaTypeForHint("pdf"), "application/pdf"
+        assertEquals pathProcessor.mediaTypeForHint("pdf"), "application/pdf"
     }
 
     void testHintForMediaType() {
-        assertEquals uriStrategy.hintForMediaType("application/pdf"), "pdf"
+        assertEquals pathProcessor.hintForMediaType("application/pdf"), "pdf"
     }
 
 

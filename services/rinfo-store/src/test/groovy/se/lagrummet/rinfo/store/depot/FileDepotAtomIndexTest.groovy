@@ -17,7 +17,8 @@ class FileDepotAtomIndexTest {
         depotSrc = new File("src/test/resources/exampledepot/storage")
         tempDepotDir = TempDirUtil.createTempDir(depotSrc)
         fileDepot = new FileDepot(new URI("http://example.org"),
-                new File(tempDepotDir, depotSrc.name))
+                new File(tempDepotDir, depotSrc.name), "feed")
+        fileDepot.feedBatchSize = 2
     }
 
     @AfterClass
@@ -29,10 +30,9 @@ class FileDepotAtomIndexTest {
     @Test
     void shouldGenerateAtomEntry() {
         def entry = fileDepot.getEntry("/publ/1901:100")
-        assertEquals 0, entry.findContents(fileDepot.uriStrategy.
+        assertEquals 0, entry.findContents(fileDepot.pathProcessor.
                 hintForMediaType("application/atom+xml;type=entry")).size()
         entry.generateAtomEntryContent()
-        //fileDepot.indexEntry(entry)
         def atomContent = entry.findContents("application/atom+xml;type=entry")[0]
         assert atomContent.file.isFile()
         // TODO: specify content, alternatives, enclosures, size, md5(?)
@@ -44,7 +44,9 @@ class FileDepotAtomIndexTest {
     @Test
     void shouldGenerateIndex() {
         fileDepot.generateIndex()
-        // TODO: list feeds..
+        def feed = fileDepot.getFeed(fileDepot.subscriptionPath)
+        assertNotNull feed
+        // TODO: list feeds.., count entries
         // - writesFeedByLatestDateInBatch
         // - confirmDoesFullIndexing
         // - archiveFeedsChain

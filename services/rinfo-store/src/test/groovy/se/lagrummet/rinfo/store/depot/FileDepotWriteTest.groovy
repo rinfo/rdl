@@ -17,7 +17,7 @@ class FileDepotWriteTest {
         depotSrc = new File("src/test/resources/exampledepot/storage")
         tempDepotDir = TempDirUtil.createTempDir(depotSrc)
         fileDepot = new FileDepot(new URI("http://example.org"),
-                new File(tempDepotDir, depotSrc.name))
+                new File(tempDepotDir, depotSrc.name), "feed")
     }
 
     @AfterClass
@@ -50,7 +50,7 @@ class FileDepotWriteTest {
         assertEquals entry.id, NEW_IDENTIFIER_1
         assertEquals entry.published, entry.updated
         assertEquals entry.updated, timestamp
-        assertEquals entry.deleted, null
+        assertEquals entry.deleted, false
 
         assertNotNull entry.findContents("application/pdf", "en")[0]
         assertNotNull entry.findContents("application/rdf+xml")[0]
@@ -85,7 +85,7 @@ class FileDepotWriteTest {
         entry.delete(deleted)
 
         entry = fileDepot.getEntry(DEL_IDENTIFIER_1)
-        assertEquals entry.edited, deleted
+        assertEquals entry.updated, deleted
         assertEquals entry.deleted, true
     }
     */

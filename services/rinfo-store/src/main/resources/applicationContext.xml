@@ -10,8 +10,9 @@
     <context:property-placeholder location="classpath:config.properties"/>
 
     <bean id="fileDepot" class="se.lagrummet.rinfo.store.depot.FileDepot" scope="singleton">
-        <property name="baseUri" value="${rinfo.depotBaseUri}"/>
-        <property name="baseDir" value="${rinfo.fileDepotDir}"/>
+        <property name="baseUri" value="${rinfo.depot.baseUri}"/>
+        <property name="baseDir" value="${rinfo.depot.fileDir}"/>
+        <property name="feedPath" value="${rinfo.depot.feedPath}"/>
     </bean>
 
     <bean id="uriMinter" class="se.lagrummet.rinfo.base.URIMinter" scope="singleton">

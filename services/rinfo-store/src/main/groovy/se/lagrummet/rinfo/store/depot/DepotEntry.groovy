@@ -40,7 +40,7 @@ class DepotEntry {
                 continue
             }
             def mediaHint = match.group(2)
-            def mediaType = depot.uriStrategy.mediaTypeForHint(mediaHint)
+            def mediaType = depot.pathProcessor.mediaTypeForHint(mediaHint)
             if (forMediaType && mediaType != forMediaType) {
                 continue
             }
@@ -53,8 +53,8 @@ class DepotEntry {
             //  .. and mediaHint *is* very concise.
             //  - receiving forMediaType in findContents
             //  - calling depot.mediaTypeForSuffix that forwards to mediaTypeForHint..
-            //  .. could allow mediaHint to be collection-dependent in uriStrategy..
-            def uriPath = depot.uriStrategy.makeNegotiatedUriPath(
+            //  .. could allow mediaHint to be collection-dependent in pathProcessor..
+            def uriPath = depot.pathProcessor.makeNegotiatedUriPath(
                     getEntryUriPath(), mediaType, lang)
             found << new DepotContent(file, uriPath, mediaType, lang)
         }
@@ -86,12 +86,12 @@ class DepotEntry {
         return getEntryManifest().updated
     }
 
-    Date getDeleted() {
-        // FIXME: date from where? feedsync? app:edited?
-        // .. or use updated (edited?) and isDeleted?
-        // *not* updated - deleteds *may* de desirable to
+    boolean isDeleted() {
+        // FIXME:
+        // Use updated and isDeleted!
+        // but store feedsync internally - deleteds *may* de desirable to
         // "dry out" even in archive docs!
-        return null
+        return false
     }
 
     protected Entry getEntryManifest() {
@@ -130,8 +130,7 @@ class DepotEntry {
     }
 
 
-    //==== TODO: in separate DepotEntryWriter? ====
-    // Also: verify mtype on content, and derive mtype from
+    // TODO: Thought: verify mtype on content, and derive mtype from
     // enclosures? Or do in use of filedepot (the collector)?
 
     void create(Date created,
@@ -168,6 +167,7 @@ class DepotEntry {
         def manifest = getEntryManifest()
         manifest.setUpdated(updated)
         manifest.writeTo(new FileOutputStream(getManifestFile()))
+        // TODO: move content and enclosures into HISTORY_DIR..
         if (sourceContents) {
             for (content in sourceContents) { addContent(content, true) }
         }
@@ -180,9 +180,9 @@ class DepotEntry {
     void delete(Date deleted) {
         // assert !isDeleted()
         def manifest = getEntryManifest()
-        manifest.edited = deleted
+        manifest.updated = deleted
         manifest.writeTo(new FileOutputStream(getManifestFile()))
-        // FIXME: move content and enclosures into ENTRY_DELETED_DIR?
+        // TODO: wipe content (or move?)
         depot.onEntryModified(this)
         // TODO: how to "410 Gone" for enclosures..?
     }
@@ -200,7 +200,7 @@ class DepotEntry {
         if (lang) {
             filename += "-" + lang
         }
-        def suffix = depot.uriStrategy.hintForMediaType(
+        def suffix = depot.pathProcessor.hintForMediaType(
                 mediaType)
         assert suffix // TODO: throw NotAllowedContentMediaTypeException?
         filename += ("." + suffix)
@@ -222,7 +222,18 @@ class DepotEntry {
 
     //==== TODO: in separate FileDepotAtomIndexStrategy? ====
 
-    void generateAtomEntryContent() {
+    // TODO: .. use a "generatedContentTypes" list that callbacks to get it (which
+    // also blocks from adding content with that mediatype)?
+
+    File generateAtomEntryContent(boolean force=true) {
+
+        def entryFile = newContentFile(ATOM_ENTRY_MEDIA_TYPE)
+        if (!force &&
+            entryFile.isFile() &&
+            entryFile.lastModified() > getManifestFile().lastModified()) {
+           return entryFile
+        }
+
         // TODO: how to represent deleted tombstones!
         def atomEntry = Abdera.instance.newEntry()
         // TODO: getEntryManifest().clone() ?
@@ -237,7 +248,7 @@ class DepotEntry {
         atomEntry.setTitle("")//getId().toString())
         atomEntry.setSummary("")//getId().toString())
 
-        def selfUriPath = depot.uriStrategy.makeNegotiatedUriPath(
+        def selfUriPath = depot.pathProcessor.makeNegotiatedUriPath(
                 getEntryUriPath(), ATOM_ENTRY_MEDIA_TYPE)
         atomEntry.addLink(selfUriPath, "self")
 
@@ -283,21 +294,9 @@ class DepotEntry {
                     enclContent.file.length())
         }
 
-        atomEntry.writeTo(new FileOutputStream(getAtomEntryFile()))
-    }
-
-    protected File getAtomEntryFile() {
-        return newContentFile(ATOM_ENTRY_MEDIA_TYPE)
-    }
-
-    Entry getParsedAtomEntry() {
-        def entryFile = getAtomEntryFile()
-        // TODO: or entryFile olderThan .. manifestFile?
-        if (!entryFile.isFile()
-            || entryFile.lastModified() < getManifestFile().lastModified()) {
-            generateAtomEntryContent()
-        }
-        return Abdera.instance.parser.parse(new FileInputStream(entryFile)).root
+        atomEntry.writeTo(
+                new FileOutputStream(entryFile))
+        return entryFile
     }
 
 }

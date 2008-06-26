@@ -8,7 +8,8 @@ class FileDepotReadTest extends GroovyTestCase {
     void setUp() {
         fileDepot = new FileDepot(
                 new URI("http://example.org"),
-                new File("src/test/resources/exampledepot/storage"))
+                new File("src/test/resources/exampledepot/storage"),
+                "feed")
     }
 
 

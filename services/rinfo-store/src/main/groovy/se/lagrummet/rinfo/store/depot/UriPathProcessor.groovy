@@ -3,7 +3,7 @@ package se.lagrummet.rinfo.store.depot
 
 // TODO: Make this configurable/extensible
 
-class DepotUriStrategy {
+class UriPathProcessor {
 
     static final URI_PATTERN = ~"(/([^/]+)\\S+?)(?:/([^/,]+)(?:,([a-z]{2}))?)?"
 
@@ -21,7 +21,7 @@ class DepotUriStrategy {
     Map namedMediaTypes
     private Map mediaTypeHints
 
-    DepotUriStrategy() {
+    UriPathProcessor() {
         setNamedMediaTypes(DEFAULT_NAMED_MEDIA_TYPES)
     }
 
