@@ -1,7 +1,7 @@
 package se.lagrummet.rinfo.store.depot
 
 
-// TODO: Make this configurable (extensible)!
+// TODO: Make this configurable/extensible
 
 class DepotUriStrategy {
 
@@ -26,7 +26,7 @@ class DepotUriStrategy {
     }
 
     void setNamedMediaTypes(Map namedMediaTypes) {
-        this.namedMediaTypes = namedMediaTypes
+        this.namedMediaTypes = Collections.unmodifiableMap(namedMediaTypes)
         mediaTypeHints = [:]
         namedMediaTypes.each { k, v ->
             mediaTypeHints[v] = k
