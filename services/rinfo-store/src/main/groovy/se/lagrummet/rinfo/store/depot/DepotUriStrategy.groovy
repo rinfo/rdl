@@ -7,10 +7,8 @@ class DepotUriStrategy {
 
     static final URI_PATTERN = ~"(/([^/]+)\\S+?)(?:/([^/,]+)(?:,([a-z]{2}))?)?"
 
-    static final FEED_DIR_NAME = "feed"
-
     // TODO: Use URLConnection.getFileNameMap?
-    static NAMED_MEDIA_TYPES = [
+    static DEFAULT_NAMED_MEDIA_TYPES = [
         atom: "application/atom+xml",
         feed: "application/atom+xml;type=feed",
         entry: "application/atom+xml;type=entry",
@@ -19,14 +17,20 @@ class DepotUriStrategy {
         xhtml: "application/xhtml+xml",
         pdf: "application/pdf",
     ]
-    static MEDIA_TYPE_HINTS = [:]
-    static {
-        NAMED_MEDIA_TYPES.each { k, v ->
-            MEDIA_TYPE_HINTS[v] = k
-        }
-    }
+
+    Map namedMediaTypes
+    private Map mediaTypeHints
 
     DepotUriStrategy() {
+        setNamedMediaTypes(DEFAULT_NAMED_MEDIA_TYPES)
+    }
+
+    void setNamedMediaTypes(Map namedMediaTypes) {
+        this.namedMediaTypes = namedMediaTypes
+        mediaTypeHints = [:]
+        namedMediaTypes.each { k, v ->
+            mediaTypeHints[v] = k
+        }
     }
 
     ParsedPath parseUriPath(String uriPath) {
@@ -46,7 +50,7 @@ class DepotUriStrategy {
         def lastSansLang = g(3)
         lang = g(4)
 
-        if (NAMED_MEDIA_TYPES.containsKey(lastSansLang)) {
+        if (namedMediaTypes.containsKey(lastSansLang)) {
             mediaHint = lastSansLang
         } else {
             // re-combine
@@ -61,11 +65,11 @@ class DepotUriStrategy {
     }
 
     String mediaTypeForHint(String mediaHint) {
-        return NAMED_MEDIA_TYPES.get(mediaHint)
+        return namedMediaTypes.get(mediaHint)
     }
 
     String hintForMediaType(String mediaType) {
-        return MEDIA_TYPE_HINTS.get(mediaType)
+        return mediaTypeHints.get(mediaType)
     }
 
     String makeNegotiatedUriPath(String entryUriPath, String mediaType,
