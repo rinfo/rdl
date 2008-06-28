@@ -46,4 +46,11 @@ class FileDepotReadTest extends GroovyTestCase {
         // TODO
     }
 
+    void testShouldNotGetDeleted() {
+        def deletedId = "/publ/1901/0"
+        shouldFail(DeletedDepotEntryException) {
+            def entry = fileDepot.getEntry(deletedId)
+        }
+    }
+
 }

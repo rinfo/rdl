@@ -110,11 +110,11 @@ class FileDepot {
     }
 
     // TODO: reintroduce EntryNotFoundException on !entryContentDir.isDir()?
-    //  .. and/or EntryDeletedException?
-    DepotEntry getEntry(String uriPath) {
+    DepotEntry getEntry(String uriPath, mustExist=true)
+            throws DeletedDepotEntryException {
         def entryDir = getEntryDir(uriPath)
         if (DepotEntry.isEntryDir(entryDir)) {
-            return new DepotEntry(this, entryDir, uriPath)
+            return new DepotEntry(this, entryDir, uriPath, mustExist)
         }
         return null
     }
@@ -133,28 +133,33 @@ class FileDepot {
         return new DepotContent(file, uriPath, mediaType)
     }
 
-    Iterator<DepotEntry> iterateEntries() {
+    Iterator<DepotEntry> iterateEntries(
+            boolean includeHistorical=false, boolean includeDeleted=false) {
+
         def manifestIter = FileUtils.iterateFiles(baseDir,
                 new NameFileFilter("manifest.xml"), DirectoryFileFilter.INSTANCE)
-
         return [
 
             hasNext: { manifestIter.hasNext() },
 
             next: {
-                def entryDir
                 while (manifestIter.hasNext()) {
                     def file = manifestIter.next()
                     def parentParent = file.parentFile.parentFile
+                    /* TODO:
+                    if (includeHistorical) ... if (!isEntryDir(historical) ...)
+                    */
                     if (DepotEntry.isEntryDir(parentParent)) {
-                        entryDir = parentParent
-                        break
+                        def entryDir = parentParent
+                        def depotEntry = new DepotEntry(
+                                this, entryDir, null, false)
+                        if (!includeDeleted && depotEntry.isDeleted()) {
+                            continue
+                        }
+                        return depotEntry
                     }
                 }
-                if (!entryDir) {
-                    throw new NoSuchElementException()
-                }
-                return new DepotEntry(this, entryDir)
+                throw new NoSuchElementException()
             },
 
             remove: { throw new UnsupportedOperationException() }

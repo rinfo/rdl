@@ -9,6 +9,7 @@ class DepotEntry {
     static final ENTRY_CONTENT_DIR_NAME = "ENTRY-INFO"
     static final MANIFEST_FILE_NAME = "manifest.xml"
     static final CONTENT_FILE_PATTERN = ~/content(?:-(\w{2}))?.(\w+)/
+    static final DELETED_FILE_NAME = "DELETED"
 
     FileDepot depot
     String entryUriPath
@@ -18,11 +19,15 @@ class DepotEntry {
 
     private Entry manifest
 
-    DepotEntry(depot, entryDir, knownUriPath=null) {
+    DepotEntry(FileDepot depot, File entryDir, String knownUriPath,
+            boolean mustExist=true) {
         this.depot = depot
         this.entryDir = entryDir
         this.entryUriPath = knownUriPath
         entryContentDir = new File(entryDir, ENTRY_CONTENT_DIR_NAME)
+        if (mustExist && isDeleted()) {
+            throw new DeletedDepotEntryException(this)
+        }
     }
 
     static boolean isEntryDir(File dir) {
@@ -31,7 +36,7 @@ class DepotEntry {
 
     List<DepotContent> findContents(String forMediaType=null, String forLang=null) {
         def found = []
-        // TODO: if both qualifiers given, get file with newContentFile
+        // TODO: if both qualifiers given, get file with newContentFile?
         for (File file : entryContentDir.listFiles()) {
             def match = CONTENT_FILE_PATTERN.matcher(file.name)
             if (!match.matches()) {
@@ -85,11 +90,7 @@ class DepotEntry {
     }
 
     boolean isDeleted() {
-        // FIXME:
-        // Use updated and isDeleted!
-        // but store feedsync internally - deleteds *may* de desirable to
-        // "dry out" even in archive docs!
-        return false
+        return getDeletedMarkerFile().isFile()
     }
 
     List<DepotContent> findEnclosures() {
@@ -146,13 +147,17 @@ class DepotEntry {
         return new File(entryContentDir, MANIFEST_FILE_NAME)
     }
 
+    protected File getDeletedMarkerFile() {
+        return new File(entryContentDir, DELETED_FILE_NAME)
+    }
+
 
     //==== TODO: in WritableDepotEntry subclass? ====
 
     // TODO: Thought: verify mtype on content, and derive mtype from
     // enclosures? Or do in depot clients (e.g. the collector)?
 
-    void create(Date created,
+    void create(Date createTime,
             List<SourceContent> sourceContents,
             List<SourceContent> sourceEnclosures=null) {
         if(entryContentDir.exists()) {
@@ -163,8 +168,8 @@ class DepotEntry {
         def manifest = Abdera.instance.newEntry()
         // TODO: unify with rest of getId/entryPath stuff!
         manifest.id = depot.baseUri.resolve(getEntryUriPath())
-        manifest.setPublished(created)
-        manifest.setUpdated(created)
+        manifest.setPublished(createTime)
+        manifest.setUpdated(createTime)
         if (sourceContents.size() > 0) {
             def content = sourceContents[0]
             manifest.setContent(null, content.mediaType)
@@ -180,30 +185,40 @@ class DepotEntry {
         depot.onEntryModified(this)
     }
 
-    void update(Date updated,
+    void update(Date updateTime,
             List<SourceContent> sourceContents=null,
             List<SourceContent> sourceEnclosures=null) {
-        def manifest = getEntryManifest()
-        manifest.setUpdated(updated)
-        manifest.writeTo(new FileOutputStream(getManifestFile()))
-        // TODO: move content and enclosures into HISTORY_DIR..
+        // TODO:
+        // - move content and enclosures into HISTORY_DIR..
+        // - store updated history (feedsync)?
         if (sourceContents) {
             for (content in sourceContents) { addContent(content, true) }
         }
         if (sourceEnclosures) {
             for (encl in sourceEnclosures) { addEnclosure(encl, true) }
         }
+        def manifest = getEntryManifest()
+        manifest.setUpdated(updateTime)
+        manifest.writeTo(new FileOutputStream(getManifestFile()))
         depot.onEntryModified(this)
     }
 
-    void delete(Date deleted) {
-        // assert !isDeleted()
+    void delete(Date deleteTime) {
+        assert !isDeleted() // TODO: what if deleted?
+        getDeletedMarkerFile().createNewFile()
         def manifest = getEntryManifest()
-        manifest.updated = deleted
+        manifest.setUpdated(deleteTime)
+
+        // FIXME:
+        // but store feedsync internally - deleteds *may* de desirable to
+        // "dry out" even in archive docs!
+
+        // TODO: wipe content and enclosures
+        // - but keep generated content.entry? (how to know that?)
+        // .. (opt. move away..?)
         manifest.writeTo(new FileOutputStream(getManifestFile()))
-        // TODO: wipe content (or move?)
         depot.onEntryModified(this)
-        // TODO: how to "410 Gone" for enclosures..?
+        // TODO: opt. mark "410 Gone" for enclosures?
     }
 
     // TODO: resurrect(...) (clears deleted state + (partial) create)

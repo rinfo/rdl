@@ -26,8 +26,8 @@ class FileDepotWriteTest {
     }
 
 
-    static final NEW_IDENTIFIER_1 = new URI("http://example.org/publ/NEW:1/added_1")
-    static final DEL_IDENTIFIER_1 = new URI("http://example.org/publ/DEL:0/deleted_1")
+    static final NEW_IDENTIFIER_1 = new URI("http://example.org/publ/NEW/1/added_1")
+    static final DEL_IDENTIFIER_1 = new URI("http://example.org/publ/DEL/1/deleted_1")
 
     @Test
     void shouldCreateEntry() {
@@ -72,6 +72,13 @@ class FileDepotWriteTest {
             )
         // TODO: assert..
     }
+
+    /* TODO
+    @Test
+    void shouldUpdateEntryWithLessContents() {
+        ...
+    }
+    */
 
     /* TODO
     @Test
