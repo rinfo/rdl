@@ -32,7 +32,7 @@ class FileDepotAtomIndexTest {
         def entry = fileDepot.getEntry("/publ/1901:100")
         assertEquals 0, entry.findContents(fileDepot.pathProcessor.
                 hintForMediaType("application/atom+xml;type=entry")).size()
-        entry.generateAtomEntryContent()
+        fileDepot.onEntryModified(entry)
         def atomContent = entry.findContents("application/atom+xml;type=entry")[0]
         assert atomContent.file.isFile()
         // TODO: specify content, alternatives, enclosures, size, md5(?)
@@ -44,7 +44,7 @@ class FileDepotAtomIndexTest {
     @Test
     void shouldGenerateIndex() {
         fileDepot.generateIndex()
-        def feed = fileDepot.getFeed(fileDepot.subscriptionPath)
+        def feed = fileDepot.atomizer.getFeed(fileDepot.subscriptionPath)
         assertNotNull feed
         // TODO: list feeds.., count entries
         // - writesFeedByLatestDateInBatch

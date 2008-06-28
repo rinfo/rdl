@@ -2,7 +2,6 @@ package se.lagrummet.rinfo.store.depot
 
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.Entry
-import org.apache.abdera.i18n.iri.IRI
 
 
 class DepotEntry {
@@ -10,7 +9,6 @@ class DepotEntry {
     static final ENTRY_CONTENT_DIR_NAME = "ENTRY-INFO"
     static final MANIFEST_FILE_NAME = "manifest.xml"
     static final CONTENT_FILE_PATTERN = ~/content(?:-(\w{2}))?.(\w+)/
-    static final ATOM_ENTRY_MEDIA_TYPE = "application/atom+xml;type=entry"
 
     FileDepot depot
     String entryUriPath
@@ -33,7 +31,7 @@ class DepotEntry {
 
     List<DepotContent> findContents(String forMediaType=null, String forLang=null) {
         def found = []
-        // TODO: if both qualifiers given, look for file with newContentFile?
+        // TODO: if both qualifiers given, get file with newContentFile
         for (File file : entryContentDir.listFiles()) {
             def match = CONTENT_FILE_PATTERN.matcher(file.name)
             if (!match.matches()) {
@@ -94,18 +92,6 @@ class DepotEntry {
         return false
     }
 
-    protected Entry getEntryManifest() {
-        if (!manifest) {
-            manifest = Abdera.instance.parser.parse(
-                    new FileInputStream(getManifestFile())).root
-        }
-        return manifest
-    }
-
-    protected getManifestFile() {
-        return new File(entryContentDir, MANIFEST_FILE_NAME)
-    }
-
     List<DepotContent> findEnclosures() {
         // FIXME: Doesn't search sub-folders! Must also skip nested entries.
         def enclosures = []
@@ -129,9 +115,42 @@ class DepotEntry {
         return uriPath
     }
 
+    /**
+     * The last system modification timestamp of this entry.
+     */
+    long lastModified() {
+        return getManifestFile().lastModified()
+    }
+
+    String getContentMediaType() {
+        return getEntryManifest().contentMimeType.toString()
+    }
+
+    String getContentLanguage() {
+        def contentElem = getEntryManifest().contentElement
+        if (contentElem == null || contentElem.language == null) {
+            return null
+        }
+        return contentElem.language.toString()
+    }
+
+    protected Entry getEntryManifest() {
+        if (!manifest) {
+            manifest = Abdera.instance.parser.parse(
+                    new FileInputStream(getManifestFile())).root
+        }
+        return manifest
+    }
+
+    protected getManifestFile() {
+        return new File(entryContentDir, MANIFEST_FILE_NAME)
+    }
+
+
+    //==== TODO: in WritableDepotEntry subclass? ====
 
     // TODO: Thought: verify mtype on content, and derive mtype from
-    // enclosures? Or do in use of filedepot (the collector)?
+    // enclosures? Or do in depot clients (e.g. the collector)?
 
     void create(Date created,
             List<SourceContent> sourceContents,
@@ -187,6 +206,8 @@ class DepotEntry {
         // TODO: how to "410 Gone" for enclosures..?
     }
 
+    // TODO: resurrect(...) (clears deleted state + (partial) create)
+
     void addContent(SourceContent srcContent, boolean replace=false) {
         def file = newContentFile(srcContent.mediaType, srcContent.lang)
         if (!replace) {
@@ -195,14 +216,15 @@ class DepotEntry {
         srcContent.writeTo(file)
     }
 
-    protected File newContentFile(String mediaType, String lang=null) {
+    File newContentFile(String mediaType, String lang=null) {
+         // TODO: use NotAllowedMediaTypeException?
         def filename = "content"
         if (lang) {
             filename += "-" + lang
         }
         def suffix = depot.pathProcessor.hintForMediaType(
                 mediaType)
-        assert suffix // TODO: throw NotAllowedContentMediaTypeException?
+        assert suffix // TODO: throw UnknownMediaTypeException?
         filename += ("." + suffix)
         return new File(entryContentDir, filename)
     }
@@ -218,85 +240,6 @@ class DepotEntry {
         }
         // TODO: ... add in path..
         srcContent.writeTo(file)
-    }
-
-    //==== TODO: in separate FileDepotAtomIndexStrategy? ====
-
-    // TODO: .. use a "generatedContentTypes" list that callbacks to get it (which
-    // also blocks from adding content with that mediatype)?
-
-    File generateAtomEntryContent(boolean force=true) {
-
-        def entryFile = newContentFile(ATOM_ENTRY_MEDIA_TYPE)
-        if (!force &&
-            entryFile.isFile() &&
-            entryFile.lastModified() > getManifestFile().lastModified()) {
-           return entryFile
-        }
-
-        // TODO: how to represent deleted tombstones!
-        def atomEntry = Abdera.instance.newEntry()
-        // TODO: getEntryManifest().clone() ?
-        atomEntry.id = getId()
-        def publDate = getPublished()
-        if (publDate) {
-            atomEntry.setPublished(publDate)
-        }
-        atomEntry.setUpdated(getUpdated())
-
-        // TODO: what to use as values?
-        atomEntry.setTitle("")//getId().toString())
-        atomEntry.setSummary("")//getId().toString())
-
-        def selfUriPath = depot.pathProcessor.makeNegotiatedUriPath(
-                getEntryUriPath(), ATOM_ENTRY_MEDIA_TYPE)
-        atomEntry.addLink(selfUriPath, "self")
-
-        // TODO: add md5 (link extension) or sha (xml-dsig)?
-
-        // TODO: is this a reasonable mediaType()+lang) control?
-        def contentMediaType = getEntryManifest().contentMimeType.toString()
-        def contentLang
-        def contentElem = getEntryManifest().contentElement
-        if (contentElem && contentElem.language) {
-            contentLang = contentElem.language.toString()
-        }
-        def contentIsSet = false
-        for (content in findContents()) {
-            if (content.mediaType == ATOM_ENTRY_MEDIA_TYPE) {
-                continue
-            }
-            if (!contentIsSet
-                && content.mediaType == contentMediaType
-                && content.lang == contentLang) {
-                atomEntry.setContent(new IRI(content.depotUriPath),
-                        content.mediaType)
-                if (content.lang) {
-                    atomEntry.contentElement.language = content.lang
-                }
-                contentIsSet = true
-            } else {
-                atomEntry.addLink(content.depotUriPath,
-                        "alternate",
-                        content.mediaType,
-                        null, // title
-                        content.lang,
-                        content.file.length())
-            }
-        }
-
-        for (enclContent in findEnclosures()) {
-            atomEntry.addLink(enclContent.depotUriPath,
-                    "enclosure",
-                    enclContent.mediaType,
-                    null, // title
-                    enclContent.lang,
-                    enclContent.file.length())
-        }
-
-        atomEntry.writeTo(
-                new FileOutputStream(entryFile))
-        return entryFile
     }
 
 }

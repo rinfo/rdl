@@ -20,7 +20,26 @@ class FileDepotReadTest extends GroovyTestCase {
     }
 
     void testShouldFindEntryContent() {
-        // TODO
+        def entry = fileDepot.getEntry("/publ/1901/100")
+        def contents = entry.findContents("application/pdf")
+        def i = 0
+        contents.each {
+            assertEquals it.mediaType, "application/pdf"
+            if (it.lang == "en") {
+                i++
+                assertEquals "/publ/1901/100/pdf,en", it.depotUriPath
+            } else if (it.lang == "sv") {
+                i++
+                assertEquals "/publ/1901/100/pdf,sv", it.depotUriPath
+            }
+        }
+        assertEquals 2, i
+        contents = entry.findContents("application/rdf+xml")
+        def c = contents[0]
+        assertEquals 1, contents.size()
+        assertEquals "application/rdf+xml", c.mediaType
+        assertEquals "/publ/1901/100/rdf", c.depotUriPath
+        assertNull c.lang
     }
 
     void testShouldFindEnclosedContent() {
