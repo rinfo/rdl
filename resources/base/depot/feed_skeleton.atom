@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+    <id>http://rinfo.lagrummet.se/feed</id>
+    <title xml:lang="sv">Rättsinformationssystemets baskälla</title>
+
+    <author>
+        <name>Rättsinformationssystemet</name>
+        <uri>http://rinfo.lagrummet.se/</uri>
+        <email></email>
+    </author>
+
+</feed>

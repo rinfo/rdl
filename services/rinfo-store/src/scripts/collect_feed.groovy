@@ -68,8 +68,8 @@ class FeedCollector extends FeedArchiveReader {
     void storeEntry(Entry entry) {
 
         def entryId = entry.id.toURI()
-        //def timestamp = new Date() // FIXME: depot doesn't yet handle lots in same day
-        def timestamp = entry.updated
+        //def timestamp = entry.updated
+        def timestamp = new Date() // TODO: always just current time?
         def contents = []
         def enclosures = []
 
@@ -151,13 +151,13 @@ class FeedCollector extends FeedArchiveReader {
             System.exit 0
         }
         def context = new Ctxt("applicationContext.xml")
-        def fileDepot = context.getBean("fileDepot")
+        def depot = context.getBean("fileDepot")
         def uriMinter = context.getBean("uriMinter")
 
-        def collector = new FeedCollector(fileDepot, uriMinter)
+        def collector = new FeedCollector(depot, uriMinter)
         collector.readFeed(new URL(args[0]))
 
-        fileDepot.generateIndex()
+        depot.generateIndex()
     }
 
 }

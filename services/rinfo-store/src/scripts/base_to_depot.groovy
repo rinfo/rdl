@@ -31,37 +31,20 @@ depot = context.getBean("fileDepot")
  *
  */
 def addModel(File file) {
-    def format = RDFFormat.forFileName(file.name)
     def repo = RDFUtil.createMemoryRepository()
     RDFUtil.loadDataFromFile(repo, file)
 
     def modelUri = null
-
     for (st in RDFUtil.one(repo, null, RDF.TYPE, OWL.ONTOLOGY, true)) {
         modelUri = new java.net.URI(st.subject.toString())
     }
-
     def rdfXmlType = RDFFormat.RDFXML.defaultMIMEType
     def rdfXml = RDFUtil.serializeAsInputStream(repo, rdfXmlType)
-
-    def entry = depot.getEntry(modelUri)
-    def fileDate = new Date(file.lastModified())
-    if (entry) {
-        // TODO: check updated vs file timestamp
-        if (fileDate > entry.updated) {
-            // ...
-        } else {
-            //logger.info
-            print "Skipping model with URI <${modelUri}>"
-            println " - not modified since ${entry.updated}."
-        }
-    } else {
-        //logger.info
-        println "Storing model ${modelUri}"
-        depot.createEntry(modelUri, fileDate,
-                [new SourceContent(rdfXml, rdfXmlType)])
-    }
     repo.shutDown()
+
+    def fileDate = new Date(file.lastModified())
+    def contents = [new SourceContent(rdfXml, rdfXmlType)]
+    return addOrUpdate(modelUri, fileDate, contents)
 }
 
 
@@ -98,7 +81,7 @@ def addDataset(String entryUriPath, List<File> files) {
         enclosures << new SourceContent(enclRdfXml, rdfXmlType, null, slug)
 
         def fileDate = new Date(file.lastModified())
-        if (!youngestEnclDate || youngestEnclDate > fileDate) {
+        if (!youngestEnclDate || fileDate > youngestEnclDate) {
             youngestEnclDate = fileDate
         }
     }
@@ -106,23 +89,48 @@ def addDataset(String entryUriPath, List<File> files) {
     def rdfXml = RDFUtil.serializeAsInputStream(repo, rdfXmlType)
 
     // TODO: as "subsumer" (i.e. supply captures sub-uri:s and 303:s..)?
-    depot.createEntry(
+    return addOrUpdate(
             new java.net.URI(entryUri),
             youngestEnclDate,
-            [new SourceContent(rdfXml, rdfXmlType)], enclosures)
+            [new SourceContent(rdfXml, rdfXmlType)],
+            enclosures
+        )
 
 }
 
+
+def addOrUpdate(uri, lastMod, contents, enclosures=null) {
+    def entry = depot.getEntry(uri)
+    if (entry) {
+        if (lastMod > entry.updated) {
+            entry.update(lastMod, contents, enclosures)
+        } else {
+            //logger.info
+            print "Skipping model with URI <${uri}>"
+            println " - not modified since ${entry.updated}."
+        }
+    } else {
+        //logger.info
+        println "Storing model ${uri}"
+        entry = depot.createEntry(uri, lastMod, contents, enclosures)
+    }
+    return entry
+}
 
 
 def baseToDepot() {
 
     def rinfoBase = "../../resources/base/"
 
+    def batch = depot.makeEntryBatch()
+    def addToBatch = {
+        if (it) { batch << it }
+    }
+
     // store models
     def baseDir = new File(rinfoBase, "model")
     FileUtils.iterateFiles(baseDir, ["n3"] as String[], true).each {
-        addModel(it)
+        addToBatch addModel(it)
     }
 
     // store the dataset "serie"
@@ -132,7 +140,9 @@ def baseToDepot() {
     FileUtils.iterateFiles(baseDir, ["n3"] as String[], true).each {
         serieFiles << it
     }
-    addDataset(baseUri, serieFiles)
+    addToBatch addDataset(baseUri, serieFiles)
+
+    depot.indexEntries(batch)
 
 }
 

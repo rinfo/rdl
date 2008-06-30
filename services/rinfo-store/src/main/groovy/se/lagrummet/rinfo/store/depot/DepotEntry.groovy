@@ -1,5 +1,7 @@
 package se.lagrummet.rinfo.store.depot
 
+import org.apache.commons.io.FileUtils
+
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.Entry
 
@@ -20,7 +22,7 @@ class DepotEntry {
     private Entry manifest
 
     DepotEntry(FileDepot depot, File entryDir, String knownUriPath,
-            boolean mustExist=true) {
+            boolean mustExist=true) throws DeletedDepotEntryException {
         this.depot = depot
         this.entryDir = entryDir
         this.entryUriPath = knownUriPath
@@ -32,6 +34,35 @@ class DepotEntry {
 
     static boolean isEntryDir(File dir) {
         return new File(dir, ENTRY_CONTENT_DIR_NAME).isDirectory()
+    }
+
+    String getEntryUriPath() {
+        if (!entryUriPath) {
+            entryUriPath = computeEntryUriPath()
+        }
+        return entryUriPath
+    }
+
+    String computeEntryUriPath() {
+        def uri = getId()
+        assert depot.withinBaseUri(uri)
+        return uri.path
+    }
+
+    URI getId() {
+        return getEntryManifest().id.toURI()
+    }
+
+    Date getPublished() {
+        return getEntryManifest().published
+    }
+
+    Date getUpdated() {
+        return getEntryManifest().updated
+    }
+
+    boolean isDeleted() {
+        return getDeletedMarkerFile().isFile()
     }
 
     List<DepotContent> findContents(String forMediaType=null, String forLang=null) {
@@ -64,37 +95,10 @@ class DepotEntry {
         return found
     }
 
-    String getEntryUriPath() {
-        if (!entryUriPath) {
-            entryUriPath = computeEntryUriPath()
-        }
-        return entryUriPath
-    }
-
-    String computeEntryUriPath() {
-        def uri = getId()
-        assert depot.withinBaseUri(uri)
-        return uri.path
-    }
-
-    URI getId() {
-        return getEntryManifest().id.toURI()
-    }
-
-    Date getPublished() {
-        return getEntryManifest().published
-    }
-
-    Date getUpdated() {
-        return getEntryManifest().updated
-    }
-
-    boolean isDeleted() {
-        return getDeletedMarkerFile().isFile()
-    }
-
     List<DepotContent> findEnclosures() {
         // FIXME: Doesn't search sub-folders! Must also skip nested entries.
+        // .. generic static "find stuff in dir" methods here?
+        //    Sync with e.g. FileDepot#iterateEntries
         def enclosures = []
         for (File file : entryDir.listFiles()) {
             if (!file.hidden && file.isFile()) {
@@ -154,9 +158,6 @@ class DepotEntry {
 
     //==== TODO: in WritableDepotEntry subclass? ====
 
-    // TODO: Thought: verify mtype on content, and derive mtype from
-    // enclosures? Or do in depot clients (e.g. the collector)?
-
     void create(Date createTime,
             List<SourceContent> sourceContents,
             List<SourceContent> sourceEnclosures=null) {
@@ -170,17 +171,15 @@ class DepotEntry {
         manifest.id = depot.baseUri.resolve(getEntryUriPath())
         manifest.setPublished(createTime)
         manifest.setUpdated(createTime)
-        if (sourceContents.size() > 0) {
-            def content = sourceContents[0]
-            manifest.setContent(null, content.mediaType)
-            if (content.lang) {
-                manifest.contentElement.language = content.lang
-            }
-        }
+        setPrimaryContent(manifest, sourceContents)
         manifest.writeTo(new FileOutputStream(manifestFile))
-        for (content in sourceContents) { addContent(content) }
+        for (content in sourceContents) {
+            addContent(content)
+        }
         if (sourceEnclosures) {
-            for (encl in sourceEnclosures) { addEnclosure(encl) }
+            for (encl in sourceEnclosures) {
+                addEnclosure(encl)
+            }
         }
         depot.onEntryModified(this)
     }
@@ -188,34 +187,39 @@ class DepotEntry {
     void update(Date updateTime,
             List<SourceContent> sourceContents=null,
             List<SourceContent> sourceEnclosures=null) {
-        // TODO:
-        // - move content and enclosures into HISTORY_DIR..
-        // - store updated history (feedsync)?
+
+        rollOffToHistory()
+
         if (sourceContents) {
-            for (content in sourceContents) { addContent(content, true) }
+            for (content in sourceContents) {
+                addContent(content, true)
+            }
         }
         if (sourceEnclosures) {
-            for (encl in sourceEnclosures) { addEnclosure(encl, true) }
+            for (encl in sourceEnclosures) {
+                addEnclosure(encl, true)
+            }
         }
         def manifest = getEntryManifest()
         manifest.setUpdated(updateTime)
+        setPrimaryContent(manifest, sourceContents)
         manifest.writeTo(new FileOutputStream(getManifestFile()))
         depot.onEntryModified(this)
     }
 
-    void delete(Date deleteTime) {
-        assert !isDeleted() // TODO: what if deleted?
+    void delete(Date deleteTime) throws DeletedDepotEntryException {
+        if (isDeleted()) {
+            throw new DeletedDepotEntryException(this)
+        }
         getDeletedMarkerFile().createNewFile()
         def manifest = getEntryManifest()
         manifest.setUpdated(deleteTime)
 
-        // FIXME:
-        // but store feedsync internally - deleteds *may* de desirable to
-        // "dry out" even in archive docs!
-
         // TODO: wipe content and enclosures
         // - but keep generated content.entry? (how to know that?)
         // .. (opt. move away..?)
+        rollOffToHistory()
+
         manifest.writeTo(new FileOutputStream(getManifestFile()))
         depot.onEntryModified(this)
         // TODO: opt. mark "410 Gone" for enclosures?
@@ -232,7 +236,6 @@ class DepotEntry {
     }
 
     File newContentFile(String mediaType, String lang=null) {
-         // TODO: use NotAllowedMediaTypeException?
         def filename = "content"
         if (lang) {
             filename += "-" + lang
@@ -255,6 +258,42 @@ class DepotEntry {
         }
         // TODO: ... add in path..
         srcContent.writeTo(file)
+    }
+
+    protected void setPrimaryContent(Entry manifest,
+            List<SourceContent> sourceContents) {
+        if (sourceContents != null && sourceContents.size() > 0) {
+            def content = sourceContents[0]
+            manifest.setContent(null, content.mediaType)
+            if (content.lang) {
+                manifest.contentElement.language = content.lang
+            }
+        }
+    }
+
+    protected void rollOffToHistory() {
+        // NOTE: this means existing content not in the update is removed.
+        //      - *including enclosures*
+        def historyDir = newHistoryDir()
+
+        FileUtils.copyFileToDirectory(getManifestFile(), historyDir, true)
+
+        for (content in findContents()) {
+            FileUtils.moveToDirectory(content.file, historyDir, false)
+        }
+        for (enclContent in findEnclosures()) {
+            // FIXME: could need to move entire dirs! protected findTopEnclosures?
+            FileUtils.moveToDirectory(enclContent.file, historyDir, false)
+        }
+
+    }
+
+    protected File newHistoryDir() {
+        def dirPath = DatePathUtil.toEntryHistoryPath(getUpdated())
+        def dir = new File(entryContentDir, dirPath)
+        assert !dir.exists() && !dir.isDirectory()
+        FileUtils.forceMkdir(dir)
+        return dir
     }
 
 }

@@ -2,6 +2,8 @@ package se.lagrummet.rinfo.store.depot
 
 import org.slf4j.LoggerFactory
 
+import org.apache.commons.io.FileUtils
+
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.AtomDate
 import org.apache.abdera.model.Feed
@@ -19,7 +21,7 @@ class Atomizer {
     private final logger = LoggerFactory.getLogger(Atomizer)
 
 
-    // TODO: must be in Abdera..
+    // TODO: in Abdera somewhere? Or get from depot(.pathProcessor)?
     static final ATOM_ENTRY_MEDIA_TYPE = "application/atom+xml;type=entry"
 
     static final ENTRY_EXT_GDATA_DELETED = new QName(
@@ -36,12 +38,14 @@ class Atomizer {
 
     // TODO: Atomizer config properties
     def includeDeleted = true
+    def includeHistorical = false // TODO: true
 
     def useEntrySelfLink = true
     def useLinkExtensionsMd5 = true
     def useTombstones = true
     def useFeedSync = true
     def useGdataDeleted = true
+    String feedSkeleton
 
 
     Atomizer(FileDepot depot) {
@@ -55,53 +59,51 @@ class Atomizer {
         return feedBatchSize ?: DEFAULT_FEED_BATCH_SIZE
     }
 
+    private Feed skeletonFeed
+    void setFeedSkeleton(String feedSkeleton) {
+        if (feedSkeleton) {
+            skeletonFeed = Abdera.instance.parser.parse(
+                    new FileInputStream(feedSkeleton)).root
+        }
+    }
+
     void generateIndex() {
         def feedDir = new File(depot.baseDir, depot.feedPath)
         if (!feedDir.exists()) {
             feedDir.mkdir()
         }
-        def ascDateSortedEntryRefs = new TreeSet(
-                [compare: { a, b ->
-                    if (a.date == b.date) {
-                        return a.uriPath.compareTo(b.uriPath)
-                    }
-                    return a.date.compareTo(b.date)
-                }] as Comparator
-            )
-        // only keeping necessary data to minimize memory use
-        // TODO: includeHistorical=true
-        for (depotEntry in depot.iterateEntries(false, includeDeleted)) {
-            ascDateSortedEntryRefs.add(
-                    new EntryRef(uriPath: depotEntry.entryUriPath,
-                            date: depotEntry.updated) )
+        def entryBatch = makeEntryBatch()
+        for (depotEntry in depot.iterateEntries(
+                    includeHistorical, includeDeleted)) {
+            entryBatch.add(depotEntry)
         }
-        indexEntryRefs(ascDateSortedEntryRefs)
+        FileUtils.cleanDirectory(feedDir)
+        indexEntries(entryBatch)
     }
 
-    // TODO: refactor and test algorithm in isolation!
-    void indexEntryRefs(Collection<EntryRef> entryRefs) {
+    Collection<DepotEntry> makeEntryBatch() {
+        return new DepotEntryBatch(depot:depot, includeDeleted:includeDeleted)
+    }
+
+    // TODO: test algorithm in isolation! (refactor?)
+    // .. perhaps with overridden generateAtomEntryContent + writeFeed
+    void indexEntries(Collection<DepotEntry> entryBatch) {
 
         def subscriptionPath = depot.getSubscriptionPath()
 
-        // FIXME: skip entries already indexed!
-        //  how? climb all? Wipe and re-index (thus ignoring these "get existing")?
-        // .. wiping controlled from generateIndex, this method should then add
-        //    only new -- see "assure added entries younger" below
         def currFeed = getFeed(subscriptionPath)
         if (currFeed == null) {
             currFeed = newFeed(subscriptionPath)
         }
         def youngestArchFeed = getPrevArchiveAsFeed(currFeed)
 
-        // TODO: assure added entries are younger than latest in currFeed?
-        // Currently, indexEntryRefs re-indexes *if the same* are added..
-        // .. if not, fail or re-index? Flag for this? *May* be critical
-        // (Business-logic may *never* allow adding "older" ones)!
+        // FIXME: assure added entries are younger than latest in currFeed?
+        // .. if not, fail or re-index? Flag for this?
+        //  .. or opt. insert into older feeds?! Would violate syncing rules!
 
         def batchCount = currFeed.getEntries().size()
-        for (EntryRef entryRef : entryRefs) {
+        for (DepotEntry depotEntry : entryBatch) {
             batchCount++
-            def depotEntry = depot.getEntry(entryRef.uriPath, !includeDeleted)
 
             if (batchCount > getFeedBatchSize()) { // save as archive
                 Paging.setArchive(currFeed, true)
@@ -134,10 +136,12 @@ class Atomizer {
     }
 
     protected Feed newFeed(String uriPath) {
-        def feed = Abdera.instance.newFeed()
-        // FIXME: metadata for feed basics: skelFeed.clone()
-        //feed.id = baseUri
-        //feed.title = null
+        def feed
+        if (skeletonFeed != null) {
+            feed = skeletonFeed.clone()
+        } else {
+            feed = Abdera.instance.newFeed()
+        }
         feed.setUpdated(new Date()) // TODO: which utcDateTime?
         feed.addLink(uriPath, "self")
         return feed
@@ -174,7 +178,12 @@ class Atomizer {
         def uriPath = uriPathFromFeed(feed)
         logger.info "Writing feed: <${uriPath}>"
         def feedFileName = depot.toFeedFilePath(uriPath)
-        feed.writeTo(new FileOutputStream(new File(depot.baseDir, feedFileName)))
+        def feedFile = new File(depot.baseDir, feedFileName)
+        def feedDir = feedFile.parentFile
+        if (!feedDir.exists()) {
+            FileUtils.forceMkdir(feedDir)
+        }
+        feed.writeTo(new FileOutputStream(feedFile))
     }
 
     protected void indexEntry(Feed feed, DepotEntry depotEntry) {
@@ -310,7 +319,56 @@ class Atomizer {
 
 }
 
+
+class DepotEntryBatch<DepotEntry> extends AbstractCollection<DepotEntry> {
+
+    def depot
+    def includeDeleted
+    private ascDateSortedEntryRefs
+
+    DepotEntryBatch() {
+        ascDateSortedEntryRefs = new TreeSet<EntryRef>(
+                [compare: { a, b ->
+                    if (a.date == b.date) {
+                        return a.uriPath.compareTo(b.uriPath)
+                    }
+                    return a.date.compareTo(b.date)
+                }] as Comparator
+            )
+    }
+
+    boolean add(DepotEntry depotEntry) {
+        // only keeping necessary data to minimize memory use
+        return ascDateSortedEntryRefs.add(new EntryRef(depotEntry))
+    }
+
+    Iterator<DepotEntry> iterator() {
+        def sortedIter = ascDateSortedEntryRefs.iterator()
+        return [
+            hasNext: {
+                return sortedIter.hasNext()
+            },
+            next: {
+                def entryRef = sortedIter.next()
+                return depot.getEntry(entryRef.uriPath, !includeDeleted)
+            },
+            remove: {
+                sortedIter.remove()
+            }
+        ] as Iterator<DepotEntry>
+    }
+
+    int size() {
+        return ascDateSortedEntryRefs.size()
+    }
+
+}
+
 protected class EntryRef {
+    EntryRef(DepotEntry depotEntry) {
+        this.uriPath = depotEntry.entryUriPath
+        this.date = depotEntry.updated
+    }
     String uriPath
     Date date
 }

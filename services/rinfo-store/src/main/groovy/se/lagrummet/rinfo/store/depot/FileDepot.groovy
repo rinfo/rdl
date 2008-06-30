@@ -7,8 +7,6 @@ import org.apache.commons.io.FileUtils
 import org.apache.commons.io.filefilter.DirectoryFileFilter
 import org.apache.commons.io.filefilter.NameFileFilter
 
-import static org.apache.commons.lang.time.DateFormatUtils.ISO_DATE_FORMAT
-
 
 class FileDepot {
 
@@ -43,38 +41,6 @@ class FileDepot {
             throw new ConfigurationException(
                     "Directory ${baseDir} does not exist.")
         }
-    }
-
-
-    //== Feed Related ==
-
-    int getFeedBatchSize() {
-        return atomizer.feedBatchSize
-    }
-
-    void setFeedBatchSize(int batchSize) {
-        atomizer.feedBatchSize = batchSize
-    }
-
-    DepotContent getFeedContent(String uriPath) {
-        // TODO: Require suffix in req? And/or conneg?
-        return getContent(uriPath + ".atom")
-    }
-
-    String getSubscriptionPath() {
-        // TODO: less hard-coded..
-        "/${feedPath}/current"
-    }
-
-    protected String pathToArchiveFeed(Date youngestDate) {
-        // TODO: offset in batch "in date".. And date as subdirs?
-        def isoDate = ISO_DATE_FORMAT.format(youngestDate)
-        return "/${feedPath}/${isoDate}"
-    }
-
-    protected String toFeedFilePath(String uriPath) {
-        // TODO: less hard-coded..
-        return toFilePath(uriPath) + ".atom"
     }
 
 
@@ -119,9 +85,9 @@ class FileDepot {
         return null
     }
 
-    DepotEntry getEntry(URI entryUri) {
+    DepotEntry getEntry(URI entryUri, mustExist=true) {
         assert withinBaseUri(entryUri) // TODO: UriNotWithinDepotException?
-        return getEntry(entryUri.path)
+        return getEntry(entryUri.path, mustExist)
     }
 
     DepotContent getContent(String uriPath) {
@@ -166,6 +132,43 @@ class FileDepot {
 
         ] as Iterator<DepotEntry>
     }
+
+
+    //== Feed Related ==
+
+    // TODO: set via this or inject configured atomizer?
+
+    int getFeedBatchSize() {
+        return atomizer.feedBatchSize
+    }
+    void setFeedBatchSize(int batchSize) {
+        atomizer.feedBatchSize = batchSize
+    }
+
+    void setFeedSkeleton(String feedSkeleton) {
+        atomizer.feedSkeleton = feedSkeleton
+    }
+
+    DepotContent getFeedContent(String uriPath) {
+        // TODO: Require suffix in req? And/or conneg?
+        return getContent(uriPath + ".atom")
+    }
+
+    String getSubscriptionPath() {
+        // TODO: less hard-coded..
+        "/${feedPath}/current"
+    }
+
+    protected String pathToArchiveFeed(Date youngestDate) {
+        def archPath = DatePathUtil.toFeedArchivePath(youngestDate)
+        return "/${feedPath}/${archPath}"
+    }
+
+    protected String toFeedFilePath(String uriPath) {
+        // TODO: less hard-coded..
+        return toFilePath(uriPath) + ".atom"
+    }
+
 
     //== Path and File Related ==
 
@@ -228,8 +231,20 @@ class FileDepot {
         atomizer.generateIndex()
     }
 
-    // TODO: indexNewEntries? Or..
-    // TODO: getEntrySession() .. for multiple operations (replace onEntryModified..)
-    //  .. and allow implicit use in edtiting (for one-offs)
+    Collection<DepotEntry> makeEntryBatch() {
+        return atomizer.makeEntryBatch()
+    }
+
+    void indexEntries(Collection<DepotEntry> entryBatch) {
+        atomizer.indexEntries(entryBatch)
+    }
+
+    /* TODO: checkConsistency() ?
+        - ensures no locks (in entries)
+        - atomizer.checkConsistency()
+            - ensures no locks (in feed dir)
+            - ensures feeds chain as expected
+            - opt. ensures all entries are properly indexed
+    */
 
 }
