@@ -355,8 +355,10 @@ class DepotEntry {
         }
         for (File file : entryDir.listFiles(PUBLIC_FILE_FILTER)) {
             if (file.isDirectory() && containsSubEntry(file)) {
-                // TODO: this doesn't roll of *any* path leading to a
-                // sub-entry. Is that ok? I believe so (alt. is forking..)..
+                // TODO: This doesn't roll of *any* path leading to a
+                // sub-entry! Is that ok? I believe so (alt. is forking..)..
+                // .. although an entry can then "shadow" old enclosures..
+                // .. We could assert "clean path" in create?
                 continue
             }
             FileUtils.moveToDirectory(file, historyDir, false)
@@ -365,7 +367,6 @@ class DepotEntry {
     }
 
     protected boolean containsSubEntry(File dir) {
-        // TODO: verify this in tests!
         boolean foundSubEntry = false
         for (File child : dir.listFiles(PUBLIC_FILE_FILTER)) {
             if (foundSubEntry || isEntryDir(child)) {

@@ -149,7 +149,7 @@ class FileDepotWriteTest {
         assertEquals "sv", contents[0].lang
 
         // TODO: update must move encloures, including nested encloures,
-        //but *not* nested entries!
+        // but *not* nested entries!
     }
 
 
