@@ -17,7 +17,7 @@ class SourceContent {
         this.enclosedUriPath = enclosedUriPath
     }
 
-    SourceContent(File sourceFile,
+    protected SourceContent(File sourceFile,
             mediaType, lang=null, enclosedUriPath=null) {
         this(mediaType, lang, enclosedUriPath)
         this.sourceFile = sourceFile

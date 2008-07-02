@@ -42,15 +42,30 @@ class FileDepotReadTest extends GroovyTestCase {
         assertNull c.lang
     }
 
-    void testShouldFindEnclosedContent() {
-        // TODO
+    void testShouldFindEnclosures() {
+        // TODO: .. direct, several, nested
+        // .. not list enclosures in nested entries
     }
+
+    // TODO: getHistoricalEntries..
 
     void testShouldNotGetDeleted() {
         def deletedId = "/publ/1901/0"
         shouldFail(DeletedDepotEntryException) {
             def entry = fileDepot.getEntry(deletedId)
         }
+    }
+
+    void testShouldIterateEntries() {
+
+        def entries = fileDepot.iterateEntries().toList()
+        assertEquals 3, entries.size()
+
+         // include deleted
+         entries = fileDepot.iterateEntries(false, true)
+        assertEquals 4, entries.size()
+
+        // TODO: historical: fileDepot.iterateEntries(true, false)
     }
 
 }

@@ -320,7 +320,7 @@ class Atomizer {
 }
 
 
-class DepotEntryBatch<DepotEntry> extends AbstractCollection<DepotEntry> {
+class DepotEntryBatch extends AbstractCollection<DepotEntry> {
 
     def depot
     def includeDeleted

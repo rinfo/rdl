@@ -13,6 +13,7 @@ class FileDepotWriteTest {
     static File depotSrc
 
     static final NEW_ID_1 = new URI("http://example.org/publ/NEW/added_1")
+    static final NEW_ID_2 = new URI("http://example.org/publ/NEW/added_2")
     static final UPD_ID_1 = new URI("http://example.org/publ/UPD/updated_1")
     static final UPD_ID_2 = new URI("http://example.org/publ/UPD/updated_2")
     static final DEL_ID_1 = new URI("http://example.org/publ/DEL/deleted_1")
@@ -39,9 +40,9 @@ class FileDepotWriteTest {
         def createTime = new Date()
         fileDepot.createEntry(NEW_ID_1, createTime,
                 [
-                    new SourceContent(exampleContentFile("content-en.pdf"),
+                    new SourceContent(exampleEntryFile("content-en.pdf"),
                             "application/pdf", "en"),
-                    new SourceContent(exampleContentFile("content.rdf"),
+                    new SourceContent(exampleEntryFile("content.rdf"),
                             "application/rdf+xml")
                 ],
             )
@@ -58,20 +59,44 @@ class FileDepotWriteTest {
     }
 
 
-    /* TODO
     @Test
     void shouldCreateEntryWithEnclosures() {
-        // TODO: with enclosures..
-        // NEW_ID_2
-        //[ new SourceContent(exampleFile("icon.png"), "icon.png", null) ]
+        assertNull fileDepot.getEntry(NEW_ID_2)
+        fileDepot.createEntry(NEW_ID_2, new Date(),
+                [],
+                [
+                    // full path
+                    new SourceContent(exampleFile("icon.png"),
+                            null, null,
+                            "/publ/NEW/added_2/icon.png"),
 
-        // TODO:
-        //assertEquals entry.findEnclosures.size(), 1
-        //def encl = entry.findEnclosures()[0]
-        //assertEquals encl.public_path, "image.png"
-        //assertEquals encl.mtype, "image/png"
+                    // relative to entry path
+                    new SourceContent(exampleFile("icon.png"),
+                            null, null,
+                            "icon2.png"),
+
+                    // nested path
+                    new SourceContent(exampleFile("icon.png"),
+                            null, null,
+                            "images/icon.png"),
+
+                    // TODO: invalid path (outside of entryUriPath)
+                ]
+            )
+        def entry = fileDepot.getEntry(NEW_ID_2)
+        def enclosures = entry.findEnclosures()
+        assertEquals 3, enclosures.size()
+
+        def expect = { path ->
+            def encl = enclosures.find { it.depotUriPath == path }
+            assertNotNull encl
+            assertEquals "image/png", encl.mediaType
+        }
+
+        expect "/publ/NEW/added_2/icon.png"
+        expect "/publ/NEW/added_2/icon2.png"
+        expect "/publ/NEW/added_2/images/icon.png"
     }
-    */
 
 
     @Test
@@ -80,7 +105,7 @@ class FileDepotWriteTest {
 
         def createTime = new Date()
         fileDepot.createEntry(UPD_ID_1, createTime, [
-                new SourceContent(exampleContentFile("content-en.pdf"),
+                new SourceContent(exampleEntryFile("content-en.pdf"),
                         "application/pdf", "en"),
             ])
         def entry = fileDepot.getEntry(UPD_ID_1)
@@ -91,9 +116,9 @@ class FileDepotWriteTest {
 
         def updateTime = new Date()
         entry.update(updateTime, [
-                new SourceContent(exampleContentFile("content-en.pdf"),
+                new SourceContent(exampleEntryFile("content-en.pdf"),
                             "application/pdf", "en"),
-                new SourceContent(exampleContentFile("content-sv.pdf"),
+                new SourceContent(exampleEntryFile("content-sv.pdf"),
                             "application/pdf", "sv")
             ])
         assertEquals 2, entry.findContents("application/pdf").size()
@@ -108,20 +133,23 @@ class FileDepotWriteTest {
     @Test
     void shouldUpdateEntryWithLessContents() {
         fileDepot.createEntry(UPD_ID_2, new Date(), [
-                new SourceContent(exampleContentFile("content-en.pdf"),
+                new SourceContent(exampleEntryFile("content-en.pdf"),
                         "application/pdf", "en"),
-                new SourceContent(exampleContentFile("content-sv.pdf"),
+                new SourceContent(exampleEntryFile("content-sv.pdf"),
                             "application/pdf", "sv")
             ])
         def entry = fileDepot.getEntry(UPD_ID_2)
         entry.update(new Date(), [
-                new SourceContent(exampleContentFile("content-sv.pdf"),
+                new SourceContent(exampleEntryFile("content-sv.pdf"),
                             "application/pdf", "sv"),
             ])
         assertEquals "sv", entry.contentLanguage
         def contents = entry.findContents("application/pdf")
         assertEquals 1, contents.size()
         assertEquals "sv", contents[0].lang
+
+        // TODO: update must move encloures, including nested encloures,
+        //but *not* nested entries!
     }
 
 
@@ -130,7 +158,7 @@ class FileDepotWriteTest {
         assertNull fileDepot.getEntry(DEL_ID_1)
         def createTime = new Date()
         fileDepot.createEntry(DEL_ID_1, createTime, [
-                new SourceContent(exampleContentFile("content-en.pdf"),
+                new SourceContent(exampleEntryFile("content-en.pdf"),
                         "application/pdf", "en"),
             ])
 
@@ -145,8 +173,12 @@ class FileDepotWriteTest {
     }
 
 
-    protected exampleContentFile(path) {
+    protected exampleEntryFile(path) {
         new File(depotSrc, "publ/1901/100/ENTRY-INFO/${path}")
+    }
+
+    protected exampleFile(path) {
+        new File(depotSrc, "publ/1901/100/${path}")
     }
 
 

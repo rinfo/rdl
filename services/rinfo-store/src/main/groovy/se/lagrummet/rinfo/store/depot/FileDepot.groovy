@@ -4,8 +4,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.filefilter.DirectoryFileFilter
-import org.apache.commons.io.filefilter.NameFileFilter
 
 
 class FileDepot {
@@ -75,7 +73,7 @@ class FileDepot {
         return results
     }
 
-    // TODO: reintroduce EntryNotFoundException on !entryContentDir.isDir()?
+    // TODO: throw EntryNotFoundException if !isEntryDir?
     DepotEntry getEntry(String uriPath, mustExist=true)
             throws DeletedDepotEntryException {
         def entryDir = getEntryDir(uriPath)
@@ -101,36 +99,7 @@ class FileDepot {
 
     Iterator<DepotEntry> iterateEntries(
             boolean includeHistorical=false, boolean includeDeleted=false) {
-
-        def manifestIter = FileUtils.iterateFiles(baseDir,
-                new NameFileFilter("manifest.xml"), DirectoryFileFilter.INSTANCE)
-        return [
-
-            hasNext: { manifestIter.hasNext() },
-
-            next: {
-                while (manifestIter.hasNext()) {
-                    def file = manifestIter.next()
-                    def parentParent = file.parentFile.parentFile
-                    /* TODO:
-                    if (includeHistorical) ... if (!isEntryDir(historical) ...)
-                    */
-                    if (DepotEntry.isEntryDir(parentParent)) {
-                        def entryDir = parentParent
-                        def depotEntry = new DepotEntry(
-                                this, entryDir, null, false)
-                        if (!includeDeleted && depotEntry.isDeleted()) {
-                            continue
-                        }
-                        return depotEntry
-                    }
-                }
-                throw new NoSuchElementException()
-            },
-
-            remove: { throw new UnsupportedOperationException() }
-
-        ] as Iterator<DepotEntry>
+        return DepotEntry.iterateEntries(this, includeHistorical, includeDeleted)
     }
 
 

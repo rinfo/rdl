@@ -1,6 +1,9 @@
 package se.lagrummet.rinfo.store.depot
 
 import org.apache.commons.io.FileUtils
+import org.apache.commons.io.filefilter.IOFileFilter
+import org.apache.commons.io.filefilter.HiddenFileFilter
+import org.apache.commons.io.filefilter.NameFileFilter
 
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.Entry
@@ -13,6 +16,15 @@ class DepotEntry {
     static final CONTENT_FILE_PATTERN = ~/content(?:-(\w{2}))?.(\w+)/
     static final DELETED_FILE_NAME = "DELETED"
 
+    protected static NON_ENTRY_DIR_FILTER = {
+            !isEntryDir(it) && !it.hidden
+        } as IOFileFilter
+
+    protected static PUBLIC_FILE_FILTER = {
+            !it.hidden && it.name != ENTRY_CONTENT_DIR_NAME
+        } as FileFilter
+
+
     FileDepot depot
     String entryUriPath
 
@@ -21,13 +33,14 @@ class DepotEntry {
 
     private Entry manifest
 
+
     DepotEntry(FileDepot depot, File entryDir, String knownUriPath,
-            boolean mustExist=true) throws DeletedDepotEntryException {
+            boolean failOnDeleted=true) throws DeletedDepotEntryException {
         this.depot = depot
         this.entryDir = entryDir
         this.entryUriPath = knownUriPath
         entryContentDir = new File(entryDir, ENTRY_CONTENT_DIR_NAME)
-        if (mustExist && isDeleted()) {
+        if (failOnDeleted && isDeleted()) {
             throw new DeletedDepotEntryException(this)
         }
     }
@@ -36,17 +49,54 @@ class DepotEntry {
         return new File(dir, ENTRY_CONTENT_DIR_NAME).isDirectory()
     }
 
+    static Iterator<DepotEntry> iterateEntries(
+            FileDepot depot,
+            boolean includeHistorical, boolean includeDeleted) {
+
+        def manifestIter = FileUtils.iterateFiles(
+                depot.baseDir,
+                new NameFileFilter(MANIFEST_FILE_NAME),
+                HiddenFileFilter.VISIBLE
+            )
+        /* TODO:
+        if (!includeHistorical) {
+            dirFilter in manifestIter must be (as the first "if" below does)
+                file.parentFile.name != ENTRY_CONTENT_DIR_NAME
+            if we use ENTRY_CONTENT_DIR_NAME in history entries.
+            And if we don't, we must change the "first if below" to ever
+            fulfil includeHistorical.. See also rollOffToHistory.
+        }
+        */
+
+        return [
+            hasNext: { manifestIter.hasNext() },
+
+            next: {
+                while (manifestIter.hasNext()) {
+                    def contentDir = manifestIter.next().parentFile
+                    if (contentDir.name != ENTRY_CONTENT_DIR_NAME) {
+                        continue
+                    }
+                    def depotEntry = new DepotEntry(
+                            depot, contentDir.parentFile, null, false)
+                    if (!includeDeleted && depotEntry.isDeleted()) {
+                        continue
+                    }
+                    return depotEntry
+                }
+                throw new NoSuchElementException()
+            },
+
+            remove: { throw new UnsupportedOperationException() }
+        ] as Iterator<DepotEntry>
+    }
+
+
     String getEntryUriPath() {
         if (!entryUriPath) {
             entryUriPath = computeEntryUriPath()
         }
         return entryUriPath
-    }
-
-    String computeEntryUriPath() {
-        def uri = getId()
-        assert depot.withinBaseUri(uri)
-        return uri.path
     }
 
     URI getId() {
@@ -96,15 +146,16 @@ class DepotEntry {
     }
 
     List<DepotContent> findEnclosures() {
-        // FIXME: Doesn't search sub-folders! Must also skip nested entries.
-        // .. generic static "find stuff in dir" methods here?
-        //    Sync with e.g. FileDepot#iterateEntries
         def enclosures = []
-        for (File file : entryDir.listFiles()) {
-            if (!file.hidden && file.isFile()) {
-                def uriPath = toEnclosedUriPath(file)
-                def mediaType = depot.computeMediaType(file)
-                enclosures << new DepotContent(file, uriPath, mediaType)
+        for (File file : entryDir.listFiles(PUBLIC_FILE_FILTER)) {
+            if (file.isFile()) {
+                enclosures << enclosedDepotContent(file)
+            } else if (file.isDirectory()) {
+                for (File subfile : FileUtils.iterateFiles(file,
+                        HiddenFileFilter.VISIBLE,
+                        NON_ENTRY_DIR_FILTER)) {
+                    enclosures << enclosedDepotContent(subfile)
+                }
             }
         }
         return enclosures
@@ -118,6 +169,12 @@ class DepotEntry {
         def pathRemainder = fileUriPath.replaceFirst(entryDirUriPath, "")
         def uriPath = getEntryUriPath() + "/" + pathRemainder
         return uriPath
+    }
+
+    protected DepotContent enclosedDepotContent(File file) {
+        def uriPath = toEnclosedUriPath(file)
+        def mediaType = depot.computeMediaType(file)
+        return new DepotContent(file, uriPath, mediaType)
     }
 
     /**
@@ -139,6 +196,12 @@ class DepotEntry {
         return contentElem.language.toString()
     }
 
+    protected String computeEntryUriPath() {
+        def uri = getId()
+        assert depot.withinBaseUri(uri)
+        return uri.path
+    }
+
     protected Entry getEntryManifest() {
         if (!manifest) {
             manifest = Abdera.instance.parser.parse(
@@ -156,7 +219,7 @@ class DepotEntry {
     }
 
 
-    //==== TODO: in WritableDepotEntry subclass? ====
+    //==== TODO: above in DepotEntryView base class? ====
 
     void create(Date createTime,
             List<SourceContent> sourceContents,
@@ -248,15 +311,22 @@ class DepotEntry {
     }
 
     void addEnclosure(SourceContent srcContent, boolean replace=false) {
-        // TODO: how shall enclosedUriPath be given? As full path?
         def enclUriPath = srcContent.enclosedUriPath
-        assert enclUriPath.startsWith(entryUriPath)
+        if (enclUriPath.startsWith("/")) {
+            assert enclUriPath.startsWith(entryUriPath)
+        } else {
+            def sep = entryUriPath.endsWith("/") ? "" : "/"
+            enclUriPath = entryUriPath + sep + enclUriPath
+        }
         def enclPath = enclUriPath.replaceFirst(entryUriPath, "")
         def file = new File(entryDir, enclPath)
         if (!replace) {
             assert !file.exists()
         }
-        // TODO: ... add in path..
+        def enclDir = file.parentFile
+        if (!enclDir.exists()) {
+            FileUtils.forceMkdir(enclDir)
+        }
         srcContent.writeTo(file)
     }
 
@@ -275,17 +345,36 @@ class DepotEntry {
         // NOTE: this means existing content not in the update is removed.
         //      - *including enclosures*
         def historyDir = newHistoryDir()
+        // TODO: there should be an entryContentDir as well if enclosures are
+        // to be located and work as normal... (but see iterateEntries!)
 
         FileUtils.copyFileToDirectory(getManifestFile(), historyDir, true)
 
         for (content in findContents()) {
             FileUtils.moveToDirectory(content.file, historyDir, false)
         }
-        for (enclContent in findEnclosures()) {
-            // FIXME: could need to move entire dirs! protected findTopEnclosures?
-            FileUtils.moveToDirectory(enclContent.file, historyDir, false)
+        for (File file : entryDir.listFiles(PUBLIC_FILE_FILTER)) {
+            if (file.isDirectory() && containsSubEntry(file)) {
+                // TODO: this doesn't roll of *any* path leading to a
+                // sub-entry. Is that ok? I believe so (alt. is forking..)..
+                continue
+            }
+            FileUtils.moveToDirectory(file, historyDir, false)
         }
 
+    }
+
+    protected boolean containsSubEntry(File dir) {
+        // TODO: verify this in tests!
+        boolean foundSubEntry = false
+        for (File child : dir.listFiles(PUBLIC_FILE_FILTER)) {
+            if (foundSubEntry || isEntryDir(child)) {
+                return true
+            } else {
+                foundSubEntry = containsSubEntry(child)
+            }
+        }
+        return foundSubEntry
     }
 
     protected File newHistoryDir() {
