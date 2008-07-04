@@ -101,18 +101,20 @@ def addDataset(String entryUriPath, List<File> files) {
 
 def addOrUpdate(uri, lastMod, contents, enclosures=null) {
     def entry = depot.getEntry(uri)
+    def newDate = new Date()
     if (entry) {
         if (lastMod > entry.updated) {
-            entry.update(lastMod, contents, enclosures)
+            entry.update(newDate, contents, enclosures)
         } else {
             //logger.info
-            print "Skipping model with URI <${uri}>"
+            print "Skipping resource with URI <${uri}>"
             println " - not modified since ${entry.updated}."
+            return null
         }
     } else {
         //logger.info
         println "Storing model ${uri}"
-        entry = depot.createEntry(uri, lastMod, contents, enclosures)
+        entry = depot.createEntry(uri, newDate, contents, enclosures)
     }
     return entry
 }
@@ -135,7 +137,7 @@ def baseToDepot() {
 
     // store the dataset "serie"
     def serieFiles = []
-    def baseUri = "ref"
+    def baseUri = "ref/serie"
     baseDir = new File(rinfoBase, "datasets/serie")
     FileUtils.iterateFiles(baseDir, ["n3"] as String[], true).each {
         serieFiles << it

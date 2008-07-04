@@ -55,4 +55,10 @@ class FileDepotAtomIndexTest {
     // TODO: shouldInsertInSubscriptionFeed
     // TODO: shouldCutOffSubscriptionToArchiveAtBatchSize
 
+    /* TODO: testIndexBatch
+    static def suiteBatch
+    suiteBatch = fileDepot.makeEntryBatch()
+    fileDepot.indexEntries(suiteBatch)
+    */
+
 }

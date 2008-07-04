@@ -98,12 +98,23 @@ class Atomizer {
         def youngestArchFeed = getPrevArchiveAsFeed(currFeed)
 
         // FIXME: assure added entries are younger than latest in currFeed?
-        // .. if not, fail or re-index? Flag for this?
-        //  .. or opt. insert into older feeds?! Would violate syncing rules!
+
 
         def batchCount = currFeed.getEntries().size()
+        def currentDate
+        if (batchCount > 0) {
+            currentDate = currFeed.getEntries()[0].updated
+        }
+
         for (DepotEntry depotEntry : entryBatch) {
             batchCount++
+
+            def nextDate = depotEntry.updated
+            if (currentDate != null) {
+                assert nextDate >= currentDate
+                // TODO: ChronologyViolationException? or ever re-index..?
+            }
+            currentDate = nextDate
 
             if (batchCount > getFeedBatchSize()) { // save as archive
                 Paging.setArchive(currFeed, true)
@@ -195,7 +206,7 @@ class Atomizer {
                 delElem.setAttributeValue(
                         "when", new AtomDate(depotEntry.getUpdated()).value)
             }
-            /* TODO: Unless generating new (when we know all, including deleteds..)
+            /* TODO: Dry out, unless generating new (when we know all, incl. deleteds..)
                 If so, historical entries must know if their current is deleted!
             dryOutHistoricalEntries(depotEntry)
             */

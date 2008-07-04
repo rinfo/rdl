@@ -16,7 +16,8 @@ class FileDepotReadTest extends GroovyTestCase {
     void testShouldContainEntry() {
         def entry = fileDepot.getEntry("/publ/1901/100")
         assertNotNull entry
-        // TODO: inspect
+        // TODO: see FileDepotWriteTest
+        // assertEquals "", entry.id # updated, published
     }
 
     void testShouldFindEntryContent() {
@@ -43,7 +44,8 @@ class FileDepotReadTest extends GroovyTestCase {
     }
 
     void testShouldFindEnclosures() {
-        // TODO: .. direct, several, nested
+        // TODO: see FileDepotWriteTest
+        // .. direct, several, nested
         // .. not list enclosures in nested entries
     }
 
