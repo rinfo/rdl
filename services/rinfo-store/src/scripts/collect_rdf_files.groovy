@@ -1,31 +1,45 @@
-import org.apache.commons.io.FileUtils
+import static org.apache.commons.io.FileUtils.iterateFiles
+import org.apache.commons.io.filefilter.HiddenFileFilter
+import org.apache.commons.io.filefilter.IOFileFilter
+import org.apache.commons.io.filefilter.NameFileFilter
 import org.apache.abdera.Abdera
 import org.springframework.context.support.ClassPathXmlApplicationContext as Ctxt
 import se.lagrummet.rinfo.store.depot.*
 
 
-def sourceRdfDir
+def sourceDir
+def entryInfoFileName
+String[] suffixes
 try {
-    sourceRdfDir = new File(args[0])
+    sourceDir = new File(args[0])
+    entryInfoFileName = args[1]
+    if (args.length > 2) {
+        suffixes = args[2].split(",")
+    }
 } catch (IndexOutOfBoundsException e) {
-    println "Usage: <rdf-dir-to-import>"
+    println "Usage: <source-dir> <entry-info-file> [suffix,...]"
     System.exit 0
 }
-
-final MTYPE_RDF = "application/rdf+xml"
 
 context = new Ctxt("applicationContext.xml")
 depot = context.getBean("fileDepot")
 
-FileUtils.iterateFiles(sourceRdfDir, ["rdf"] as String[], true).each {
-    def entryFile = new File(it.parentFile, "entry.atom")
-    def entry = Abdera.instance.parser.parse(new FileInputStream(entryFile)).root
+iterateFiles(sourceDir,
+        new NameFileFilter(entryInfoFileName),
+        HiddenFileFilter.VISIBLE).each {
+
+    def entry = Abdera.instance.parser.parse(new FileInputStream(it)).root
+    def contentDir = it.parentFile
     def id = entry.id.toURI()
-    def date = entry.updated
-    println "Importing rdf file <${it}> as <${id}> [${date}]"
-    try {
-        depot.createEntry(id, date, [new SourceContent(it, MTYPE_RDF)])
-    } catch (DuplicateDepotEntryException e) {
-        println "Couldn't add duplicate: ${e.message}"
+    def date = entry.published ?: entry.updated
+    def contents = iterateFiles(contentDir, suffixes, false).collect {
+        new SourceContent(it, depot.computeMediaType(it))
     }
+    println "Importing entry <${id}> [${date}] from <${contentDir}>"
+    try {
+        depot.createEntry(id, date, contents)
+    } catch (DuplicateDepotEntryException e) {
+        println "Error: couldn't add duplicate: ${e.message}"
+    }
+
 }
