@@ -33,10 +33,9 @@ class SesameFeeder extends FeedArchiveReader {
 
             // TODO: from content *or* alternate recognized as RDF
             def rdfPath = entry.contentSrc.toString()
-            // FIXME: the ":"-in-url uri-minter problem
-            rdfPath = rdfPath.replace(URLEncoder.encode(":", "utf-8"), ":")
+            rdfPath = unescapeColon(rdfPath)
 
-            logger.info "Entry <${entryId}>, RDF from <rdfPath>"
+            logger.info "Entry <${entryId}>, RDF from <${rdfPath}>"
 
             loadDataFromURL(conn, new URL(rdfPath), "${entryId}")
             // TODO: Check for tombstones; delete..: conn.clear(context)

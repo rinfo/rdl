@@ -91,7 +91,8 @@ class FeedCollector extends FeedArchiveReader {
                 contents << createDepotContent(urlPath, mediaType, lang)
             }
             if (link.rel == "enclosure") {
-                assert urlPath.startsWith(entryId)
+                println "enclosure: ${urlPath}"
+                assert urlPath.startsWith(entryId.toString())
                 def slug = urlPath.replaceFirst(entryId, "")
                 enclosures << createDepotContent(urlPath, mediaType, null, slug)
             }
@@ -138,9 +139,7 @@ class FeedCollector extends FeedArchiveReader {
     }
 
     protected SourceContent createDepotContent(urlPath, mediaType, lang, slug=null) {
-        // FIXME: we have ":" url-escaped here. Is this a symptom of a brittle
-        // URI strategy in general?
-        urlPath = urlPath.replace(URLEncoder.encode(":", "utf-8"), ":")
+        urlPath = unescapeColon(urlPath)
         def inStream = new URL(urlPath).openStream()
         return new SourceContent(inStream, mediaType, lang, slug)
     }
