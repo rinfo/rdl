@@ -54,6 +54,7 @@ WHERE {
 
 
     #== By relationship to other doc and date ==
+
     UNION
     {
         ?about a ripub:KonsolideradGrundforfattning;
@@ -61,6 +62,14 @@ WHERE {
             ripub:utfardandedatum ?konsDatum .
             # FIXME: utkomFranTryck? kosolideringsdatum? dc:issued? Någon slags ordinal?
     }
+
+    # FIXME: ok med rattningAv + beslutsdatum?
+    #UNION
+    #{
+    #    ?about a ripub:Rattelseblad;
+    #        ripub:rattningAv ?rattningAv;
+    #        ripub:beslutsdatum ?rattnBeslutsdatum .
+    #}
 
 
     #== By publisher and subPropertyOf rattsdokumentnummer ==

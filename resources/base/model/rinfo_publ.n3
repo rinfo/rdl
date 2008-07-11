@@ -625,6 +625,7 @@
 #---------------------------------------
 
 # TODO: är undertyp av :FSDokument? Se dock rattningAv nedan (kan även ändra t.ex. proppar)
+# FIXME: hur identifiera? :rattningAv + vad? :beslutsdatum?
 :Rattelseblad a owl:Class;
     rdfs:isDefinedBy : ;
     rdfs:label "Rättelseblad"@sv;
