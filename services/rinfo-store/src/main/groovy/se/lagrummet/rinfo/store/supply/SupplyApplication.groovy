@@ -17,7 +17,7 @@ import se.lagrummet.rinfo.store.depot.FileDepot
 
 class SupplyApplication extends Application {
 
-    SupplyApplication(parentContext) {
+    SupplyApplication(Context parentContext) {
         super(parentContext)
         // NOTE: Turn off extensionsTunnel - it removes extensions it can
         // turn into content negotiation metadata. Cool but hard to spot!

@@ -17,7 +17,7 @@ class DepotEntry {
     static final DELETED_FILE_NAME = "DELETED"
 
     protected static NON_ENTRY_DIR_FILTER = {
-            !isEntryDir(it) && !it.hidden
+            !isEntryDir(it.parentFile) && !it.hidden
         } as IOFileFilter
 
     protected static PUBLIC_FILE_FILTER = {

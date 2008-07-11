@@ -106,6 +106,8 @@ class FileDepot {
     //== Feed Related ==
 
     // TODO: set via this or inject configured atomizer?
+    //  - don't set via this, use Spring "compound property names":
+    //      atomizer.feedBatchSize, atomizer.feedSkeleton
 
     int getFeedBatchSize() {
         return atomizer.feedBatchSize
@@ -165,7 +167,7 @@ class FileDepot {
         assert uriPath && uriPath[0] == "/"
         def localUriPath = uriPath.replaceFirst("/", "")
         // FIXME: do a smarter (probably reversable) algorithm!
-        def path = localUriPath.replace(":", "/")
+        def path = localUriPath.replace(":", "/_3A_")
         path = path.split("/").collect { URLEncoder.encode(it) }.join("/")
         return path
     }

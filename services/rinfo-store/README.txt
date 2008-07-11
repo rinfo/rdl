@@ -33,7 +33,7 @@ To put dependencies in classpath, use (see inside for details)::
 
     $ . src/scripts/setclasspath.sh -b
 
-To use a named environment, use (se environments in pom.xml)::
+To use a named environment, use (see environments in pom.xml)::
 
     $ . src/scripts/setclasspath.sh prod
 

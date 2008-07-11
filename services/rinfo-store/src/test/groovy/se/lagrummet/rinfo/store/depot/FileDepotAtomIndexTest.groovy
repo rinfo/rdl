@@ -29,7 +29,7 @@ class FileDepotAtomIndexTest {
 
     @Test
     void shouldGenerateAtomEntry() {
-        def entry = fileDepot.getEntry("/publ/1901:100")
+        def entry = fileDepot.getEntry("/publ/1901/100")
         assertEquals 0, entry.findContents(fileDepot.pathProcessor.
                 hintForMediaType("application/atom+xml;type=entry")).size()
         fileDepot.onEntryModified(entry)

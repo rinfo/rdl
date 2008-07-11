@@ -47,6 +47,12 @@ abstract class FeedArchiveReader {
         return followingUrl
     }
 
+    static String unescapeColon(String uriPath) {
+        // FIXME: we have ":" url-escaped here (via Abdera resolved hrefs).
+        // Is this a symptom of a brittle URI strategy in general?
+        return uriPath.replace(URLEncoder.encode(":", "utf-8"), ":")
+    }
+
     /**
      * @return whether to continue backwards in time or stop.
      */

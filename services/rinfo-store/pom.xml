@@ -116,13 +116,11 @@
       <artifactId>org.restlet.ext.spring</artifactId>
       <version>1.1-SNAPSHOT</version>
     </dependency>
-    <!-- NOTE: at least not yet..
     <dependency>
       <groupId>com.noelios.restlet</groupId>
       <artifactId>com.noelios.restlet.ext.servlet</artifactId>
       <version>1.1-SNAPSHOT</version>
     </dependency>
-    -->
 
     <dependency>
       <groupId>org.openrdf.sesame</groupId>
@@ -295,6 +293,16 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.7</version>
+        <configuration>
+          <scanIntervalSeconds>10</scanIntervalSeconds>
+          <contextPath>/</contextPath>
+        </configuration>
       </plugin>
 
     </plugins>
