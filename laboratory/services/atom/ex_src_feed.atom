@@ -18,6 +18,8 @@
   <link href="/feed/current.atom" rel="self"/>
   <link href="/feed/archive/2007/index.atom" rel="prev-archive"/>
 
+  <link rel="related" href="http://verva.se/publikationer/foreskrifter/"/>
+
   <entry>
     <id>http://rinfo.verva.se/publ/vervafs/2007/2</id>
     <updated>2007-11-19T00:00:00.000Z</updated>
