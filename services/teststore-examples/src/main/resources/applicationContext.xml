@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+    <context:property-placeholder location="classpath:config.properties"/>
+
+    <bean id="fileDepot" class="se.lagrummet.rinfo.store.depot.FileDepot" scope="singleton">
+        <property name="baseUri" value="${rinfo.depot.baseUri}"/>
+        <property name="baseDir" value="${rinfo.depot.fileDir}"/>
+        <property name="feedSkeleton" value="${rinfo.depot.feedSkeleton}"/>
+        <property name="feedPath" value="${rinfo.depot.feedPath}"/>
+    </bean>
+
+</beans>
