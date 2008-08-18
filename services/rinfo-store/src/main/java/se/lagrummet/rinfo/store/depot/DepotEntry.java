@@ -1,0 +1,475 @@
+package se.lagrummet.rinfo.store.depot;
+
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.AbstractFileFilter;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.HiddenFileFilter;
+import org.apache.commons.io.filefilter.NameFileFilter;
+
+import org.apache.abdera.Abdera;
+import org.apache.abdera.model.Content;
+import org.apache.abdera.model.Entry;
+
+
+public class DepotEntry {
+
+    public static final String ENTRY_CONTENT_DIR_NAME = "ENTRY-INFO";
+    public static final String MANIFEST_FILE_NAME = "manifest.xml";
+    public static final Pattern CONTENT_FILE_PATTERN = Pattern.compile(
+            "content(?:-(\\w{2}))?.(\\w+)");
+    public static final String DELETED_FILE_NAME = "DELETED";
+
+    protected static IOFileFilter NON_ENTRY_DIR_FILTER =  new AbstractFileFilter() {
+        public boolean accept(File it) {
+            return !isEntryDir(it.getParentFile()) && !it.isHidden();
+        }
+    };
+
+    protected static FileFilter PUBLIC_FILE_FILTER = new FileFilter() {
+        public boolean accept(File it) {
+            return !it.isHidden() && !it.getName().equals(ENTRY_CONTENT_DIR_NAME);
+        }
+    };
+
+
+    private FileDepot depot;
+    private String entryUriPath;
+
+    protected File entryDir;
+    protected File entryContentDir;
+
+    private Entry manifest;
+
+
+    public DepotEntry(FileDepot depot, File entryDir, String knownUriPath)
+        throws DeletedDepotEntryException {
+        this(depot, entryDir, knownUriPath, true);
+    }
+
+    public DepotEntry(FileDepot depot, File entryDir, String knownUriPath,
+            boolean failOnDeleted) throws DeletedDepotEntryException {
+        this.depot = depot;
+        this.entryDir = entryDir;
+        this.entryUriPath = knownUriPath;
+        entryContentDir = new File(entryDir, ENTRY_CONTENT_DIR_NAME);
+        // TODO: change to only public (safe) factory method
+        if (failOnDeleted && isDeleted()) {
+            throw new DeletedDepotEntryException(this);
+        }
+    }
+
+    public static boolean isEntryDir(File dir) {
+        return new File(dir, ENTRY_CONTENT_DIR_NAME).isDirectory();
+    }
+
+    public FileDepot getDepot() {
+        return depot;
+    }
+
+    public String getEntryUriPath() {
+        if (entryUriPath==null) {
+            try {
+                entryUriPath = computeEntryUriPath();
+            } catch (URISyntaxException e) {
+                throw new RuntimeException("Malformed entry URI.", e);
+            }
+        }
+        return entryUriPath;
+    }
+
+    public URI getId() {
+        try {
+            return getEntryManifest().getId().toURI();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Malformed entry URI.", e);
+        }
+    }
+
+    public Date getPublished() {
+        return getEntryManifest().getPublished();
+    }
+
+    public Date getUpdated() {
+        return getEntryManifest().getUpdated();
+    }
+
+    public boolean isDeleted() {
+        return getDeletedMarkerFile().isFile();
+    }
+
+
+    public static Iterator<DepotEntry> iterateEntries(
+            final FileDepot depot,
+            boolean includeHistorical, final boolean includeDeleted) {
+
+        final Iterator<File> manifestIter = FileUtils.iterateFiles(
+                depot.getBaseDir(),
+                new NameFileFilter(MANIFEST_FILE_NAME),
+                HiddenFileFilter.VISIBLE
+            );
+        /* TODO:
+        if (!includeHistorical) {
+            dirFilter in manifestIter must be (as the first "if" below does)
+                file.parentFile.name != ENTRY_CONTENT_DIR_NAME
+            if we use ENTRY_CONTENT_DIR_NAME in history entries.
+            And if we don't, we must change the "first if below" to ever
+            fulfil includeHistorical.. See also rollOffToHistory.
+        }
+        */
+
+        return new Iterator<DepotEntry>() {
+
+            public boolean hasNext() { return manifestIter.hasNext(); }
+
+            public DepotEntry next() {
+                while (manifestIter.hasNext()) {
+                    File contentDir = manifestIter.next().getParentFile();
+                    if (!contentDir.getName().equals(ENTRY_CONTENT_DIR_NAME)) {
+                        continue;
+                    }
+                    DepotEntry depotEntry;
+                    try {
+                        depotEntry = new DepotEntry(
+                            depot, contentDir.getParentFile(), null, false);
+                    } catch (DeletedDepotEntryException e) {
+                        continue; // TODO: clean up, cannot happen with fail = false
+                    }
+                    if (!includeDeleted && depotEntry.isDeleted()) {
+                        continue;
+                    }
+                    return depotEntry;
+                }
+                throw new NoSuchElementException();
+            }
+
+            public void remove() { throw new UnsupportedOperationException(); }
+        };
+    }
+
+
+    public List<DepotContent> findContents() {
+        return findContents(null, null);
+    }
+
+    public List<DepotContent> findContents(String forMediaType) {
+        return findContents(forMediaType, null);
+    }
+
+    public List<DepotContent> findContents(String forMediaType, String forLang) {
+        List<DepotContent> found = new ArrayList<DepotContent>();
+        // TODO: if both qualifiers given, get file with newContentFile?
+        for (File file : entryContentDir.listFiles()) {
+            Matcher match = CONTENT_FILE_PATTERN.matcher(file.getName());
+            if (!match.matches()) {
+                continue;
+            }
+            String mediaHint = match.group(2);
+            String mediaType = depot.getPathProcessor().mediaTypeForHint(mediaHint);
+            if (forMediaType!=null && !mediaType.equals(forMediaType)) {
+                continue;
+            }
+            String lang = match.group(1);
+            if ("".equals(lang)) lang = null;
+            if (forLang!=null && !forLang.equals(lang)) {
+                continue;
+            }
+            // TODO: we now decouple suffix and hint logic:
+            //  .. although this reintroduces map->remap->back-to-map..!
+            //  .. and mediaHint *is* very concise.
+            //  - receiving forMediaType in findContents
+            //  - calling depot.mediaTypeForSuffix that forwards to mediaTypeForHint..
+            //  .. could allow mediaHint to be collection-dependent in pathProcessor..
+            String uriPath = depot.getPathProcessor().makeNegotiatedUriPath(
+                    getEntryUriPath(), mediaType, lang);
+            found.add(new DepotContent(file, uriPath, mediaType, lang));
+        }
+        return found;
+    }
+
+    public List<DepotContent> findEnclosures() {
+        List<DepotContent> enclosures = new ArrayList<DepotContent>();
+        for (File file : entryDir.listFiles(PUBLIC_FILE_FILTER)) {
+            if (file.isFile()) {
+                enclosures.add( enclosedDepotContent(file) );
+            } else if (file.isDirectory()) {
+                for (File subfile : ((Collection<File>)FileUtils.listFiles(file,
+                        HiddenFileFilter.VISIBLE,
+                        NON_ENTRY_DIR_FILTER))) {
+                    enclosures.add( enclosedDepotContent(subfile) );
+                }
+            }
+        }
+        return enclosures;
+    }
+
+    public String toEnclosedUriPath(File file) {
+        // TODO: depot.toUriPath(file .. or relativeFilePath..)
+        String fileUriPath = file.toURI().toString();
+        String entryDirUriPath = entryDir.toURI().toString();
+        assert fileUriPath.startsWith(entryDirUriPath);
+        String pathRemainder = fileUriPath.replaceFirst(entryDirUriPath, "");
+        String uriPath = getEntryUriPath() + "/" + pathRemainder;
+        return uriPath;
+    }
+
+    protected DepotContent enclosedDepotContent(File file) {
+        String uriPath = toEnclosedUriPath(file);
+        String mediaType = depot.computeMediaType(file);
+        return new DepotContent(file, uriPath, mediaType);
+    }
+
+    /**
+     * The last system modification timestamp of this entry.
+     */
+    public long lastModified() {
+        return getManifestFile().lastModified();
+    }
+
+    public String getContentMediaType() {
+        return getEntryManifest().getContentMimeType().toString();
+    }
+
+    public String getContentLanguage() {
+        Content contentElem = getEntryManifest().getContentElement();
+        if (contentElem == null || contentElem.getLanguage() == null) {
+            return null;
+        }
+        return contentElem.getLanguage().toString();
+    }
+
+    protected String computeEntryUriPath() throws URISyntaxException {
+        URI uri = getId();
+        assert depot.withinBaseUri(uri);
+        return uri.getPath();
+    }
+
+    protected Entry getEntryManifest() {
+        if (manifest==null) {
+            try {
+                manifest = (Entry) Abdera.getInstance().getParser().parse(
+                        new FileInputStream(getManifestFile())).getRoot();
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("Missing manifest file.", e);
+            }
+        }
+        return manifest;
+    }
+
+    protected File getManifestFile() {
+        return new File(entryContentDir, MANIFEST_FILE_NAME);
+    }
+
+    protected File getDeletedMarkerFile() {
+        return new File(entryContentDir, DELETED_FILE_NAME);
+    }
+
+
+    //==== TODO: above in DepotEntryView base class? ====
+
+    public void create(Date createTime, List<SourceContent> sourceContents)
+            throws DuplicateDepotEntryException,
+                   FileNotFoundException, IOException {
+        create(createTime, sourceContents, null);
+    }
+
+    public void create(Date createTime, List<SourceContent> sourceContents,
+            List<SourceContent> sourceEnclosures)
+            throws DuplicateDepotEntryException,
+                   FileNotFoundException, IOException {
+        if(entryContentDir.exists()) {
+            throw new DuplicateDepotEntryException(this);
+        }
+        entryContentDir.mkdir();
+
+        Entry manifest = Abdera.getInstance().newEntry();
+        // TODO: unify with rest of getId/entryPath stuff!
+        manifest.setId(depot.getBaseUri().resolve(getEntryUriPath()).toString());
+        manifest.setPublished(createTime);
+        manifest.setUpdated(createTime);
+
+        setPrimaryContent(manifest, sourceContents);
+        manifest.writeTo(new FileOutputStream(getManifestFile()));
+
+        for (SourceContent content : sourceContents) {
+            addContent(content);
+        }
+        if (sourceEnclosures!=null) {
+            for (SourceContent encl : sourceEnclosures) {
+                addEnclosure(encl);
+            }
+        }
+        depot.onEntryModified(this);
+    }
+
+    public void update(Date updateTime,
+            List<SourceContent> sourceContents)
+            throws IOException, FileNotFoundException {
+        update(updateTime, sourceContents, null);
+    }
+
+    public void update(Date updateTime,
+            List<SourceContent> sourceContents,
+            List<SourceContent> sourceEnclosures)
+            throws FileNotFoundException, IOException {
+
+        rollOffToHistory();
+
+        if (sourceContents!=null) {
+            for (SourceContent content : sourceContents) {
+                addContent(content, true);
+            }
+        }
+        if (sourceEnclosures!=null) {
+            for (SourceContent encl : sourceEnclosures) {
+                addEnclosure(encl, true);
+            }
+        }
+
+        Entry manifest = getEntryManifest();
+        manifest.setUpdated(updateTime);
+        setPrimaryContent(manifest, sourceContents);
+        manifest.writeTo(new FileOutputStream(getManifestFile()));
+        depot.onEntryModified(this);
+    }
+
+    public void delete(Date deleteTime)
+            throws DeletedDepotEntryException, IOException, FileNotFoundException {
+        if (isDeleted()) {
+            throw new DeletedDepotEntryException(this);
+        }
+        getDeletedMarkerFile().createNewFile();
+        Entry manifest = getEntryManifest();
+        manifest.setUpdated(deleteTime);
+
+        // TODO: wipe content and enclosures
+        // - but keep generated content.entry? (how to know that?)
+        // .. (opt. move away..?)
+        rollOffToHistory();
+
+        manifest.writeTo(new FileOutputStream(getManifestFile()));
+        depot.onEntryModified(this);
+        // TODO: opt. mark "410 Gone" for enclosures?
+    }
+
+    // TODO: resurrect(...) (clears deleted state + (partial) create)
+
+    public void addContent(SourceContent srcContent) throws IOException {
+        addContent(srcContent, false);
+    }
+
+    public void addContent(SourceContent srcContent, boolean replace)
+            throws IOException {
+        File file = newContentFile(srcContent.getMediaType(), srcContent.getLang());
+        if (!replace) {
+            assert !file.exists();
+        }
+        srcContent.writeTo(file);
+    }
+
+    public File newContentFile(String mediaType) {
+        return newContentFile(mediaType, null);
+    }
+
+    public File newContentFile(String mediaType, String lang) {
+        String filename = "content";
+        if (lang!=null) {
+            filename += "-" + lang;
+        }
+        String suffix = depot.getPathProcessor().hintForMediaType(
+                mediaType);
+        assert suffix != null; // TODO: throw UnknownMediaTypeException?
+        filename += "." + suffix;
+        return new File(entryContentDir, filename);
+    }
+
+    public void addEnclosure(SourceContent srcContent) throws IOException {
+        addEnclosure(srcContent, false);
+    }
+
+    public void addEnclosure(SourceContent srcContent, boolean replace) 
+            throws IOException {
+        String enclUriPath = srcContent.getEnclosedUriPath();
+        if (enclUriPath.startsWith("/")) {
+            assert enclUriPath.startsWith(entryUriPath);
+        } else {
+            String sep = entryUriPath.endsWith("/") ? "" : "/";
+            enclUriPath = entryUriPath + sep + enclUriPath;
+        }
+        String enclPath = enclUriPath.replaceFirst(entryUriPath, "");
+        File file = new File(entryDir, enclPath);
+        if (!replace) {
+            assert !file.exists();
+        }
+        File enclDir = file.getParentFile();
+        if (!enclDir.exists()) {
+            FileUtils.forceMkdir(enclDir);
+        }
+        srcContent.writeTo(file);
+    }
+
+    protected void setPrimaryContent(Entry manifest,
+            List<SourceContent> sourceContents) {
+        if (sourceContents != null && sourceContents.size() > 0) {
+            SourceContent content = sourceContents.get(0);
+            manifest.setContent(((String)null), content.getMediaType());
+            if (content.getLang()!=null && !content.getLang().equals("")) {
+                manifest.getContentElement().setLanguage(content.getLang());
+            }
+        }
+    }
+
+    protected void rollOffToHistory()
+            throws IOException {
+        // NOTE: this means existing content not in the update is removed.
+        //      - *including enclosures*
+        File historyDir = newHistoryDir();
+        // TODO: there should be an entryContentDir as well if enclosures are
+        // to be located and work as normal... (but see iterateEntries!)
+
+        FileUtils.copyFileToDirectory(getManifestFile(), historyDir, true);
+
+        for (DepotContent content : findContents()) {
+            FileUtils.moveToDirectory(content.getFile(), historyDir, false);
+        }
+        for (File file : entryDir.listFiles(PUBLIC_FILE_FILTER)) {
+            if (file.isDirectory() && containsSubEntry(file)) {
+                // TODO: This doesn't roll of *any* path leading to a
+                // sub-entry! Is that ok? I believe so (alt. is forking..)..
+                // .. although an entry can then "shadow" old enclosures..
+                // .. We could assert "clean path" in create?
+                continue;
+            }
+            FileUtils.moveToDirectory(file, historyDir, false);
+        }
+
+    }
+
+    protected boolean containsSubEntry(File dir) {
+        boolean foundSubEntry = false;
+        for (File child : dir.listFiles(PUBLIC_FILE_FILTER)) {
+            if (foundSubEntry || isEntryDir(child)) {
+                return true;
+            } else if (child.isDirectory()) {
+                foundSubEntry = containsSubEntry(child);
+            }
+        }
+        return foundSubEntry;
+    }
+
+    protected File newHistoryDir()
+            throws IOException {
+        String dirPath = DatePathUtil.toEntryHistoryPath(getUpdated());
+        File dir = new File(entryContentDir, dirPath);
+        assert !dir.exists() && !dir.isDirectory();
+        FileUtils.forceMkdir(dir);
+        return dir;
+    }
+
+}
