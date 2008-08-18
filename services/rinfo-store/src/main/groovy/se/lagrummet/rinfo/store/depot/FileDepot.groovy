@@ -17,6 +17,7 @@ class FileDepot {
 
     // TODO: configure via metadata.. (IoC? Data in baseDir?)
     private UriPathProcessor pathProcessor = new UriPathProcessor()
+    public UriPathProcessor getPathProcessor() { return pathProcessor; }
 
     FileDepot() {
         this.atomizer = new Atomizer(this)

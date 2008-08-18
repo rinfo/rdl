@@ -17,7 +17,7 @@ class FileDepotAtomIndexTest {
         depotSrc = new File("src/test/resources/exampledepot/storage")
         tempDepotDir = TempDirUtil.createTempDir(depotSrc)
         fileDepot = new FileDepot(new URI("http://example.org"),
-                new File(tempDepotDir, depotSrc.name), "feed")
+                new File(tempDepotDir, depotSrc.name), "/feed")
         fileDepot.feedBatchSize = 2
     }
 

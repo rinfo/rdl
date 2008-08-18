@@ -221,7 +221,11 @@ class Atomizer {
 
     //== Entry Specifics ==
 
-    Entry generateAtomEntryContent(DepotEntry depotEntry, boolean force=true) {
+    Entry generateAtomEntryContent(DepotEntry depotEntry) {
+        return generateAtomEntryContent(depotEntry, true);
+    }
+
+    Entry generateAtomEntryContent(DepotEntry depotEntry, boolean force) {
         def entryFile = depotEntry.newContentFile(ATOM_ENTRY_MEDIA_TYPE)
         if (!force &&
             entryFile.isFile() &&
@@ -375,7 +379,7 @@ class DepotEntryBatch extends AbstractCollection<DepotEntry> {
 
 }
 
-protected class EntryRef {
+class EntryRef {
     EntryRef(DepotEntry depotEntry) {
         this.uriPath = depotEntry.entryUriPath
         this.date = depotEntry.updated

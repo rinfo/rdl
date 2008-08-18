@@ -128,8 +128,14 @@ class RDFUtil {
 
     static Repository replaceURI(Repository repo,
             java.net.URI oldUri,
+            java.net.URI newUri) {
+        return replaceURI(repo, oldUri, newUri, false)
+    }
+
+    static Repository replaceURI(Repository repo,
+            java.net.URI oldUri,
             java.net.URI newUri,
-            replacePredicates=false) {
+            replacePredicates) {
         def vf = repo.valueFactory
         return replaceURI(repo,
                 vf.createURI(oldUri.toString()),
@@ -138,8 +144,14 @@ class RDFUtil {
     }
 
     static Repository replaceURI(Repository repo,
+            URI oldUri,
+            URI newUri) {
+        return replaceURI(repo, oldUri, newUri, false)
+    }
+
+    static Repository replaceURI(Repository repo,
             URI oldUri, URI newUri,
-            replacePredicates=false) {
+            replacePredicates) {
 
         def repoConn = repo.connection
         def newRepo = createMemoryRepository()

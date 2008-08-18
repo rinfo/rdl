@@ -1,5 +1,6 @@
 package se.lagrummet.rinfo.store.supply
 
+import org.restlet.Context
 import org.restlet.Finder
 import org.restlet.Handler
 import org.restlet.data.Language
@@ -20,7 +21,7 @@ class DepotFinder extends Finder {
     FileDepot fileDepot
 
     DepotFinder() { super() }
-    DepotFinder(context) { super(context) }
+    DepotFinder(Context context) { super(context) }
 
     @Override
     Handler findTarget(Request request, Response response) {

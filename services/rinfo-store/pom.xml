@@ -241,7 +241,7 @@
     <dependency>
       <groupId>org.codehaus.groovy.maven.runtime</groupId>
       <artifactId>gmaven-runtime-default</artifactId>
-      <version>1.0-rc-1</version>
+      <version>1.0-rc-3</version>
     </dependency>
 
   </dependencies>
@@ -283,10 +283,7 @@
         <executions>
           <execution>
             <goals>
-              <!-- TODO: generateStubs seems to have dependency issues..
-                          - needed for.. cross-compile, javadoc, ...
               <goal>generateStubs</goal>
-              -->
               <goal>compile</goal>
               <goal>generateTestStubs</goal>
               <goal>testCompile</goal>
