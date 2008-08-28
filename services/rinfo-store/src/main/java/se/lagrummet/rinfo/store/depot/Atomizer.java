@@ -77,7 +77,7 @@ public class Atomizer {
 
     private Feed skeletonFeed;
     void setFeedSkeleton(String feedSkeleton) throws FileNotFoundException {
-        if (feedSkeleton!=null) {
+        if (feedSkeleton!=null && !feedSkeleton.equals("")) {
             skeletonFeed = (Feed) Abdera.getInstance().getParser().parse(
                     new FileInputStream(feedSkeleton)).getRoot();
         }
@@ -88,7 +88,7 @@ public class Atomizer {
         if (!feedDir.exists()) {
             feedDir.mkdir();
         }
-        Collection<DepotEntry>  entryBatch = makeEntryBatch();
+        Collection<DepotEntry> entryBatch = makeEntryBatch();
 
         for (Iterator<DepotEntry> iter = depot.iterateEntries(
                 includeHistorical, includeDeleted); iter.hasNext(); ) {
@@ -129,8 +129,12 @@ public class Atomizer {
 
             Date nextDate = depotEntry.getUpdated();
             if (currentDate != null) {
-                assert nextDate.compareTo(currentDate) > 0;
-                // TODO: ChronologyViolationException? or ever re-index..?
+                if (nextDate.compareTo(currentDate) < 0) {
+                    throw new DepotIndexException(
+                            "New entry to index must be younger than previous." +
+                            " Entry with id <"+depotEntry.getId()+"> was updated at ["
+                            +nextDate+"], previous entry at ["+currentDate+"].");
+                }
             }
             currentDate = nextDate;
 

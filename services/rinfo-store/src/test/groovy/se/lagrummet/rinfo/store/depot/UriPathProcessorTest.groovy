@@ -82,7 +82,7 @@ class UriPathProcessorTest extends GroovyTestCase {
                 try {
                     pathProcessor.makeNegotiatedUriPath(path, mtype, lang)
                     fail()
-                } catch (AssertionError e) {
+                } catch (UnknownMediaTypeException e) {
                     // ok
                 }
             }

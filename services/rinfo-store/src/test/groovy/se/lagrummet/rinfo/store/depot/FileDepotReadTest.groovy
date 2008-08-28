@@ -70,4 +70,23 @@ class FileDepotReadTest extends GroovyTestCase {
         // TODO: historical: fileDepot.iterateEntries(true, false)
     }
 
+
+    // negative tests
+
+    void testShouldDisallowUrisNotWithinBaseUri() {
+        shouldFail(DepotUriException) {
+            def entry = fileDepot.getEntry(
+                    new URI("http://example.com/some/path"))
+        }
+    }
+
+    void testShouldDisallowNonAbsoluteOrFullUriPaths() {
+        shouldFail(DepotUriException) {
+            def entry = fileDepot.getEntry("http://example.com/some/path")
+        }
+        shouldFail(DepotUriException) {
+            def entry = fileDepot.getEntry("http://example.org/some/path")
+        }
+    }
+
 }

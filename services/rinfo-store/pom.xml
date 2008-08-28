@@ -217,13 +217,12 @@
         <artifactId>xercesImpl</artifactId>
         <version>2.8.1</version>
     </dependency>
-    <!-- NOTE: latest doesn't seem to be needed (but try in both Java 1.5 + 16)..
+    <!-- NOTE: seems to be needed (at least with Java 1.5 on OS X 10.5).. -->
     <dependency>
         <groupId>xml-apis</groupId>
         <artifactId>xml-apis</artifactId>
         <version>1.3.04</version>
     </dependency>
-    -->
     <dependency>
       <groupId>xalan</groupId>
       <artifactId>xalan</artifactId>

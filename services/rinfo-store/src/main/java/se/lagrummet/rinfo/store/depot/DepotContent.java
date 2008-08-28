@@ -37,10 +37,12 @@ public class DepotContent {
     }
 
     public String toString() {
-        return "DepotContent(file:"+file.toString() +
-                ", depotUriPath:"+depotUriPath +
+        return "DepotContent(" +
+                "depotUriPath:"+depotUriPath +
                 ", mediaType:"+mediaType +
-                ", lang:"+lang+")";
+                ", lang:"+lang +
+                ", file:"+file.toString() +
+                ")";
     }
 
 }

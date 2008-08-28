@@ -12,8 +12,8 @@ import org.openrdf.rio.RDFFormat
 import org.openrdf.sail.memory.MemoryStore
 import org.openrdf.sail.nativerdf.NativeStore
 
-import se.lagrummet.rinfo.util.atom.FeedArchiveReader
-import se.lagrummet.rinfo.util.rdf.RDFUtil
+import se.lagrummet.rinfo.base.atom.FeedArchiveReader
+import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 
 class SesameFeeder extends FeedArchiveReader {

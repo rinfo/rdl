@@ -74,11 +74,21 @@ public class UriPathProcessor {
     }
 
     public String mediaTypeForHint(String mediaHint) {
-        return namedMediaTypes.get(mediaHint);
+        String mediaType = namedMediaTypes.get(mediaHint);
+        if (mediaType == null) {
+            throw new UnknownMediaTypeException(
+                    "Found no media type for unknown media hint: "+mediaHint);
+        }
+        return mediaType;
     }
 
     public String hintForMediaType(String mediaType) {
-        return mediaTypeHints.get(mediaType);
+        String mediaHint = mediaTypeHints.get(mediaType);
+        if (mediaHint == null) {
+            throw new UnknownMediaTypeException(
+                    "Found no media hint for unknown media type: "+mediaType);
+        }
+        return mediaHint;
     }
 
     public String makeNegotiatedUriPath(String entryUriPath, String mediaType) {
@@ -89,7 +99,6 @@ public class UriPathProcessor {
     public String makeNegotiatedUriPath(String entryUriPath, String mediaType,
             String lang) {
         String mediaHint = hintForMediaType(mediaType);
-        assert mediaHint != null && mediaType != null;
         String uri = entryUriPath+"/"+mediaHint;
         if (lang!=null && !lang.equals("")) {
             uri += ","+lang;

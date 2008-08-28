@@ -1,4 +1,4 @@
-package se.lagrummet.rinfo.util.rdf
+package se.lagrummet.rinfo.base.rdf
 
 import org.openrdf.repository.Repository
 import org.openrdf.repository.RepositoryConnection
@@ -11,6 +11,7 @@ import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.vocabulary.RDFS
 
 import org.junit.Test
+import static org.junit.Assert.*
 
 
 class RDFUtilTest {
@@ -34,8 +35,8 @@ class RDFUtilTest {
         def newRepo = RDFUtil.replaceURI(repo, oldURI, newURI)
         def newRepoConn = newRepo.connection
 
-        assert newRepoConn.hasStatement(newURI, RDF.TYPE, RDFS.RESOURCE, false)
-        assert newRepoConn.hasStatement(newURI, RDFS.SEEALSO, newSubURI, false)
+        assertTrue newRepoConn.hasStatement(newURI, RDF.TYPE, RDFS.RESOURCE, false)
+        assertTrue newRepoConn.hasStatement(newURI, RDFS.SEEALSO, newSubURI, false)
     }
 
 }

@@ -213,7 +213,12 @@ public class DepotEntry {
         // TODO: depot.toUriPath(file .. or relativeFilePath..)
         String fileUriPath = file.toURI().toString();
         String entryDirUriPath = entryDir.toURI().toString();
-        assert fileUriPath.startsWith(entryDirUriPath);
+        if (!fileUriPath.startsWith(entryDirUriPath)) {
+            throw new DepotUriException(
+                    "Enclosed file <"+fileUriPath +
+                    "> is not within depot entry at dir <"+entryDirUriPath +
+                    ">.");
+        }
         String pathRemainder = fileUriPath.replaceFirst(entryDirUriPath, "");
         String uriPath = getEntryUriPath() + "/" + pathRemainder;
         return uriPath;
@@ -246,7 +251,7 @@ public class DepotEntry {
 
     protected String computeEntryUriPath() throws URISyntaxException {
         URI uri = getId();
-        assert depot.withinBaseUri(uri);
+        depot.assertWithinBaseUri(uri);
         return uri.getPath();
     }
 
@@ -368,7 +373,9 @@ public class DepotEntry {
             throws IOException {
         File file = newContentFile(srcContent.getMediaType(), srcContent.getLang());
         if (!replace) {
-            assert !file.exists();
+            if (file.exists()) {
+                throwDuplicateDepotContentException(srcContent);
+            }
         }
         srcContent.writeTo(file);
     }
@@ -382,9 +389,7 @@ public class DepotEntry {
         if (lang!=null) {
             filename += "-" + lang;
         }
-        String suffix = depot.getPathProcessor().hintForMediaType(
-                mediaType);
-        assert suffix != null; // TODO: throw UnknownMediaTypeException?
+        String suffix = depot.getPathProcessor().hintForMediaType(mediaType);
         filename += "." + suffix;
         return new File(entryContentDir, filename);
     }
@@ -393,11 +398,15 @@ public class DepotEntry {
         addEnclosure(srcContent, false);
     }
 
-    public void addEnclosure(SourceContent srcContent, boolean replace) 
+    public void addEnclosure(SourceContent srcContent, boolean replace)
             throws IOException {
         String enclUriPath = srcContent.getEnclosedUriPath();
         if (enclUriPath.startsWith("/")) {
-            assert enclUriPath.startsWith(entryUriPath);
+            if (!enclUriPath.startsWith(entryUriPath)) {
+                throw new DepotUriException(
+                        "Enclosure <"+enclUriPath +
+                        "> is not within depot entry <"+entryUriPath+">.");
+            }
         } else {
             String sep = entryUriPath.endsWith("/") ? "" : "/";
             enclUriPath = entryUriPath + sep + enclUriPath;
@@ -405,7 +414,9 @@ public class DepotEntry {
         String enclPath = enclUriPath.replaceFirst(entryUriPath, "");
         File file = new File(entryDir, enclPath);
         if (!replace) {
-            assert !file.exists();
+            if (file.exists()) {
+                throwDuplicateDepotContentException(srcContent);
+            }
         }
         File enclDir = file.getParentFile();
         if (!enclDir.exists()) {
@@ -467,9 +478,19 @@ public class DepotEntry {
             throws IOException {
         String dirPath = DatePathUtil.toEntryHistoryPath(getUpdated());
         File dir = new File(entryContentDir, dirPath);
-        assert !dir.exists() && !dir.isDirectory();
+        if (dir.exists()) {
+            throw new DepotIndexException(
+                    "Cannot create history for depot entry <"+this.getId() +
+                    "> at date ["+getUpdated()+"]. File <"+dir+"> is in the way!"
+                );
+        }
         FileUtils.forceMkdir(dir);
         return dir;
+    }
+
+    protected void throwDuplicateDepotContentException(SourceContent srcContent) {
+        throw new DuplicateDepotContentException(
+                this, srcContent.getMediaType(), srcContent.getLang());
     }
 
 }

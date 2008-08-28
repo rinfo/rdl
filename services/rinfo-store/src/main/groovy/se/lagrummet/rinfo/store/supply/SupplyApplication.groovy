@@ -47,7 +47,7 @@ class SupplyApplication extends Application {
         new Component().with {
             servers.add(Protocol.HTTP, port)
             defaultHost.attach(
-                    new SupplyApplication(context))
+                    new SupplyApplication(context.createChildContext()))
             start()
         }
     }

@@ -21,9 +21,10 @@ MVN_DEPS=$(cat classpath.txt)
 # We need groovy runtime in front for groovysh to work:
 GROOVY_JARS=$(for jar in $(ls $GROOVY_HOME/lib/*.jar); do echo -n "$jar:"; done)
 # Add resources and groovy src:
-EXTRAS=src/main/resources:src/main/groovy:src/test/resources:src/test/groovy
-#EXTRAS=target/classes/
+#LOCAL=src/main/resources:src/main/groovy:src/test/resources:src/test/groovy
+LOCAL=src/main/resources:target/classes:src/test/resources:src/test/groovy
 
 # Then define classpath, including main sources and resources:
-export CLASSPATH=$GROOVY_JARS:$EXTRAS:$MVN_DEPS:$ENV_DIR
+export CLASSPATH=$GROOVY_JARS:$LOCAL:$MVN_DEPS:$ENV_DIR
+#export CLASSPATH=$MVN_DEPS:$ENV_DIR:$LOCAL
 

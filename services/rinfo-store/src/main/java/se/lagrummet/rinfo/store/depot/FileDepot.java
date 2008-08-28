@@ -17,20 +17,11 @@ public class FileDepot {
     private final Logger logger = LoggerFactory.getLogger(FileDepot.class);
 
     private URI baseUri;
-    public URI getBaseUri() { return baseUri; }
-
     private File baseDir;
-    public File getBaseDir() { return baseDir; }
-
     private String feedPath;
-    public String getFeedPath() { return feedPath; }
-
     private Atomizer atomizer;
-    public Atomizer getAtomizer() { return atomizer; }
-
     // TODO: configure via metadata.. (IoC? Data in baseDir?)
     private UriPathProcessor pathProcessor = new UriPathProcessor();
-    public UriPathProcessor getPathProcessor() { return pathProcessor; }
 
     public FileDepot() {
         this.atomizer = new Atomizer(this);
@@ -48,6 +39,14 @@ public class FileDepot {
         this.feedPath = feedPath;
     }
 
+    public URI getBaseUri() { return baseUri; }
+
+    public void setBaseUri(URI baseUri) {
+        this.baseUri = baseUri;
+    }
+
+    public File getBaseDir() { return baseDir; }
+
     public void setBaseDir(File baseDir) throws ConfigurationException {
         this.baseDir = baseDir;
         if (!baseDir.isDirectory()) {
@@ -56,23 +55,33 @@ public class FileDepot {
         }
     }
 
+    public String getFeedPath() { return feedPath; }
+
+    public void setFeedPath(String feedPath) {
+        this.feedPath = feedPath;
+    }
+
+    public Atomizer getAtomizer() { return atomizer; }
+
+    public UriPathProcessor getPathProcessor() { return pathProcessor; }
+
 
     //== Entry and Content Lookups ==
 
     public List<DepotContent> find(String uriPath) throws DeletedDepotEntryException {
         List results = new ArrayList();
 
-        ParsedPath parsed = pathProcessor.parseUriPath(uriPath);
-        if (parsed==null || parsed.equals("")) {
-            return null;
-        }
-
-        if (parsed.getCollection().equals(feedPath)) {
+        if (uriPath.startsWith(feedPath)) {
             DepotContent feed = getFeedContent(uriPath);
             if (feed==null) {
                 return null;
             }
             return Arrays.asList(feed);
+        }
+
+        ParsedPath parsed = pathProcessor.parseUriPath(uriPath);
+        if (parsed==null || parsed.equals("")) {
+            return null;
         }
 
         DepotEntry depotEntry = getEntry(parsed.getDepotUriPath());
@@ -109,7 +118,7 @@ public class FileDepot {
 
     public DepotEntry getEntry(URI entryUri, boolean mustExist)
             throws DeletedDepotEntryException {
-        assert withinBaseUri(entryUri); // TODO: UriNotWithinDepotException?
+        assertWithinBaseUri(entryUri);
         return getEntry(entryUri.getPath(), mustExist);
     }
 
@@ -182,13 +191,24 @@ public class FileDepot {
                 uri.getPort() == baseUri.getPort();
     }
 
+    void assertWithinBaseUri(URI uri) {
+        if (!withinBaseUri(uri)) {
+            throw new DepotUriException(
+                    "The URI <"+uri+"> is not within <"+baseUri+">.");
+        }
+    }
+
     // FIXME: Knows *very* little! Configurable?
     public String computeMediaType(File file) {
         String mtype = URLConnection.getFileNameMap().getContentTypeFor(file.getName());
         // TODO: this is too simple. Unify or only via some fileExtensionUtil..
         if (mtype==null) {
             String[] dotSplit = file.getName().split("\\.");
-            mtype = pathProcessor.mediaTypeForHint( dotSplit[dotSplit.length-1] );
+            try {
+                mtype = pathProcessor.mediaTypeForHint( dotSplit[dotSplit.length-1] );
+            } catch (UnknownMediaTypeException e) {
+                ; // pass
+            }
         }
         return mtype;
     }
@@ -198,10 +218,13 @@ public class FileDepot {
     }
 
     protected String toFilePath(String uriPath) {
-        assert uriPath!=null && uriPath.startsWith("/"):
-                "Malformed uriPath: " + uriPath;
+        if (!uriPath.startsWith("/")) {
+            throw new DepotUriException(
+                    "URI path must be absolute and not full. Was: " + uriPath);
+        }
 
         String localUriPath = uriPath.replaceFirst("/", "");
+
         // FIXME: do a smarter (probably reversable) algorithm!
         String path = localUriPath.replace(":", "/_3A_");
 
@@ -215,7 +238,7 @@ public class FileDepot {
     }
 
     protected String toFilePath(URI uri) {
-        assert withinBaseUri(uri); // TODO: UriNotWithinDepotException?
+        assertWithinBaseUri(uri);
         return toFilePath(uri.getPath());
     }
 
@@ -233,7 +256,7 @@ public class FileDepot {
             List<SourceContent> enclosures)
             throws IOException,
                    DeletedDepotEntryException, DuplicateDepotEntryException {
-        assert withinBaseUri(entryUri);
+        assertWithinBaseUri(entryUri);
         String uriPath = entryUri.getPath();
         File entryDir = getEntryDir(uriPath);
         FileUtils.forceMkdir(entryDir);

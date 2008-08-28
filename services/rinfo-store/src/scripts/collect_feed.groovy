@@ -14,8 +14,8 @@ import se.lagrummet.rinfo.store.depot.SourceContent
 
 import se.lagrummet.rinfo.base.URIMinter
 
-import se.lagrummet.rinfo.util.rdf.RDFUtil
-import se.lagrummet.rinfo.util.atom.FeedArchiveReader
+import se.lagrummet.rinfo.base.rdf.RDFUtil
+import se.lagrummet.rinfo.base.atom.FeedArchiveReader
 
 /* TODO:
 

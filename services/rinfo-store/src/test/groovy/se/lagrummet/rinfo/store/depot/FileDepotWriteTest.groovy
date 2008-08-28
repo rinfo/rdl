@@ -98,7 +98,7 @@ class FileDepotWriteTest {
     }
 
 
-    @Test(expected=AssertionError)
+    @Test(expected=DepotUriException)
     void shouldFailOnEnclosureOutOfPath() {
         def BAD_ENCL_1 = new URI("http://example.org/publ/ERROR/encl_1")
         def invalidEnclPath = "/publ/OTHER/path/icon.png"
