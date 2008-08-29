@@ -1,0 +1,25 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX rinfo: <http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#>
+
+
+SELECT DISTINCT ?doc ?title ?type_label ?nr ?fs
+WHERE {
+    ?doc dc:title ?title .
+    ?doc a ?type .
+    ?type rdfs:label ?type_label .
+    ?doc ?property ?object .
+
+    OPTIONAL { ?doc rinfo:fsNummer ?nr . }
+    OPTIONAL {
+        ?doc rinfo:forfattningssamling ?fsid.
+        ?fsid rdfs:label ?fs .
+    }
+}
+ORDER BY ?nr
+LIMIT 20 OFFSET 0
+
