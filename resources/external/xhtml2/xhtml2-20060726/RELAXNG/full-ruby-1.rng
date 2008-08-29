@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:x="http://www.w3.org/1999/xhtml">
+
+  <x:h1>Ruby Module in RELAX NG for full ruby markup</x:h1>
+
+  <x:pre>
+    Copyright &#xA9;2003 W3C&#xAE; (MIT, ERCIM, Keio), All Rights Reserved.
+
+      Editor:   Masayasu Ishikawa &lt;mimasa@w3.org&gt;
+      Revision: $Id: full-ruby-1.rng,v 1.4 2003/04/30 06:50:03 mimasa Exp $
+  </x:pre>
+
+  <include href="ruby-1.rng"/>
+
+  <define name="Ruby.content" combine="choice">
+    <x:p>Allow complex ruby markup in addition to simple ruby markup</x:p>
+    <ref name="Ruby.content.complex"/>
+  </define>
+
+</grammar>

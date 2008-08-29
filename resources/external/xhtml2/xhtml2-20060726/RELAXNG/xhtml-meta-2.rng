@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:x="http://www.w3.org/1999/xhtml">
+
+  <x:h1>Metainformation Module</x:h1>
+
+  <div>
+    <x:h2>The link element</x:h2>
+
+    <define name="link">
+      <element name="link">
+        <ref name="link.attlist"/>
+        <zeroOrMore>
+          <choice>
+            <ref name="link"/>
+            <ref name="meta"/>
+          </choice>
+        </zeroOrMore>
+      </element>
+    </define>
+
+    <define name="link.attlist">
+      <ref name="Common.attrib"/>
+    </define>
+  </div>
+
+  <define name="head.misc" combine="choice">
+    <ref name="link"/>
+  </define>
+
+  <define name="Misc.class" combine="choice">
+    <ref name="link"/>
+  </define>
+
+  <div>
+    <x:h2>The meta element</x:h2>
+
+    <define name="meta">
+      <element name="meta">
+        <ref name="meta.attlist"/>
+        <ref name="Text.model"/>
+      </element>
+    </define>
+
+    <define name="meta.attlist">
+      <ref name="Common.attrib"/>
+    </define>
+  </div>
+
+  <define name="head.misc" combine="choice">
+    <ref name="meta"/>
+  </define>
+
+  <define name="Misc.class" combine="choice">
+    <ref name="meta"/>
+  </define>
+
+</grammar>

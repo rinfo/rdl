@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:x="http://www.w3.org/1999/xhtml">
+
+  <x:h1>Access Module</x:h1>
+
+  <div>
+    <x:h2>The access element</x:h2>
+
+    <define name="access">
+      <element name="access">
+        <ref name="access.attlist"/>
+      </element>
+    </define>
+
+    <define name="access.attlist">
+      <ref name="Common.attrib"/>
+      <optional>
+        <attribute name="key">
+          <ref name="Character.datatype"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="targetid">
+          <ref name="IDREF.datatype"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="targetrole">
+          <ref name="Role.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+  </div>
+
+  <define name="head.misc" combine="choice">
+    <ref name="access"/>
+  </define>
+
+</grammar>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:x="http://www.w3.org/1999/xhtml">
+
+  <x:h1>Document Module</x:h1>
+
+  <start>
+    <ref name="html"/>
+  </start>
+
+  <div>
+    <x:h2>The html element</x:h2>
+
+    <define name="html">
+      <element name="html">
+        <ref name="html.attlist"/>
+        <ref name="head"/>
+        <ref name="body"/>
+      </element>
+    </define>
+
+    <define name="html.attlist">
+      <ref name="Common.attrib"/>
+      <ref name="version.attrib"/>
+      <optional>
+        <ref name="XSI.schemaLocation"/>
+      </optional>
+    </define>
+
+    <define name="version.attrib">
+      <optional>
+        <attribute name="version">
+          <ref name="CDATA.datatype"/>
+        </attribute>     
+      </optional>
+    </define>
+  </div>
+
+  <div>
+    <x:h2>The head element</x:h2>
+
+    <define name="head">
+      <element name="head">
+        <ref name="head.attlist"/>
+        <ref name="head.content"/>
+      </element>
+    </define>
+
+    <define name="head.attlist">
+      <ref name="Common.attrib"/>
+    </define>
+
+    <define name="head.content">
+      <ref name="title"/>
+      <zeroOrMore>
+        <choice>
+          <ref name="head.misc"/>
+        </choice>
+      </zeroOrMore>
+    </define>
+
+    <define name="head.misc">
+      <notAllowed/>
+    </define>
+  </div>
+
+  <div>
+    <x:h2>The title element</x:h2>
+
+    <define name="title">
+      <element name="title">
+        <ref name="title.attlist"/>
+        <ref name="Text.model"/>
+      </element>
+    </define>
+
+    <define name="title.attlist">
+      <ref name="Common.attrib"/>
+    </define>
+  </div>
+
+  <div>
+    <x:h2>The body element</x:h2>
+
+    <define name="body">
+      <element name="body">
+        <ref name="body.attlist"/>
+        <ref name="Structural.model"/>
+      </element>
+    </define>
+
+    <define name="body.attlist">
+      <ref name="Common.attrib"/>
+    </define>
+  </div>
+
+</grammar>

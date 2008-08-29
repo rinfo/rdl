@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+         xmlns:x="http://www.w3.org/1999/xhtml">
+
+  <x:h1>Media Attribute Module</x:h1>
+
+  <define name="media.attrib">
+    <optional>
+      <attribute name="media" a:defaultValue="all">
+        <ref name="MediaDesc.datatype"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="Common.attrib" combine="interleave">
+    <ref name="media.attrib"/>
+  </define>
+
+</grammar>

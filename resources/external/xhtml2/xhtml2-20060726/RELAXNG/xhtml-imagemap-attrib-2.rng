@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:x="http://www.w3.org/1999/xhtml">
+
+  <x:h1>Image Map Attributes Module</x:h1>
+
+  <div>
+    <x:h2>Image Map Attributes Collection</x:h2>
+
+    <define name="usemap.attrib">
+      <optional>
+        <attribute name="usemap">
+          <ref name="URI.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="ismap.attrib">
+      <optional>
+        <attribute name="ismap">
+          <value>ismap</value>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="shape.attrib">
+      <optional>
+        <attribute name="shape">
+          <ref name="Shape.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="coords.attrib">
+      <optional>
+        <attribute name="coords">
+          <ref name="Coordinates.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="Map.attrib">
+      <ref name="usemap.attrib"/>
+      <ref name="ismap.attrib"/>
+      <ref name="shape.attrib"/>
+      <ref name="coords.attrib"/>
+    </define>
+  </div>
+
+  <define name="Common.attrib" combine="interleave">
+    <ref name="Map.attrib"/>
+  </define>
+
+</grammar>

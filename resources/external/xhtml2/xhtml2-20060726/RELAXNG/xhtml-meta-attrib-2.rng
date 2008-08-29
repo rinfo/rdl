@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+         xmlns:x="http://www.w3.org/1999/xhtml">
+
+<x:h1>Metainformation Attributes Module</x:h1>
+
+  <div>
+    <x:h2>Metadata Attribute Collection</x:h2>
+
+    <define name="about.attrib">
+      <optional>
+        <attribute name="about">
+          <ref name="URI.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="content.attrib">
+      <optional>
+        <attribute name="content">
+          <ref name="CDATA.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="datatype.attrib">
+      <optional>
+        <attribute name="datatype">
+          <ref name="QName.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="property.attrib">
+      <optional>
+        <attribute name="property" a:defaultValue="reference">
+          <ref name="Property.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="rel.attrib">
+      <optional>
+        <attribute name="rel">
+          <ref name="LinkTypes.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="rev.attrib">
+      <optional>
+        <attribute name="rev">
+          <ref name="LinkTypes.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="Metadata.attrib">
+      <ref name="about.attrib"/>
+      <ref name="content.attrib"/>
+      <ref name="datatype.attrib"/>
+      <ref name="property.attrib"/>
+      <ref name="rel.attrib"/>
+      <ref name="rev.attrib"/>
+    </define>
+  </div>
+
+  <define name="Common.attrib" combine="interleave">
+    <ref name="Metadata.attrib"/>
+  </define>
+
+</grammar>

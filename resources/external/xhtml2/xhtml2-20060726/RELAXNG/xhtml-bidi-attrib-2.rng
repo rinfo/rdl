@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+         xmlns:x="http://www.w3.org/1999/xhtml">
+
+  <x:h1>Bi-directional Text Attribute Module</x:h1>
+
+  <div>
+    <x:h2>Bi-directional Text Collection</x:h2>
+
+    <define name="dir.attrib">
+      <optional>
+        <attribute name="dir" a:defaultValue="ltr">
+          <choice>
+            <value>ltr</value>
+            <value>rtl</value>
+            <value>lro</value>
+            <value>rlo</value>
+          </choice>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="Bidi.attrib">
+      <ref name="dir.attrib"/>
+    </define>
+  </div>
+
+  <define name="Common.attrib" combine="interleave">
+    <ref name="Bidi.attrib"/>
+  </define>
+
+</grammar>

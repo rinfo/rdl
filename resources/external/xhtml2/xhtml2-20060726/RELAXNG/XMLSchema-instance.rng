@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         ns="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+  <define name="XSI.type">
+    <attribute name="xsi:type">
+      <data type="QName"/>
+    </attribute>
+  </define>
+
+  <define name="XSI.nil">
+    <attribute name="xsi:nil">
+      <data type="boolean"/>
+    </attribute>
+  </define>
+
+  <define name="XSI.schemaLocation">
+    <attribute name="xsi:schemaLocation">
+      <list>
+        <oneOrMore>
+          <data type="anyURI"/>
+          <data type="anyURI"/>
+        </oneOrMore>
+      </list>
+    </attribute>
+  </define>
+
+  <define name="XSI.noNamespaceSchemaLocation">
+    <attribute name="xsi:noNamespaceSchemaLocation">
+      <data type="anyURI"/>
+    </attribute>
+  </define>
+
+</grammar>

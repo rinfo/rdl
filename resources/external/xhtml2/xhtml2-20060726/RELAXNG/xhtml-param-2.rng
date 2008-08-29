@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+         xmlns:x="http://www.w3.org/1999/xhtml">
+
+  <x:h1>Param Module</x:h1>
+
+  <div>
+    <x:h2>The param element</x:h2>
+
+    <define name="param">
+      <element name="param">
+        <ref name="param.attlist"/>
+      </element>
+    </define>
+
+    <define name="param.attlist">
+      <optional>
+        <ref name="id.attrib"/>
+      </optional>
+      <attribute name="name"/>
+      <optional>
+        <attribute name="value"/>
+      </optional>
+      <optional>
+        <attribute name="valuetype" a:defaultValue="data">
+          <choice>
+            <value>data</value>
+            <value>ref</value>
+            <value>object</value>
+          </choice>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="type">
+          <ref name="ContentTypes.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+  </div>
+
+</grammar>

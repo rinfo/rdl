@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:x="http://www.w3.org/1999/xhtml">
+
+  <x:h1>Attribute Collections Module</x:h1>
+
+  <div>
+    <x:h2>Core Attributes Module</x:h2>
+    <include href="xhtml-core-attrib-2.rng"/>
+  </div>
+
+  <div>
+    <x:h2>Internationalization Attribute Module</x:h2>
+    <include href="xhtml-i18n-attrib-2.rng"/>
+  </div>
+
+  <div>
+    <x:h2>Bi-directional Text Collection</x:h2>
+    <include href="xhtml-bidi-attrib-2.rng"/>
+  </div>
+
+  <div>
+    <x:h2>Edit Attributes Module</x:h2>
+    <include href="xhtml-edit-attrib-2.rng"/>
+  </div>
+
+  <div>
+    <x:h2>Embedding Attributes Module</x:h2>
+    <include href="xhtml-embed-attrib-2.rng"/>
+  </div>
+
+  <div>
+    <x:h2>Events Module</x:h2>
+    <include href="xhtml-events-2.rng"/>
+  </div>
+
+  <div>
+    <x:h2>XForms Repeat Attribute Collection</x:h2>
+    <include href="xforms-repeat-attrib.rng"/>
+
+    <define name="Common.attrib" combine="interleave">
+      <ref name="XFORMS.Repeat.attrib"/>
+    </define>
+  </div>
+
+  <div>
+    <x:h2>Hypertext Attributes Module</x:h2>
+    <include href="xhtml-hypertext-attrib-2.rng"/>
+  </div>
+
+  <div>
+    <x:h2>Image Map Attributes Module</x:h2>
+    <include href="xhtml-imagemap-attrib-2.rng"/>
+  </div>
+
+  <div>
+    <x:h2>Media Attribute Module</x:h2>
+    <include href="xhtml-media-attrib-2.rng"/>
+  </div>
+
+  <div>
+    <x:h2>Metainformation Attributes Module</x:h2>
+    <include href="xhtml-meta-attrib-2.rng"/>
+  </div>
+
+  <div>
+    <x:h2>Role Attribute Module</x:h2>
+    <include href="xhtml-role-attrib-2.rng"/>
+  </div>
+
+  <div>
+    <x:h2>Style Attribute Module</x:h2>
+    <include href="xhtml-inlstyle-2.rng"/>
+  </div>
+
+  <define name="Common.extra.attrib">
+    <empty/>
+  </define>
+
+  <define name="Common.attrib">
+    <ref name="Common.extra.attrib"/>
+  </define>
+
+</grammar>

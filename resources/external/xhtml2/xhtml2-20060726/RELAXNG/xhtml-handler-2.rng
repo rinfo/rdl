@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:x="http://www.w3.org/1999/xhtml">
+
+  <x:h1>Handler Module</x:h1>
+
+  <div>
+    <x:h2>The handler element</x:h2>
+
+    <define name="handler">
+      <element name="handler">
+        <ref name="handler.attlist"/>
+        <choice>
+          <text/>
+          <ref name="handler"/>
+        </choice>
+      </element>
+    </define>
+
+    <define name="handler.attlist">
+      <ref name="Common.attrib"/>
+      <optional>
+        <attribute name="type">
+          <ref name="ContentTypes.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+  </div>
+
+  <define name="head.misc" combine="choice">
+    <ref name="handler"/>
+  </define>
+
+  <define name="Handler.class">
+    <ref name="handler"/>
+  </define>
+
+  <define name="Misc.class" combine="choice">
+    <ref name="Handler.class"/>
+  </define>
+
+</grammar>

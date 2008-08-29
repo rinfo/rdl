@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+         xmlns:x="http://www.w3.org/1999/xhtml">
+
+  <x:h1>Core Attributes Module</x:h1>
+
+  <div>
+    <x:h2>Core Attribute Collection</x:h2>
+
+    <define name="class.attrib">
+      <optional>
+        <attribute name="class">
+          <ref name="NMTOKENS.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="id.attrib">
+      <optional>
+        <attribute name="xml:id">
+          <ref name="ID.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="layout.attrib">
+      <optional>
+        <attribute name="layout" a:defaultValue="irrelevant">
+          <choice>
+            <value>irrelevant</value>  
+            <value>relevant</value>  
+          </choice>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="title.attrib">
+      <optional>
+        <attribute name="title">
+          <ref name="Text.datatype"/>
+        </attribute>
+      </optional>
+    </define>
+
+    <define name="Core.attrib">
+      <ref name="id.attrib"/>
+      <ref name="class.attrib"/>
+      <ref name="layout.attrib"/>
+      <ref name="title.attrib"/>
+    </define>
+  </div>
+
+  <define name="Common.attrib" combine="interleave">
+    <ref name="Core.attrib"/>
+  </define>
+
+</grammar>
