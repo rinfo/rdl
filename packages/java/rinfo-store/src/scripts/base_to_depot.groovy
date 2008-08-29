@@ -122,7 +122,7 @@ def addOrUpdate(uri, lastMod, contents, enclosures=null) {
 
 def baseToDepot() {
 
-    def rinfoBase = "../../resources/base/"
+    def rinfoBase = "../../../resources/base/"
 
     def batch = depot.makeEntryBatch()
     def addToBatch = {

@@ -13,7 +13,7 @@ class URIMinterTest {
 
     @BeforeClass
     static void setupClass() {
-        def rinfoBaseDir = "../../resources/base/"
+        def rinfoBaseDir = "../../../resources/base/"
         uriMinter = new URIMinter(rinfoBaseDir)
     }
 
