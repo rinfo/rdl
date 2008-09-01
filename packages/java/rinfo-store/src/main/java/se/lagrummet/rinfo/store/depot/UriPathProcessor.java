@@ -13,6 +13,7 @@ public class UriPathProcessor {
             "(/([^/]+)\\S+?)(?:/([^/,]+)(?:,([a-z]{2}))?)?");
 
     // TODO: Use URLConnection.getFileNameMap?
+    // TODO: put namedMediaTypes in rinfo-depot.properties
     static Map<String, String> DEFAULT_NAMED_MEDIA_TYPES =
             new HashMap<String, String>() {{
         put("atom", "application/atom+xml");

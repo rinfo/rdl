@@ -13,21 +13,17 @@
 
   <repositories>
     <repository>
-      <id>maven-restlet</id>
-      <name>Public online Restlet repository</name>
-      <url>http://maven.restlet.org</url>
-    </repository>
-    <repository>
       <id>apache-incubating</id>
       <name>Apache Incubating Repository</name>
       <url>http://people.apache.org/repo/m2-incubating-repository/</url>
     </repository>
     <repository>
-      <id>aduna-repo</id>
-      <name>Aduna Repository</name>
-      <url>http://repo.aduna-software.org/maven2/releases/</url>
+      <id>maven-restlet</id>
+      <name>Public online Restlet repository</name>
+      <url>http://maven.restlet.org</url>
     </repository>
   </repositories>
+
 
   <dependencies>
 
@@ -213,14 +209,6 @@
       <version>2.7.0</version>
     </dependency>
 
-    <!-- TODO: Isn't this needed for runtime?
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-all</artifactId>
-      <version>1.5.6</version>
-    </dependency>
-    -->
-
     <dependency>
       <groupId>org.codehaus.groovy.maven.runtime</groupId>
       <artifactId>gmaven-runtime-default</artifactId>
@@ -229,27 +217,9 @@
 
   </dependencies>
 
+
   <build>
     <plugins>
-
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <delete file="${project.build.outputDirectory}/rinfo-depot.properties"/>
-                <copy file="src/environments/${environment}/rinfo-depot.properties"
-                      tofile="${project.build.outputDirectory}/rinfo-depot.properties"/>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -275,19 +245,10 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.7</version>
-        <configuration>
-          <scanIntervalSeconds>10</scanIntervalSeconds>
-          <contextPath>/</contextPath>
-        </configuration>
-      </plugin>
-
     </plugins>
   </build>
 
+  <!--
   <reporting>
     <plugins>
       <plugin>
@@ -300,35 +261,6 @@
       </plugin>
     </plugins>
   </reporting>
-
-  <profiles>
-    <profile>
-      <activation>
-        <property>
-          <name>!environment</name>
-        </property>
-      </activation>
-      <properties>
-        <environment>default</environment>
-      </properties>
-    </profile>
-    <profile>
-      <id>dev-unix</id>
-      <activation>
-        <os>
-          <family>unix</family>
-        </os>
-      </activation>
-      <properties>
-        <environment>dev-unix</environment>
-      </properties>
-    </profile>
-    <profile>
-      <id>prod</id>
-      <properties>
-        <environment>prod</environment>
-      </properties>
-    </profile>
-  </profiles>
+  -->
 
 </project>
