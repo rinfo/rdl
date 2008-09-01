@@ -3,7 +3,6 @@ import org.apache.commons.io.filefilter.HiddenFileFilter
 import org.apache.commons.io.filefilter.IOFileFilter
 import org.apache.commons.io.filefilter.NameFileFilter
 import org.apache.abdera.Abdera
-import org.springframework.context.support.ClassPathXmlApplicationContext as Ctxt
 import se.lagrummet.rinfo.store.depot.*
 
 
@@ -21,8 +20,7 @@ try {
     System.exit 0
 }
 
-context = new Ctxt("applicationContext.xml")
-depot = context.getBean("fileDepot")
+depot = FileDepot.autoConfigure()
 
 iterateFiles(sourceDir,
         new NameFileFilter(entryInfoFileName),

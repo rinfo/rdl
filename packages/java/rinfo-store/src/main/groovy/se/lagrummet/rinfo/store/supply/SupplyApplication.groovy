@@ -7,10 +7,6 @@ import org.restlet.Restlet
 import org.restlet.data.Protocol
 import org.restlet.data.Request
 import org.restlet.data.Response
-import org.restlet.ext.spring.SpringContext
-
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader
-import org.springframework.core.io.ClassPathResource
 
 import se.lagrummet.rinfo.store.depot.FileDepot
 
@@ -29,21 +25,14 @@ class SupplyApplication extends Application {
 
     @Override
     synchronized Restlet createRoot() {
-
-        def springContext = new SpringContext(context)
-        new XmlBeanDefinitionReader(springContext).loadBeanDefinitions(
-                new ClassPathResource("applicationContext.xml"))
-        springContext.refresh()
-
-        def fileDepot = (FileDepot) springContext.getBean("fileDepot")
-
         def depotFinder = new DepotFinder(context)
-        depotFinder.fileDepot = fileDepot
+        depotFinder.fileDepot = FileDepot.autoConfigure()
         return depotFinder
     }
 
     static void main(args) {
         int port = args.size() ? new Integer(args[0]) : 8182
+        // TODO: opt. supply path to autoConfigure...
         new Component().with {
             servers.add(Protocol.HTTP, port)
             defaultHost.attach(

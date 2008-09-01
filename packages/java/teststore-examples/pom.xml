@@ -24,24 +24,10 @@
   <build>
     <plugins>
 
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <delete file="${project.build.outputDirectory}/config.properties"/>
-                <copy file="src/environments/${environment}/config.properties"
-                      tofile="${project.build.outputDirectory}/config.properties"/>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+        <!-- TODO: values in config properties:
+                - use different per env (as rinfo-store/previously)?
+                - and/or utilize local paths (may be massive depot data..)
+        -->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -49,6 +35,16 @@
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.7</version>
+        <configuration>
+          <scanIntervalSeconds>10</scanIntervalSeconds>
+          <contextPath>/</contextPath>
         </configuration>
       </plugin>
 

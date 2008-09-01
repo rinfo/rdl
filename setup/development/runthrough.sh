@@ -8,8 +8,9 @@
 #========
 echo "Start example depot supply"
 (
-    source src/scripts/setclasspath.sh dev-local/example
-    groovy src/scripts/run_supply.groovy 2>&1 > /dev/null &
+    # TODO: cd teststore-examples/
+    #mvn -Djetty.port=8180 jetty:run
+    mvn exec:java -Dexec.mainClass=se.lagrummet.rinfo.store.supply.SupplyApplication 2>&1 > /dev/null &
 )
 ##========
 #echo "Collect example data + base data; run Supply"

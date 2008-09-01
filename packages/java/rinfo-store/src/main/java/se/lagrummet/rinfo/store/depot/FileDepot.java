@@ -3,6 +3,7 @@ package se.lagrummet.rinfo.store.depot;
 import java.util.*;
 import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
@@ -10,9 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.ConfigurationException;
 
 
 public class FileDepot {
+
+    public static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-depot.properties";
 
     private final Logger logger = LoggerFactory.getLogger(FileDepot.class);
 
@@ -27,17 +32,33 @@ public class FileDepot {
         this.atomizer = new Atomizer(this);
     }
 
-    public FileDepot(URI baseUri) {
-        this();
-        this.baseUri = baseUri;
-    }
-
     public FileDepot(URI baseUri, File baseDir, String feedPath)
             throws ConfigurationException {
-        this(baseUri);
+        this();
+        this.baseUri = baseUri;
         this.setBaseDir(baseDir);
         this.feedPath = feedPath;
     }
+
+    public static FileDepot autoConfigure()
+        throws ConfigurationException,
+               URISyntaxException, FileNotFoundException {
+        return autoConfigure(CONFIG_PROPERTIES_FILE_NAME);
+    }
+
+    public static FileDepot autoConfigure(String fileName)
+        throws ConfigurationException,
+               URISyntaxException, FileNotFoundException {
+        FileDepot depot = new FileDepot();
+        PropertiesConfiguration config = new PropertiesConfiguration(fileName);
+        depot.setBaseUri(new URI(config.getString("baseUri")));
+        depot.setBaseDir(new File(config.getString("fileDir")));
+        depot.setFeedSkeleton(config.getString("feedSkeleton"));
+        depot.setFeedPath(config.getString("feedPath"));
+        // TODO: set atomizer props here (see forwarding setters for atomizer)
+        return depot;
+    }
+
 
     public URI getBaseUri() { return baseUri; }
 
@@ -147,9 +168,8 @@ public class FileDepot {
 
     //== Feed Related ==
 
-    // TODO: set via this or inject configured atomizer?
-    //  - don't set via this, use Spring "compound property names":
-    //      atomizer.feedBatchSize, atomizer.feedSkeleton
+    // TODO: remove forwarding setters (see autoConfigure). Are these shortcuts
+    // used (in tests), look at removing them all.
 
     public int getFeedBatchSize() {
         return atomizer.getFeedBatchSize();
@@ -200,6 +220,8 @@ public class FileDepot {
 
     // FIXME: Knows *very* little! Configurable?
     public String computeMediaType(File file) {
+        // TODO: System.setProperty("content.types.user.table",
+        // configuredContentTypesPath"), then store the FileNameMap..
         String mtype = URLConnection.getFileNameMap().getContentTypeFor(file.getName());
         // TODO: this is too simple. Unify or only via some fileExtensionUtil..
         if (mtype==null) {

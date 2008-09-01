@@ -57,15 +57,15 @@
     </dependency>
 
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.5.0</version>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+      <version>1.5</version>
     </dependency>
 
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>2.5</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.5.0</version>
     </dependency>
 
     <dependency>
@@ -88,18 +88,6 @@
       <artifactId>abdera-client</artifactId>
       <version>0.4.0-incubating</version>
     </dependency>
-    <!-- NOTE: not (yet) to be used.
-    <dependency>
-      <groupId>org.apache.abdera</groupId>
-      <artifactId>abdera-server</artifactId>
-      <version>0.4.0-incubating</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.abdera</groupId>
-      <artifactId>abdera-spring</artifactId>
-      <version>0.4.0-incubating</version>
-    </dependency>
-    -->
 
     <dependency>
       <groupId>org.restlet</groupId>
@@ -109,11 +97,6 @@
     <dependency>
       <groupId>com.noelios.restlet</groupId>
       <artifactId>com.noelios.restlet</artifactId>
-      <version>1.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.restlet</groupId>
-      <artifactId>org.restlet.ext.spring</artifactId>
       <version>1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -258,9 +241,9 @@
             </goals>
             <configuration>
               <tasks>
-                <delete file="${project.build.outputDirectory}/config.properties"/>
-                <copy file="src/environments/${environment}/config.properties"
-                      tofile="${project.build.outputDirectory}/config.properties"/>
+                <delete file="${project.build.outputDirectory}/rinfo-depot.properties"/>
+                <copy file="src/environments/${environment}/rinfo-depot.properties"
+                      tofile="${project.build.outputDirectory}/rinfo-depot.properties"/>
               </tasks>
             </configuration>
           </execution>

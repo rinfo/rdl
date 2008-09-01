@@ -6,8 +6,6 @@ import org.apache.abdera.Abdera
 import org.apache.abdera.model.Feed
 import org.apache.abdera.model.Entry
 
-import org.springframework.context.support.ClassPathXmlApplicationContext as Ctxt
-
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.depot.DuplicateDepotEntryException
 import se.lagrummet.rinfo.store.depot.SourceContent
@@ -149,9 +147,10 @@ class FeedCollector extends FeedArchiveReader {
             println "Usage: <uri-to-subscription-feed>"
             System.exit 0
         }
-        def context = new Ctxt("applicationContext.xml")
-        def depot = context.getBean("fileDepot")
-        def uriMinter = context.getBean("uriMinter")
+        def depot = FileDepot.autoConfigure()
+
+        def rinfoBaseDir = "../../../resources/base/"
+        def uriMinter = new URIMinter(rinfoBaseDir)
 
         def collector = new FeedCollector(depot, uriMinter)
         collector.readFeed(new URL(args[0]))

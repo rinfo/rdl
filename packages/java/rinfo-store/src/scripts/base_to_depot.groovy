@@ -20,11 +20,8 @@ import se.lagrummet.rinfo.util.rdf.RDFUtil
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.depot.SourceContent
 
-import org.springframework.context.support.ClassPathXmlApplicationContext as Ctxt
 
-
-context = new Ctxt("applicationContext.xml")
-depot = context.getBean("fileDepot")
+depot = FileDepot.autoConfigure()
 
 
 /**
