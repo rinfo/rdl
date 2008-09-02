@@ -5,38 +5,40 @@ import org.restlet.Component
 import org.restlet.Context
 import org.restlet.Restlet
 import org.restlet.data.Protocol
-import org.restlet.data.Request
-import org.restlet.data.Response
 
 import se.lagrummet.rinfo.store.depot.FileDepot
 
 
 class SupplyApplication extends Application {
 
+    String fileDepotConfig
+
+    SupplyApplication(Context parentContext, String fileDepotConfig) {
+        this(parentContext)
+        this.fileDepotConfig = fileDepotConfig
+    }
+
     SupplyApplication(Context parentContext) {
         super(parentContext)
-        // NOTE: Turn off extensionsTunnel - it removes extensions it can
-        // turn into content negotiation metadata. Cool but hard to spot!
-        // In at least Restlet 1.1 M3, this is on by default.
-        // TODO: should we leave tunnelService enabled at all? If enabled, it
-        // will allow e.g. parameter negotiation as well.
-        tunnelService.setExtensionsTunnel(false)
     }
 
     @Override
     synchronized Restlet createRoot() {
-        def depotFinder = new DepotFinder(context)
-        depotFinder.fileDepot = FileDepot.autoConfigure()
+        def fileDepot = (fileDepotConfig)?
+                FileDepot.autoConfigure(fileDepotConfig) :
+                FileDepot.autoConfigure()
+        def depotFinder = new DepotFinder(context, fileDepot)
         return depotFinder
     }
 
-    static void main(args) {
+    static void main(String[] args) {
         int port = args.size() ? new Integer(args[0]) : 8182
-        // TODO: opt. supply path to autoConfigure...
+        def fileDepotConfig = args.size()>1 ? args[1] : null
         new Component().with {
             servers.add(Protocol.HTTP, port)
+            def ctx = context.createChildContext()
             defaultHost.attach(
-                    new SupplyApplication(context.createChildContext()))
+                    new SupplyApplication(ctx, fileDepotConfig))
             start()
         }
     }

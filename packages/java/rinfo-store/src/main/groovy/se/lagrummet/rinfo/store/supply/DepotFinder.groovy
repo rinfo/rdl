@@ -22,6 +22,10 @@ class DepotFinder extends Finder {
 
     DepotFinder() { super() }
     DepotFinder(Context context) { super(context) }
+    DepotFinder(Context context, FileDepot fileDepot) {
+        this(context)
+        this.fileDepot = fileDepot
+    }
 
     @Override
     Handler findTarget(Request request, Response response) {

@@ -16,6 +16,6 @@ Testing::
 
 Running a class::
 
-    $ mvn exec:java -Dexec.mainClass=se.lagrummet.rinfo.store.supply.SupplyApplication -Dexec.args="8182"
+    $ mvn exec:java -Dexec.mainClass=se.lagrummet.rinfo.store.supply.SupplyApplication -Dexec.args="8182 [opt. path to depot-config-props]"
 
 
