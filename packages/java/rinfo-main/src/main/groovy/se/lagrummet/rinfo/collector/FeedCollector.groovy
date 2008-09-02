@@ -9,6 +9,7 @@ import org.apache.abdera.model.Feed
 import org.apache.abdera.model.Entry
 
 import se.lagrummet.rinfo.store.depot.FileDepot
+import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.DuplicateDepotEntryException
 import se.lagrummet.rinfo.store.depot.SourceContent
 
@@ -42,16 +43,24 @@ class FeedCollector extends FeedArchiveReader {
     private final logger = LoggerFactory.getLogger(FeedCollector)
 
     FileDepot depot
-    URIMinter uriMinter
+    URIMinter uriMinter // TODO: set up uriMinter in this class (right?)
 
     def rdfMimeTypes = [
         "application/rdf+xml",
         // "application/xhtml+xml" TODO: scan for RDFa
     ]
 
+    private Collection<DepotEntry> collectedBatch
+
     FeedCollector(depot, uriMinter) {
         this.depot = depot
         this.uriMinter = uriMinter
+        this.collectedBatch = depot.makeEntryBatch()
+    }
+
+    public void readFeed(URL url) throws IOException {
+        super.readFeed(url)
+        depot.indexEntries(collectedBatch)
     }
 
     boolean processFeedPage(URL pageUrl, Feed feed) {
@@ -102,20 +111,29 @@ class FeedCollector extends FeedArchiveReader {
         logger.info "New URI: <${newUri}>"
 
         logger.info "Saving Entry <${newUri}>"
+
+        def depotEntry
+
         // FIXME: duplicates are hard errors; but *updates* to existing
         // must be possible! How to detect "benign" updates from source? Alts:
         // - require published to be kept; use as is and only diff on updated?
         // - .. <batch:operation type="update">
         // - save orig.url (if different from this, error is in minting)
         // - require publishers to compute URI? (and req. published + updated..)
+        // - best? if existing; check stored entry and allow update if *both*
+        //   source entry updated > created *and* > *stored* entry updated
+        //   .. and "source" is "same as last" (indirected via rdf facts)?
         try {
-            depot.createEntry(newUri, timestamp, contents, enclosures)
+            depotEntry = depot.createEntry(newUri, timestamp, contents, enclosures)
         } catch (DuplicateDepotEntryException e) {
             logger.error "Duplicate entry <${newUri}>!"
             logger.warn "Updating anyway."
-            def depotEntry = depot.getEntry(newUri)
+            depotEntry = depot.getEntry(newUri)
             depotEntry.update(timestamp, contents, enclosures)
         }
+
+        collectedBatch.add(depotEntry)
+
     }
 
     protected URI computeOfficialUriInPlace(
