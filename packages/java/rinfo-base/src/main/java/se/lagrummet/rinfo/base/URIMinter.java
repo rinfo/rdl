@@ -51,8 +51,8 @@ public class URIMinter {
 
     // TODO: paths in property file? Set each?
     public static final String BASE_DATA_FPATH = "datasets/containers.n3";
-    public static final String COLLECT_URI_DATA_SPARQL = "uri_strategy/collect-uri-data.rq";
-    public static final String CREATE_URI_XSLT = "uri_strategy/create-uri.xslt";
+    public static final String COLLECT_URI_DATA_SPARQL = "uri_algorithm/collect-uri-data.rq";
+    public static final String CREATE_URI_XSLT = "uri_algorithm/create-uri.xslt";
 
     private String rinfoBaseDir;
 
