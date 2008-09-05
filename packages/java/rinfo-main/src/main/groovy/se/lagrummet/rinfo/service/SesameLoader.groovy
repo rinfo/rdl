@@ -21,7 +21,7 @@ class SesameLoader extends FeedArchiveReader {
 
     private final logger = LoggerFactory.getLogger(SesameLoader)
 
-    SesameLoader(repository) {
+    SesameLoader(Repository repository) {
         this.repository = repository
     }
 

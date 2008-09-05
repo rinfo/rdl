@@ -8,17 +8,25 @@ import org.restlet.data.Method
 import org.restlet.data.Request
 import org.restlet.data.Response
 
+import org.openrdf.repository.Repository
+import org.openrdf.repository.http.HTTPRepository
+import org.openrdf.repository.sail.SailRepository
+import org.openrdf.sail.memory.MemoryStore
+import org.openrdf.sail.nativerdf.NativeStore
+
 
 class RDFStoreLoaderRestlet extends Restlet {
 
     static final ALLOWED = new HashSet([Method.GET])
     private FileDepot depot
-    private SesameLoader rdfStoreLoader
+    String repoPath
+    String remoteRepoName
 
-    public RDFStoreLoaderRestlet(Context context, FileDepot depot, SesameLoader rdfStoreLoader) {
+    public RDFStoreLoaderRestlet(Context context, FileDepot depot, repoPath, remoteRepoName) {
         super(context)
         this.depot = depot
-        this.rdfStoreLoader = rdfStoreLoader
+        this.repoPath = repoPath
+        this.remoteRepoName = remoteRepoName
     }
 
     @Override
@@ -31,8 +39,24 @@ class RDFStoreLoaderRestlet extends Restlet {
             return
         }
         // FIXME: run via concurrent!
-        rdfStoreLoader.readFeed([new URL(feedUrl)])
+        loadFromFeed(new URL(feedUrl))
         response.setEntity("Scheduled collect of <${feedUrl}>.", MediaType.TEXT_PLAIN)
+    }
+
+    private void loadFromFeed(URL feedUrl) {
+        Repository repo = null
+        def repoPath = args[1]
+        if (repoPath =~ /^https?:/) {
+            repo = new HTTPRepository(repoPath, repoName)
+        } else {
+            def dataDir = new File(repoPath)
+            repo = new SailRepository(new NativeStore(dataDir))
+        }
+        repo.initialize()
+        // FIXME: loader needs "stop at entryId + date" or something..
+        SesameLoader rdfStoreLoader = new SesameLoader(repo)
+        rdfStoreLoader.readFeed([new URL(feedUrl)])
+        repo.shutDown()
     }
 
 }

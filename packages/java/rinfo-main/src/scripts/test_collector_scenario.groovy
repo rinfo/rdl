@@ -179,4 +179,13 @@ tearDown()
 //System.exit 0
 
 
+// TODO: set up..
+//RDFStoreLoaderRestlet
+// .. with..
+//SesameLoader
+// .. in .. TestApplication?
+// TODO: ping from MainApplication..
+//pingRInfoFeedToService(localhost(rinfoPort, "feed/current"))
+
+
 // TODO: Add to each step: SPAQRL-query for $entryUri.
