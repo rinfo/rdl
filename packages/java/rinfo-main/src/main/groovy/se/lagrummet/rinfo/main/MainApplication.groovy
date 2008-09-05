@@ -74,7 +74,7 @@ class CollectorRestlet extends Restlet {
             response.setEntity("No feed parameter.", MediaType.TEXT_PLAIN)
             return
         }
-        collectorRunner.collectFeeds([new URL(feedUrl)])
+        collectorRunner.spawnOneFeedCollect([new URL(feedUrl)])
         response.setEntity("Scheduled collect of <${feedUrl}>.", MediaType.TEXT_PLAIN)
     }
 

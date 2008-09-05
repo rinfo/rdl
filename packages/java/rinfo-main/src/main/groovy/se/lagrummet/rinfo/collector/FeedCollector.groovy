@@ -53,7 +53,7 @@ class FeedCollector extends FeedArchiveReader {
     private final logger = LoggerFactory.getLogger(FeedCollector)
 
     FileDepot depot
-    URIMinter uriMinter // TODO: set up uriMinter in this class (right?)
+    URIMinter uriMinter
 
     List rdfMimeTypes = [
         "application/rdf+xml",
