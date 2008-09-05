@@ -8,12 +8,14 @@
 #========
 echo "Start example depot supply"
 (
-    # TODO: cd teststore-examples/
-    #mvn -Djetty.port=8180 jetty:run
-    mvn exec:java -Dexec.mainClass=se.lagrummet.rinfo.store.supply.SupplyApplication 2>&1 > /dev/null &
+    #pushd teststore-examples/
+    #mvn -Djetty.port=8182 jetty:run
+    # or..
+    #mvn exec:java -Dexec.mainClass=se.lagrummet.rinfo.store.supply.SupplyApplication -Dexec.args="8182" # 2>&1 > /dev/null &
+    # popd
 )
 ##========
-#echo "Collect example data + base data; run Supply"
+echo "Collect example data + base data; run Supply"
 #(
 #    source src/scripts/setclasspath.sh dev-unix
 #    groovy src/scripts/collect_feed.groovy http://localhost:8182/feed/current
@@ -21,7 +23,7 @@ echo "Start example depot supply"
 #    groovy src/scripts/run_supply.groovy 8180 2>&1 > /dev/null &
 #)
 ##========
-#echo "Feed To Sesame"
+echo "Feed To Sesame"
 #(
 #    source src/scripts/setclasspath.sh dev-unix
 #    groovy src/scripts/feed_to_sesame.groovy http://localhost:8180/feed/current http://localhost:8080/openrdf-sesame/ SYSTEM

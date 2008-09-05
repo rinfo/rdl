@@ -16,7 +16,7 @@ import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.vocabulary.RDFS
 import org.openrdf.model.vocabulary.OWL
 
-import se.lagrummet.rinfo.util.rdf.RDFUtil
+import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.depot.SourceContent
 

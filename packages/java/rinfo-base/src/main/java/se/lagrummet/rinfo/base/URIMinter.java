@@ -199,8 +199,8 @@ public class URIMinter {
 
     static void main(String[] args)
         throws IOException, RepositoryException, RDFParseException,
-               URIComputationException
-    {
+               URIComputationException {
+        String rinfoBaseDir = args[0];
         URIMinter minter = new URIMinter(args[0]);
         for (String it : args) {
             System.out.println(minter.computeOfficialUri(it, RDFFormat.RDFXML));

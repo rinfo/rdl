@@ -188,7 +188,7 @@ public class FileDepot {
     }
 
     public String getSubscriptionPath() {
-        // TODO: less hard-coded..
+        // TODO: configurable? Settable "feedSubscriptionSegment"?
         return feedPath+"/current";
     }
 
@@ -198,7 +198,8 @@ public class FileDepot {
     }
 
     protected String toFeedFilePath(String uriPath) {
-        // TODO: less hard-coded..
+        // TODO: less hard-coded..?
+        // Can't as it is change that public feed uri:s are non-suffixed
         return toFilePath(uriPath) + ".atom";
     }
 

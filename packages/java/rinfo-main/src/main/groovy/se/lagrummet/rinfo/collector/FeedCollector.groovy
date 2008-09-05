@@ -20,21 +20,31 @@ import se.lagrummet.rinfo.base.atom.FeedArchiveReader
 
 /* TODO:
 
-    - Read backwards in time until last read date..
+    - Read backwards in time until last read date (last known youngest per feed?)..
     - Use e.g. collector.startSession(), session.doIndex() ?
+
     - we also need error recovery (rollback? store "atDate"?)
         to prevent a state of having read half-way!
     - perhaps get all feeds until minDateTime, then read entries
         forwards in time?
         - and/or just store entries in a "temp session locally",
         and wipe if errors.
+
+
     .. Reasonably; all entries read will have new timestamps
         based on their actual (successful) addition into this depot.
+
+    - add "extras" support in depot-API to store collector state (lastRead)?
+        .. no, write in an own dir..
+        .. but perhaps at least for entries? for source docs? but.. hm..
+        .. Begin with own dir!
 
     - storage safety and history:
         - Verify length and md5.
         - Store all collected stuff separately(?)
             .. or just feeds and pre-rewritten RDF?
+                .. support "extras" in depot-API? (See above)
+        - verify source certificates
 
 */
 
@@ -45,46 +55,60 @@ class FeedCollector extends FeedArchiveReader {
     FileDepot depot
     URIMinter uriMinter // TODO: set up uriMinter in this class (right?)
 
-    def rdfMimeTypes = [
+    List rdfMimeTypes = [
         "application/rdf+xml",
         // "application/xhtml+xml" TODO: scan for RDFa
     ]
 
     private Collection<DepotEntry> collectedBatch
 
-    FeedCollector(depot, uriMinter) {
+    FeedCollector(FileDepot depot, URIMinter uriMinter) {
         this.depot = depot
         this.uriMinter = uriMinter
-        this.collectedBatch = depot.makeEntryBatch()
     }
 
+    public static void readFeed(FileDepot depot, URIMinter uriMinter, URL url) {
+        new FeedCollector(depot, uriMinter).readFeed(url)
+    }
+
+    // TODO: synchronized? Or just warn - not thread safe?
     public void readFeed(URL url) throws IOException {
+        this.collectedBatch = depot.makeEntryBatch()
         super.readFeed(url)
         depot.indexEntries(collectedBatch)
+        this.collectedBatch = null
     }
 
     boolean processFeedPage(URL pageUrl, Feed feed) {
         logger.info "Title: ${feed.title}"
         // TODO: Check for tombstones; if so, delete in depot.
         for (entry in feed.entries) {
-            storeEntry(entry)
+            try {
+                storeEntry(entry)
+            } catch (DuplicateDepotEntryException e) {
+                // FIXME: this isn't reliable; should use explicit "stop at dateTime"
+                return false
+            }
         }
         // TODO: stop at feed with entry at minDateTime..
         //Date minDateTime=null
         return true
     }
 
-    void storeEntry(Entry entry) {
+    void storeEntry(Entry sourceEntry) {
 
-        def entryId = entry.id.toURI()
-        //def timestamp = entry.updated
-        def timestamp = new Date() // TODO: always just current time?
+        def entryId = sourceEntry.id.toURI()
+        // TODO: always just current time? Yes, exposed feed must be with "live" time..
+        //  - for one, since we collect multiple feeds, and must not fill feed with
+        //  - non-chronological dates!
+        //  - so don't use:: def timestamp = sourceEntry.updated
+        def timestamp = new Date()
         def contents = []
         def enclosures = []
 
         logger.info "Reading Entry <${entryId}> ..."
 
-        def contentElem = entry.contentElement
+        def contentElem = sourceEntry.contentElement
         def contentUrlPath = contentElem.resolvedSrc.toString()
         def contentMimeType = contentElem.mimeType.toString()
         def contentLang = contentElem.language
@@ -92,7 +116,7 @@ class FeedCollector extends FeedArchiveReader {
         contents << createDepotContent(
                 contentUrlPath, contentMimeType, contentLang)
 
-        for (link in entry.links) {
+        for (link in sourceEntry.links) {
             def urlPath = link.resolvedHref.toString()
             def mediaType = link.mimeType.toString()
             def lang = link.hrefLang
@@ -110,25 +134,34 @@ class FeedCollector extends FeedArchiveReader {
         def newUri = computeOfficialUriInPlace(entryId, contents)
         logger.info "New URI: <${newUri}>"
 
-        logger.info "Saving Entry <${newUri}>"
+        logger.info "Collecting entry <${sourceEntry.getId()}>  as <${newUri}>.."
 
-        def depotEntry
+        def depotEntry = depot.getEntry(newUri)
 
-        // FIXME: duplicates are hard errors; but *updates* to existing
-        // must be possible! How to detect "benign" updates from source? Alts:
-        // - require published to be kept; use as is and only diff on updated?
-        // - .. <batch:operation type="update">
-        // - save orig.url (if different from this, error is in minting)
-        // - require publishers to compute URI? (and req. published + updated..)
-        // - best? if existing; check stored entry and allow update if *both*
-        //   source entry updated > created *and* > *stored* entry updated
-        //   .. and "source" is "same as last" (indirected via rdf facts)?
-        try {
+        if (depotEntry == null) {
+            logger.info "New entry <${newUri}>."
             depotEntry = depot.createEntry(newUri, timestamp, contents, enclosures)
-        } catch (DuplicateDepotEntryException e) {
-            logger.error "Duplicate entry <${newUri}>!"
-            logger.warn "Updating anyway."
-            depotEntry = depot.getEntry(newUri)
+
+        } else {
+
+            // TODO: Will read same updated entry twice - must stop at last
+            //       datetime, see above).
+            if (!(sourceEntry.getUpdated() > sourceEntry.getPublished())) {
+                /* TODO:
+                If existing; check stored entry and allow update if *both*
+                 sourceEntry.updated>.created (above) *and* > depotEntry.updated..
+                 .. and "source" is "same as last" (indirected via rdf facts)?
+                But we cannot reliably do this comparison (since depot creates
+                its own update date)::
+                    entry.getUpdated() <= depotEntry.getUpdated()
+                */
+                logger.error("Collected entry <${sourceEntry.getId()} exists as " +
+                        " <${newUri}> but does not appear as updated:" +
+                        sourceEntry)
+                throw new DuplicateDepotEntryException(depotEntry);
+            }
+
+            logger.info "Updating entry <${newUri}>."
             depotEntry.update(timestamp, contents, enclosures)
         }
 
@@ -136,22 +169,40 @@ class FeedCollector extends FeedArchiveReader {
 
     }
 
+    protected boolean isRdfContent(SourceContent content) {
+        return rdfMimeTypes.contains(content.mediaType)
+    }
+
     protected URI computeOfficialUriInPlace(
             URI entryId, List<SourceContent> contents) {
         def repo = RDFUtil.createMemoryRepository()
 
-        // TODO: find RDF with suitable mediaType (don't assume first content!)
+        def rdfContent = null
+        for (SourceContent content : contents) {
+            if (isRdfContent(content)) {
+                rdfContent = content
+                break
+            }
+        }
+        if (rdfContent == null) {
+            throw new MissingRdfContentException("Found no RDF in <${entryId}>.")
+        }
         // FIXME: RDFa must be handled more manually (getting, esp. serializing!)
-        def content = contents[0]
+
         // TODO: "" is baseURI; should be passed (via SourceContent?)?
-        RDFUtil.loadDataFromStream(repo, content.sourceStream, "", content.mediaType)
+        RDFUtil.loadDataFromStream(repo, rdfContent.sourceStream, "", rdfContent.mediaType)
 
         def newUri = uriMinter.computeOfficialUri(repo) // TODO: give entryId for subj?
 
+        /* TODO:
+        if (oldUri.equals(newUri)) {
+            return newUri;
+        }
+        */
         def newRepo = RDFUtil.replaceURI(repo, entryId, newUri)
 
-        content.sourceStream = RDFUtil.serializeAsInputStream(
-                newRepo, content.mediaType)
+        rdfContent.sourceStream = RDFUtil.serializeAsInputStream(
+                newRepo, rdfContent.mediaType)
 
         return newUri
     }
