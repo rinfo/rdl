@@ -7,8 +7,8 @@ import org.restlet.Router
 import org.restlet.data.CharacterSet
 import org.restlet.data.MediaType
 import org.restlet.data.Method
-import org.restlet.data.Response
 import org.restlet.data.Request
+import org.restlet.data.Response
 
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.supply.DepotFinder
@@ -69,7 +69,6 @@ class CollectorRestlet extends Restlet {
         String feedUrl = request.getResourceRef().
                 getQueryAsForm(CharacterSet.UTF_8).getFirstValue("feed")
         response.setAllowedMethods(ALLOWED)
-        // FIXME: set up scheduler, trigger via that (so it runs in separate thread)..
         if (feedUrl == null) {
             response.setEntity("No feed parameter.", MediaType.TEXT_PLAIN)
             return
