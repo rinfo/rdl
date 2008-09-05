@@ -118,17 +118,17 @@ public class FileDepot {
         return results;
     }
 
-    // TODO: throw EntryNotFoundException if !isEntryDir?
     public DepotEntry getEntry(String uriPath)
             throws DeletedDepotEntryException {
         return getEntry(uriPath, true);
     }
 
-    public DepotEntry getEntry(String uriPath, boolean mustExist)
+    // TODO: throw EntryNotFoundException if !isEntryDir?
+    public DepotEntry getEntry(String uriPath, boolean failOnDeleted)
             throws DeletedDepotEntryException {
         File entryDir = getEntryDir(uriPath);
         if (DepotEntry.isEntryDir(entryDir)) {
-            return new DepotEntry(this, entryDir, uriPath, mustExist);
+            return new DepotEntry(this, entryDir, uriPath, failOnDeleted);
         }
         return null;
     }
@@ -137,10 +137,10 @@ public class FileDepot {
         return getEntry(entryUri, true);
     }
 
-    public DepotEntry getEntry(URI entryUri, boolean mustExist)
+    public DepotEntry getEntry(URI entryUri, boolean failOnDeleted)
             throws DeletedDepotEntryException {
         assertWithinBaseUri(entryUri);
-        return getEntry(entryUri.getPath(), mustExist);
+        return getEntry(entryUri.getPath(), failOnDeleted);
     }
 
     public DepotContent getContent(String uriPath) {
