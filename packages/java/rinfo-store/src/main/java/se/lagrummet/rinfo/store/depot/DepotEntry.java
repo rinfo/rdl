@@ -25,6 +25,7 @@ public class DepotEntry {
     public static final Pattern CONTENT_FILE_PATTERN = Pattern.compile(
             "content(?:-(\\w{2}))?.(\\w+)");
     public static final String DELETED_FILE_NAME = "DELETED";
+    public static final String GENERIC_META_DIR_NAME = "local-meta";
 
     protected static IOFileFilter NON_ENTRY_DIR_FILTER =  new AbstractFileFilter() {
         public boolean accept(File it) {
@@ -44,6 +45,7 @@ public class DepotEntry {
 
     protected File entryDir;
     protected File entryContentDir;
+    protected File genericMetaDir;
 
     private Entry manifest;
 
@@ -59,6 +61,7 @@ public class DepotEntry {
         this.entryDir = entryDir;
         this.entryUriPath = knownUriPath;
         entryContentDir = new File(entryDir, ENTRY_CONTENT_DIR_NAME);
+        genericMetaDir = new File(entryContentDir, GENERIC_META_DIR_NAME);
         // TODO: change to only public (safe) factory method
         if (failOnDeleted && isDeleted()) {
             throw new DeletedDepotEntryException(this);
@@ -354,7 +357,7 @@ public class DepotEntry {
         manifest.setUpdated(deleteTime);
 
         // TODO: wipe content and enclosures
-        // - but keep generated content.entry? (how to know that?)
+        // - but keep generated content.entry? (how to know that? meta-file?)
         // .. (opt. move away..?)
         rollOffToHistory();
 
@@ -363,7 +366,7 @@ public class DepotEntry {
         // TODO: opt. mark "410 Gone" for enclosures?
     }
 
-    // TODO: resurrect(...) (clears deleted state + (partial) create)
+    // TODO: resurrect(...)? (clears deleted state + (partial) create)
 
     public void addContent(SourceContent srcContent) throws IOException {
         addContent(srcContent, false);
@@ -423,6 +426,21 @@ public class DepotEntry {
             FileUtils.forceMkdir(enclDir);
         }
         srcContent.writeTo(file);
+    }
+
+    /**
+     * A generic metadata file for usage specific needs. Can be used e.g.
+     * to store additional information about creation source etc.
+     */
+    public File getMetaFile(String fileName) {
+        return new File(genericMetaDir, fileName);
+    }
+
+    protected File getMetaDir() {
+        if (!genericMetaDir.exists()) {
+            genericMetaDir.mkdir();
+        }
+        return genericMetaDir;
     }
 
     protected void setPrimaryContent(Entry manifest,

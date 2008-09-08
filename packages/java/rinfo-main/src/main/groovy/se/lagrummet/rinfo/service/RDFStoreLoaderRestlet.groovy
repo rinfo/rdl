@@ -18,13 +18,11 @@ import org.openrdf.sail.nativerdf.NativeStore
 class RDFStoreLoaderRestlet extends Restlet {
 
     static final ALLOWED = new HashSet([Method.GET])
-    private FileDepot depot
     String repoPath
     String remoteRepoName
 
-    public RDFStoreLoaderRestlet(Context context, FileDepot depot, repoPath, remoteRepoName) {
+    public RDFStoreLoaderRestlet(Context context, repoPath, remoteRepoName) {
         super(context)
-        this.depot = depot
         this.repoPath = repoPath
         this.remoteRepoName = remoteRepoName
     }
@@ -45,9 +43,8 @@ class RDFStoreLoaderRestlet extends Restlet {
 
     private void loadFromFeed(URL feedUrl) {
         Repository repo = null
-        def repoPath = args[1]
         if (repoPath =~ /^https?:/) {
-            repo = new HTTPRepository(repoPath, repoName)
+            repo = new HTTPRepository(repoPath, remoteRepoName)
         } else {
             def dataDir = new File(repoPath)
             repo = new SailRepository(new NativeStore(dataDir))
@@ -55,7 +52,7 @@ class RDFStoreLoaderRestlet extends Restlet {
         repo.initialize()
         // FIXME: loader needs "stop at entryId + date" or something..
         SesameLoader rdfStoreLoader = new SesameLoader(repo)
-        rdfStoreLoader.readFeed([new URL(feedUrl)])
+        rdfStoreLoader.readFeed(feedUrl)
         repo.shutDown()
     }
 

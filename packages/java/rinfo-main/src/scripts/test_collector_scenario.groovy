@@ -173,19 +173,34 @@ println "Ping rinfo-main"
 pingFeedToRInfo(localhost(sourcePort, "/feed/current"))
 
 
+// TODO: simulating ServiceApplication
+prompt("-p", "to ping service")
+import se.lagrummet.rinfo.service.RDFStoreLoaderRestlet
+class ServiceApplication extends Application {
+    ServiceApplication(parentContext) {
+        super(parentContext)
+    }
+    synchronized Restlet createRoot() {
+        return new RDFStoreLoaderRestlet(context,
+                "http://localhost:8080/openrdf-sesame", "rinfo")
+    }
+}
+servicePort = 8181
+startAppServer(servicePort, {new ServiceApplication(it)})
+// TODO: ping from MainApplication..
+def pingRInfoFeedToService(feedUrl) {
+    def pingUrl = new URL(
+            "http://localhost:${servicePort}/?feed=${feedUrl}")
+    println pingUrl.text
+}
+pingRInfoFeedToService(localhost(rinfoPort, "/feed/current"))
+
+
+// TODO: Add to each step: SPAQRL-query for $entryUri.
+
+
 // Teardown
 prompt("-h", "to quit")
 tearDown()
 //System.exit 0
 
-
-// TODO: set up..
-//RDFStoreLoaderRestlet
-// .. with..
-//SesameLoader
-// .. in .. TestApplication?
-// TODO: ping from MainApplication..
-//pingRInfoFeedToService(localhost(rinfoPort, "feed/current"))
-
-
-// TODO: Add to each step: SPAQRL-query for $entryUri.

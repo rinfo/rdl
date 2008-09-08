@@ -87,6 +87,8 @@ class FeedCollector extends FeedArchiveReader {
                 storeEntry(entry)
             } catch (DuplicateDepotEntryException e) {
                 // FIXME: this isn't reliable; should use explicit "stop at dateTime"
+                // .. or rather flag "has stored", and stop if page contained storeds
+                //      .. opt. never visit pageUrl being an already visited archive page
                 return false
             }
         }
@@ -98,10 +100,7 @@ class FeedCollector extends FeedArchiveReader {
     void storeEntry(Entry sourceEntry) {
 
         def entryId = sourceEntry.id.toURI()
-        // TODO: always just current time? Yes, exposed feed must be with "live" time..
-        //  - for one, since we collect multiple feeds, and must not fill feed with
-        //  - non-chronological dates!
-        //  - so don't use:: def timestamp = sourceEntry.updated
+        // NOTE: since feed must be in ordered "at collect" time (not jumbled source times):
         def timestamp = new Date()
         def contents = []
         def enclosures = []

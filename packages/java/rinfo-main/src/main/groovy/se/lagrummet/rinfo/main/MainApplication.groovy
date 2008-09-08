@@ -54,7 +54,7 @@ class MainApplication extends Application {
 
 class CollectorRestlet extends Restlet {
 
-    static final ALLOWED = new HashSet([Method.GET])
+    static final ALLOWED = new HashSet([Method.GET]) // TODO: only POST
     private FileDepot depot
     private CollectorRunner collectorRunner
 
