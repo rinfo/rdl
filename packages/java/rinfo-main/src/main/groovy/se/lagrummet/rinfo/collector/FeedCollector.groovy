@@ -31,8 +31,9 @@ import se.lagrummet.rinfo.base.atom.FeedArchiveReader
         and wipe if errors.
 
 
-    .. Reasonably; all entries read will have new timestamps
-        based on their actual (successful) addition into this depot.
+    * All entries read will have new timestamps based on their actual
+      (successful) addition into this depot. This because the resulting feed
+      must be ordered by "collect" time (not "jumbled" source times).
 
     - add "extras" support in depot-API to store collector state (lastRead)?
         .. no, write in an own dir..
@@ -81,31 +82,33 @@ class FeedCollector extends FeedArchiveReader {
 
     boolean processFeedPage(URL pageUrl, Feed feed) {
         logger.info "Title: ${feed.title}"
+        // TODO:? never visit pageUrl being an already visited archive page?
         // TODO: Check for tombstones; if so, delete in depot.
+        def continueCollect = true
         for (entry in feed.entries) {
             try {
-                storeEntry(entry)
-            } catch (DuplicateDepotEntryException e) {
-                // FIXME: this isn't reliable; should use explicit "stop at dateTime"
-                // .. or rather flag "has stored", and stop if page contained storeds
-                //      .. opt. never visit pageUrl being an already visited archive page
+                boolean newOrUpdated = storeEntry(entry)
+                if (!newOrUpdated) {
+                    continueCollect = false
+                }
+            } catch (Exception e) {
+                // FIXME: rollback and report explicit error!
                 return false
             }
         }
-        // TODO: stop at feed with entry at minDateTime..
-        //Date minDateTime=null
-        return true
+        return continueCollect
     }
 
-    void storeEntry(Entry sourceEntry) {
+    boolean storeEntry(Entry sourceEntry) {
 
-        def entryId = sourceEntry.id.toURI()
-        // NOTE: since feed must be in ordered "at collect" time (not jumbled source times):
+        def sourceEntryId = sourceEntry.id.toURI()
         def timestamp = new Date()
         def contents = []
         def enclosures = []
 
-        logger.info "Reading Entry <${entryId}> ..."
+        logger.info "Reading Entry <${sourceEntryId}> ..."
+
+        // TODO: if metaIndex.get(sourceEntryId)
 
         def contentElem = sourceEntry.contentElement
         def contentUrlPath = contentElem.resolvedSrc.toString()
@@ -124,13 +127,14 @@ class FeedCollector extends FeedArchiveReader {
             }
             if (link.rel == "enclosure") {
                 println "enclosure: ${urlPath}"
-                assert urlPath.startsWith(entryId.toString())
-                def slug = urlPath.replaceFirst(entryId, "")
+                assert urlPath.startsWith(sourceEntryId.toString())
+                def slug = urlPath.replaceFirst(sourceEntryId, "")
                 enclosures << createDepotContent(urlPath, mediaType, null, slug)
             }
         }
 
-        def newUri = computeOfficialUriInPlace(entryId, contents)
+        def newUri = computeOfficialUriInPlace(sourceEntryId, contents)
+        // TODO: fail on MissingRdfContentException, URIComputationException, DuplicateDepotEntryException
         logger.info "New URI: <${newUri}>"
 
         logger.info "Collecting entry <${sourceEntry.getId()}>  as <${newUri}>.."
@@ -143,8 +147,8 @@ class FeedCollector extends FeedArchiveReader {
 
         } else {
 
-            // TODO: Will read same updated entry twice - must stop at last
-            //       datetime, see above).
+            // TODO: Will read same updated entry twice - must stop if known entry
+            //       (is that reliable enough?)
             if (!(sourceEntry.getUpdated() > sourceEntry.getPublished())) {
                 /* TODO:
                 If existing; check stored entry and allow update if *both*
@@ -164,8 +168,15 @@ class FeedCollector extends FeedArchiveReader {
             depotEntry.update(timestamp, contents, enclosures)
         }
 
+        /* TODO:
+        verifyChecksums(sourceEntry, depotEntry)
+        */
+        /* TODO:
+        File metaFile = depotEntry.getMetaFile("collector-source-info.entry")
+        // save id, updated (published), source (id, updated, link/@rel=self)
+        */
         collectedBatch.add(depotEntry)
-
+        return true
     }
 
     protected boolean isRdfContent(SourceContent content) {
@@ -173,7 +184,7 @@ class FeedCollector extends FeedArchiveReader {
     }
 
     protected URI computeOfficialUriInPlace(
-            URI entryId, List<SourceContent> contents) {
+            URI sourceEntryId, List<SourceContent> contents) {
         def repo = RDFUtil.createMemoryRepository()
 
         def rdfContent = null
@@ -184,21 +195,21 @@ class FeedCollector extends FeedArchiveReader {
             }
         }
         if (rdfContent == null) {
-            throw new MissingRdfContentException("Found no RDF in <${entryId}>.")
+            throw new MissingRdfContentException("Found no RDF in <${sourceEntryId}>.")
         }
         // FIXME: RDFa must be handled more manually (getting, esp. serializing!)
 
         // TODO: "" is baseURI; should be passed (via SourceContent?)?
         RDFUtil.loadDataFromStream(repo, rdfContent.sourceStream, "", rdfContent.mediaType)
 
-        def newUri = uriMinter.computeOfficialUri(repo) // TODO: give entryId for subj?
+        def newUri = uriMinter.computeOfficialUri(repo) // TODO: give sourceEntryId for subj?
 
         /* TODO:
         if (oldUri.equals(newUri)) {
             return newUri;
         }
         */
-        def newRepo = RDFUtil.replaceURI(repo, entryId, newUri)
+        def newRepo = RDFUtil.replaceURI(repo, sourceEntryId, newUri)
 
         rdfContent.sourceStream = RDFUtil.serializeAsInputStream(
                 newRepo, rdfContent.mediaType)
@@ -207,6 +218,7 @@ class FeedCollector extends FeedArchiveReader {
     }
 
     protected SourceContent createDepotContent(urlPath, mediaType, lang, slug=null) {
+        // TODO: inStream via https; verify cert.!
         urlPath = unescapeColon(urlPath)
         def inStream = new URL(urlPath).openStream()
         return new SourceContent(inStream, mediaType, lang, slug)
