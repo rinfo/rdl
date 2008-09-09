@@ -115,6 +115,7 @@ public class SourceContent {
     }
 
     private void checkMd5(File file) throws IOException {
+        // TODO: don't calculate unless Check.MD5 in datachecks
         String md5Hex = DigestUtils.md5Hex(FileUtils.readFileToByteArray(file));
         checkExpected(Check.MD5, md5Hex);
     }

@@ -7,8 +7,11 @@ import org.slf4j.LoggerFactory
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.Feed
 import org.apache.abdera.model.Entry
+import org.apache.abdera.model.Element
 
+import se.lagrummet.rinfo.store.depot.Atomizer
 import se.lagrummet.rinfo.store.depot.FileDepot
+import se.lagrummet.rinfo.store.depot.DepotContent
 import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.DuplicateDepotEntryException
 import se.lagrummet.rinfo.store.depot.SourceContent
@@ -80,7 +83,7 @@ class FeedCollector extends FeedArchiveReader {
         this.collectedBatch = null
     }
 
-    boolean processFeedPage(URL pageUrl, Feed feed) {
+    public boolean processFeedPage(URL pageUrl, Feed feed) {
         logger.info "Title: ${feed.title}"
         // TODO:? never visit pageUrl being an already visited archive page?
         // TODO: Check for tombstones; if so, delete in depot.
@@ -91,7 +94,7 @@ class FeedCollector extends FeedArchiveReader {
                 if (!newOrUpdated) {
                     continueCollect = false
                 }
-            } catch (Exception e) {
+            } catch (DuplicateDepotEntryException e) {
                 // FIXME: rollback and report explicit error!
                 return false
             }
@@ -99,56 +102,69 @@ class FeedCollector extends FeedArchiveReader {
         return continueCollect
     }
 
-    boolean storeEntry(Entry sourceEntry) {
+    protected boolean storeEntry(Entry sourceEntry) {
 
-        def sourceEntryId = sourceEntry.id.toURI()
-        def timestamp = new Date()
-        def contents = []
-        def enclosures = []
+        URI sourceEntryId = sourceEntry.getId().toURI()
+        List contents = new ArrayList()
+        List enclosures = new ArrayList()
 
         logger.info "Reading Entry <${sourceEntryId}> ..."
 
         // TODO: if metaIndex.get(sourceEntryId)
 
-        def contentElem = sourceEntry.contentElement
-        def contentUrlPath = contentElem.resolvedSrc.toString()
-        def contentMimeType = contentElem.mimeType.toString()
-        def contentLang = contentElem.language
+        def contentElem = sourceEntry.getContentElement()
+        def contentUrlPath = contentElem.getResolvedSrc().toString()
+        def contentMimeType = contentElem.getMimeType().toString()
+        def contentLang = contentElem.getLanguage()
 
-        contents << createDepotContent(
-                contentUrlPath, contentMimeType, contentLang)
+        // TODO: allow inline content!
+        def contentMd5hex = contentElem.getAttributeValue(Atomizer.LINK_EXT_MD5)
+        contents << createSourceContent(
+                contentUrlPath, contentMimeType, contentLang, null, contentMd5hex)
 
         for (link in sourceEntry.links) {
             def urlPath = link.resolvedHref.toString()
             def mediaType = link.mimeType.toString()
             def lang = link.hrefLang
+            def md5hex = link.getAttributeValue(Atomizer.LINK_EXT_MD5)
             if (link.rel == "alternate") {
-                contents << createDepotContent(urlPath, mediaType, lang)
+                contents << createSourceContent(urlPath, mediaType, lang, null, md5hex)
             }
             if (link.rel == "enclosure") {
-                println "enclosure: ${urlPath}"
-                assert urlPath.startsWith(sourceEntryId.toString())
+                assert urlPath.startsWith(sourceEntryId.toString()) // TODO: fail with what?
                 def slug = urlPath.replaceFirst(sourceEntryId, "")
-                enclosures << createDepotContent(urlPath, mediaType, null, slug)
+                enclosures << createSourceContent(urlPath, mediaType, null, slug, md5hex)
             }
         }
 
-        def newUri = computeOfficialUriInPlace(sourceEntryId, contents)
-        // TODO: fail on MissingRdfContentException, URIComputationException, DuplicateDepotEntryException
-        logger.info "New URI: <${newUri}>"
+        URI newUri = computeOfficialUriInPlace(sourceEntryId, contents)
 
-        logger.info "Collecting entry <${sourceEntry.getId()}>  as <${newUri}>.."
+        // TODO: fail on MissingRdfContentException, URIComputationException, DuplicateDepotEntryException, SourceCheckException
+        // TODO: SourceCheckException from SourceContent#writeTo
+        /*
+        throw new Exception("Bad MD5 checksum in " +
+                depotEntry.getId()+" for "+mapEntry.getKey()+". Was "+
+                mapEntry.getValue()+", expected "+storedMd5Hex+".")
+        */
 
-        def depotEntry = depot.getEntry(newUri)
+
+        logger.info("New URI: <${newUri}>")
+
+        logger.info("Collecting entry <${sourceEntryId}>  as <${newUri}>..")
+
+        DepotEntry depotEntry = depot.getEntry(newUri)
+
+        Date timestamp = new Date()
 
         if (depotEntry == null) {
-            logger.info "New entry <${newUri}>."
+            logger.info("New entry <${newUri}>.")
             depotEntry = depot.createEntry(newUri, timestamp, contents, enclosures)
 
         } else {
 
             // TODO: Will read same updated entry twice - must stop if known entry
             //       (is that reliable enough?)
+
             if (!(sourceEntry.getUpdated() > sourceEntry.getPublished())) {
                 /* TODO:
                 If existing; check stored entry and allow update if *both*
@@ -164,17 +180,13 @@ class FeedCollector extends FeedArchiveReader {
                 throw new DuplicateDepotEntryException(depotEntry);
             }
 
-            logger.info "Updating entry <${newUri}>."
+            logger.info("Updating entry <${newUri}>.")
             depotEntry.update(timestamp, contents, enclosures)
         }
 
-        /* TODO:
-        verifyChecksums(sourceEntry, depotEntry)
-        */
-        /* TODO:
-        File metaFile = depotEntry.getMetaFile("collector-source-info.entry")
-        // save id, updated (published), source (id, updated, link/@rel=self)
-        */
+        saveSourceMetaInfo(sourceEntry, depotEntry)
+        //TODO: metaIndex.indexCollected(sourceId, sourceUpdated, newUri.toString())
+
         collectedBatch.add(depotEntry)
         return true
     }
@@ -200,6 +212,7 @@ class FeedCollector extends FeedArchiveReader {
         // FIXME: RDFa must be handled more manually (getting, esp. serializing!)
 
         // TODO: "" is baseURI; should be passed (via SourceContent?)?
+        // FIXME: must verify md5hex of *original*, then *turn off* check for new RDF!
         RDFUtil.loadDataFromStream(repo, rdfContent.sourceStream, "", rdfContent.mediaType)
 
         def newUri = uriMinter.computeOfficialUri(repo) // TODO: give sourceEntryId for subj?
@@ -217,11 +230,29 @@ class FeedCollector extends FeedArchiveReader {
         return newUri
     }
 
-    protected SourceContent createDepotContent(urlPath, mediaType, lang, slug=null) {
-        // TODO: inStream via https; verify cert.!
+    protected SourceContent createSourceContent(urlPath, mediaType, lang, slug=null,
+            md5hex=null, length=null) {
         urlPath = unescapeColon(urlPath)
+        // TODO: inStream via https; verify cert.!
         def inStream = new URL(urlPath).openStream()
-        return new SourceContent(inStream, mediaType, lang, slug)
+        def srcContent = new SourceContent(inStream, mediaType, lang, slug)
+        if (md5hex != null) {
+            srcContent.datachecks[SourceContent.Check.MD5] = md5hex
+        }
+        if (length != null) {
+            srcContent.datachecks[SourceContent.Check.LENGTH] = length
+        }
+        println "DEBUG: ${srcContent.datachecks}"
+        return srcContent
+    }
+
+    protected Entry saveSourceMetaInfo(Entry sourceEntry, DepotEntry depotEntry) {
+        // FIXME: implement!
+        /* TODO:
+        File metaFile = depotEntry.getMetaFile("collector-source-info.entry")
+        // save id, updated (published), source (id, updated, link/@rel=self)
+        */
+        return null
     }
 
 }
