@@ -2,12 +2,17 @@ package se.lagrummet.rinfo.store.depot;
 
 import java.util.*;
 import java.io.*;
-import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 
 
 public class SourceContent {
 
+    public static enum Check {
+        MD5, LENGTH;
+    }
 
     private File sourceFile;
     public File getSourceFile() { return sourceFile; }
@@ -24,6 +29,11 @@ public class SourceContent {
     private String lang;
     public String getLang() { return lang; }
 
+    private Map<Check, Object> datachecks = new HashMap<Check, Object>();
+    /**
+     * A map with token, value checks to perform when calling {@link writeTo}.
+     */
+    public Map<Check, Object> getDatachecks() { return datachecks; }
 
     public SourceContent(File sourceFile,
             String mediaType, String lang, String enclosedUriPath) {
@@ -63,12 +73,14 @@ public class SourceContent {
     }
 
 
-    void writeTo(File file) throws IOException, IllegalStateException {
+    void writeTo(File file) throws IOException, IllegalStateException, SourceCheckException {
         FileOutputStream outStream = new FileOutputStream(file);
         writeTo(outStream);
+        checkData(file);
     }
 
-    void writeTo(FileOutputStream outStream)
+    // TODO: public again if we do Check stuff byte by byte (which we "should")
+    private void writeTo(FileOutputStream outStream)
             throws IOException, IllegalStateException {
         try {
             if (sourceFile != null) {
@@ -90,6 +102,31 @@ public class SourceContent {
             }
         } finally {
             outStream.close();
+        }
+    }
+
+    private void checkData(File file) throws IOException {
+        checkLength(file);
+        checkMd5(file);
+    }
+
+    private void checkLength(File file) throws IOException {
+        checkExpected(Check.LENGTH, file.length());
+    }
+
+    private void checkMd5(File file) throws IOException {
+        String md5Hex = DigestUtils.md5Hex(FileUtils.readFileToByteArray(file));
+        checkExpected(Check.MD5, md5Hex);
+    }
+
+    private void checkExpected(Check check, Object real)
+            throws IOException {
+        Object expected = datachecks.get(check);
+        if (expected == null) {
+            return;
+        }
+        if (!real.equals(expected)) {
+            throw new SourceCheckException(check, expected, real);
         }
     }
 

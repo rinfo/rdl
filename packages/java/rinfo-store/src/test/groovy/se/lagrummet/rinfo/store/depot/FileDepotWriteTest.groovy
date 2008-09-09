@@ -18,6 +18,8 @@ class FileDepotWriteTest {
     static final UPD_ID_2 = new URI("http://example.org/publ/UPD/updated_2")
     static final UPD_ID_3 = new URI("http://example.org/publ/UPD/updated_3")
     static final DEL_ID_1 = new URI("http://example.org/publ/DEL/deleted_1")
+    static final CHECKED_ID_1 = new URI("http://example.org/publ/CHECK/added_1")
+    static final FAILED_ID_1 = new URI("http://example.org/publ/CHECK/failed_1")
 
 
     @BeforeClass
@@ -201,6 +203,25 @@ class FileDepotWriteTest {
         assertEquals 0, entry.findContents("application/pdf").size()
         assertEquals entry.updated, deleteTime
         assertEquals entry.deleted, true
+    }
+
+    @Test
+    void shouldCreateEntryAndCheckMD5AndLength() {
+        def srcContent = new SourceContent(
+                exampleEntryFile("content-en.pdf"), "application/pdf", "en")
+        srcContent.datachecks[SourceContent.Check.LENGTH] = new Long(24014)
+        srcContent.datachecks[SourceContent.Check.MD5] =
+                "eff60b86aaaac3a1fde5affc07a27006"
+        fileDepot.createEntry(CHECKED_ID_1, new Date(), [srcContent])
+    }
+
+
+    @Test(expected=SourceCheckException)
+    void shouldFailCreateEntryOnBadMD5() {
+        def srcContent = new SourceContent(
+                exampleEntryFile("content-en.pdf"), "application/pdf", "en")
+        srcContent.datachecks[SourceContent.Check.MD5] = "BAD_CHECKSUM"
+        fileDepot.createEntry(FAILED_ID_1, new Date(), [srcContent])
     }
 
 
