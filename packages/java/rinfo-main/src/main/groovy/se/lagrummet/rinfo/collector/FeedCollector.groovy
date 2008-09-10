@@ -96,69 +96,40 @@ class FeedCollector extends FeedArchiveReader {
                     continueCollect = false
                 }
             } catch (DuplicateDepotEntryException e) {
-                // FIXME: rollback and report explicit error!
+                // TODO: don't catch when sourceIsNotAnUpdate is implemented (see below)
                 return false
+            } catch (Exception e) {
+                // FIXME: rollback and report explicit error!
+                throw e
             }
         }
         return continueCollect
     }
 
     protected boolean storeEntry(Entry sourceEntry) {
+        /* TODO:
+        Fail on MissingRdfContentException, URIComputationException,
+                DuplicateDepotEntryException,
+                SourceCheckException (from SourceContent#writeTo), ...
+            - then *rollback* (entire batch?)!
 
-        URI sourceEntryId = sourceEntry.getId().toURI()
-        List contents = new ArrayList()
-        List enclosures = new ArrayList()
-
-        logger.info "Reading Entry <${sourceEntryId}> ..."
-
-        // TODO: if metaIndex.get(sourceEntryId)
-
-        def contentElem = sourceEntry.getContentElement()
-        def contentUrlPath = contentElem.getResolvedSrc().toString()
-        def contentMimeType = contentElem.getMimeType().toString()
-        def contentLang = contentElem.getLanguage()
-
-        // TODO: allow inline content!
-        def contentMd5hex = contentElem.getAttributeValue(Atomizer.LINK_EXT_MD5)
-        contents << createSourceContent(
-                contentUrlPath, contentMimeType, contentLang, null, contentMd5hex)
-
-        for (link in sourceEntry.links) {
-            def urlPath = link.resolvedHref.toString()
-            def mediaType = link.mimeType.toString()
-            def lang = link.hrefLang
-            def len = link.getLength()
-            def md5hex = link.getAttributeValue(Atomizer.LINK_EXT_MD5)
-            if (link.rel == "alternate") {
-                contents << createSourceContent(urlPath, mediaType, lang, null, md5hex, len)
-            }
-            if (link.rel == "enclosure") {
-                if (!urlPath.startsWith(sourceEntryId.toString())) {
-                    // TODO: fail with what?
-                    throw new RuntimeException("Entry <"+sourceEntryId +
-                            "> references <${urlPath}> out of its domain.")
-                }
-                def slug = urlPath.replaceFirst(sourceEntryId, "")
-                enclosures << createSourceContent(urlPath, mediaType, null, slug, md5hex, len)
-            }
-        }
-
-        URI newUri = computeOfficialUriInPlace(sourceEntryId, contents)
-
-        // TODO: fail on MissingRdfContentException, URIComputationException, DuplicateDepotEntryException, SourceCheckException (from SourceContent#writeTo)
-        /*
         throw new Exception("Bad MD5 checksum in " +
                 depotEntry.getId()+" for "+mapEntry.getKey()+". Was "+
                 mapEntry.getValue()+", expected "+storedMd5Hex+".")
         */
 
+        URI sourceEntryId = sourceEntry.getId().toURI()
+        logger.info "Reading Entry <${sourceEntryId}> ..."
+        // TODO:? if metaIndex.get(sourceEntryId): if not newOrUpdated: continue..
 
-        logger.info("New URI: <${newUri}>")
+        List contents = initialContents(sourceEntry)
+        List enclosures = new ArrayList()
+        fillContentsAndEnclosures(sourceEntry, contents, enclosures)
 
+        URI newUri = computeOfficialUriInPlace(sourceEntryId, contents)
         logger.info("Collecting entry <${sourceEntryId}>  as <${newUri}>..")
 
         DepotEntry depotEntry = depot.getEntry(newUri)
-
         Date timestamp = new Date()
 
         if (depotEntry == null) {
@@ -166,7 +137,6 @@ class FeedCollector extends FeedArchiveReader {
             depotEntry = depot.createEntry(newUri, timestamp, contents, enclosures)
 
         } else {
-
             /* TODO:
             Will read same updated entry twice - must stop if known entry
             (is that reliable enough?)
@@ -178,7 +148,11 @@ class FeedCollector extends FeedArchiveReader {
             its own update date)::
                 entry.getUpdated() <= depotEntry.getUpdated()
             */
+            if (sourceIsNotAnUpdate(sourceEntry, depotEntry)) {
+                return false
+            }
 
+            // NOTE: If source has been collected but appears as newly published:
             if (!(sourceEntry.getUpdated() > sourceEntry.getPublished())) {
                 logger.error("Collected entry <${sourceEntry.getId()} exists as " +
                         " <${newUri}> but does not appear as updated:" +
@@ -191,10 +165,48 @@ class FeedCollector extends FeedArchiveReader {
         }
 
         saveSourceMetaInfo(sourceEntry, depotEntry)
-        //TODO: metaIndex.indexCollected(sourceId, sourceUpdated, newUri.toString())
+        //TODO:? metaIndex.indexCollected(sourceId, sourceUpdated, newUri.toString())
 
         collectedBatch.add(depotEntry)
         return true
+    }
+
+    protected List initialContents(Entry sourceEntry) {
+        def contentElem = sourceEntry.getContentElement()
+        def contentUrlPath = contentElem.getResolvedSrc().toString()
+        def contentMimeType = contentElem.getMimeType().toString()
+        def contentLang = contentElem.getLanguage()
+        List contents = new ArrayList()
+        def contentMd5hex = contentElem.getAttributeValue(Atomizer.LINK_EXT_MD5)
+        // TODO: allow inline content!
+        contents.add(createSourceContent(
+                contentUrlPath, contentMimeType, contentLang, null, contentMd5hex))
+        return contents
+    }
+
+    protected void fillContentsAndEnclosures(Entry sourceEntry,
+            List contents, List enclosures) {
+        for (link in sourceEntry.links) {
+            def urlPath = link.resolvedHref.toString()
+            def mediaType = link.mimeType.toString()
+            def lang = link.hrefLang
+            def len = link.getLength()
+            def md5hex = link.getAttributeValue(Atomizer.LINK_EXT_MD5)
+            if (link.rel == "alternate") {
+                contents.add(createSourceContent(
+                        urlPath, mediaType, lang, null, md5hex, len))
+            }
+            if (link.rel == "enclosure") {
+                if (!urlPath.startsWith(sourceEntryId.toString())) {
+                    // TODO: fail with what?
+                    throw new RuntimeException("Entry <"+sourceEntryId +
+                            "> references <${urlPath}> out of its domain.")
+                }
+                def slug = urlPath.replaceFirst(sourceEntryId, "")
+                enclosures.add(createSourceContent(
+                        urlPath, mediaType, null, slug, md5hex, len))
+            }
+        }
     }
 
     protected boolean isRdfContent(SourceContent content) {
@@ -229,6 +241,7 @@ class FeedCollector extends FeedArchiveReader {
         def newUri = uriMinter.computeOfficialUri(repo) // TODO: give sourceEntryId for subj?
 
         if (!sourceEntryId.equals(newUri)) {
+            logger.info("New URI: <${newUri}>")
             repo = RDFUtil.replaceURI(repo, sourceEntryId, newUri)
         }
         // TODO:IMPROVE: nicer to keep exact input rdf serialization if not rewritten?
@@ -252,6 +265,11 @@ class FeedCollector extends FeedArchiveReader {
             srcContent.datachecks[SourceContent.Check.LENGTH] = length
         }
         return srcContent
+    }
+
+    protected boolean sourceIsNotAnUpdate(Entry sourceEntry, DepotEntry depotEntry) {
+        // FIXME: implement!
+        return false
     }
 
     protected Entry saveSourceMetaInfo(Entry sourceEntry, DepotEntry depotEntry) {
