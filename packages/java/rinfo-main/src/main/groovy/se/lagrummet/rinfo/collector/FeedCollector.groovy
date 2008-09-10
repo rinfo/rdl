@@ -269,16 +269,22 @@ class FeedCollector extends FeedArchiveReader {
 
     protected boolean sourceIsNotAnUpdate(Entry sourceEntry, DepotEntry depotEntry) {
         // FIXME: implement!
+        File metaFile = depotEntry.getMetaFile(SOURCE_META_FILE_NAME)
+        /*
+        if (!metaFile.isFile()) {
+            throw new IllegalStateException("Entry <"+depotEntry.getId() +
+                    "> is missing expected meta file <"+metaFile+">.")
+        }
+        */
         return false
     }
 
-    protected Entry saveSourceMetaInfo(Entry sourceEntry, DepotEntry depotEntry) {
+    protected void saveSourceMetaInfo(Entry sourceEntry, DepotEntry depotEntry) {
         // FIXME: implement!
-        /* TODO:
-        File metaFile = depotEntry.getMetaFile("collector-source-info.entry")
-        // save id, updated (published), source (id, updated, link/@rel=self)
-        */
-        return null
+        File metaFile = depotEntry.getMetaFile(SOURCE_META_FILE_NAME)
+        // TODO: save id, updated (published), source (id, updated, link/@rel=self)
     }
+
+    public static final String SOURCE_META_FILE_NAME = "collector-source-info.entry"
 
 }
