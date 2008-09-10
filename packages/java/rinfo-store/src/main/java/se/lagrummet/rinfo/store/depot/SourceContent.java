@@ -14,41 +14,28 @@ public class SourceContent {
         MD5, LENGTH;
     }
 
-    private File sourceFile;
-    public File getSourceFile() { return sourceFile; }
-
     private InputStream sourceStream;
-    public InputStream getSourceStream() { return sourceStream; }
-
     private String enclosedUriPath;
-    public String getEnclosedUriPath() { return enclosedUriPath; }
-
     private String mediaType;
-    public String getMediaType() { return mediaType; }
-
     private String lang;
-    public String getLang() { return lang; }
-
     private Map<Check, Object> datachecks = new HashMap<Check, Object>();
-    /**
-     * A map with token, value checks to perform when calling {@link writeTo}.
-     */
-    public Map<Check, Object> getDatachecks() { return datachecks; }
 
     public SourceContent(File sourceFile,
-            String mediaType, String lang, String enclosedUriPath) {
+            String mediaType, String lang, String enclosedUriPath)
+            throws FileNotFoundException {
         this(mediaType, lang, enclosedUriPath);
-        this.sourceFile = sourceFile;
+        this.sourceStream = new FileInputStream(sourceFile);
     }
 
-    public SourceContent(File sourceFile, String mediaType, String lang) {
+    public SourceContent(File sourceFile, String mediaType, String lang)
+            throws FileNotFoundException {
         this(sourceFile, mediaType, lang, null);
     }
-    public SourceContent(File sourceFile, String mediaType) {
+    public SourceContent(File sourceFile, String mediaType)
+            throws FileNotFoundException {
         this(sourceFile, mediaType, null);
     }
 
-    // TODO: URL instead? Perhaps allow sourceStream too, but not closing it?
     /**
      * @param sourceStream. An open InputStream. This will be closed when
      *  {@link #writeTo} is called.
@@ -62,6 +49,7 @@ public class SourceContent {
     public SourceContent(InputStream sourceStream, String mediaType, String lang) {
         this(sourceStream, mediaType, lang, null);
     }
+
     public SourceContent(InputStream sourceStream, String mediaType) {
         this(sourceStream, mediaType, null);
     }
@@ -72,52 +60,82 @@ public class SourceContent {
         this.enclosedUriPath = enclosedUriPath;
     }
 
+    public String getEnclosedUriPath() { return enclosedUriPath; }
 
-    void writeTo(File file) throws IOException, IllegalStateException, SourceCheckException {
-        FileOutputStream outStream = new FileOutputStream(file);
-        writeTo(outStream);
-        checkData(file);
+    public String getMediaType() { return mediaType; }
+
+    public String getLang() { return lang; }
+
+    public void setSourceStream(InputStream sourceStream) {
+        this.sourceStream = sourceStream;
     }
 
-    // TODO: public again if we do Check stuff byte by byte (which we "should")
-    private void writeTo(FileOutputStream outStream)
-            throws IOException, IllegalStateException {
+    /**
+     * A map with token, value checks to perform when calling {@link writeTo}.
+     */
+    public Map<Check, Object> getDatachecks() { return datachecks; }
+
+
+    public void writeTo(File file) throws IOException, IllegalStateException, SourceCheckException {
+        FileOutputStream outStream = new FileOutputStream(file);
+        writeTo(outStream);
+    }
+
+    // TODO:IMPROVE: compute expected values for Check by byte
+    public void writeTo(OutputStream outStream) throws IOException {
+        ByteArrayOutputStream checkStream = null;
+        if (datachecks.size() > 0) {
+            checkStream = new ByteArrayOutputStream();
+        }
         try {
-            if (sourceFile != null) {
-                FileChannel srcChannel = new FileInputStream(sourceFile).getChannel();
-                FileChannel destChannel = outStream.getChannel();
-                destChannel.transferFrom(srcChannel, 0, srcChannel.size());
-
-            } else if (sourceStream != null) {
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = sourceStream.read(buf)) > 0) {
-                    outStream.write(buf, 0, len);
+            byte[] buf = new byte[1024];
+            int len;
+            long total = 0;
+            while ((len = sourceStream.read(buf)) > 0) {
+                outStream.write(buf, 0, len);
+                if (checkStream != null) {
+                    checkStream.write(buf, 0, len);
                 }
-                sourceStream.close();
-
-            } else {
-                throw new IllegalStateException(
-                        "Neither sourceStream nor sourceFile is set.");
             }
+            sourceStream.close();
         } finally {
             outStream.close();
         }
+        if (checkStream != null) {
+            checkData(checkStream);
+        }
+        checkStream = null;
     }
 
-    private void checkData(File file) throws IOException {
-        checkLength(file);
-        checkMd5(file);
+    private void checkData(ByteArrayOutputStream checkStream) throws IOException {
+        checkLength(checkStream);
+        checkMd5(checkStream);
     }
 
-    private void checkLength(File file) throws IOException {
-        checkExpected(Check.LENGTH, file.length());
+    private void checkLength(ByteArrayOutputStream checkStream) throws IOException {
+        checkExpected(Check.LENGTH, Long.valueOf(checkStream.size()));
     }
 
-    private void checkMd5(File file) throws IOException {
-        // TODO: don't calculate unless Check.MD5 in datachecks
-        String md5Hex = DigestUtils.md5Hex(FileUtils.readFileToByteArray(file));
-        checkExpected(Check.MD5, md5Hex);
+    private void checkMd5(ByteArrayOutputStream checkStream) throws IOException {
+        if (datachecks.containsKey(Check.MD5)) {
+            String md5Hex = DigestUtils.md5Hex(checkStream.toByteArray());
+            checkExpected(Check.MD5, md5Hex);
+        }
+        /* TODO:IMPROVE: To compute md5 while writing (instead of the checkStream
+           duplicated buffer; see above), do::
+            try {
+                MessageDigest algorithm = MessageDigest.getInstance("MD5");
+                algorithm.reset();
+                algorithm.update(defaultBytes);
+                byte messageDigest[] = algorithm.digest();
+                StringBuffer hexString = new StringBuffer();
+                for (int i=0;i<messageDigest.length;i++) {
+                    hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+                }
+                String hexValue = hexString.toString();
+            } catch(NoSuchAlgorithmException e) {
+            }
+        */
     }
 
     private void checkExpected(Check check, Object real)

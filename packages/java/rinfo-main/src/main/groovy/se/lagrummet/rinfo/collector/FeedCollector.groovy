@@ -34,21 +34,22 @@ import se.lagrummet.rinfo.base.atom.FeedArchiveReader
         and wipe if errors.
 
 
-    * All entries read will have new timestamps based on their actual
-      (successful) addition into this depot. This because the resulting feed
-      must be ordered by "collect" time (not "jumbled" source times).
-
     - add "extras" support in depot-API to store collector state (lastRead)?
         .. no, write in an own dir..
         .. but perhaps at least for entries? for source docs? but.. hm..
         .. Begin with own dir!
 
     - storage safety and history:
-        - Verify length and md5.
         - Store all collected stuff separately(?)
             .. or just feeds and pre-rewritten RDF?
                 .. support "extras" in depot-API? (See above)
         - verify source certificates
+
+    ---- Documentation ----
+
+    * All entries read will have new timestamps based on their actual
+      (successful) addition into this depot. This because the resulting feed
+      must be ordered by "collect" time (not "jumbled" source times).
 
 */
 
@@ -75,7 +76,7 @@ class FeedCollector extends FeedArchiveReader {
         new FeedCollector(depot, uriMinter).readFeed(url)
     }
 
-    // TODO: synchronized? Or just warn - not thread safe?
+    // TODO:IMPROVE: synchronized? Or just warn - not thread safe?
     public void readFeed(URL url) throws IOException {
         this.collectedBatch = depot.makeEntryBatch()
         super.readFeed(url)
@@ -87,7 +88,7 @@ class FeedCollector extends FeedArchiveReader {
         logger.info "Title: ${feed.title}"
         // TODO:? never visit pageUrl being an already visited archive page?
         // TODO: Check for tombstones; if so, delete in depot.
-        def continueCollect = true
+        boolean continueCollect = true
         for (entry in feed.entries) {
             try {
                 boolean newOrUpdated = storeEntry(entry)
@@ -126,21 +127,25 @@ class FeedCollector extends FeedArchiveReader {
             def urlPath = link.resolvedHref.toString()
             def mediaType = link.mimeType.toString()
             def lang = link.hrefLang
+            def len = link.getLength()
             def md5hex = link.getAttributeValue(Atomizer.LINK_EXT_MD5)
             if (link.rel == "alternate") {
-                contents << createSourceContent(urlPath, mediaType, lang, null, md5hex)
+                contents << createSourceContent(urlPath, mediaType, lang, null, md5hex, len)
             }
             if (link.rel == "enclosure") {
-                assert urlPath.startsWith(sourceEntryId.toString()) // TODO: fail with what?
+                if (!urlPath.startsWith(sourceEntryId.toString())) {
+                    // TODO: fail with what?
+                    throw new RuntimeException("Entry <"+sourceEntryId +
+                            "> references <${urlPath}> out of its domain.")
+                }
                 def slug = urlPath.replaceFirst(sourceEntryId, "")
-                enclosures << createSourceContent(urlPath, mediaType, null, slug, md5hex)
+                enclosures << createSourceContent(urlPath, mediaType, null, slug, md5hex, len)
             }
         }
 
         URI newUri = computeOfficialUriInPlace(sourceEntryId, contents)
 
-        // TODO: fail on MissingRdfContentException, URIComputationException, DuplicateDepotEntryException, SourceCheckException
-        // TODO: SourceCheckException from SourceContent#writeTo
+        // TODO: fail on MissingRdfContentException, URIComputationException, DuplicateDepotEntryException, SourceCheckException (from SourceContent#writeTo)
         /*
         throw new Exception("Bad MD5 checksum in " +
                 depotEntry.getId()+" for "+mapEntry.getKey()+". Was "+
@@ -162,18 +167,19 @@ class FeedCollector extends FeedArchiveReader {
 
         } else {
 
-            // TODO: Will read same updated entry twice - must stop if known entry
-            //       (is that reliable enough?)
+            /* TODO:
+            Will read same updated entry twice - must stop if known entry
+            (is that reliable enough?)
+
+            If existing; check stored entry and allow update if *both*
+                sourceEntry.updated>.created (above) *and* > depotEntry.updated..
+                .. and "source" is "same as last" (indirected via rdf facts)?
+            But we cannot reliably do this comparison (since depot creates
+            its own update date)::
+                entry.getUpdated() <= depotEntry.getUpdated()
+            */
 
             if (!(sourceEntry.getUpdated() > sourceEntry.getPublished())) {
-                /* TODO:
-                If existing; check stored entry and allow update if *both*
-                 sourceEntry.updated>.created (above) *and* > depotEntry.updated..
-                 .. and "source" is "same as last" (indirected via rdf facts)?
-                But we cannot reliably do this comparison (since depot creates
-                its own update date)::
-                    entry.getUpdated() <= depotEntry.getUpdated()
-                */
                 logger.error("Collected entry <${sourceEntry.getId()} exists as " +
                         " <${newUri}> but does not appear as updated:" +
                         sourceEntry)
@@ -211,21 +217,24 @@ class FeedCollector extends FeedArchiveReader {
         }
         // FIXME: RDFa must be handled more manually (getting, esp. serializing!)
 
-        // TODO: "" is baseURI; should be passed (via SourceContent?)?
-        // FIXME: must verify md5hex of *original*, then *turn off* check for new RDF!
-        RDFUtil.loadDataFromStream(repo, rdfContent.sourceStream, "", rdfContent.mediaType)
+        // TODO:IMPROVE: "" is baseURI; should be passed (via SourceContent?)?
+
+        // TODO:IMPROVE: lots of buffered data going on here; how to streamline?
+        def checkedOutStream = new ByteArrayOutputStream()
+        rdfContent.writeTo(checkedOutStream)
+        RDFUtil.loadDataFromStream(repo,
+                new ByteArrayInputStream(checkedOutStream.toByteArray()),
+                "", rdfContent.mediaType)
 
         def newUri = uriMinter.computeOfficialUri(repo) // TODO: give sourceEntryId for subj?
 
-        /* TODO:
-        if (oldUri.equals(newUri)) {
-            return newUri;
+        if (!sourceEntryId.equals(newUri)) {
+            repo = RDFUtil.replaceURI(repo, sourceEntryId, newUri)
         }
-        */
-        def newRepo = RDFUtil.replaceURI(repo, sourceEntryId, newUri)
-
-        rdfContent.sourceStream = RDFUtil.serializeAsInputStream(
-                newRepo, rdfContent.mediaType)
+        // TODO:IMPROVE: nicer to keep exact input rdf serialization if not rewritten?
+        rdfContent.setSourceStream(RDFUtil.serializeAsInputStream(
+                repo, rdfContent.mediaType))
+        rdfContent.datachecks.clear()
 
         return newUri
     }
@@ -242,7 +251,6 @@ class FeedCollector extends FeedArchiveReader {
         if (length != null) {
             srcContent.datachecks[SourceContent.Check.LENGTH] = length
         }
-        println "DEBUG: ${srcContent.datachecks}"
         return srcContent
     }
 

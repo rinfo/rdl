@@ -66,7 +66,7 @@ class SesameLoader extends FeedArchiveReader {
                 def urlPath = unescapeColon( link.resolvedHref.toString() )
                 def mediaType = link.mimeType.toString()
                 if (mediaType.equals(rdfMimeType)) {
-                    rdfReprs.add(new ReprRef(new URL(urlPath, mediaType)))
+                    rdfReprs.add(new ReprRef(new URL(urlPath), mediaType))
                 }
             }
 
