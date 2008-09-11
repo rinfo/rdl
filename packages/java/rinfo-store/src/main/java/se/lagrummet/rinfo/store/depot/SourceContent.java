@@ -67,7 +67,14 @@ public class SourceContent {
     public String getLang() { return lang; }
 
     public void setSourceStream(InputStream sourceStream) {
+        this.setSourceStream(sourceStream, true);
+    }
+
+    public void setSourceStream(InputStream sourceStream, boolean clearChecks) {
         this.sourceStream = sourceStream;
+        if (clearChecks) {
+            datachecks.clear();
+        }
     }
 
     /**

@@ -94,10 +94,12 @@ class FeedCollector extends FeedArchiveReader {
         // TODO:? never visit pageUrl being an already visited archive page?
         return super.readFeedPage(url)
     }
+
     public boolean processFeedPage(URL pageUrl, Feed feed) {
         logger.info "Title: ${feed.title}"
         // TODO: Check for tombstones; if so, delete in depot.
         boolean continueCollect = true
+        // TODO: sort entries by updated and stop directly if not newOrUpdated?
         for (entry in feed.entries) {
             try {
                 boolean newOrUpdated = storeEntry(feed, entry)
@@ -156,10 +158,7 @@ class FeedCollector extends FeedArchiveReader {
 
             If existing; check stored entry and allow update if *both*
                 sourceEntry.updated>.created (above) *and* > depotEntry.updated..
-                .. and "source" is "same as last" (indirected via rdf facts)?
-            But we cannot reliably do this comparison (since depot creates
-            its own update date)::
-                entry.getUpdated() <= depotEntry.getUpdated()
+                .. and "source feed" is "same as last"? (indirected via rdf facts)?
             */
             if (sourceIsNotAnUpdate(sourceEntry, depotEntry)) {
                 logger.info("Encountered collected entry <${sourceEntry.getId()}> at [" + 
@@ -304,8 +303,7 @@ class FeedCollector extends FeedArchiveReader {
         }
         // TODO:IMPROVE: nicer to keep exact input rdf serialization if not rewritten?
         rdfContent.setSourceStream(RDFUtil.serializeAsInputStream(
-                repo, rdfContent.mediaType))
-        rdfContent.datachecks.clear()
+                repo, rdfContent.mediaType), true)
 
         return newUri
     }
