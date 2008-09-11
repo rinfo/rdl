@@ -34,6 +34,8 @@ class CollectorRunner {
         this.uriMinter = uriMinter
     }
 
+    // FIXME: make sure collects are *never* running simultaneously!
+
     void startup() {
         // TODO: Needs source feed urls!
         execPool = Executors.newScheduledThreadPool(DEFAULT_POOL_SIZE)

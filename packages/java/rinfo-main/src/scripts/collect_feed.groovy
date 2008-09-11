@@ -3,17 +3,16 @@ import se.lagrummet.rinfo.collector.FeedCollector
 import se.lagrummet.rinfo.base.URIMinter
 
 
-if (args.size() != 1) {
-    println "Usage: <uri-to-subscription-feed>"
+if (args.size() != 2) {
+    println "Usage: <path-to-depot-props> <uri-to-subscription-feed>"
     System.exit 0
 }
-def depot = FileDepot.autoConfigure()
+def depot = FileDepot.autoConfigure(args[0])
 
 def rinfoBaseDir = "../../../resources/base/"
 def uriMinter = new URIMinter(rinfoBaseDir)
 
 def collector = new FeedCollector(depot, uriMinter)
-collector.readFeed(new URL(args[0]))
-
-depot.generateIndex()
+collector.readFeed(new URL(args[1]))
+//depot.generateIndex()
 

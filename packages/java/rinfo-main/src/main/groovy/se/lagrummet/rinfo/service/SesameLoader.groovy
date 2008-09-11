@@ -84,7 +84,9 @@ class SesameLoader extends FeedArchiveReader {
                 storedContext = contextStmt.subject
             }
 
-            // TODO: Check for tombstones; delete..: conn.clear(context)
+            /* TODO: Check for tombstones; delete..:
+            conn.clear(context)
+            */
             if (storedContext != null) {
                 def storedUpdated = null
                 def updatedStmt = RDFUtil.one(repository, storedContext, AWOL_UPDATED, null)
@@ -106,7 +108,7 @@ class SesameLoader extends FeedArchiveReader {
 
             for (ReprRef rdfRef in rdfReprs) {
                 logger.info("RDF from <${rdfRef.url}>")
-                loadDataFromURL(conn, rdfRef, context)
+                loadData(conn, rdfRef, context)
             }
 
         }
@@ -117,8 +119,9 @@ class SesameLoader extends FeedArchiveReader {
         return foundVisitedInFeed
     }
 
-    void loadDataFromURL(RepositoryConnection conn, ReprRef repr, Resource context) {
-        conn.add(repr.url, repr.url.toString(), RDFFormat.forMIMEType(repr.mediaType))
+    protected void loadData(RepositoryConnection conn, ReprRef repr, Resource context) {
+        def inStream = getResponseAsInputStream(repr.url)
+        conn.add(inStream, repr.url.toString(), RDFFormat.forMIMEType(repr.mediaType))
         conn.commit()
     }
 

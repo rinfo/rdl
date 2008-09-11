@@ -4,10 +4,14 @@ package se.lagrummet.rinfo.collector
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import org.apache.http.client.HttpClient
+import org.apache.http.impl.client.DefaultHttpClient
+
 import org.apache.abdera.Abdera
-import org.apache.abdera.model.Feed
-import org.apache.abdera.model.Entry
 import org.apache.abdera.model.Element
+import org.apache.abdera.model.Entry
+import org.apache.abdera.model.Feed
+import org.apache.abdera.model.Source
 
 import se.lagrummet.rinfo.store.depot.Atomizer
 import se.lagrummet.rinfo.store.depot.FileDepot
@@ -57,6 +61,8 @@ class FeedCollector extends FeedArchiveReader {
 
     private final logger = LoggerFactory.getLogger(FeedCollector)
 
+    public static final String SOURCE_META_FILE_NAME = "collector-source-info.entry"
+
     FileDepot depot
     URIMinter uriMinter
 
@@ -84,39 +90,46 @@ class FeedCollector extends FeedArchiveReader {
         this.collectedBatch = null
     }
 
+    public URL readFeedPage(URL url) throws IOException {
+        // TODO:? never visit pageUrl being an already visited archive page?
+        return super.readFeedPage(url)
+    }
     public boolean processFeedPage(URL pageUrl, Feed feed) {
         logger.info "Title: ${feed.title}"
-        // TODO:? never visit pageUrl being an already visited archive page?
         // TODO: Check for tombstones; if so, delete in depot.
         boolean continueCollect = true
         for (entry in feed.entries) {
             try {
-                boolean newOrUpdated = storeEntry(entry)
+                boolean newOrUpdated = storeEntry(feed, entry)
                 if (!newOrUpdated) {
                     continueCollect = false
                 }
-            } catch (DuplicateDepotEntryException e) {
-                // TODO: don't catch when sourceIsNotAnUpdate is implemented (see below)
-                return false
             } catch (Exception e) {
                 // FIXME: rollback and report explicit error!
                 throw e
             }
         }
         return continueCollect
-    }
-
-    protected boolean storeEntry(Entry sourceEntry) {
         /* TODO:
         Fail on MissingRdfContentException, URIComputationException,
                 DuplicateDepotEntryException,
                 SourceCheckException (from SourceContent#writeTo), ...
             - then *rollback* (entire batch?)!
+            - and *report error*
 
         throw new Exception("Bad MD5 checksum in " +
                 depotEntry.getId()+" for "+mapEntry.getKey()+". Was "+
                 mapEntry.getValue()+", expected "+storedMd5Hex+".")
         */
+    }
+
+    @Override
+    public HttpClient createClient() {
+        // TODO: Configure to use SSL (https) and verify cert.!
+        return new DefaultHttpClient()
+    }
+
+    protected boolean storeEntry(Feed sourceFeed, Entry sourceEntry) {
 
         URI sourceEntryId = sourceEntry.getId().toURI()
         logger.info "Reading Entry <${sourceEntryId}> ..."
@@ -149,6 +162,8 @@ class FeedCollector extends FeedArchiveReader {
                 entry.getUpdated() <= depotEntry.getUpdated()
             */
             if (sourceIsNotAnUpdate(sourceEntry, depotEntry)) {
+                logger.info("Encountered collected entry <${sourceEntry.getId()}> at [" + 
+                        sourceEntry.getUpdated()+"].")
                 return false
             }
 
@@ -164,7 +179,7 @@ class FeedCollector extends FeedArchiveReader {
             depotEntry.update(timestamp, contents, enclosures)
         }
 
-        saveSourceMetaInfo(sourceEntry, depotEntry)
+        saveSourceMetaInfo(sourceFeed, sourceEntry, depotEntry)
         //TODO:? metaIndex.indexCollected(sourceId, sourceUpdated, newUri.toString())
 
         collectedBatch.add(depotEntry)
@@ -209,6 +224,50 @@ class FeedCollector extends FeedArchiveReader {
         }
     }
 
+    protected SourceContent createSourceContent(urlPath, mediaType, lang, slug=null,
+            md5hex=null, length=null) {
+        urlPath = unescapeColon(urlPath)
+        def inStream = getResponseAsInputStream(urlPath)
+        def srcContent = new SourceContent(inStream, mediaType, lang, slug)
+        if (md5hex != null) {
+            srcContent.datachecks[SourceContent.Check.MD5] = md5hex
+        }
+        if (length != null) {
+            srcContent.datachecks[SourceContent.Check.LENGTH] = length
+        }
+        return srcContent
+    }
+
+
+    protected boolean sourceIsNotAnUpdate(Entry sourceEntry, DepotEntry depotEntry) {
+        File metaFile = depotEntry.getMetaFile(SOURCE_META_FILE_NAME)
+        Entry metaEntry = null
+        try {
+            metaEntry = (Entry) Abdera.getInstance().getParser().parse(
+                    new FileInputStream(metaFile)).getRoot();
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException("Entry <"+depotEntry.getId() +
+                    "> is missing expected meta file <"+metaFile+">.")
+        }
+        // TODO: is this trustworthy enough?
+        return !(sourceEntry.getUpdated() > metaEntry.getUpdated())
+    }
+
+    protected void saveSourceMetaInfo(Feed sourceFeed, Entry sourceEntry,
+            DepotEntry depotEntry) {
+        /* TODO:IMPROVE:
+            easier to store and use depotEntry.edited = sourceEntry.updated?
+            .. but this metadata should be kept, so we can use it
+               (reasonably not too much of a performance hit) */
+        File metaFile = depotEntry.getMetaFile(SOURCE_META_FILE_NAME)
+        // TODO:IMPROVE: only keep id, updated (published)?
+        Entry metaEntry = sourceEntry.clone()
+        metaEntry.setSource(sourceFeed)
+        // FIXME: resolve links in metaEntry (incl.source) as full URL:s..
+        metaEntry.writeTo(new FileOutputStream(metaFile))
+    }
+
+
     protected boolean isRdfContent(SourceContent content) {
         return rdfMimeTypes.contains(content.mediaType)
     }
@@ -228,10 +287,9 @@ class FeedCollector extends FeedArchiveReader {
             throw new MissingRdfContentException("Found no RDF in <${sourceEntryId}>.")
         }
         // FIXME: RDFa must be handled more manually (getting, esp. serializing!)
-
-        // TODO:IMPROVE: "" is baseURI; should be passed (via SourceContent?)?
-
         // TODO:IMPROVE: lots of buffered data going on here; how to streamline?
+        // TODO:IMPROVE: "" is baseURI; should be passed (via SourceContent?)?
+        // TODO:IMPROVE: keep original RDF as metaFile?
         def checkedOutStream = new ByteArrayOutputStream()
         rdfContent.writeTo(checkedOutStream)
         RDFUtil.loadDataFromStream(repo,
@@ -251,40 +309,5 @@ class FeedCollector extends FeedArchiveReader {
 
         return newUri
     }
-
-    protected SourceContent createSourceContent(urlPath, mediaType, lang, slug=null,
-            md5hex=null, length=null) {
-        urlPath = unescapeColon(urlPath)
-        // TODO: inStream via https; verify cert.!
-        def inStream = new URL(urlPath).openStream()
-        def srcContent = new SourceContent(inStream, mediaType, lang, slug)
-        if (md5hex != null) {
-            srcContent.datachecks[SourceContent.Check.MD5] = md5hex
-        }
-        if (length != null) {
-            srcContent.datachecks[SourceContent.Check.LENGTH] = length
-        }
-        return srcContent
-    }
-
-    protected boolean sourceIsNotAnUpdate(Entry sourceEntry, DepotEntry depotEntry) {
-        // FIXME: implement!
-        File metaFile = depotEntry.getMetaFile(SOURCE_META_FILE_NAME)
-        /*
-        if (!metaFile.isFile()) {
-            throw new IllegalStateException("Entry <"+depotEntry.getId() +
-                    "> is missing expected meta file <"+metaFile+">.")
-        }
-        */
-        return false
-    }
-
-    protected void saveSourceMetaInfo(Entry sourceEntry, DepotEntry depotEntry) {
-        // FIXME: implement!
-        File metaFile = depotEntry.getMetaFile(SOURCE_META_FILE_NAME)
-        // TODO: save id, updated (published), source (id, updated, link/@rel=self)
-    }
-
-    public static final String SOURCE_META_FILE_NAME = "collector-source-info.entry"
 
 }

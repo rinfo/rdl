@@ -64,39 +64,63 @@ def prompt(flag, message=null) {
     if (flag in args) {
         println()
         while (true) {
-            println(); print "Type ENTER ${message}.."
+            println(); print ">>> Type ENTER ${message}.."
             if (System.in.read() == "\n") break;
         }
         println()
     }
 }
 
+def teststep(msg) {
+    println "="*20; println msg; println "="*20
+}
 
-// TODO: run two separate source depots; sit back and watch what happens..
 // Initialize source depot
-println "Create a temporary test repot"
+teststep "Create a temporary test repot"
 sourceDepot = new FileDepot(
         new URI("http://example.org"), createTempDir("source"), "/feed")
-
 sourcePort = 8182
-println "Start test supply"
+teststep "Start test supply"
 startAppServer(sourcePort, {new TestApplication(it, sourceDepot)})
+// TODO: run two separate source depots; sit back and watch what happens..
 
 
-// Initialize rinfo app
-println "Set up rinfo app"
+// Initialize rinfo main
+teststep "Set up rinfo main"
 rinfoDepot = new FileDepot(
         new URI("http://rinfo.lagrummet.se"), createTempDir("rinfo"), "/feed")
 collectorRunner = new CollectorRunner(rinfoDepot,
         new URIMinter("../../../resources/base/"))
-
 rinfoPort = 8180
-println "Start rinfo app"
+teststep "Start rinfo app"
 startAppServer(rinfoPort, {new MainApplication(it, rinfoDepot, collectorRunner)})
 
+// simulate ping from a source
 def pingFeedToRInfo(feedUrl) {
     def pingUrl = new URL(
             "http://localhost:${rinfoPort}/collector?feed=${feedUrl}")
+    println pingUrl.text
+}
+
+
+// Initialize rinfo service
+teststep "Set up rinfo service"
+import se.lagrummet.rinfo.service.RDFStoreLoaderRestlet
+class ServiceApplication extends Application {
+    ServiceApplication(parentContext) {
+        super(parentContext)
+    }
+    synchronized Restlet createRoot() {
+        return new RDFStoreLoaderRestlet(context,
+                "http://localhost:8080/openrdf-sesame", "rinfo")
+    }
+}
+servicePort = 8181
+startAppServer(servicePort, {new ServiceApplication(it)})
+// TODO: do ping from MainApplication..
+def pingRInfoFeedToService(feedUrl) {
+    def pingUrl = new URL(
+            "http://localhost:${servicePort}/?feed=${feedUrl}")
     println pingUrl.text
 }
 
@@ -111,7 +135,7 @@ def exampleSourceContent(fname, mtype, lang=null) {
 
 // Case: Add
 prompt("-p", "to add")
-println "Add source entry </docs/one>"
+teststep "Add source entry </docs/one>"
 sourceDepot.makeEntryBatch().with { batch ->
     batch << sourceDepot.createEntry(
             DOC_ONE_ID, new Date(), [
@@ -120,16 +144,16 @@ sourceDepot.makeEntryBatch().with { batch ->
     sourceDepot.indexEntries(batch)
 }
 prompt("-p", "to ping rinfo")
-println "Ping rinfo-main"
+teststep "Ping rinfo-main"
 pingFeedToRInfo(localhost(sourcePort, "/feed/current"))
-println "Find created==updated <publ/sfs/1:1> in rinfo:</feed/latest>"
+teststep "Find created==updated <publ/sfs/1:1> in rinfo:</feed/latest>"
 // TODO: check resulting rinfo feed
 
 
 // Case: Update
-Thread.sleep(1000) // can't modify in same second
+Thread.sleep(2000) // can't modify in same second
 prompt("-p", "to update")
-println "Update source entry </docs/one>"
+teststep "Update source entry </docs/one>"
 sourceDepot.makeEntryBatch().with {
     def entry = sourceDepot.getEntry(DOC_ONE_ID)
     entry.update(new Date(), [
@@ -140,18 +164,18 @@ sourceDepot.makeEntryBatch().with {
     sourceDepot.indexEntries(it)
 }
 prompt("-p", "to ping rinfo")
-println "Ping rinfo-main"
+teststep "Ping rinfo-main"
 pingFeedToRInfo(localhost(sourcePort, "/feed/current"))
 // FIXME: adds an updated twice in index! (see FeedCollector)
-println "Find updated <publ/sfs/1:1> in rinfo:</feed/current>"
+teststep "Find updated <publ/sfs/1:1> in rinfo:</feed/current>"
 // TODO: check resulting rinfo feed
 
 
 // Case: Delete
 /* FIXME: collector can't yet handle these!
-Thread.sleep(1000) // can't modify in same second
+Thread.sleep(2000) // can't modify in same second
 prompt("-p", "to delete")
-println "Delete source entry </docs/one>"
+teststep "Delete source entry </docs/one>"
 sourceDepot.makeEntryBatch().with {
     def entry = sourceDepot.getEntry(DOC_ONE_ID)
     entry.delete(new Date())
@@ -159,40 +183,22 @@ sourceDepot.makeEntryBatch().with {
     sourceDepot.indexEntries(it)
 }
 prompt("-p", "to ping rinfo")
-println "Ping rinfo-main"
+teststep "Ping rinfo-main"
 pingFeedToRInfo(localhost(sourcePort, "/feed/current"))
-println "Find deleted <publ/sfs/1:1> in rinfo:</feed/latest>"
+teststep "Find deleted <publ/sfs/1:1> in rinfo:</feed/latest>"
 // TODO: check resulting rinfo feed
 */
 
 
 // Case: Read unmodified
-println "Source not modified"
-prompt("-h", "to ping rinfo (no source mods)")
-println "Ping rinfo-main"
+prompt("-p", "to ping rinfo (no source mods)")
+teststep "Ping rinfo-main (after no source modifications)"
 pingFeedToRInfo(localhost(sourcePort, "/feed/current"))
 
 
-// TODO: simulating ServiceApplication
+// TODO: this is a manual ping, do from main..
 prompt("-p", "to ping service")
-import se.lagrummet.rinfo.service.RDFStoreLoaderRestlet
-class ServiceApplication extends Application {
-    ServiceApplication(parentContext) {
-        super(parentContext)
-    }
-    synchronized Restlet createRoot() {
-        return new RDFStoreLoaderRestlet(context,
-                "http://localhost:8080/openrdf-sesame", "rinfo")
-    }
-}
-servicePort = 8181
-startAppServer(servicePort, {new ServiceApplication(it)})
-// TODO: ping from MainApplication..
-def pingRInfoFeedToService(feedUrl) {
-    def pingUrl = new URL(
-            "http://localhost:${servicePort}/?feed=${feedUrl}")
-    println pingUrl.text
-}
+teststep "Pinging rinfo-service (collect to triple store)"
 pingRInfoFeedToService(localhost(rinfoPort, "/feed/current"))
 
 
