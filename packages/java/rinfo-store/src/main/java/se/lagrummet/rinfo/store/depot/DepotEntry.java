@@ -433,7 +433,7 @@ public class DepotEntry {
      * to store additional information about creation source etc.
      */
     public File getMetaFile(String fileName) {
-        return new File(genericMetaDir, fileName);
+        return new File(getMetaDir(), fileName);
     }
 
     protected File getMetaDir() {
@@ -459,13 +459,16 @@ public class DepotEntry {
         // NOTE: this means existing content not in the update is removed.
         //      - *including enclosures*
         File historyDir = newHistoryDir();
-        // TODO: there should be an entryContentDir as well if enclosures are
+        // FIXME: there should be an entryContentDir as well if enclosures are
         // to be located and work as normal... (but see iterateEntries!)
 
         FileUtils.copyFileToDirectory(getManifestFile(), historyDir, true);
 
         for (DepotContent content : findContents()) {
             FileUtils.moveToDirectory(content.getFile(), historyDir, false);
+        }
+        if (genericMetaDir.exists()) {
+            FileUtils.moveToDirectory(genericMetaDir, historyDir, false);
         }
         for (File file : entryDir.listFiles(PUBLIC_FILE_FILTER)) {
             if (file.isDirectory() && containsSubEntry(file)) {

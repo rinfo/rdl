@@ -81,7 +81,11 @@ public class SourceContent {
         writeTo(outStream);
     }
 
-    // TODO:IMPROVE: compute expected values for Check by byte
+    /* FIXME:IMPROVE:
+        Compute expected values for Check by byte - use:
+        MD5: java.security.DigestOutputStream
+        LENGTH: org.apache.commons.io.output.CountingOutputStream
+    */
     public void writeTo(OutputStream outStream) throws IOException {
         ByteArrayOutputStream checkStream = null;
         if (datachecks.size() > 0) {
@@ -97,12 +101,15 @@ public class SourceContent {
                     checkStream.write(buf, 0, len);
                 }
             }
-            sourceStream.close();
+            if (checkStream != null) {
+                checkData(checkStream);
+            }
         } finally {
+            sourceStream.close();
             outStream.close();
-        }
-        if (checkStream != null) {
-            checkData(checkStream);
+            if (checkStream != null) {
+                checkStream.close();
+            }
         }
         checkStream = null;
     }
