@@ -113,11 +113,14 @@ class FeedCollector extends FeedArchiveReader {
         }
         return continueCollect
         /* TODO:
-        Fail on MissingRdfContentException, URIComputationException,
-                DuplicateDepotEntryException,
-                SourceCheckException (from SourceContent#writeTo), ...
-            - then *rollback* (entire batch?)!
-            - and *report error*
+        * Fail on:
+            javax.net.ssl.SSLPeerUnverifiedException,
+            MissingRdfContentException,
+            URIComputationException,
+            DuplicateDepotEntryException,
+            SourceCheckException (from SourceContent#writeTo), ...
+          - then *rollback* (entire batch?)!
+          - and *report error*
 
         throw new Exception("Bad MD5 checksum in " +
                 depotEntry.getId()+" for "+mapEntry.getKey()+". Was "+
@@ -262,7 +265,9 @@ class FeedCollector extends FeedArchiveReader {
         // TODO:IMPROVE: only keep id, updated (published)?
         Entry metaEntry = sourceEntry.clone()
         metaEntry.setSource(sourceFeed)
-        // FIXME: resolve links in metaEntry (incl.source) as full URL:s..
+        // TODO:IMPROVE: is this way of setting base URI enough?
+        metaEntry.setBaseUri(metaEntry.getSource().getResolvedBaseUri())
+        metaEntry.getSource().setBaseUri(null)
         metaEntry.writeTo(new FileOutputStream(metaFile))
     }
 
