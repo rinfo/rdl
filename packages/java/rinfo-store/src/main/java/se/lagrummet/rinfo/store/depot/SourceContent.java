@@ -1,11 +1,23 @@
 package se.lagrummet.rinfo.store.depot;
 
 import java.util.*;
-import java.io.*;
-import java.nio.channels.FileChannel;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+import java.io.OutputStream;
 
-import org.apache.commons.io.FileUtils;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.CountingOutputStream;
 
 
 public class SourceContent {
@@ -19,22 +31,6 @@ public class SourceContent {
     private String mediaType;
     private String lang;
     private Map<Check, Object> datachecks = new HashMap<Check, Object>();
-
-    public SourceContent(File sourceFile,
-            String mediaType, String lang, String enclosedUriPath)
-            throws FileNotFoundException {
-        this(mediaType, lang, enclosedUriPath);
-        this.sourceStream = new FileInputStream(sourceFile);
-    }
-
-    public SourceContent(File sourceFile, String mediaType, String lang)
-            throws FileNotFoundException {
-        this(sourceFile, mediaType, lang, null);
-    }
-    public SourceContent(File sourceFile, String mediaType)
-            throws FileNotFoundException {
-        this(sourceFile, mediaType, null);
-    }
 
     /**
      * @param sourceStream. An open InputStream. This will be closed when
@@ -52,6 +48,21 @@ public class SourceContent {
 
     public SourceContent(InputStream sourceStream, String mediaType) {
         this(sourceStream, mediaType, null);
+    }
+
+    public SourceContent(File sourceFile,
+            String mediaType, String lang, String enclosedUriPath)
+            throws FileNotFoundException {
+        this(new FileInputStream(sourceFile), mediaType, lang, enclosedUriPath);
+    }
+
+    public SourceContent(File sourceFile, String mediaType, String lang)
+            throws FileNotFoundException {
+        this(sourceFile, mediaType, lang, null);
+    }
+    public SourceContent(File sourceFile, String mediaType)
+            throws FileNotFoundException {
+        this(sourceFile, mediaType, null);
     }
 
     private SourceContent(String mediaType, String lang, String enclosedUriPath) {
@@ -80,76 +91,54 @@ public class SourceContent {
     /**
      * A map with token, value checks to perform when calling {@link writeTo}.
      */
-    public Map<Check, Object> getDatachecks() { return datachecks; }
+    public Map<Check, Object> getDatachecks() {
+        return datachecks;
+    }
 
-
-    public void writeTo(File file) throws IOException, IllegalStateException, SourceCheckException {
+    /**
+     * @see {@link #writeTo(OutputStream)}.
+     */
+    public void writeTo(File file)
+            throws IOException, IllegalStateException, SourceCheckException {
         FileOutputStream outStream = new FileOutputStream(file);
         writeTo(outStream);
     }
 
-    /* FIXME:IMPROVE:
-        Compute expected values for Check by byte - use:
-        MD5: java.security.DigestOutputStream
-        LENGTH: org.apache.commons.io.output.CountingOutputStream
-    */
+    /**
+     * Writes the {@link #sourceStream} to the outStream and closes both streams
+     * upon completion. Also runs any registered {@link #datachecks} at close
+     * time.
+     */
     public void writeTo(OutputStream outStream) throws IOException {
-        ByteArrayOutputStream checkStream = null;
-        if (datachecks.size() > 0) {
-            checkStream = new ByteArrayOutputStream();
-        }
+        outStream = checkedOutStream(outStream);
         try {
-            byte[] buf = new byte[1024];
-            int len;
-            long total = 0;
-            while ((len = sourceStream.read(buf)) > 0) {
-                outStream.write(buf, 0, len);
-                if (checkStream != null) {
-                    checkStream.write(buf, 0, len);
-                }
-            }
-            if (checkStream != null) {
-                checkData(checkStream);
-            }
+            IOUtils.copyLarge(sourceStream, outStream);
         } finally {
-            sourceStream.close();
-            outStream.close();
-            if (checkStream != null) {
-                checkStream.close();
-            }
-        }
-        checkStream = null;
-    }
-
-    private void checkData(ByteArrayOutputStream checkStream) throws IOException {
-        checkLength(checkStream);
-        checkMd5(checkStream);
-    }
-
-    private void checkLength(ByteArrayOutputStream checkStream) throws IOException {
-        checkExpected(Check.LENGTH, Long.valueOf(checkStream.size()));
-    }
-
-    private void checkMd5(ByteArrayOutputStream checkStream) throws IOException {
-        if (datachecks.containsKey(Check.MD5)) {
-            String md5Hex = DigestUtils.md5Hex(checkStream.toByteArray());
-            checkExpected(Check.MD5, md5Hex);
-        }
-        /* TODO:IMPROVE: To compute md5 while writing (instead of the checkStream
-           duplicated buffer; see above), do::
             try {
-                MessageDigest algorithm = MessageDigest.getInstance("MD5");
-                algorithm.reset();
-                algorithm.update(defaultBytes);
-                byte messageDigest[] = algorithm.digest();
-                StringBuffer hexString = new StringBuffer();
-                for (int i=0;i<messageDigest.length;i++) {
-                    hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
-                }
-                String hexValue = hexString.toString();
-            } catch(NoSuchAlgorithmException e) {
+                sourceStream.close();
+            } finally {
+                outStream.close();
             }
-        */
+        }
+    }
+
+    private OutputStream checkedOutStream(OutputStream outStream) throws IOException {
+        for (Check check : datachecks.keySet()) {
+            switch (check) {
+                case MD5:
+                    try {
+                        outStream = new CheckMD5OutputStream(outStream);
+                    } catch (NoSuchAlgorithmException e) {
+                        throw new IllegalStateException(
+                                "Cannot create a MessageDigest instance for MD5.", e);
+                    }
+                    break;
+                case LENGTH:
+                    outStream = new CheckLengthOutputStream(outStream);
+                    break;
+            }
+        }
+        return outStream;
     }
 
     private void checkExpected(Check check, Object real)
@@ -161,6 +150,43 @@ public class SourceContent {
         if (!real.equals(expected)) {
             throw new SourceCheckException(check, expected, real);
         }
+    }
+
+    protected class CheckLengthOutputStream extends CountingOutputStream {
+
+        public CheckLengthOutputStream(OutputStream outStream) {
+            super(outStream);
+        }
+
+        public void close() throws IOException {
+            super.close();
+            checkLength();
+        }
+
+        private void checkLength() throws IOException {
+            checkExpected(Check.LENGTH, getByteCount());
+        }
+
+    }
+
+    protected class CheckMD5OutputStream extends DigestOutputStream {
+
+        public CheckMD5OutputStream(OutputStream outStream)
+                throws NoSuchAlgorithmException {
+            super(outStream, MessageDigest.getInstance("MD5"));
+        }
+
+        public void close() throws IOException {
+            super.close();
+            checkMd5();
+        }
+
+        private void checkMd5() throws IOException {
+            MessageDigest digest = getMessageDigest();
+            String hexDigest = new String(Hex.encodeHex(digest.digest()));
+            checkExpected(Check.MD5, hexDigest);
+        }
+
     }
 
 }

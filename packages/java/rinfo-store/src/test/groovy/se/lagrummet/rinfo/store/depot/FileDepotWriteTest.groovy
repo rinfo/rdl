@@ -20,6 +20,7 @@ class FileDepotWriteTest {
     static final DEL_ID_1 = new URI("http://example.org/publ/DEL/deleted_1")
     static final CHECKED_ID_1 = new URI("http://example.org/publ/CHECK/added_1")
     static final FAILED_ID_1 = new URI("http://example.org/publ/CHECK/failed_1")
+    static final FAILED_ID_2 = new URI("http://example.org/publ/CHECK/failed_2")
 
 
     @BeforeClass
@@ -222,6 +223,15 @@ class FileDepotWriteTest {
                 exampleEntryFile("content-en.pdf"), "application/pdf", "en")
         srcContent.datachecks[SourceContent.Check.MD5] = "BAD_CHECKSUM"
         fileDepot.createEntry(FAILED_ID_1, new Date(), [srcContent])
+    }
+
+
+    @Test(expected=SourceCheckException)
+    void shouldFailCreateEntryOnBadLength() {
+        def srcContent = new SourceContent(
+                exampleEntryFile("content-en.pdf"), "application/pdf", "en")
+        srcContent.datachecks[SourceContent.Check.LENGTH] = new Long(0)
+        fileDepot.createEntry(FAILED_ID_2, new Date(), [srcContent])
     }
 
 
