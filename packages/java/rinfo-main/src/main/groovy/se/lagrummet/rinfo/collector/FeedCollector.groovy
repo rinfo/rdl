@@ -98,20 +98,23 @@ class FeedCollector extends FeedArchiveReader {
     public boolean processFeedPage(URL pageUrl, Feed feed) {
         logger.info "Title: ${feed.title}"
         // TODO: Check for tombstones; if so, delete in depot.
-        boolean continueCollect = true
-        // TODO: sort entries by updated and stop directly if not newOrUpdated?
-        for (entry in feed.entries) {
+        feed = feed.sortEntriesByUpdated(true)
+        def currentUpdated = new Date() // TODO: choke on "futures" in collect source?
+        for (entry in feed.getEntries()) {
+            // TODO: verify this assert in unit test instead (using a jumbled source feed)
+            assert currentUpdated >= entry.getUpdated()
+            currentUpdated = entry.getUpdated()
             try {
                 boolean newOrUpdated = storeEntry(feed, entry)
                 if (!newOrUpdated) {
-                    continueCollect = false
+                    return false
                 }
             } catch (Exception e) {
                 // FIXME: rollback and report explicit error!
                 throw e
             }
         }
-        return continueCollect
+        return true
         /* TODO:
         * Fail on:
             javax.net.ssl.SSLPeerUnverifiedException,
