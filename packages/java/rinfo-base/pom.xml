@@ -7,7 +7,7 @@
   <groupId>se.lagrummet.rinfo</groupId>
   <artifactId>rinfo-base</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>RInfo Store</name>
+  <name>RInfo Base</name>
   <url>http://dev.lagrummet.se/rinfo/</url>
   <packaging>jar</packaging>
 

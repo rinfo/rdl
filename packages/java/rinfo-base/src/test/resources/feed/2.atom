@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:fh="http://purl.org/syndication/history/1.0">
+    <updated>2007-09-16T09:16:00.000Z</updated>
+    <link href="/2.atom" rel="self"/>
+    <fh:archive/>
+    <link href="/index.atom" rel="current"/>
+
+    <entry>
+        <id>http://example.org/entry/1</id>
+        <updated>2007-09-16T09:16:00.000Z</updated>
+        <title type="text">Entry 1</title>
+        <content type="text/plain">Entry 1 content.</content>
+    </entry>
+
+</feed>

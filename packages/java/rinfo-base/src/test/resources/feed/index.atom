@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <updated>2008-09-16T09:16:00.000Z</updated>
+    <link href="/index.atom" rel="self"/>
+    <link href="/2.atom" rel="prev-archive"/>
+
+    <entry>
+        <id>http://example.org/entry/2</id>
+        <updated>2008-09-16T09:16:00.000Z</updated>
+        <title type="text">Entry 2</title>
+        <content type="text/plain">Entry 2 content.</content>
+    </entry>
+
+</feed>
