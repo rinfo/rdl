@@ -37,23 +37,21 @@ class FeedArchiveReaderTest {
 
     @Test
     void shouldReadFeed() {
-        def feedUrl =  new URL("http://localhost:${testHttpPort}/index.atom")
+        def baseUrl = "http://localhost:${testHttpPort}"
+        def feedUrl =  new URL("${baseUrl}/index.atom")
         def reader = new DummyFeeder()
         reader.readFeed(feedUrl)
-        assertEquals 2, reader.visitedPages
+        assertEquals([feedUrl, new URL("${baseUrl}/2.atom")], reader.visitedPages)
     }
 
 }
 
 class DummyFeeder extends FeedArchiveReader {
-
-    int visitedPages
-
+    def visitedPages = []
     boolean processFeedPage(URL pageUrl, Feed feed) {
-        visitedPages += 1
+        visitedPages << pageUrl
         return true
     }
-
 }
 
 class FileApp extends Application {
