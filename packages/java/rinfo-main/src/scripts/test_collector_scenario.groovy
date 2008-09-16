@@ -1,4 +1,5 @@
 import org.apache.commons.io.FileUtils
+import org.apache.commons.configuration.PropertiesConfiguration
 
 import org.restlet.Application
 import org.restlet.Component
@@ -37,7 +38,6 @@ def startAppServer(port, makeApp) {
             makeApp(component.context.createChildContext()) )
     component.start()
     appServers << component
-    return component
 }
 
 def tearDown() {
@@ -87,13 +87,12 @@ startAppServer(sourcePort, {new TestApplication(it, sourceDepot)})
 
 // Initialize rinfo main
 teststep "Set up rinfo main"
-rinfoDepot = new FileDepot(
-        new URI("http://rinfo.lagrummet.se"), createTempDir("rinfo"), "/feed")
-collectorRunner = new CollectorRunner(rinfoDepot,
-        new URIMinter("../../../resources/base/"))
+rinfoCfg = new PropertiesConfiguration(
+        "src/environments/dev-unix/rinfo-main.properties")
+rinfoCfg.setProperty("rinfo.depot.fileDir", createTempDir("rinfo").toString())
 rinfoPort = 8180
 teststep "Start rinfo app"
-startAppServer(rinfoPort, {new MainApplication(it, rinfoDepot, collectorRunner)})
+startAppServer(rinfoPort, {new MainApplication(it, rinfoCfg)})
 
 // simulate ping from a source
 def pingFeedToRInfo(feedUrl) {
@@ -191,12 +190,14 @@ teststep "Find deleted <publ/sfs/1:1> in rinfo:</feed/latest>"
 
 
 // Case: Read unmodified
+Thread.sleep(1000)
 prompt("-p", "to ping rinfo (no source mods)")
 teststep "Ping rinfo-main (after no source modifications)"
 pingFeedToRInfo(localhost(sourcePort, "/feed/current"))
 
 
 // TODO: this is a manual ping, do from main..
+Thread.sleep(1000)
 prompt("-p", "to ping service")
 teststep "Pinging rinfo-service (collect to triple store)"
 pingRInfoFeedToService(localhost(rinfoPort, "/feed/current"))

@@ -1,18 +1,12 @@
+import org.apache.commons.configuration.PropertiesConfiguration
 import se.lagrummet.rinfo.store.depot.FileDepot
-import se.lagrummet.rinfo.collector.FeedCollector
-import se.lagrummet.rinfo.base.URIMinter
-
+import se.lagrummet.rinfo.collector.CollectorRunner
 
 if (args.size() != 2) {
-    println "Usage: <path-to-depot-props> <uri-to-subscription-feed>"
+    println "Usage: <path-to-main-config> <uri-to-subscription-feed>"
     System.exit 0
 }
-def depot = FileDepot.newConfigured(args[0])
-
-def rinfoBaseDir = "../../../resources/base/"
-def uriMinter = new URIMinter(rinfoBaseDir)
-
-def collector = new FeedCollector(depot, uriMinter)
-collector.readFeed(new URL(args[1]))
-//depot.generateIndex()
+def runner = new CollectorRunner(null, null)
+runner.configure(new PropertiesConfiguration(args[0]))
+runner.collectFeed(new URL(args[1]))
 

@@ -6,6 +6,9 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
+import org.apache.commons.configuration.AbstractConfiguration
+import org.apache.commons.configuration.ConfigurationException
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,12 +29,21 @@ class CollectorRunner {
     static final int DEFAULT_INITIAL_DELAY = 0
     static final int DEFAULT_SCHEDULE_SECONDS = 4
 
-    private URIMinter uriMinter // TODO: auto-config here ...?
+    private URIMinter uriMinter
     private ScheduledExecutorService execPool
 
     CollectorRunner(FileDepot depot, URIMinter uriMinter) {
         this.depot = depot
         this.uriMinter = uriMinter
+    }
+
+    void configure(AbstractConfiguration config) {
+        if (depot == null) {
+            depot = FileDepot.newConfigured(config)
+        }
+        if (uriMinter == null) {
+            uriMinter = new URIMinter(config.getString("rinfo.main.baseDir"))
+        }
     }
 
     // FIXME: make sure collects are *never* running simultaneously!
@@ -50,10 +62,12 @@ class CollectorRunner {
 
     void spawnOneFeedCollect(URL feedUrl) {
         def executor = Executors.newSingleThreadExecutor()
-        executor.execute({
-                FeedCollector.readFeed(depot, uriMinter, feedUrl)
-            });
+        executor.execute({ collectFeed(feedUrl) })
         executor.shutdown()
+    }
+
+    void collectFeed(URL feedUrl) {
+        FeedCollector.readFeed(depot, uriMinter, feedUrl)
     }
 
     private void collectFeeds() {

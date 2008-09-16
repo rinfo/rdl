@@ -1,5 +1,9 @@
 package se.lagrummet.rinfo.main
 
+import org.apache.commons.configuration.AbstractConfiguration
+import org.apache.commons.configuration.ConfigurationException
+import org.apache.commons.configuration.PropertiesConfiguration
+
 import org.restlet.Application
 import org.restlet.Context
 import org.restlet.Restlet
@@ -17,15 +21,21 @@ import se.lagrummet.rinfo.collector.CollectorRunner
 
 class MainApplication extends Application {
 
+    public static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-main.properties"
+
     private FileDepot depot
     private CollectorRunner collectorRunner
 
-    // TODO: depot and collectorRunner should bootstrap themselves..
-    MainApplication(Context parentContext,
-            FileDepot depot, CollectorRunner collectorRunner) {
+    MainApplication(Context parentContext) {
+        def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
+        this(parentContext, config)
+    }
+
+    MainApplication(Context parentContext, AbstractConfiguration config) {
         super(parentContext)
-        this.depot = depot
-        this.collectorRunner = collectorRunner
+        depot = FileDepot.newConfigured(config)
+        collectorRunner = new CollectorRunner(depot, null)
+        collectorRunner.configure(config)
     }
 
     @Override

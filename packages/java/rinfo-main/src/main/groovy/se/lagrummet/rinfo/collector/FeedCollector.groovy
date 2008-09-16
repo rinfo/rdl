@@ -148,6 +148,9 @@ class FeedCollector extends FeedArchiveReader {
         fillContentsAndEnclosures(sourceEntry, contents, enclosures)
 
         URI newUri = computeOfficialUriInPlace(sourceEntryId, contents)
+
+        verifyRdf(newUri, contents)
+
         logger.info("Collecting entry <${sourceEntryId}>  as <${newUri}>..")
 
         DepotEntry depotEntry = depot.getEntry(newUri)
@@ -275,24 +278,12 @@ class FeedCollector extends FeedArchiveReader {
     }
 
 
-    protected boolean isRdfContent(SourceContent content) {
-        return rdfMimeTypes.contains(content.mediaType)
-    }
-
     protected URI computeOfficialUriInPlace(
             URI sourceEntryId, List<SourceContent> contents) {
         def repo = RDFUtil.createMemoryRepository()
 
-        def rdfContent = null
-        for (SourceContent content : contents) {
-            if (isRdfContent(content)) {
-                rdfContent = content
-                break
-            }
-        }
-        if (rdfContent == null) {
-            throw new MissingRdfContentException("Found no RDF in <${sourceEntryId}>.")
-        }
+        def rdfContent = getRdfContent(contents)
+
         // FIXME: RDFa must be handled more manually (getting, esp. serializing!)
         // TODO:IMPROVE: lots of buffered data going on here; how to streamline?
         // TODO:IMPROVE: "" is baseURI; should be passed (via SourceContent?)?
@@ -313,7 +304,32 @@ class FeedCollector extends FeedArchiveReader {
         rdfContent.setSourceStream(RDFUtil.serializeAsInputStream(
                 repo, rdfContent.mediaType), true)
 
+        repo.shutDown()
         return newUri
+    }
+
+    protected SourceContent getRdfContent(List<SourceContent> contents) {
+        def rdfContent = null
+        for (SourceContent content : contents) {
+            if (isRdfContent(content)) {
+                rdfContent = content
+                break
+            }
+        }
+        if (rdfContent == null) {
+            throw new MissingRdfContentException("Found no RDF in <${sourceEntryId}>.")
+        }
+        return rdfContent
+    }
+
+    protected boolean isRdfContent(SourceContent content) {
+        return rdfMimeTypes.contains(content.mediaType)
+    }
+
+    protected void verifyRdf(URI docUri, List<SourceContent> contents) {
+        // FIXME: use new base.RDFVerifyer#verifyRdf()
+        // .. also, really read and re-set sourceContent? Write entry *first*?
+        // .. or call this via computeOfficialUriInPlace..?
     }
 
 }
