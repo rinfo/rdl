@@ -25,8 +25,8 @@ class SupplyApplication extends Application {
     @Override
     synchronized Restlet createRoot() {
         def fileDepot = (fileDepotConfig)?
-                FileDepot.configure(fileDepotConfig) :
-                FileDepot.autoConfigure()
+                FileDepot.newConfigured(fileDepotConfig) :
+                FileDepot.newAutoConfigured()
         def depotFinder = new DepotFinder(context, fileDepot)
         return depotFinder
     }

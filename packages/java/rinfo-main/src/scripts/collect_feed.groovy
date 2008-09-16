@@ -7,7 +7,7 @@ if (args.size() != 2) {
     println "Usage: <path-to-depot-props> <uri-to-subscription-feed>"
     System.exit 0
 }
-def depot = FileDepot.autoConfigure(args[0])
+def depot = FileDepot.newConfigured(args[0])
 
 def rinfoBaseDir = "../../../resources/base/"
 def uriMinter = new URIMinter(rinfoBaseDir)

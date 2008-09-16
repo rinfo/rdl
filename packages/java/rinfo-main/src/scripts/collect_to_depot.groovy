@@ -20,7 +20,7 @@ try {
     System.exit 0
 }
 
-depot = FileDepot.autoConfigure()
+depot = FileDepot.newAutoConfigured()
 
 iterateFiles(sourceDir,
         new NameFileFilter(entryInfoFileName),

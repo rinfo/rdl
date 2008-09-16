@@ -40,7 +40,7 @@ README.txt
 packages/
 
     All code modules/libraries/components live here, under directories named by
-    implementation platform/language (e.g. "java/rinfo-util").
+    implementation platform/language (e.g. "java/rinfo-main").
 
     All components (libraries and services) that constitute the RInfo
     architecture live here. (Each directory under the platform directory should

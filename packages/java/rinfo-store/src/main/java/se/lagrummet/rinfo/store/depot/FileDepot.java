@@ -10,15 +10,16 @@ import java.net.URLEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.io.FileUtils;
 
 
 public class FileDepot {
 
     public static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-depot.properties";
+    public static final String CONF_BASE_KEY = "rinfo.depot.";
 
     private final Logger logger = LoggerFactory.getLogger(FileDepot.class);
 
@@ -26,7 +27,7 @@ public class FileDepot {
     private File baseDir;
     private String feedPath;
     private Atomizer atomizer;
-    // TODO: configure via metadata.. (IoC? Data in baseDir?)
+    // TODO: configurable.. (Via configure? Data in baseDir?)
     private UriPathProcessor pathProcessor = new UriPathProcessor();
 
     public FileDepot() {
@@ -41,30 +42,34 @@ public class FileDepot {
         this.feedPath = feedPath;
     }
 
-    public static FileDepot configure(AbstractConfiguration config)
+    public static FileDepot newAutoConfigured()
         throws ConfigurationException,
                URISyntaxException, FileNotFoundException {
-        FileDepot depot = new FileDepot();
-        depot.setBaseUri(new URI(config.getString("baseUri")));
-        depot.setBaseDir(new File(config.getString("fileDir")));
-        depot.setFeedSkeleton(config.getString("feedSkeleton"));
-        depot.setFeedPath(config.getString("feedPath"));
-        // TODO: set atomizer props here (see forwarding setters for atomizer)
-        //atomizer.configure(config);
-        return depot;
+        return newConfigured(CONFIG_PROPERTIES_FILE_NAME);
     }
 
-    public static FileDepot configure(String fileName)
+    public static FileDepot newConfigured(String fileName)
         throws ConfigurationException,
                URISyntaxException, FileNotFoundException {
         PropertiesConfiguration config = new PropertiesConfiguration(fileName);
-        return configure(config);
+        return newConfigured(config);
     }
 
-    public static FileDepot autoConfigure()
+    public static FileDepot newConfigured(AbstractConfiguration config)
         throws ConfigurationException,
                URISyntaxException, FileNotFoundException {
-        return configure(CONFIG_PROPERTIES_FILE_NAME);
+        FileDepot depot = new FileDepot();
+        depot.configure(config);
+        return depot;
+    }
+
+    public void configure(AbstractConfiguration config)
+        throws ConfigurationException,
+               URISyntaxException, FileNotFoundException {
+        setBaseUri(new URI(config.getString(CONF_BASE_KEY+"baseUri")));
+        setBaseDir(new File(config.getString(CONF_BASE_KEY+"fileDir")));
+        setFeedPath(config.getString(CONF_BASE_KEY+"feedPath"));
+        atomizer.configure(config);
     }
 
 
@@ -175,20 +180,6 @@ public class FileDepot {
 
 
     //== Feed Related ==
-
-    // TODO: remove forwarding setters (see autoConfigure). Are these shortcuts
-    // used (in tests), look at removing them all.
-
-    public int getFeedBatchSize() {
-        return atomizer.getFeedBatchSize();
-    }
-    public void setFeedBatchSize(int batchSize) {
-        atomizer.setFeedBatchSize(batchSize);
-    }
-
-    public void setFeedSkeleton(String feedSkeleton) throws FileNotFoundException {
-        atomizer.setFeedSkeleton(feedSkeleton);
-    }
 
     public DepotContent getFeedContent(String uriPath) {
         // TODO: Require suffix in req? And/or conneg?

@@ -3,13 +3,15 @@ package se.lagrummet.rinfo.store.depot;
 import java.util.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.commons.configuration.AbstractConfiguration;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
 
@@ -29,8 +31,7 @@ import javax.xml.namespace.QName;
 
 public class Atomizer {
 
-    private final Logger logger = LoggerFactory.getLogger(Atomizer.class);
-
+    public static final String CONF_BASE_KEY = "rinfo.depot.atom.";
 
     // TODO: in Abdera somewhere? Or get from depot(.pathProcessor)?
     public static final String ATOM_ENTRY_MEDIA_TYPE = "application/atom+xml;type=entry";
@@ -44,28 +45,53 @@ public class Atomizer {
     public static final QName FEED_EXT_TOMBSTONE = new QName(
             "http://purl.org/atompub/tombstones/1.0", "deleted-entry", "at");
 
+    public static final int DEFAULT_FEED_BATCH_SIZE = 25;
+
+
+    private final Logger logger = LoggerFactory.getLogger(Atomizer.class);
 
     private FileDepot depot;
-    public FileDepot getDepot() { return depot; }
 
-    // TODO: Atomizer config properties
+    private int feedBatchSize;
     private boolean includeDeleted = true;
     private boolean includeHistorical = false; // TODO: true
-
     private boolean useEntrySelfLink = true;
     private boolean useLinkExtensionsMd5 = true;
     private boolean useTombstones = true;
     private boolean useFeedSync = true;
     private boolean useGdataDeleted = true;
 
+    private Feed skeletonFeed;
+
 
     public Atomizer(FileDepot depot) {
         this.depot = depot;
     }
 
-    public static final int DEFAULT_FEED_BATCH_SIZE = 25;
+    public void configure(AbstractConfiguration config)
+            throws ConfigurationException, FileNotFoundException {
+        setFeedSkeleton(
+                config.getString(CONF_BASE_KEY+"feedSkeleton"));
+        setFeedBatchSize(
+                config.getInt(CONF_BASE_KEY+"feedBatchSize", 0));
+        setIncludeDeleted(
+                config.getBoolean(CONF_BASE_KEY+"includeDeleted", true));
+        setIncludeHistorical(
+                config.getBoolean(CONF_BASE_KEY+"includeHistorical", false));
+        setUseEntrySelfLink(
+                config.getBoolean(CONF_BASE_KEY+"useEntrySelfLink", true));
+        setUseLinkExtensionsMd5(
+                config.getBoolean(CONF_BASE_KEY+"useLinkExtensionsMd5", true));
+        setUseTombstones(
+                config.getBoolean(CONF_BASE_KEY+"useTombstones", true));
+        setUseFeedSync(
+                config.getBoolean(CONF_BASE_KEY+"useFeedSync", true));
+        setUseGdataDeleted(
+                config.getBoolean(CONF_BASE_KEY+"useGdataDeleted", true));
+    }
 
-    private int feedBatchSize;
+    public FileDepot getDepot() { return depot; }
+
     public int getFeedBatchSize() {
         return feedBatchSize!=0 ? feedBatchSize : DEFAULT_FEED_BATCH_SIZE;
     }
@@ -73,14 +99,49 @@ public class Atomizer {
         this.feedBatchSize = feedBatchSize;
     }
 
+    public boolean getIncludeDeleted() { return includeDeleted; }
+    public void setIncludeDeleted(boolean includeDeleted) {
+        this.includeDeleted = includeDeleted;
+    }
 
-    private Feed skeletonFeed;
+    public boolean getIncludeHistorical() { return includeHistorical; }
+    public void setIncludeHistorical(boolean includeHistorical) {
+        this.includeHistorical = includeHistorical;
+    }
+
+    public boolean getUseEntrySelfLink() { return useEntrySelfLink; }
+    public void setUseEntrySelfLink(boolean useEntrySelfLink) {
+        this.useEntrySelfLink = useEntrySelfLink;
+    }
+
+    public boolean getUseLinkExtensionsMd5() { return useLinkExtensionsMd5; }
+    public void setUseLinkExtensionsMd5(boolean useLinkExtensionsMd5) {
+        this.useLinkExtensionsMd5 = useLinkExtensionsMd5;
+    }
+
+    public boolean getUseTombstones() { return useTombstones; }
+    public void setUseTombstones(boolean useTombstones) {
+        this.useTombstones = useTombstones;
+    }
+
+    public boolean getUseFeedSync() { return useFeedSync; }
+    public void setUseFeedSync(boolean useFeedSync) {
+        this.useFeedSync = useFeedSync;
+    }
+
+    public boolean getUseGdataDeleted() { return useGdataDeleted; }
+    public void setUseGdataDeleted(boolean useGdataDeleted) {
+        this.useGdataDeleted = useGdataDeleted;
+    }
+
+
     void setFeedSkeleton(String feedSkeleton) throws FileNotFoundException {
         if (feedSkeleton!=null && !feedSkeleton.equals("")) {
             skeletonFeed = (Feed) Abdera.getInstance().getParser().parse(
                     new FileInputStream(feedSkeleton)).getRoot();
         }
     }
+
 
     public void generateIndex() throws IOException {
         File feedDir = new File(depot.getBaseDir(), depot.getFeedPath());

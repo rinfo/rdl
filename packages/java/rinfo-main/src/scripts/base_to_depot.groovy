@@ -21,7 +21,7 @@ import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.depot.SourceContent
 
 
-depot = FileDepot.autoConfigure()
+depot = FileDepot.newConfigured(args[0])
 
 
 /**
