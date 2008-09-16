@@ -57,7 +57,6 @@ public class Atomizer {
     private boolean useTombstones = true;
     private boolean useFeedSync = true;
     private boolean useGdataDeleted = true;
-    //private String feedSkeleton;
 
 
     public Atomizer(FileDepot depot) {
@@ -114,9 +113,6 @@ public class Atomizer {
             currFeed = newFeed(subscriptionPath);
         }
         Feed youngestArchFeed = getPrevArchiveAsFeed(currFeed);
-
-        // FIXME: assure added entries are younger than latest in currFeed?
-
 
         int batchCount = currFeed.getEntries().size();
         Date currentDate = null;
@@ -175,7 +171,7 @@ public class Atomizer {
         } else {
             feed = Abdera.getInstance().newFeed();
         }
-        feed.setUpdated(new Date()); // TODO: which utcDateTime?
+        feed.setUpdated(new Date()); // TODO:IMPROVE: always use "now" utcDateTime?
         feed.addLink(uriPath, "self");
         return feed;
     }
@@ -198,12 +194,13 @@ public class Atomizer {
         return getFeed(prev.toString());
     }
 
+    /* TODO: to use for e.g. "emptying" deleted entries
+        - search in feed folder by date, time; opt. offset (if many of same in same instant?)
     protected Feed getFeedForDateTime(Date date) {
-        // TODO: to use for e.g. "emptying" deleted entries
-        // - search in feed folder by date, time; opt. offset (can there be many in same same instant?)
-        // .. getFeedForDateTime(depot.pathToArchiveFeed(date))
+        .. getFeedForDateTime(depot.pathToArchiveFeed(date))
         return null;
     }
+    */
 
     protected String uriPathFromFeed(Feed feed) {
         return feed.getSelfLink().getHref().toString();
@@ -241,6 +238,7 @@ public class Atomizer {
         if (useDeletedEntriesInFeed) ...
         */
         Entry atomEntry = generateAtomEntryContent(depotEntry, false);
+        atomEntry.setSource(null);
         feed.insertEntry(atomEntry);
     }
 
@@ -279,6 +277,10 @@ public class Atomizer {
         Date publDate = depotEntry.getPublished();
         if (publDate!=null) {
             atomEntry.setPublished(publDate);
+        }
+
+        if (skeletonFeed != null) {
+            atomEntry.setSource(skeletonFeed);
         }
 
         if (useFeedSync) {

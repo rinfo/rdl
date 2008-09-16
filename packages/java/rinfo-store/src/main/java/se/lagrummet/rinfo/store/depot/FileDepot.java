@@ -11,8 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 
 
 public class FileDepot {
@@ -40,23 +41,30 @@ public class FileDepot {
         this.feedPath = feedPath;
     }
 
-    public static FileDepot autoConfigure()
-        throws ConfigurationException,
-               URISyntaxException, FileNotFoundException {
-        return autoConfigure(CONFIG_PROPERTIES_FILE_NAME);
-    }
-
-    public static FileDepot autoConfigure(String fileName)
+    public static FileDepot configure(AbstractConfiguration config)
         throws ConfigurationException,
                URISyntaxException, FileNotFoundException {
         FileDepot depot = new FileDepot();
-        PropertiesConfiguration config = new PropertiesConfiguration(fileName);
         depot.setBaseUri(new URI(config.getString("baseUri")));
         depot.setBaseDir(new File(config.getString("fileDir")));
         depot.setFeedSkeleton(config.getString("feedSkeleton"));
         depot.setFeedPath(config.getString("feedPath"));
         // TODO: set atomizer props here (see forwarding setters for atomizer)
+        //atomizer.configure(config);
         return depot;
+    }
+
+    public static FileDepot configure(String fileName)
+        throws ConfigurationException,
+               URISyntaxException, FileNotFoundException {
+        PropertiesConfiguration config = new PropertiesConfiguration(fileName);
+        return configure(config);
+    }
+
+    public static FileDepot autoConfigure()
+        throws ConfigurationException,
+               URISyntaxException, FileNotFoundException {
+        return configure(CONFIG_PROPERTIES_FILE_NAME);
     }
 
 

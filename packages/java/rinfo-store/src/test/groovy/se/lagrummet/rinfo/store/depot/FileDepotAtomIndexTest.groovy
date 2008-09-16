@@ -18,7 +18,7 @@ class FileDepotAtomIndexTest {
         tempDepotDir = TempDirUtil.createTempDir(depotSrc)
         fileDepot = new FileDepot(new URI("http://example.org"),
                 new File(tempDepotDir, depotSrc.name), "/feed")
-        fileDepot.feedBatchSize = 2
+        fileDepot.atomizer.feedBatchSize = 2
     }
 
     @AfterClass
