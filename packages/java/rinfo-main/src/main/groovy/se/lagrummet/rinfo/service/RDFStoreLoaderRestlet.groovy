@@ -17,7 +17,7 @@ import org.openrdf.sail.nativerdf.NativeStore
 
 class RDFStoreLoaderRestlet extends Restlet {
 
-    static final ALLOWED = new HashSet([Method.GET])
+    static final ALLOWED = new HashSet([Method.GET]) // TODO: only POST
     String repoPath
     String remoteRepoName
 
