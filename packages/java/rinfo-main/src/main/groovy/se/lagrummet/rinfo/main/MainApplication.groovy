@@ -42,8 +42,8 @@ class MainApplication extends Application {
     synchronized Restlet createRoot() {
         def router = new Router(getContext())
         router.attach("/collector",
-                new CollectorRestlet(context, depot, collectorRunner))
-        router.attachDefault(new DepotFinder(context, depot))
+                new CollectorRestlet(getContext(), depot, collectorRunner))
+        router.attachDefault(new DepotFinder(getContext(), depot))
         return router
     }
 
@@ -62,6 +62,7 @@ class MainApplication extends Application {
 }
 
 
+// FIXME: rebuild (as Finder+Handler)
 class CollectorRestlet extends Restlet {
 
     static final ALLOWED = new HashSet([Method.GET]) // TODO: only POST

@@ -77,7 +77,7 @@ class CollectorRunner {
         }
         logger.info("Starting to collect ${sourceFeedUrls.size()} source feeds.")
         for (URL feedUrl : sourceFeedUrls) {
-            FeedCollector.readFeed(depot, uriMinter, feedUrl)
+            collectFeed(feedUrl)
         }
         logger.info("Done collecting source feeds.")
     }

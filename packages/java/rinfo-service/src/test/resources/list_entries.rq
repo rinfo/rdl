@@ -1,0 +1,23 @@
+PREFIX awol: <http://bblfish.net/work/atom-owl/2006-06-06/#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+SELECT DISTINCT * WHERE {
+
+    ?entryNode a awol:Entry;
+        awol:updated ?entryUpdated;
+        awol:id ?entryId .
+    GRAPH ?entryNode {
+        ?docNode
+            a ?docType;
+            dc:title ?docTitle;
+            ?rel ?relUri; a ?relType . # TODO: inference + foaf:Document
+        #FILTER( isURI(?relUri) )
+    }
+    # NOTE: a course variant is to skip GRAPH above and filter like:
+    # FILTER( STR(?docNode) = STR(?entryId) )
+
+
+}
+ORDER BY ASC(?entryUpdated) LIMIT 200 OFFSET 0
+

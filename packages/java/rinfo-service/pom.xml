@@ -5,9 +5,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>se.lagrummet.rinfo</groupId>
-  <artifactId>rinfo-main</artifactId>
+  <artifactId>rinfo-service</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>RInfo Main</name>
+  <name>RInfo Service</name>
   <url>http://dev.lagrummet.se/rinfo/</url>
   <packaging>war</packaging>
 
@@ -87,6 +87,7 @@
         </configuration>
       </plugin>
 
+      <!--
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
@@ -97,19 +98,21 @@
             </goals>
             <configuration>
               <tasks>
-                <delete file="${project.build.outputDirectory}/rinfo-main.properties"/>
-                <copy file="src/environments/${environment}/rinfo-main.properties"
-                      tofile="${project.build.outputDirectory}/rinfo-main.properties"/>
+                <delete file="${project.build.outputDirectory}/rinfo-service.properties"/>
+                <copy file="src/environments/${environment}/rinfo-service.properties"
+                      tofile="${project.build.outputDirectory}/rinfo-service.properties"/>
               </tasks>
             </configuration>
           </execution>
         </executions>
       </plugin>
+      -->
 
     </plugins>
   </build>
 
 
+  <!--
   <profiles>
     <profile>
       <activation>
@@ -139,5 +142,6 @@
       </properties>
     </profile>
   </profiles>
+  -->
 
 </project>

@@ -19,8 +19,11 @@ if (args.length > 1) {
         def dataDir = new File(path)
         repo = new SailRepository(new NativeStore(dataDir))
     }
-} else {
+} else if (args.length == 1) {
     repo = new SailRepository(new MemoryStore())
+} else {
+    println "Usage: <path-to-feed> [sesame-repo [remote-repo-name]]"
+    System.exit 1
 }
 
 repo.initialize()

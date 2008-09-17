@@ -45,8 +45,8 @@ class SesameLoader extends FeedArchiveReader {
     }
 
     boolean processFeedPage(URL pageUrl, Feed feed) {
-        def foundVisitedInFeed = false
         def conn = repository.connection
+        feed = feed.sortEntriesByUpdated(true)
         for (entry in feed.entries) {
 
             Collection<ReprRef> rdfReprs =
@@ -94,17 +94,19 @@ class SesameLoader extends FeedArchiveReader {
                     storedUpdated = updatedStmt.object
                 }
                 if (entryUpdatedLiteral.equals(storedUpdated)) {
-                    foundVisitedInFeed = true
-                    continue
+                    logger.info("Encountered collected entry <${entry.getId()}>; stopping.")
+                    return false
                 } else {
                     conn.clear()
                 }
             }
 
+            // TODO: add in which context (itself - i.e. context)?
+            // *Must be removed/updated when the context is*!
             Resource context = vf.createBNode()
-            conn.add(context, RDF.TYPE, AWOL_ENTRY)
-            conn.add(context, AWOL_ID, entryIdLiteral)
-            conn.add(context, AWOL_UPDATED, entryUpdatedLiteral)
+            conn.add(context, RDF.TYPE, AWOL_ENTRY, context)
+            conn.add(context, AWOL_ID, entryIdLiteral, context)
+            conn.add(context, AWOL_UPDATED, entryUpdatedLiteral, context)
 
             for (ReprRef rdfRef in rdfReprs) {
                 logger.info("RDF from <${rdfRef.url}>")
@@ -116,12 +118,14 @@ class SesameLoader extends FeedArchiveReader {
 
         // TODO: stop at feed with entry at minDateTime..
         //Date minDateTime=null
-        return foundVisitedInFeed
+        return true
     }
 
     protected void loadData(RepositoryConnection conn, ReprRef repr, Resource context) {
         def inStream = getResponseAsInputStream(repr.url)
-        conn.add(inStream, repr.url.toString(), RDFFormat.forMIMEType(repr.mediaType))
+        conn.add(
+                inStream, repr.url.toString(), RDFFormat.forMIMEType(repr.mediaType),
+                context)
         conn.commit()
     }
 

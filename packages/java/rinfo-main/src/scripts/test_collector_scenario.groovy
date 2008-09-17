@@ -101,27 +101,15 @@ def pingFeedToRInfo(feedUrl) {
     println pingUrl.text
 }
 
-
-// Initialize rinfo service
-teststep "Set up rinfo service"
-import se.lagrummet.rinfo.service.RDFStoreLoaderRestlet
-class ServiceApplication extends Application {
-    ServiceApplication(parentContext) {
-        super(parentContext)
-    }
-    synchronized Restlet createRoot() {
-        return new RDFStoreLoaderRestlet(context,
-                "http://localhost:8080/openrdf-sesame", "rinfo")
-    }
-}
-servicePort = 8181
-startAppServer(servicePort, {new ServiceApplication(it)})
-// TODO: do ping from MainApplication..
-def pingRInfoFeedToService(feedUrl) {
-    def pingUrl = new URL(
-            "http://localhost:${servicePort}/?feed=${feedUrl}")
-    println pingUrl.text
-}
+// simulate ping to rinfo service
+// TODO: this is started outside of this package
+// TODO: And do ping from MainApplication..
+//servicePort = 8181
+//def pingRInfoFeedToService(feedUrl) {
+//    def pingUrl = new URL(
+//            "http://localhost:${servicePort}/?feed=${feedUrl}")
+//    println pingUrl.text
+//}
 
 
 // Test data:
@@ -196,13 +184,11 @@ teststep "Ping rinfo-main (after no source modifications)"
 pingFeedToRInfo(localhost(sourcePort, "/feed/current"))
 
 
-// TODO: this is a manual ping, do from main..
-Thread.sleep(1000)
-prompt("-p", "to ping service")
-teststep "Pinging rinfo-service (collect to triple store)"
-pingRInfoFeedToService(localhost(rinfoPort, "/feed/current"))
-
-
+// TODO: se pingRInfoFeedToService above
+//Thread.sleep(1000)
+//prompt("-p", "to ping service")
+//teststep "Pinging rinfo-service (collect to triple store)"
+//pingRInfoFeedToService(localhost(rinfoPort, "/feed/current"))
 // TODO: Add to each step: SPAQRL-query for $entryUri.
 
 

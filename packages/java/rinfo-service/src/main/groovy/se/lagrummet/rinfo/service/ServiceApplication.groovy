@@ -33,6 +33,7 @@ class ServiceApplication extends Application {
 
     @Override
     synchronized Restlet createRoot() {
+        // FIXME: args from config
         def loaderRestlet = new RDFStoreLoaderRestlet(getContext(),
                 "http://localhost:8080/openrdf-sesame", "rinfo")
         loaderRestlet.configure(config)
