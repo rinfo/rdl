@@ -1,6 +1,9 @@
-PREFIX awol: <http://bblfish.net/work/atom-owl/2006-06-06/#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX awol: <http://bblfish.net/work/atom-owl/2006-06-06/#>
 
 SELECT DISTINCT * WHERE {
 
@@ -11,9 +14,15 @@ SELECT DISTINCT * WHERE {
         ?docNode
             a ?docType;
             dc:title ?docTitle;
-            ?rel ?relUri; a ?relType . # TODO: inference + foaf:Document
+            ?rel ?relUri .
+        ?relUri a ?relType . # TODO: inference + foaf:Document
         #FILTER( isURI(?relUri) )
     }
+    OPTIONAL {
+        ?revUri ?rev ?docNode . 
+        ?revUri a ?revType .
+    }
+    # NOTE: sesame seems to put inferred in default context; put such matches here.
     # NOTE: a course variant is to skip GRAPH above and filter like:
     # FILTER( STR(?docNode) = STR(?entryId) )
 
