@@ -2,10 +2,13 @@ import org.apache.commons.io.FileUtils
 import org.apache.commons.configuration.PropertiesConfiguration
 
 import org.restlet.Application
+import org.restlet.Client
 import org.restlet.Component
 import org.restlet.Context
 import org.restlet.Restlet
+import org.restlet.data.Method
 import org.restlet.data.Protocol
+import org.restlet.data.Request
 
 import se.lagrummet.rinfo.store.depot.*
 import se.lagrummet.rinfo.store.supply.DepotFinder
@@ -96,14 +99,19 @@ startAppServer(rinfoPort, {new MainApplication(it, rinfoCfg)})
 
 // simulate ping from a source
 def pingFeedToRInfo(feedUrl) {
-    def pingUrl = new URL(
+    def request = new Request(Method.POST,
             "http://localhost:${rinfoPort}/collector?feed=${feedUrl}")
-    println pingUrl.text
+    //request.setReferrerRef(...)
+    def client = new Client(Protocol.HTTP)
+    def response = client.handle(request)
+    println response.status
+    println response.entity.text
 }
 
 // simulate ping to rinfo service
-// TODO: this is started outside of this package
-// TODO: And do ping from MainApplication..
+// TODO: service is started outside of this package
+// TODO: Do ping from MainApplication..
+//  pingRInfoFeedToService(localhost(rinfoPort, "/feed/current"))
 //servicePort = 8181
 //def pingRInfoFeedToService(feedUrl) {
 //    def pingUrl = new URL(
@@ -182,14 +190,6 @@ Thread.sleep(1000)
 prompt("-p", "to ping rinfo (no source mods)")
 teststep "Ping rinfo-main (after no source modifications)"
 pingFeedToRInfo(localhost(sourcePort, "/feed/current"))
-
-
-// TODO: se pingRInfoFeedToService above
-//Thread.sleep(1000)
-//prompt("-p", "to ping service")
-//teststep "Pinging rinfo-service (collect to triple store)"
-//pingRInfoFeedToService(localhost(rinfoPort, "/feed/current"))
-// TODO: Add to each step: SPAQRL-query for $entryUri.
 
 
 // Teardown

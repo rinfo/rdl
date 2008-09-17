@@ -65,7 +65,7 @@ class MainApplication extends Application {
 // FIXME: rebuild (as Finder+Handler)
 class CollectorRestlet extends Restlet {
 
-    static final ALLOWED = new HashSet([Method.GET]) // TODO: only POST
+    static final ALLOWED = new HashSet([Method.POST])
     private FileDepot depot
     private CollectorRunner collectorRunner
 
