@@ -21,10 +21,19 @@ class RDFStoreLoaderRestlet extends Restlet {
     String repoPath
     String remoteRepoName
 
-    public RDFStoreLoaderRestlet(Context context, repoPath, remoteRepoName) {
+    public RDFStoreLoaderRestlet(Context context) {
         super(context)
+    }
+
+    public RDFStoreLoaderRestlet(Context context, repoPath, remoteRepoName) {
+        this(context)
         this.repoPath = repoPath
         this.remoteRepoName = remoteRepoName
+    }
+
+    void configure(AbstractConfiguration config) {
+        this.repoPath = config.getString("rinfo.service.sesameRepoPath")
+        this.remoteRepoName = config.getString("rinfo.service.sesameRemoteRepoName")
     }
 
     @Override
