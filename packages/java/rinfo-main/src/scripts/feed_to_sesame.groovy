@@ -26,7 +26,7 @@ if (args.length > 1) {
 repo.initialize()
 
 def loader = new SesameLoader(repo)
-loader.readFeed new URL(args[0])
+loader.readFeed(new URL(args[0]))
 
 if (repo instanceof SailRepository && repo.sail instanceof MemoryStore) {
     //def mtype = "application/x-turtle"
