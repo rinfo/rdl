@@ -27,8 +27,7 @@ class MainApplication extends Application {
     private CollectorRunner collectorRunner
 
     MainApplication(Context parentContext) {
-        def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
-        this(parentContext, config)
+        this(parentContext, new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME))
     }
 
     MainApplication(Context parentContext, AbstractConfiguration config) {

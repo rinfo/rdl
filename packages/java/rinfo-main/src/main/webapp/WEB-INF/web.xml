@@ -9,7 +9,7 @@
 
     <context-param>
         <param-name>org.restlet.application</param-name>
-        <param-value>se.lagrummet.rinfo.store.supply.SupplyApplication</param-value>
+        <param-value>se.lagrummet.rinfo.main.MainApplication</param-value>
     </context-param>
 
     <servlet>
