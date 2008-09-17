@@ -17,13 +17,13 @@ public class SupplyApplication extends Application {
 
     private String fileDepotConfig;
 
-    public SupplyApplication(Context parentContext, String fileDepotConfig) {
-        this(parentContext);
+    public SupplyApplication(Context context, String fileDepotConfig) {
+        this(context);
         this.fileDepotConfig = fileDepotConfig;
     }
 
-    public SupplyApplication(Context parentContext) {
-        super(parentContext);
+    public SupplyApplication(Context context) {
+        super(context);
     }
 
     @Override
@@ -43,9 +43,9 @@ public class SupplyApplication extends Application {
         String fileDepotConfig = args.length > 1 ? args[1] : null;
         Component component = new Component();
         component.getServers().add(Protocol.HTTP, port);
-        Context ctx = component.getContext().createChildContext();
+        Context context = component.getContext().createChildContext();
         component.getDefaultHost().attach(
-                new SupplyApplication(ctx, fileDepotConfig));
+                new SupplyApplication(context, fileDepotConfig));
         component.start();
     }
 
