@@ -42,15 +42,27 @@ class FeedArchiveReaderTest {
         def reader = new DummyFeeder()
         reader.readFeed(feedUrl)
         assertEquals([feedUrl, new URL("${baseUrl}/2.atom")], reader.visitedPages)
+        assertTrue reader.wasInitialized
+        assertTrue reader.wasShutdown
     }
 
 }
 
 class DummyFeeder extends FeedArchiveReader {
     def visitedPages = []
+    def wasInitialized = false
+    def wasShutdown
     boolean processFeedPage(URL pageUrl, Feed feed) {
         visitedPages << pageUrl
         return true
+    }
+    void initialize() {
+        super.initialize()
+        wasInitialized = true
+    }
+    void shutdown() {
+        super.shutdown()
+        wasShutdown = true
     }
 }
 

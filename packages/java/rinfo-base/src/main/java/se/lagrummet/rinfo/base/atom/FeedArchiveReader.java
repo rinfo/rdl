@@ -28,12 +28,22 @@ public abstract class FeedArchiveReader {
 
     HttpClient httpClient;
 
-    public FeedArchiveReader() {
-        this.httpClient = createClient();
-    }
-
     public final HttpClient getClient() {
         return httpClient;
+    }
+
+    /**
+     * Called before {@link readFeed}. By default this sets the HttpClient from
+     * {@link getClient} using {@createClient}.
+     */
+    public void initialize() {
+         this.httpClient = createClient();
+    }
+
+    /**
+     * Called after {@link readFeed}.
+     */
+    public void shutdown() {
     }
 
     /**
@@ -48,14 +58,19 @@ public abstract class FeedArchiveReader {
      * Starts the feed archive climbing.
      */
     public void readFeed(URL url) throws IOException {
-        URL followingUrl = url;
-        while (followingUrl != null) {
-            followingUrl = readFeedPage(followingUrl);
-            if (followingUrl != null) {
-                logger.info(".. following: <"+followingUrl+">");
+        initialize();
+        try {
+            URL followingUrl = url;
+            while (followingUrl != null) {
+                followingUrl = readFeedPage(followingUrl);
+                if (followingUrl != null) {
+                    logger.info(".. following: <"+followingUrl+">");
+                }
             }
+            logger.info("Done.");
+        } finally {
+            shutdown();
         }
-        logger.info("Done.");
     }
 
     /**
