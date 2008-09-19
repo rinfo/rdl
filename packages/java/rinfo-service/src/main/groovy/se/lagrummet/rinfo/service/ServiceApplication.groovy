@@ -47,6 +47,7 @@ class ServiceApplication extends Application {
         }
         repo.initialize()
         rdfStoreLoader = new SesameLoader(repo)
+        def attrs = getContext().getAttributes()
         attrs.putIfAbsent(RDF_LOADER_CONTEXT_KEY, rdfStoreLoader)
     }
 
@@ -60,7 +61,7 @@ class ServiceApplication extends Application {
     @Override
     public void stop() {
         super.stop()
-        repo.shutdown()
+        repo.shutDown()
     }
 
 }
