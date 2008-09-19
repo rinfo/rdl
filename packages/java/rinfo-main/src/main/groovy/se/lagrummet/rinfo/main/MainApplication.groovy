@@ -89,8 +89,7 @@ class CollectorHandler extends Handler {
         def collectorRunner = (CollectorRunner) attrs.get(
                 MainApplication.COLLECTOR_RUNNER_CONTEXT_KEY)
 
-        String feedUrl = getRequest().getResourceRef().
-                getQueryAsForm(CharacterSet.UTF_8).getFirstValue("feed")
+        String feedUrl = request.getEntityAsForm().getFirstValue("feed")
         if (feedUrl == null) {
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, BAD_MSG)
             return

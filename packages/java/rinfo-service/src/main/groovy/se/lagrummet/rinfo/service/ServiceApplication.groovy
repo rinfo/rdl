@@ -11,6 +11,7 @@ import org.restlet.data.MediaType
 import org.restlet.data.Method
 import org.restlet.data.Request
 import org.restlet.data.Response
+import org.restlet.data.Status
 
 import org.apache.commons.configuration.AbstractConfiguration
 import org.apache.commons.configuration.ConfigurationException
@@ -74,8 +75,7 @@ class RDFLoaderHandler extends Handler {
 
     @Override
     public void handlePost() {
-        String feedUrl = request.getResourceRef().
-                getQueryAsForm(CharacterSet.UTF_8).getFirstValue("feed")
+        String feedUrl = request.getEntityAsForm().getFirstValue("feed")
         if (feedUrl == null) {
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
                     "Missing feed parameter.")
