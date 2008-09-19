@@ -57,7 +57,7 @@ public abstract class FeedArchiveReader {
     /**
      * Starts the feed archive climbing.
      */
-    public void readFeed(URL url) throws IOException {
+    public final void readFeed(URL url) throws IOException {
         initialize();
         try {
             URL followingUrl = url;
