@@ -47,6 +47,9 @@ class ServiceApplication extends Application {
             repo = new SailRepository(new NativeStore(dataDir))
         }
         repo.initialize()
+        // TODO: new instance of SesameLoader for each RDFLoaderHandler request?
+        // .. Not so expensive, and isolates it for when (if?) ServiceApplication
+        //    grows more parts..
         rdfStoreLoader = new SesameLoader(repo)
         def attrs = getContext().getAttributes()
         attrs.putIfAbsent(RDF_LOADER_CONTEXT_KEY, rdfStoreLoader)
@@ -86,6 +89,7 @@ class RDFLoaderHandler extends Handler {
                 ServiceApplication.RDF_LOADER_CONTEXT_KEY)
 
         // FIXME: run via concurrent!
+        // FIXME: error handling.. (report and/or (public) log)
         rdfStoreLoader.readFeed(new URL(feedUrl))
         response.setEntity("Scheduled collect of <${feedUrl}>.", MediaType.TEXT_PLAIN)
     }

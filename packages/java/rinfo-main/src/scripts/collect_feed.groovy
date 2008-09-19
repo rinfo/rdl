@@ -8,5 +8,5 @@ if (args.size() != 2) {
 }
 def runner = new CollectorRunner(null, null)
 runner.configure(new PropertiesConfiguration(args[0]))
-runner.collectFeed(new URL(args[1]))
+runner.triggerFeedCollect(new URL(args[1]))
 

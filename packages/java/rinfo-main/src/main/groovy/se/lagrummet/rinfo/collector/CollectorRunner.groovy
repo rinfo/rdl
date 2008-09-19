@@ -24,13 +24,22 @@ class CollectorRunner {
     FileDepot depot
     Collection sourceFeedUrls
 
-    // TODO: configurable
-    static final int DEFAULT_POOL_SIZE = 100
     static final int DEFAULT_INITIAL_DELAY = 0
-    static final int DEFAULT_SCHEDULE_SECONDS = 4
+    static final int DEFAULT_SCHEDULE_INTERVAL = 600
+    static final String DEFAULT_TIME_UNIT_NAME = "SECONDS"
+
+    private int initialDelay
+    private int scheduleInterval
+    private TimeUnit timeUnit
 
     private URIMinter uriMinter
-    private ScheduledExecutorService execPool
+    private ScheduledExecutorService scheduleService
+
+    CollectorRunner(FileDepot depot, URIMinter uriMinter,
+            AbstractConfiguration config) {
+        this(depot, uriMinter)
+        this.configure(config)
+    }
 
     CollectorRunner(FileDepot depot, URIMinter uriMinter) {
         this.depot = depot
@@ -44,29 +53,53 @@ class CollectorRunner {
         if (uriMinter == null) {
             uriMinter = new URIMinter(config.getString("rinfo.main.baseDir"))
         }
-        //TODO:sourceFeedUrls = config.getList("rinfo.collector.sourceFeedUrls")
+        sourceFeedUrls = config.getList("rinfo.collector.sourceFeedUrls")
+        initialDelay = config.getInt(
+                "rinfo.collector.initialDelay", DEFAULT_INITIAL_DELAY)
+        scheduleInterval = config.getInt(
+                "rinfo.collector.scheduleInterval", DEFAULT_SCHEDULE_INTERVAL)
+        timeUnit = TimeUnit.valueOf(config.getString(
+                "rinfo.collector.timeUnit", DEFAULT_TIME_UNIT_NAME))
     }
 
-    // FIXME: make sure collects are *never* running simultaneously!
-
     void startup() {
-        execPool = Executors.newScheduledThreadPool(DEFAULT_POOL_SIZE)
-        execPool.scheduleAtFixedRate(
-            { collectFeeds() }, DEFAULT_INITIAL_DELAY,
-                    DEFAULT_SCHEDULE_SECONDS, TimeUnit.SECONDS)
+        if (scheduleInterval == -1) {
+            logger.info("Disabled scheduled collects.")
+        } else {
+            // FIXME: error handling (currently silently dies on bad feeds)
+            scheduleService = Executors.newSingleThreadScheduledExecutor()
+            scheduleService.scheduleAtFixedRate(
+                { collectFeeds() }, initialDelay, scheduleInterval, timeUnit)
+            String unitName = timeUnit.toString().toLowerCase()
+            logger.info("Scheduled collect every "+scheduleInterval +
+                    " "+unitName+" (starting in "+initialDelay+" "+unitName+").")
+        }
     }
 
     void shutdown() {
-        execPool.shutdown()
+        if (scheduleService != null) {
+            scheduleService.shutdown()
+        }
     }
 
-    void spawnOneFeedCollect(URL feedUrl) {
+    boolean triggerFeedCollect(URL feedUrl) {
+        if (!sourceFeedUrls.contains(feedUrl.toString())) {
+            // TODO: or throw an exception?
+            logger.warn("Warning - triggerFeedCollect called with disallowed " +
+                    "feed url: <"+feedUrl+">")
+            return false
+        }
         def executor = Executors.newSingleThreadExecutor()
         executor.execute({ collectFeed(feedUrl) })
         executor.shutdown()
+        return true
     }
 
-    void collectFeed(URL feedUrl) {
+    // FIXME: make sure collects are *never* running simultaneously!
+    //  .. i.e. sync triggerFeedCollect and scheduled collectFeeds somehow..
+    //  .. pop from synchronized queue?
+    private void collectFeed(URL feedUrl) {
+        //  .. and (in webapp) that request comes from allowed domain..
         FeedCollector.readFeed(depot, uriMinter, feedUrl)
     }
 
@@ -75,8 +108,8 @@ class CollectorRunner {
             return
         }
         logger.info("Starting to collect ${sourceFeedUrls.size()} source feeds.")
-        for (URL feedUrl : sourceFeedUrls) {
-            collectFeed(feedUrl)
+        for (String feedUrl : sourceFeedUrls) {
+            collectFeed(new URL(feedUrl))
         }
         logger.info("Done collecting source feeds.")
     }

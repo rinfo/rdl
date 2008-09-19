@@ -40,8 +40,7 @@ class MainApplication extends Application {
     MainApplication(Context context, AbstractConfiguration config) {
         super(context)
         depot = FileDepot.newConfigured(config)
-        collectorRunner = new CollectorRunner(depot, null)
-        collectorRunner.configure(config)
+        collectorRunner = new CollectorRunner(depot, null, config)
         def attrs = getContext().getAttributes()
         attrs.putIfAbsent(DEPOT_CONTEXT_KEY, depot)
         attrs.putIfAbsent(COLLECTOR_RUNNER_CONTEXT_KEY, collectorRunner)
@@ -79,6 +78,7 @@ class CollectorHandler extends Handler {
 
     @Override
     public void handleGet() {
+        // TODO: some form of collect status page..
         getResponse().setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED, BAD_MSG)
     }
 
@@ -94,7 +94,12 @@ class CollectorHandler extends Handler {
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, BAD_MSG)
             return
         }
-        collectorRunner.spawnOneFeedCollect(new URL(feedUrl))
+        boolean allowedUrl = collectorRunner.triggerFeedCollect(new URL(feedUrl))
+        if (!allowedUrl) {
+            def msg = "The url <${feedUrl}> is not an allowed source feed."
+            getResponse().setStatus(Status.CLIENT_ERROR_FORBIDDEN)
+            getResponse().setEntity(msg, MediaType.TEXT_PLAIN)
+        }
         getResponse().setEntity(
                 "Scheduled collect of <${feedUrl}>.", MediaType.TEXT_PLAIN)
     }

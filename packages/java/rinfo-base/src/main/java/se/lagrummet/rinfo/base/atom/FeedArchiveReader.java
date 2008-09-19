@@ -106,8 +106,10 @@ public abstract class FeedArchiveReader {
         logger.info("Reading Feed <"+url+"> ...");
         Feed feed;
         URL followingUrl = null;
-        /* TODO:IMPROVE: opt. HEAD-req first using (somehow) supplied (template
-        method?) getLastRead(url) (If-Modified-Since/ETag..)..
+        /* TODO:IMPROVE:
+            optional use of supplied "If-Modified-Since"/"ETag"..
+            .. from template method(?): getLastReadTimeTag(url)..
+            .. configurable to always try HEAD first (at least on feeds)?
          */
         InputStream inStream = getResponseAsInputStream(url);
         try {
