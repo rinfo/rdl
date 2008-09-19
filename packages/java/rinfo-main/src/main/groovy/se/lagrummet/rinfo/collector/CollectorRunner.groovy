@@ -44,13 +44,12 @@ class CollectorRunner {
         if (uriMinter == null) {
             uriMinter = new URIMinter(config.getString("rinfo.main.baseDir"))
         }
-        // TODO: sourceFeedUrls = config.getList("rinfo.collector.sourceFeedUrls")
+        //TODO:sourceFeedUrls = config.getList("rinfo.collector.sourceFeedUrls")
     }
 
     // FIXME: make sure collects are *never* running simultaneously!
 
     void startup() {
-        // TODO: Needs source feed urls!
         execPool = Executors.newScheduledThreadPool(DEFAULT_POOL_SIZE)
         execPool.scheduleAtFixedRate(
             { collectFeeds() }, DEFAULT_INITIAL_DELAY,

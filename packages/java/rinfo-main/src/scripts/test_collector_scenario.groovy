@@ -78,6 +78,17 @@ def teststep(msg) {
     println "="*20; println msg; println "="*20
 }
 
+
+def doPing(target) {
+    def request = new Request(Method.POST, target)
+    //request.setReferrerRef(...)
+    def client = new Client(Protocol.HTTP)
+    def response = client.handle(request)
+    println response.status
+    println response.entity.text
+}
+
+
 // Initialize source depot
 teststep "Create a temporary test repot"
 sourceDepot = new FileDepot(
@@ -99,25 +110,17 @@ startAppServer(rinfoPort, {new MainApplication(it, rinfoCfg)})
 
 // simulate ping from a source
 def pingFeedToRInfo(feedUrl) {
-    def request = new Request(Method.POST,
-            "http://localhost:${rinfoPort}/collector?feed=${feedUrl}")
-    //request.setReferrerRef(...)
-    def client = new Client(Protocol.HTTP)
-    def response = client.handle(request)
-    println response.status
-    println response.entity.text
+    doPing("http://localhost:${rinfoPort}/collector?feed=${feedUrl}")
 }
 
 // simulate ping to rinfo service
 // TODO: service is started outside of this package
-// TODO: Do ping from MainApplication..
-//  pingRInfoFeedToService(localhost(rinfoPort, "/feed/current"))
 //servicePort = 8181
 //def pingRInfoFeedToService(feedUrl) {
-//    def pingUrl = new URL(
-//            "http://localhost:${servicePort}/?feed=${feedUrl}")
-//    println pingUrl.text
+//    doPing("http://localhost:${servicePort}/?feed=${feedUrl}")
 //}
+// TODO: Do ping from MainApplication..
+//  pingRInfoFeedToService(localhost(rinfoPort, "/feed/current"))
 
 
 // Test data:
@@ -193,7 +196,7 @@ pingFeedToRInfo(localhost(sourcePort, "/feed/current"))
 
 
 // Teardown
+Thread.sleep(1000)
 prompt("-h", "to quit")
 tearDown()
-//System.exit 0
 

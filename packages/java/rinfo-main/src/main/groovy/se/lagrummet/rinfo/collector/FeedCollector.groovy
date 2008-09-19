@@ -7,6 +7,21 @@ import org.slf4j.LoggerFactory
 import org.apache.http.client.HttpClient
 import org.apache.http.impl.client.DefaultHttpClient
 
+import org.apache.http.HttpVersion
+import org.apache.http.conn.ClientConnectionManager
+import org.apache.http.conn.params.ConnManagerParams
+import org.apache.http.conn.params.ConnPerRouteBean
+import org.apache.http.conn.scheme.PlainSocketFactory
+import org.apache.http.conn.scheme.Scheme
+import org.apache.http.conn.scheme.SchemeRegistry
+import org.apache.http.conn.ssl.SSLSocketFactory
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
+import org.apache.http.params.BasicHttpParams
+import org.apache.http.params.HttpParams
+import org.apache.http.params.HttpProtocolParams
+
+import org.apache.commons.io.IOUtils
+
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.Element
 import org.apache.abdera.model.Entry
@@ -117,10 +132,11 @@ class FeedCollector extends FeedArchiveReader {
         return true
         /* TODO:
         * Fail on:
-            javax.net.ssl.SSLPeerUnverifiedException,
-            MissingRdfContentException,
-            URIComputationException,
-            DuplicateDepotEntryException,
+            javax.net.ssl.SSLPeerUnverifiedException
+            java.net.SocketException
+            MissingRdfContentException
+            URIComputationException
+            DuplicateDepotEntryException
             SourceCheckException (from SourceContent#writeTo), ...
           - then *rollback* (entire batch?)!
           - and *report error*
@@ -134,7 +150,37 @@ class FeedCollector extends FeedArchiveReader {
     @Override
     public HttpClient createClient() {
         // TODO: Configure to use SSL (https) and verify cert.!
-        return new DefaultHttpClient()
+        // TODO:? httpClient.setHttpRequestRetryHandler(...)
+
+        HttpParams params = new BasicHttpParams()
+        ConnManagerParams.setMaxTotalConnections(params, 100)
+        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1)
+        // FIXME: According to RFC 2616, 8.1.4, a client should nor maintain
+        // more than 2 open connections per host. We *can* bump it up like this:
+        ConnManagerParams.setMaxConnectionsPerRoute(params, new ConnPerRouteBean(20))
+        // .. but it's "wrong". What we need is to open and read as late as
+        // possible (done in SourceContent).
+
+        SchemeRegistry schemeRegistry = new SchemeRegistry()
+        schemeRegistry.register(
+                new Scheme("http", PlainSocketFactory.getSocketFactory(), 80))
+        schemeRegistry.register(
+                new Scheme("https", SSLSocketFactory.getSocketFactory(), 443))
+
+        ClientConnectionManager clientConnMgr =
+                new ThreadSafeClientConnManager(params, schemeRegistry)
+        HttpClient httpClient = new DefaultHttpClient(clientConnMgr, params)
+
+        return httpClient
+    }
+
+    public void initialize() {
+        super.initialize()
+    }
+
+    public void shutdown() {
+        super.shutdown()
+        getClient().getConnectionManager().shutdown()
     }
 
     protected boolean storeEntry(Feed sourceFeed, Entry sourceEntry) {
@@ -209,6 +255,7 @@ class FeedCollector extends FeedArchiveReader {
 
     protected void fillContentsAndEnclosures(Entry sourceEntry,
             List contents, List enclosures) {
+        URI sourceEntryId = sourceEntry.getId().toURI()
         for (link in sourceEntry.links) {
             def urlPath = link.resolvedHref.toString()
             def mediaType = link.mimeType.toString()
@@ -236,6 +283,15 @@ class FeedCollector extends FeedArchiveReader {
             md5hex=null, length=null) {
         urlPath = unescapeColon(urlPath)
         def inStream = getResponseAsInputStream(urlPath)
+        /* FIXME: rethink opening connections and reading(+checking); write to
+           tmp-file? Extend SourceContent with something "late-bound"? See
+           createClient above.
+        */
+        /* FIXME: testing to read the response at once.. * /
+        def outStream = new ByteArrayOutputStream()
+        IOUtils.copyLarge(inStream, outStream)
+        inStream = new ByteArrayInputStream(outStream.toByteArray())
+        /* end */
         def srcContent = new SourceContent(inStream, mediaType, lang, slug)
         if (md5hex != null) {
             srcContent.datachecks[SourceContent.Check.MD5] = md5hex
@@ -282,16 +338,16 @@ class FeedCollector extends FeedArchiveReader {
             URI sourceEntryId, List<SourceContent> contents) {
         def repo = RDFUtil.createMemoryRepository()
 
-        def rdfContent = getRdfContent(contents)
+        def rdfContent = getRdfContent(sourceEntryId, contents)
 
         // FIXME: RDFa must be handled more manually (getting, esp. serializing!)
         // TODO:IMPROVE: lots of buffered data going on here; how to streamline?
         // TODO:IMPROVE: "" is baseURI; should be passed (via SourceContent?)?
         // TODO:IMPROVE: keep original RDF as metaFile?
-        def checkedOutStream = new ByteArrayOutputStream()
-        rdfContent.writeTo(checkedOutStream)
+        def rdfOutStream = new ByteArrayOutputStream()
+        rdfContent.writeTo(rdfOutStream)
         RDFUtil.loadDataFromStream(repo,
-                new ByteArrayInputStream(checkedOutStream.toByteArray()),
+                new ByteArrayInputStream(rdfOutStream.toByteArray()),
                 "", rdfContent.mediaType)
 
         def newUri = uriMinter.computeOfficialUri(repo) // TODO: give sourceEntryId for subj?
@@ -308,7 +364,8 @@ class FeedCollector extends FeedArchiveReader {
         return newUri
     }
 
-    protected SourceContent getRdfContent(List<SourceContent> contents) {
+    protected SourceContent getRdfContent(URI sourceEntryId,
+            List<SourceContent> contents) {
         def rdfContent = null
         for (SourceContent content : contents) {
             if (isRdfContent(content)) {
