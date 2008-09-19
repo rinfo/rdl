@@ -23,14 +23,15 @@ import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.memory.MemoryStore
 import org.openrdf.sail.nativerdf.NativeStore
 
+import java.util.concurrent.Executors
+
 
 class ServiceApplication extends Application {
 
     static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service.properties"
-    static final String RDF_LOADER_CONTEXT_KEY = "rinfo.service.rdfloader"
+    static final String RDF_REPO_CONTEXT_KEY = "rinfo.service.rdfloader"
 
     Repository repo
-    SesameLoader rdfStoreLoader
 
     ServiceApplication(Context parentContext) {
         super(parentContext)
@@ -47,12 +48,8 @@ class ServiceApplication extends Application {
             repo = new SailRepository(new NativeStore(dataDir))
         }
         repo.initialize()
-        // TODO: new instance of SesameLoader for each RDFLoaderHandler request?
-        // .. Not so expensive, and isolates it for when (if?) ServiceApplication
-        //    grows more parts..
-        rdfStoreLoader = new SesameLoader(repo)
         def attrs = getContext().getAttributes()
-        attrs.putIfAbsent(RDF_LOADER_CONTEXT_KEY, rdfStoreLoader)
+        attrs.putIfAbsent(RDF_REPO_CONTEXT_KEY, repo)
     }
 
     @Override
@@ -85,13 +82,25 @@ class RDFLoaderHandler extends Handler {
             return
         }
 
-        def rdfStoreLoader = (SesameLoader) getContext().getAttributes().get(
-                ServiceApplication.RDF_LOADER_CONTEXT_KEY)
-
-        // FIXME: run via concurrent!
-        // FIXME: error handling.. (report and/or (public) log)
-        rdfStoreLoader.readFeed(new URL(feedUrl))
+        triggerFeedCollect(new URL(feedUrl))
         response.setEntity("Scheduled collect of <${feedUrl}>.", MediaType.TEXT_PLAIN)
+    }
+
+    boolean triggerFeedCollect(URL feedUrl) {
+        // TODO: verify source of request and/or feedUrl
+        // FIXME: error handling.. (report and/or (public) log)
+
+        def repo = (Repository) getContext().getAttributes().get(
+                ServiceApplication.RDF_REPO_CONTEXT_KEY)
+        // TODO:IMPROVE: Ok to make a new instance for each request? Shouldn't
+        // be so expensive, and isolates it (shouldn't be app-global..)
+        def rdfStoreLoader = new SesameLoader(repo)
+        def executor = Executors.newSingleThreadExecutor()
+        executor.execute({
+                rdfStoreLoader.readFeed(feedUrl)
+            })
+        executor.shutdown()
+        return true
     }
 
 }
