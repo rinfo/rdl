@@ -106,6 +106,9 @@ public abstract class FeedArchiveReader {
         logger.info("Reading Feed <"+url+"> ...");
         Feed feed;
         URL followingUrl = null;
+        /* TODO:IMPROVE: opt. HEAD-req first using (somehow) supplied (template
+        method?) getLastRead(url) (If-Modified-Since/ETag..)..
+         */
         InputStream inStream = getResponseAsInputStream(url);
         try {
             feed = (Feed) Abdera.getInstance().getParser().parse(

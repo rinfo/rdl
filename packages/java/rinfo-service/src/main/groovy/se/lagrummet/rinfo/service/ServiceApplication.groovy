@@ -54,7 +54,7 @@ class ServiceApplication extends Application {
     @Override
     synchronized Restlet createRoot() {
         def router = new Router(getContext())
-        router.attachDefault(new Finder(getContext(), RDFStoreLoader))
+        router.attachDefault(new Finder(getContext(), RDFLoaderHandler))
         return router
     }
 
@@ -67,7 +67,7 @@ class ServiceApplication extends Application {
 }
 
 
-class RDFStoreLoader extends Handler {
+class RDFLoaderHandler extends Handler {
 
     @Override
     public boolean allowPost() { return true; }
@@ -82,13 +82,11 @@ class RDFStoreLoader extends Handler {
             return
         }
 
-        def rdfStoreLoader = (RDFStoreLoader) getContext().getAttributes().get(
+        def rdfStoreLoader = (SesameLoader) getContext().getAttributes().get(
                 ServiceApplication.RDF_LOADER_CONTEXT_KEY)
 
         // FIXME: run via concurrent!
-        // FIXME: loader needs "stop at entryId + date" or something..
-        loadFromFeed(new URL(feedUrl))
-        rdfStoreLoader.readFeed(feedUrl)
+        rdfStoreLoader.readFeed(new URL(feedUrl))
         response.setEntity("Scheduled collect of <${feedUrl}>.", MediaType.TEXT_PLAIN)
     }
 

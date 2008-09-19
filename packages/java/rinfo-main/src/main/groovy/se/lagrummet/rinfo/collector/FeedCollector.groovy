@@ -119,8 +119,8 @@ class FeedCollector extends FeedArchiveReader {
         // TODO:? httpClient.setHttpRequestRetryHandler(...)
 
         HttpParams params = new BasicHttpParams()
-        ConnManagerParams.setMaxTotalConnections(params, 100)
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1)
+        ConnManagerParams.setMaxTotalConnections(params, 100)
         // FIXME: According to RFC 2616, 8.1.4, a client should nor maintain
         // more than 2 open connections per host. We *can* bump it up like this:
         ConnManagerParams.setMaxConnectionsPerRoute(params, new ConnPerRouteBean(20))
