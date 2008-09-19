@@ -97,14 +97,50 @@ class FeedCollector extends FeedArchiveReader {
         new FeedCollector(depot, uriMinter).readFeed(url)
     }
 
-    // TODO:IMPROVE: synchronized? Or just warn - not thread safe?
-    public void readFeed(URL url) throws IOException {
+    // TODO:IMPROVE: synchronized readFeed? Or just warn that this is not thread safe?
+
+    @Override
+    public void initialize() {
+        super.initialize()
         this.collectedBatch = depot.makeEntryBatch()
-        super.readFeed(url)
-        depot.indexEntries(collectedBatch)
-        this.collectedBatch = null
     }
 
+    @Override
+    public void shutdown() {
+        super.shutdown()
+        depot.indexEntries(collectedBatch)
+        this.collectedBatch = null
+        getClient().getConnectionManager().shutdown()
+    }
+
+    @Override
+    public HttpClient createClient() {
+        // TODO: Configure to use SSL (https) and verify cert.!
+        // TODO:? httpClient.setHttpRequestRetryHandler(...)
+
+        HttpParams params = new BasicHttpParams()
+        ConnManagerParams.setMaxTotalConnections(params, 100)
+        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1)
+        // FIXME: According to RFC 2616, 8.1.4, a client should nor maintain
+        // more than 2 open connections per host. We *can* bump it up like this:
+        ConnManagerParams.setMaxConnectionsPerRoute(params, new ConnPerRouteBean(20))
+        // .. but it's "wrong". What we need is to open and read as late as
+        // possible (done in SourceContent).
+
+        SchemeRegistry schemeRegistry = new SchemeRegistry()
+        schemeRegistry.register(
+                new Scheme("http", PlainSocketFactory.getSocketFactory(), 80))
+        schemeRegistry.register(
+                new Scheme("https", SSLSocketFactory.getSocketFactory(), 443))
+
+        ClientConnectionManager clientConnMgr =
+                new ThreadSafeClientConnManager(params, schemeRegistry)
+        HttpClient httpClient = new DefaultHttpClient(clientConnMgr, params)
+
+        return httpClient
+    }
+
+    @Override
     public URL readFeedPage(URL url) throws IOException {
         // TODO:? never visit pageUrl being an already visited archive page?
         return super.readFeedPage(url)
@@ -145,42 +181,6 @@ class FeedCollector extends FeedArchiveReader {
                 depotEntry.getId()+" for "+mapEntry.getKey()+". Was "+
                 mapEntry.getValue()+", expected "+storedMd5Hex+".")
         */
-    }
-
-    @Override
-    public HttpClient createClient() {
-        // TODO: Configure to use SSL (https) and verify cert.!
-        // TODO:? httpClient.setHttpRequestRetryHandler(...)
-
-        HttpParams params = new BasicHttpParams()
-        ConnManagerParams.setMaxTotalConnections(params, 100)
-        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1)
-        // FIXME: According to RFC 2616, 8.1.4, a client should nor maintain
-        // more than 2 open connections per host. We *can* bump it up like this:
-        ConnManagerParams.setMaxConnectionsPerRoute(params, new ConnPerRouteBean(20))
-        // .. but it's "wrong". What we need is to open and read as late as
-        // possible (done in SourceContent).
-
-        SchemeRegistry schemeRegistry = new SchemeRegistry()
-        schemeRegistry.register(
-                new Scheme("http", PlainSocketFactory.getSocketFactory(), 80))
-        schemeRegistry.register(
-                new Scheme("https", SSLSocketFactory.getSocketFactory(), 443))
-
-        ClientConnectionManager clientConnMgr =
-                new ThreadSafeClientConnManager(params, schemeRegistry)
-        HttpClient httpClient = new DefaultHttpClient(clientConnMgr, params)
-
-        return httpClient
-    }
-
-    public void initialize() {
-        super.initialize()
-    }
-
-    public void shutdown() {
-        super.shutdown()
-        getClient().getConnectionManager().shutdown()
     }
 
     protected boolean storeEntry(Feed sourceFeed, Entry sourceEntry) {
