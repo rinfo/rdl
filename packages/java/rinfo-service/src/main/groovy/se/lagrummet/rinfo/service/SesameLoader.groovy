@@ -103,7 +103,7 @@ class SesameLoader extends FeedArchiveReader {
 
             // TODO: add in which context (itself - i.e. context)?
             // *Must be removed/updated when the context is*!
-            Resource context = vf.createBNode()
+            Resource context = vf.createBNode() // TODO: use getSelfLink URI (stable)?
             conn.add(context, RDF.TYPE, AWOL_ENTRY, context)
             conn.add(context, AWOL_ID, entryIdLiteral, context)
             conn.add(context, AWOL_UPDATED, entryUpdatedLiteral, context)

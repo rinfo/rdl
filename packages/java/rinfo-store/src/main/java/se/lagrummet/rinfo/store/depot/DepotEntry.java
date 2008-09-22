@@ -27,6 +27,7 @@ public class DepotEntry {
     public static final String DELETED_FILE_NAME = "DELETED";
     public static final String GENERIC_META_DIR_NAME = "local-meta";
 
+
     protected static IOFileFilter NON_ENTRY_DIR_FILTER =  new AbstractFileFilter() {
         public boolean accept(File it) {
             return !isEntryDir(it.getParentFile()) && !it.isHidden();
@@ -39,15 +40,13 @@ public class DepotEntry {
         }
     };
 
-
-    private FileDepot depot;
-    private String entryUriPath;
-
     protected File entryDir;
     protected File entryContentDir;
     protected File genericMetaDir;
 
+    private FileDepot depot;
     private Entry manifest;
+    private String entryUriPath;
 
 
     public DepotEntry(FileDepot depot, File entryDir, String knownUriPath)
@@ -105,6 +104,25 @@ public class DepotEntry {
 
     public boolean isDeleted() {
         return getDeletedMarkerFile().isFile();
+    }
+
+    public String getContentMediaType() {
+        return getEntryManifest().getContentMimeType().toString();
+    }
+
+    public String getContentLanguage() {
+        Content contentElem = getEntryManifest().getContentElement();
+        if (contentElem == null || contentElem.getLanguage() == null) {
+            return null;
+        }
+        return contentElem.getLanguage().toString();
+    }
+
+    /**
+     * The last system modification timestamp of this entry.
+     */
+    public long lastModified() {
+        return getManifestFile().lastModified();
     }
 
 
@@ -212,7 +230,13 @@ public class DepotEntry {
         return enclosures;
     }
 
-    public String toEnclosedUriPath(File file) {
+    protected DepotContent enclosedDepotContent(File file) {
+        String uriPath = toEnclosedUriPath(file);
+        String mediaType = depot.computeMediaType(file);
+        return new DepotContent(file, uriPath, mediaType);
+    }
+
+    protected String toEnclosedUriPath(File file) {
         // TODO: depot.toUriPath(file .. or relativeFilePath..)
         String fileUriPath = file.toURI().toString();
         String entryDirUriPath = entryDir.toURI().toString();
@@ -225,31 +249,6 @@ public class DepotEntry {
         String pathRemainder = fileUriPath.replaceFirst(entryDirUriPath, "");
         String uriPath = getEntryUriPath() + "/" + pathRemainder;
         return uriPath;
-    }
-
-    protected DepotContent enclosedDepotContent(File file) {
-        String uriPath = toEnclosedUriPath(file);
-        String mediaType = depot.computeMediaType(file);
-        return new DepotContent(file, uriPath, mediaType);
-    }
-
-    /**
-     * The last system modification timestamp of this entry.
-     */
-    public long lastModified() {
-        return getManifestFile().lastModified();
-    }
-
-    public String getContentMediaType() {
-        return getEntryManifest().getContentMimeType().toString();
-    }
-
-    public String getContentLanguage() {
-        Content contentElem = getEntryManifest().getContentElement();
-        if (contentElem == null || contentElem.getLanguage() == null) {
-            return null;
-        }
-        return contentElem.getLanguage().toString();
     }
 
     protected String computeEntryUriPath() throws URISyntaxException {
@@ -366,6 +365,7 @@ public class DepotEntry {
         // TODO: opt. mark "410 Gone" for enclosures?
     }
 
+
     // TODO: resurrect(...)? (clears deleted state + (partial) create)
 
     public void addContent(SourceContent srcContent) throws IOException {
@@ -383,19 +383,6 @@ public class DepotEntry {
         srcContent.writeTo(file);
     }
 
-    public File newContentFile(String mediaType) {
-        return newContentFile(mediaType, null);
-    }
-
-    public File newContentFile(String mediaType, String lang) {
-        String filename = "content";
-        if (lang!=null) {
-            filename += "-" + lang;
-        }
-        String suffix = depot.getPathProcessor().hintForMediaType(mediaType);
-        filename += "." + suffix;
-        return new File(entryContentDir, filename);
-    }
 
     public void addEnclosure(SourceContent srcContent) throws IOException {
         addEnclosure(srcContent, false);
@@ -428,6 +415,7 @@ public class DepotEntry {
         srcContent.writeTo(file);
     }
 
+
     /**
      * A generic metadata file for usage specific needs. Can be used e.g.
      * to store additional information about creation source etc.
@@ -441,6 +429,21 @@ public class DepotEntry {
             genericMetaDir.mkdir();
         }
         return genericMetaDir;
+    }
+
+
+    protected File newContentFile(String mediaType) {
+        return newContentFile(mediaType, null);
+    }
+
+    protected File newContentFile(String mediaType, String lang) {
+        String filename = "content";
+        if (lang!=null) {
+            filename += "-" + lang;
+        }
+        String suffix = depot.getPathProcessor().hintForMediaType(mediaType);
+        filename += "." + suffix;
+        return new File(entryContentDir, filename);
     }
 
     protected void setPrimaryContent(Entry manifest,
