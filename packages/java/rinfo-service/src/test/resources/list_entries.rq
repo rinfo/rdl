@@ -19,7 +19,7 @@ SELECT DISTINCT * WHERE {
         #FILTER( isURI(?relUri) )
     }
     OPTIONAL {
-        ?revUri ?rev ?docNode . 
+        ?revUri ?rev ?docNode .
         ?revUri a ?revType .
     }
     # NOTE: sesame seems to put inferred in default context; put such matches here.

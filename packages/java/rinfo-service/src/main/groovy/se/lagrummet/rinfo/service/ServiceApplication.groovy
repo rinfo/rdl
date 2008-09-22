@@ -28,17 +28,17 @@ import java.util.concurrent.Executors
 
 class ServiceApplication extends Application {
 
-    static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service.properties"
-    static final String RDF_REPO_CONTEXT_KEY = "rinfo.service.rdfloader"
+    public static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service.properties"
+    public static final String RDF_REPO_CONTEXT_KEY = "rinfo.service.rdfrepo"
 
-    Repository repo
+    private Repository repo
 
-    ServiceApplication(Context parentContext) {
+    public ServiceApplication(Context parentContext) {
         super(parentContext)
         configure(new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME))
     }
 
-    void configure(AbstractConfiguration config) {
+    protected void configure(AbstractConfiguration config) {
         def repoPath = config.getString("rinfo.service.sesameRepoPath")
         def remoteRepoName = config.getString("rinfo.service.sesameRemoteRepoName")
         if (repoPath =~ /^https?:/) {
@@ -53,7 +53,7 @@ class ServiceApplication extends Application {
     }
 
     @Override
-    synchronized Restlet createRoot() {
+    public synchronized Restlet createRoot() {
         def router = new Router(getContext())
         router.attachDefault(new Finder(getContext(), RDFLoaderHandler))
         return router
@@ -81,7 +81,6 @@ class RDFLoaderHandler extends Handler {
                     "Missing feed parameter.")
             return
         }
-
         triggerFeedCollect(new URL(feedUrl))
         response.setEntity("Scheduled collect of <${feedUrl}>.", MediaType.TEXT_PLAIN)
     }

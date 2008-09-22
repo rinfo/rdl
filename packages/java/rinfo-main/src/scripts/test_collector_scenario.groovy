@@ -6,6 +6,7 @@ import org.restlet.Client
 import org.restlet.Component
 import org.restlet.Context
 import org.restlet.Restlet
+import org.restlet.data.MediaType
 import org.restlet.data.Method
 import org.restlet.data.Protocol
 import org.restlet.data.Request
@@ -80,7 +81,9 @@ def teststep(msg) {
 
 
 def doPing(target) {
-    def request = new Request(Method.POST, target)
+    def parts = target.split(/\?/)
+    def request = new Request(Method.POST, parts[0])
+    request.setEntity(parts[1], MediaType.MULTIPART_FORM_DATA)
     //request.setReferrerRef(...)
     def client = new Client(Protocol.HTTP)
     def response = client.handle(request)
@@ -189,14 +192,14 @@ teststep "Find deleted <publ/sfs/1:1> in rinfo:</feed/latest>"
 
 
 // Case: Read unmodified
-Thread.sleep(1000)
+Thread.sleep(2000)
 prompt("-p", "to ping rinfo (no source mods)")
 teststep "Ping rinfo-main (after no source modifications)"
 pingFeedToRInfo(localhost(sourcePort, "/feed/current"))
 
 
 // Teardown
-Thread.sleep(1000)
+Thread.sleep(2000)
 prompt("-h", "to quit")
 tearDown()
 

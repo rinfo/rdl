@@ -10,7 +10,6 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.HttpVersion
 import org.apache.http.conn.ClientConnectionManager
 import org.apache.http.conn.params.ConnManagerParams
-import org.apache.http.conn.params.ConnPerRouteBean
 import org.apache.http.conn.scheme.PlainSocketFactory
 import org.apache.http.conn.scheme.Scheme
 import org.apache.http.conn.scheme.SchemeRegistry
@@ -27,6 +26,8 @@ import org.apache.abdera.model.Element
 import org.apache.abdera.model.Entry
 import org.apache.abdera.model.Feed
 import org.apache.abdera.model.Source
+
+import org.openrdf.repository.Repository
 
 import se.lagrummet.rinfo.store.depot.Atomizer
 import se.lagrummet.rinfo.store.depot.FileDepot
@@ -97,7 +98,8 @@ class FeedCollector extends FeedArchiveReader {
         new FeedCollector(depot, uriMinter).readFeed(url)
     }
 
-    // TODO:IMPROVE: synchronized readFeed? Or just warn that this is not thread safe?
+    // TODO:IMPROVE: synchronized readFeed? Private ctor?
+    // Or just warn that this class is not thread safe?
 
     @Override
     public void initialize() {
@@ -121,11 +123,6 @@ class FeedCollector extends FeedArchiveReader {
         HttpParams params = new BasicHttpParams()
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1)
         ConnManagerParams.setMaxTotalConnections(params, 100)
-        // FIXME: According to RFC 2616, 8.1.4, a client should nor maintain
-        // more than 2 open connections per host. We *can* bump it up like this:
-        ConnManagerParams.setMaxConnectionsPerRoute(params, new ConnPerRouteBean(20))
-        // .. but it's "wrong". What we need is to open and read as late as
-        // possible (done in SourceContent).
 
         SchemeRegistry schemeRegistry = new SchemeRegistry()
         schemeRegistry.register(
@@ -193,18 +190,16 @@ class FeedCollector extends FeedArchiveReader {
         List enclosures = new ArrayList()
         fillContentsAndEnclosures(sourceEntry, contents, enclosures)
 
-        URI newUri = computeOfficialUriInPlace(sourceEntryId, contents)
+        URI finalUri = processRdfInPlace(sourceEntryId, contents)
 
-        verifyRdf(newUri, contents)
+        logger.info("Collecting entry <${sourceEntryId}>  as <${finalUri}>..")
 
-        logger.info("Collecting entry <${sourceEntryId}>  as <${newUri}>..")
-
-        DepotEntry depotEntry = depot.getEntry(newUri)
+        DepotEntry depotEntry = depot.getEntry(finalUri)
         Date timestamp = new Date()
 
         if (depotEntry == null) {
-            logger.info("New entry <${newUri}>.")
-            depotEntry = depot.createEntry(newUri, timestamp, contents, enclosures)
+            logger.info("New entry <${finalUri}>.")
+            depotEntry = depot.createEntry(finalUri, timestamp, contents, enclosures)
 
         } else {
             /* TODO:
@@ -224,17 +219,17 @@ class FeedCollector extends FeedArchiveReader {
             // NOTE: If source has been collected but appears as newly published:
             if (!(sourceEntry.getUpdated() > sourceEntry.getPublished())) {
                 logger.error("Collected entry <${sourceEntry.getId()} exists as " +
-                        " <${newUri}> but does not appear as updated:" +
+                        " <${finalUri}> but does not appear as updated:" +
                         sourceEntry)
                 throw new DuplicateDepotEntryException(depotEntry);
             }
 
-            logger.info("Updating entry <${newUri}>.")
+            logger.info("Updating entry <${finalUri}>.")
             depotEntry.update(timestamp, contents, enclosures)
         }
 
         saveSourceMetaInfo(sourceFeed, sourceEntry, depotEntry)
-        //TODO:? metaIndex.indexCollected(sourceId, sourceUpdated, newUri.toString())
+        //TODO:? metaIndex.indexCollected(sourceId, sourceUpdated, finalUri.toString())
 
         collectedBatch.add(depotEntry)
         return true
@@ -282,17 +277,8 @@ class FeedCollector extends FeedArchiveReader {
     protected SourceContent createSourceContent(urlPath, mediaType, lang, slug=null,
             md5hex=null, length=null) {
         urlPath = unescapeColon(urlPath)
-        def inStream = getResponseAsInputStream(urlPath)
-        /* FIXME: rethink opening connections and reading(+checking); write to
-           tmp-file? Extend SourceContent with something "late-bound"? See
-           createClient above.
-        */
-        /* FIXME: testing to read the response at once.. * /
-        def outStream = new ByteArrayOutputStream()
-        IOUtils.copyLarge(inStream, outStream)
-        inStream = new ByteArrayInputStream(outStream.toByteArray())
-        /* end */
-        def srcContent = new SourceContent(inStream, mediaType, lang, slug)
+        def srcContent = new CollectingSourceContent(
+                this, urlPath, mediaType, lang, slug)
         if (md5hex != null) {
             srcContent.datachecks[SourceContent.Check.MD5] = md5hex
         }
@@ -334,28 +320,20 @@ class FeedCollector extends FeedArchiveReader {
     }
 
 
-    protected URI computeOfficialUriInPlace(
+    protected URI processRdfInPlace(
             URI sourceEntryId, List<SourceContent> contents) {
-        def repo = RDFUtil.createMemoryRepository()
 
         def rdfContent = getRdfContent(sourceEntryId, contents)
-
-        // FIXME: RDFa must be handled more manually (getting, esp. serializing!)
-        // TODO:IMPROVE: lots of buffered data going on here; how to streamline?
-        // TODO:IMPROVE: "" is baseURI; should be passed (via SourceContent?)?
-        // TODO:IMPROVE: keep original RDF as metaFile?
-        def rdfOutStream = new ByteArrayOutputStream()
-        rdfContent.writeTo(rdfOutStream)
-        RDFUtil.loadDataFromStream(repo,
-                new ByteArrayInputStream(rdfOutStream.toByteArray()),
-                "", rdfContent.mediaType)
+        def repo = rdfContentToRepository(rdfContent)
 
         def newUri = uriMinter.computeOfficialUri(repo) // TODO: give sourceEntryId for subj?
-
         if (!sourceEntryId.equals(newUri)) {
             logger.info("New URI: <${newUri}>")
             repo = RDFUtil.replaceURI(repo, sourceEntryId, newUri)
         }
+
+        verifyRdf(newUri, repo)
+
         // TODO:IMPROVE: nicer to keep exact input rdf serialization if not rewritten?
         rdfContent.setSourceStream(RDFUtil.serializeAsInputStream(
                 repo, rdfContent.mediaType), true)
@@ -383,10 +361,48 @@ class FeedCollector extends FeedArchiveReader {
         return rdfMimeTypes.contains(content.mediaType)
     }
 
-    protected void verifyRdf(URI docUri, List<SourceContent> contents) {
-        // FIXME: use new base.RDFVerifyer#verifyRdf()
-        // .. also, really read and re-set sourceContent? Write entry *first*?
-        // .. or call this via computeOfficialUriInPlace..?
+    protected Repository rdfContentToRepository(SourceContent rdfContent) {
+        def repo = RDFUtil.createMemoryRepository()
+        // FIXME: RDFa must be handled more manually (getting, esp. serializing!)
+        // TODO:IMPROVE: lots of buffered data going on here; how to streamline?
+        // TODO:IMPROVE: "" is baseURI; should be passed (via SourceContent?)?
+        // TODO:IMPROVE: keep original RDF as metaFile?
+        def rdfOutStream = new ByteArrayOutputStream()
+        rdfContent.writeTo(rdfOutStream)
+        RDFUtil.loadDataFromStream(repo,
+                new ByteArrayInputStream(rdfOutStream.toByteArray()),
+                "", rdfContent.mediaType)
+        return repo
+    }
+
+    protected URI computeNewUri(Repository repo, URI sourceEntryId) {
+    }
+
+    protected void verifyRdf(URI docUri, Repository repo) {
+        // TODO: use new base.RDFVerifyer#verifyRdf()
+    }
+
+}
+
+protected class CollectingSourceContent extends SourceContent {
+
+    private FeedCollector collector;
+    private String urlPath;
+
+    public CollectingSourceContent(FeedCollector collector, String urlPath,
+            String mediaType, String lang, String enclosedUriPath) {
+        super(mediaType, lang, enclosedUriPath);
+        this.collector = collector;
+        this.urlPath = urlPath;
+    }
+
+    @Override
+    public void writeTo(OutputStream outStream) throws IOException {
+        // TODO:IMPROVE: retrying http; and also handle failed gets in writeTo(File)
+        if (getSourceStream() == null) {
+            setSourceStream(collector.getResponseAsInputStream(urlPath));
+        }
+        super.writeTo(outStream);
     }
 
 }

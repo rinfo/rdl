@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,13 +54,14 @@ public class Atomizer {
     private FileDepot depot;
 
     private int feedBatchSize;
-    private boolean includeDeleted = true;
-    private boolean includeHistorical = false; // TODO: true
-    private boolean useEntrySelfLink = true;
-    private boolean useLinkExtensionsMd5 = true;
-    private boolean useTombstones = true;
-    private boolean useFeedSync = true;
-    private boolean useGdataDeleted = true;
+    private boolean includeDeleted;
+    private boolean includeHistorical;
+    private boolean useEntrySelfLink;
+    private boolean useLinkExtensionsMd5;
+    private boolean useTombstones;
+    private boolean useFeedSync;
+    private boolean useGdataDeleted;
+    private boolean prettyXml;
 
     private Feed skeletonFeed;
 
@@ -76,7 +78,7 @@ public class Atomizer {
                 config.getInt(CONF_BASE_KEY+"feedBatchSize", 0));
         setIncludeDeleted(
                 config.getBoolean(CONF_BASE_KEY+"includeDeleted", true));
-        setIncludeHistorical(
+        setIncludeHistorical( // TODO: true
                 config.getBoolean(CONF_BASE_KEY+"includeHistorical", false));
         setUseEntrySelfLink(
                 config.getBoolean(CONF_BASE_KEY+"useEntrySelfLink", true));
@@ -88,6 +90,10 @@ public class Atomizer {
                 config.getBoolean(CONF_BASE_KEY+"useFeedSync", true));
         setUseGdataDeleted(
                 config.getBoolean(CONF_BASE_KEY+"useGdataDeleted", true));
+        // TODO:IMPROVE: remove support for prettyXml? In 0.4, it's still too
+        // brittle (accumulates whitespace over time).
+        setPrettyXml(
+                config.getBoolean(CONF_BASE_KEY+"prettyXml", false));
     }
 
     public FileDepot getDepot() { return depot; }
@@ -134,6 +140,10 @@ public class Atomizer {
         this.useGdataDeleted = useGdataDeleted;
     }
 
+    public boolean getPrettyXml() { return prettyXml; }
+    public void setPrettyXml(boolean prettyXml) {
+        this.prettyXml = prettyXml;
+    }
 
     void setFeedSkeleton(String feedSkeleton) throws FileNotFoundException {
         if (feedSkeleton!=null && !feedSkeleton.equals("")) {
@@ -276,7 +286,12 @@ public class Atomizer {
         if (!feedDir.exists()) {
             FileUtils.forceMkdir(feedDir);
         }
-        feed.writeTo(new FileOutputStream(feedFile));
+        OutputStream outStream = new FileOutputStream(feedFile);
+        if (prettyXml) {
+            feed.writeTo("prettyxml", outStream);
+        } else {
+            feed.writeTo(outStream);
+        }
     }
 
     protected void indexEntry(Feed feed, DepotEntry depotEntry)
@@ -320,7 +335,12 @@ public class Atomizer {
                     new FileInputStream(entryFile)).getRoot();
         }
         Entry atomEntry = createAtomEntry(depotEntry);
-        atomEntry.writeTo(new FileOutputStream(entryFile));
+        OutputStream outStream = new FileOutputStream(entryFile);
+        if (prettyXml) {
+            atomEntry.writeTo("prettyxml", outStream);
+        } else {
+            atomEntry.writeTo(outStream);
+        }
         return atomEntry;
     }
 

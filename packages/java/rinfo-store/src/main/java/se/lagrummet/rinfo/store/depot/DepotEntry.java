@@ -142,7 +142,7 @@ public class DepotEntry {
                         depotEntry = new DepotEntry(
                             depot, contentDir.getParentFile(), null, false);
                     } catch (DeletedDepotEntryException e) {
-                        continue; // TODO: clean up, cannot happen with fail = false
+                        continue; // TODO:IMPROVE: this cannot happen with fail = false
                     }
                     if (!includeDeleted && depotEntry.isDeleted()) {
                         continue;

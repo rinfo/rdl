@@ -65,7 +65,7 @@ public class SourceContent {
         this(sourceFile, mediaType, null);
     }
 
-    private SourceContent(String mediaType, String lang, String enclosedUriPath) {
+    protected SourceContent(String mediaType, String lang, String enclosedUriPath) {
         this.mediaType = mediaType;
         this.lang = lang;
         this.enclosedUriPath = enclosedUriPath;
@@ -76,6 +76,8 @@ public class SourceContent {
     public String getMediaType() { return mediaType; }
 
     public String getLang() { return lang; }
+
+    public InputStream getSourceStream() { return sourceStream; }
 
     public void setSourceStream(InputStream sourceStream) {
         this.setSourceStream(sourceStream, true);
