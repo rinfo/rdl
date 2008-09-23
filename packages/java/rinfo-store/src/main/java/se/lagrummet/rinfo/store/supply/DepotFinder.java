@@ -19,6 +19,7 @@ import org.restlet.resource.Variant;
 import se.lagrummet.rinfo.store.depot.DeletedDepotEntryException;
 import se.lagrummet.rinfo.store.depot.DepotContent;
 import se.lagrummet.rinfo.store.depot.FileDepot;
+import se.lagrummet.rinfo.store.depot.LockedDepotEntryException;
 
 
 public class DepotFinder extends Finder {
@@ -39,7 +40,9 @@ public class DepotFinder extends Finder {
             results = fileDepot.find(
                     request.getResourceRef().getPath().toString());
         } catch (DeletedDepotEntryException e) {
-            // TODO: GoneHandler?
+            // TODO: Gone?
+        } catch (LockedDepotEntryException e) {
+            // FIXME: Busy!
         }
 
         /* TODO: should perhaps wrap "odd" results in GoneHandler,
