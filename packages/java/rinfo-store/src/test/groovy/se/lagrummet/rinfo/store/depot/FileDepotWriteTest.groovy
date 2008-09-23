@@ -1,16 +1,10 @@
 package se.lagrummet.rinfo.store.depot
 
 import org.junit.Test
-import org.junit.AfterClass
-import org.junit.BeforeClass
 import static org.junit.Assert.*
 
 
-class FileDepotWriteTest {
-
-    static FileDepot fileDepot
-    static File tempDepotDir
-    static File depotSrc
+class FileDepotWriteTest extends FileDepotTempBase {
 
     static final NEW_ID_1 = new URI("http://example.org/publ/NEW/added_1")
     static final NEW_ID_2 = new URI("http://example.org/publ/NEW/added_2")
@@ -21,20 +15,6 @@ class FileDepotWriteTest {
     static final CHECKED_ID_1 = new URI("http://example.org/publ/CHECK/added_1")
     static final FAILED_ID_1 = new URI("http://example.org/publ/CHECK/failed_1")
     static final FAILED_ID_2 = new URI("http://example.org/publ/CHECK/failed_2")
-
-
-    @BeforeClass
-    static void setupClass() {
-        depotSrc = new File("src/test/resources/exampledepot/storage")
-        tempDepotDir = TempDirUtil.createTempDir(depotSrc)
-        fileDepot = new FileDepot(new URI("http://example.org"),
-                new File(tempDepotDir, depotSrc.name), "feed")
-    }
-
-    @AfterClass
-    static void tearDownClass() {
-        TempDirUtil.removeTempDir(tempDepotDir)
-    }
 
 
     @Test
@@ -234,13 +214,5 @@ class FileDepotWriteTest {
         fileDepot.createEntry(FAILED_ID_2, new Date(), [srcContent])
     }
 
-
-    protected exampleEntryFile(path) {
-        new File(depotSrc, "publ/1901/100/ENTRY-INFO/${path}")
-    }
-
-    protected exampleFile(path) {
-        new File(depotSrc, "publ/1901/100/${path}")
-    }
 
 }

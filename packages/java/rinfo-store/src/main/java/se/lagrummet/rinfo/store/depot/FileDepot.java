@@ -102,7 +102,8 @@ public class FileDepot {
 
     //== Entry and Content Lookups ==
 
-    public List<DepotContent> find(String uriPath) throws DeletedDepotEntryException {
+    public List<DepotContent> find(String uriPath)
+            throws DeletedDepotEntryException, LockedDepotEntryException {
         List results = new ArrayList();
 
         if (uriPath.startsWith(feedPath)) {
@@ -131,38 +132,42 @@ public class FileDepot {
         return results;
     }
 
-    public DepotEntry getEntry(String uriPath)
-            throws DeletedDepotEntryException {
-        return getEntry(uriPath, true);
-    }
 
-    // TODO: throw EntryNotFoundException if !isEntryDir?
-    public DepotEntry getEntry(String uriPath, boolean failOnDeleted)
-            throws DeletedDepotEntryException {
-        File entryDir = getEntryDir(uriPath);
-        if (DepotEntry.isEntryDir(entryDir)) {
-            return new DepotEntry(this, entryDir, uriPath, failOnDeleted);
-        }
-        return null;
-    }
-
-    public DepotEntry getEntry(URI entryUri) throws DeletedDepotEntryException {
+    public DepotEntry getEntry(URI entryUri)
+            throws DeletedDepotEntryException, LockedDepotEntryException {
         return getEntry(entryUri, true);
     }
 
     public DepotEntry getEntry(URI entryUri, boolean failOnDeleted)
-            throws DeletedDepotEntryException {
+            throws DeletedDepotEntryException, LockedDepotEntryException {
         assertWithinBaseUri(entryUri);
         return getEntry(entryUri.getPath(), failOnDeleted);
     }
 
-    public DepotContent getContent(String uriPath) {
-        File file = new File(baseDir, toFilePath(uriPath));
-        if (!file.isFile()) {
+    public DepotEntry getEntry(String uriPath)
+            throws DeletedDepotEntryException, LockedDepotEntryException {
+        return getEntry(uriPath, true);
+    }
+
+    public DepotEntry getEntry(String uriPath, boolean failOnDeleted)
+            throws DeletedDepotEntryException, LockedDepotEntryException {
+        DepotEntry depotEntry = getUncheckedDepotEntry(uriPath);
+        if (depotEntry != null) {
+            if (failOnDeleted) {
+                depotEntry.assertIsNotDeleted();
+            }
+            // TODO:IMPROVE: bubble up these details or use failOnLocked flag?
+            depotEntry.assertIsNotLocked();
+        }
+        return depotEntry;
+    }
+
+    protected DepotEntry getUncheckedDepotEntry(String uriPath) {
+        File entryDir = getEntryDir(uriPath);
+        if (!DepotEntry.isEntryDir(entryDir)) {
             return null;
         }
-        String mediaType = computeMediaType(file);
-        return new DepotContent(file, uriPath, mediaType);
+        return DepotEntry.newUncheckedDepotEntry(this, entryDir, uriPath);
     }
 
     public Iterator<DepotEntry> iterateEntries() {
@@ -176,6 +181,16 @@ public class FileDepot {
     public Iterator<DepotEntry> iterateEntries(
             boolean includeHistorical, boolean includeDeleted) {
         return DepotEntry.iterateEntries(this, includeHistorical, includeDeleted);
+    }
+
+
+    public DepotContent getContent(String uriPath) {
+        File file = new File(baseDir, toFilePath(uriPath));
+        if (!file.isFile()) {
+            return null;
+        }
+        String mediaType = computeMediaType(file);
+        return new DepotContent(file, uriPath, mediaType);
     }
 
 
@@ -269,7 +284,8 @@ public class FileDepot {
     public DepotEntry createEntry(URI entryUri, Date created,
             List<SourceContent> contents)
             throws IOException,
-                   DeletedDepotEntryException, DuplicateDepotEntryException {
+                   DeletedDepotEntryException, LockedDepotEntryException,
+                   DuplicateDepotEntryException {
         return createEntry(entryUri, created, contents, null);
     }
 
@@ -277,7 +293,8 @@ public class FileDepot {
             List<SourceContent> contents,
             List<SourceContent> enclosures)
             throws IOException,
-                   DeletedDepotEntryException, DuplicateDepotEntryException {
+                   DeletedDepotEntryException, LockedDepotEntryException,
+                   DuplicateDepotEntryException {
         assertWithinBaseUri(entryUri);
         String uriPath = entryUri.getPath();
         File entryDir = getEntryDir(uriPath);
@@ -298,11 +315,8 @@ public class FileDepot {
         atomizer.generateIndex();
     }
 
-    public Collection<DepotEntry> makeEntryBatch() {
-        return atomizer.makeEntryBatch();
-    }
-
-    public void indexEntries(Collection<DepotEntry> entryBatch) throws IOException {
+    public void indexEntries(Collection<DepotEntry> entryBatch)
+            throws IOException {
         atomizer.indexEntries(entryBatch);
     }
 
@@ -313,5 +327,66 @@ public class FileDepot {
             - ensures feeds chain as expected
             - opt. ensures all entries are properly indexed
     */
+
+
+    Collection<DepotEntry> makeEntryBatch() {
+        return new DepotEntryBatch(this);
+    }
+
+
+    static class DepotEntryBatch extends AbstractCollection<DepotEntry> {
+
+        FileDepot depot;
+        private TreeSet<EntryRef> ascDateSortedEntryRefs;
+
+        public DepotEntryBatch(FileDepot depot) {
+            this.depot = depot;
+            ascDateSortedEntryRefs = new TreeSet<EntryRef>(
+                    new Comparator<EntryRef>() {
+                        public int compare(EntryRef a, EntryRef b) {
+                            if (a.date.equals(b.date)) {
+                                return a.uriPath.compareTo(b.uriPath);
+                            }
+                            return a.date.compareTo(b.date);
+                        }
+                });
+        }
+
+        public boolean add(DepotEntry depotEntry) {
+            // only keeping necessary data to minimize memory use
+            return ascDateSortedEntryRefs.add(new EntryRef(depotEntry));
+        }
+
+        public Iterator<DepotEntry> iterator() {
+            final Iterator<EntryRef> sortedIter = ascDateSortedEntryRefs.iterator();
+            return new Iterator<DepotEntry>() {
+                public boolean hasNext() {
+                    return sortedIter.hasNext();
+                }
+                public DepotEntry next() {
+                    EntryRef entryRef = sortedIter.next();
+                    return depot.getUncheckedDepotEntry(entryRef.uriPath);
+                }
+                public void remove() {
+                    sortedIter.remove();
+                }
+            };
+        }
+
+        public int size() {
+            return ascDateSortedEntryRefs.size();
+        }
+
+    }
+
+    private static class EntryRef {
+        public EntryRef(DepotEntry depotEntry) {
+            this.uriPath = depotEntry.getEntryUriPath();
+            this.date = depotEntry.getUpdated();
+        }
+        String uriPath;
+        Date date;
+    }
+
 
 }

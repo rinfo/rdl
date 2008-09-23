@@ -26,6 +26,7 @@ public class DepotEntry {
             "content(?:-(\\w{2}))?.(\\w+)");
     public static final String DELETED_FILE_NAME = "DELETED";
     public static final String GENERIC_META_DIR_NAME = "local-meta";
+    public static final String LOCKED_FILE_NAME = "LOCKED";
 
 
     protected static IOFileFilter NON_ENTRY_DIR_FILTER =  new AbstractFileFilter() {
@@ -50,21 +51,27 @@ public class DepotEntry {
 
 
     public DepotEntry(FileDepot depot, File entryDir, String knownUriPath)
-        throws DeletedDepotEntryException {
-        this(depot, entryDir, knownUriPath, true);
+            throws DeletedDepotEntryException, LockedDepotEntryException {
+        initialize(depot, entryDir, knownUriPath);
+        assertIsNotDeleted();
+        assertIsNotLocked();
     }
 
-    public DepotEntry(FileDepot depot, File entryDir, String knownUriPath,
-            boolean failOnDeleted) throws DeletedDepotEntryException {
+    protected DepotEntry() { }
+
+    protected void initialize(FileDepot depot, File entryDir, String knownUriPath) {
         this.depot = depot;
         this.entryDir = entryDir;
         this.entryUriPath = knownUriPath;
         entryContentDir = new File(entryDir, ENTRY_CONTENT_DIR_NAME);
         genericMetaDir = new File(entryContentDir, GENERIC_META_DIR_NAME);
-        // TODO: change to only public (safe) factory method
-        if (failOnDeleted && isDeleted()) {
-            throw new DeletedDepotEntryException(this);
-        }
+    }
+
+    public static DepotEntry newUncheckedDepotEntry(
+            FileDepot depot, File entryDir, String knownUriPath) {
+        DepotEntry depotEntry = new DepotEntry();
+        depotEntry.initialize(depot, entryDir, knownUriPath);
+        return depotEntry;
     }
 
     public static boolean isEntryDir(File dir) {
@@ -106,6 +113,10 @@ public class DepotEntry {
         return getDeletedMarkerFile().isFile();
     }
 
+    public boolean isLocked() {
+        return getLockedMarkerFile().exists();
+    }
+
     public String getContentMediaType() {
         return getEntryManifest().getContentMimeType().toString();
     }
@@ -123,6 +134,19 @@ public class DepotEntry {
      */
     public long lastModified() {
         return getManifestFile().lastModified();
+    }
+
+
+    public void assertIsNotDeleted() throws DeletedDepotEntryException {
+        if (isDeleted()) {
+            throw new DeletedDepotEntryException(this);
+        }
+    }
+
+    public void assertIsNotLocked() throws LockedDepotEntryException {
+        if (isLocked()) {
+            throw new LockedDepotEntryException(this);
+        }
     }
 
 
@@ -155,16 +179,12 @@ public class DepotEntry {
                     if (!contentDir.getName().equals(ENTRY_CONTENT_DIR_NAME)) {
                         continue;
                     }
-                    DepotEntry depotEntry;
-                    try {
-                        depotEntry = new DepotEntry(
-                            depot, contentDir.getParentFile(), null, false);
-                    } catch (DeletedDepotEntryException e) {
-                        continue; // TODO:IMPROVE: this cannot happen with fail = false
-                    }
+                    DepotEntry depotEntry = DepotEntry.newUncheckedDepotEntry(
+                        depot, contentDir.getParentFile(), null);
                     if (!includeDeleted && depotEntry.isDeleted()) {
                         continue;
                     }
+                    // TODO: includeLocked (and/or onlyLocked?) Fail on locked..
                     return depotEntry;
                 }
                 throw new NoSuchElementException();
@@ -275,6 +295,10 @@ public class DepotEntry {
 
     protected File getDeletedMarkerFile() {
         return new File(entryContentDir, DELETED_FILE_NAME);
+    }
+
+    protected File getLockedMarkerFile() {
+        return new File(entryContentDir, LOCKED_FILE_NAME);
     }
 
 
@@ -413,6 +437,15 @@ public class DepotEntry {
             FileUtils.forceMkdir(enclDir);
         }
         srcContent.writeTo(file);
+    }
+
+
+    public void lock() throws IOException {
+        getLockedMarkerFile().createNewFile();
+    }
+
+    public void unlock() throws IOException {
+        getLockedMarkerFile().delete();
     }
 
 

@@ -158,7 +158,7 @@ public class Atomizer {
         if (!feedDir.exists()) {
             feedDir.mkdir();
         }
-        Collection<DepotEntry> entryBatch = makeEntryBatch();
+        Collection<DepotEntry> entryBatch = depot.makeEntryBatch();
 
         for (Iterator<DepotEntry> iter = depot.iterateEntries(
                 includeHistorical, includeDeleted); iter.hasNext(); ) {
@@ -167,10 +167,6 @@ public class Atomizer {
 
         FileUtils.cleanDirectory(feedDir);
         indexEntries(entryBatch);
-    }
-
-    public Collection<DepotEntry> makeEntryBatch() {
-        return new DepotEntryBatch(depot, includeDeleted);
     }
 
     // TODO: test algorithm in isolation! (refactor?)
@@ -446,67 +442,5 @@ public class Atomizer {
             }
         }
     }
-
-
-    class DepotEntryBatch extends AbstractCollection<DepotEntry> {
-
-        FileDepot depot;
-        boolean includeDeleted;
-        private TreeSet<EntryRef> ascDateSortedEntryRefs;
-
-        public DepotEntryBatch(FileDepot depot, boolean includeDeleted) {
-            this.depot = depot;
-            this.includeDeleted = includeDeleted;
-            ascDateSortedEntryRefs = new TreeSet<EntryRef>(
-                    new Comparator<EntryRef>() {
-                        public int compare(EntryRef a, EntryRef b) {
-                            if (a.date.equals(b.date)) {
-                                return a.uriPath.compareTo(b.uriPath);
-                            }
-                            return a.date.compareTo(b.date);
-                        }
-                });
-        }
-
-        public boolean add(DepotEntry depotEntry) {
-            // only keeping necessary data to minimize memory use
-            return ascDateSortedEntryRefs.add(new EntryRef(depotEntry));
-        }
-
-        public Iterator<DepotEntry> iterator() {
-            final Iterator<EntryRef> sortedIter = ascDateSortedEntryRefs.iterator();
-            return new Iterator<DepotEntry>() {
-                public boolean hasNext() {
-                    return sortedIter.hasNext();
-                }
-                public DepotEntry next() {
-                    EntryRef entryRef = sortedIter.next();
-                    try {
-                        return depot.getEntry(entryRef.uriPath, !includeDeleted);
-                    } catch (DeletedDepotEntryException e) {
-                        throw new RuntimeException("Unexpected deleted entry.", e);
-                    }
-                }
-                public void remove() {
-                    sortedIter.remove();
-                }
-            };
-        }
-
-        public int size() {
-            return ascDateSortedEntryRefs.size();
-        }
-
-    }
-
-    private class EntryRef {
-        public EntryRef(DepotEntry depotEntry) {
-            this.uriPath = depotEntry.getEntryUriPath();
-            this.date = depotEntry.getUpdated();
-        }
-        String uriPath;
-        Date date;
-    }
-
 
 }

@@ -1,31 +1,16 @@
 package se.lagrummet.rinfo.store.depot
 
 import org.junit.Test
-import org.junit.AfterClass
-import org.junit.BeforeClass
+import org.junit.Before
 import static org.junit.Assert.*
 
 
-class FileDepotAtomIndexTest {
+class FileDepotAtomIndexTest extends FileDepotTempBase {
 
-    static FileDepot fileDepot
-    static File tempDepotDir
-    static File depotSrc
-
-    @BeforeClass
-    static void setupClass() {
-        depotSrc = new File("src/test/resources/exampledepot/storage")
-        tempDepotDir = TempDirUtil.createTempDir(depotSrc)
-        fileDepot = new FileDepot(new URI("http://example.org"),
-                new File(tempDepotDir, depotSrc.name), "/feed")
+    @Before
+    void setup() {
         fileDepot.atomizer.feedBatchSize = 2
     }
-
-    @AfterClass
-    static void tearDownClass() {
-        TempDirUtil.removeTempDir(tempDepotDir)
-    }
-
 
     @Test
     void shouldGenerateAtomEntry() {
@@ -55,7 +40,7 @@ class FileDepotAtomIndexTest {
     // TODO: shouldInsertInSubscriptionFeed
     // TODO: shouldCutOffSubscriptionToArchiveAtBatchSize
 
-    /* TODO: testIndexBatch
+    /* FIXME: testIndexBatch
     static def suiteBatch
     suiteBatch = fileDepot.makeEntryBatch()
     fileDepot.indexEntries(suiteBatch)
