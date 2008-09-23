@@ -46,6 +46,7 @@ public class DepotEntry {
     protected File genericMetaDir;
 
     private FileDepot depot;
+
     private Entry manifest;
     private String entryUriPath;
 
@@ -205,7 +206,7 @@ public class DepotEntry {
 
     public List<DepotContent> findContents(String forMediaType, String forLang) {
         List<DepotContent> found = new ArrayList<DepotContent>();
-        // TODO: if both qualifiers given, get file with newContentFile?
+        // TODO:IMPROVE: if both qualifiers given, get file with newContentFile?
         for (File file : entryContentDir.listFiles()) {
             Matcher match = CONTENT_FILE_PATTERN.matcher(file.getName());
             if (!match.matches()) {
@@ -221,7 +222,7 @@ public class DepotEntry {
             if (forLang!=null && !forLang.equals(lang)) {
                 continue;
             }
-            // TODO: we now decouple suffix and hint logic:
+            // TODO:IMPROVE: we now decouple suffix and hint logic:
             //  .. although this reintroduces map->remap->back-to-map..!
             //  .. and mediaHint *is* very concise.
             //  - receiving forMediaType in findContents
@@ -300,6 +301,10 @@ public class DepotEntry {
     protected File getLockedMarkerFile() {
         return new File(entryContentDir, LOCKED_FILE_NAME);
     }
+
+    /* TODO:? To call when modified (to re-read props from manifest..)
+    protected void reset() { manifest = null; entryUriPath = null; }
+    */
 
 
     //==== TODO: above in DepotEntryView base class? ====

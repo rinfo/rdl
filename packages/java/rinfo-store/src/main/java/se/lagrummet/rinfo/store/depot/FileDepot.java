@@ -279,7 +279,7 @@ public class FileDepot {
         return toFilePath(uri.getPath());
     }
 
-    //== Writing Specifics ==
+    //== Write Specifics ==
 
     public DepotEntry createEntry(URI entryUri, Date created,
             List<SourceContent> contents)
@@ -306,7 +306,7 @@ public class FileDepot {
 
     public void onEntryModified(DepotEntry depotEntry) throws IOException {
         atomizer.generateAtomEntryContent(depotEntry);
-        // TODO: update latest feed index file (may create new file and modify
+        // TODO:? update latest feed index file (may create new file and modify
         // next-to-last (add next-archive)?)! Since any modifying means
         // a new updated depotEntry in the feeds..
     }
