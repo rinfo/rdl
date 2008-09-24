@@ -20,12 +20,14 @@ class FileDepotTransactionTest extends FileDepotTempBase {
         } catch (LockedDepotEntryException e) {
         }
         entry.unlock()
-        fileDepot.getEntry(entryId)
+        assertFalse entry.isLocked()
+        entry = fileDepot.getEntry(entryId)
+        assertFalse entry.isLocked()
     }
 
     @Test
     void shouldOperateViaBatch() {
-        /* TODO:
+        /* TODO:? Really?
         def batch = depot.makeEntryBatch()
         batch.create
         assertTrue locked

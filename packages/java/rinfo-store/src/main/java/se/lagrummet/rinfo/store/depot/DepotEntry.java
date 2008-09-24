@@ -319,10 +319,18 @@ public class DepotEntry {
             List<SourceContent> sourceEnclosures)
             throws DuplicateDepotEntryException,
                    FileNotFoundException, IOException {
+        create(createTime, sourceContents, sourceEnclosures, true);
+    }
+
+    public void create(Date createTime, List<SourceContent> sourceContents,
+            List<SourceContent> sourceEnclosures, boolean releaseLock)
+            throws DuplicateDepotEntryException,
+                   FileNotFoundException, IOException {
         if(entryContentDir.exists()) {
             throw new DuplicateDepotEntryException(this);
         }
         entryContentDir.mkdir();
+        lock();
 
         Entry manifest = Abdera.getInstance().newEntry();
         // TODO: unify with rest of getId/entryPath stuff!
@@ -342,6 +350,9 @@ public class DepotEntry {
             }
         }
         depot.onEntryModified(this);
+        if (releaseLock) {
+            unlock();
+        }
     }
 
     public void update(Date updateTime,
@@ -353,8 +364,11 @@ public class DepotEntry {
     public void update(Date updateTime,
             List<SourceContent> sourceContents,
             List<SourceContent> sourceEnclosures)
-            throws FileNotFoundException, IOException {
-
+            throws IOException, FileNotFoundException  {
+        boolean selfLocked = !isLocked();
+        if (selfLocked) {
+            lock();
+        }
         rollOffToHistory();
 
         if (sourceContents!=null) {
@@ -372,11 +386,20 @@ public class DepotEntry {
         manifest.setUpdated(updateTime);
         setPrimaryContent(manifest, sourceContents);
         manifest.writeTo(new FileOutputStream(getManifestFile()));
+
         depot.onEntryModified(this);
+        if (selfLocked) {
+            unlock();
+        }
     }
 
     public void delete(Date deleteTime)
-            throws DeletedDepotEntryException, IOException, FileNotFoundException {
+            throws DeletedDepotEntryException,
+                   IOException, FileNotFoundException {
+        boolean selfLocked = !isLocked();
+        if (selfLocked) {
+            lock();
+        }
         if (isDeleted()) {
             throw new DeletedDepotEntryException(this);
         }
@@ -388,13 +411,16 @@ public class DepotEntry {
         // - but keep generated content.entry? (how to know that? meta-file?)
         // .. (opt. move away..?)
         rollOffToHistory();
+        // TODO: opt. mark "410 Gone" for enclosures?
 
         manifest.writeTo(new FileOutputStream(getManifestFile()));
         depot.onEntryModified(this);
-        // TODO: opt. mark "410 Gone" for enclosures?
+        if (selfLocked) {
+            unlock();
+        }
     }
 
-
+    // TODO: rollback: must be locked: does wipeout or restorePrevious (unUpdate)
     // TODO: resurrect(...)? (clears deleted state + (partial) create)
 
     public void addContent(SourceContent srcContent) throws IOException {

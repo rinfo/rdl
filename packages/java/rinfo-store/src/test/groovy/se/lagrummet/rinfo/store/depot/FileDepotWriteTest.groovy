@@ -12,6 +12,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
     static final UPD_ID_2 = new URI("http://example.org/publ/UPD/updated_2")
     static final UPD_ID_3 = new URI("http://example.org/publ/UPD/updated_3")
     static final DEL_ID_1 = new URI("http://example.org/publ/DEL/deleted_1")
+    static final BROKEN_ID_1 = new URI("http://example.org/publ/NEW/broken_1")
     static final CHECKED_ID_1 = new URI("http://example.org/publ/CHECK/added_1")
     static final FAILED_ID_1 = new URI("http://example.org/publ/CHECK/failed_1")
     static final FAILED_ID_2 = new URI("http://example.org/publ/CHECK/failed_2")
@@ -32,6 +33,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
             )
 
         def entry = fileDepot.getEntry(NEW_ID_1)
+        assertFalse entry.isLocked()
 
         assertEquals entry.id, NEW_ID_1
         assertEquals entry.published, entry.updated
@@ -94,6 +96,26 @@ class FileDepotWriteTest extends FileDepotTempBase {
 
 
     @Test
+    void shouldLeaveLockedOnBadContent() {
+        try {
+            fileDepot.createEntry(BROKEN_ID_1, new Date(),
+                    [ new SourceContent(((InputStream)null), null, null) ]
+                )
+            fail("Should fail with nullpointer.")
+        } catch (NullPointerException e) {
+        }
+        try {
+            fileDepot.getEntry(BROKEN_ID_1)
+            fail("Should fail on locked.")
+        } catch (LockedDepotEntryException e) {
+        }
+        def brokenEntry = fileDepot.getUncheckedDepotEntry(
+                BROKEN_ID_1.getPath())
+        assertTrue brokenEntry.isLocked()
+    }
+
+
+    @Test
     void shouldUpdateEntry() {
         assertNull fileDepot.getEntry(UPD_ID_1)
 
@@ -121,6 +143,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
         assertEquals entry.updated, updateTime
         assertEquals entry.deleted, false
         // TODO: getHistoricalEntries..
+        assertFalse entry.isLocked()
     }
 
 
@@ -181,6 +204,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
         entry.delete(deleteTime)
 
         entry = fileDepot.getEntry(DEL_ID_1, false)
+        assertFalse entry.isLocked()
         assertEquals 0, entry.findContents("application/pdf").size()
         assertEquals entry.updated, deleteTime
         assertEquals entry.deleted, true

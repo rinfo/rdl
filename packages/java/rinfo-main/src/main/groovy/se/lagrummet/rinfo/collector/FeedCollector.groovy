@@ -33,6 +33,7 @@ import se.lagrummet.rinfo.store.depot.Atomizer
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.depot.DepotContent
 import se.lagrummet.rinfo.store.depot.DepotEntry
+import se.lagrummet.rinfo.store.depot.DepotEntryBatch
 import se.lagrummet.rinfo.store.depot.DuplicateDepotEntryException
 import se.lagrummet.rinfo.store.depot.SourceContent
 
@@ -87,7 +88,7 @@ class FeedCollector extends FeedArchiveReader {
         // "application/xhtml+xml" TODO: scan for RDFa
     ]
 
-    private Collection<DepotEntry> collectedBatch
+    private DepotEntryBatch collectedBatch
 
     FeedCollector(FileDepot depot, URIMinter uriMinter) {
         this.depot = depot

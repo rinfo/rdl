@@ -158,7 +158,7 @@ public class Atomizer {
         if (!feedDir.exists()) {
             feedDir.mkdir();
         }
-        Collection<DepotEntry> entryBatch = depot.makeEntryBatch();
+        DepotEntryBatch entryBatch = depot.makeEntryBatch();
 
         for (Iterator<DepotEntry> iter = depot.iterateEntries(
                 includeHistorical, includeDeleted); iter.hasNext(); ) {
@@ -171,7 +171,7 @@ public class Atomizer {
 
     // TODO: test algorithm in isolation! (refactor?)
     // .. perhaps with overridden generateAtomEntryContent + writeFeed
-    public void indexEntries(Collection<DepotEntry> entryBatch) throws IOException {
+    public void indexEntries(DepotEntryBatch entryBatch) throws IOException {
 
         String subscriptionPath = depot.getSubscriptionPath();
 
