@@ -385,7 +385,7 @@ class FeedCollector extends FeedArchiveReader {
 
 }
 
-protected class CollectingSourceContent extends SourceContent {
+class CollectingSourceContent extends SourceContent {
 
     private FeedCollector collector;
     private String urlPath;
