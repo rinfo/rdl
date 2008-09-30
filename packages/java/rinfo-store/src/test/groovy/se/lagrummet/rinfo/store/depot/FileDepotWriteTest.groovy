@@ -12,7 +12,6 @@ class FileDepotWriteTest extends FileDepotTempBase {
     static final UPD_ID_2 = new URI("http://example.org/publ/UPD/updated_2")
     static final UPD_ID_3 = new URI("http://example.org/publ/UPD/updated_3")
     static final DEL_ID_1 = new URI("http://example.org/publ/DEL/deleted_1")
-    static final BROKEN_ID_1 = new URI("http://example.org/publ/NEW/broken_1")
     static final CHECKED_ID_1 = new URI("http://example.org/publ/CHECK/added_1")
     static final FAILED_ID_1 = new URI("http://example.org/publ/CHECK/failed_1")
     static final FAILED_ID_2 = new URI("http://example.org/publ/CHECK/failed_2")
@@ -92,26 +91,6 @@ class FileDepotWriteTest extends FileDepotTempBase {
                 [ new SourceContent(exampleFile("icon.png"),
                             null, null, invalidEnclPath), ]
             )
-    }
-
-
-    @Test
-    void shouldLeaveLockedOnBadContent() {
-        try {
-            fileDepot.createEntry(BROKEN_ID_1, new Date(),
-                    [ new SourceContent(((InputStream)null), null, null) ]
-                )
-            fail("Should fail with nullpointer.")
-        } catch (NullPointerException e) {
-        }
-        try {
-            fileDepot.getEntry(BROKEN_ID_1)
-            fail("Should fail on locked.")
-        } catch (LockedDepotEntryException e) {
-        }
-        def brokenEntry = fileDepot.getUncheckedDepotEntry(
-                BROKEN_ID_1.getPath())
-        assertTrue brokenEntry.isLocked()
     }
 
 

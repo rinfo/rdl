@@ -27,7 +27,8 @@ public class DepotEntry {
     public static final String DELETED_FILE_NAME = "DELETED";
     public static final String GENERIC_META_DIR_NAME = "local-meta";
     public static final String LOCKED_FILE_NAME = "LOCKED";
-
+    public static final String MOVED_ENCLOSURES_DIR_NAME = "enclosures";
+    public static final String ROLLOFF_DIR_NAME = "TEMP_ROLLOFF";
 
     protected static IOFileFilter NON_ENTRY_DIR_FILTER =  new AbstractFileFilter() {
         public boolean accept(File it) {
@@ -251,26 +252,14 @@ public class DepotEntry {
         return enclosures;
     }
 
-    protected DepotContent enclosedDepotContent(File file) {
-        String uriPath = toEnclosedUriPath(file);
-        String mediaType = depot.computeMediaType(file);
-        return new DepotContent(file, uriPath, mediaType);
+    /**
+     * A generic metadata file for usage specific needs. Can be used e.g.
+     * to store additional information about creation source etc.
+     */
+    public File getMetaFile(String fileName) {
+        return new File(getMetaDir(), fileName);
     }
 
-    protected String toEnclosedUriPath(File file) {
-        // TODO: depot.toUriPath(file .. or relativeFilePath..)
-        String fileUriPath = file.toURI().toString();
-        String entryDirUriPath = entryDir.toURI().toString();
-        if (!fileUriPath.startsWith(entryDirUriPath)) {
-            throw new DepotUriException(
-                    "Enclosed file <"+fileUriPath +
-                    "> is not within depot entry at dir <"+entryDirUriPath +
-                    ">.");
-        }
-        String pathRemainder = fileUriPath.replaceFirst(entryDirUriPath, "");
-        String uriPath = getEntryUriPath() + "/" + pathRemainder;
-        return uriPath;
-    }
 
     protected String computeEntryUriPath() throws URISyntaxException {
         URI uri = getId();
@@ -294,12 +283,33 @@ public class DepotEntry {
         return new File(entryContentDir, MANIFEST_FILE_NAME);
     }
 
+
+    protected DepotContent enclosedDepotContent(File file) {
+        String uriPath = toEnclosedUriPath(file);
+        String mediaType = depot.computeMediaType(file);
+        return new DepotContent(file, uriPath, mediaType);
+    }
+
+    protected String toEnclosedUriPath(File file) {
+        String pathRemainder = FilePathUtil.toRelativeFilePath(file, entryDir);
+        String uriPath = getEntryUriPath() + "/" + pathRemainder;
+        return uriPath;
+    }
+
+
     protected File getDeletedMarkerFile() {
         return new File(entryContentDir, DELETED_FILE_NAME);
     }
 
     protected File getLockedMarkerFile() {
         return new File(entryContentDir, LOCKED_FILE_NAME);
+    }
+
+    protected File getMetaDir() {
+        if (!genericMetaDir.exists()) {
+            genericMetaDir.mkdir();
+        }
+        return genericMetaDir;
     }
 
     /* TODO:? To call when modified (to re-read props from manifest..)
@@ -408,10 +418,9 @@ public class DepotEntry {
         manifest.setUpdated(deleteTime);
 
         // TODO: wipe content and enclosures
-        // - but keep generated content.entry? (how to know that? meta-file?)
-        // .. (opt. move away..?)
+        // - but keep generated content.entry? (as meta-file?)
+        // .. (opt. move away..? zip?)
         rollOffToHistory();
-        // TODO: opt. mark "410 Gone" for enclosures?
 
         manifest.writeTo(new FileOutputStream(getManifestFile()));
         depot.onEntryModified(this);
@@ -420,14 +429,64 @@ public class DepotEntry {
         }
     }
 
-    // TODO: rollback: must be locked: does wipeout or restorePrevious (unUpdate)
-    // TODO: resurrect(...)? (clears deleted state + (partial) create)
+    // TODO:IMPROVE: resurrect()? (clears deleted state + (partial) create)
 
-    public void addContent(SourceContent srcContent) throws IOException {
+
+    public void lock() throws IOException {
+        getLockedMarkerFile().createNewFile();
+    }
+
+    public void unlock() throws IOException {
+        getLockedMarkerFile().delete();
+    }
+
+
+    public boolean rollback() throws IOException {
+        // TODO: is returning "locked, ok" really so useful? Or throw? Require lock?
+        if (hasHistory()) {
+            return restorePrevious();
+        } else {
+            return wipeout();
+        }
+    }
+
+    public boolean hasHistory() {
+        return getUpdated().compareTo(getPublished()) > 0 &&
+            DatePathUtil.youngestEntryHistoryDir(entryContentDir) != null;
+    }
+
+    public boolean wipeout() throws IOException {
+        if (!isLocked()) {
+            return false;
+        }
+        rollOffToHistory();
+        FileUtils.deleteDirectory(entryContentDir);
+        FilePathUtil.removeEmptyTrail(
+                entryContentDir.getParentFile(), depot.getBaseDir());
+        return true;
+    }
+
+    protected boolean restorePrevious() throws IOException {
+        if (!isLocked()) {
+            return false;
+        }
+        File rollOffDir = newRollOffDir();
+        rollOffToDir(rollOffDir);
+        // TODO:IMPROVE: use a "HistoryEntry" and "update" from that?
+        File historyDir = DatePathUtil.youngestEntryHistoryDir(entryContentDir);
+        restoreFromRollOff(historyDir);
+        FileUtils.deleteDirectory(historyDir);
+        FilePathUtil.removeEmptyTrail(historyDir.getParentFile(), entryContentDir);
+        FileUtils.deleteDirectory(rollOffDir);
+        return true;
+    }
+
+
+    protected void addContent(SourceContent srcContent) throws IOException {
         addContent(srcContent, false);
     }
 
-    public void addContent(SourceContent srcContent, boolean replace)
+    protected void addContent(SourceContent srcContent, boolean replace)
             throws IOException {
         File file = newContentFile(srcContent.getMediaType(), srcContent.getLang());
         if (!replace) {
@@ -439,11 +498,11 @@ public class DepotEntry {
     }
 
 
-    public void addEnclosure(SourceContent srcContent) throws IOException {
+    protected void addEnclosure(SourceContent srcContent) throws IOException {
         addEnclosure(srcContent, false);
     }
 
-    public void addEnclosure(SourceContent srcContent, boolean replace)
+    protected void addEnclosure(SourceContent srcContent, boolean replace)
             throws IOException {
         String enclUriPath = srcContent.getEnclosedUriPath();
         if (enclUriPath.startsWith("/")) {
@@ -463,36 +522,8 @@ public class DepotEntry {
                 throwDuplicateDepotContentException(srcContent);
             }
         }
-        File enclDir = file.getParentFile();
-        if (!enclDir.exists()) {
-            FileUtils.forceMkdir(enclDir);
-        }
+        FilePathUtil.plowParentDirPath(file);
         srcContent.writeTo(file);
-    }
-
-
-    public void lock() throws IOException {
-        getLockedMarkerFile().createNewFile();
-    }
-
-    public void unlock() throws IOException {
-        getLockedMarkerFile().delete();
-    }
-
-
-    /**
-     * A generic metadata file for usage specific needs. Can be used e.g.
-     * to store additional information about creation source etc.
-     */
-    public File getMetaFile(String fileName) {
-        return new File(getMetaDir(), fileName);
-    }
-
-    protected File getMetaDir() {
-        if (!genericMetaDir.exists()) {
-            genericMetaDir.mkdir();
-        }
-        return genericMetaDir;
     }
 
 
@@ -521,33 +552,40 @@ public class DepotEntry {
         }
     }
 
-    protected void rollOffToHistory()
-            throws IOException {
+
+    protected void rollOffToHistory() throws IOException {
+        rollOffToDir(newHistoryDir());
+    }
+
+    protected void rollOffToDir(File destDir) throws IOException {
         // NOTE: this means existing content not in the update is removed.
         //      - *including enclosures*
-        File historyDir = newHistoryDir();
-        // FIXME: there should be an entryContentDir as well if enclosures are
-        // to be located and work as normal... (but see iterateEntries!)
 
-        FileUtils.copyFileToDirectory(getManifestFile(), historyDir, true);
+        /* TODO:IMPROVE: use an entryContentDir to keep structure (boxed
+        content, enclosures) similar to regular entries (for a possible
+        HistoryEntry)? But see iterateEntries (it scans for
+        entryContentDir name..)! */
+
+        FileUtils.moveFileToDirectory(getManifestFile(), destDir, false);
 
         for (DepotContent content : findContents()) {
-            FileUtils.moveToDirectory(content.getFile(), historyDir, false);
+            FileUtils.moveToDirectory(content.getFile(), destDir, false);
         }
         if (genericMetaDir.exists()) {
-            FileUtils.moveToDirectory(genericMetaDir, historyDir, false);
+            FileUtils.moveToDirectory(genericMetaDir, destDir, false);
         }
+        File enclosuresDir = getMovedEnclosuresDir(destDir);
         for (File file : entryDir.listFiles(PUBLIC_FILE_FILTER)) {
             if (file.isDirectory() && containsSubEntry(file)) {
-                // TODO: This doesn't roll of *any* path leading to a
-                // sub-entry! Is that ok? I believe so (alt. is forking..)..
-                // .. although an entry can then "shadow" old enclosures..
-                // .. We could assert "clean path" in create?
+                /* TODO: This doesn't roll of *any* path leading to a
+                sub-entry! Is that ok? I believe so (alt. is forking..)..
+                .. although an entry can then "shadow" old enclosures..
+                .. We could assert "clean path" in create? */
                 continue;
             }
-            FileUtils.moveToDirectory(file, historyDir, false);
+            FileUtils.moveToDirectory(file, enclosuresDir, false);
+            // TODO:IMPROVE: removeEmptyTrail(file.getParentFile())?
         }
-
     }
 
     protected boolean containsSubEntry(File dir) {
@@ -562,8 +600,35 @@ public class DepotEntry {
         return foundSubEntry;
     }
 
-    protected File newHistoryDir()
-            throws IOException {
+    protected void restoreFromRollOff(File rolledOffDir) throws IOException {
+        FileUtils.moveFileToDirectory(new File(rolledOffDir, MANIFEST_FILE_NAME),
+                entryContentDir, false);
+
+        for (File file : rolledOffDir.listFiles()) {
+            Matcher match = CONTENT_FILE_PATTERN.matcher(file.getName());
+            if (match.matches()) {
+                FileUtils.moveFileToDirectory(file, entryContentDir, false);
+            }
+        }
+
+        File movedMetaDir = new File(rolledOffDir, GENERIC_META_DIR_NAME);
+        if (movedMetaDir.exists()) {
+            FileUtils.moveDirectoryToDirectory(
+                    movedMetaDir, entryContentDir, false);
+        }
+
+        File movedEnclDir = getMovedEnclosuresDir(rolledOffDir);
+        for (File enclFile : ((Collection<File>)FileUtils.listFiles(movedEnclDir,
+                HiddenFileFilter.VISIBLE, HiddenFileFilter.VISIBLE))) {
+            String enclPath = FilePathUtil.toRelativeFilePath(
+                    enclFile, movedEnclDir);
+            File target = new File(entryDir, enclPath);
+            FilePathUtil.plowParentDirPath(target);
+            FileUtils.moveFile(enclFile, target);
+        }
+    }
+
+    protected File newHistoryDir() throws IOException {
         String dirPath = DatePathUtil.toEntryHistoryPath(getUpdated());
         File dir = new File(entryContentDir, dirPath);
         if (dir.exists()) {
@@ -574,6 +639,26 @@ public class DepotEntry {
         }
         FileUtils.forceMkdir(dir);
         return dir;
+    }
+
+    protected File newRollOffDir() throws IOException {
+        File dir = new File(entryContentDir, ROLLOFF_DIR_NAME);
+        if (dir.exists()) {
+            throw new DepotIndexException(
+                    "Cannot create roll-off for depot entry <"+this.getId() +
+                    "> at date ["+getUpdated()+"]. File <"+dir+"> is in the way!"
+                );
+        }
+        FileUtils.forceMkdir(dir);
+        return dir;
+    }
+
+    protected File getMovedEnclosuresDir(File destDir) {
+        File enclosuresDir = new File(destDir, MOVED_ENCLOSURES_DIR_NAME);
+        if (!enclosuresDir.exists()) {
+            enclosuresDir.mkdir();
+        }
+        return enclosuresDir;
     }
 
     protected void throwDuplicateDepotContentException(SourceContent srcContent) {

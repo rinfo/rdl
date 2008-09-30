@@ -27,9 +27,13 @@ public class DepotEntryBatch extends AbstractCollection<DepotEntry> {
         return ascDateSortedEntryRefs.add(new EntryRef(depotEntry));
     }
 
-    /* TODO:
+    /* TODO:test first!
     @Override
     public boolean contains(Object o) {
+        if (o instanceof DepotEntry) {
+            o = new EntryRef(o);
+        }
+        return ascDateSortedEntryRefs.contains(o);
     }
     */
 
