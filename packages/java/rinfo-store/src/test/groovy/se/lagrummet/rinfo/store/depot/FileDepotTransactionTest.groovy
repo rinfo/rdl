@@ -132,20 +132,4 @@ class FileDepotTransactionTest extends FileDepotTempBase {
         // TODO:IMPROVE: verify path of enclosures..
     }
 
-
-    /* TODO:? Really? Depot user must perhaps know the details..
-    @Test
-    void shouldOperateViaBatch() {
-        def batch = depot.makeEntryBatch()
-        batch.create
-        assertTrue locked
-        batch.update
-        ...
-        batch.delete
-        ...
-        batch.commit()
-        assert hasBeenIndexed
-    }
-    */
-
 }
