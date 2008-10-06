@@ -45,6 +45,8 @@ class SesameLoader extends FeedArchiveReader {
     }
 
     boolean processFeedPage(URL pageUrl, Feed feed) {
+        // TODO: if a failure occurs, store as statement (pageUrl, entry and date; retry..)
+        // or rather, store "last safe entry date" before reading, retry if still there!
         def conn = repository.connection
         feed = feed.sortEntriesByUpdated(true)
         for (entry in feed.entries) {
