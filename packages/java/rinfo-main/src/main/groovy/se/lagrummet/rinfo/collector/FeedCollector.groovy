@@ -27,6 +27,7 @@ import org.apache.abdera.model.Entry
 import org.apache.abdera.model.Feed
 import org.apache.abdera.model.Source
 
+import org.openrdf.model.vocabulary.XMLSchema
 import org.openrdf.repository.Repository
 
 import se.lagrummet.rinfo.store.depot.Atomizer
@@ -42,29 +43,18 @@ import se.lagrummet.rinfo.base.URIMinter
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.base.atom.FeedArchiveReader
 
-/* TODO:
+/* TODO: (see details in inline comments)
 
-    - Read backwards in time until last read date (last known youngest per feed?)..
-    - Use e.g. collector.startSession(), session.doIndex() ?
-
-    - we also need error recovery (rollback? store "atDate"?)
-        to prevent a state of having read half-way!
-    - perhaps get all feeds until minDateTime, then read entries
-        forwards in time?
-        - and/or just store entries in a "temp session locally",
-        and wipe if errors.
-
-
-    - add "extras" support in depot-API to store collector state (lastRead)?
-        .. no, write in an own dir..
-        .. but perhaps at least for entries? for source docs? but.. hm..
-        .. Begin with own dir!
+    - needs error recovery to prevent a state of having read half-way!
 
     - storage safety and history:
         - Store all collected stuff separately(?)
             .. or just feeds and pre-rewritten RDF?
-                .. support "extras" in depot-API? (See above)
-        - verify source certificates
+            - some "extras" support in depot-API for this collector depot?
+
+    - get all feeds until last collected, then read entries forwards in time?
+        - and/or just store entries in a "temp session locally",
+          and wipe if errors.
 
     ---- Documentation ----
 
@@ -82,6 +72,7 @@ class FeedCollector extends FeedArchiveReader {
 
     FileDepot depot
     URIMinter uriMinter
+    Repository statsRepo
 
     List rdfMimeTypes = [
         "application/rdf+xml",
@@ -90,30 +81,18 @@ class FeedCollector extends FeedArchiveReader {
 
     private DepotEntryBatch collectedBatch
 
-    FeedCollector(FileDepot depot, URIMinter uriMinter) {
-        this.depot = depot
-        this.uriMinter = uriMinter
-    }
-
-    public static void readFeed(FileDepot depot, URIMinter uriMinter, URL url) {
-        new FeedCollector(depot, uriMinter).readFeed(url)
-    }
-
-    // TODO:IMPROVE: synchronized readFeed? Private ctor?
+    // TODO:IMPROVE:  Private ctor ok? Synchronized readFeed?
     // Or just warn that this class is not thread safe?
 
-    @Override
-    public void initialize() {
-        super.initialize()
-        this.collectedBatch = depot.makeEntryBatch()
+    private FeedCollector(FileDepot depot, Repository statsRepo, URIMinter uriMinter) {
+        this.depot = depot
+        this.uriMinter = uriMinter
+        this.statsRepo = statsRepo
     }
 
-    @Override
-    public void shutdown() {
-        super.shutdown()
-        depot.indexEntries(collectedBatch)
-        this.collectedBatch = null
-        getClient().getConnectionManager().shutdown()
+    public static void readFeed(FileDepot depot, Repository statsRepo,
+            URIMinter uriMinter, URL url) {
+        new FeedCollector(depot, statsRepo, uriMinter).readFeed(url)
     }
 
     @Override
@@ -139,6 +118,20 @@ class FeedCollector extends FeedArchiveReader {
     }
 
     @Override
+    public void initialize() {
+        super.initialize()
+        this.collectedBatch = depot.makeEntryBatch()
+    }
+
+    @Override
+    public void shutdown() {
+        super.shutdown()
+        depot.indexEntries(collectedBatch)
+        this.collectedBatch = null
+        getClient().getConnectionManager().shutdown()
+    }
+
+    @Override
     public URL readFeedPage(URL url) throws IOException {
         // TODO:? never visit pageUrl being an already visited archive page?
         return super.readFeedPage(url)
@@ -146,9 +139,28 @@ class FeedCollector extends FeedArchiveReader {
 
     public boolean processFeedPage(URL pageUrl, Feed feed) {
         logger.info "Title: ${feed.title}"
-        // TODO: Check for tombstones; if so, delete in depot.
+
         feed = feed.sortEntriesByUpdated(true)
-        def currentUpdated = new Date() // TODO: choke on "futures" in collect source?
+        logVisitedFeedPageStats(feed)
+        /* FIXME: revamp for failsafe collecting:
+
+            - store local copy of:
+                - feed pages with file url:s
+                - entries with intact dates but reminted urls,
+              then read that copy forward in time into real depot, with new dates.
+
+            - scroll back in history until last known (via statsRepo)
+                - schedule updates and deletes (to avoid reading old entries)
+
+            - IMPORTANT: *then* walk forwards and storeEntry
+                - ow. the dates are wrong, and older resources cannot be
+                  referenced by newer! And more crucially, a failed read
+                  effectively blocks other sources (since it's not yet indexed)!
+
+        */
+
+        // TODO: Check for tombstones; if so, delete in depot.
+        def currentUpdated = new Date() // TODO:? fail like this on "future entries" in collect source?
         for (entry in feed.getEntries()) {
             // TODO: verify this assert in unit test instead (using a jumbled source feed)
             assert currentUpdated >= entry.getUpdated()
@@ -164,21 +176,34 @@ class FeedCollector extends FeedArchiveReader {
             }
         }
         return true
-        /* TODO:
-        * Fail on:
-            javax.net.ssl.SSLPeerUnverifiedException
-            java.net.SocketException
-            MissingRdfContentException
-            URIComputationException
-            DuplicateDepotEntryException
-            SourceCheckException (from SourceContent#writeTo), ...
-          - then *rollback* (entire batch?)!
-          - and *report error*
+        /* FIXME: Fail on:
+            - retriable:
+                java.net.SocketException
 
-        throw new Exception("Bad MD5 checksum in " +
-                depotEntry.getId()+" for "+mapEntry.getKey()+". Was "+
-                mapEntry.getValue()+", expected "+storedMd5Hex+".")
+            - source errors (needs reporting):
+                javax.net.ssl.SSLPeerUnverifiedException
+                MissingRdfContentException
+                URIComputationException
+                DuplicateDepotEntryException
+                SourceCheckException (from SourceContent#writeTo), ...
+
+          , then *rollback* (entire batch?) and *report error*!
         */
+    }
+
+    protected void logVisitedFeedPageStats(Feed feed) {
+        def vf = statsRepo.getValueFactory()
+        def conn = statsRepo.getConnection()
+
+        def selfUri = vf.createURI(feed.getSelfLinkResolvedHref().toString())
+        def updated = vf.createLiteral(feed.updatedElement.getString(), XMLSchema.DATETIME)
+        def updProp = vf.createURI(
+                "http://bblfish.net/work/atom-owl/2006-06-06/#", "updated")
+        conn.remove(selfUri, updProp, null)
+        conn.add(selfUri, updProp, updated)
+        // TODO: log isArchive, source, ...?
+
+        conn.close()
     }
 
     protected boolean storeEntry(Feed sourceFeed, Entry sourceEntry) {
@@ -204,15 +229,24 @@ class FeedCollector extends FeedArchiveReader {
 
         } else {
             /* TODO:
-            Will read same updated entry twice - must stop if known entry
-            (is that reliable enough?)
+            Is stopping on known entry reliable enough?
 
             If existing; check stored entry and allow update if *both*
                 sourceEntry.updated>.created (above) *and* > depotEntry.updated..
                 .. and "source feed" is "same as last"? (indirected via rdf facts)?
             */
+            /* FIXME: since we read backwards, a batch with a new then updated will
+               force a stop although there may be earlier unvisited entries.
+               This should be solved by two-pass collect (as per TODO in
+               processFeedPage above).
+            .. But "for now", this should do the trick(?):
+            */
+            if (collectedBatch.contains(depotEntry)) {
+                return true;
+            }
+
             if (sourceIsNotAnUpdate(sourceEntry, depotEntry)) {
-                logger.info("Encountered collected entry <${sourceEntry.getId()}> at [" + 
+                logger.info("Encountered collected entry <${sourceEntry.getId()}> at [" +
                         sourceEntry.getUpdated()+"].")
                 return false
             }
@@ -234,6 +268,10 @@ class FeedCollector extends FeedArchiveReader {
 
         collectedBatch.add(depotEntry)
         return true
+    }
+
+    protected void deleteEntry(Feed sourceFeed, URI entryId, Date deletedDate) {
+        // FIXME: implement and use!
     }
 
     protected List initialContents(Entry sourceEntry) {

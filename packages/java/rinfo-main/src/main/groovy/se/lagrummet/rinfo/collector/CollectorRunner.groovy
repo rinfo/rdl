@@ -12,6 +12,10 @@ import org.apache.commons.configuration.ConfigurationException
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.openrdf.repository.Repository
+import org.openrdf.repository.sail.SailRepository
+import org.openrdf.sail.nativerdf.NativeStore
+
 import se.lagrummet.rinfo.base.URIMinter
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.collector.FeedCollector
@@ -23,6 +27,7 @@ class CollectorRunner {
 
     FileDepot depot
     Collection sourceFeedUrls
+    Repository statsRepo
 
     static final int DEFAULT_INITIAL_DELAY = 0
     static final int DEFAULT_SCHEDULE_INTERVAL = 600
@@ -53,6 +58,12 @@ class CollectorRunner {
         if (uriMinter == null) {
             uriMinter = new URIMinter(config.getString("rinfo.main.baseDir"))
         }
+        if (statsRepo == null) {
+            def dataDirPath = config.getString("rinfo.collector.statsRepoDataDir")
+            def dataDir = new File(dataDirPath)
+            statsRepo = new SailRepository(new NativeStore(dataDir))
+            statsRepo.initialize()
+        }
         sourceFeedUrls = config.getList("rinfo.collector.sourceFeedUrls")
         initialDelay = config.getInt(
                 "rinfo.collector.initialDelay", DEFAULT_INITIAL_DELAY)
@@ -80,6 +91,9 @@ class CollectorRunner {
         if (scheduleService != null) {
             scheduleService.shutdown()
         }
+        if (statsRepo != null) {
+            statsRepo.shutDown()
+        }
     }
 
     boolean triggerFeedCollect(URL feedUrl) {
@@ -100,7 +114,7 @@ class CollectorRunner {
     //  .. pop from synchronized queue?
     private void collectFeed(URL feedUrl) {
         //  .. and (in webapp) that request comes from allowed domain..
-        FeedCollector.readFeed(depot, uriMinter, feedUrl)
+        FeedCollector.readFeed(depot, statsRepo, uriMinter, feedUrl)
     }
 
     private void collectFeeds() {
