@@ -20,7 +20,6 @@ import org.apache.commons.configuration.PropertiesConfiguration
 import org.openrdf.repository.Repository
 import org.openrdf.repository.http.HTTPRepository
 import org.openrdf.repository.sail.SailRepository
-import org.openrdf.sail.memory.MemoryStore
 import org.openrdf.sail.nativerdf.NativeStore
 
 import java.util.concurrent.Executors
