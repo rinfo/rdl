@@ -125,13 +125,14 @@ public class RDFUtil {
     {
         RDFFormat format = RDFFormat.forMIMEType(mimeType);
         RDFWriter writer = null;
-        if (format.equals(RDFFormat.RDFXML)) {
-            writer = new RDFXMLPrettyWriter(outStream);
-        } else {
+        // TODO: doesn't work with bnodes.
+        //if (format.equals(RDFFormat.RDFXML)) {
+        //    writer = new RDFXMLPrettyWriter(outStream);
+        //} else {
             RDFWriterFactory factory = (RDFWriterFactory) RDFWriterRegistry
                     .getInstance().get(format);
             writer = factory.getWriter(outStream);
-        }
+        //}
         RepositoryConnection conn = repo.getConnection();
         conn.exportStatements(null, null, null, false, writer);
         conn.close();
