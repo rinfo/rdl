@@ -24,7 +24,8 @@
     <id>http://rinfo.verva.se/publ/vervafs/2007/2</id>
     <updated>2007-11-19T00:00:00.000Z</updated>
     <published>2007-11-19T00:00:00.000Z</published>
-    <title>Vervas föreskrift om statliga myndigheters arbete med säkert elektroniskt informationsutbyte, VERVAFS 2007:2</title>
+    <title>VERVAFS 2007:2</title>
+    <subtitle>Vervas föreskrift om statliga myndigheters arbete med säkert elektroniskt informationsutbyte</subtitle>
     <summary>Föreskrift om statliga myndigheters arbete med säkert elektroniskt informationsutbyten ...</summary>
     <content type="application/pdf" src="/publ/vervafs/2007/2/data.pdf"
              le:md5="234039401d3a90b55640f75decc6c274"/>
@@ -38,7 +39,8 @@
     <id>http://rinfo.verva.se/publ/vervafs/2007/1</id>
     <updated>2007-01-12T00:00:00.000Z</updated>
     <published>2007-01-12T00:00:00.000Z</published>
-    <title>Vervas föreskrifter om statliga myndigheters elektroniska fakturor, VERVAFS 2007:1</title>
+    <title>VERVAFS 2007:1</title>
+    <subtitle>Vervas föreskrifter om statliga myndigheters elektroniska fakturor</subtitle>
     <summary>Föreskrift och allmänna råd som pdf-filer Föreskrifter om statliga myndigheters elektroniska ...</summary>
     <content type="application/pdf" src="/publ/vervafs/2007/1/data.pdf"
              le:md5="bf16399b5df53bc2431cc7b49c2db470"/>
