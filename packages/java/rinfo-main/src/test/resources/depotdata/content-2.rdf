@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:rinfo="http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#">
+
+  <rinfo:Forordning rdf:about="http://example.org/docs/sfs/1:2">
+    <rinfo:fsNummer>1:2</rinfo:fsNummer>
+    <rinfo:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/ref/fs/sfs"/>
+    <dc:title xml:lang="sv">Andra Förordningen</dc:title>
+    <rinfo:paragraf rdf:resource="http://example.org/docs/sfs/1:2#p-1"/>
+  </rinfo:Forordning>
+
+</rdf:RDF>

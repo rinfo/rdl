@@ -27,7 +27,7 @@ class CollectorRunner {
 
     FileDepot depot
     Collection sourceFeedUrls
-    Repository statsRepo
+    Repository stateRepo
 
     static final int DEFAULT_INITIAL_DELAY = 0
     static final int DEFAULT_SCHEDULE_INTERVAL = 600
@@ -58,11 +58,14 @@ class CollectorRunner {
         if (uriMinter == null) {
             uriMinter = new URIMinter(config.getString("rinfo.main.baseDir"))
         }
-        if (statsRepo == null) {
-            def dataDirPath = config.getString("rinfo.collector.statsRepoDataDir")
+        if (stateRepo == null) {
+            def dataDirPath = config.getString("rinfo.collector.stateRepoDataDir")
             def dataDir = new File(dataDirPath)
-            statsRepo = new SailRepository(new NativeStore(dataDir))
-            statsRepo.initialize()
+            if (!dataDir.exists()) {
+                dataDir.mkdir()
+            }
+            stateRepo = new SailRepository(new NativeStore(dataDir))
+            stateRepo.initialize()
         }
         sourceFeedUrls = config.getList("rinfo.collector.sourceFeedUrls")
         initialDelay = config.getInt(
@@ -91,8 +94,8 @@ class CollectorRunner {
         if (scheduleService != null) {
             scheduleService.shutdown()
         }
-        if (statsRepo != null) {
-            statsRepo.shutDown()
+        if (stateRepo != null) {
+            stateRepo.shutDown()
         }
     }
 
@@ -114,7 +117,7 @@ class CollectorRunner {
     //  .. pop from synchronized queue?
     private void collectFeed(URL feedUrl) {
         //  .. and (in webapp) that request comes from allowed domain..
-        FeedCollector.readFeed(depot, statsRepo, uriMinter, feedUrl)
+        FeedCollector.readFeed(depot, stateRepo, uriMinter, feedUrl)
     }
 
     private void collectFeeds() {

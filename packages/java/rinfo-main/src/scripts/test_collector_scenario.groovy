@@ -96,7 +96,9 @@ def doPing(target) {
 teststep "Create a temporary test repot"
 sourceDepot = new FileDepot(
         new URI("http://example.org"), createTempDir("source"), "/feed")
-sourcePort = 8182
+// TODO: to fix bug(?) in Atomizer (doesn't set props to defaults unless configured..)
+sourceDepot.atomizer.configure(new PropertiesConfiguration())
+sourcePort = 8982
 teststep "Start test supply"
 startAppServer(sourcePort, {new TestApplication(it, sourceDepot)})
 // TODO: run two separate source depots; sit back and watch what happens..
@@ -106,8 +108,12 @@ startAppServer(sourcePort, {new TestApplication(it, sourceDepot)})
 teststep "Set up rinfo main"
 rinfoCfg = new PropertiesConfiguration(
         "src/environments/dev-unix/rinfo-main.properties")
-rinfoCfg.setProperty("rinfo.depot.fileDir", createTempDir("rinfo").toString())
-rinfoPort = 8180
+def tempRInfoDir = createTempDir("rinfo").toString()
+rinfoCfg.setProperty("rinfo.depot.fileDir", tempRInfoDir+"/depot")
+rinfoCfg.setProperty("rinfo.collector.stateRepoDataDir", tempRInfoDir+"/state")
+rinfoCfg.setProperty("rinfo.collector.sourceFeedUrls",
+        [ localhost(sourcePort, "/feed/current").toString() ])
+rinfoPort = 8980
 teststep "Start rinfo app"
 startAppServer(rinfoPort, {new MainApplication(it, rinfoCfg)})
 
@@ -118,7 +124,7 @@ def pingFeedToRInfo(feedUrl) {
 
 // simulate ping to rinfo service
 // TODO: service is started outside of this package
-//servicePort = 8181
+//servicePort = 8981
 //def pingRInfoFeedToService(feedUrl) {
 //    doPing("http://localhost:${servicePort}/?feed=${feedUrl}")
 //}
@@ -127,7 +133,8 @@ def pingFeedToRInfo(feedUrl) {
 
 
 // Test data:
-DOC_ONE_ID = new URI("http://example.org/docs/sfs/1:1")
+DOC_1_ID = new URI("http://example.org/docs/sfs/1:1")
+DOC_2_ID = new URI("http://example.org/docs/sfs/1:2")
 def exampleSourceContent(fname, mtype, lang=null) {
     def base = "src/test/resources/depotdata"
     return new SourceContent(new File("$base/$fname"), mtype, lang)
@@ -139,8 +146,13 @@ prompt("-p", "to add")
 teststep "Add source entry </docs/one>"
 sourceDepot.makeEntryBatch().with { batch ->
     batch << sourceDepot.createEntry(
-            DOC_ONE_ID, new Date(), [
-            exampleSourceContent("content.rdf", "application/rdf+xml")
+            DOC_1_ID, new Date(), [
+            exampleSourceContent("content-1.rdf", "application/rdf+xml")
+        ])
+    Thread.sleep(1000)
+    batch << sourceDepot.createEntry(
+            DOC_2_ID, new Date(), [
+            exampleSourceContent("content-2.rdf", "application/rdf+xml")
         ])
     sourceDepot.indexEntries(batch)
 }
@@ -156,10 +168,10 @@ Thread.sleep(2000) // can't modify in same second
 prompt("-p", "to update")
 teststep "Update source entry </docs/one>"
 sourceDepot.makeEntryBatch().with {
-    def entry = sourceDepot.getEntry(DOC_ONE_ID)
+    def entry = sourceDepot.getEntry(DOC_1_ID)
     entry.update(new Date(), [
         exampleSourceContent("content-en.pdf", "application/pdf", "en"),
-        exampleSourceContent("content.rdf", "application/rdf+xml")
+        exampleSourceContent("content-1.rdf", "application/rdf+xml")
     ])
     it << entry
     sourceDepot.indexEntries(it)
@@ -172,13 +184,19 @@ teststep "Find updated <publ/sfs/1:1> in rinfo:</feed/current>"
 // TODO: check resulting rinfo feed
 
 
+// Case: Read unmodified
+Thread.sleep(2000)
+prompt("-p", "to ping rinfo (no source mods)")
+teststep "Ping rinfo-main (after no source modifications)"
+pingFeedToRInfo(localhost(sourcePort, "/feed/current"))
+
+
 // Case: Delete
-/* FIXME: collector can't yet handle these!
 Thread.sleep(2000) // can't modify in same second
 prompt("-p", "to delete")
 teststep "Delete source entry </docs/one>"
 sourceDepot.makeEntryBatch().with {
-    def entry = sourceDepot.getEntry(DOC_ONE_ID)
+    def entry = sourceDepot.getEntry(DOC_1_ID)
     entry.delete(new Date())
     it << entry
     sourceDepot.indexEntries(it)
@@ -188,14 +206,6 @@ teststep "Ping rinfo-main"
 pingFeedToRInfo(localhost(sourcePort, "/feed/current"))
 teststep "Find deleted <publ/sfs/1:1> in rinfo:</feed/latest>"
 // TODO: check resulting rinfo feed
-*/
-
-
-// Case: Read unmodified
-Thread.sleep(2000)
-prompt("-p", "to ping rinfo (no source mods)")
-teststep "Ping rinfo-main (after no source modifications)"
-pingFeedToRInfo(localhost(sourcePort, "/feed/current"))
 
 
 // Teardown
