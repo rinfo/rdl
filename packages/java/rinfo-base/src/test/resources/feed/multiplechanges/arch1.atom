@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:fh="http://purl.org/syndication/history/1.0">
+
+    <id>http://example.org/feed</id>
+    <updated>2000-01-01T00:00:02.000Z</updated>
+    <link href="/arch1.atom" rel="self"/>
+    <fh:archive/>
+    <link href="/index.atom" rel="current"/>
+
+    <entry>
+        <id>http://example.org/entry/2</id>
+        <updated>2000-01-01T00:00:02.000Z</updated>
+        <published>2000-01-01T00:00:02.000Z</published>
+        <title type="text">Entry 2</title>
+        <content type="text/plain">Entry 2 content.</content>
+    </entry>
+
+    <entry>
+        <id>http://example.org/entry/1</id>
+        <updated>2000-01-01T00:00:01.000Z</updated>
+        <published>2000-01-01T00:00:01.000Z</published>
+        <title type="text">Entry 1</title>
+        <content type="text/plain">Entry 1 content.</content>
+    </entry>
+
+</feed>

@@ -26,6 +26,9 @@ public abstract class FeedArchiveReader {
 
     private final Logger logger = LoggerFactory.getLogger(FeedArchiveReader.class);
 
+    public static final String LINK_NEXT_ARCHIVE_REL = "next-archive";
+    public static final String LINK_PREV_ARCHIVE_REL = "prev-archive";
+
     HttpClient httpClient;
 
     public final HttpClient getClient() {
@@ -113,11 +116,10 @@ public abstract class FeedArchiveReader {
          */
         InputStream inStream = getResponseAsInputStream(url);
         try {
-            feed = (Feed) Abdera.getInstance().getParser().parse(
-                    inStream, url.toString()).getRoot();
+            feed = parseFeed(inStream, url);
 
             if (processFeedPage(url, feed)) {
-                IRI followingHref = feed.getLinkResolvedHref("prev-archive");
+                IRI followingHref = feed.getLinkResolvedHref(getFollowingPageRel());
                 if (followingHref != null) {
                     followingUrl = followingHref.toURL();
                 }
@@ -134,10 +136,25 @@ public abstract class FeedArchiveReader {
     }
 
     /**
+     * Default method for getting the link relation name of the following page
+     * to read from the current feed page.
+     *
+     * @return Defaults to {@link LINK_PREV_ARCHIVE_REL}.
+     */
+    public String getFollowingPageRel() {
+        return LINK_PREV_ARCHIVE_REL;
+    }
+
+    /**
      * Template method intended for the feed processing.
      * @return whether to continue backwards in time or stop.
      */
     public abstract boolean processFeedPage(URL pageUrl, Feed feed);
+
+    public Feed parseFeed(InputStream inStream, URL baseUrl) {
+        return (Feed) Abdera.getInstance().getParser().parse(
+                inStream, baseUrl.toString()).getRoot();
+    }
 
     public static String unescapeColon(String uriPath)
         throws UnsupportedEncodingException {

@@ -26,7 +26,7 @@ class FeedArchiveReaderTest {
         component = new Component()
         component.servers.add(Protocol.HTTP, testHttpPort)
         component.clients.add(Protocol.FILE)
-        component.defaultHost.attach(new FileApp())
+        component.defaultHost.attach(new FeedApp())
         component.start()
     }
 
@@ -66,7 +66,7 @@ class DummyFeeder extends FeedArchiveReader {
     }
 }
 
-class FileApp extends Application {
+class FeedApp extends Application {
     static ROOT_URI = new File("src/test/resources/feed").toURI().toString()
     Restlet createRoot() {
         return new Directory(context, ROOT_URI)
