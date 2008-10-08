@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,7 @@ import org.apache.abdera.i18n.iri.IRI;
 
 import org.apache.abdera.ext.history.FeedPagingHelper;
 import org.apache.abdera.ext.sharing.SharingHelper;
+import org.apache.abdera.ext.sharing.Sync;
 
 import javax.xml.namespace.QName;
 
@@ -45,6 +48,8 @@ public class Atomizer {
 
     public static final QName FEED_EXT_TOMBSTONE = new QName(
             "http://purl.org/atompub/tombstones/1.0", "deleted-entry", "at");
+    public static final String TOMBSTONE_REF = "ref";
+    public static final String TOMBSTONE_WHEN = "when";
 
     public static final int DEFAULT_FEED_BATCH_SIZE = 25;
 
@@ -152,6 +157,8 @@ public class Atomizer {
         }
     }
 
+
+    //== Feed Specifics ==
 
     public void generateIndex() throws IOException {
         File feedDir = new File(depot.getBaseDir(), depot.getFeedPath());
@@ -296,9 +303,10 @@ public class Atomizer {
             if (useTombstones) {
                 Element delElem = feed.addExtension(FEED_EXT_TOMBSTONE);
                 delElem.setAttributeValue(
-                        "ref", depotEntry.getId().toString());
+                        TOMBSTONE_REF, depotEntry.getId().toString());
                 delElem.setAttributeValue(
-                        "when", new AtomDate(depotEntry.getUpdated()).getValue());
+                        TOMBSTONE_WHEN,
+                        new AtomDate(depotEntry.getUpdated()).getValue());
             }
             /* TODO: Dry out, unless generating new (when we know all, incl. deleteds..)
                 If so, historical entries must know if their current is deleted!
@@ -313,6 +321,7 @@ public class Atomizer {
         atomEntry.setSource(null);
         feed.insertEntry(atomEntry);
     }
+
 
     //== Entry Specifics ==
 
@@ -441,6 +450,37 @@ public class Atomizer {
                 link.setAttributeValue(LINK_EXT_MD5, enclContent.getMd5Hex());
             }
         }
+    }
+
+
+    //== Utilities ==
+
+    public static Map<IRI, AtomDate> getDeletedMarkers(Feed feed)
+            throws URISyntaxException {
+        Map deletedMap = new HashMap();
+        List<Element> tombstones = feed.getExtensions(FEED_EXT_TOMBSTONE);
+        for (Element elem : tombstones) {
+            deletedMap.put(new IRI(elem.getAttributeValue(TOMBSTONE_REF)),
+                    new AtomDate(elem.getAttributeValue(TOMBSTONE_WHEN)));
+        }
+        for (Entry entry : feed.getEntries()) {
+            if (isDeleted(entry)) {
+                deletedMap.put(entry.getId(),
+                        entry.getUpdatedElement().getValue());
+            }
+        }
+        return deletedMap;
+    }
+
+    public static boolean isDeleted(Entry entry) {
+        if (entry.getExtension(ENTRY_EXT_GDATA_DELETED) != null) {
+            return true;
+        }
+        Sync sync = SharingHelper.getSync(entry);
+        if (sync != null) {
+            return sync.isDeleted();
+        }
+        return false;
     }
 
 }

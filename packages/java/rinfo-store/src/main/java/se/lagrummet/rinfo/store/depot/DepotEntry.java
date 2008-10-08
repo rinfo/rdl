@@ -441,12 +441,11 @@ public class DepotEntry {
     }
 
 
-    public boolean rollback() throws IOException {
-        // TODO: is returning "locked, ok" really so useful? Or throw? Require lock?
+    public void rollback() throws IOException {
         if (hasHistory()) {
-            return restorePrevious();
+            restorePrevious();
         } else {
-            return wipeout();
+            wipeout();
         }
     }
 
@@ -455,21 +454,16 @@ public class DepotEntry {
             DatePathUtil.youngestEntryHistoryDir(entryContentDir) != null;
     }
 
-    public boolean wipeout() throws IOException {
-        if (!isLocked()) {
-            return false;
-        }
+    public void wipeout() throws IOException {
+        lock();
         rollOffToHistory();
         FileUtils.deleteDirectory(entryContentDir);
         FilePathUtil.removeEmptyTrail(
                 entryContentDir.getParentFile(), depot.getBaseDir());
-        return true;
     }
 
-    protected boolean restorePrevious() throws IOException {
-        if (!isLocked()) {
-            return false;
-        }
+    protected void restorePrevious() throws IOException {
+        lock();
         File rollOffDir = newRollOffDir();
         rollOffToDir(rollOffDir);
         // TODO:IMPROVE: use a "HistoryEntry" and "update" from that?
@@ -478,7 +472,7 @@ public class DepotEntry {
         FileUtils.deleteDirectory(historyDir);
         FilePathUtil.removeEmptyTrail(historyDir.getParentFile(), entryContentDir);
         FileUtils.deleteDirectory(rollOffDir);
-        return true;
+        unlock();
     }
 
 

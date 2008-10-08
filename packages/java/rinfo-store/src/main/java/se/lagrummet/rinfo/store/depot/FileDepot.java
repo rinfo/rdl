@@ -35,7 +35,7 @@ public class FileDepot {
     }
 
     public FileDepot(URI baseUri, File baseDir, String feedPath)
-            throws ConfigurationException {
+            throws ConfigurationException, FileNotFoundException {
         this();
         this.baseUri = baseUri;
         this.setBaseDir(baseDir);
@@ -81,11 +81,12 @@ public class FileDepot {
 
     public File getBaseDir() { return baseDir; }
 
-    public void setBaseDir(File baseDir) throws ConfigurationException {
+    public void setBaseDir(File baseDir) throws FileNotFoundException {
         this.baseDir = baseDir;
-        if (!baseDir.isDirectory()) {
-            throw new ConfigurationException(
-                    "Directory "+baseDir+" does not exist.");
+        if (!baseDir.exists()) {
+            baseDir.mkdir();
+            //throw new ConfigurationException(
+            //        "Directory "+baseDir+" does not exist.");
         }
     }
 

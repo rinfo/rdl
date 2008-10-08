@@ -62,8 +62,7 @@ class FileDepotTransactionTest extends FileDepotTempBase {
                 ],
             )
         assertNotNull fileDepot.getEntry(NEW_ID_1)
-        entry.lock()
-        assertTrue entry.rollback()
+        entry.rollback()
         assertNull fileDepot.getEntry(NEW_ID_1)
         // TODO: IllegalStateException on any futher entry ops..
     }
@@ -119,9 +118,7 @@ class FileDepotTransactionTest extends FileDepotTempBase {
         assertFalse entry.getMetaFile("TEST_META_FILE").exists()
 
         Thread.sleep(900)
-        entry.lock()
-        assertTrue entry.rollback()
-        entry.unlock()
+        entry.rollback()
 
         entry = fileDepot.getEntry(UPD_ID_1)
         assertEquals updateTime, entry.updated
