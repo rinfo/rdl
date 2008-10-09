@@ -15,8 +15,8 @@ class AtomizerTest  {
 
     def atomizer = new Atomizer()
 
-    @Before
-    void setup() {
+    @Test
+    void shouldBeConfigurable() {
         atomizer.configure(new PropertiesConfiguration())
     }
 
