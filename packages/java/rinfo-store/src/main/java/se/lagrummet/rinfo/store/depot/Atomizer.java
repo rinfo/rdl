@@ -39,6 +39,8 @@ public class Atomizer {
     // TODO: in Abdera somewhere? Or get from depot(.pathProcessor)?
     public static final String ATOM_ENTRY_MEDIA_TYPE = "application/atom+xml;type=entry";
 
+    // TODO:IMPROVE: depend on base and use base.atom.AtomEntryDeleteUtil?
+
     public static final QName ENTRY_EXT_GDATA_DELETED = new QName(
             "http://schemas.google.com/g/2005", "deleted", "gd");
 

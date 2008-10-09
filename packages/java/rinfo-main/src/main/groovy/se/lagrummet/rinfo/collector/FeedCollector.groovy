@@ -41,8 +41,9 @@ import se.lagrummet.rinfo.store.depot.SourceContent
 
 import se.lagrummet.rinfo.base.URIMinter
 
-import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.base.atom.FeedArchivePastToPresentReader
+import se.lagrummet.rinfo.base.atom.AtomEntryDeleteUtil
+import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 /* TODO: (see details in inline comments)
 
@@ -141,7 +142,7 @@ class FeedCollector extends FeedArchivePastToPresentReader {
 
         stateData.logVisitedFeedPage(feed)
         collectedBatch = depot.makeEntryBatch()
-        def deletedMap = depot.getAtomizer().getDeletedMarkers(feed)
+        def deletedMap = AtomEntryDeleteUtil.getDeletedMarkers(feed)
         def currentUpdated
         try {
             for (entry in feed.getEntries()) {

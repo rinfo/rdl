@@ -19,6 +19,7 @@ import org.openrdf.sail.nativerdf.NativeStore
 
 
 import se.lagrummet.rinfo.base.atom.FeedArchiveReader
+import se.lagrummet.rinfo.base.atom.AtomEntryDeleteUtil
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 
@@ -87,6 +88,7 @@ class SesameLoader extends FeedArchiveReader {
             }
 
             /* TODO: Check for tombstones; delete..:
+            def deletedMap = AtomEntryDeleteUtil.getDeletedMarkers(feed)
             conn.clear(context)
             */
             if (storedContext != null) {
