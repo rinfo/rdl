@@ -12,7 +12,7 @@ class AtomEntryDeleteUtilTest {
 
     @Test
     void shouldGetDeletedMarkers() {
-        def feed = (Feed) Abdera.instance.parser.parse(
+        def feed = Abdera.instance.parser.parse(
                 new FileInputStream("src/test/resources/feed_with_deleted.atom")
             ).root
 
