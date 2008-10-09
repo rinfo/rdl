@@ -10,6 +10,8 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.xml.namespace.QName;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +30,6 @@ import org.apache.abdera.i18n.iri.IRI;
 
 import org.apache.abdera.ext.history.FeedPagingHelper;
 import org.apache.abdera.ext.sharing.SharingHelper;
-import org.apache.abdera.ext.sharing.Sync;
-
-import javax.xml.namespace.QName;
 
 
 public class Atomizer {
@@ -450,37 +449,6 @@ public class Atomizer {
                 link.setAttributeValue(LINK_EXT_MD5, enclContent.getMd5Hex());
             }
         }
-    }
-
-
-    //== Utilities ==
-
-    public static Map<IRI, AtomDate> getDeletedMarkers(Feed feed)
-            throws URISyntaxException {
-        Map deletedMap = new HashMap();
-        List<Element> tombstones = feed.getExtensions(FEED_EXT_TOMBSTONE);
-        for (Element elem : tombstones) {
-            deletedMap.put(new IRI(elem.getAttributeValue(TOMBSTONE_REF)),
-                    new AtomDate(elem.getAttributeValue(TOMBSTONE_WHEN)));
-        }
-        for (Entry entry : feed.getEntries()) {
-            if (isDeleted(entry)) {
-                deletedMap.put(entry.getId(),
-                        entry.getUpdatedElement().getValue());
-            }
-        }
-        return deletedMap;
-    }
-
-    public static boolean isDeleted(Entry entry) {
-        if (entry.getExtension(ENTRY_EXT_GDATA_DELETED) != null) {
-            return true;
-        }
-        Sync sync = SharingHelper.getSync(entry);
-        if (sync != null) {
-            return sync.isDeleted();
-        }
-        return false;
     }
 
 }
