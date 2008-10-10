@@ -12,12 +12,18 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.openrdf.model.Literal;
 import org.openrdf.model.Namespace;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.model.vocabulary.XMLSchema;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -172,6 +178,21 @@ public class RDFUtil {
         stmts.close();
         conn.close();
         return st;
+    }
+
+    public static Literal createDateTime(ValueFactory vf, Date time)
+        throws RepositoryException {
+        GregorianCalendar gregCal = new GregorianCalendar(
+                TimeZone.getTimeZone("GMT"));
+        gregCal.setTime(time);
+        try {
+            return vf.createLiteral(
+                    DatatypeFactory.newInstance().newXMLGregorianCalendar(
+                        gregCal).toString(),
+                    XMLSchema.DATETIME);
+        } catch (DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
