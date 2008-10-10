@@ -50,6 +50,18 @@ class SesameLoader extends FeedArchiveReader {
         // (pageUrl, entry and date)
         def conn = repository.connection
         feed = feed.sortEntriesByUpdated(true)
+
+        // FIXME: test use of deletedMap!
+        def deletedMap = AtomEntryDeleteUtil.getDeletedMarkers(feed)
+
+        for (URI uri : deletedMap.values()) {
+            // TODO: error if not exists?
+            /* TODO: find context..
+            def context = vf.createURI(uri.toString())
+            conn.clear(context)
+            */
+        }
+
         for (entry in feed.entries) {
 
             Collection<ReprRef> rdfReprs =
@@ -78,8 +90,7 @@ class SesameLoader extends FeedArchiveReader {
             def vf = repository.valueFactory
 
             def entryIdLiteral = vf.createLiteral(entry.id.toString(), XMLSchema.ANYURI)
-            def entryUpdatedLiteral = vf.createLiteral(
-                    entry.updatedElement.getString(), XMLSchema.DATETIME)
+            def entryUpdatedLiteral = RDFUtil.createDateTime(vf, entry.getUpdated())
 
             Resource storedContext = null
             def contextStmt = RDFUtil.one(repository, null, AWOL_ID, entryIdLiteral)
@@ -87,10 +98,6 @@ class SesameLoader extends FeedArchiveReader {
                 storedContext = contextStmt.subject
             }
 
-            /* TODO: Check for tombstones; delete..:
-            def deletedMap = AtomEntryDeleteUtil.getDeletedMarkers(feed)
-            conn.clear(context)
-            */
             if (storedContext != null) {
                 def storedUpdated = null
                 def updatedStmt = RDFUtil.one(repository, storedContext, AWOL_UPDATED, null)
@@ -101,7 +108,7 @@ class SesameLoader extends FeedArchiveReader {
                     logger.info("Encountered collected entry <${entry.getId()}>; stopping.")
                     return false
                 } else {
-                    conn.clear()
+                    conn.clear(storedContext)
                 }
             }
 
@@ -111,6 +118,12 @@ class SesameLoader extends FeedArchiveReader {
             conn.add(context, RDF.TYPE, AWOL_ENTRY, context)
             conn.add(context, AWOL_ID, entryIdLiteral, context)
             conn.add(context, AWOL_UPDATED, entryUpdatedLiteral, context)
+
+            // TODO: move to top of loop (when deleting from deletedMap is active)
+            if (deletedMap.containsKey(entry.getId())) {
+                logger.info("Deleting RDF from entry <${entry.id}>")
+                continue
+            }
 
             for (ReprRef rdfRef in rdfReprs) {
                 logger.info("RDF from <${rdfRef.url}>")
