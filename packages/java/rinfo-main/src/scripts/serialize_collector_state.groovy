@@ -4,7 +4,7 @@ import org.openrdf.sail.nativerdf.NativeStore
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 
-import static se.lagrummet.rinfo.collector.FeedCollectorStateLogger.COLLECTOR_NS
+import static se.lagrummet.rinfo.collector.FeedCollectorStateData.COLLECTOR_NS
 
 if (args.length < 1) {
     println "Usage: <sesame-repo>"

@@ -8,7 +8,6 @@ import org.apache.abdera.model.Feed
 import org.openrdf.model.ValueFactory
 import org.openrdf.model.URI
 import org.openrdf.model.impl.ValueFactoryImpl
-import org.openrdf.model.vocabulary.XMLSchema
 import org.openrdf.repository.Repository
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
@@ -51,8 +50,7 @@ class FeedCollectorStateData {
     void logVisitedFeedPage(Feed feed) {
         // TODO: log what?
         def selfUri = vf.createURI(feed.getSelfLinkResolvedHref().toString())
-        def updated = vf.createLiteral(
-                feed.updatedElement.getString(), XMLSchema.DATETIME)
+        def updated = RDFUtil.createDateTime(vf, feed.getUpdated())
         conn.remove(selfUri, UPDATED, null)
         conn.add(selfUri, UPDATED, updated)
         // TODO: log isArchive, source, ETag/Modified-Since ...?
@@ -62,7 +60,7 @@ class FeedCollectorStateData {
             DepotEntry depotEntry) {
         logUpdatedEntry(sourceFeed,
                 sourceEntry.getId().toURI(),
-                sourceEntry.getUpdatedElement().getDate(),
+                sourceEntry.getUpdated(),
                 depotEntry)
     }
 
@@ -73,28 +71,26 @@ class FeedCollectorStateData {
         def sourceUri = vf.createURI(sourceEntryId.toString())
         conn.add(sourceUri, STORED_AS, vf.createURI(
                 depotEntry.getId().toString()))
-        conn.add(sourceUri, UPDATED, vf.createLiteral(
-                updated.toString(), XMLSchema.DATETIME))
+        conn.add(sourceUri, UPDATED, RDFUtil.createDateTime(vf, updated))
         // TODO: how to fail on missing id for source feed?
         //conn.add(sourceUri, FROM_FEED, vf.createURI(sourceFeed.getId().toString()))
     }
 
     /* TODO: as logUpdatedEntry but add deleted marker? At all?
     void logDeletedEntry(Feed sourceFeed, URI sourceEntryId,
-            String sourceEntryDeleted,
+            Date sourceEntryDeleted,
             DepotEntry depotEntry) {
         def sourceUri = vf.createURI(sourceEntryId.toString())
         conn.add(sourceUri, STORED_AS, depotEntry.getId())
-        conn.add(sourceUri, DELETED, vf.createLiteral(
-                sourceEntryDeleted, XMLSchema.DATETIME))
+        conn.add(sourceUri, DELETED, RDFUtil.createDateTime(vf,
+                sourceEntryDeleted))
         // TODO: see FROM_FEED in logUpdatedEntry
     }
     */
 
     boolean hasCollected(Entry sourceEntry) {
         def sourceUri = vf.createURI(sourceEntry.getId().toString())
-        def sourceUpdated = vf.createLiteral(
-                sourceEntry.updatedElement.getString(), XMLSchema.DATETIME)
+        def sourceUpdated = RDFUtil.createDateTime(vf, sourceEntry.getUpdated())
         def stmt = RDFUtil.one(repo, sourceUri, UPDATED, sourceUpdated)
         // TODO: check for deleted; or better, flag DELETED with bool instead?
         return stmt != null
