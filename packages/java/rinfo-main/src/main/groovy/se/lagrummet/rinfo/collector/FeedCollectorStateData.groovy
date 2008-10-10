@@ -1,6 +1,5 @@
 package se.lagrummet.rinfo.collector
 
-import java.net.URI
 import java.net.URISyntaxException
 
 import org.apache.abdera.model.Entry
