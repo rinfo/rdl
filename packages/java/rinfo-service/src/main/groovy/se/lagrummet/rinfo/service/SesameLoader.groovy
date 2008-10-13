@@ -62,45 +62,21 @@ class SesameLoader extends FeedArchiveReader {
             */
         }
 
-        for (entry in feed.entries) {
-
-            Collection<ReprRef> rdfReprs =
-                    new ArrayList<ReprRef>()
-            def contentElem = entry.contentElement
-            def contentUrlPath = contentElem.resolvedSrc.toString()
-            def contentMimeType = contentElem.mimeType.toString()
-            contentUrlPath = unescapeColon( contentUrlPath )
-
-            // TODO: manual RDFa-parsing?
-            def rdfMimeType = "application/rdf+xml" // TODO: in "allowed" list?
-
-            if (contentMimeType.equals(rdfMimeType)) {
-                rdfReprs.add(new ReprRef(new URL(contentUrlPath), contentMimeType))
-            }
-            for (link in entry.links) {
-                def urlPath = unescapeColon( link.resolvedHref.toString() )
-                def mediaType = link.mimeType.toString()
-                if (mediaType.equals(rdfMimeType)) {
-                    rdfReprs.add(new ReprRef(new URL(urlPath), mediaType))
-                }
-            }
-
-            logger.info("Loading RDF from entry <${entry.id}>")
+        for (Entry entry : feed.entries) {
 
             def vf = repository.valueFactory
-
             def entryIdLiteral = vf.createLiteral(entry.id.toString(), XMLSchema.ANYURI)
             def entryUpdatedLiteral = RDFUtil.createDateTime(vf, entry.getUpdated())
 
             Resource storedContext = null
-            def contextStmt = RDFUtil.one(repository, null, AWOL_ID, entryIdLiteral)
+            def contextStmt = RDFUtil.one(conn, null, AWOL_ID, entryIdLiteral)
             if (contextStmt != null) {
                 storedContext = contextStmt.subject
             }
 
             if (storedContext != null) {
                 def storedUpdated = null
-                def updatedStmt = RDFUtil.one(repository, storedContext, AWOL_UPDATED, null)
+                def updatedStmt = RDFUtil.one(conn, storedContext, AWOL_UPDATED, null)
                 if (updatedStmt != null) {
                     storedUpdated = updatedStmt.object
                 }
@@ -125,7 +101,9 @@ class SesameLoader extends FeedArchiveReader {
                 continue
             }
 
-            for (ReprRef rdfRef in rdfReprs) {
+            logger.info("Loading RDF from entry <${entry.id}>")
+            Collection<ReprRef> rdfReferences = getRdfReferences(entry)
+            for (ReprRef rdfRef : rdfReferences) {
                 logger.info("RDF from <${rdfRef.url}>")
                 loadData(conn, rdfRef, context)
             }
@@ -136,6 +114,30 @@ class SesameLoader extends FeedArchiveReader {
         // TODO: stop at feed with entry at minDateTime..
         //Date minDateTime=null
         return true
+    }
+
+    protected Collection<ReprRef> getRdfReferences(Entry entry) {
+        Collection<ReprRef> rdfReferences =
+                new ArrayList<ReprRef>()
+        def contentElem = entry.contentElement
+        def contentUrlPath = contentElem.resolvedSrc.toString()
+        def contentMimeType = contentElem.mimeType.toString()
+        contentUrlPath = unescapeColon( contentUrlPath )
+
+        // TODO: manual RDFa-parsing?
+        def rdfMimeType = "application/rdf+xml" // TODO: in "allowed" list?
+
+        if (contentMimeType.equals(rdfMimeType)) {
+            rdfReferences.add(new ReprRef(new URL(contentUrlPath), contentMimeType))
+        }
+        for (link in entry.links) {
+            def urlPath = unescapeColon( link.resolvedHref.toString() )
+            def mediaType = link.mimeType.toString()
+            if (mediaType.equals(rdfMimeType)) {
+                rdfReferences.add(new ReprRef(new URL(urlPath), mediaType))
+            }
+        }
+        return rdfReferences
     }
 
     protected void loadData(RepositoryConnection conn, ReprRef repr, Resource context) {

@@ -6,9 +6,7 @@ import static org.junit.Assert.*
 import org.restlet.*
 import org.restlet.data.Protocol
 
-import org.openrdf.model.*
 import org.openrdf.model.vocabulary.RDFS
-import org.openrdf.repository.*
 import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.memory.MemoryStore
 
@@ -43,6 +41,8 @@ class SesameLoaderTest {
 
     @Test
     void shouldLoadRdf() {
+        def conn = repo.connection
+
         def url = { new URL(it) }
         def lit = repo.valueFactory.&createLiteral
 
@@ -50,38 +50,40 @@ class SesameLoaderTest {
             repo.valueFactory.createURI("http://example.org/things/$it")
         }
         def countContexts = {
-            def conn = it.connection; def res = conn.contextIDs
+            def res = conn.contextIDs
             def i = res.asList().size()
-            res.close(); conn.close()
+            res.close()
             return i
         }
 
-        assertEquals 0, countContexts(repo)
+        assertEquals 0, countContexts()
 
         loader.readFeed(url("${baseUrl}/1-init.atom"))
-        assertEquals 2, countContexts(repo)
-        assertNotNull RDFUtil.one(repo, thing(1), RDFS.LABEL, lit("Thing 1"))
-        assertNotNull RDFUtil.one(repo, thing(2), RDFS.LABEL, lit("Thing 2"))
+        assertEquals 2, countContexts()
+        assertNotNull RDFUtil.one(conn, thing(1), RDFS.LABEL, lit("Thing 1"))
+        assertNotNull RDFUtil.one(conn, thing(2), RDFS.LABEL, lit("Thing 2"))
 
+        // No changes
         loader.readFeed(url("${baseUrl}/1-init.atom"))
-        assertEquals 2, countContexts(repo)
-        assertNotNull RDFUtil.one(repo, thing(1), RDFS.LABEL, lit("Thing 1"))
+        assertEquals 2, countContexts()
+        assertNotNull RDFUtil.one(conn, thing(1), RDFS.LABEL, lit("Thing 1"))
 
         loader.readFeed(url("${baseUrl}/2-updated_t1.atom"))
-        assertEquals 2, countContexts(repo)
-        assertNotNull RDFUtil.one(repo, thing(1), RDFS.LABEL,
+        assertEquals 2, countContexts()
+        assertNotNull RDFUtil.one(conn, thing(1), RDFS.LABEL,
                 lit("Updated thing 1"))
 
         loader.readFeed(url("${baseUrl}/3-added_t3.atom"))
-        assertEquals 3, countContexts(repo)
-        assertNotNull RDFUtil.one(repo, thing(3), RDFS.LABEL, lit("Thing 3"))
+        assertEquals 3, countContexts()
+        assertNotNull RDFUtil.one(conn, thing(3), RDFS.LABEL, lit("Thing 3"))
 
         loader.readFeed(url("${baseUrl}/4-deleted_t3.atom"))
-        assertEquals 3, countContexts(repo) // NOTE: keeps context..
+        assertEquals 3, countContexts() // NOTE: keeps context..
         // TODO: assertEquals contextTimeStamp..
-        assertNull RDFUtil.one(repo, thing(3), RDFS.LABEL, null)
+        assertNull RDFUtil.one(conn, thing(3), RDFS.LABEL, null)
 
         //DEBUG:RDFUtil.serialize(repo, "application/rdf+xml", System.out)
+        conn.close()
     }
 
 }
