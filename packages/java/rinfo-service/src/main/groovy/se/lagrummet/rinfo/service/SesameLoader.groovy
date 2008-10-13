@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.apache.abdera.model.Feed
 import org.apache.abdera.model.Entry
 
+import org.openrdf.model.Literal
 import org.openrdf.model.Namespace
 import org.openrdf.model.Resource
 import org.openrdf.model.ValueFactory
@@ -29,90 +30,53 @@ class SesameLoader extends FeedArchiveReader {
 
     private final logger = LoggerFactory.getLogger(SesameLoader)
 
-    static final AWOL_ENTRY
-    static final AWOL_ID
-    static final AWOL_UPDATED
-    static {
-        ValueFactory vf = ValueFactoryImpl.getInstance()
-        def AWOL_NS = "http://bblfish.net/work/atom-owl/2006-06-06/#"
-        AWOL_ENTRY = vf.createURI(AWOL_NS, "Entry")
-        AWOL_ID = vf.createURI(AWOL_NS, "id")
-        AWOL_UPDATED = vf.createURI(AWOL_NS, "updated")
-    }
-
 
     SesameLoader(Repository repository) {
         this.repository = repository
     }
 
     boolean processFeedPage(URL pageUrl, Feed feed) {
-        // TODO: store "last safe entry date" before reading, retry if still there!
+        // TODO:? store "last safe entry date" before reading, retry if still there!
         // (pageUrl, entry and date)
         def conn = repository.connection
         feed = feed.sortEntriesByUpdated(true)
 
-        // FIXME: test use of deletedMap!
         def deletedMap = AtomEntryDeleteUtil.getDeletedMarkers(feed)
 
-        for (URI uri : deletedMap.values()) {
-            // TODO: error if not exists?
-            /* TODO: find context..
-            def context = vf.createURI(uri.toString())
-            conn.clear(context)
-            */
+        for (Map.Entry<URI, Date> delItem : deletedMap.entrySet()) {
+            def entryRepoData = new EntryRepoData(
+                    delItem.getKey().toURI(), delItem.getValue().getDate(),
+                    conn)
+            logger.info("Deleting RDF from entry <${entryRepoData.id}>")
+            entryRepoData.clearContext() // TODO: error if not exists?
+            // TODO:? just add the tombstone as a marker (for collect) like this?
+            entryRepoData.addContext()
         }
 
         for (Entry entry : feed.entries) {
-
-            def vf = repository.valueFactory
-            def entryIdLiteral = vf.createLiteral(entry.id.toString(), XMLSchema.ANYURI)
-            def entryUpdatedLiteral = RDFUtil.createDateTime(vf, entry.getUpdated())
-
-            Resource storedContext = null
-            def contextStmt = RDFUtil.one(conn, null, AWOL_ID, entryIdLiteral)
-            if (contextStmt != null) {
-                storedContext = contextStmt.subject
-            }
-
-            if (storedContext != null) {
-                def storedUpdated = null
-                def updatedStmt = RDFUtil.one(conn, storedContext, AWOL_UPDATED, null)
-                if (updatedStmt != null) {
-                    storedUpdated = updatedStmt.object
-                }
-                if (entryUpdatedLiteral.equals(storedUpdated)) {
-                    logger.info("Encountered collected entry <${entry.getId()}>; stopping.")
-                    return false
-                } else {
-                    conn.clear(storedContext)
-                }
-            }
-
-            // TODO: add in which context (itself - i.e. context)?
-            // *Must be removed/updated when the context is*!
-            Resource context = vf.createBNode() // TODO: use getSelfLink URI (stable)?
-            conn.add(context, RDF.TYPE, AWOL_ENTRY, context)
-            conn.add(context, AWOL_ID, entryIdLiteral, context)
-            conn.add(context, AWOL_UPDATED, entryUpdatedLiteral, context)
-
-            // TODO: move to top of loop (when deleting from deletedMap is active)
-            if (deletedMap.containsKey(entry.getId())) {
-                logger.info("Deleting RDF from entry <${entry.id}>")
+            if (deletedMap.containsKey(entry.id)) {
                 continue
             }
-
+            def entryRepoData = new EntryRepoData(entry.id.toURI(), entry.updated, conn)
+            if (entryRepoData.isCollected()) {
+                logger.info("Encountered collected entry <${entry.getId()}>; stopping.")
+                return false
+            } else {
+                if (entryRepoData.getStoredContext() != null) {
+                    entryRepoData.clearContext()
+                }
+            }
+            entryRepoData.addContext()
             logger.info("Loading RDF from entry <${entry.id}>")
             Collection<ReprRef> rdfReferences = getRdfReferences(entry)
             for (ReprRef rdfRef : rdfReferences) {
                 logger.info("RDF from <${rdfRef.url}>")
-                loadData(conn, rdfRef, context)
+                loadData(conn, rdfRef, entryRepoData.getContext())
             }
-
         }
+
         conn.close()
 
-        // TODO: stop at feed with entry at minDateTime..
-        //Date minDateTime=null
         return true
     }
 
@@ -149,6 +113,87 @@ class SesameLoader extends FeedArchiveReader {
     }
 
 }
+
+
+class EntryRepoData {
+
+    static final AWOL_ENTRY
+    static final AWOL_ID
+    static final AWOL_UPDATED
+    static {
+        ValueFactory vf = ValueFactoryImpl.getInstance()
+        def AWOL_NS = "http://bblfish.net/work/atom-owl/2006-06-06/#"
+        AWOL_ENTRY = vf.createURI(AWOL_NS, "Entry")
+        AWOL_ID = vf.createURI(AWOL_NS, "id")
+        AWOL_UPDATED = vf.createURI(AWOL_NS, "updated")
+    }
+
+    URI id
+    Date updated
+    RepositoryConnection conn
+
+    private Resource storedContext
+    private Resource newContext
+    private Literal entryIdLiteral
+    private Literal entryUpdatedLiteral
+
+    EntryRepoData(URI id, Date updated, RepositoryConnection conn) {
+        this.id = id
+        this.updated = updated
+        this.conn = conn
+        def vf = conn.repository.valueFactory
+        entryIdLiteral = vf.createLiteral(id.toString(), XMLSchema.ANYURI)
+        entryUpdatedLiteral = RDFUtil.createDateTime(vf, updated)
+    }
+
+    Resource getStoredContext() {
+        if (storedContext == null) {
+            def contextStmt = RDFUtil.one(conn, null, AWOL_ID, entryIdLiteral)
+            if (contextStmt != null) {
+                storedContext = contextStmt.subject
+            }
+        }
+        return storedContext
+    }
+
+    boolean isCollected() {
+        getStoredContext()
+        if (storedContext != null) {
+            def storedUpdated = null
+            def updatedStmt = RDFUtil.one(
+                    conn, storedContext, AWOL_UPDATED, null)
+            if (updatedStmt != null) {
+                storedUpdated = updatedStmt.object
+            }
+            return (entryUpdatedLiteral.equals(storedUpdated))
+        }
+        return false
+    }
+
+    Resource getContext() {
+        if (newContext == null) {
+            // TODO: use getSelfLink URI (stable)? Cannot for tombstones. Mint?
+            def vf = conn.repository.valueFactory
+            newContext = vf.createBNode()
+        }
+        return newContext
+    }
+
+    void addContext() {
+        // TODO: add in which context (itself - i.e. context)?
+        // *Must be removed/updated when the context is*!
+        def ctx = getContext()
+        conn.add(ctx, RDF.TYPE, AWOL_ENTRY, ctx)
+        conn.add(ctx, AWOL_ID, entryIdLiteral, ctx)
+        conn.add(ctx, AWOL_UPDATED, entryUpdatedLiteral, ctx)
+    }
+
+    void clearContext() {
+        conn.clear(getStoredContext())
+    }
+
+}
+
 
 class ReprRef {
     URL url
