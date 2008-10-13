@@ -32,7 +32,7 @@ def addModel(File file) {
     RDFUtil.loadDataFromFile(repo, file)
 
     def modelUri = null
-    for (st in RDFUtil.one(repo, null, RDF.TYPE, OWL.ONTOLOGY, true)) {
+    for (st in RDFUtil.one(repo.connection, null, RDF.TYPE, OWL.ONTOLOGY, true)) {
         modelUri = new java.net.URI(st.subject.toString())
     }
     def rdfXmlType = RDFFormat.RDFXML.defaultMIMEType

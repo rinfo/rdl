@@ -91,14 +91,14 @@ class FeedCollectorStateData {
     boolean hasCollected(Entry sourceEntry) {
         def sourceUri = vf.createURI(sourceEntry.getId().toString())
         def sourceUpdated = RDFUtil.createDateTime(vf, sourceEntry.getUpdated())
-        def stmt = RDFUtil.one(repo, sourceUri, UPDATED, sourceUpdated)
+        def stmt = RDFUtil.one(conn, sourceUri, UPDATED, sourceUpdated)
         // TODO: check for deleted; or better, flag DELETED with bool instead?
         return stmt != null
     }
 
     java.net.URI getDepotIdBySourceId(java.net.URI sourceEntryId) {
         def sourceUri = vf.createURI(sourceEntryId.toString())
-        def stmt = RDFUtil.one(repo, sourceUri, STORED_AS, null)
+        def stmt = RDFUtil.one(conn, sourceUri, STORED_AS, null)
         if (stmt == null) return null
         return new java.net.URI(stmt.getObject().toString())
     }
