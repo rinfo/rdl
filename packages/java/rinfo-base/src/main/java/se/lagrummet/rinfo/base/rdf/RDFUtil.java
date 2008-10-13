@@ -150,7 +150,7 @@ public class RDFUtil {
             throws IOException, RepositoryException, RDFHandlerException
     {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        RDFUtil.serialize(repo, mimeType, outStream);
+        serialize(repo, mimeType, outStream);
         outStream.close();
         return new ByteArrayInputStream(outStream.toByteArray());
     }
@@ -159,16 +159,17 @@ public class RDFUtil {
     // NOTE: GraphUtil looked promising, but Graph:s aren't prominent in
     // Sesame 2 (as in hard to create, disconnected from repo etc)
 
-    public static Statement one(Repository repo, Resource s, URI p, Value o)
+    public static Statement one(RepositoryConnection conn,
+            Resource s, URI p, Value o)
         throws RepositoryException
     {
-        return one(repo, s, p, o, false);
+        return one(conn, s, p, o, false);
     }
 
-    public static Statement one(Repository repo, Resource s, URI p, Value o,
+    public static Statement one(RepositoryConnection conn,
+            Resource s, URI p, Value o,
             boolean includeInferred) throws RepositoryException {
-        RepositoryConnection conn = repo.getConnection();
-       RepositoryResult<Statement> stmts = conn.getStatements(
+        RepositoryResult<Statement> stmts = conn.getStatements(
                s, p, o, includeInferred);
         Statement st = null;
         while (stmts.hasNext()) {
@@ -176,7 +177,6 @@ public class RDFUtil {
             break;
         }
         stmts.close();
-        conn.close();
         return st;
     }
 
