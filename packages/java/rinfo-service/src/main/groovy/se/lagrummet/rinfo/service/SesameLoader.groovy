@@ -19,14 +19,15 @@ import org.openrdf.sail.memory.MemoryStore
 import org.openrdf.sail.nativerdf.NativeStore
 
 
-import se.lagrummet.rinfo.base.atom.FeedArchiveReader
+import se.lagrummet.rinfo.base.atom.FeedArchivePastToPresentReader
 import se.lagrummet.rinfo.base.atom.AtomEntryDeleteUtil
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 
-class SesameLoader extends FeedArchiveReader {
+class SesameLoader extends FeedArchivePastToPresentReader {
 
     Repository repository
+    RepositoryConnection conn
 
     private final logger = LoggerFactory.getLogger(SesameLoader)
 
@@ -35,12 +36,30 @@ class SesameLoader extends FeedArchiveReader {
         this.repository = repository
     }
 
-    boolean processFeedPage(URL pageUrl, Feed feed) {
-        // TODO:? store "last safe entry date" before reading, retry if still there!
-        // (pageUrl, entry and date)
-        def conn = repository.connection
-        feed = feed.sortEntriesByUpdated(true)
+    @Override
+    public void initialize() {
+        super.initialize()
+        conn = repository.getConnection()
+    }
 
+    @Override
+    public void shutdown() {
+        try {
+            super.shutdown()
+        } finally {
+            conn.close()
+        }
+    }
+
+    boolean stopOnEntry(Entry entry) {
+        // TODO:? store "youngest collected entry + date", stop only on that?
+        // (pageUrl, entry and date)
+        def entryRepoData = new EntryRepoData(
+                entry.id.toURI(), entry.updated, conn)
+        return entryRepoData.isCollected()
+    }
+
+    void processFeedPageInOrder(URL pageUrl, Feed feed) {
         def deletedMap = AtomEntryDeleteUtil.getDeletedMarkers(feed)
 
         for (Map.Entry<URI, Date> delItem : deletedMap.entrySet()) {
@@ -49,18 +68,21 @@ class SesameLoader extends FeedArchiveReader {
                     conn)
             logger.info("Deleting RDF from entry <${entryRepoData.id}>")
             entryRepoData.clearContext() // TODO: error if not exists?
-            // TODO:? just add the tombstone as a marker (for collect) like this?
+            // TODO:? ok to just add the tombstone as a marker (for collect) like this?
             entryRepoData.addContext()
         }
 
-        for (Entry entry : feed.entries) {
+        for (Entry entry : feed.getEntries()) {
             if (deletedMap.containsKey(entry.id)) {
                 continue
             }
             def entryRepoData = new EntryRepoData(entry.id.toURI(), entry.updated, conn)
+            // TODO:IMPROVE: log known entries of last feed in stopOnEntry and
+            // filter by that. Should be done in FeedArchivePastToPresentReader..
             if (entryRepoData.isCollected()) {
-                logger.info("Encountered collected entry <${entry.getId()}>; stopping.")
-                return false
+                // TODO: logger.debug
+                logger.info("skipping collected entry <${entry.id}> [${entry.updated}]")
+                continue
             } else {
                 if (entryRepoData.getStoredContext() != null) {
                     entryRepoData.clearContext()
@@ -71,13 +93,9 @@ class SesameLoader extends FeedArchiveReader {
             Collection<ReprRef> rdfReferences = getRdfReferences(entry)
             for (ReprRef rdfRef : rdfReferences) {
                 logger.info("RDF from <${rdfRef.url}>")
-                loadData(conn, rdfRef, entryRepoData.getContext())
+                loadData(rdfRef, entryRepoData.getContext())
             }
         }
-
-        conn.close()
-
-        return true
     }
 
     protected Collection<ReprRef> getRdfReferences(Entry entry) {
@@ -104,7 +122,7 @@ class SesameLoader extends FeedArchiveReader {
         return rdfReferences
     }
 
-    protected void loadData(RepositoryConnection conn, ReprRef repr, Resource context) {
+    protected void loadData(ReprRef repr, Resource context) {
         def inStream = getResponseAsInputStream(repr.url)
         conn.add(
                 inStream, repr.url.toString(), RDFFormat.forMIMEType(repr.mediaType),
@@ -157,8 +175,7 @@ class EntryRepoData {
     }
 
     boolean isCollected() {
-        getStoredContext()
-        if (storedContext != null) {
+        if (getStoredContext() != null) {
             def storedUpdated = null
             def updatedStmt = RDFUtil.one(
                     conn, storedContext, AWOL_UPDATED, null)
@@ -172,7 +189,7 @@ class EntryRepoData {
 
     Resource getContext() {
         if (newContext == null) {
-            // TODO: use getSelfLink URI (stable)? Cannot for tombstones. Mint?
+            // TODO:? Mint uri from id? Cannot use getSelfLink for tombstones.
             def vf = conn.repository.valueFactory
             newContext = vf.createBNode()
         }
