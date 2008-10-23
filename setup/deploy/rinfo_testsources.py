@@ -1,11 +1,9 @@
-load("deploy/envs.py")
-
 ##
 # Local build
 
-#@depends(install_libs)
+@requires('env', provided_by=[staging, production])
+@depends(install_store)
 def package_testapp():
-    #local("cd $(java_packages)/rinfo-store/; mvn install")
     local("cd $(java_packages)/teststore-examples/; mvn -P$(env) package")
 
 ##

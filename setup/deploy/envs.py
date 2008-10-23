@@ -14,12 +14,12 @@ def staging():
     )
     # Machines:
     config(
+        fab_user='rinfo',
         host_map={
             'main': ['rinfo-main.statskontoret.se'],
             'service': ['rinfo-service.statskontoret.se'],
             'testsources': ['rinfo-sources.statskontoret.se'],
         },
-        fab_user='rinfo',
         dist_dir='rinfo_dist',
         rinfo_dir='/opt/rinfo',
     )

@@ -1,14 +1,8 @@
-load("deploy/envs.py")
-
 ##
 # Local build
 
-def install_libs():
-    cd_pkg = "cd $(java_packages)/%s/; %s"
-    local(cd_pkg % ('rinfo-base', 'mvn install'))
-    local(cd_pkg % ('rinfo-store', 'mvn install'))
-
-@depends(install_libs)
+@requires('env', provided_by=[staging, production])
+@depends(install_base, install_store)
 def package_main():
     local("cd $(java_packages)/rinfo-main/; mvn -P$(env) package")
 
