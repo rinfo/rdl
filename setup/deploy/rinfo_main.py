@@ -22,7 +22,7 @@ def setup_main():
     sudo("mkdir $(rinfo_main_store)", fail='ignore')
 
 @depends(setup_main)
-def deploy_resources():
+def deploy_main_resources():
     # TODO: rsync instead? Or bundle (via pom)?
     tarname = "$(project)-$(fab_timestamp).tar"
     tmp_tar ="/tmp/%s" % tarname
@@ -35,7 +35,7 @@ def deploy_resources():
     finally:
         local("rm %s" % tmp_tar)
 
-@depends(deploy_resources)
+@depends(deploy_main_resources)
 def deploy_main():
     put("$(java_packages)/rinfo-main/target/rinfo-main-1.0-SNAPSHOT.war",
             '$(dist_dir)/ROOT.war')
