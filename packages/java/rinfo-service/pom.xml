@@ -136,6 +136,12 @@
       </properties>
     </profile>
     <profile>
+      <id>stg</id>
+      <properties>
+        <environment>stg</environment>
+      </properties>
+    </profile>
+    <profile>
       <id>prod</id>
       <properties>
         <environment>prod</environment>
