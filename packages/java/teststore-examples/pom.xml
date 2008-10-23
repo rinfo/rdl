@@ -92,9 +92,9 @@
       </properties>
     </profile>
     <profile>
-      <id>prod</id>
+      <id>stg</id>
       <properties>
-        <environment>prod</environment>
+        <environment>stg</environment>
       </properties>
     </profile>
   </profiles>
