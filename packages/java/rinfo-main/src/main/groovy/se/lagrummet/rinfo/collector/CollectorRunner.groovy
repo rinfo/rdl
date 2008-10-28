@@ -21,24 +21,15 @@ import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.collector.FeedCollector
 
 
-class CollectorRunner {
+class CollectorRunner extends CollectorRunnerBase {
 
     private final Logger logger = LoggerFactory.getLogger(CollectorRunner.class);
 
-    FileDepot depot
-    Collection sourceFeedUrls
-    Repository stateRepo
+    private Collection sourceFeedUrls
 
-    static final int DEFAULT_INITIAL_DELAY = 0
-    static final int DEFAULT_SCHEDULE_INTERVAL = 600
-    static final String DEFAULT_TIME_UNIT_NAME = "SECONDS"
-
-    private int initialDelay
-    private int scheduleInterval
-    private TimeUnit timeUnit
-
+    private FileDepot depot
+    private Repository stateRepo
     private URIMinter uriMinter
-    private ScheduledExecutorService scheduleService
 
     CollectorRunner(FileDepot depot, URIMinter uriMinter,
             AbstractConfiguration config) {
@@ -52,6 +43,14 @@ class CollectorRunner {
     }
 
     void configure(AbstractConfiguration config) {
+
+        setInitialDelay(config.getInt(
+                "rinfo.collector.initialDelay", DEFAULT_INITIAL_DELAY))
+        setScheduleInterval(config.getInt(
+                "rinfo.collector.scheduleInterval", DEFAULT_SCHEDULE_INTERVAL))
+        setTimeUnitName(config.getString(
+                "rinfo.collector.timeUnit", DEFAULT_TIME_UNIT_NAME))
+
         if (depot == null) {
             depot = FileDepot.newConfigured(config)
         }
@@ -68,67 +67,22 @@ class CollectorRunner {
             stateRepo.initialize()
         }
         sourceFeedUrls = config.getList("rinfo.collector.sourceFeedUrls")
-        initialDelay = config.getInt(
-                "rinfo.collector.initialDelay", DEFAULT_INITIAL_DELAY)
-        scheduleInterval = config.getInt(
-                "rinfo.collector.scheduleInterval", DEFAULT_SCHEDULE_INTERVAL)
-        timeUnit = TimeUnit.valueOf(config.getString(
-                "rinfo.collector.timeUnit", DEFAULT_TIME_UNIT_NAME))
-    }
-
-    void startup() {
-        if (scheduleInterval == -1) {
-            logger.info("Disabled scheduled collects.")
-        } else {
-            // FIXME: error handling (currently silently dies on bad feeds)
-            scheduleService = Executors.newSingleThreadScheduledExecutor()
-            scheduleService.scheduleAtFixedRate(
-                { collectFeeds() }, initialDelay, scheduleInterval, timeUnit)
-            String unitName = timeUnit.toString().toLowerCase()
-            logger.info("Scheduled collect every "+scheduleInterval +
-                    " "+unitName+" (starting in "+initialDelay+" "+unitName+").")
-        }
     }
 
     void shutdown() {
-        if (scheduleService != null) {
-            scheduleService.shutdown()
-        }
+        super.shutdown()
         if (stateRepo != null) {
             stateRepo.shutDown()
         }
     }
 
-    boolean triggerFeedCollect(URL feedUrl) {
-        if (!sourceFeedUrls.contains(feedUrl.toString())) {
-            // TODO: or throw an exception?
-            logger.warn("Warning - triggerFeedCollect called with disallowed " +
-                    "feed url: <"+feedUrl+">")
-            return false
-        }
-        def executor = Executors.newSingleThreadExecutor()
-        executor.execute({ collectFeed(feedUrl) })
-        executor.shutdown()
-        return true
+    public Collection getSourceFeedUrls() {
+        return sourceFeedUrls
     }
 
-    // FIXME: make sure collects are *never* running simultaneously!
-    //  .. i.e. sync triggerFeedCollect and scheduled collectFeeds somehow..
-    //  .. pop from synchronized queue?
-    private void collectFeed(URL feedUrl) {
+    protected void collectFeed(URL feedUrl) {
         //  .. and (in webapp) that request comes from allowed domain..
         FeedCollector.readFeed(depot, stateRepo, uriMinter, feedUrl)
-    }
-
-    private void collectFeeds() {
-        if (sourceFeedUrls == null) {
-            return
-        }
-        logger.info("Starting to collect ${sourceFeedUrls.size()} source feeds.")
-        for (String feedUrl : sourceFeedUrls) {
-            collectFeed(new URL(feedUrl))
-        }
-        logger.info("Done collecting source feeds.")
     }
 
 }
