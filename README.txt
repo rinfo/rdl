@@ -13,6 +13,11 @@ Repository Contents
 
 The top-level directories separate packages by intrinsic purpose.
 
+documentation/
+    All forms of documentation, including system descriptions, data examples
+    (both core data and service responses), acceptance specifications/tests
+    etc.
+
 laboratory/
     Designs, data examples, tools, experiments etc. Things here should either
     graduate into resources, code modules, become documentation or eventually
