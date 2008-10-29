@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>RInfo Main REST Spec</title>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta http-equiv="Content-Language" content="en" />
+    <style type="text/css">
+
+        table {
+            width: 96%;
+            margin-bottom: 1em;
+        }
+
+        thead th {
+            background-color: #ccc;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        tr.group td {
+            border-top-width: 4px;
+        }
+
+    </style>
+  </head>
+  <body>
+
+    <h1>RInfo Main REST Spec</h1>
+
+    <table>
+      <thead>
+        <tr><th>Keyword</th>
+          <th>Action</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr><td>Define Namespaces and Base URL</td>
+          <td>XMLNS</td>
+          <td>h</td>
+          <td>http://www.w3.org/1999/xhtml</td>
+        </tr>
+        <tr><td></td>
+          <td>XMLNS</td>
+          <td>atom</td>
+          <td>http://www.w3.org/2005/Atom</td>
+        </tr>
+        <tr><td></td>
+          <td>Base URL</td>
+          <td>${MAIN_URL}</td>
+          <td></td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <table>
+      <colgroup>
+        <col width="20%" />
+        <col width="14%" />
+        <col width="33%" />
+        <col width="33%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Test Case</th>
+          <th>Action</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr><td>Core Feeds</td>
+          <td>GET</td>
+          <td>/feed/current</td>
+          <td></td>
+        </tr>
+        <tr><td></td>
+          <td>Response</td>
+          <td>200 OK</td>
+          <td></td>
+        </tr>
+        <tr><td></td>
+          <td>Header</td> <td>Content-Type</td> <td>application/atom+xml</td>
+        </tr>
+        <tr><td></td>
+          <td>XPath</td>
+          <td>/atom:feed/atom:link[@rel='prev-archive']/@href</td>
+          <td>/feed/2008/10-24/T13_34/44.251Z</td>
+        </tr>
+
+        <tr><td colspan="4">&#160;</td></tr>
+
+        <tr><td>Content Negotiation for RDF of Entry</td>
+          <td>Accept</td> <td>application/rdf+xml</td> <td></td>
+        </tr>
+        <tr><td></td>
+          <td>GET</td> <td>/publ/sfs/1999:175/rdf</td> <td></td>
+        </tr>
+        <tr><td></td>
+          <td>Response</td> <td>200 OK</td> <td></td>
+        </tr>
+        <tr><td></td>
+          <td>Header</td> <td>Content-Type</td> <td>application/rdf+xml</td>
+        </tr>
+        <tr><td></td>
+          <td>Header</td> <td>Content-Language</td> <td></td>
+        </tr>
+        <tr><td></td>
+          <td>Header</td> <td>Content-Location</td> <td>/publ/sfs/1999:175/rdf</td>
+        </tr>
+        <tr><td></td>
+          <td>Header</td>
+          <td>Vary</td>
+          <td>Accept-Charset, Accept-Encoding, Accept-Language, Accept</td>
+        </tr>
+
+        <!--
+        <tr><td colspan="4">&#160;</td></tr>
+
+        <tr><td>Content Negotiation for PDF of Entry</td>
+          <td>Accept</td> <td>application/pdf</td> <td></td>
+        </tr>
+        <tr><td></td>
+          <td>GET</td> <td>/publ/sfs/1999:175</td> <td></td>
+        </tr>
+        <tr><td></td>
+          <td>Response</td> <td>200 OK</td> <td></td>
+        </tr>
+        <tr><td></td>
+          <td>Header</td> <td>Content-Type</td> <td>application/pdf</td>
+        </tr>
+        <tr><td></td>
+          <td>Header</td> <td>Content-Language</td> <td>sv</td>
+        </tr>
+        <tr><td></td>
+          <td>Header</td> <td>Content-Location</td> <td>/publ/sfs/1999:175/pdf,sv</td>
+        </tr>
+        <tr><td></td>
+          <td>Header</td>
+          <td>Vary</td>
+          <td>Accept-Charset, Accept-Encoding, Accept-Language, Accept</td>
+        </tr>
+        -->
+
+      </tbody>
+    </table>
+
+    <table>
+      <thead>
+        <tr><th>Setting</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Library</td>
+          <td>robotlib/RestLibrary.py</td>
+        </tr>
+        <tr><td>Test Setup</td>
+          <td>Define Namespaces and Base URL</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table>
+      <thead>
+        <tr><th>Variable</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>${MAIN_URL}</td>
+          <td>http://rinfo-main.statskontoret.se:8080/</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </body>
+</html>
