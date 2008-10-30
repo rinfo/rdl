@@ -43,3 +43,6 @@ def deploy_testapp():
     sudo("mv $(dist_dir)/ROOT.war $(tomat_webapps)/ROOT.war")
     sudo("$(tomcat_start)")
 
+@depends(package_testapp, deploy_testdata, index_testdata, deploy_testapp)
+def testapp_all(): pass
+
