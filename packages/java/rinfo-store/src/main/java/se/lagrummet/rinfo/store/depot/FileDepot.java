@@ -122,7 +122,11 @@ public class FileDepot {
 
         DepotEntry depotEntry = getEntry(parsed.getDepotUriPath());
         if (depotEntry!=null) {
-            String mediaType = pathProcessor.mediaTypeForHint(parsed.getMediaHint());
+            String mediaType = null;
+            String mediaHint = parsed.getMediaHint();
+            if (mediaHint != null) {
+                mediaType = pathProcessor.mediaTypeForHint(mediaHint);
+            }
             results = depotEntry.findContents(mediaType, parsed.getLang());
         } else { // enclosure..
             DepotContent content = getContent(parsed.getDepotUriPath());
