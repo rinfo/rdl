@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="Content-Language" content="en" />
-    <link rel="stylesheet" href="spec.css" />
+    <link rel="stylesheet" type="text/css" href="spec.css" />
   </head>
   <body>
 
@@ -80,6 +80,7 @@
           <td class="act">GET</td>
           <td class="arg">${feed_url}</td>
           <td class="arg"></td>
+        </tr>
         <tr><td></td>
           <td class="act">Response</td>
           <td class="arg">200 OK</td>
@@ -167,9 +168,15 @@
           <td class="act">[Arguments]</td>
           <td class="arg">${entry_url}</td>
           <td class="arg">${media_type}</td>
+        </tr>
         <tr><td></td>
           <td>...</td>
           <td class="arg">${language}</td>
+          <td class="arg">${expected_location}</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Should Not Be Equal</td>
+          <td class="arg">${entry_url}</td>
           <td class="arg">${expected_location}</td>
         </tr>
         <tr><td></td>
@@ -181,6 +188,7 @@
           <td class="act">GET</td>
           <td class="arg">${entry_url}</td>
           <td class="arg"></td>
+        </tr>
         <tr><td></td>
           <td class="act">Response</td>
           <td class="arg">200 OK</td>
@@ -237,10 +245,11 @@
       </thead>
       <tbody>
 
-        <tr><td>Negotiate for RDF of Entry</td>
+        <tr><td>RDF Content of Entry</td>
           <td class="act">Negotiate Entry Content</td>
           <td class="arg">/publ/sfs/1999:175</td>
           <td class="arg">application/rdf+xml</td>
+        </tr>
         <tr><td></td>
           <td>...</td>
           <td class="arg"></td>
@@ -249,7 +258,7 @@
 
         <tr class="sep"><td>&#160;</td></tr>
 
-        <tr><td>Negotiate for PDF of Entry</td>
+        <tr><td>PDF Content of Entry</td>
           <td class="act">Set Header</td>
           <td class="arg">Accept-Language</td>
           <td class="arg">sv</td>
@@ -258,6 +267,7 @@
           <td class="act">Negotiate Entry Content</td>
           <td class="arg">/publ/sfs/1999:175</td>
           <td class="arg">application/pdf</td>
+        </tr>
         <tr><td></td>
           <td>...</td>
           <td class="arg">sv</td>
