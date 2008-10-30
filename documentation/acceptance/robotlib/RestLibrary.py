@@ -57,7 +57,7 @@ class RestLibrary(object):
         expect("status", expected_status, self._status)
 
     def header(self, header, expected=None):
-        value = self._response.get(header.lower(), "")
+        value = self._response.get(header.lower())
         expect(header, expected, value)
 
     def xmlns(self, pfx, uri):

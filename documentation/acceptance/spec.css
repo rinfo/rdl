@@ -26,6 +26,10 @@ tr.group td {
     background-color: #eee;
 }
 
+.bot {
+    color: brown;
+}
+
 .act {
     color: blue;
 }
@@ -33,5 +37,19 @@ tr.group td {
 .arg {
     font-family: courier;
     color: green;
+}
+
+.def {
+    font-family: courier;
+    color: brown;
+}
+
+.key {
+    color: blue;
+    font-style: italic;
+}
+
+.src {
+    font-family: courier;
 }
 

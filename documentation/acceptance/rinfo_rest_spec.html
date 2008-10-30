@@ -34,7 +34,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td>Define Namespaces and Base URL</td>
+        <tr><td class="key">Define Namespaces and Base URL</td>
           <td class="act">XMLNS</td>
           <td class="arg">h</td>
           <td class="arg">http://www.w3.org/1999/xhtml</td>
@@ -71,10 +71,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td>GET Atom Feed</td>
-          <td class="act">[Arguments]</td>
-          <td class="arg">${feed_url}</td>
-          <td class="arg"></td>
+        <tr><td class="key">GET Atom Feed</td>
+          <td class="bot">[Arguments]</td>
+          <td class="def">${feed_url}</td>
+          <td class="def"></td>
         </tr>
         <tr><td></td>
           <td class="act">GET</td>
@@ -125,7 +125,7 @@
           <td class="arg"></td>
         </tr>
         <tr><td></td>
-          <td class="arg">${prev_arch}=</td>
+          <td class="def">${prev_arch}=</td>
           <td class="act">XPath Regexp</td>
           <td class="arg">/atom:feed/atom:link[ @rel='prev-archive']/@href</td>
           <td class="arg">^/feed/.+/.+/T.+/.+Z$</td>
@@ -164,15 +164,15 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td>Negotiate Entry Content</td>
-          <td class="act">[Arguments]</td>
-          <td class="arg">${entry_url}</td>
-          <td class="arg">${media_type}</td>
+        <tr><td class="key">Negotiate Entry Content</td>
+          <td class="bot">[Arguments]</td>
+          <td class="def">${entry_url}</td>
+          <td class="def">${media_type}</td>
         </tr>
         <tr><td></td>
           <td>...</td>
-          <td class="arg">${language}</td>
-          <td class="arg">${expected_location}</td>
+          <td class="def">${expected_location}</td>
+          <td class="def">${language}=${None}</td>
         </tr>
         <tr><td></td>
           <td class="act">Should Not Be Equal</td>
@@ -213,13 +213,13 @@
         </tr>
         <tr><td></td>
           <td class="act">Header</td>
-          <td class="arg">Content-Language</td>
-          <td class="arg">${language}</td>
+          <td class="arg">Content-Location</td>
+          <td class="arg">${expected_location}</td>
         </tr>
         <tr><td></td>
           <td class="act">Header</td>
-          <td class="arg">Content-Location</td>
-          <td class="arg">${expected_location}</td>
+          <td class="arg">Content-Language</td>
+          <td class="arg">${language}</td>
         </tr>
         <tr><td></td>
           <td class="act">Header</td>
@@ -245,6 +245,19 @@
       </thead>
       <tbody>
 
+        <tr><td>Atom Entry</td>
+          <td class="act">Negotiate Entry Content</td>
+          <td class="arg">/publ/sfs/1999:175</td>
+          <td class="arg">application/atom+xml;type=entry</td>
+        </tr>
+        <tr><td></td>
+          <td>...</td>
+          <td class="arg">/publ/sfs/1999:175/entry</td>
+          <td class="arg"></td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+
         <tr><td>RDF Content of Entry</td>
           <td class="act">Negotiate Entry Content</td>
           <td class="arg">/publ/sfs/1999:175</td>
@@ -252,8 +265,8 @@
         </tr>
         <tr><td></td>
           <td>...</td>
-          <td class="arg"></td>
           <td class="arg">/publ/sfs/1999:175/rdf</td>
+          <td class="arg"></td>
         </tr>
 
         <tr class="sep"><td>&#160;</td></tr>
@@ -270,8 +283,8 @@
         </tr>
         <tr><td></td>
           <td>...</td>
-          <td class="arg">sv</td>
           <td class="arg">/publ/sfs/1999:175/pdf</td>
+          <td class="arg">sv</td>
         </tr>
 
       </tbody>
@@ -288,11 +301,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td>Library</td>
-          <td>robotlib/RestLibrary.py</td>
+        <tr><td class="bot">Library</td>
+          <td class="src">robotlib/RestLibrary.py</td>
         </tr>
-        <tr><td>Test Setup</td>
-          <td>Define Namespaces and Base URL</td>
+        <tr><td class="bot">Test Setup</td>
+          <td class="act">Define Namespaces and Base URL</td>
         </tr>
       </tbody>
     </table>
@@ -304,7 +317,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td class="arg">${MAIN_URL}</td>
+        <tr><td class="def">${MAIN_URL}</td>
           <td class="arg">http://rinfo-main.statskontoret.se:8080/</td>
         </tr>
       </tbody>
