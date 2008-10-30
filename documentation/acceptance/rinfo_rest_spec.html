@@ -163,9 +163,9 @@
         </tr>
         <tr><td></td>
           <td class="arg">${prev_arch}=</td>
-          <td class="act">XPath Value</td>
+          <td class="act">XPath Regexp</td>
           <td class="arg">/atom:feed/atom:link[ @rel='prev-archive']/@href</td>
-          <td class="arg">/feed/2008/10-24/T13_34/44.251Z</td>
+          <td class="arg">/feed/.+/.+/T.+/.+Z</td>
         </tr>
         <tr class="sep"><td>&#160;</td></tr>
         <tr><td></td>
@@ -224,6 +224,18 @@
           <td class="arg">200 OK</td>
           <td class="arg"></td>
         </tr>
+        <!-- TODO: Do we break Cool URIs and ConNeg if we don't require:
+        <tr><td></td>
+          <td class="act">Response</td>
+          <td class="arg">302 Found</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Follow</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        -->
         <tr><td></td>
           <td class="act">Header</td>
           <td class="arg">Content-Type</td>
@@ -265,7 +277,7 @@
 
         <tr><td>Negotiate for RDF of Entry</td>
           <td class="act">Negotiate Entry Content</td>
-          <td class="arg">/publ/sfs/1999:175/rdf</td>
+          <td class="arg">/publ/sfs/1999:175</td>
           <td class="arg">application/rdf+xml</td>
         <tr><td></td>
           <td>...</td>

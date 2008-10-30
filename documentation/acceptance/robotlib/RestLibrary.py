@@ -1,3 +1,4 @@
+import re
 from urlparse import urljoin
 import httplib2
 from lxml import etree
@@ -65,7 +66,13 @@ class RestLibrary(object):
     def xpath_value(self, expr, expected):
         value = self.find_xpath(expr)
         value = "".join(value)
-        expect(expr, expected, value)
+        expect("xpath %r" % expr, expected, value)
+        return value
+
+    def xpath_regexp(self, expr, regexp):
+        value = self.find_xpath(expr)
+        value = "".join(value)
+        expect_regexp("xpath %r" % expr, regexp, value)
         return value
 
     def find_xpath(self, expr):
@@ -97,6 +104,10 @@ class RestLibrary(object):
 def expect(key, expected, value):
     assert expected == value, (
             "Expected %s to be %r but was %r" % (key, expected, value))
+
+def expect_regexp(key, regexp, value):
+    assert re.match(regexp, value), (
+            "Expected %s to match regexp %r but was %r" % (key, regexp, value))
 
 def expect_exists(what, value):
     assert value, "Expected %s to be present (got %r)." % (what, value)
