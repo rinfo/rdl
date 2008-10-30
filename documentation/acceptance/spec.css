@@ -1,0 +1,37 @@
+
+body {
+    font-family: helvetica, arial, sans-serif;
+    font-size: small;
+}
+
+table {
+    width: 96%;
+    margin-bottom: 1.6em;
+}
+
+thead th {
+    background-color: #ccc;
+}
+
+table, th, td {
+    border: 1px solid #333;
+    border-collapse: collapse;
+}
+
+tr.group td {
+    border-top-width: 4px;
+}
+
+.sep {
+    background-color: #eee;
+}
+
+.act {
+    color: blue;
+}
+
+.arg {
+    font-family: courier;
+    color: green;
+}
+

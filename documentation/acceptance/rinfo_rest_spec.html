@@ -6,45 +6,7 @@
     <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="Content-Language" content="en" />
-    <style type="text/css">
-
-        body {
-            font-family: helvetica, arial, sans-serif;
-            font-size: small;
-        }
-
-        table {
-            width: 96%;
-            margin-bottom: 1.6em;
-        }
-
-        thead th {
-            background-color: #ccc;
-        }
-
-        table, th, td {
-            border: 1px solid #333;
-            border-collapse: collapse;
-        }
-
-        tr.group td {
-            border-top-width: 4px;
-        }
-
-        .sep {
-            background-color: #eee;
-        }
-
-        .act {
-            color: blue;
-        }
-
-        .arg {
-            font-family: courier;
-            color: green;
-        }
-
-    </style>
+    <link rel="stylesheet" href="spec.css" />
   </head>
   <body>
 
@@ -165,7 +127,7 @@
           <td class="arg">${prev_arch}=</td>
           <td class="act">XPath Regexp</td>
           <td class="arg">/atom:feed/atom:link[ @rel='prev-archive']/@href</td>
-          <td class="arg">/feed/.+/.+/T.+/.+Z</td>
+          <td class="arg">^/feed/.+/.+/T.+/.+Z$</td>
         </tr>
         <tr class="sep"><td>&#160;</td></tr>
         <tr><td></td>
