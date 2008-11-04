@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>RInfo Staged Integration Scenario</title>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta http-equiv="Content-Language" content="en" />
+    <link rel="stylesheet" type="text/css" href="spec.css" />
+  </head>
+  <body>
+
+    <h1>RInfo Staged Integration Scenario</h1>
+
+    <h2>Settings</h2>
+    <table>
+      <thead>
+        <tr><th>Setting</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="bot">Resource</td>
+          <td class="src">init.html</td>
+        </tr>
+        <tr><td class="bot">Test Setup</td>
+          <td class="act">Define Namespaces and Base URL</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Scenario Test Cases</h2>
+    <p>The following consequtive test cases test the flow of information from
+       multiple test sources into RInfo Main.</p>
+    <table>
+      <colgroup>
+        <col width="20%" /> <col width="20%" />
+        <col width="30%" /> <col width="30%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Test Case</th>
+          <th>Action</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Empty RInfo Main</td>
+          <td class="act">GET</td>
+          <td class="arg">/feed/current</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Response</td>
+          <td class="arg">404 Not Found</td>
+          <td class="arg"></td>
+        </tr>
+      </tbody>
+    </table>
+
+  </body>
+</html>
