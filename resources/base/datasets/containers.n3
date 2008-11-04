@@ -16,12 +16,12 @@
 # TODO 2: Alternate solution sketch:
 #
 #@prefix owl: <http://www.w3.org/2002/07/owl#> .
-#@prefix dc: <http://purl.org/dc/elements/1.1/> .
+#@prefix dct: <http://purl.org/dc/terms/> .
 #
 #<http://rinfo.lagrummet.se/> a sioc:Space;
 #    sioc:feed [
 #        sioc:id "/feed/";
-#        dc:language "sv", "en";
+#        dct:language "sv", "en";
 #    ];
 #    foaf:primaryTopic [
 #        a owl:Restriction;
@@ -32,13 +32,13 @@
 #<http://rinfo.lagrummet.se/publ/> a sioc:Space;
 #    sioc:has_host <http://rinfo.lagrummet.se>;
 #    sioc:id "/publ/";
-#    dc:format (
+#    dct:format (
 #        ("application/rdf+xml" "rdf")
 #        ("application/xhtml+xml" "xhtml")
 #        ("application/pdf" "pdf")
 #        ("application/atom+xml;type=entry" "entry")
 #    );
-#    dc:language "sv", "en";
+#    dct:language "sv", "en";
 #    foaf:primaryTopic foaf:Document .
 #
 #<http://rinfo.lagrummet.se/ns/> a sioc:Space;
@@ -563,7 +563,7 @@
 # Based on (...)
 
 
-# Based on dc:publisher
+# Based on dct:publisher
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
