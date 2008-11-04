@@ -1,26 +1,25 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 
-dc:title a rdf:Property;
+dct:title a rdf:Property;
     rdfs:label "Titel"@sv;
     rdfs:comment "Dokumentets officiella titel"@sv .
 
-dc:description a rdf:Property;
+dct:description a rdf:Property;
     rdfs:label "Beskrivning"@sv;
     rdfs:comment "Text som beskriver dokumentet."@sv .
 
-dc:publisher a rdf:Property;
+dct:publisher a rdf:Property;
     rdfs:label "Utgivare"@sv;
     rdfs:comment "Ansvarig utgivare av detta dokument."@sv .
 
-dc:creator a rdf:Property;
+dct:creator a rdf:Property;
     rdfs:label "Skapare av dokumentet"@sv;
     rdfs:comment ""@sv .
 
-dc:subject a rdf:Property;
+dct:subject a rdf:Property;
     rdfs:label "Ämnesord"@sv;
     rdfs:comment ""@sv .
 

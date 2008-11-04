@@ -1,5 +1,5 @@
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX sioc: <http://rdfs.org/sioc/ns#>
 PREFIX ripub: <http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#>
@@ -60,7 +60,7 @@ WHERE {
         ?about a ripub:KonsolideradGrundforfattning;
             ripub:konsoliderar ?konsoliderar;
             ripub:utfardandedatum ?konsDatum .
-            # FIXME: utkomFranTryck? kosolideringsdatum? dc:issued? Någon slags ordinal?
+            # FIXME: utkomFranTryck? kosolideringsdatum? dct:issued? Någon slags ordinal?
     }
 
     # FIXME: ok med rattningAv + beslutsdatum?
@@ -76,13 +76,13 @@ WHERE {
     UNION
     {
         ?about a ripub:VagledandeMyndighetsavgorande;
-            dc:publisher ?_publisher;
+            dct:publisher ?_publisher;
             ripub:diarienummer ?rattsdokumentnummer .
         ?containerUri
             # TODO: more specific? by type or property?
             # TODO: by specific type for sub-partitions?
             foaf:primaryTopic ?_publisher;
-            #sioc:topic dc:publisher;
+            #sioc:topic dct:publisher;
             foaf:topic foaf:Document;
             sioc:id ?containerId .
     }
@@ -92,7 +92,7 @@ WHERE {
     UNION
     {
         ?about a ripub:VagledandeDomstolsavgorande;
-            dc:publisher ?_publisher;
+            dct:publisher ?_publisher;
             ripub:malnummer ?rattsdokumentnummer .
         ?containerUri
             foaf:primaryTopic ?_publisher;
