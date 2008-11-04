@@ -1,0 +1,13 @@
+########################################################################
+CHANGELOG
+########################################################################
+
+2008-11-04
+--------------------
+
+* Bytte ut all användning av legacy-namespace
+  <http://purl.org/dc/elements/1.1/> ("DC") till <http://purl.org/dc/terms/>
+  ("DCT").
+
+  Se `<http://www.dublincore.org/documents/2008/01/14/dcmi-terms/>`_.
+
