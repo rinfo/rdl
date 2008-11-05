@@ -60,6 +60,15 @@ class RestLibrary(object):
         value = self._response.get(header.lower())
         expect(header, expected, value)
 
+    def body_is(self, expected):
+        expect("response body", expected, self._content)
+
+    def has_body(self):
+        expect_exists("response body", self._content)
+
+    def no_body(self):
+        expect_not_exists("response body", self._content)
+
     def xmlns(self, pfx, uri):
         self._namespaces[pfx] = uri
 

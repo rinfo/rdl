@@ -40,14 +40,11 @@ public class DepotFinder extends Finder {
             results = fileDepot.find(
                     request.getResourceRef().getPath().toString());
         } catch (DeletedDepotEntryException e) {
-            // TODO: Gone?
+            // TODO: Gone or 404?
+            response.setStatus(Status.CLIENT_ERROR_GONE);
         } catch (LockedDepotEntryException e) {
-            // FIXME: Busy!
+            response.setStatus(Status.SERVER_ERROR_SERVICE_UNAVAILABLE);
         }
-
-        /* TODO: should perhaps wrap "odd" results in GoneHandler,
-        SeeOtherHandler? null is "not found".
-        */
 
         if (results==null) {
             // TODO: if (results == null)? Or on an exception? EntryDeletedException?
@@ -56,24 +53,27 @@ public class DepotFinder extends Finder {
         }
         // TODO: some kind of result which 303:s (use-case: resource path
         // subsumed by entry above which descibes it ("/ref/fs/sfs"..)..)
-        // Also, possible to have "symlink" resources, which at some point in
-        // time become owl:sameAs, and thus needs e.g. file://.../name-SYMLINK?
+        // E.g.: if(404) findParentEntry, scan ENTRY-INFO/DESCRIBES.urls
 
-        // perhaps: def resource = new SupplyResource(results)
+        // TODO: Also, possible to have "symlink" resources, which at some
+        // point in time become owl:sameAs, and thus needs e.g.
+        // file://.../name-SYMLINK?
+
+        // perhaps: new SupplyResource(results)
         Resource resource = new Resource(getContext(), request, response);
         List<Variant> reps = new ArrayList<Variant>();
         for (DepotContent content : results) {
             reps.add(makeRepresentation(content));
         }
         resource.setVariants(reps);
-        if (reps.size() == 1) {
-            try {
-                resource.represent(reps.get(0));
-            } catch (ResourceException e) {
-                throw new RuntimeException(e); // TODO: what to do?
-            }
-        }
         resource.setNegotiateContent(true);
+        /* TODO: 303 (or 307) instead of 200?
+                 (For entry paths not ending with "/"? conneg before?)
+        if (reps.size() > 1) {
+            response.setStatus(Status.REDIRECTION_FOUND);
+            //...
+        }
+        */
         return resource;
     }
 

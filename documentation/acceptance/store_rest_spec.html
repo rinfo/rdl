@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>Store Module REST Spec</title>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="spec.css" />
+  </head>
+  <body>
+
+    <h1>Store Module REST Spec</h1>
+
+    <h2>Settings</h2>
+    <table>
+      <thead>
+        <tr><th>Setting</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="bot">Resource</td>
+          <td class="src"><a href="init.html">init.html</a></td>
+        </tr>
+        <tr><td class="bot">Test Setup</td>
+          <td class="act">Define Namespaces and Base URL</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table>
+      <thead>
+        <tr><th>Variable</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="def">${MAIN_URL}</td>
+          <td class="arg">http://localhost:8182/</td>
+        </tr>
+        <tr><td class="def">${200_OK}</td>
+          <td class="arg">200 The request has succeeded</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Entry Content Retrieval</h2>
+
+    <table>
+      <colgroup>
+        <col width="20%" /> <col width="20%" />
+        <col width="30%" /> <col width="30%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Test Case</th>
+          <th>Action</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr><td>RDF by conneg</td>
+          <td class="act">Negotiate Entry Content</td>
+          <td class="arg">/publ/1901/100</td>
+          <td class="arg">application/rdf+xml</td>
+        </tr>
+        <tr><td></td>
+          <td>...</td>
+          <td class="arg">/publ/1901/100/rdf</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Find XPath</td>
+          <td class="arg">/rdf:RDF</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+
+        <tr><td>RDF by Path</td>
+          <td class="act">GET</td>
+          <td class="arg">/publ/1901/100/rdf</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Response</td>
+          <td class="arg">${200_OK}</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Header</td>
+          <td class="arg">Content-Type</td>
+          <td class="arg">application/rdf+xml</td>
+        </tr>
+
+        <!--
+
+        <tr class="sep"><td>&#160;</td></tr>
+
+        <tr><td>Atom Entry</td>
+          <td class="act">Negotiate Entry Content</td>
+          <td class="arg">/publ/1901/100</td>
+          <td class="arg">application/atom+xml;type=entry</td>
+        </tr>
+        <tr><td></td>
+          <td>...</td>
+          <td class="arg">/publ/1901/100/entry</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Find XPath</td>
+          <td class="arg">/atom:entry/atom:id</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+
+        Atom Entry by path:
+
+        GET: http://localhost:8182/publ/1901/100/entry
+        Response: 200 The request has succeeded
+        Content-Type: application/atom+xml;type=entry
+        Has Body
+
+        -->
+
+        <tr class="sep"><td>&#160;</td></tr>
+
+        <tr><td>PDF Content of Entry</td>
+          <td class="act">Set Header</td>
+          <td class="arg">Accept-Language</td>
+          <td class="arg">sv</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Negotiate Entry Content</td>
+          <td class="arg">/publ/1901/100</td>
+          <td class="arg">application/pdf</td>
+        </tr>
+        <tr><td></td>
+          <td>...</td>
+          <td class="arg">/publ/1901/100/pdf,sv</td>
+          <td class="arg">sv</td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+
+        <tr><td>PDF Content of Entry (defaults to english)</td>
+          <td class="act">Negotiate Entry Content</td>
+          <td class="arg">/publ/1901/100</td>
+          <td class="arg">application/pdf</td>
+        </tr>
+        <tr><td></td>
+          <td>...</td>
+          <td class="arg">/publ/1901/100/pdf,en</td>
+          <td class="arg">en</td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+
+        <tr><td>PDF By Half Path (ask for swedish)</td>
+          <td class="act">Set Header</td>
+          <td class="arg">Accept-Language</td>
+          <td class="arg">sv</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Negotiate Entry Content</td>
+          <td class="arg">/publ/1901/100/pdf</td>
+          <td class="arg">application/pdf</td>
+        </tr>
+        <tr><td></td>
+          <td>...</td>
+          <td class="arg">/publ/1901/100/pdf,sv</td>
+          <td class="arg">sv</td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+
+        <tr><td>PDF by path</td>
+          <td class="act">GET</td>
+          <td class="arg">/publ/1901/100/pdf,sv</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Response</td>
+          <td class="arg">${200_OK}</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Header</td>
+          <td class="arg">Content-Type</td>
+          <td class="arg">application/pdf</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Header</td>
+          <td class="arg">Content-Language</td>
+          <td class="arg">sv</td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+
+        <tr><td>A PNG Enclosure</td>
+          <td class="act">GET</td>
+          <td class="arg">/publ/1901/100/icon.png</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Response</td>
+          <td class="arg">${200_OK}</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Header</td>
+          <td class="arg">Content-Type</td>
+          <td class="arg">image/png</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Has Body</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+
+        <tr><td>A Locked Entry</td>
+          <td class="act">GET</td>
+          <td class="arg">/publ/1901/locked</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Response</td>
+          <td class="arg">503 The server is currently unable to handle the request due to a temporary overloading or maintenance of the server</td>
+          <td class="arg"></td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+
+        <tr><td>A Deleted Entry</td>
+          <td class="act">GET</td>
+          <td class="arg">/publ/1901/0</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Response</td>
+          <td class="arg">410 The requested resource is no longer available at the server and no forwarding address is known</td>
+          <td class="arg"></td>
+        </tr>
+
+      </tbody>
+    </table>
+
+  </body>
+</html>

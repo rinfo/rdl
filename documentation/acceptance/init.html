@@ -40,6 +40,9 @@
         <tr><td class="def">${MAIN_URL}</td>
           <td class="arg">http://rinfo-main.statskontoret.se:8080/</td>
         </tr>
+        <tr><td class="def">${200_OK}</td>
+          <td class="arg">200 OK</td>
+        </tr>
       </tbody>
     </table>
 
@@ -71,6 +74,11 @@
           <td class="arg">http://purl.org/syndication/history/1.0</td>
         </tr>
         <tr><td></td>
+          <td class="act">XMLNS</td>
+          <td class="arg">rdf</td>
+          <td class="arg">http://www.w3.org/1999/02/22-rdf-syntax-ns#</td>
+        </tr>
+        <tr><td></td>
           <td class="act">Base URL</td>
           <td class="arg">${MAIN_URL}</td>
           <td class="arg"></td>
@@ -100,13 +108,18 @@
         </tr>
         <tr><td></td>
           <td class="act">Response</td>
-          <td class="arg">200 OK</td>
+          <td class="arg">${200_OK}</td>
           <td class="arg"></td>
         </tr>
         <tr><td></td>
           <td class="act">Header</td>
           <td class="arg">Content-Type</td>
           <td class="arg">application/atom+xml</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Has Body</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
         </tr>
       </tbody>
     </table>
@@ -148,7 +161,7 @@
         </tr>
         <tr><td></td>
           <td class="act">Response</td>
-          <td class="arg">200 OK</td>
+          <td class="arg">${200_OK}</td>
           <td class="arg"></td>
         </tr>
         <!-- TODO: Do we break Cool URIs and ConNeg if we don't require:
@@ -189,17 +202,27 @@
           <td class="arg"></td>
         </tr>
         <tr><td></td>
-          <td class="act">Response</td> <td class="arg">200 OK</td> <td class="arg"></td>
+          <td class="act">Response</td>
+          <td class="arg">${200_OK}</td>
+          <td class="arg"></td>
         </tr>
         <tr><td></td>
-          <td class="act">Header</td> <td class="arg">Content-Type</td> <td class="arg">${media_type}</td>
+          <td class="act">Header</td>
+          <td class="arg">Content-Type</td>
+          <td class="arg">${media_type}</td>
         </tr>
         <tr><td></td>
-          <td class="act">Header</td> <td class="arg">Content-Language</td> <td class="arg">${language}</td>
+          <td class="act">Header</td>
+          <td class="arg">Content-Language</td>
+          <td class="arg">${language}</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Has Body</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
         </tr>
       </tbody>
     </table>
-
 
   </body>
 </html>

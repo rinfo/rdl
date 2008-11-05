@@ -1,0 +1,44 @@
+
+Discovering information from the index page::
+
+    GET: / # index.xhtml
+    Response: 200 OK
+    Content-Type: application/xhtml+xml
+    Match XPath: /h:html/h:body/h:link[@rel='']
+
+# TODO: define what to expose
+
+An extended sitemap.xml is available to provide locations of SPARQL-endpoints and eventual data dumps (see <a href="http://sw.deri.org/2007/07/sitemapextension/">Semantic Web Crawling: A Sitemap Extension</a>).
+
+The sitemap extensions are::
+
+    GET: /sitemap.xml
+    Match XPath: sm:urlset/sc:dataset/sc:sparqlEndpointLocation
+    Response: 200 OK
+    Content-Type: text/xml
+
+
+Atom-feed med alla resurser: scheman, "listor" och dokument:
+
+<http://rinfo.lagrummet.se/feed>
+    .. @rel="archive-prev"
+    .. Fråga: @rel="next" som inte visar gamla "updateds" och inga deleteds?
+        .. grymt bra för första-laddningen!
+        .. dock archives med tombstones och tidigare updates;
+        ska vara med i beräkningen för laddning, då gamla poster
+        man läst in måste delete:as! Tidigare updates inte lika viktigt
+        för inläsning? Dock extremt så för historiken!
+
+Rimligt även med feed per collection?
+
+    <http://rinfo.lagrummet.se/publ/> =>
+        <http://rinfo.lagrummet.se/publ/feed>
+
+        <http://rinfo.lagrummet.se/publ/container>
+            -> SIOC-container metadata (det som ingår i uri-strategin)
+
+Segmenten under en collection är delar av de ogenomskinliga identifierarna för respektive entry. Så går man på "en halv" ges 404 (att t.ex. "studsa upp" till ovanliggande collection vore märkligt för ett felaktigt path-värde..):
+
+    GET: http://rinfo.lagrummet.se/publ/sfs/
+    Response: 404 Not Found
+

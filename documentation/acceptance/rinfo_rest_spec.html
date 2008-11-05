@@ -4,8 +4,6 @@
   <head>
     <title>RInfo Main REST Specification</title>
     <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
-    <meta http-equiv="Content-Style-Type" content="text/css" />
-    <meta http-equiv="Content-Language" content="en" />
     <link rel="stylesheet" type="text/css" href="spec.css" />
   </head>
   <body>
@@ -22,6 +20,8 @@
           >On Linking Alternative Representations To Enable Discovery And Publishing</a></li>
       <li><a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html"
           >HTTP/1.1 Status Code Definitions</a></li>
+      <li><a href="http://httpd.apache.org/docs/2.2/en/content-negotiation.html#algorithm"
+          >Content Negotiation</a></li>
     </ul>
     <p>It should also conform to these Atom Syndication specs:</p>
     <ul>
@@ -38,7 +38,7 @@
       </thead>
       <tbody>
         <tr><td class="bot">Resource</td>
-          <td class="src">init.html</td>
+          <td class="src"><a href="init.html">init.html</a></td>
         </tr>
         <tr><td class="bot">Test Setup</td>
           <td class="act">Define Namespaces and Base URL</td>
@@ -108,6 +108,36 @@
       </tbody>
     </table>
 
+    <h3>Model Retrieval</h3>
+    <table>
+      <colgroup>
+        <col width="20%" /> <col width="20%" />
+        <col width="30%" /> <col width="30%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Test Case</th>
+          <th>Action</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- TODO: -->
+        <tr><td>Model RDF</td>
+          <td class="act">Negotiate Entry Content</td>
+          <td class="arg">/ns/2008/11/rinfo/publ</td>
+          <td class="arg">application/rdf+xml</td>
+        </tr>
+        <tr><td></td>
+          <td>...</td>
+          <td class="arg">/ns/2008/11/rinfo/publ/rdf</td>
+          <td class="arg"></td>
+        </tr>
+
+      </tbody>
+    </table>
+
     <h3>Content Negotiation on Entries</h3>
     <table>
       <colgroup>
@@ -164,6 +194,156 @@
           <td>...</td>
           <td class="arg">/publ/sfs/1999:175/pdf,sv</td>
           <td class="arg">sv</td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+
+        <tr><td>PDF Header Data</td>
+            <td class="act">HEAD</td>
+          <td class="arg">/publ/sfs/1999:175/pdf,sv</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Header</td>
+          <td class="arg">Content-Type</td>
+          <td class="arg">application/pdf</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">No body</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+
+        <tr><td>Defaults to Atom Entry</td>
+          <td class="act">GET</td>
+          <td class="arg">/publ/sfs/1999:175</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Response</td>
+          <td class="arg">200 OK</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Header</td>
+          <td class="arg">Content-Type</td>
+          <td class="arg">application/atom+xml;type=entry</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Find XPath</td>
+          <td class="arg">/atom:entry/atom:id</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+
+        <!-- TODO:
+          Retrieval with cache control::
+
+          ${etag}= Header ETag
+          Set Header If-None-Match ${etag}
+          GET /publ/sfs/1999:175/pdf,sv
+          Response 304 Not Modified
+
+          ${etag}= Header Last-Modified
+          Set Header If-Modified-Since ${etag}
+          GET /publ/sfs/1999:175/pdf,sv
+          Response 304 Not Modified
+        -->
+
+        <!-- TODO:
+            Deleted is Gone
+            410 Gone
+        -->
+
+      </tbody>
+    </table>
+
+    <h3>Erroneous Retrieval</h3>
+    <table>
+      <colgroup>
+        <col width="20%" /> <col width="20%" />
+        <col width="30%" /> <col width="30%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Test Case</th>
+          <th>Action</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr><td>Missing Entry</td>
+          <td class="act">GET</td>
+          <td class="arg">/publ/sfs/-1</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Response</td>
+          <td class="arg">404 Not Found</td>
+          <td class="arg"></td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+
+        <tr><td>No Representation</td>
+          <td class="act">Set Header</td>
+          <td class="arg">Accept</td>
+          <td class="arg">application/msword</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">GET</td>
+          <td class="arg">/publ/sfs/1999:175</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Response</td>
+          <td class="arg">406 Not Acceptable</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Body is</td>
+          <td class="arg">
+            /publ/sfs/1999:175/rdf\r\n
+            /publ/sfs/1999:175/entry\r\n
+            /publ/sfs/1999:175/pdf,sv\r\n
+          </td>
+          <td class="arg"></td>
+        </tr>
+
+        <!-- TODO: overzealous?
+        <tr class="sep"><td>&#160;</td></tr>
+        <tr><td>Query Not Allowed</td>
+          <td class="act">GET</td>
+          <td class="arg">/publ/sfs/1999:175?x=1</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Response</td>
+          <td class="arg">400 Bad Request</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">No body</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        -->
+
+        <tr class="sep"><td>&#160;</td></tr>
+
+        <tr><td>Only Get Allowed</td>
+          <td class="act">POST</td>
+          <td class="arg">/publ/sfs/1999:175</td>
+          <td class="arg">some data</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Response</td>
+          <td class="arg">405 Method Not Allowed</td>
+          <td class="arg"></td>
         </tr>
 
       </tbody>
