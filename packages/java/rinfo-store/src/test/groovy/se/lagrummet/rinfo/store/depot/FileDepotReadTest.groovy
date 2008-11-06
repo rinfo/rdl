@@ -59,11 +59,11 @@ class FileDepotReadTest extends GroovyTestCase {
     void testShouldIterateEntries() {
 
         def entries = fileDepot.iterateEntries().toList()
-        assertEquals 3, entries.size()
+        assertEquals 4, entries.size()
 
          // include deleted
          entries = fileDepot.iterateEntries(false, true)
-        assertEquals 4, entries.size()
+        assertEquals 5, entries.size()
 
         // TODO: historical: fileDepot.iterateEntries(true, false)
     }
