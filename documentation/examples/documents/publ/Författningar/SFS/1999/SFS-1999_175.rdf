@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:dct="http://purl.org/dc/terms/"
+         xmlns="http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#">
+
+  <!-- TODO: En gemensam är ju mkt bättre än egna url:ar per källa. Tidigare:
+
+    http://rinfo.gov.se/publ/SFS/1999/SFS-1999_175
+
+  -->
+
+  <Forordning rdf:about="tag:lagrummet.se,2008:publ/sfs/1999:175">
+    <!-- identification -->
+    <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/ref/fs/sfs"/>
+    <fsNummer>1999:175</fsNummer>
+    <dct:title xml:lang="sv">Rättsinformationsförordning</dct:title>
+    <!-- temporality -->
+    <utfardandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1999-03-25</utfardandedatum>
+    <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1999-05-01</ikrafttradandedatum>
+    <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1999-04-13</utkomFranTryck>
+    <!-- provenance -->
+    <dct:creator rdf:resource="http://rdf.kb.se/ap/20061121164911"/>
+    <dct:publisher rdf:resource="http://rdf.kb.se/ap/20061121145747"/>
+    <!-- connections -->
+    <forarbete rdf:resource="http://rinfo.lagrummet.se/publ/ds/1998:10"/>
+    <upphaver rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1980:628"/>
+    <!-- composition -->
+    <overgangsbestammelse rdf:resource="tag:lagrummet.se,2008:publ/sfs/1999:175#overgangsbestammelse-1"/>
+    <paragraf>
+      <Paragraf rdf:about="tag:lagrummet.se,2008:publ/sfs/1999:175#paragraf-1">
+        <paragrafnummer>1</paragrafnummer>
+      </Paragraf>
+    </paragraf>
+  </Forordning>
+
+</rdf:RDF>
