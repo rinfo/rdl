@@ -21,4 +21,8 @@ Running as war::
 
     $ mvn -Djetty.port=8180 jetty:run
 
+Manually pinging rinfo-main to collect from a test source::
+
+    $ curl --data "feed=http://localhost:8182/feed/current" http://localhost:8180/collector
+
 
