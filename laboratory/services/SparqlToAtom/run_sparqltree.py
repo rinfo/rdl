@@ -149,6 +149,11 @@ if __name__ == '__main__':
     parser.add_option('-s', '--serve', type=int,
             help='Port to serve as web app.')
 
+    parser.add_option('--sparql', action="store_true",
+            help='')
+    parser.add_option('--xslt', action="store_true",
+            help='')
+
     opts, args = parser.parse_args()
     if not opts.endpoint:
         parser.error("Please provide ENDPOINT.")
@@ -158,6 +163,13 @@ if __name__ == '__main__':
     else:
         if not args:
             parser.error("Please provide one filename.")
-        print SparqlTree(args[0])(opts.endpoint)
+
+        rqtree = SparqlTree(args[0])
+        if opts.sparql:
+            print rqtree.sparql
+        elif opts.xslt:
+            print rqtree._trans_doc
+        else:
+            print rqtree(opts.endpoint)
 
 

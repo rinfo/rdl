@@ -178,7 +178,7 @@ publ/ # TODO: 'publ' är väl bättre?!
 org/
     grupp- och organisationsinfo (gruppinfo, t.ex. kommittéer.., domstolar och andra myndigheter)
 
-saml/ # TODO: 'ser'/'serie'?
+serie/ # TODO: 'ser'/'saml'?
     collections/series.. listor? set?
     För t.ex.:
         - "SFS - Svensk författningssamling"
