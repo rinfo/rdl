@@ -31,7 +31,7 @@
 			.docmeta td {
 				padding: 0.1em 0 0.1em 0;
 			}
-		
+
 			.pdflink {
 				margin: 1em 0 1em 0;
 			}
@@ -43,6 +43,35 @@
 				vertical-align: middle;
 				display: block;
 			}
+
+
+			ul.chain li {
+				margin:0;
+				padding:0;
+				list-style-type:none;
+				display:block;
+			}
+			ul.chain li.current
+			{
+				background-image: url(static/arrow_down.gif);
+				background-position: center top;
+				background-repeat: no-repeat;
+				border: solid 1px #f5f5f5;
+			}
+			#related .panel ul.chain {
+				margin:0;
+				padding:0;
+				list-style-type:none;
+			}
+			ul.chain li div {
+				border: solid 1px #999;
+				padding: 4px 8px;
+				margin: 0 5px 0 5px;
+			}
+			ul.chain li.current div {
+				margin-top: 17px;
+			}
+
 		</style>
 
 		<base href="http://www.lagrummet.se/t/" />
@@ -82,29 +111,29 @@
 						<div id="content" class="tpl-page">
 							<div class="pagelocation"><a href="/">Startsida</a> / <a href="/lar-dig-mer/">SFS</a> / <a href="/lar-dig-mer/">1999</a</div>
 
-							<h1>SFS 1999:175 Rättsinformationsförordning</h1>
+								<h1>SFS 1999:175 Rättsinformationsförordning</h1>
 
-							<table class="docmeta">
-								<tr>
-									<th>Departement</th>
-									<td>Justitiedepartementet Gransk</td>
-								</tr>
-								<tr>
-									<th>Utfärdad</th>
-									<td>1999-03-25</td>
-								</tr>
-								<tr>
-									<th>Källa</th>
-									<td><a href="/">Regeringskansliets rättsdatabaser</a></td>
-								</tr>
-							</table>
+								<table class="docmeta">
+									<tr>
+										<th>Departement</th>
+										<td>Justitiedepartementet Gransk</td>
+									</tr>
+									<tr>
+										<th>Utfärdad</th>
+										<td>1999-03-25</td>
+									</tr>
+									<tr>
+										<th>Källa</th>
+										<td><a href="/">Regeringskansliets rättsdatabaser</a></td>
+									</tr>
+								</table>
 
-							<p class="pdflink"><a href="/">Ladda ner PDF-version av SFS 1999:175</a></p>
+								<p class="pdflink"><a href="/">Ladda ner PDF-version av SFS 1999:175</a></p>
 
 
-							<h2>Ändringar och övergångsbestämmelser</h2>
+								<h2>Ändringar och övergångsbestämmelser</h2>
 
-							<p>
+								<p>
 								<ul>
 									<li>Förordning (2000:80) om ändring i rättsinformationsförordningen (1999:175)</li>
 									<li>Förordning (2000:668) om ändring i rättsinformationsförordningen (1999:175)</li>
@@ -118,29 +147,32 @@
 									<li>Förordning (2007:875) om ändring i rättsinformationsförordningen (1999:175)</li>
 									<li>Förordning (2008:763) om ändring i förordningen (2007:293) om ändring i rättsinformationsförordningen (1999:175)</li>
 								</ul>
-							</p>
+								</p>
 
-							<p class="pagemeta">
-							</p>    
+								<p class="pagemeta">
+								</p>    
+							</div>
+							<div id="related">
+								<div class="panel">
+									<h2>Förarbeten</h2>
+									<ul class="chain">
+										<li class="prev"><div><a href="/">Ds 1998:10 Ett offentligt rättsinformationssystem</a></div></li>
+										<li class="current"><div>SFS 1999:175 Rättsinformationsförordning</div></li>
+									</ul>
+								</div>
+							</div>
+							<div class="clearer"></div>
 						</div>
-						<div id="related">
-							<div class="panel">
-								<p class="prev">Ds 1998:10 Ett offentligt rättsinformationssystem</p>
-								<p class="prev">SFS 1999:175 Rättsinformationsförordning</p>
+					</div>
+					<div id="footer">
+						<div id="footercontent">
+							<div class="contact">
+								<p class="left"><a href="/Om-lagrummetse/om_lagrummet_se/kontaktinfo/">Kontakta oss</a></p>
+								<p class="right"><a href="http://www.verva.se">Verva</a> 2006</p>
 							</div>
 						</div>
-						<div class="clearer"></div>
-					</div>
+					</div>	
 				</div>
-				<div id="footer">
-					<div id="footercontent">
-						<div class="contact">
-							<p class="left"><a href="/Om-lagrummetse/om_lagrummet_se/kontaktinfo/">Kontakta oss</a></p>
-							<p class="right"><a href="http://www.verva.se">Verva</a> 2006</p>
-						</div>
-					</div>
-				</div>	
-			</div>
-		</form>
-	</body>
-</html>
+			</form>
+		</body>
+	</html>
