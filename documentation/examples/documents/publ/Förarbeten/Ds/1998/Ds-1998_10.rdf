@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:dct="http://purl.org/dc/terms/"
+         xmlns="http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#">
+
+  <!-- FIXME: UNKNOWN -->
+  <Utredningsbetankande rdf:about="tag:lagrummet.se,2008:publ/ds/1998:10">
+    <!-- identification -->
+    <utrSerie rdf:resource="http://rinfo.lagrummet.se/ref/utr/ds"/>
+    <utrSerienummer>1998:10</utrSerienummer>
+    <dct:title xml:lang="sv"></dct:title>
+    <!-- temporality -->
+    <!-- provenance -->
+    <dct:publisher/>
+    <!-- connections -->
+    <utgarFran/>
+    <foreslarAndringAv/>
+    <!-- composition -->
+  </Utredningsbetankande>
+
+</rdf:RDF>

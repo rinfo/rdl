@@ -9,8 +9,8 @@
 @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
 @prefix protege: <http://protege.stanford.edu/plugins/owl/protege#> .
 @prefix pvsetime: <http://pervasive.semanticweb.org/ont/2004/01/time#> .
-@prefix ripub: <http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#> .
-@prefix : <http://rinfo.lagrummet.se/taxo/2007/09/rinfo/kommitte#> .
+@prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
+@prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/kommitte#> .
 #=======================================================================
 
 
@@ -23,7 +23,7 @@
                     inklusive egenskaper, som ingår i det svenska
                     rättsinformationssystemet."""@sv;
      owl:versionInfo "0.1 rev 1";
-     owl:imports dct:, skos:, foaf:, vcard:, protege:, pvsetime:, ripub: .
+     owl:imports dct:, skos:, foaf:, vcard:, protege:, pvsetime:, rpubl: .
 
 
 ##
@@ -100,7 +100,7 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Kommittédirektiv"@sv;
     rdfs:comment "Det direktiv som aktuell kommitté har att arbeta efter."@sv;
-    rdfs:range ripub:Kommittedirektiv;
+    rdfs:range rpubl:Kommittedirektiv;
     owl:inverseOf [ rdfs:label "Kommittedirektiv för"@sv ]; .
 
 :deltagande a rdf:Property;

@@ -29,7 +29,7 @@ Försöksverksamheten 2007 (t.o.m. ca september):
 Blir enligt nedan beskrivna strategi (lagrummet f.n. bibehållet):
     http://rinfo.lagrummet.se/schema/2007/09/rinfo/pub#
     http://rinfo.lagrummet.se/pub/sfs/1999:175
-    http://rinfo.lagrummet.se/saml/sfs
+    http://rinfo.lagrummet.se/serie/sfs
 
 
 Artiklar som beskriver sunda URL-strategier generellt:
@@ -46,6 +46,32 @@ Artiklar som beskriver sunda URL-strategier generellt:
         http://idealliance.org/proceedings/xtech05/papers/02-06-04/
 
 
+Öppet - TAG-URI:er för källornas ID:n?
+
+    E.x.: <tag:lagrummet.se,2008:publ/sfs/1999:175>
+
+    Atom-id:n är ofta tag-uri:er.
+
+    URI-algoritmen kan delas ut "bitvis" per myndighet
+        - Typ "släng på id:t efter denna tag-sträng."
+        - eftersom de sällan gör mer än en typ.
+        - Så slipper de tänka alls på hur de ska göra (annars måste de ju hitta
+          på en mekanism med id:n själva, allihop; som inte är tänkt att användas
+          av andra än oss!)
+
+    För att se till att de myndigheterna genererar förutsägbara uri:er för dokumenten.
+
+    Gör det material de producerar uniformt utan att hårdkoppla det med url:ar (som kan vara förvirrande i produktionsledet).
+
+    RInfo har dock URL:ar som är de officiella uri:erna.
+
+    En speficik issue är iaf att de inte bör hitta på fragment-identifierare för paragrafer osv!
+        .. se nedan
+
+    TODO: behöver diskuteras och finskrivas om uri-mekanismen när vi gått igenom materialet.
+    Med för- och nackdelar och varför vi valt det vi väljer.
+    Räcker rimligen med en förfining av detta dokument.
+
 
 Teori
 ========================================================================
@@ -55,16 +81,14 @@ Grundfrågor och -principer:
     - alla "root-kataloger":
         - måste ha låst mening
             - och deterministiskt (upptäckbart/genererbart) erbjuda lagring:
-                - för enheter (path-item i url?) med enkla beteckningar
-                    - TODO: kalla dessa.. kataloger? (partitioner? segment...)
-                        .. kataloger/directories..
-                      SVAR: segment! Enligt <http://www.ietf.org/rfc/rfc3986.txt>!
+                - via segment med enkla beteckningar
+                    (segment, enligt <http://www.ietf.org/rfc/rfc3986.txt>)
         - måste hålla över tid
-    - TODO: hur hantera underrymder (sfs vs. sfs-sakl_for)?
-        - finns det något sätt att hantera ett stigande nummer (datum eller
-            abstrakt) för *varje* term som dyker upp och ändå kunna generera
-            och upptäcka saker?
-            .. utan central kollaps?
+            - Varje segment döps efter en term som den associeras till explicit (i intern data)
+              så att administrationen av dem är under total kontroll (om t.ex.
+              framtida termer "inkräktar" på befintliga namn kan man styra det här).
+            - Detta betyder att segment inte ska genereras från
+              löptext-etiketter per automatik, utan kontrolleras.
 
 Grundråd:
     - så lite som möjligt i URI:n (nu plus *ett* steg framåt?)
@@ -99,12 +123,11 @@ Språkhantering
         - se t.ex. <http://h3h.net/2007/01/designing-urls-for-multilingual-web-sites/>
           för goda designråd kring hur dessa bör se ut. Vår nuvarande rekommendation är t.ex:
 
-            - TODO:
-                <http://rinfo.lagrummet.se/pub/sfs/1999:175,sv.xhtml>
-                <http://rinfo.lagrummet.se/pub/sfs/1999:175.xhtml,sv>
+            - TODO: see documentation/acceptance för specar.
 
         - hur hantera samma dokument på olika språk?
-            - rimligen inte samma resurs? eller? svårt att säga 'dc:language "sv"' om de är "samma resurs"! (samma resonemang kan föras om dc:hasFormat..)
+            - är det en "representation" av document-resursen?
+            - rimligen inte utan en ny document-resurs: går ej att säga 'dc:language "sv"' om de är "samma resurs"! (samma resonemang kan föras om dc:hasFormat..)
 
 
 "Normativa" principer:
@@ -129,7 +152,7 @@ Språkhantering
             om varje segment har en mening kan man tänka sig att de kan bytas
             ut.. Tänk årtal, publikationsnamn m.m.
 
-            Dock: jmf. "pointer-artimetik". URI:er *ska* betraktas som ogenomskinliga "atomer"
+            Dock: jmf. "pointer-artimetik". URI:er *ska* betraktas som ogenomskinliga, "atomära"
 
             Kan vara en "service", men inte alls nödvändig att uppfylla (eller konsekvent uppfylla)
 
@@ -261,7 +284,7 @@ Publicerade dokument:
                         <http://rinfo.lagrummet.se/publ/sfs/> a sioc:Container;
                             sioc:id "/publ/sfs/";
                             foaf:primaryTopic <http://rinfo.lagrummet.se/serie/sfs>;
-                            #rinternal:useProperty ripubl:fsNummer;
+                            #rinstrument:useProperty rpubl:fsNummer;
                         .
 
                 - atomär ordinal så naturlig som "rimligt"
@@ -346,7 +369,7 @@ Publicerade dokument:
 
 # TODO: viktig punkt!
 - Stöd-data: andra saker än publicerade dokument! (segment parallella med "/pub/")
-    - i org, saml, ext, ...
+    - i org, serie, ext, ...
     - termer&begrepp, domstolar och liknande, författningssamlingar, prop-samlingen (och motsv.)?
 
     - TODO: ur "Modell - rättsinformation" fr. dec 2006:

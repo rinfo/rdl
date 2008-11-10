@@ -7,7 +7,7 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix protege: <http://protege.stanford.edu/plugins/owl/protege#> .
-@prefix : <http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#> .
+@prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
 #=======================================================================
 
 # .. Status "god form:"
@@ -75,7 +75,6 @@
             owl:allValuesFrom rdfs:Resource;
             owl:minCardinality 0
         ],
-        # TODO: "utfärdare"? Ny egenskap skiljd från dct:publisher?
         [ a owl:Restriction;
             owl:onProperty dct:publisher;
             owl:allValuesFrom foaf:Agent;
@@ -244,6 +243,10 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Kapitel"@sv;
     rdfs:comment "Ett kapitel i en svensk författning."@sv;
+    # TODO: instrumental data for minting fragment identifiers? 
+    # Put in separate dataset (along with containers)?
+    #rinstrument:fragmentIdStart "paragraf-";
+    #rinstrument:fragmentIdLeafFrom :paragrafnummer;
     rdfs:subClassOf
         [ a owl:Restriction;
             owl:onProperty :paragraf;
@@ -422,15 +425,22 @@
 #   - förslag: :upphavanderegel (-datum, -anvisning, -lagrum)
 #   - obs! korrelera med :andrar och dess subproperties.
 
-# TODO: verkligen tillåta både literal/uriref?
-#   - ej tillåtet i t.ex. OWL DL
-#   - kan behöva modelleras på samma sätt som :ikrafttradanderegel
 :overgangsbestammelse a rdf:Property;
-    rdfs:isDefinedBy : ;
     rdfs:label "Övergångsbestämmelse"@sv;
-    rdfs:comment "Text (eller referens till text) som beskriver övergångsbestämmelser."@sv;
-    # TODO: rdfs:range Referens eller Text
-    .
+    rdfs:comment "Information om övergångsbestämmelser."@sv;
+    protege:abstract "true" .
+
+:overgangsbestammelsehanvisning a owl:ObjectProperty;
+    rdfs:subPropertyOf :overgangsbestammelse;
+    rdfs:label "Övergångsbestämmelsehänvisning"@sv;
+    rdfs:comment "Referens till något som beskriver övergångsbestämmelser."@sv;
+    rdfs:isDefinedBy : .
+
+:overgangsbestammelsetext a rdf:Property;
+    rdfs:subPropertyOf :overgangsbestammelse;
+    rdfs:label "Övergångsbestämmelsetext"@sv;
+    rdfs:comment "Text som beskriver övergångsbestämmelser."@sv;
+    rdfs:isDefinedBy : .
 
 
 :beslutsdatum a owl:DatatypeProperty;

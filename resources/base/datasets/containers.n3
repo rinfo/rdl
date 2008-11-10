@@ -1,7 +1,7 @@
 @prefix sioc: <http://rdfs.org/sioc/ns#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix ripub: <http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#> .
-@prefix rikm: <http://rinfo.lagrummet.se/taxo/2007/09/rinfo/kommitte#> .
+@prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
+@prefix rkmt: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/kommitte#> .
 
 
 # TODO:
@@ -25,8 +25,8 @@
 #    ];
 #    foaf:primaryTopic [
 #        a owl:Restriction;
-#        owl:onProperty ripub:forfattningssamling;
-#        owl:hasValue <http://rinfo.lagrummet.se/ref/fs/01fs>
+#        owl:onProperty rpubl:forfattningssamling;
+#        owl:hasValue <http://rinfo.lagrummet.se/serie/fs/01fs>
 #    ] .
 #
 #<http://rinfo.lagrummet.se/publ/> a sioc:Space;
@@ -50,514 +50,514 @@
 #    sioc:has_space <http://rinfo.lagrummet.se/publ/>;
 #    sioc:id "/publ/01fs/";
 #    foaf:primaryTopic [ a owl:Restriction;
-#        owl:onProperty ripub:forfattningssamling;
-#        owl:hasValue <http://rinfo.lagrummet.se/ref/fs/01fs>
+#        owl:onProperty rpubl:forfattningssamling;
+#        owl:hasValue <http://rinfo.lagrummet.se/serie/fs/01fs>
 #    ] .
 #
 
-# Based on membership by ripub:forfattningssamling
+# Based on membership by rpubl:forfattningssamling
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/01fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/01fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/01fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/03fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/03fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/03fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/04fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/04fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/04fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/05fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/05fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/05fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/06fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/06fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/06fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/07fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/07fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/07fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/08fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/08fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/08fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/09fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/09fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/09fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/10fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/10fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/10fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/12fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/12fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/12fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/13fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/13fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/13fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/14fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/14fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/14fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/17fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/17fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/17fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/18fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/18fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/18fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/19fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/19fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/19fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/20fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/20fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/20fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/21fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/21fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/21fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/22fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/22fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/22fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/23fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/23fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/23fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/24fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/24fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/24fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/25fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/25fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/25fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/afs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/afs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/afs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/afs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/afs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/afs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/agvfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/agvfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/agvfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/amsfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/amsfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/amsfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/bfnar/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/bfnar> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/bfnar> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/bfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/bfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/bfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/bolfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/bolfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/bolfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/bv-fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/bv-fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/bv-fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/csnfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/csnfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/csnfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/dfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/dfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/dfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/difs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/difs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/difs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/dvfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/dvfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/dvfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/elsak-fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/elsak-fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/elsak-fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/fffs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/fffs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/fffs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/ffs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/ffs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/ffs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/fhifs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/fhifs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/fhifs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/fifs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/fifs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/fifs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/fkfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/fkfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/fkfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/hsvfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/hsvfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/hsvfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/iaffs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/iaffs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/iaffs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/itpsfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/itpsfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/itpsfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/jvsfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/jvsfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/jvsfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/kamfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/kamfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/kamfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/kbmfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/kbmfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/kbmfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/kfmfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/kfmfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/kfmfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/kfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/kfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/kfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/kifs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/kifs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/kifs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/kkvfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/kkvfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/kkvfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/kovfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/kovfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/kovfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/krfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/krfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/krfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/kvfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/kvfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/kvfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/lfnfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/lfnfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/lfnfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/lfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/lfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/lfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/lifs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/lifs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/lifs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/livsfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/livsfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/livsfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/lmvfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/lmvfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/lmvfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/lvfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/lvfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/lvfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/migrfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/migrfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/migrfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/nfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/nfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/nfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/nutfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/nutfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/nutfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/prvfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/prvfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/prvfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/ptsfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/ptsfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/ptsfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/ra-fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/ra-fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/ra-fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/rgkfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/rgkfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/rgkfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/rnfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/rnfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/rnfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/rpsfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/rpsfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/rpsfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/rtvfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/rtvfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/rtvfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/scb-fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/scb-fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/scb-fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/sfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/sfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/sfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/sgu-fs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/sgu-fs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/sgu-fs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/sjofs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/sjofs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/sjofs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/sjvfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/sjvfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/sjvfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/skifs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/skifs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/skifs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/skolfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/skolfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/skolfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/sksfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/sksfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/sksfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/skvfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/skvfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/skvfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/sosfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/sosfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/sosfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/srvfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/srvfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/srvfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/ssifs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/ssifs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/ssifs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/stafs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/stafs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/stafs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/stemfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/stemfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/stemfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/svkfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/svkfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/svkfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/tfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/tfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/tfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/tpvfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/tpvfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/tpvfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/valfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/valfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/valfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/vervafs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/vervafs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/vervafs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/vrfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/vrfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/vrfs> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/vvfs/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/fs/vvfs> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/fs/vvfs> .
 
 
-# Based on membership by ripub:rattsfallspublikation
+# Based on membership by rpubl:rattsfallspublikation
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/rattsfall/nja/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/rff/nja> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/rff/nja> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/rattsfall/rh/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/rff/rh> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/rff/rh> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/rattsfall/mod/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/rff/mod> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/rff/mod> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/rattsfall/ra/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/rff/ra> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/rff/ra> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/rattsfall/mig/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/rff/mig> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/rff/mig> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/rattsfall/ad/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/rff/ad> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/rff/ad> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/rattsfall/md/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/rff/md> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/rff/md> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/rattsfall/fod/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/rff/fod> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/rff/fod> .
 
 
 
-# Based on membership by ripub::utrSerie
+# Based on membership by rpubl::utrSerie
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/utr/ds/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/utr/ds> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/utr/ds> .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/utr/sou/";
-    foaf:primaryTopic <http://rinfo.lagrummet.se/ref/utr/sou> .
+    foaf:primaryTopic <http://rinfo.lagrummet.se/serie/utr/sou> .
 
 
 # Based on (...)
@@ -609,21 +609,21 @@
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/prop/";
-    foaf:primaryTopic ripub:Proposition .
+    foaf:primaryTopic rpubl:Proposition .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/fm/";
-    foaf:primaryTopic ripub:Forordningsmotiv .
+    foaf:primaryTopic rpubl:Forordningsmotiv .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
         sioc:id "/publ/dir/";
-    foaf:primaryTopic ripub:Kommittedirektiv .
+    foaf:primaryTopic rpubl:Kommittedirektiv .
 
 [] a sioc:Container;
     sioc:has_host <http://rinfo.lagrummet.se>;
     sioc:id "/publ/so/";
-    foaf:primaryTopic ripub:InternationellOverenskommelse .
+    foaf:primaryTopic rpubl:InternationellOverenskommelse .
 
 

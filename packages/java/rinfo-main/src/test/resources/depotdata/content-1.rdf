@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:dct="http://purl.org/dc/terms/"
-         xmlns:rinfo="http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#">
+         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
 
-  <rinfo:Forordning rdf:about="http://example.org/docs/sfs/1:1">
-    <rinfo:fsNummer>1:1</rinfo:fsNummer>
-    <rinfo:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/ref/fs/sfs"/>
+  <Forordning rdf:about="http://example.org/docs/sfs/1:1">
+    <fsNummer>1:1</fsNummer>
+    <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/ref/fs/sfs"/>
     <dct:title xml:lang="sv">Första Förordningen</dct:title>
-    <rinfo:paragraf rdf:resource="http://example.org/docs/sfs/1:1#p-1"/>
-  </rinfo:Forordning>
+    <paragraf rdf:resource="http://example.org/docs/sfs/1:1#p-1"/>
+  </Forordning>
 
 </rdf:RDF>

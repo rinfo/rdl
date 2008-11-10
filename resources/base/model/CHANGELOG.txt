@@ -11,3 +11,11 @@ CHANGELOG
 
   Se `<http://www.dublincore.org/documents/2008/01/14/dcmi-terms/>`_.
 
+2008-11-10
+--------------------
+
+* Strök föreslagen egenskap "utfärdare". Vi behåller dct:publisher för detta
+  ändamål.
+
+* Ändrade bas-segmentet för modell-URI:er till "ns". Döpte om publikationsmodellens segmentnamn (löv) till "publ".
+

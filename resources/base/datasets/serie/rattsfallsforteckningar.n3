@@ -3,7 +3,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix prism: <http://prismstandard.org/namespaces/1.2/basic/> .
-@prefix : <http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#> .
+@prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
 #=======================================================================
 
 # TODO: prism:issn <urn:ISSN:0000-0000>;
@@ -29,39 +29,39 @@
 
 
 # TODO: uttrycka hur?
-<http://rinfo.lagrummet.se/ref/rff/>
+<http://rinfo.lagrummet.se/serie/rff/>
     rdfs:label "Rättsfallsförteckningar" .
 
 
-<http://rinfo.lagrummet.se/ref/rff/nja> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rff/nja> a :Rattsfallsforteckning;
     rdfs:label "NJA"@sv;
     rdfs:comment "Nytt Juridiskt Arkiv"@sv .
 
-<http://rinfo.lagrummet.se/ref/rff/rh> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rff/rh> a :Rattsfallsforteckning;
     rdfs:label "RH"@sv;
     rdfs:comment "Rättsfall från hovrätterna"@sv .
 
-<http://rinfo.lagrummet.se/ref/rff/mod> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rff/mod> a :Rattsfallsforteckning;
     rdfs:label "MÖD"@sv;
     rdfs:comment "Miljööverdomstolen"@sv .
 
-<http://rinfo.lagrummet.se/ref/rff/ra> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rff/ra> a :Rattsfallsforteckning;
     rdfs:label "RÅ"@sv;
     rdfs:comment "Regeringsrättens årsbok"@sv .
 
-<http://rinfo.lagrummet.se/ref/rff/mig> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rff/mig> a :Rattsfallsforteckning;
     rdfs:label "MIG"@sv;
     rdfs:comment "Migrationsöverdomstolen"@sv .
 
-<http://rinfo.lagrummet.se/ref/rff/ad> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rff/ad> a :Rattsfallsforteckning;
     rdfs:label "AD"@sv;
     rdfs:comment "Arbetsdomstolen"@sv .
 
-<http://rinfo.lagrummet.se/ref/rff/md> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rff/md> a :Rattsfallsforteckning;
     rdfs:label "MD"@sv;
     rdfs:comment "Marknadsdomstolen"@sv .
 
-<http://rinfo.lagrummet.se/ref/rff/fod> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rff/fod> a :Rattsfallsforteckning;
     rdfs:label "FÖD"@sv;
     rdfs:comment "Försäkringsöverdomstolen"@sv .
 

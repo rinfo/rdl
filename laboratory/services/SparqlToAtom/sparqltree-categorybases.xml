@@ -4,7 +4,7 @@
                xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
                xmlns:dct="http://purl.org/dc/terms/"
                xmlns:foaf="http://xmlns.com/foaf/0.1/"
-               xmlns:rinfo="http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#"
+               xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
                distinct="true">
 
     {
@@ -16,9 +16,9 @@
         ?super1 rdfs:subClassOf ?super2 .
         OPTIONAL { ?super2 rdfs:subClassOf ?super3 }
         FILTER(
-            ?super1 = rinfo:Rattsinformationsdokument ||
-            ?super2 = rinfo:Rattsinformationsdokument ||
-            ?super3 = rinfo:Rattsinformationsdokument
+            ?super1 = rpubl:Rattsinformationsdokument ||
+            ?super2 = rpubl:Rattsinformationsdokument ||
+            ?super3 = rpubl:Rattsinformationsdokument
         )
     } UNION {
         ?subject dct:publisher ?item .
