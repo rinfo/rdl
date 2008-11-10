@@ -29,14 +29,16 @@ depot = FileDepot.newConfigured(args[0])
  */
 def addModel(File file) {
     def repo = RDFUtil.createMemoryRepository()
+    def conn = repo.connection
     RDFUtil.loadDataFromFile(repo, file)
 
     def modelUri = null
-    for (st in RDFUtil.one(repo.connection, null, RDF.TYPE, OWL.ONTOLOGY, true)) {
+    for (st in RDFUtil.one(conn, null, RDF.TYPE, OWL.ONTOLOGY, true)) {
         modelUri = new java.net.URI(st.subject.toString())
     }
     def rdfXmlType = RDFFormat.RDFXML.defaultMIMEType
     def rdfXml = RDFUtil.serializeAsInputStream(repo, rdfXmlType)
+    conn.close()
     repo.shutDown()
 
     def fileDate = new Date(file.lastModified())
@@ -52,6 +54,7 @@ def addDataset(String entryUriPath, List<File> files) {
     // TODO: scan resources and "figure out common base"?
 
     def repo = RDFUtil.createMemoryRepository()
+    def conn = repo.connection
 
     def rdfXmlType = RDFFormat.RDFXML.defaultMIMEType
     def enclosures = []
@@ -70,7 +73,7 @@ def addDataset(String entryUriPath, List<File> files) {
         def slug = "/${entryUriPath}/${fname}"
 
         def vf = repo.valueFactory
-        repo.connection.add(
+        conn.add(
                 vf.createURI(entryUri),
                 RDFS.SEEALSO,
                 vf.createURI(depot.baseUri.toString() + slug))
@@ -84,6 +87,9 @@ def addDataset(String entryUriPath, List<File> files) {
     }
 
     def rdfXml = RDFUtil.serializeAsInputStream(repo, rdfXmlType)
+
+    conn.close()
+    repo.shutDown()
 
     // TODO: as "subsumer" (i.e. supply captures sub-uri:s and 303:s..)?
     return addOrUpdate(
