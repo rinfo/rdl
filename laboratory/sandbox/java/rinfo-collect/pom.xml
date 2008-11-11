@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>se.lagrummet.rinfo</groupId>
+  <artifactId>rinfo-collect</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <parent>
+    <groupId>se.lagrummet</groupId>
+    <artifactId>rinfo</artifactId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+
+  <dependencies>
+    <!-- DEFAULT SCOPE (COMPILE) START -->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    <!-- DEFAULT SCOPE (COMPILE) END -->
+    
+    <!-- RUNTIME SCOPE START -->
+    <!-- RUNTIME SCOPE END -->
+    
+    <!-- TEST SCOPE START -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+      </dependency>    
+    <!-- TEST SCOPE END -->
+  </dependencies>
+
+<!-- Build Settings Start -->
+  <reporting>
+    <!-- Needed in order to generate the dashboard report properly. -->
+    <outputDirectory>
+      ${basedir}/../target/site/${project.artifactId}
+    </outputDirectory>
+  </reporting>
+<!-- Build Settings Stop -->
+
+<!-- Project Information Start -->
+    <name>RInfo Collect</name>
+    <description></description>
+    <url>http://dev.lagrummet.se/rinfo/</url>
+<!-- Project Information Stop -->
+
+</project>
