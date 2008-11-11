@@ -140,7 +140,7 @@ def baseToDepot() {
 
     // store the dataset "serie"
     def serieFiles = []
-    def baseUri = "ref/serie"
+    def baseUri = "serie"
     baseDir = new File(rinfoBase, "datasets/serie")
     FileUtils.iterateFiles(baseDir, ["n3"] as String[], true).each {
         serieFiles << it
