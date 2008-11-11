@@ -17,7 +17,7 @@ Bakgrund m.m.
             Kapitel 5: http://www.notisum.se/rnp/sls/lag/19980490.HTM#K5
             Kapitel 3, paragraf 3: http://www.notisum.se/rnp/sls/lag/19980490.HTM#K3P3
     - ...
-    - intern-id-baserat, likt: <http://rinfo/id/18.b1bed211329040f5080003602/DFS_2007-08.pdf>
+    - intern-id-baserat, likt: <http://rinfo/id/18.b1bed211329040f5080003602/DFS-2007_08.pdf>
         - Intern-ID plus "namn" som "dokumentet"
 )
 
@@ -392,6 +392,34 @@ Framtida begreppstillägg med liknande kortformer:
     .. SFS:er får RF-ID:n 2024:
         http://rinfo/rfid/sfs/af24123443cc4354215
 
+
+"Content Negotiation"-alternativ
+========================================================================
+
+.. Skäl för att låta representationer ligga URL-hierarkiskt "under" canonical:
+    - för att alla "lokal"-relativa enclosure-sökvägar ska funka utan rewrite
+      av hyperlänkar i content. T.ex.:
+
+        /publ/sfs/1999/175/
+            pdf,sv ::
+                href="bilaga_A.pdf"
+            bilaga_A.pdf
+
+ http://rinfo.lagrummet.se/
+
+    # canonical:
+    /publ/sfs/1999/175
+
+    # controlled name or mechanic suffix:
+    /publ/sfs/1999/175/xhtml,sv
+    /publ/sfs/1999/175/data,sv.xhtml
+
+    # a different take:
+    /repr/xhtml,sv/publ/sfs/1999/175
+
+    # slugs:
+    /publ/sfs/1999/175/SFS-2007_175,sv.xhtml
+    /publ/sfs-2007_175,sv.xhtml
 
 
 REST:en av frågan

@@ -6,17 +6,17 @@
 
   <!-- FIXME: UNKNOWN -->
   <Utredningsbetankande rdf:about="tag:lagrummet.se,2008:publ/ds/1998:10">
-    <!-- identification -->
+    <!-- identifiering -->
     <utrSerie rdf:resource="http://rinfo.lagrummet.se/ref/utr/ds"/>
     <utrSerienummer>1998:10</utrSerienummer>
     <dct:title xml:lang="sv"></dct:title>
-    <!-- temporality -->
-    <!-- provenance -->
+    <!-- tidsaspekter -->
+    <!-- ursprung -->
     <dct:publisher/>
-    <!-- connections -->
+    <!-- kopplingar -->
     <utgarFran/>
     <foreslarAndringAv/>
-    <!-- composition -->
+    <!-- sammansätting -->
   </Utredningsbetankande>
 
 </rdf:RDF>

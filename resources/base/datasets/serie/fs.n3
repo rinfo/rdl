@@ -174,7 +174,7 @@
     rdfs:label "KIFS"@sv;
     rdfs:comment "Kemikalieinspektionens författningssamling"@sv;
     rdfs:seeAlso <http://www.kemi.se/templates/Page____2910.aspx>;
-    dc:publisher <http://rdf.kb.se/ap/20061130160202>; .
+    dct:publisher <http://rdf.kb.se/ap/20061130160202>; .
 
 <http://rinfo.lagrummet.se/serie/fs/kfs> a :Forfattningssamling;
     rdfs:label "KFS"@sv;
