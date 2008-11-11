@@ -46,7 +46,12 @@ public class DepotEntryBatch extends AbstractCollection<DepotEntry> {
             }
             public DepotEntry next() {
                 EntryRef entryRef = sortedIter.next();
-                return depot.getUncheckedDepotEntry(entryRef.uriPath);
+                DepotEntry depotEntry = depot.getUncheckedDepotEntry(entryRef.uriPath);
+                if (depotEntry == null) {
+                    throw new DepotUriException("Reference to entry with path <" +
+                            entryRef.uriPath+"> yields no entry.");
+                }
+                return depotEntry;
             }
             public void remove() {
                 sortedIter.remove();

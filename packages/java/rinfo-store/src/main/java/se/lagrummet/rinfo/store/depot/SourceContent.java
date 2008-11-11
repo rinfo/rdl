@@ -101,7 +101,7 @@ public class SourceContent {
      * @see {@link #writeTo(OutputStream)}.
      */
     public void writeTo(File file)
-            throws IOException, IllegalStateException, SourceCheckException {
+            throws IOException, IllegalStateException {
         FileOutputStream outStream = new FileOutputStream(file);
         writeTo(outStream);
     }

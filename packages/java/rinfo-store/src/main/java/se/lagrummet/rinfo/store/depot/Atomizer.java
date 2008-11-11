@@ -161,7 +161,7 @@ public class Atomizer {
 
     //== Feed Specifics ==
 
-    public void generateIndex() throws IOException {
+    public void generateIndex() throws DepotWriteException, IOException {
         File feedDir = new File(depot.getBaseDir(), depot.getFeedPath());
         if (!feedDir.exists()) {
             feedDir.mkdir();
@@ -179,7 +179,8 @@ public class Atomizer {
 
     // TODO: test algorithm in isolation! (refactor?)
     // .. perhaps with overridden generateAtomEntryContent + writeFeed
-    public void indexEntries(DepotEntryBatch entryBatch) throws IOException {
+    public void indexEntries(DepotEntryBatch entryBatch)
+            throws DepotWriteException, IOException {
 
         String subscriptionPath = depot.getSubscriptionPath();
 
@@ -246,7 +247,7 @@ public class Atomizer {
         } else {
             feed = Abdera.getInstance().newFeed();
         }
-        feed.setUpdated(new Date()); // TODO:IMPROVE: always use "now" utcDateTime?
+        feed.setUpdated(new Date()); // TODO:? always use "now" utcDateTime?
         feed.addLink(uriPath, "self");
         return feed;
     }
@@ -380,8 +381,8 @@ public class Atomizer {
         }
 
         // TODO: what to use as values?
-        atomEntry.setTitle("");//getId().toString())
-        atomEntry.setSummary("");//getId().toString())
+        atomEntry.setTitle(depotEntry.getId().toString());
+        atomEntry.setSummary("");//getId().toString()
 
         if (useEntrySelfLink) {
             String selfUriPath = depot.getPathProcessor().makeNegotiatedUriPath(

@@ -182,7 +182,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
         def entry = fileDepot.getEntry(DEL_ID_1)
         entry.delete(deleteTime)
 
-        entry = fileDepot.getEntry(DEL_ID_1, false)
+        entry = fileDepot.getUncheckedDepotEntry(DEL_ID_1.path)
         assertFalse entry.isLocked()
         assertEquals 0, entry.findContents("application/pdf").size()
         assertEquals entry.updated, deleteTime

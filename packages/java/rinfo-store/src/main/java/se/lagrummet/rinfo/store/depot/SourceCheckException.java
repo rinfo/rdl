@@ -3,7 +3,7 @@ package se.lagrummet.rinfo.store.depot;
 import java.io.IOException;
 
 
-public class SourceCheckException extends IOException { // TODO: just Exception?
+public class SourceCheckException extends IOException {
 
     SourceContent.Check failedCheck;
     Object expectedValue;

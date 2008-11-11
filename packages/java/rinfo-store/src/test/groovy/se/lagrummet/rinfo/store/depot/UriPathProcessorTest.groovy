@@ -12,6 +12,12 @@ class UriPathProcessorTest extends GroovyTestCase {
 
     static final PATHS_TO_PARSE = [
 
+        ["/serie/",
+            new ParsedPath("serie", "/serie", true)],
+
+        ["/serie/rdf",
+            new ParsedPath("serie", "/serie", false, "rdf")],
+
         ["/publ/sfs/1999:175",
             new ParsedPath("publ", "/publ/sfs/1999:175")],
 
@@ -35,6 +41,12 @@ class UriPathProcessorTest extends GroovyTestCase {
 
         ["/ns/2007/09/rinfo/publ,sv",
             new ParsedPath("ns", "/ns/2007/09/rinfo/publ", false, null, "sv")],
+
+        ["/serie/fs",
+            new ParsedPath("serie", "/serie/fs")],
+
+        ["/serie/fs.rdf",
+            new ParsedPath("serie", "/serie/fs.rdf")],
 
         ["/publ/sfs/1999:175/image.png",
             new ParsedPath("publ", "/publ/sfs/1999:175/image.png")],

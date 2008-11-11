@@ -1,7 +1,6 @@
 package se.lagrummet.rinfo.store.depot;
 
-
-public class DepotIndexException extends RuntimeException {
+public class DepotIndexException extends DepotWriteException {
 
     public DepotIndexException(String msg) {
         super(msg);

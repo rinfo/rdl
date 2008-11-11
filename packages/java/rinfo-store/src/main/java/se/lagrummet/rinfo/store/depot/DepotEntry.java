@@ -320,22 +320,19 @@ public class DepotEntry {
     //==== TODO: above in DepotEntryView base class? ====
 
     public void create(Date createTime, List<SourceContent> sourceContents)
-            throws DuplicateDepotEntryException,
-                   FileNotFoundException, IOException {
+            throws DepotWriteException, FileNotFoundException, IOException {
         create(createTime, sourceContents, null);
     }
 
     public void create(Date createTime, List<SourceContent> sourceContents,
             List<SourceContent> sourceEnclosures)
-            throws DuplicateDepotEntryException,
-                   FileNotFoundException, IOException {
+            throws DepotWriteException, FileNotFoundException, IOException {
         create(createTime, sourceContents, sourceEnclosures, true);
     }
 
     public void create(Date createTime, List<SourceContent> sourceContents,
             List<SourceContent> sourceEnclosures, boolean releaseLock)
-            throws DuplicateDepotEntryException,
-                   FileNotFoundException, IOException {
+            throws DepotWriteException, FileNotFoundException, IOException {
         if(entryContentDir.exists()) {
             throw new DuplicateDepotEntryException(this);
         }
@@ -367,14 +364,14 @@ public class DepotEntry {
 
     public void update(Date updateTime,
             List<SourceContent> sourceContents)
-            throws IOException, FileNotFoundException {
+            throws DepotWriteException, IOException, FileNotFoundException {
         update(updateTime, sourceContents, null);
     }
 
     public void update(Date updateTime,
             List<SourceContent> sourceContents,
             List<SourceContent> sourceEnclosures)
-            throws IOException, FileNotFoundException  {
+            throws DepotWriteException, IOException, FileNotFoundException {
         boolean selfLocked = !isLocked();
         if (selfLocked) {
             lock();
@@ -404,7 +401,7 @@ public class DepotEntry {
     }
 
     public void delete(Date deleteTime)
-            throws DeletedDepotEntryException,
+            throws DeletedDepotEntryException, DepotIndexException,
                    IOException, FileNotFoundException {
         boolean selfLocked = !isLocked();
         if (selfLocked) {
@@ -441,7 +438,7 @@ public class DepotEntry {
     }
 
 
-    public void rollback() throws IOException {
+    public void rollback() throws DepotWriteException, IOException {
         if (hasHistory()) {
             restorePrevious();
         } else {
@@ -454,7 +451,7 @@ public class DepotEntry {
             DatePathUtil.youngestEntryHistoryDir(entryContentDir) != null;
     }
 
-    public void wipeout() throws IOException {
+    public void wipeout() throws DepotIndexException, IOException {
         lock();
         rollOffToHistory();
         FileUtils.deleteDirectory(entryContentDir);
@@ -462,7 +459,7 @@ public class DepotEntry {
                 entryContentDir.getParentFile(), depot.getBaseDir());
     }
 
-    protected void restorePrevious() throws IOException {
+    protected void restorePrevious() throws DepotIndexException, IOException {
         lock();
         File rollOffDir = newRollOffDir();
         rollOffToDir(rollOffDir);
@@ -476,28 +473,30 @@ public class DepotEntry {
     }
 
 
-    protected void addContent(SourceContent srcContent) throws IOException {
+    protected void addContent(SourceContent srcContent)
+            throws DepotWriteException, IOException {
         addContent(srcContent, false);
     }
 
     protected void addContent(SourceContent srcContent, boolean replace)
-            throws IOException {
+            throws DepotWriteException, IOException {
         File file = newContentFile(srcContent.getMediaType(), srcContent.getLang());
         if (!replace) {
             if (file.exists()) {
-                throwDuplicateDepotContentException(srcContent);
+                throw new DuplicateDepotContentException(this, srcContent);
             }
         }
         srcContent.writeTo(file);
     }
 
 
-    protected void addEnclosure(SourceContent srcContent) throws IOException {
+    protected void addEnclosure(SourceContent srcContent)
+            throws DepotWriteException, IOException {
         addEnclosure(srcContent, false);
     }
 
     protected void addEnclosure(SourceContent srcContent, boolean replace)
-            throws IOException {
+            throws DepotWriteException, IOException {
         String enclUriPath = srcContent.getEnclosedUriPath();
         if (enclUriPath.startsWith("/")) {
             if (!enclUriPath.startsWith(entryUriPath)) {
@@ -513,7 +512,7 @@ public class DepotEntry {
         File file = new File(entryDir, enclPath);
         if (!replace) {
             if (file.exists()) {
-                throwDuplicateDepotContentException(srcContent);
+                throw new DuplicateDepotContentException(this, srcContent);
             }
         }
         FilePathUtil.plowParentDirPath(file);
@@ -547,7 +546,7 @@ public class DepotEntry {
     }
 
 
-    protected void rollOffToHistory() throws IOException {
+    protected void rollOffToHistory() throws DepotIndexException, IOException {
         rollOffToDir(newHistoryDir());
     }
 
@@ -622,7 +621,7 @@ public class DepotEntry {
         }
     }
 
-    protected File newHistoryDir() throws IOException {
+    protected File newHistoryDir() throws DepotIndexException, IOException {
         String dirPath = DatePathUtil.toEntryHistoryPath(getUpdated());
         File dir = new File(entryContentDir, dirPath);
         if (dir.exists()) {
@@ -635,7 +634,7 @@ public class DepotEntry {
         return dir;
     }
 
-    protected File newRollOffDir() throws IOException {
+    protected File newRollOffDir() throws DepotIndexException, IOException {
         File dir = new File(entryContentDir, ROLLOFF_DIR_NAME);
         if (dir.exists()) {
             throw new DepotIndexException(
@@ -653,11 +652,6 @@ public class DepotEntry {
             enclosuresDir.mkdir();
         }
         return enclosuresDir;
-    }
-
-    protected void throwDuplicateDepotContentException(SourceContent srcContent) {
-        throw new DuplicateDepotContentException(
-                this, srcContent.getMediaType(), srcContent.getLang());
     }
 
 }

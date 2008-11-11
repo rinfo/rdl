@@ -27,7 +27,6 @@ public class FileDepot {
     private File baseDir;
     private String feedPath;
     private Atomizer atomizer;
-    // TODO: configurable.. (Via configure? Data in baseDir?)
     private UriPathProcessor pathProcessor = new UriPathProcessor();
 
     public FileDepot() {
@@ -70,6 +69,7 @@ public class FileDepot {
         setBaseDir(new File(config.getString(CONF_BASE_KEY+"fileDir")));
         setFeedPath(config.getString(CONF_BASE_KEY+"feedPath"));
         atomizer.configure(config);
+        pathProcessor.configure(config);
     }
 
 
@@ -85,8 +85,6 @@ public class FileDepot {
         this.baseDir = baseDir;
         if (!baseDir.exists()) {
             baseDir.mkdir();
-            //throw new ConfigurationException(
-            //        "Directory "+baseDir+" does not exist.");
         }
     }
 
@@ -103,8 +101,7 @@ public class FileDepot {
 
     //== Entry and Content Lookups ==
 
-    public List<DepotContent> find(String uriPath)
-            throws DeletedDepotEntryException, LockedDepotEntryException {
+    public List<DepotContent> find(String uriPath) throws DepotReadException {
         List results = new ArrayList();
 
         if (uriPath.startsWith(feedPath)) {
@@ -138,30 +135,15 @@ public class FileDepot {
     }
 
 
-    public DepotEntry getEntry(URI entryUri)
-            throws DeletedDepotEntryException, LockedDepotEntryException {
-        return getEntry(entryUri, true);
-    }
-
-    public DepotEntry getEntry(URI entryUri, boolean failOnDeleted)
-            throws DeletedDepotEntryException, LockedDepotEntryException {
+    public DepotEntry getEntry(URI entryUri) throws DepotReadException {
         assertWithinBaseUri(entryUri);
-        return getEntry(entryUri.getPath(), failOnDeleted);
+        return getEntry(entryUri.getPath());
     }
 
-    public DepotEntry getEntry(String uriPath)
-            throws DeletedDepotEntryException, LockedDepotEntryException {
-        return getEntry(uriPath, true);
-    }
-
-    public DepotEntry getEntry(String uriPath, boolean failOnDeleted)
-            throws DeletedDepotEntryException, LockedDepotEntryException {
+    public DepotEntry getEntry(String uriPath) throws DepotReadException {
         DepotEntry depotEntry = getUncheckedDepotEntry(uriPath);
         if (depotEntry != null) {
-            if (failOnDeleted) {
-                depotEntry.assertIsNotDeleted();
-            }
-            // TODO:IMPROVE: bubble up these details or use failOnLocked flag?
+            depotEntry.assertIsNotDeleted();
             depotEntry.assertIsNotLocked();
         }
         return depotEntry;
@@ -288,18 +270,16 @@ public class FileDepot {
 
     public DepotEntry createEntry(URI entryUri, Date created,
             List<SourceContent> contents)
-            throws IOException,
-                   DeletedDepotEntryException, LockedDepotEntryException,
-                   DuplicateDepotEntryException {
+            throws DepotReadException, DepotWriteException,
+                   IOException {
         return createEntry(entryUri, created, contents, null);
     }
 
     public DepotEntry createEntry(URI entryUri, Date created,
             List<SourceContent> contents,
             List<SourceContent> enclosures)
-            throws IOException,
-                   DeletedDepotEntryException, LockedDepotEntryException,
-                   DuplicateDepotEntryException {
+            throws DepotReadException, DepotWriteException,
+                   IOException {
         assertWithinBaseUri(entryUri);
         String uriPath = entryUri.getPath();
         File entryDir = getEntryDir(uriPath);
@@ -316,12 +296,12 @@ public class FileDepot {
         // a new updated depotEntry in the feeds..
     }
 
-    public void generateIndex() throws IOException {
+    public void generateIndex() throws DepotWriteException, IOException {
         atomizer.generateIndex();
     }
 
     public void indexEntries(DepotEntryBatch entryBatch)
-            throws IOException {
+        throws DepotWriteException, IOException {
         atomizer.indexEntries(entryBatch);
     }
 

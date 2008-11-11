@@ -14,8 +14,8 @@ class FileDepotReadTest extends GroovyTestCase {
     void testShouldContainEntry() {
         def entry = fileDepot.getEntry("/publ/1901/100")
         assertNotNull entry
-        // TODO: see FileDepotWriteTest
-        // assertEquals "", entry.id # updated, published
+        assertEquals entry.id, new URI("http://example.org/publ/1901/100")
+        assertEquals entry.published, entry.updated
     }
 
     void testShouldFindEntryContent() {
@@ -41,13 +41,22 @@ class FileDepotReadTest extends GroovyTestCase {
         assertNull c.lang
     }
 
-    void testShouldFindEnclosures() {
-        // TODO: see FileDepotWriteTest
-        // .. direct, several, nested
-        // .. not list enclosures in nested entries
+    void testShouldFindEnclosure() {
+        def enclosures = fileDepot.getEntry("/publ/1901/100").findEnclosures()
+        assertEquals 1, enclosures.size()
+        def encl = enclosures[0]
+        assertEquals "/publ/1901/100/icon.png", encl.depotUriPath
+        assertEquals "image/png", encl.mediaType
     }
 
-    // TODO: getHistoricalEntries..
+    void testShouldFindNestedEnclosure() {
+        def entryPath = "/publ/1901/100/revisions/1902/200"
+        def enclosures = fileDepot.getEntry(entryPath).findEnclosures()
+        def encl = enclosures[0]
+        assertEquals "${entryPath}/styles/screen.css", encl.depotUriPath
+        // TODO: needs to configure FileDepot computeMediaType
+        //assertEquals "text/css", encl.mediaType
+    }
 
     void testShouldNotGetDeleted() {
         def deletedId = "/publ/1901/0"
@@ -56,14 +65,26 @@ class FileDepotReadTest extends GroovyTestCase {
         }
     }
 
+    void testShouldFindAllEntryContentAsList() {
+        def results = fileDepot.find("/publ/1901/100")
+        assertEquals 3, results.size()
+    }
+
+    void testShouldFindDirectContent() {
+        def results = fileDepot.find("/publ/1901/100/icon.png")
+        assertEquals 1, results.size()
+    }
+
+    // TODO: getHistoricalEntries..
+
     void testShouldIterateEntries() {
 
         def entries = fileDepot.iterateEntries().toList()
-        assertEquals 4, entries.size()
+        assertEquals 5, entries.size()
 
          // include deleted
          entries = fileDepot.iterateEntries(false, true)
-        assertEquals 5, entries.size()
+        assertEquals 6, entries.size()
 
         // TODO: historical: fileDepot.iterateEntries(true, false)
     }
@@ -85,6 +106,18 @@ class FileDepotReadTest extends GroovyTestCase {
         shouldFail(DepotUriException) {
             def entry = fileDepot.getEntry("http://example.org/some/path")
         }
+    }
+
+    // edge cases / regressions
+
+    void testShouldFindRdfInTopEntry() {
+        def entry = fileDepot.getEntry("/dataset")
+        assertNotNull entry
+        def contents = entry.findContents("application/rdf+xml", null)
+        assertEquals 1, contents.size()
+        def c = contents[0]
+        assertEquals "application/rdf+xml", c.mediaType
+        assertEquals "/dataset/rdf", c.depotUriPath
     }
 
 }
