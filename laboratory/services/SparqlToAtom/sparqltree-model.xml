@@ -80,10 +80,11 @@
             } UNION {
                 ?property a owl:FunctionalProperty
             }
+
             <property> a <propertyType/>;
-                rdfs:isDefinedBy ?ontology;
                 rdfs:label <label/>;
-                rdfs:comment <comment/>;
+                rdfs:comment <comment/> .
+                ?property rdfs:isDefinedBy ?ontology;
                 OPTIONAL {
                     ?property rdfs:subPropertyOf <subPropertyOf/>;
                 }
@@ -104,6 +105,15 @@
                 }
 
             </property>
+
+        } UNION {
+
+            <!-- TODO: how to get only props (and classes) *referenced* via
+                 ontology defined things (w/o getting *all* in the repo)?
+            -->
+            ?property a rdf:Property;
+                rdfs:label ?label;
+                rdfs:comment ?comment .
 
         }
 
