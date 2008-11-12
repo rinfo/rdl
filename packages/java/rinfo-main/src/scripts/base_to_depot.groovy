@@ -138,14 +138,15 @@ def baseToDepot() {
         addToBatch addModel(it)
     }
 
+    // store the dataset "ext/modeldata"
+    baseDir = new File(rinfoBase, "extended/rdf")
+    addToBatch addDataset("ext/modeldata",
+            FileUtils.listFiles(baseDir, ["n3"] as String[], true))
+
     // store the dataset "serie"
-    def serieFiles = []
-    def baseUri = "serie"
     baseDir = new File(rinfoBase, "datasets/serie")
-    FileUtils.iterateFiles(baseDir, ["n3"] as String[], true).each {
-        serieFiles << it
-    }
-    addToBatch addDataset(baseUri, serieFiles)
+    addToBatch addDataset("serie",
+            FileUtils.listFiles(baseDir, ["n3"] as String[], true))
 
     depot.indexEntries(batch)
 
