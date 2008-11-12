@@ -143,16 +143,23 @@ def wsgi_server(servername='', port=None, **kwargs):
 if __name__ == '__main__':
 
     from optparse import OptionParser
+
     parser = OptionParser(usage="%prog [options] [-h] <filename>")
+
     parser.add_option('-e', '--endpoint',
             help='Url to the sparql endpoint.')
     parser.add_option('-s', '--serve', type=int,
             help='Port to serve as web app.')
 
     parser.add_option('--sparql', action="store_true",
-            help='')
+            help='Show the sparql extracted from the sparqltree')
     parser.add_option('--xslt', action="store_true",
-            help='')
+            help='Show the xslt created from the sparqltree')
+
+    parser.add_option('--result', action="store_true",
+            help='Show raw sparql response xml')
+    parser.add_option('--apply',
+            help='Apply an xslt to the result tree')
 
     opts, args = parser.parse_args()
     if not opts.endpoint:
@@ -169,7 +176,12 @@ if __name__ == '__main__':
             print rqtree.sparql
         elif opts.xslt:
             print rqtree._trans_doc
+        elif opts.result:
+            print rqtree._get_result(opts.endpoint)
         else:
-            print rqtree(opts.endpoint)
-
+            out = rqtree(opts.endpoint)
+            if opts.apply:
+                print to_xslt(opts.apply)(out)
+            else:
+                print out
 

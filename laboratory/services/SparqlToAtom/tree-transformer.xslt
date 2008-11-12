@@ -34,6 +34,11 @@
                     <alias:value-of select="s:uri"/>
                 </alias:attribute>
             </alias:when>
+            <alias:when test="s:bnode">
+                <alias:attribute name="bnode">
+                    <alias:value-of select="s:bnode"/>
+                </alias:attribute>
+            </alias:when>
             <alias:otherwise>
                 <alias:copy-of select="*/@*"/>
                 <alias:value-of select="*"/>
