@@ -71,6 +71,12 @@
             owl:minCardinality 0
         ],
         [ a owl:Restriction;
+            owl:onProperty dct:issued;
+            owl:cardinality 1;
+            # TODO: strukturerad kommentar?
+            #rdfs:comment "Är i regel alltid publicerad, men datumet kan vara okänt."@sv
+        ],
+        [ a owl:Restriction;
             owl:onProperty dct:references;
             owl:allValuesFrom rdfs:Resource;
             owl:minCardinality 0
@@ -395,6 +401,7 @@
 
 
 :ikrafttradanderegel a rdf:Property;
+    rdfs:isDefinedBy : ;
     rdfs:label "Ikraftträdanderegel"@sv;
     rdfs:comment "En bestämmelse som anger om, när och hur författningen träder ikraft."@sv;
     protege:abstract "true" .
@@ -428,7 +435,8 @@
 :overgangsbestammelse a rdf:Property;
     rdfs:label "Övergångsbestämmelse"@sv;
     rdfs:comment "Information om övergångsbestämmelser."@sv;
-    protege:abstract "true" .
+    protege:abstract "true";
+    rdfs:isDefinedBy : .
 
 :overgangsbestammelsehanvisning a owl:ObjectProperty;
     rdfs:subPropertyOf :overgangsbestammelse;
