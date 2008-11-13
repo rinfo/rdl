@@ -1,5 +1,8 @@
 package se.lagrummet.rinfo.service
 
+import org.slf4j.LoggerFactory
+import org.slf4j.Logger
+
 import org.restlet.Application
 import org.restlet.Context
 import org.restlet.Finder
@@ -12,6 +15,10 @@ import org.restlet.data.Method
 import org.restlet.data.Request
 import org.restlet.data.Response
 import org.restlet.data.Status
+import org.restlet.resource.Representation;
+import org.restlet.resource.Resource;
+import org.restlet.resource.StringRepresentation;
+import org.restlet.resource.Variant;
 
 import org.apache.commons.configuration.AbstractConfiguration
 import org.apache.commons.configuration.ConfigurationException
@@ -22,6 +29,7 @@ import org.openrdf.repository.http.HTTPRepository
 import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.nativerdf.NativeStore
 
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
@@ -29,7 +37,12 @@ class ServiceApplication extends Application {
 
     public static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service.properties"
     public static final String RDF_REPO_CONTEXT_KEY = "rinfo.service.rdfrepo"
+    public static final String THREAD_POOL_CONTEXT_KEY = "rinfo.service.threadpool"
+    public static final String LOGGER_CONTEXT_KEY = "rinfo.service.logger"
 
+    private final logger = LoggerFactory.getLogger(ServiceApplication)
+
+    private ExecutorService threadPool    
     private Repository repo
 
     public ServiceApplication(Context parentContext) {
@@ -47,13 +60,19 @@ class ServiceApplication extends Application {
             repo = new SailRepository(new NativeStore(dataDir))
         }
         repo.initialize()
+        
+        threadPool = Executors.newSingleThreadExecutor()
+        
         def attrs = getContext().getAttributes()
         attrs.putIfAbsent(RDF_REPO_CONTEXT_KEY, repo)
+        attrs.putIfAbsent(THREAD_POOL_CONTEXT_KEY, threadPool)
+        attrs.putIfAbsent(LOGGER_CONTEXT_KEY, logger)
     }
 
     @Override
     public synchronized Restlet createRoot() {
-        def router = new Router(getContext())
+        def router = new Router(getContext())                
+        router.attach("/status", StatusResource)        
         router.attachDefault(new Finder(getContext(), RDFLoaderHandler))
         return router
     }
@@ -61,6 +80,7 @@ class ServiceApplication extends Application {
     @Override
     public void stop() {
         super.stop()
+        threadPool.shutdown()
         repo.shutDown()
     }
 
@@ -80,6 +100,7 @@ class RDFLoaderHandler extends Handler {
                     "Missing feed parameter.")
             return
         }
+        logger.info("ServiceApplication: Scheduling collect of <${feedUrl}>.")
         triggerFeedCollect(new URL(feedUrl))
         response.setEntity("Scheduled collect of <${feedUrl}>.", MediaType.TEXT_PLAIN)
     }
@@ -90,15 +111,37 @@ class RDFLoaderHandler extends Handler {
 
         def repo = (Repository) getContext().getAttributes().get(
                 ServiceApplication.RDF_REPO_CONTEXT_KEY)
-        // TODO:IMPROVE: Ok to make a new instance for each request? Shouldn't
-        // be so expensive, and isolates it (shouldn't be app-global..)
-        def rdfStoreLoader = new SesameLoader(repo)
-        def executor = Executors.newSingleThreadExecutor()
-        executor.execute({
+                
+        def pool = (ExecutorService) getContext().getAttributes().get(
+                ServiceApplication.THREAD_POOL_CONTEXT_KEY) 
+
+        def logger = (Logger) getContext().getAttributes().get(
+        		ServiceApplication.LOGGER_CONTEXT_KEY) 
+        		
+		pool.execute({
+                // TODO:IMPROVE: Ok to make a new instance for each request? Shouldn't
+                // be so expensive, and isolates it (shouldn't be app-global..)
+                logger.info("Beginning collect of <${feedUrl}>.")                
+                def rdfStoreLoader = new SesameLoader(repo)
                 rdfStoreLoader.readFeed(feedUrl)
+                logger.info("Completeted collect of <${feedUrl}>.")                
             })
-        executor.shutdown()
         return true
     }
 
+}
+
+/*
+ *  Basic resource for simple status message.   
+ */
+class StatusResource extends Resource {
+	public StatusResource(Context context, Request request, Response response) {
+		super(context, request, response)
+		getVariants().add(new Variant(MediaType.TEXT_PLAIN))
+	}
+	@Override
+	public Representation getRepresentation(Variant variant) {
+		def representation = new StringRepresentation("OK", MediaType.TEXT_PLAIN)
+		return representation
+	}
 }
