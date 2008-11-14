@@ -152,6 +152,9 @@ class RDFLoaderHandler extends Handler {
 
 /*
  *  Basic resource for simple status message.   
+ *  
+ *  TODO: replace this by a handleGet in RDFLoaderHandler?
+ *  TODO: some form of collect status page..?
  */
 class StatusResource extends Resource {
 	public StatusResource(Context context, Request request, Response response) {
