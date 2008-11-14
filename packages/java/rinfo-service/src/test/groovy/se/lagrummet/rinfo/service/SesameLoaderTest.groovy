@@ -60,27 +60,35 @@ class SesameLoaderTest {
 
         loader.readFeed(url("${baseUrl}/1-init.atom"))
         assertEquals 2, countContexts()
-        assertNotNull RDFUtil.one(conn, thing(1), RDFS.LABEL, lit("Thing 1"))
-        assertNotNull RDFUtil.one(conn, thing(2), RDFS.LABEL, lit("Thing 2"))
+        assertTrue conn.hasStatement(thing(1), RDFS.LABEL, lit("Thing 1"), false)
+        assertTrue conn.hasStatement(thing(2), RDFS.LABEL, lit("Thing 2"), false)        
 
         // No changes
         loader.readFeed(url("${baseUrl}/1-init.atom"))
         assertEquals 2, countContexts()
-        assertNotNull RDFUtil.one(conn, thing(1), RDFS.LABEL, lit("Thing 1"))
+        assertTrue conn.hasStatement(thing(1), RDFS.LABEL, lit("Thing 1"), false)
 
         loader.readFeed(url("${baseUrl}/2-updated_t1.atom"))
         assertEquals 2, countContexts()
-        assertNotNull RDFUtil.one(conn, thing(1), RDFS.LABEL,
-                lit("Updated thing 1"))
+        assertTrue conn.hasStatement(thing(1), RDFS.LABEL, 
+        		lit("Updated thing 1"), false)
 
         loader.readFeed(url("${baseUrl}/3-added_t3.atom"))
         assertEquals 3, countContexts()
-        assertNotNull RDFUtil.one(conn, thing(3), RDFS.LABEL, lit("Thing 3"))
+        assertTrue conn.hasStatement(thing(3), RDFS.LABEL, lit("Thing 3"), false)
 
         loader.readFeed(url("${baseUrl}/4-deleted_t3.atom"))
         assertEquals 3, countContexts() // NOTE: keeps context..
         // TODO: assertEquals contextTimeStamp..
-        assertNull RDFUtil.one(conn, thing(3), RDFS.LABEL, null)
+        assertFalse conn.hasStatement(thing(3), RDFS.LABEL, null, false)
+
+        loader.readFeed(url("${baseUrl}/5-deleted_t2.atom"))
+        assertEquals 3, countContexts() // NOTE: keeps context..        
+        assertFalse conn.hasStatement(thing(2), RDFS.LABEL, null, false)
+
+        loader.readFeed(url("${baseUrl}/6-deleted_t1.atom"))
+        assertEquals 3, countContexts() // NOTE: keeps context..        
+        assertFalse conn.hasStatement(thing(1), RDFS.LABEL, null, false)
 
         //DEBUG:RDFUtil.serialize(repo, "application/rdf+xml", System.out)
         conn.close()
