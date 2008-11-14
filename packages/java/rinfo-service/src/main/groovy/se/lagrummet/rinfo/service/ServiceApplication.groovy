@@ -27,6 +27,7 @@ import org.apache.commons.configuration.PropertiesConfiguration
 import org.openrdf.repository.Repository
 import org.openrdf.repository.http.HTTPRepository
 import org.openrdf.repository.sail.SailRepository
+import org.openrdf.repository.event.base.NotifyingRepositoryWrapper
 import org.openrdf.sail.nativerdf.NativeStore
 
 import java.util.concurrent.ExecutorService
@@ -44,29 +45,47 @@ class ServiceApplication extends Application {
 
     private ExecutorService threadPool    
     private Repository repo
-
+    
     public ServiceApplication(Context parentContext) {
-        super(parentContext)
+        super(parentContext)        
+        
+        threadPool = Executors.newSingleThreadExecutor()
+
+        def attrs = getContext().getAttributes()
+        attrs.putIfAbsent(THREAD_POOL_CONTEXT_KEY, threadPool)
+        attrs.putIfAbsent(LOGGER_CONTEXT_KEY, logger)        
+
         configure(new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME))
     }
 
     protected void configure(AbstractConfiguration config) {
-        def repoPath = config.getString("rinfo.service.sesameRepoPath")
+    	def repoPath = config.getString("rinfo.service.sesameRepoPath")
         def remoteRepoName = config.getString("rinfo.service.sesameRemoteRepoName")
+        
+        if (repo != null) {
+            // close previous repo if set - to enable reconfiguration
+            repo.shutDown()
+        }
+
         if (repoPath =~ /^https?:/) {
             repo = new HTTPRepository(repoPath, remoteRepoName)
         } else {
             def dataDir = new File(repoPath)
             repo = new SailRepository(new NativeStore(dataDir))
         }
+        repo = new NotifyingRepositoryWrapper(repo) // enable notifications     
         repo.initialize()
         
-        threadPool = Executors.newSingleThreadExecutor()
-        
         def attrs = getContext().getAttributes()
-        attrs.putIfAbsent(RDF_REPO_CONTEXT_KEY, repo)
-        attrs.putIfAbsent(THREAD_POOL_CONTEXT_KEY, threadPool)
-        attrs.putIfAbsent(LOGGER_CONTEXT_KEY, logger)
+        attrs.put(RDF_REPO_CONTEXT_KEY, repo)
+    }
+
+    protected void addRepositoryListener(listener) {
+    	repo.addRepositoryListener(listener)    	
+    }
+
+    protected void addRepositoryConnectionListener(listener) {
+    	repo.addRepositoryConnectionListener(listener)     
     }
 
     @Override
@@ -119,13 +138,13 @@ class RDFLoaderHandler extends Handler {
         		ServiceApplication.LOGGER_CONTEXT_KEY) 
         		
 		pool.execute({
-                // TODO:IMPROVE: Ok to make a new instance for each request? Shouldn't
-                // be so expensive, and isolates it (shouldn't be app-global..)
-                logger.info("Beginning collect of <${feedUrl}>.")                
-                def rdfStoreLoader = new SesameLoader(repo)
-                rdfStoreLoader.readFeed(feedUrl)
-                logger.info("Completeted collect of <${feedUrl}>.")                
-            })
+            logger.info("Beginning collect of <${feedUrl}>.")            
+            // TODO:IMPROVE: Ok to make a new instance for each request? Shouldn't
+            // be so expensive, and isolates it (shouldn't be app-global..)
+            def rdfStoreLoader = new SesameLoader(repo)
+            rdfStoreLoader.readFeed(feedUrl)
+            logger.info("Completed collect of <${feedUrl}>.")                
+        })
         return true
     }
 
