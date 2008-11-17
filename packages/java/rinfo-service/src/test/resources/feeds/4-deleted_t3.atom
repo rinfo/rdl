@@ -10,9 +10,6 @@
                       when="2008-10-10T20:30:48.000Z"/>
 
     <entry>
-        <!-- TODO: verify all forms of deletion
-        <gd:deleted/>
-        -->
         <id>http://example.org/things/3</id>
         <updated>2008-10-10T20:30:48.000Z</updated>
         <title type="text"/>
