@@ -49,4 +49,29 @@
     <url>http://dev.lagrummet.se/rinfo/</url>
 <!-- Project Information Stop -->
 
+<!-- Environment Settings Start -->
+    <!-- Source Control Management -->
+    <scm>
+        <connection>scm:svn:https://source.verva.se/svn/rinfo/trunk/rinfo-collect</connection>
+        <developerConnection>scm:svn:https://source.verva.se/svn/rinfo/trunk/rinfo-collect</developerConnection>
+        <url>https://source.verva.se/svn/rinfo/trunk/rinfo-collect</url>
+    </scm>
+
+    <distributionManagement>    
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>rinfoRepository</id>
+            <name>RInfo Maven Repository</name>
+            <url>scp://server/folder-for-maven-repository</url>
+        </repository>
+        <site>
+            <id>rinfo server name</id>
+            <name>RInfo Website</name>
+            <url>
+                scp://server/folder-for-web-publishing/${project.artifactId}
+            </url>
+        </site>
+    </distributionManagement>
+<!-- Environment Settings Stop -->
+
 </project>

@@ -328,10 +328,103 @@
 <!-- Project Information Start -->
     <name>RInfo</name>
     <description>Rättsinformation</description>
-    <url>http://dev.lagrummet.se/rinfo/</url>
+    <url>http://dev.lagrummet.se/rinfo/</url>    
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <organization>
+        <name>Verva</name>
+        <url>http://www.verva.se</url>
+    </organization>
+    <developers>
+        <developer>
+            <id>pkr</id>
+            <name>Peter Krantz</name>
+            <email>Peter.Krantz@verva.se</email>
+            <organization>Verva</organization>
+            <organizationUrl>http://www.verva.se/</organizationUrl>
+            <roles>
+                <role>project manager, developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>nlm</id>
+            <name>Niklas Lindström</name>
+            <email>niklas.lindstrom@valtech.se</email>
+            <organization>Valtech AB</organization>
+            <organizationUrl>http://www.valtech.se</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>msher</id>
+            <name>Martin Sherwood</name>
+            <email>martin.sherwood@curalia.se</email>
+            <organization>Curalia AB</organization>
+            <organizationUrl>http://www.curalia.se/</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+    <contributors />
+    <inceptionYear>2008</inceptionYear>
+    
 <!-- Project Information Stop -->
 
 <!-- Environment Settings Start -->
+    <issueManagement>
+        <system>rinfo - Trac</system>
+        <url>https://source.verva.se/trac/rinfo/</url>
+    </issueManagement>
+
+    <!-- Continuous Integration --> 
+    <ciManagement>
+        <system>continuum</system>
+        <url>http://source.verva.se/continuum/</url>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <sendOnError>true</sendOnError>
+                <sendOnFailure>true</sendOnFailure>
+                <sendOnSuccess>false</sendOnSuccess>
+                <sendOnWarning>false</sendOnWarning>
+                <configuration>
+                    <address>martin.sherwood@curalia.se</address>
+                </configuration>
+            </notifier>
+        </notifiers>
+    </ciManagement>
+    
+    <mailingLists>
+        <mailingList>
+            <name>Rättsinformationsprojektets lista</name>
+            <subscribe>rinfo-request@lists.verva.se?subject=subscribe</subscribe>
+            <unsubscribe>rinfo-request@lists.verva.se?subject=unsubscribe</unsubscribe>
+            <post>rinfo@lists.verva.se</post>
+            <archive>https://source.verva.se/pipermail/rinfo/</archive>
+        </mailingList>
+    </mailingLists>
+
+    <!-- Source Control Management -->
+    <scm>
+        <!--
+            DO NOT USE PASSWORDS IN THESE URLS! They will be published on the
+            website.
+        -->
+        <connection>scm:svn:https://source.verva.se/svn/rinfo/trunk</connection>
+        <developerConnection>scm:svn:https://source.verva.se/svn/rinfo/trunk</developerConnection>
+        <url>https://source.verva.se/svn/rinfo/trunk</url>
+    </scm>    
+
     <repositories>
         <repository>
             <id>central</id>
@@ -345,6 +438,23 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-    </repositories>    
+    </repositories>  
+    
+    <distributionManagement>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>rinfoRepository</id>
+            <name>RInfo Maven Repository</name>
+            <url>scp://server/folder-for-maven-repository</url>
+        </repository>
+        <site>
+            <id>rinfo server name</id>
+            <name>RInfo Website</name>
+            <url>
+                scp://server/folder-for-web-publishing/
+            </url>
+        </site>
+    </distributionManagement>    
+      
 <!-- Environment Settings Stop -->
 </project>
