@@ -176,7 +176,7 @@ class FeedCollector extends FeedArchivePastToPresentReader {
     }
 
     protected void deleteFromMarkers(Feed sourceFeed, Map<IRI, AtomDate> deletedMap) {
-        for (Map.Entry<URI, Date> delItem : deletedMap.entrySet()) {
+        for (Map.Entry<IRI, AtomDate> delItem : deletedMap.entrySet()) {
             try {
                 deleteEntry(sourceFeed,
                         delItem.getKey().toURI(),
