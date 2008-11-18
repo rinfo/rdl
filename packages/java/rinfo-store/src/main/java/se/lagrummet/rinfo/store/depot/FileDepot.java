@@ -102,10 +102,11 @@ public class FileDepot {
     //== Entry and Content Lookups ==
 
     public List<DepotContent> find(String uriPath) throws DepotReadException {
-        List results = new ArrayList();
+        List<DepotContent> results = new ArrayList<DepotContent>();
 
         if (uriPath.startsWith(feedPath)) {
             DepotContent feed = getFeedContent(uriPath);
+            // TODO: (the plan is that) subscription feed can be locked!
             if (feed==null) {
                 return null;
             }
@@ -256,7 +257,11 @@ public class FileDepot {
         StringBuffer sb = new StringBuffer();
         for (int i=0; i<segments.length; i++) {
             if (i!=0) sb.append("/");
-            sb.append(URLEncoder.encode(segments[i]));
+            try {
+                sb.append(URLEncoder.encode(segments[i], "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
         }
         return sb.toString();
     }

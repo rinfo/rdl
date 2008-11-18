@@ -11,13 +11,12 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 import org.restlet.resource.FileRepresentation;
-import org.restlet.resource.Representation;
-import org.restlet.resource.ResourceException;
 import org.restlet.resource.Resource;
 import org.restlet.resource.Variant;
 
 import se.lagrummet.rinfo.store.depot.DeletedDepotEntryException;
 import se.lagrummet.rinfo.store.depot.DepotContent;
+import se.lagrummet.rinfo.store.depot.DepotReadException;
 import se.lagrummet.rinfo.store.depot.FileDepot;
 import se.lagrummet.rinfo.store.depot.LockedDepotEntryException;
 
@@ -44,6 +43,8 @@ public class DepotFinder extends Finder {
             response.setStatus(Status.CLIENT_ERROR_GONE);
         } catch (LockedDepotEntryException e) {
             response.setStatus(Status.SERVER_ERROR_SERVICE_UNAVAILABLE);
+        } catch (DepotReadException e) {
+            throw new RuntimeException(e);
         }
 
         if (results==null) {
@@ -84,7 +85,7 @@ public class DepotFinder extends Finder {
         fileRep.setModificationDate(new Date(content.getFile().lastModified()));
         fileRep.setIdentifier(content.getDepotUriPath());
         if (content.getLang() != null) {
-            List languages = new ArrayList<Representation>();
+            List<Language> languages = new ArrayList<Language>();
             languages.add(Language.valueOf(content.getLang()));
             fileRep.setLanguages(languages);
         }

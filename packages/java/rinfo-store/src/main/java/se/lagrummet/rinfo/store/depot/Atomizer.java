@@ -7,8 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.xml.namespace.QName;
 
@@ -181,6 +179,7 @@ public class Atomizer {
     // .. perhaps with overridden generateAtomEntryContent + writeFeed
     public void indexEntries(DepotEntryBatch entryBatch)
             throws DepotWriteException, IOException {
+        // TODO: create a LOCKED file in the feed dir
 
         String subscriptionPath = depot.getSubscriptionPath();
 
@@ -238,6 +237,7 @@ public class Atomizer {
         }
         writeFeed(currFeed); // as subscription feed
 
+        // TODO: remove the LOCKED file in the feed dir
     }
 
     protected Feed newFeed(String uriPath) {
