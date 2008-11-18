@@ -118,13 +118,14 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
         return false;
     }
 
-    public static boolean putUriDateIfNewOrYoungest(Map<IRI, AtomDate> map,
+    static boolean putUriDateIfNewOrYoungest(Map<IRI, AtomDate> map,
             IRI iri, AtomDate atomDate) {
         AtomDate storedAtomDate = map.get(iri);
         if (storedAtomDate != null) {
             Date date = atomDate.getDate();
             Date storedDate = storedAtomDate.getDate();
-            if(storedDate.compareTo(date) < 0) {
+            // keep largest date => ignore all older (smaller)
+            if(storedDate.compareTo(date) > 0) {
                 return false;
             }
         }
