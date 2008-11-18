@@ -2,14 +2,16 @@ package se.lagrummet.rinfo.base.atom;
 
 import java.io.*;
 import java.util.*;
+import java.net.URI;
 import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.abdera.Abdera;
+import org.apache.abdera.model.AtomDate;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Entry;
+import org.apache.abdera.i18n.iri.IRI;
 
 
 /**
@@ -26,43 +28,40 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
     private final Logger logger = LoggerFactory.getLogger(
             FeedArchivePastToPresentReader.class);
 
-    private LinkedList<URL> feedTrail;
-    private Map entryUpdatedMap;
-    private URL firstArchiveUrl;
+    private LinkedList<FeedReference> feedTrail;
+    private Map<IRI, AtomDate> entryModificationMap;
 
     @Override
-    public void initialize() {
-        super.initialize();
-        firstArchiveUrl = null;
-        feedTrail = new LinkedList<URL>();
-        entryUpdatedMap = new HashMap();
+    public void beforeTraversal() {
+        feedTrail = new LinkedList<FeedReference>();
+        entryModificationMap = new HashMap<IRI, AtomDate>();
     }
 
     @Override
-    public void shutdown() {
-        for (URL pageUrl : feedTrail) {
+    public void afterTraversal() {
+        /* FIXME: when we're back to *youngest* archive feed:
+            if firstArchiveUrl *now* has "next-archive":
+                *follow that* until no "next-archive"
+                *then* read subscription feed ("current")
+        */
+        for (FeedReference feedRef : feedTrail) {
             try {
-                Feed feed;
-                InputStream inStream = getResponseAsInputStream(pageUrl);
                 try {
-                    feed = parseFeed(inStream, pageUrl);
+                    Feed feed = feedRef.getFeed();
                     feed = feed.sortEntriesByUpdated(false);
-                    processFeedPageInOrder(pageUrl, feed);
+                    // FIXME: supply entriesCurrentlyInEffect.. (and deletedRefs?)
+                    processFeedPageInOrder(feedRef.getFeedUrl(), feed);
                 } finally {
-                    inStream.close();
+                    feedRef.close();
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        super.shutdown();
     }
 
     @Override
     public URL readFeedPage(URL url) throws IOException {
-        if (firstArchiveUrl == null) {
-            firstArchiveUrl = url;
-        }
         if (hasVisitedArchivePage(url)) {
             logger.info("Stopping on visited archive page: <"+url+">");
             return null;
@@ -72,16 +71,26 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
     }
 
     @Override
-    public boolean processFeedPage(URL pageUrl, Feed feed) {
-        feedTrail.addFirst(pageUrl);
+    public boolean processFeedPage(URL pageUrl, Feed feed) throws Exception {
+        feedTrail.addFirst(new FeedReference(pageUrl, feed));
         feed = feed.sortEntriesByUpdated(true);
+
+        Map<IRI, AtomDate> deletedMap = AtomEntryDeleteUtil.getDeletedMarkers(feed);
+        for (Map.Entry<IRI, AtomDate> item : deletedMap.entrySet()) {
+            putUriDateIfNewOrYoungest(entryModificationMap, item.getKey(), item.getValue());
+        }
+
         for (Entry entry : feed.getEntries()) {
             if (stopOnEntry(entry)) {
                 logger.info("Stopping on known entry: <" +entry.getId() +
                         "> ["+entry.getUpdatedElement().getString()+"]");
                 return false;
             }
+            putUriDateIfNewOrYoungest(entryModificationMap,
+                    entry.getId(),
+                    entry.getUpdatedElement().getValue());
         }
+
         return true;
     }
 
@@ -107,6 +116,56 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
      */
     public boolean hasVisitedArchivePage(URL pageUrl) {
         return false;
+    }
+
+    public static boolean putUriDateIfNewOrYoungest(Map<IRI, AtomDate> map,
+            IRI iri, AtomDate atomDate) {
+        AtomDate storedAtomDate = map.get(iri);
+        if (storedAtomDate != null) {
+            Date date = atomDate.getDate();
+            Date storedDate = storedAtomDate.getDate();
+            if(storedDate.compareTo(date) < 0) {
+                return false;
+            }
+        }
+        map.put(iri, atomDate);
+        return true;
+    }
+
+    public static class FeedReference {
+
+        private URL feedUrl;
+        private URI tempFileUri;
+
+        public FeedReference(URL feedUrl, Feed feed)
+                throws IOException, FileNotFoundException {
+            this.feedUrl = feedUrl;
+            File tempFile = File.createTempFile("feed", ".atom");
+            tempFileUri = tempFile.toURI();
+            OutputStream outStream = new FileOutputStream(tempFile);
+            feed.writeTo(outStream);
+            outStream.close();
+        }
+
+        public URL getFeedUrl() {
+            return feedUrl;
+        }
+
+        public Feed getFeed() throws IOException, FileNotFoundException {
+            InputStream inStream = new FileInputStream(getTempFile());
+            Feed feed = parseFeed(inStream, feedUrl);
+            inStream.close();
+            return feed;
+        }
+
+        public void close() throws IOException {
+            getTempFile().delete();
+        }
+
+        private File getTempFile() {
+            return new File(tempFileUri);
+        }
+
     }
 
 }

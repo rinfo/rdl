@@ -1,13 +1,11 @@
 package se.lagrummet.rinfo.base;
 
-import java.util.*;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.OutputStream;
 import java.net.URI;
 
 import javax.xml.parsers.ParserConfigurationException;

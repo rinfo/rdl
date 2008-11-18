@@ -1,7 +1,6 @@
 package se.lagrummet.rinfo.base.atom;
 
 import java.util.*;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.xml.namespace.QName;
@@ -27,7 +26,7 @@ public class AtomEntryDeleteUtil {
 
     public static Map<IRI, AtomDate> getDeletedMarkers(Feed feed)
             throws URISyntaxException {
-        Map deletedMap = new HashMap();
+        Map<IRI, AtomDate> deletedMap = new HashMap<IRI, AtomDate>();
         List<Element> tombstones = feed.getExtensions(FEED_EXT_TOMBSTONE);
         for (Element elem : tombstones) {
             deletedMap.put(new IRI(elem.getAttributeValue(TOMBSTONE_REF)),

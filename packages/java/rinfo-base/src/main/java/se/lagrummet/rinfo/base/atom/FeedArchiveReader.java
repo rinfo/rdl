@@ -1,6 +1,5 @@
 package se.lagrummet.rinfo.base.atom;
 
-import java.util.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.io.InputStream;
@@ -19,7 +18,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Feed;
-import org.apache.abdera.model.Entry;
 
 
 public abstract class FeedArchiveReader {
@@ -44,7 +42,7 @@ public abstract class FeedArchiveReader {
     }
 
     /**
-     * Called after {@link readFeed}.
+     * Always called when {@link readFeed} has completed.
      */
     public void shutdown() {
     }
@@ -55,25 +53,6 @@ public abstract class FeedArchiveReader {
      */
     public HttpClient createClient() {
         return new DefaultHttpClient();
-    }
-
-    /**
-     * Starts the feed archive climbing.
-     */
-    public final void readFeed(URL url) throws IOException {
-        initialize();
-        try {
-            URL followingUrl = url;
-            while (followingUrl != null) {
-                followingUrl = readFeedPage(followingUrl);
-                if (followingUrl != null) {
-                    logger.info(".. following: <"+followingUrl+">");
-                }
-            }
-            logger.info("Done.");
-        } finally {
-            shutdown();
-        }
     }
 
     /**
@@ -94,6 +73,41 @@ public abstract class FeedArchiveReader {
             return null;
         }
         return entity.getContent();
+    }
+
+    /**
+     * Starts the feed archive climbing.
+     */
+    public final void readFeed(URL url) throws IOException {
+        initialize();
+        try {
+            beforeTraversal();
+            URL followingUrl = url;
+            while (followingUrl != null) {
+                followingUrl = readFeedPage(followingUrl);
+                if (followingUrl != null) {
+                    logger.info(".. following: <"+followingUrl+">");
+                }
+            }
+            afterTraversal();
+            logger.info("Done.");
+        } finally {
+            shutdown();
+        }
+    }
+
+    /**
+     * Called before {@link readFeed} begins page traversal. Does nothing by
+     * default.
+     */
+    public void beforeTraversal() {
+    }
+
+    /**
+     * Called when {@link readFeed} has (successfully) traversed all feed
+     * pages. Does nothing by default.
+     */
+    public void afterTraversal() {
     }
 
     /**
@@ -149,9 +163,9 @@ public abstract class FeedArchiveReader {
      * Template method intended for the feed processing.
      * @return whether to continue backwards in time or stop.
      */
-    public abstract boolean processFeedPage(URL pageUrl, Feed feed);
+    public abstract boolean processFeedPage(URL pageUrl, Feed feed) throws Exception;
 
-    public Feed parseFeed(InputStream inStream, URL baseUrl) {
+    public static Feed parseFeed(InputStream inStream, URL baseUrl) {
         return (Feed) Abdera.getInstance().getParser().parse(
                 inStream, baseUrl.toString()).getRoot();
     }
