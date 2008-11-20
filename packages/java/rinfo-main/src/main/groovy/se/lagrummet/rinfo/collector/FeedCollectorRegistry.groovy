@@ -14,7 +14,7 @@ import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.store.depot.DepotEntry
 
 
-class FeedCollectorStateData {
+class FeedCollectorRegistry {
 
     static final COLLECTOR_NS = "http://rinfo.lagrummet.se/2008/10/collector#"
     static final DELETED
@@ -37,7 +37,7 @@ class FeedCollectorStateData {
     private def conn
     private def vf
 
-    FeedCollectorStateData(Repository repo) {
+    FeedCollectorRegistry(Repository repo) {
         this.repo = repo
         this.conn = repo.getConnection()
         this.vf = repo.getValueFactory()

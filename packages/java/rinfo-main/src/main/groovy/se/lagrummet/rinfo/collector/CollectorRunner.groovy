@@ -28,7 +28,7 @@ class CollectorRunner extends CollectorRunnerBase {
     private Collection sourceFeedUrls
 
     private FileDepot depot
-    private Repository stateRepo
+    private Repository registryRepo
     private URIMinter uriMinter
 
     CollectorRunner(FileDepot depot, URIMinter uriMinter,
@@ -57,22 +57,22 @@ class CollectorRunner extends CollectorRunnerBase {
         if (uriMinter == null) {
             uriMinter = new URIMinter(config.getString("rinfo.main.baseDir"))
         }
-        if (stateRepo == null) {
-            def dataDirPath = config.getString("rinfo.collector.stateRepoDataDir")
+        if (registryRepo == null) {
+            def dataDirPath = config.getString("rinfo.collector.registryDataDir")
             def dataDir = new File(dataDirPath)
             if (!dataDir.exists()) {
                 dataDir.mkdir()
             }
-            stateRepo = new SailRepository(new NativeStore(dataDir))
-            stateRepo.initialize()
+            registryRepo = new SailRepository(new NativeStore(dataDir))
+            registryRepo.initialize()
         }
         sourceFeedUrls = config.getList("rinfo.collector.sourceFeedUrls")
     }
 
     void shutdown() {
         super.shutdown()
-        if (stateRepo != null) {
-            stateRepo.shutDown()
+        if (registryRepo != null) {
+            registryRepo.shutDown()
         }
     }
 
@@ -82,7 +82,7 @@ class CollectorRunner extends CollectorRunnerBase {
 
     protected void collectFeed(URL feedUrl) {
         //  .. and (in webapp) that request comes from allowed domain..
-        FeedCollector.readFeed(depot, stateRepo, uriMinter, feedUrl)
+        FeedCollector.readFeed(depot, registryRepo, uriMinter, feedUrl)
     }
 
 }

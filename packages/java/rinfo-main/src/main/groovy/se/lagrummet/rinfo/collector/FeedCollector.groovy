@@ -54,7 +54,7 @@ import se.lagrummet.rinfo.base.rdf.RDFUtil
 
     * gets all feeds until last collected, then reads entries forwards in time..
 
-    * uses stateData...
+    * uses registry...
 
     * All entries read will have new timestamps based on their actual
       (successful) addition into this depot. This because the resulting feed
@@ -70,7 +70,7 @@ class FeedCollector extends FeedArchivePastToPresentReader {
 
     FileDepot depot
     URIMinter uriMinter
-    FeedCollectorStateData stateData
+    FeedCollectorRegistry registry
 
     List rdfMimeTypes = [
         "application/rdf+xml",
@@ -81,15 +81,15 @@ class FeedCollector extends FeedArchivePastToPresentReader {
 
     // TODO:IMPROVE: Not thread safe - is private ctor ok? Synchronized readFeed?
 
-    private FeedCollector(FileDepot depot, Repository stateRepo, URIMinter uriMinter) {
+    private FeedCollector(FileDepot depot, Repository registryRepo, URIMinter uriMinter) {
         this.depot = depot
         this.uriMinter = uriMinter
-        this.stateData = new FeedCollectorStateData(stateRepo)
+        this.registry = new FeedCollectorRegistry(registryRepo)
     }
 
-    public static void readFeed(FileDepot depot, Repository stateRepo,
+    public static void readFeed(FileDepot depot, Repository registryRepo,
             URIMinter uriMinter, URL url) {
-        new FeedCollector(depot, stateRepo, uriMinter).readFeed(url)
+        new FeedCollector(depot, registryRepo, uriMinter).readFeed(url)
     }
 
     @Override
@@ -120,14 +120,14 @@ class FeedCollector extends FeedArchivePastToPresentReader {
             super.shutdown()
         } finally {
             getClient().getConnectionManager().shutdown()
-            this.stateData.shutdown()
+            this.registry.shutdown()
         }
     }
 
 
     @Override
     boolean stopOnEntry(Entry entry) {
-        return stateData.hasCollected(entry)
+        return registry.hasCollected(entry)
     }
 
     @Override
@@ -140,7 +140,7 @@ class FeedCollector extends FeedArchivePastToPresentReader {
     public void processFeedPageInOrder(URL pageUrl, Feed feed) {
         logger.info("Processing feed page: <${pageUrl}> (id <${feed.id}>)")
 
-        stateData.logVisitedFeedPage(feed)
+        registry.logVisitedFeedPage(feed)
         collectedBatch = depot.makeEntryBatch()
         def deletedMap = AtomEntryDeleteUtil.getDeletedMarkers(feed)
         def currentUpdated
@@ -150,7 +150,7 @@ class FeedCollector extends FeedArchivePastToPresentReader {
                     // TODO:? this skips any preceding updates of deleteds in page..
                     continue
                 }
-                if (stateData.hasCollected(entry)) {
+                if (registry.hasCollected(entry)) {
                     if (logger.isDebugEnabled())
                         logger.debug "skipping collected entry <${entry.id}> [${entry.updated}]"
                     continue
@@ -232,7 +232,7 @@ class FeedCollector extends FeedArchivePastToPresentReader {
                 depotEntry.update(timestamp, contents, enclosures)
             }
             saveSourceMetaInfo(sourceFeed, sourceEntry, depotEntry)
-            stateData.logUpdatedEntry(sourceFeed, sourceEntry, depotEntry)
+            registry.logUpdatedEntry(sourceFeed, sourceEntry, depotEntry)
             collectedBatch.add(depotEntry)
         } catch (Exception e) {
             depotEntry.rollback()
@@ -255,14 +255,14 @@ class FeedCollector extends FeedArchivePastToPresentReader {
 
     protected void deleteEntry(Feed sourceFeed, URI sourceEntryId, Date deletedDate) {
         // FIXME: saveSourceMetaInfo (which may be present)
-        def entryId = stateData.getDepotIdBySourceId(sourceEntryId)
+        def entryId = registry.getDepotIdBySourceId(sourceEntryId)
         // TODO: this being null means we have lost collector metadata!
         DepotEntry depotEntry = depot.getEntry(entryId)
         logger.info("Deleting entry <${entryId}>.")
         depotEntry.delete(deletedDate)
-        stateData.logUpdatedEntry(sourceFeed, sourceEntryId, deletedDate, depotEntry)
+        registry.logUpdatedEntry(sourceFeed, sourceEntryId, deletedDate, depotEntry)
         collectedBatch.add(depotEntry)
-        //TODO:..stateData.logDeletedEntry
+        //TODO:..registry.logDeletedEntry
     }
 
     protected List initialContents(Entry sourceEntry) {
