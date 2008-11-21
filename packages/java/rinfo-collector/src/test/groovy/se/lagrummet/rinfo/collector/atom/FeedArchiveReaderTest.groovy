@@ -1,4 +1,4 @@
-package se.lagrummet.rinfo.base.atom
+package se.lagrummet.rinfo.collector.atom
 
 import org.junit.AfterClass
 import org.junit.BeforeClass

@@ -1,4 +1,4 @@
-package se.lagrummet.rinfo.base.atom;
+package se.lagrummet.rinfo.collector.atom;
 
 import java.util.*;
 import java.net.URISyntaxException;

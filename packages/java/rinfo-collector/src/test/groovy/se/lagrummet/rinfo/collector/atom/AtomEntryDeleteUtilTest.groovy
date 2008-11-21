@@ -1,4 +1,4 @@
-package se.lagrummet.rinfo.base.atom
+package se.lagrummet.rinfo.collector.atom
 
 import org.apache.abdera.model.*
 import org.apache.abdera.i18n.iri.IRI

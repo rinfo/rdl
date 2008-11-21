@@ -40,10 +40,10 @@ import se.lagrummet.rinfo.store.depot.DuplicateDepotEntryException
 import se.lagrummet.rinfo.store.depot.SourceContent
 
 import se.lagrummet.rinfo.base.URIMinter
-
-import se.lagrummet.rinfo.base.atom.FeedArchivePastToPresentReader
-import se.lagrummet.rinfo.base.atom.AtomEntryDeleteUtil
 import se.lagrummet.rinfo.base.rdf.RDFUtil
+
+import se.lagrummet.rinfo.collector.atom.FeedArchivePastToPresentReader
+import se.lagrummet.rinfo.collector.atom.AtomEntryDeleteUtil
 
 /* TODO: (see details in inline comments)
 

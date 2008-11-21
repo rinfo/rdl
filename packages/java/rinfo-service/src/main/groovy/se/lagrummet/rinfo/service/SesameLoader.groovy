@@ -19,9 +19,9 @@ import org.openrdf.sail.memory.MemoryStore
 import org.openrdf.sail.nativerdf.NativeStore
 
 
-import se.lagrummet.rinfo.base.atom.FeedArchivePastToPresentReader
-import se.lagrummet.rinfo.base.atom.AtomEntryDeleteUtil
 import se.lagrummet.rinfo.base.rdf.RDFUtil
+import se.lagrummet.rinfo.collector.atom.FeedArchivePastToPresentReader
+import se.lagrummet.rinfo.collector.atom.AtomEntryDeleteUtil
 
 
 class SesameLoader extends FeedArchivePastToPresentReader {
