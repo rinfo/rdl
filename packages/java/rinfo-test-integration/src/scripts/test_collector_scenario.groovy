@@ -110,7 +110,7 @@ rinfoCfg = new PropertiesConfiguration(
         "src/environments/dev-unix/rinfo-main.properties")
 def tempRInfoDir = createTempDir("rinfo").toString()
 rinfoCfg.setProperty("rinfo.depot.fileDir", tempRInfoDir+"/depot")
-rinfoCfg.setProperty("rinfo.collector.stateRepoDataDir", tempRInfoDir+"/state")
+rinfoCfg.setProperty("rinfo.collector.registryRepoDataDir", tempRInfoDir+"/registry")
 rinfoCfg.setProperty("rinfo.collector.sourceFeedUrls",
         [ localhost(sourcePort, "/feed/current").toString() ])
 rinfoPort = 8980
