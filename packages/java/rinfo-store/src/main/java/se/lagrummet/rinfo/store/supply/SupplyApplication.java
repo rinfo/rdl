@@ -1,9 +1,5 @@
 package se.lagrummet.rinfo.store.supply;
 
-import java.util.*;
-
-import org.apache.commons.configuration.ConfigurationException;
-
 import org.restlet.Application;
 import org.restlet.Component;
 import org.restlet.Context;
