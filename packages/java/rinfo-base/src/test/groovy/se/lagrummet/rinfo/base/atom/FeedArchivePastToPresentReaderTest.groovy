@@ -5,8 +5,10 @@ import org.junit.BeforeClass
 import org.junit.Test
 import static org.junit.Assert.*
 
+import org.apache.abdera.model.AtomDate
 import org.apache.abdera.model.Feed
 import org.apache.abdera.model.Entry
+import org.apache.abdera.i18n.iri.IRI
 
 import org.restlet.*
 import org.restlet.data.Protocol
@@ -70,6 +72,31 @@ class FeedArchivePastToPresentReaderTest {
         def reader = new CollectReader(knownArchive:"${baseUrl}/arch1.atom")
         reader.readFeed(feedUrl)
         assertEquals 1, reader.visitedPages.size()
+    }
+
+    @Test
+    void shouldPutUriDateIfNewOrYoungest() {
+        def map = [:]
+        def iri = new IRI("http://example.org/1")
+
+        FeedArchivePastToPresentReader.putUriDateIfNewOrYoungest(map,
+                iri, new AtomDate("2000-01-01T00:01:00.000Z"))
+        assertEquals new AtomDate("2000-01-01T00:01:00.000Z"), map[iri]
+
+        FeedArchivePastToPresentReader.putUriDateIfNewOrYoungest(map,
+                iri, new AtomDate("2002-01-01T00:01:00.000Z"))
+        assertEquals new AtomDate("2002-01-01T00:01:00.000Z"), map[iri]
+
+        FeedArchivePastToPresentReader.putUriDateIfNewOrYoungest(map,
+                iri, new AtomDate("2001-01-01T00:01:00.000Z"))
+        assertEquals new AtomDate("2002-01-01T00:01:00.000Z"), map[iri]
+
+        assertEquals 1, map.size()
+
+        FeedArchivePastToPresentReader.putUriDateIfNewOrYoungest(map,
+                new IRI("http://example.org/2"),
+                new AtomDate("2000-01-01T00:01:00.000Z"))
+        assertEquals 2, map.size()
     }
 
 }

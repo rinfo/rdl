@@ -39,17 +39,17 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
 
     @Override
     public void afterTraversal() {
-        /* FIXME: when we're back to *youngest* archive feed:
-            if firstArchiveUrl *now* has "next-archive":
-                *follow that* until no "next-archive"
-                *then* read subscription feed ("current")
-        */
         for (FeedReference feedRef : feedTrail) {
             try {
                 try {
                     Feed feed = feedRef.getFeed();
                     feed = feed.sortEntriesByUpdated(false);
-                    // FIXME: supply entriesCurrentlyInEffect.. (and deletedRefs?)
+                    /* FIXME: supply:
+                        - entriesCurrentlyInEffect
+                            if not in entryModificationMap or date.equals
+                            and not older or equals stoppedOnKnownEntry
+                        - deletedRefs
+                    */
                     processFeedPageInOrder(feedRef.getFeedUrl(), feed);
                 } finally {
                     feedRef.close();
