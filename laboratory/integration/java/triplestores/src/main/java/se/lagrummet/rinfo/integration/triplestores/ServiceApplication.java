@@ -1,5 +1,7 @@
 package se.lagrummet.rinfo.integration.triplestores;
 
+import java.io.File;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.log4j.Logger;
@@ -22,20 +24,22 @@ public class ServiceApplication extends Application {
     	"ServiceApplication.properties";
     
 	private static RepositoryFactory repositoryFactory;
-	private static String tripleStore;
-	private static String backend;
+	private static Configuration config;
+	private static String tempDir;
+	private static String tempDirUri;
 	
 	
     public ServiceApplication() {
     	try {
-			Configuration config = 
-				new PropertiesConfiguration(PROPERTIES_FILE_NAME);
-			
-			tripleStore = config.getString("triple.store");
-			backend = config.getString("backend");
-			
-	        repositoryFactory = new RepositoryFactory(config);
+    		
+			config = new PropertiesConfiguration(PROPERTIES_FILE_NAME);			
+			repositoryFactory = new RepositoryFactory(config);
 
+			tempDir = config.getString("tmp.dir");
+			File f = new File(tempDir);
+			f.mkdir();
+			tempDirUri = f.toURI().toString();
+			
 		} catch (Exception e) {
 			log.fatal(e);
 			System.exit(1);
@@ -44,12 +48,14 @@ public class ServiceApplication extends Application {
     
 	@Override
 	public synchronized Restlet getRoot() {
+		
 		Router router = new Router(getContext());
-		router.attach("/atom", FeedResource.class);
+		router.attach("/feed", FeedResource.class);
 		router.attach("/rdf", RdfResource.class);		
 		router.attach("/sparql", SparqlResource.class);
-		router.attach("/sparql/{query}", SparqlResource.class);
+//		router.attach("/sparql/{query}", SparqlResource.class);
 //		router.attach("/serql/{query}", SparqlResource.class);
+				
 		router.attach("/status", StatusResource.class);
 		return router;
 	}
@@ -74,10 +80,19 @@ public class ServiceApplication extends Application {
 	}
 	
 	public static String getTripleStoreType() {
-		return tripleStore;
+		return config.getString("triple.store");
 	}
 	
 	public static String getBackendType() {
-		return backend;
+		return config.getString("backend");
 	}
+
+	public static String getTempDir() {
+		return tempDir;
+	}
+
+	public static String getTempDirUri() {
+		return tempDirUri;
+	}
+	
 }
