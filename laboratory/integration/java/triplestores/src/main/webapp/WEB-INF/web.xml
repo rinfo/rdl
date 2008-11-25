@@ -8,8 +8,8 @@
     <display-name>RInfo Service</display-name>
 
     <context-param>
-        <param-name>org.restlet.application</param-name>
-        <param-value>se.lagrummet.rinfo.integration.triplestores.ServiceApplication</param-value>
+        <param-name>org.restlet.component</param-name>
+        <param-value>se.lagrummet.rinfo.integration.triplestores.ServiceComponent</param-value>
     </context-param>
 
     <servlet>
