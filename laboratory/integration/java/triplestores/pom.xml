@@ -42,38 +42,53 @@
 	    </dependency>
         <dependency>
           <groupId>org.openrdf.sesame</groupId>
-          <artifactId>sesame-queryresultio-sparqjson</artifactId>
-          <version>2.2</version>
+          <artifactId>sesame-queryparser-sparql</artifactId>
+          <version>2.2.1</version>
         </dependency>
         <dependency>
           <groupId>org.openrdf.sesame</groupId>
-          <artifactId>sesame-queryresultio-sparqxml</artifactId>
-          <version>2.2</version>
+          <artifactId>sesame-queryresultio-api</artifactId>
+          <version>2.2.1</version>
+        </dependency>
+        <dependency>
+          <groupId>org.openrdf.sesame</groupId>
+          <artifactId>sesame-queryresultio-sparqljson</artifactId>
+          <version>2.2.1</version>
+        </dependency>
+        <dependency>
+          <groupId>org.openrdf.sesame</groupId>
+          <artifactId>sesame-queryresultio-sparqlxml</artifactId>
+          <version>2.2.1</version>
+        </dependency>
+        <dependency>
+          <groupId>org.openrdf.sesame</groupId>
+          <artifactId>sesame-queryresultio-text</artifactId>
+          <version>2.2.1</version>
         </dependency>
 	    <dependency>
 	      <groupId>org.openrdf.sesame</groupId>
 	      <artifactId>sesame-repository-api</artifactId>
-	      <version>2.2</version>
+	      <version>2.2.1</version>
 	    </dependency>
 		<dependency>
 		  <groupId>org.openrdf.sesame</groupId>
 		  <artifactId>sesame-repository-sail</artifactId>
-		  <version>2.2</version>
+		  <version>2.2.1</version>
 		</dependency>
         <dependency>
           <groupId>org.openrdf.sesame</groupId>
           <artifactId>sesame-rio-rdfxml</artifactId>
-          <version>2.2</version>
+          <version>2.2.1</version>
         </dependency>
         <dependency>
           <groupId>org.openrdf.sesame</groupId>
           <artifactId>sesame-sail-api</artifactId>
-          <version>2.2</version>
+          <version>2.2.1</version>
         </dependency>
         <dependency>
           <groupId>org.openrdf.sesame</groupId>
           <artifactId>sesame-sail-memory</artifactId>
-          <version>2.2</version>
+          <version>2.2.1</version>
         </dependency>
 	    
         <dependency>
