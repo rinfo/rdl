@@ -1,101 +1,238 @@
 package se.lagrummet.rinfo.integration.triplestores.domain.resource;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Map;
 
-import org.openrdf.OpenRDFException;
-import org.openrdf.query.Query;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.openrdf.query.BooleanQuery;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.TupleQuery;
+import org.openrdf.query.TupleQueryResultHandler;
+import org.openrdf.query.TupleQueryResultHandlerException;
+import org.openrdf.query.resultio.BooleanQueryResultWriter;
+import org.openrdf.query.resultio.sparqljson.SPARQLResultsJSONWriter;
+import org.openrdf.query.resultio.sparqlxml.SPARQLBooleanXMLWriter;
+import org.openrdf.query.resultio.sparqlxml.SPARQLResultsXMLWriter;
+import org.openrdf.query.resultio.text.BooleanTextWriter;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
 import org.restlet.Context;
-import org.restlet.data.ClientInfo;
 import org.restlet.data.MediaType;
-import org.restlet.data.Preference;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
-import org.restlet.resource.Representation;
+import org.restlet.resource.FileRepresentation;
 import org.restlet.resource.Resource;
-import org.restlet.resource.ResourceException;
+import org.restlet.resource.Variant;
 
 import se.lagrummet.rinfo.integration.triplestores.ServiceApplication;
+import se.lagrummet.rinfo.integration.triplestores.domain.data.Constants;
+import se.lagrummet.rinfo.integration.triplestores.util.PageUtils;
 
+/**
+ * 
+ * @author msher
+ */
 public class SparqlResource extends Resource {
 
-    public SparqlResource(Context context, Request request, Response response) {
-        super(context, request, response);
-    }
+	private static final Logger log = Logger.getLogger(SparqlResource.class);
+	
+	private static String variantNames;
 
-    @Override
-    public boolean allowPost() { 
-    	return true; 
-    }
+	
 
-    @Override
-    public void handleGet() {    	    	
-    	// TODO
-    	String message = "Get " + getRequest().getAttributes().get("query");
-    	getResponse().setEntity(message, MediaType.TEXT_PLAIN);
-    }    
+	public SparqlResource(Context context, Request request, Response response) {
+		super(context, request, response);
+		
+		getVariants().add(new Variant(Constants.MEDIA_TYPE_SPARQL_RESULTS_XML));
+		getVariants().add(new Variant(Constants.MEDIA_TYPE_SPARQL_RESULTS_JSON));
+		getVariants().add(new Variant(Constants.MEDIA_TYPE_TEXT_BOOLEAN));
+		getVariants().add(new Variant(MediaType.TEXT_PLAIN));
+		
+		variantNames = "";
+		for (Variant v : getVariants()) {
+			variantNames += v.getMediaType().getName() + ", ";
+		}
+		variantNames = StringUtils.removeEnd(variantNames, ", ");		
+	}
 
-    
-    @Override
-    public void acceptRepresentation(Representation entity) 
-    throws ResourceException {
+	@Override
+	public boolean allowPost() { 
+		return true; 
+	}
 
-        String query = getRequest().getEntityAsForm().getFirstValue("query");
-        if (query == null) {
-            getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
-                    "Missing query parameter.");
-            return;
-        }
+	@Override
+	public void handleGet() {    	    			
+		String params = getRequest().getResourceRef().getRemainingPart();		
+		Map<String, String> map = PageUtils.parsePageParameters(params); 		
+		String query = map.get("query");
+		
+		handleSparqlQuery(query);				
+	}    
+		
+	@Override
+	public void handlePost() {
+		String query = getRequest().getEntityAsForm().getFirstValue("query");
+		
+		handleSparqlQuery(query);		
+	}	
 
-//    	List<MediaType> acceptedMediaTypes = getAcceptedMediaTypes(getRequest());    	    	
-//    	if (acceptedMediaTypes.contains("application/sparql-results+xml")) {
-//    		
-//    	}
+	/**
+	 * 
+	 * @param query
+	 */
+	private void handleSparqlQuery(String query) {
+		
+		Variant preferredVariant = getPreferredVariant();		
+		if (preferredVariant == null) {
+			getResponse().setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE,
+			"This resource is not capable of delivering content in the " 
+					+ "requested media type. Please use one of the following: " 
+					+ variantNames);
+			return;
+		} 
 
-        // depending on accepted media type, create corresponding writer...
-        
-//        SPARQLResultsXMLWriter sparqlWriter;
-//        = new SPARQLResultsXMLWriter();
-        
-        /*
-         * TODO: how to handle large results - buffered writer to file?
-         * limit to certain size?
-         * 
-         * how to pipe result to suitable format for delivering results?
-         */
-        
-		Repository repo = ServiceApplication.getRepository();
-        try {
-        	RepositoryConnection conn = repo.getConnection();
-        	try {
-        		Query q = conn.prepareQuery(QueryLanguage.SPARQL, query);
-      			// q.evaluate(sparqlWriter);
-        	}
-        	finally {
-        		conn.close();
-        	}
-        }
-        catch (OpenRDFException e) {
-        	// TODO
-        }                
-        
-        
-    	getResponse().setEntity("", MediaType.TEXT_PLAIN);
-    	
-    }
-    
-    private List<MediaType> getAcceptedMediaTypes(Request request) {
-    	ClientInfo clientInfo = request.getClientInfo();
-    	List<Preference<MediaType>> preferences = clientInfo.getAcceptedMediaTypes();
-    	ArrayList<MediaType> acceptedMediaTypes = new ArrayList<MediaType>(); 
-    	for (Preference<MediaType> p : preferences) {
-    		acceptedMediaTypes.add(p.getMetadata());
-    	}
-    	return acceptedMediaTypes;
-    }
+		if (StringUtils.isEmpty(query)) {
+			getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
+			"Missing query parameter.");
+			return;
+		}
+		
+		query = query.toLowerCase();
+		boolean isTupleQuery = query.contains("select") || query.contains("construct");
+		
+		File result = null;
+		String fileName = "rinfo-query-result-" + System.currentTimeMillis();
+		MediaType resultType = null;
+		BufferedOutputStream output = null;
+		TupleQueryResultHandler tupleResultHandler = null;		
+		BooleanQueryResultWriter booleanResultWriter = null;
+		
+		try {
+			String variantName = preferredVariant.getMediaType().getName();
+			String dir = ServiceApplication.getTempDir(); 
+			
+			if (variantName.equals(Constants.MIME_TYPE_SPARQL_RESULTS_XML)) {				
+				resultType = Constants.MEDIA_TYPE_SPARQL_RESULTS_XML;
+				result = new File(dir, fileName + ".xml");				
+				output = new BufferedOutputStream(new FileOutputStream(result));
+				
+				if (isTupleQuery) {
+					tupleResultHandler = new SPARQLResultsXMLWriter(output);					
+				} else {
+					booleanResultWriter = new SPARQLBooleanXMLWriter(output);
+				}
 
+			} else if (variantName.equals(Constants.MIME_TYPE_SPARQL_RESULTS_JSON)) {
+				resultType = Constants.MEDIA_TYPE_SPARQL_RESULTS_JSON;
+				result = new File(dir, fileName + ".json");				
+				output = new BufferedOutputStream(new FileOutputStream(result));
+				tupleResultHandler = new SPARQLResultsJSONWriter(output);
+				
+			} else if (variantName.equals(Constants.MIME_TYPE_TEXT_BOOLEAN)) {				
+					resultType = Constants.MEDIA_TYPE_TEXT_BOOLEAN;
+					result = new File(dir, fileName + ".txt");				
+					output = new BufferedOutputStream(new FileOutputStream(result));
+					booleanResultWriter = new BooleanTextWriter(output);
+				
+			} else {
+				resultType = MediaType.TEXT_PLAIN;
+				result = new File(dir, fileName + ".txt");				
+				output = new BufferedOutputStream(new FileOutputStream(result));
+				if (isTupleQuery) {
+					tupleResultHandler = new SPARQLResultsXMLWriter(output);					
+				} else {
+					booleanResultWriter = new BooleanTextWriter(output);
+				}
+			}
+
+		} catch (IOException e) {
+			log.fatal("Could not create temp file for SPARQL query result.", e);
+			getResponse().setStatus(Status.SERVER_ERROR_INTERNAL);
+			return;
+		}          
+		
+		RepositoryConnection conn = null;
+		try {
+			Repository repo = ServiceApplication.getRepository();
+			conn = repo.getConnection();        	        			
+			
+			if (isTupleQuery) {				
+				TupleQuery q = conn.prepareTupleQuery(QueryLanguage.SPARQL, query);
+				q.evaluate(tupleResultHandler);
+			} else {
+				BooleanQuery q = conn.prepareBooleanQuery(QueryLanguage.SPARQL, query);
+				booleanResultWriter.write(q.evaluate());
+			}
+			
+		} catch (IllegalArgumentException e) {
+			log.info("Supplied query is not a tuple query: " + query, e);
+			getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
+			"Supplied query is not a tuple query.");
+			return;
+			
+		} catch (MalformedQueryException e) {
+			log.info("Supplied query is malformed: " + query, e);
+			getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
+			"Supplied query is malformed.");
+			return;
+
+		} catch (QueryEvaluationException e) {
+			log.info("Evaluation of the query failed for query: " + query, e);
+			getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
+			"Evaluation of the query failed.");
+			return;
+
+		} catch (TupleQueryResultHandlerException e) {
+			log.info("Evaluation of the query failed for query: : " + query, e);
+			getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
+			"Evaluation of the query failed.");
+			return;
+
+		} catch (RepositoryException e) {
+			log.error("Unexpected exception in repository connection.", e);
+			getResponse().setStatus(Status.SERVER_ERROR_INTERNAL);
+			return;
+			
+		} catch (IOException e) {
+			log.fatal("Could not write to temp file for SPARQL query result.", e);
+			getResponse().setStatus(Status.SERVER_ERROR_INTERNAL);
+			return;
+						
+		} finally {
+			boolean errorInFinallyBlock = false;			
+			try {
+				output.flush();
+				output.close();
+			} catch (IOException e) {
+				errorInFinallyBlock = true;
+				log.fatal("Could not close temp file for SPARQL query result.", e);
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (RepositoryException e) {
+					errorInFinallyBlock = true;
+					log.fatal("Could not close repository connection.", e);
+				} 
+			}
+			if (errorInFinallyBlock) {
+				getResponse().setStatus(Status.SERVER_ERROR_INTERNAL);
+				return;
+			}
+		}
+
+		// TODO: set timetolive?
+		
+		FileRepresentation rep = new FileRepresentation(result, resultType);		
+		getResponse().setEntity(rep);
+		
+	}
 }
