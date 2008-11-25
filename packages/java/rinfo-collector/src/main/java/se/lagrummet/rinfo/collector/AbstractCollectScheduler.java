@@ -1,22 +1,22 @@
 package se.lagrummet.rinfo.collector;
 
+import java.util.*;
+import java.net.URL;
+
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.configuration.AbstractConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class CollectorRunnerBase {
+public abstract class AbstractCollectScheduler {
 
-    private final Logger logger = LoggerFactory.getLogger(CollectorRunnerBase.class);
+    private final Logger logger = LoggerFactory.getLogger(AbstractCollectScheduler.class);
 
     public static final int DEFAULT_INITIAL_DELAY = 0;
     public static final int DEFAULT_SCHEDULE_INTERVAL = 600;
@@ -52,7 +52,7 @@ public abstract class CollectorRunnerBase {
         this.timeUnit = TimeUnit.valueOf(timeUnitName);
     }
 
-    public abstract Collection getSourceFeedUrls();
+    public abstract Collection<URL> getSourceFeedUrls();
 
     public void startup() {
         if (scheduleInterval == -1) {
@@ -61,8 +61,11 @@ public abstract class CollectorRunnerBase {
             // FIXME: error handling (currently silently dies on bad feeds)
             scheduleService = Executors.newSingleThreadScheduledExecutor();
             scheduleService.scheduleAtFixedRate(
-                { collectAllFeeds() }, initialDelay, scheduleInterval, timeUnit);
-            String unitName = timeUnit.toString().toLowerCase()
+                new Runnable() {
+                  public void run() { collectAllFeeds(); }
+                } ,
+                initialDelay, scheduleInterval, timeUnit);
+            String unitName = timeUnit.toString().toLowerCase();
             logger.info("Scheduled collect every "+scheduleInterval +
                     " "+unitName+" (starting in "+initialDelay+" "+unitName+").");
         }
@@ -74,8 +77,8 @@ public abstract class CollectorRunnerBase {
         }
     }
 
-    public boolean triggerFeedCollect(URL feedUrl) {
-        if (!getSourceFeedUrls().contains(feedUrl.toString())) {
+    public boolean triggerFeedCollect(final URL feedUrl) {
+        if (!getSourceFeedUrls().contains(feedUrl)) {
             // FIXME: throw NotAllowedSourceFeedException?
             logger.warn("Warning - triggerFeedCollect called with disallowed " +
                     "feed url: <"+feedUrl+">");
@@ -86,8 +89,12 @@ public abstract class CollectorRunnerBase {
             return false;
         }
         try {
-            Executor executor = Executors.newSingleThreadExecutor();
-            executor.execute({ collectFeed(feedUrl) });
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.execute(
+                  new Runnable() {
+                    public void run() { collectFeed(feedUrl); }
+                  }
+                );
             executor.shutdown();
             return true;
         } finally {
@@ -106,8 +113,8 @@ public abstract class CollectorRunnerBase {
         try {
             logger.info("Starting to collect " + getSourceFeedUrls().size() +
                     " source feeds.");
-            for (String feedUrl : getSourceFeedUrls()) {
-                collectFeed(new URL(feedUrl));
+            for (URL feedUrl : getSourceFeedUrls()) {
+                collectFeed(feedUrl);
             }
             logger.info("Done collecting source feeds.");
             return true;

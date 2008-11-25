@@ -5,17 +5,15 @@ import org.junit.Before
 import org.junit.Test
 import static org.junit.Assert.*
 
-import org.apache.commons.configuration.PropertiesConfiguration
 
-
-class CollectorRunnerTest {
+class AbstractCollectSchedulerTest {
 
     static SOURCE_FEEDS = [
-        [url: "http://source1.example.org/", items:["1a", "1b"]],
-        [url: "http://source2.example.org/", items:["2a", "2b"]],
+        [url: new URL("http://source1.example.org/"), items:["1a", "1b"]],
+        [url: new URL("http://source2.example.org/"), items:["2a", "2b"]],
     ]
 
-    CollectorRunnerBase runner
+    AbstractCollectScheduler runner
 
     static int SAFE_STARTUP_MILLIS = 100
 
@@ -38,7 +36,7 @@ class CollectorRunnerTest {
     void shouldTriggerCollect() {
         runner.startup()
         def fakeSource = SOURCE_FEEDS[0]
-        assertTrue runner.triggerFeedCollect(new URL(fakeSource.url))
+        assertTrue runner.triggerFeedCollect(fakeSource.url)
         Thread.sleep(50)
         assertEquals fakeSource.items, runner.collectedItems
     }
@@ -51,7 +49,7 @@ class CollectorRunnerTest {
         try {
             Thread.sleep(SAFE_STARTUP_MILLIS)
             assertTrue "Expected stall to have ocurred at least once.",
-                    runner.triggerFeedCollect(new URL(SOURCE_FEEDS[1].url))
+                    runner.triggerFeedCollect(SOURCE_FEEDS[1].url)
         } finally {
             runner.shutdown()
         }
@@ -69,7 +67,7 @@ class CollectorRunnerTest {
 
 }
 
-class DummyRunner extends CollectorRunnerBase {
+class DummyRunner extends AbstractCollectScheduler {
 
     Collection sourceFeedUrls
 
@@ -82,8 +80,8 @@ class DummyRunner extends CollectorRunnerBase {
             Thread.sleep(sleepOnce)
             sleepOnce = 0
         }
-        collectedItems = CollectorRunnerTest.SOURCE_FEEDS.find {
-                it.url == feedUrl.toString()
+        collectedItems = AbstractCollectSchedulerTest.SOURCE_FEEDS.find {
+                it.url == feedUrl
             }.items
     }
 
