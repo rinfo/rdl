@@ -8,7 +8,7 @@
 
     <xsl:template match="/s:sparql">
         <xsl:variable name="result">
-            <xsl:apply-templates select="s:results/s:result"/>
+            <xsl:apply-templates select="s:results"/>
         </xsl:variable>
         <!-- TODO: Keep? $debug flag? Or use explicit error element?
         <xsl:variable name="resultCount" select="count(s:results/s:result)"/>
@@ -24,10 +24,13 @@
     </xsl:template>
 
 
-    <xsl:template match="s:result">
+    <xsl:template match="s:results">
         <entry>
             <id>
-                <xsl:apply-templates select="." mode="make-uri"/>
+                <!-- TODO: can we trust the *last* result to be the expected at
+                     all times? Feels to brittle (might be necessary to filter
+                     in the query). -->
+                <xsl:apply-templates select="s:result[last()]" mode="make-uri"/>
             </id>
             <!-- TODO: Keep? $debug flag?
             <source>
