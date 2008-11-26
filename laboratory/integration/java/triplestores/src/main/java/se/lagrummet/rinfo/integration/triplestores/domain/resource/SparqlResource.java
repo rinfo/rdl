@@ -37,16 +37,17 @@ import se.lagrummet.rinfo.integration.triplestores.domain.data.Constants;
 import se.lagrummet.rinfo.integration.triplestores.util.PageUtils;
 
 /**
+ * SPARQL end-point.
+ * 
+ * Handles queries sent by GET and POST with the parameter 'query'.  
  * 
  * @author msher
  */
 public class SparqlResource extends Resource {
 
-	private static final Logger log = Logger.getLogger(SparqlResource.class);
-	
+	private static final Logger log = Logger.getLogger(SparqlResource.class);	
 	private static String variantNames;
 
-	
 
 	public SparqlResource(Context context, Request request, Response response) {
 		super(context, request, response);
@@ -69,36 +70,49 @@ public class SparqlResource extends Resource {
 	}
 
 	@Override
-	public void handleGet() {    	    			
-		String params = getRequest().getResourceRef().getRemainingPart();		
-		Map<String, String> map = PageUtils.parsePageParameters(params); 		
-		String query = map.get("query");
-		
-		handleSparqlQuery(query);				
+	public void handleGet() {		
+		if (isPreferredVariantSupported()) {
+			String params = getRequest().getResourceRef().getRemainingPart();		
+			Map<String, String> map = PageUtils.parsePageParameters(params); 		
+			String query = map.get("query");			
+			handleSparqlQuery(query);	
+		}
 	}    
 		
 	@Override
 	public void handlePost() {
-		String query = getRequest().getEntityAsForm().getFirstValue("query");
-		
-		handleSparqlQuery(query);		
+		if (isPreferredVariantSupported()) {
+			String query = getRequest().getEntityAsForm().getFirstValue("query");
+			handleSparqlQuery(query);
+		}
 	}	
 
 	/**
+	 * Determine if the client's preferred variant is supported. If not, set
+	 * response status to indicate error 406 - Not Acceptable.
 	 * 
-	 * @param query
+	 * @return If the client's preferred variant is supported
 	 */
-	private void handleSparqlQuery(String query) {
-		
+	private boolean isPreferredVariantSupported() {
 		Variant preferredVariant = getPreferredVariant();		
 		if (preferredVariant == null) {
 			getResponse().setStatus(Status.CLIENT_ERROR_NOT_ACCEPTABLE,
 			"This resource is not capable of delivering content in the " 
 					+ "requested media type. Please use one of the following: " 
 					+ variantNames);
-			return;
-		} 
-
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Parse and evaluate a SPARQL query, set results as a FileRepresentation
+	 * in the response. 
+	 *  
+	 * @param query
+	 */
+	private void handleSparqlQuery(String query) {
+		
 		if (StringUtils.isEmpty(query)) {
 			getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
 			"Missing query parameter.");
@@ -116,7 +130,7 @@ public class SparqlResource extends Resource {
 		BooleanQueryResultWriter booleanResultWriter = null;
 		
 		try {
-			String variantName = preferredVariant.getMediaType().getName();
+			String variantName = getPreferredVariant().getMediaType().getName();
 			String dir = ServiceApplication.getTempDir(); 
 			
 			if (variantName.equals(Constants.MIME_TYPE_SPARQL_RESULTS_XML)) {				
@@ -229,10 +243,7 @@ public class SparqlResource extends Resource {
 			}
 		}
 
-		// TODO: set timetolive?
-		
 		FileRepresentation rep = new FileRepresentation(result, resultType);		
-		getResponse().setEntity(rep);
-		
+		getResponse().setEntity(rep);		
 	}
 }
