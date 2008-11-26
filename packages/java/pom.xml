@@ -67,6 +67,11 @@
       </dependency>
       <dependency>
         <groupId>se.lagrummet.rinfo</groupId>
+        <artifactId>rinfo-collector</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>se.lagrummet.rinfo</groupId>
         <artifactId>rinfo-base</artifactId>
         <version>1.0-SNAPSHOT</version>
       </dependency>
