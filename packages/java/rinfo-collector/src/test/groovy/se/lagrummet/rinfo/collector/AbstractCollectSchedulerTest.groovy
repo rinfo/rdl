@@ -13,13 +13,13 @@ class AbstractCollectSchedulerTest {
         [url: new URL("http://source2.example.org/"), items:["2a", "2b"]],
     ]
 
-    AbstractCollectScheduler runner
+    AbstractCollectScheduler collectScheduler
 
     static int SAFE_STARTUP_MILLIS = 100
 
     @Before
     void startUp() {
-        runner = new DummyRunner(
+        collectScheduler = new DummyScheduler(
             initialDelay: 0,
             scheduleInterval: -1,
             timeUnitName: "MILLISECONDS",
@@ -29,45 +29,45 @@ class AbstractCollectSchedulerTest {
 
     @After
     void tearDown() {
-        runner.shutdown()
+        collectScheduler.shutdown()
     }
 
     @Test
     void shouldTriggerCollect() {
-        runner.startup()
+        collectScheduler.startup()
         def fakeSource = SOURCE_FEEDS[0]
-        assertTrue runner.triggerFeedCollect(fakeSource.url)
+        assertTrue collectScheduler.triggerFeedCollect(fakeSource.url)
         Thread.sleep(50)
-        assertEquals fakeSource.items, runner.collectedItems
+        assertEquals fakeSource.items, collectScheduler.collectedItems
     }
 
     @Test
     void shouldNotTriggerWhenRunningScheduled() {
-        runner.scheduleInterval = 200
-        runner.sleepBefore = SAFE_STARTUP_MILLIS*2
-        runner.startup()
+        collectScheduler.scheduleInterval = 200
+        collectScheduler.sleepBefore = SAFE_STARTUP_MILLIS*2
+        collectScheduler.startup()
         try {
             Thread.sleep(SAFE_STARTUP_MILLIS)
             assertTrue "Expected stall to have ocurred at least once.",
-                    runner.triggerFeedCollect(SOURCE_FEEDS[1].url)
+                    collectScheduler.triggerFeedCollect(SOURCE_FEEDS[1].url)
         } finally {
-            runner.shutdown()
+            collectScheduler.shutdown()
         }
     }
 
     @Test
     void shouldNeverCollectConcurrently() {
-        runner.scheduleInterval = 200
-        runner.sleepOnce = SAFE_STARTUP_MILLIS*2
-        runner.startup()
+        collectScheduler.scheduleInterval = 200
+        collectScheduler.sleepOnce = SAFE_STARTUP_MILLIS*2
+        collectScheduler.startup()
         Thread.sleep(SAFE_STARTUP_MILLIS)
-        assertFalse runner.collectAllFeeds()
+        assertFalse collectScheduler.collectAllFeeds()
         Thread.sleep(SAFE_STARTUP_MILLIS)
     }
 
 }
 
-class DummyRunner extends AbstractCollectScheduler {
+class DummyScheduler extends AbstractCollectScheduler {
 
     Collection sourceFeedUrls
 

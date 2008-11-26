@@ -42,7 +42,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
         for (FeedReference feedRef : feedTrail) {
             try {
                 try {
-                    Feed feed = feedRef.getFeed();
+                    Feed feed = feedRef.openFeed();
                     feed = feed.sortEntriesByUpdated(false);
                     /* FIXME: supply:
                         - entriesCurrentlyInEffect
@@ -56,6 +56,19 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @Override
+    public void shutdown() {
+        super.shutdown();
+        // NOTE: cleanup trail if an exception occurred in afterTraversal.
+        for (FeedReference feedRef : feedTrail) {
+            try {
+                feedRef.close();
+            } catch (IOException e) {
+                logger.error("Could not close " + feedRef, e);
             }
         }
     }
@@ -137,6 +150,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
 
         private URL feedUrl;
         private URI tempFileUri;
+        private InputStream tempInStream;
 
         public FeedReference(URL feedUrl, Feed feed)
                 throws IOException, FileNotFoundException {
@@ -152,15 +166,26 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
             return feedUrl;
         }
 
-        public Feed getFeed() throws IOException, FileNotFoundException {
-            InputStream inStream = new FileInputStream(getTempFile());
-            Feed feed = parseFeed(inStream, feedUrl);
-            inStream.close();
+        public Feed openFeed() throws IOException, FileNotFoundException {
+            tempInStream = new FileInputStream(getTempFile());
+            Feed feed = parseFeed(tempInStream, feedUrl);
             return feed;
         }
 
         public void close() throws IOException {
-            getTempFile().delete();
+            if (tempInStream != null) {
+              tempInStream.close();
+              tempInStream = null;
+            }
+            File tempFile = getTempFile();
+            if (tempFile.exists()) {
+              tempFile.delete();
+            }
+        }
+
+        public String toString() {
+            return "FeedReference(feedUrl="+this.feedUrl +
+                    ", tempFileUri="+this.tempFileUri+")";
         }
 
         private File getTempFile() {
