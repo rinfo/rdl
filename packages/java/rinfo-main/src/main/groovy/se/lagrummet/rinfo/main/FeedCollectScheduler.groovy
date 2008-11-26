@@ -1,4 +1,4 @@
-package se.lagrummet.rinfo.collector
+package se.lagrummet.rinfo.main
 
 import java.util.concurrent.Callable
 import java.util.concurrent.Executor
@@ -18,26 +18,27 @@ import org.openrdf.sail.nativerdf.NativeStore
 
 import se.lagrummet.rinfo.base.URIMinter
 import se.lagrummet.rinfo.store.depot.FileDepot
-import se.lagrummet.rinfo.collector.FeedCollector
+
+import se.lagrummet.rinfo.collector.AbstractCollectScheduler
 
 
-class CollectorRunner extends CollectorRunnerBase {
+class FeedCollectScheduler extends AbstractCollectScheduler {
 
-    private final Logger logger = LoggerFactory.getLogger(CollectorRunner.class);
+    private final Logger logger = LoggerFactory.getLogger(FeedCollectScheduler.class);
 
-    private Collection sourceFeedUrls
+    private Collection<URL> sourceFeedUrls
 
     private FileDepot depot
     private Repository registryRepo
     private URIMinter uriMinter
 
-    CollectorRunner(FileDepot depot, URIMinter uriMinter,
+    FeedCollectScheduler(FileDepot depot, URIMinter uriMinter,
             AbstractConfiguration config) {
         this(depot, uriMinter)
         this.configure(config)
     }
 
-    CollectorRunner(FileDepot depot, URIMinter uriMinter) {
+    FeedCollectScheduler(FileDepot depot, URIMinter uriMinter) {
         this.depot = depot
         this.uriMinter = uriMinter
     }
@@ -45,11 +46,11 @@ class CollectorRunner extends CollectorRunnerBase {
     void configure(AbstractConfiguration config) {
 
         setInitialDelay(config.getInt(
-                "rinfo.collector.initialDelay", DEFAULT_INITIAL_DELAY))
+                "rinfo.main.collector.initialDelay", DEFAULT_INITIAL_DELAY))
         setScheduleInterval(config.getInt(
-                "rinfo.collector.scheduleInterval", DEFAULT_SCHEDULE_INTERVAL))
+                "rinfo.main.collector.scheduleInterval", DEFAULT_SCHEDULE_INTERVAL))
         setTimeUnitName(config.getString(
-                "rinfo.collector.timeUnit", DEFAULT_TIME_UNIT_NAME))
+                "rinfo.main.collector.timeUnit", DEFAULT_TIME_UNIT_NAME))
 
         if (depot == null) {
             depot = FileDepot.newConfigured(config)
@@ -58,7 +59,7 @@ class CollectorRunner extends CollectorRunnerBase {
             uriMinter = new URIMinter(config.getString("rinfo.main.baseDir"))
         }
         if (registryRepo == null) {
-            def dataDirPath = config.getString("rinfo.collector.registryDataDir")
+            def dataDirPath = config.getString("rinfo.main.collector.registryDataDir")
             def dataDir = new File(dataDirPath)
             if (!dataDir.exists()) {
                 dataDir.mkdir()
@@ -66,7 +67,10 @@ class CollectorRunner extends CollectorRunnerBase {
             registryRepo = new SailRepository(new NativeStore(dataDir))
             registryRepo.initialize()
         }
-        sourceFeedUrls = config.getList("rinfo.collector.sourceFeedUrls")
+        sourceFeedUrls = new ArrayList<URL>()
+        for (String url : config.getList("rinfo.main.collector.sourceFeedUrls")) {
+          sourceFeedUrls.add(new URL(url))
+        }
     }
 
     void shutdown() {

@@ -1,4 +1,4 @@
-package se.lagrummet.rinfo.collector
+package se.lagrummet.rinfo.main
 
 
 import org.slf4j.Logger
@@ -83,8 +83,8 @@ class FeedCollector extends FeedArchivePastToPresentReader {
 
     private FeedCollector(FileDepot depot, Repository registryRepo, URIMinter uriMinter) {
         this.depot = depot
-        this.uriMinter = uriMinter
         this.registry = new FeedCollectorRegistry(registryRepo)
+        this.uriMinter = uriMinter
     }
 
     public static void readFeed(FileDepot depot, Repository registryRepo,

@@ -19,19 +19,18 @@ import org.restlet.data.Status
 
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.supply.DepotFinder
-import se.lagrummet.rinfo.collector.CollectorRunner
 
 
 class MainApplication extends Application {
 
     public static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-main.properties"
     public static final String DEPOT_CONTEXT_KEY =
-            "rinfo.depot.restlet.context"
+            "rinfo.main.depot.restlet.context"
     public static final String COLLECTOR_RUNNER_CONTEXT_KEY =
-            "rinfo.collector.restlet.context"
+            "rinfo.main.collector.restlet.context"
 
     private FileDepot depot
-    private CollectorRunner collectorRunner
+    private FeedCollectScheduler collectScheduler
 
     MainApplication(Context context) {
         this(context, new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME))
@@ -40,10 +39,10 @@ class MainApplication extends Application {
     MainApplication(Context context, AbstractConfiguration config) {
         super(context)
         depot = FileDepot.newConfigured(config)
-        collectorRunner = new CollectorRunner(depot, null, config)
+        collectScheduler = new FeedCollectScheduler(depot, null, config)
         def attrs = getContext().getAttributes()
         attrs.putIfAbsent(DEPOT_CONTEXT_KEY, depot)
-        attrs.putIfAbsent(COLLECTOR_RUNNER_CONTEXT_KEY, collectorRunner)
+        attrs.putIfAbsent(COLLECTOR_RUNNER_CONTEXT_KEY, collectScheduler)
     }
 
     @Override
@@ -57,13 +56,13 @@ class MainApplication extends Application {
     @Override
     public void start() {
         super.start()
-        collectorRunner.startup()
+        collectScheduler.startup()
     }
 
     @Override
     public void stop() {
         super.stop()
-        collectorRunner.shutdown()
+        collectScheduler.shutdown()
     }
 
 }
@@ -86,7 +85,7 @@ class CollectorHandler extends Handler {
     public void handlePost() {
         def attrs = context.getAttributes()
         def depot = (FileDepot) attrs.get(MainApplication.DEPOT_CONTEXT_KEY)
-        def collectorRunner = (CollectorRunner) attrs.get(
+        def collectScheduler = (FeedCollectScheduler) attrs.get(
                 MainApplication.COLLECTOR_RUNNER_CONTEXT_KEY)
 
         String feedUrl = request.getEntityAsForm().getFirstValue("feed")
@@ -94,7 +93,7 @@ class CollectorHandler extends Handler {
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, BAD_MSG)
             return
         }
-        boolean allowedUrl = collectorRunner.triggerFeedCollect(new URL(feedUrl))
+        boolean allowedUrl = collectScheduler.triggerFeedCollect(new URL(feedUrl))
         if (!allowedUrl) {
             def msg = "The url <${feedUrl}> is not an allowed source feed."
             getResponse().setStatus(Status.CLIENT_ERROR_FORBIDDEN)
