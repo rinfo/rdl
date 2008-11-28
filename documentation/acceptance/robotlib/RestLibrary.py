@@ -4,21 +4,26 @@ This is a HTTP/REST client library, primarily designed for use as a
 `Robot Framework <http://robotframework.org/>`_ test library. It provides
 keywords for calling REST-style services and inspecting the response.
 """
+
+__author__ = "Niklas Lindström"
+__version__ = "1.0a"
+
+
 import re
 from urlparse import urljoin
 from warnings import warn
 
-__author__ = "Niklas Lindström"
-__version__ = "1.0b"
-
 # Prefer httplib2, with fallback to (std) httplib.
 try:
     from httplib2 import Http
+
     def http_request(url, method, data=None, headers=None):
         return Http().request(url, method, data, headers)
+
 except ImportError:
     from urlparse import urlsplit
     from httplib import HTTPConnection, HTTPSConnection
+
     def http_request(url, method, data=None, headers=None):
         scheme, netloc, path, query, fragment = urlsplit(url)
         if scheme == 'https':
@@ -31,7 +36,7 @@ except ImportError:
         return response, response.read()
 
 
-# Generic assertion functions.
+# Assertion utilities.
 
 def expect(key, expected, value):
     assert expected == value, (
@@ -48,12 +53,7 @@ def expect_not_exists(what, value):
     assert not value, "Expected no value for %s (got %r)." % (what, value)
 
 
-# Library implementation.
-# Use add_base to register a class as a base for the final library class.
-
-from collections import deque
-bases = deque()
-add_base = bases.appendleft
+# The library core.
 
 
 class CoreRestClient(object):
@@ -71,7 +71,8 @@ class CoreRestClient(object):
     def _do_request(self, method, url, data=None):
         self._reset()
         url = urljoin(self._baseurl, url)
-        response, content = http_request(url, method, data, headers=self._send_headers)
+        response, content = http_request(
+                url, method, data, headers=self._send_headers)
         self._status = "%d %s" % (response.status, response.reason)
         self._response = response
         self._content = content
@@ -138,18 +139,37 @@ class CoreRestLibrary(CoreRestClient):
     def no_body(self):
         expect_not_exists("response body", self._content)
 
-add_base(CoreRestLibrary)
+
+# Final library class (with ad hoc mixin support).
+
+class RestLibrary(CoreRestLibrary):
+
+    @classmethod
+    def mixin(cls, klass):
+        cls.__bases__ += (klass,)
+
+    def __init__(self):
+        self.__base_call('__init__')
+
+    def _reset(self):
+        self.__base_call('_reset')
+
+    def __base_call(self, name, *args, **kwargs):
+        for base in type(self).__bases__:
+            if hasattr(base, name):
+                getattr(base, name)(self, *args, **kwargs)
+
+
+# Additional feature mixins.
 
 
 class XmlMixinSupport(object):
 
     def __init__(self):
-        super(XmlMixinSupport, self).__init__()
         self._namespaces = {}
 
     def _reset(self):
-        super(XmlMixinSupport, self)._reset()
-        self._lazy_doc = None
+        self._lazy_xml = None
 
     def xmlns(self, pfx, uri):
         self._namespaces[pfx] = uri
@@ -175,7 +195,7 @@ class XmlMixinSupport(object):
         value = self._eval_xpath(expr)
         expect_not_exists("xpath %r" % expr, value)
 
-    def _get_parsed_doc(self):
+    def _get_parsed_xml(self):
         raise NotImplementedError("No XML parser available.")
 
     def _eval_xpath(self, expr):
@@ -186,24 +206,28 @@ try:
 
     class XmlMixin(XmlMixinSupport):
 
-        def _get_parsed_doc(self):
-            if self._lazy_doc is None:
-                self._lazy_doc = etree.fromstring(self._content)
-            return self._lazy_doc
+        def _get_parsed_xml(self):
+            if self._lazy_xml is None:
+                self._lazy_xml = etree.fromstring(self._content)
+            return self._lazy_xml
 
         def _eval_xpath(self, expr):
-            doc = self._get_parsed_doc()
+            doc = self._get_parsed_xml()
             return doc.xpath(expr, namespaces=self._namespaces)
 
-    add_base(XmlMixin)
+    RestLibrary.mixin(XmlMixin)
 
 except ImportError:
     warn("Cannot parse XML responses. Missing module: lxml")
-    # TODO: Try some more options (amara, elementtree, javax.xml).
+    # TODO: Try some more options (4Suite, elementtree, javax.xml).
     # If none can be found, disable XML keywords by removing the following line:
-    add_base(XmlMixinSupport)
+    RestLibrary.mixin(XmlMixinSupport)
 
 
-RestLibrary = type('RestLibrary', tuple(bases), {})
+# TODO: No features yet.
+class JsonMixin(object):
+    def _reset(self):
+        self._lazy_json = None
+RestLibrary.mixin(JsonMixin)
 
 
