@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>se.lagrummet.rinfo</groupId>
+  <artifactId>rinfo-collect</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <parent>
+    <groupId>se.lagrummet</groupId>
+    <artifactId>rinfo</artifactId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+
+  <dependencies>
+    <!-- DEFAULT SCOPE (COMPILE) START -->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    <!-- DEFAULT SCOPE (COMPILE) END -->
+    
+    <!-- RUNTIME SCOPE START -->
+    <!-- RUNTIME SCOPE END -->
+    
+    <!-- TEST SCOPE START -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+      </dependency>    
+    <!-- TEST SCOPE END -->
+  </dependencies>
+
+<!-- Build Settings Start -->
+  <reporting>
+    <!-- Needed in order to generate the dashboard report properly. -->
+    <outputDirectory>
+      ${basedir}/../target/site/${project.artifactId}
+    </outputDirectory>
+  </reporting>
+<!-- Build Settings Stop -->
+
+<!-- Project Information Start -->
+    <name>RInfo Collect</name>
+    <description></description>
+    <url>http://dev.lagrummet.se/rinfo/</url>
+<!-- Project Information Stop -->
+
+<!-- Environment Settings Start -->
+    <!-- Source Control Management -->
+    <scm>
+        <connection>scm:svn:https://source.verva.se/svn/rinfo/trunk/rinfo-collect</connection>
+        <developerConnection>scm:svn:https://source.verva.se/svn/rinfo/trunk/rinfo-collect</developerConnection>
+        <url>https://source.verva.se/svn/rinfo/trunk/rinfo-collect</url>
+    </scm>
+
+    <distributionManagement>    
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>rinfoRepository</id>
+            <name>RInfo Maven Repository</name>
+            <url>scp://server/folder-for-maven-repository</url>
+        </repository>
+        <site>
+            <id>rinfo server name</id>
+            <name>RInfo Website</name>
+            <url>
+                scp://server/folder-for-web-publishing/${project.artifactId}
+            </url>
+        </site>
+    </distributionManagement>
+<!-- Environment Settings Stop -->
+
+</project>
