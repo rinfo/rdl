@@ -36,6 +36,9 @@ public class DepotFinder extends Finder {
     public Handler findTarget(Request request, Response response) {
         List<DepotContent> results = null;
         try {
+            // TODO:? E.g in a servlet container, how to handle </webapp/> base?
+            // fileDepot may not want such an "intrumental" base segment,
+            // in case it should reinterpret non-full url as e.g. a tag uri..?
             results = fileDepot.find(
                     request.getResourceRef().getPath().toString());
         } catch (DeletedDepotEntryException e) {

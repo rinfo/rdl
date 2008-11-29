@@ -184,12 +184,21 @@ public class FileDepot {
 
     //== Feed Related ==
 
-    public DepotContent getFeedContent(String uriPath) {
+    // TODO:IMPROVE: don't hard-code ".atom" (or don't even do it at all?)
+    // Most importantly, DepotContent for a feed now has a non-working uriPath!
+    // I.e. we must consider that public feed uri:s are non-suffixed (currently)..
+    // All of this should be stiched together with uriPathProcessor..
+
+    protected DepotContent getFeedContent(String uriPath) {
         // TODO: Require suffix in req? And/or conneg?
         return getContent(uriPath + ".atom");
     }
 
-    public String getSubscriptionPath() {
+    protected File getFeedFile(String uriPath) {
+        return new File(baseDir, toFilePath(uriPath) + ".atom");
+    }
+
+    protected String getSubscriptionPath() {
         // TODO: configurable? Settable "feedSubscriptionSegment"?
         return feedPath+"/current";
     }
@@ -197,12 +206,6 @@ public class FileDepot {
     protected String pathToArchiveFeed(Date youngestDate) {
         String archPath = DatePathUtil.toFeedArchivePath(youngestDate);
         return feedPath+"/"+archPath;
-    }
-
-    protected String toFeedFilePath(String uriPath) {
-        // TODO: less hard-coded..?
-        // Can't as it is change that public feed uri:s are non-suffixed
-        return toFilePath(uriPath) + ".atom";
     }
 
 
@@ -302,7 +305,20 @@ public class FileDepot {
     }
 
     public void generateIndex() throws DepotWriteException, IOException {
-        atomizer.generateIndex();
+        File feedDir = new File(getBaseDir(), getFeedPath());
+        if (!feedDir.exists()) {
+            feedDir.mkdir();
+        }
+        DepotEntryBatch entryBatch = makeEntryBatch();
+
+        for (Iterator<DepotEntry> iter = iterateEntries(
+                atomizer.getIncludeHistorical(), atomizer.getIncludeDeleted());
+                iter.hasNext(); ) {
+            entryBatch.add(iter.next());
+        }
+
+        FileUtils.cleanDirectory(feedDir);
+        indexEntries(entryBatch);
     }
 
     public void indexEntries(DepotEntryBatch entryBatch)

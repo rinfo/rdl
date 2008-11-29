@@ -70,8 +70,11 @@ public class Atomizer {
     private Feed skeletonFeed;
 
 
+    public Atomizer() {
+    }
+
     public Atomizer(FileDepot depot) {
-        this.depot = depot;
+        setDepot(depot);
     }
 
     public void configure(AbstractConfiguration config)
@@ -101,6 +104,9 @@ public class Atomizer {
     }
 
     public FileDepot getDepot() { return depot; }
+    public void setDepot(FileDepot depot) {
+        this.depot = depot;
+    }
 
     public int getFeedBatchSize() {
         return feedBatchSize!=0 ? feedBatchSize : DEFAULT_FEED_BATCH_SIZE;
@@ -149,6 +155,10 @@ public class Atomizer {
         this.prettyXml = prettyXml;
     }
 
+    public boolean isUsingEntriesAsTombstones() {
+        return getUseFeedSync() || getUseGdataDeleted();
+    }
+
     void setFeedSkeleton(String feedSkeleton) throws FileNotFoundException {
         if (feedSkeleton!=null && !feedSkeleton.equals("")) {
             skeletonFeed = (Feed) Abdera.getInstance().getParser().parse(
@@ -159,27 +169,11 @@ public class Atomizer {
 
     //== Feed Specifics ==
 
-    public void generateIndex() throws DepotWriteException, IOException {
-        File feedDir = new File(depot.getBaseDir(), depot.getFeedPath());
-        if (!feedDir.exists()) {
-            feedDir.mkdir();
-        }
-        DepotEntryBatch entryBatch = depot.makeEntryBatch();
-
-        for (Iterator<DepotEntry> iter = depot.iterateEntries(
-                includeHistorical, includeDeleted); iter.hasNext(); ) {
-            entryBatch.add(iter.next());
-        }
-
-        FileUtils.cleanDirectory(feedDir);
-        indexEntries(entryBatch);
-    }
-
     // TODO: test algorithm in isolation! (refactor?)
-    // .. perhaps with overridden generateAtomEntryContent + writeFeed
+    // .. perhaps with overridden indexEntry, getFeed, writeFeed..?
     public void indexEntries(DepotEntryBatch entryBatch)
             throws DepotWriteException, IOException {
-        // TODO: create a LOCKED file in the feed dir
+        // TODO:? create a LOCKED file in the feed dir
 
         String subscriptionPath = depot.getSubscriptionPath();
 
@@ -237,7 +231,7 @@ public class Atomizer {
         }
         writeFeed(currFeed); // as subscription feed
 
-        // TODO: remove the LOCKED file in the feed dir
+        // TODO:? remove LOCKED (see above)
     }
 
     protected Feed newFeed(String uriPath) {
@@ -253,10 +247,10 @@ public class Atomizer {
     }
 
     protected Feed getFeed(String uriPath) {
-        File file = new File(depot.getBaseDir(), depot.toFeedFilePath(uriPath));
+        File feedFile = depot.getFeedFile(uriPath);
         try {
             return (Feed) Abdera.getInstance().getParser().parse(
-                    new FileInputStream(file)).getRoot();
+                    new FileInputStream(feedFile)).getRoot();
         } catch (FileNotFoundException e) {
             return null;
         }
@@ -270,10 +264,11 @@ public class Atomizer {
         return getFeed(prev.toString());
     }
 
-    /* TODO: to use for e.g. "emptying" deleted entries
-        - search in feed folder by date, time; opt. offset (if many of same in same instant?)
-    protected Feed getFeedForDateTime(Date date) {
-        .. getFeedForDateTime(depot.pathToArchiveFeed(date))
+    /* TODO: to use for e.g. "emptying" deleted entries.
+        Search in feed folder by date, time; opt. offset (if many of same in
+        same instant?).
+    protected Feed findFeedForDateTime(Date date) {
+        .. findFeedForDateTime(depot.pathToArchiveFeed(date))
         return null;
     }
     */
@@ -285,8 +280,7 @@ public class Atomizer {
     protected void writeFeed(Feed feed) throws IOException, FileNotFoundException {
         String uriPath = uriPathFromFeed(feed);
         logger.info("Writing feed: <"+uriPath+">");
-        String feedFileName = depot.toFeedFilePath(uriPath);
-        File feedFile = new File(depot.getBaseDir(), feedFileName);
+        File feedFile = depot.getFeedFile(uriPath);
         File feedDir = feedFile.getParentFile();
         if (!feedDir.exists()) {
             FileUtils.forceMkdir(feedDir);
@@ -310,18 +304,20 @@ public class Atomizer {
                         TOMBSTONE_WHEN,
                         new AtomDate(depotEntry.getUpdated()).getValue());
             }
-            /* TODO: Dry out, unless generating new (when we know all, incl. deleteds..)
+            /* TODO:IMPROVE:
+                Dry out, unless generating new (when we know all, incl. deleteds..)
                 If so, historical entries must know if their current is deleted!
             dryOutHistoricalEntries(depotEntry)
             */
         }
-        /* TODO: Ensure this insert is only done if atomEntry represents
-            a deletion in itself (how to combine with addTombstone?).
-        if (useDeletedEntriesInFeed) ...
+        /* TODO: Test to ensure this insert is only done if atomEntry represents
+            a deletion in itself (and not only feed-level tombstone markers).
         */
-        Entry atomEntry = generateAtomEntryContent(depotEntry, false);
-        atomEntry.setSource(null);
-        feed.insertEntry(atomEntry);
+        if (!depotEntry.isDeleted() || isUsingEntriesAsTombstones()) {
+            Entry atomEntry = generateAtomEntryContent(depotEntry, false);
+            atomEntry.setSource(null);
+            feed.insertEntry(atomEntry);
+        }
     }
 
 
