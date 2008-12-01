@@ -108,7 +108,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
         feedTrail.addFirst(new FeedReference(pageUrl, feed));
         feed = feed.sortEntriesByUpdated(true);
 
-        Map<IRI, AtomDate> deletedMap = AtomEntryDeleteUtil.getDeletedMarkers(feed);
+        Map<IRI, AtomDate> deletedMap = getDeletedMarkers(feed);
         for (Map.Entry<IRI, AtomDate> item : deletedMap.entrySet()) {
             putUriDateIfNewOrYoungest(entryModificationMap, item.getKey(), item.getValue());
         }
@@ -145,7 +145,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
      * </ul>
      *
      * @param deletedMap A map of tombstones (given in one of the forms
-     *        supported by {@link AtomEntryDeleteUtil})
+     *        supported by {@link getDeletedMarkers}).
      */
     public abstract void processFeedPageInOrder(URL pageUrl, Feed feed,
             List<Entry> effectiveEntries, Map<IRI, AtomDate> deletedMap);
@@ -163,6 +163,16 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
      */
     public boolean hasVisitedArchivePage(URL pageUrl) {
         return false;
+    }
+
+    /**
+     * Default method used to get tombstone markers from a feed.
+     * @return A map of entry id:s and deletion times. The default uses {@link
+     *         AtomEntryDeleteUtil.getDeletedMarkers}.
+     */
+    public Map<IRI, AtomDate> getDeletedMarkers(Feed feed)
+            throws URISyntaxException {
+        return AtomEntryDeleteUtil.getDeletedMarkers(feed);
     }
 
     public static boolean isYoungerThan(Date date, Date thanDate) {
