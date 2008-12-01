@@ -55,6 +55,16 @@ public class Atomizer {
 
     private final Logger logger = LoggerFactory.getLogger(Atomizer.class);
 
+    /* TODO: factor out dep to depot?
+       As a Depot (super-)interface, with minimal path- and write operations?
+
+        depot.getPathProcessor().makeNegotiatedUriPath(...)
+        depot.getSubscriptionPath()
+        depot.pathToArchiveFeed(date)
+
+        depot.getFeedFile(uriPath)
+
+    */
     private FileDepot depot;
 
     private int feedBatchSize;
