@@ -78,7 +78,7 @@ public abstract class FeedArchiveReader {
     /**
      * Starts the feed archive climbing.
      */
-    public final void readFeed(URL url) throws IOException {
+    public final void readFeed(URL url) throws Exception {
         initialize();
         try {
             beforeTraversal();
@@ -100,14 +100,14 @@ public abstract class FeedArchiveReader {
      * Called before {@link readFeed} begins page traversal. Does nothing by
      * default.
      */
-    public void beforeTraversal() {
+    public void beforeTraversal() throws Exception {
     }
 
     /**
      * Called when {@link readFeed} has (successfully) traversed all feed
      * pages. Does nothing by default.
      */
-    public void afterTraversal() {
+    public void afterTraversal() throws Exception {
     }
 
     /**

@@ -137,29 +137,20 @@ class FeedCollector extends FeedArchivePastToPresentReader {
     }
 
     @Override
-    public void processFeedPageInOrder(URL pageUrl, Feed feed) {
+    public void processFeedPageInOrder(URL pageUrl, Feed feed,
+            List<Entry> effectiveEntries, Map<IRI, AtomDate> deletedMap) {
         logger.info("Processing feed page: <${pageUrl}> (id <${feed.id}>)")
 
         registry.logVisitedFeedPage(feed)
         collectedBatch = depot.makeEntryBatch()
-        def deletedMap = AtomEntryDeleteUtil.getDeletedMarkers(feed)
-        def currentUpdated
         try {
-            for (entry in feed.getEntries()) {
-                if (deletedMap.containsKey(entry.getId())) {
-                    // TODO:? this skips any preceding updates of deleteds in page..
-                    continue
-                }
+            for (entry in effectiveEntries) {
+                // TODO: isn't this a strange exceptional state?
                 if (registry.hasCollected(entry)) {
                     if (logger.isDebugEnabled())
                         logger.debug "skipping collected entry <${entry.id}> [${entry.updated}]"
                     continue
                 }
-                // TODO:? verify this in unit test instead (using a jumbled source feed)
-                if (currentUpdated != null) {
-                    assert currentUpdated <= entry.getUpdated()
-                }
-                currentUpdated = entry.getUpdated()
                 try {
                     storeEntry(feed, entry)
                 } catch (Exception e) {

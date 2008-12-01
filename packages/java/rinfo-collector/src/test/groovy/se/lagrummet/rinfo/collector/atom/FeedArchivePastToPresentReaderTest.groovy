@@ -45,7 +45,7 @@ class FeedArchivePastToPresentReaderTest {
                 reader.visitedPages )
         assertEquals( [
                     "http://example.org/entry/1 2000-01-01T00:00:01.000Z",
-                    "http://example.org/entry/2 2000-01-01T00:00:02.000Z",
+                    //"http://example.org/entry/2 2000-01-01T00:00:02.000Z",
                     "http://example.org/entry/3 2000-01-01T00:00:03.000Z",
                     "http://example.org/entry/2 2000-01-01T00:01:00.000Z",
                 ],
@@ -63,8 +63,7 @@ class FeedArchivePastToPresentReaderTest {
             )
         reader.readFeed(feedUrl)
         assertEquals 1, reader.visitedPages.size()
-        // NOTE: 2, not 1, since reader doesn't filter visiting feeds
-        assertEquals 2, reader.visitedEntries.size()
+        assertEquals 1, reader.visitedEntries.size()
     }
 
     @Test
@@ -108,9 +107,11 @@ class CollectReader extends FeedArchivePastToPresentReader {
     def knownEntry
     def knownArchive
 
-    void processFeedPageInOrder(URL pageUrl, Feed feed) {
+    @Override
+    void processFeedPageInOrder(URL pageUrl, Feed feed,
+            List<Entry> effectiveEntries, Map<IRI, AtomDate> deleteds) {
         visitedPages << pageUrl
-        for (entry in feed.entries) {
+        for (entry in effectiveEntries) {
             visitedEntries << entry
         }
     }

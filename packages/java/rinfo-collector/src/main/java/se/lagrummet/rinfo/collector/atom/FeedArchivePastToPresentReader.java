@@ -3,6 +3,7 @@ package se.lagrummet.rinfo.collector.atom;
 import java.io.*;
 import java.util.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.slf4j.Logger;
@@ -30,27 +31,46 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
 
     private LinkedList<FeedReference> feedTrail;
     private Map<IRI, AtomDate> entryModificationMap;
+    private Entry knownStoppingEntry;
 
     @Override
     public void beforeTraversal() {
         feedTrail = new LinkedList<FeedReference>();
         entryModificationMap = new HashMap<IRI, AtomDate>();
+        knownStoppingEntry = null;
     }
 
     @Override
-    public void afterTraversal() {
+    public void afterTraversal() throws URISyntaxException {
         for (FeedReference feedRef : feedTrail) {
             try {
                 try {
                     Feed feed = feedRef.openFeed();
                     feed = feed.sortEntriesByUpdated(false);
-                    /* FIXME: supply:
-                        - entriesCurrentlyInEffect
-                            if not in entryModificationMap or date.equals
-                            and not older or equals stoppedOnKnownEntry
-                        - deletedRefs
-                    */
-                    processFeedPageInOrder(feedRef.getFeedUrl(), feed);
+
+                    Map<IRI, AtomDate> deletedMap =
+                            AtomEntryDeleteUtil.getDeletedMarkers(feed);
+                    List<Entry> effectiveEntries = new ArrayList<Entry>();
+
+                    for (Entry entry: feed.getEntries()) {
+                        if (deletedMap.containsKey(entry.getId())) {
+                            continue;
+                        }
+                        Date entryUpdated = entry.getUpdated();
+                        AtomDate youngestAtomDate = entryModificationMap.get(
+                                entry.getId());
+                        if (youngestAtomDate == null ||
+                                youngestAtomDate.getDate().equals(entryUpdated)) {
+                            if (knownStoppingEntry != null &&
+                                    !isYoungerThan(entryUpdated,
+                                        knownStoppingEntry.getUpdated())) {
+                                continue;
+                            }
+                            effectiveEntries.add(entry);
+                        }
+                    }
+                    processFeedPageInOrder(feedRef.getFeedUrl(), feed,
+                            effectiveEntries, deletedMap);
                 } finally {
                     feedRef.close();
                 }
@@ -97,6 +117,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
             if (stopOnEntry(entry)) {
                 logger.info("Stopping on known entry: <" +entry.getId() +
                         "> ["+entry.getUpdatedElement().getString()+"]");
+                knownStoppingEntry = entry;
                 return false;
             }
             putUriDateIfNewOrYoungest(entryModificationMap,
@@ -113,8 +134,21 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
      * to newest, with a feed entries sorted in chronological order <em>from
      * oldest to newest</em>. Note that the feed will contain <em>all</em>
      * entries, even the ones older than any known processed entry.
+     *
+     * @param pageUrl The URL of the feed page.
+     * @param feed The feed itself (with entries sorted in chronological order).
+     *
+     * @param effectiveEntries Entries in the current feed, filtered so that:
+     * <ul>
+     *   <li>No younger entries exist in the range of collected feed pages.</li>
+     *   <li>The entry has no tombstone in the current feed.</li>
+     * </ul>
+     *
+     * @param deletedMap A map of tombstones (given in one of the forms
+     *        supported by {@link AtomEntryDeleteUtil})
      */
-    public abstract void processFeedPageInOrder(URL pageUrl, Feed feed);
+    public abstract void processFeedPageInOrder(URL pageUrl, Feed feed,
+            List<Entry> effectiveEntries, Map<IRI, AtomDate> deletedMap);
 
     /**
      * Template method to stop on known feed entry.
@@ -131,6 +165,14 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
         return false;
     }
 
+    public static boolean isYoungerThan(Date date, Date thanDate) {
+        return date.compareTo(thanDate) > 0;
+    }
+
+    public static boolean isOlderThan(Date date, Date thanDate) {
+        return date.compareTo(thanDate) < 0;
+    }
+
     static boolean putUriDateIfNewOrYoungest(Map<IRI, AtomDate> map,
             IRI iri, AtomDate atomDate) {
         AtomDate storedAtomDate = map.get(iri);
@@ -138,7 +180,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
             Date date = atomDate.getDate();
             Date storedDate = storedAtomDate.getDate();
             // keep largest date => ignore all older (smaller)
-            if(storedDate.compareTo(date) > 0) {
+            if (isOlderThan(atomDate.getDate(), storedAtomDate.getDate())) {
                 return false;
             }
         }
