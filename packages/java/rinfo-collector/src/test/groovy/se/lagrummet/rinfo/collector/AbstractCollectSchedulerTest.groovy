@@ -21,7 +21,7 @@ class AbstractCollectSchedulerTest {
 
     @Before
     void startUp() {
-        collectScheduler = new DummyScheduler(
+        collectScheduler = new ManagedDummyScheduler(
             initialDelay: 0,
             scheduleInterval: -1,
             timeUnitName: "MILLISECONDS",
@@ -31,22 +31,7 @@ class AbstractCollectSchedulerTest {
 
     @After
     void tearDown() {
-        collectScheduler.reachedLastSemaphore.release()
         collectScheduler.shutdown()
-    }
-
-    void waitForLastCollect() {
-        collectScheduler.reachedLastSemaphore.acquire()
-        collectScheduler.reachedLastSemaphore.release()
-    }
-
-    void blockCollect() {
-        collectScheduler.blockCollectSemaphore = new Semaphore(1)
-        collectScheduler.blockCollectSemaphore.acquire()
-    }
-
-    void releaseCollect() {
-        collectScheduler.blockCollectSemaphore.release()
     }
 
     @Test
@@ -54,7 +39,7 @@ class AbstractCollectSchedulerTest {
         collectScheduler.startup()
         def fakeSource = SOURCE_FEEDS[0]
         assertTrue collectScheduler.triggerFeedCollect(fakeSource.url)
-        waitForLastCollect()
+        collectScheduler.waitForCompletedCollect()
         assertEquals fakeSource.items, collectScheduler.collectedItems
     }
 
@@ -63,7 +48,7 @@ class AbstractCollectSchedulerTest {
         collectScheduler.startup()
         def fakeSource = SOURCE_FEEDS[0]
         assertTrue collectScheduler.collectAllFeeds()
-        waitForLastCollect()
+        collectScheduler.waitForCompletedCollect()
         assertEquals SOURCE_FEEDS.collect { it.items }.flatten(),
                 collectScheduler.collectedItems
     }
@@ -71,23 +56,23 @@ class AbstractCollectSchedulerTest {
     @Test
     void shouldNotTriggerWhenRunningScheduled() {
         collectScheduler.scheduleInterval = 20
-        blockCollect()
+        collectScheduler.pause()
         collectScheduler.startup()
         Thread.sleep(SAFE_STARTUP_MILLIS)
         assertFalse "Expected stalled collector to block trigger.",
                 collectScheduler.triggerFeedCollect(SOURCE_FEEDS[1].url)
-        releaseCollect()
+        collectScheduler.unpause()
     }
 
     @Test
     void shouldNeverCollectConcurrently() {
         collectScheduler.scheduleInterval = 20
-        blockCollect()
+        collectScheduler.pause()
         collectScheduler.startup()
         Thread.sleep(SAFE_STARTUP_MILLIS)
         assertFalse "Expected stalled collector to block new collectAll.",
                 collectScheduler.collectAllFeeds()
-        releaseCollect()
+        collectScheduler.unpause()
     }
 
     @Test(expected=NotAllowedSourceFeedException)
@@ -98,15 +83,30 @@ class AbstractCollectSchedulerTest {
 
 }
 
-class DummyScheduler extends AbstractCollectScheduler {
+class ManagedDummyScheduler extends AbstractCollectScheduler {
 
     Collection sourceFeedUrls
 
     def collectedItems = []
 
-    // TODO: use semaphore.acquire and release instead of sleep?
-    def reachedLastSemaphore = new Semaphore(1)
-    def blockCollectSemaphore
+    private reachedLastSemaphore = new Semaphore(1)
+
+    protected waitForCompletedCollect() {
+        reachedLastSemaphore.acquire()
+        reachedLastSemaphore.release()
+    }
+
+    private blockCollectSemaphore
+
+    protected pause() {
+        blockCollectSemaphore = new Semaphore(1)
+        blockCollectSemaphore.acquire()
+    }
+
+    protected unpause() {
+        blockCollectSemaphore.release()
+        blockCollectSemaphore = null
+    }
 
     void collectFeed(URL feedUrl, boolean lastInBatch) {
         if (blockCollectSemaphore) {
@@ -133,4 +133,5 @@ class DummyScheduler extends AbstractCollectScheduler {
         reachedLastSemaphore.tryAcquire()
         return super.triggerFeedCollect(feedUrl)
     }
+
 }
