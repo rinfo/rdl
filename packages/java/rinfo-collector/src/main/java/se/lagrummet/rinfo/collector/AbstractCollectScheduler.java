@@ -54,11 +54,16 @@ public abstract class AbstractCollectScheduler {
 
     public abstract Collection<URL> getSourceFeedUrls();
 
+    // TODO:IMPROVE: does the current semaphore work? Consider:
+    //  - demand collect/write concurrenct safety in user instead?
+    //  - pop from synchronized queue? (To e.g. inform if triggerFeedCollect
+    //    will "soon" tart collecting?)
+    protected abstract void collectFeed(URL feedUrl, boolean lastInBatch);
+
     public void startup() {
         if (scheduleInterval == -1) {
             logger.info("Disabled scheduled collects.");
         } else {
-            // FIXME: error handling (currently silently dies on bad feeds)
             scheduleService = Executors.newSingleThreadScheduledExecutor();
             scheduleService.scheduleAtFixedRate(
                 new Runnable() {
@@ -92,7 +97,7 @@ public abstract class AbstractCollectScheduler {
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.execute(
                   new Runnable() {
-                    public void run() { collectFeed(feedUrl); }
+                    public void run() { collectFeed(feedUrl, true); }
                   }
                 );
             executor.shutdown();
@@ -103,7 +108,8 @@ public abstract class AbstractCollectScheduler {
     }
 
     public boolean collectAllFeeds() {
-        if (getSourceFeedUrls() == null) {
+        Collection<URL> sourceFeedUrls = getSourceFeedUrls();
+        if (sourceFeedUrls == null) {
             return true;
         }
         if (!semaphore.tryAcquire()) {
@@ -111,10 +117,12 @@ public abstract class AbstractCollectScheduler {
             return false;
         }
         try {
-            logger.info("Starting to collect " + getSourceFeedUrls().size() +
+            logger.info("Starting to collect " + sourceFeedUrls.size() +
                     " source feeds.");
-            for (URL feedUrl : getSourceFeedUrls()) {
-                collectFeed(feedUrl);
+            int count = 0;
+            for (URL feedUrl : sourceFeedUrls) {
+                count++;
+                collectFeed(feedUrl, count == sourceFeedUrls.size());
             }
             logger.info("Done collecting source feeds.");
             return true;
@@ -122,10 +130,5 @@ public abstract class AbstractCollectScheduler {
             semaphore.release();
         }
     }
-
-    // TODO:IMPROVE: does the current semaphore work? Consider:
-    //  - demand collect/write concurrenct safety in user instead?
-    //  - pop from synchronized queue?
-    protected abstract void collectFeed(URL feedUrl);
 
 }

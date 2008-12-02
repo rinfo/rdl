@@ -5,6 +5,8 @@ import org.junit.Before
 import org.junit.Test
 import static org.junit.Assert.*
 
+import java.util.concurrent.Semaphore
+
 
 class AbstractCollectSchedulerTest {
 
@@ -29,7 +31,22 @@ class AbstractCollectSchedulerTest {
 
     @After
     void tearDown() {
+        collectScheduler.reachedLastSemaphore.release()
         collectScheduler.shutdown()
+    }
+
+    void waitForLastCollect() {
+        collectScheduler.reachedLastSemaphore.acquire()
+        collectScheduler.reachedLastSemaphore.release()
+    }
+
+    void blockCollect() {
+        collectScheduler.blockCollectSemaphore = new Semaphore(1)
+        collectScheduler.blockCollectSemaphore.acquire()
+    }
+
+    void releaseCollect() {
+        collectScheduler.blockCollectSemaphore.release()
     }
 
     @Test
@@ -37,36 +54,45 @@ class AbstractCollectSchedulerTest {
         collectScheduler.startup()
         def fakeSource = SOURCE_FEEDS[0]
         assertTrue collectScheduler.triggerFeedCollect(fakeSource.url)
-        Thread.sleep(50)
+        waitForLastCollect()
         assertEquals fakeSource.items, collectScheduler.collectedItems
     }
 
     @Test
-    void shouldNotTriggerWhenRunningScheduled() {
-        collectScheduler.scheduleInterval = 200
-        collectScheduler.sleepBefore = SAFE_STARTUP_MILLIS*2
+    void shouldCollectAllFeeds() {
         collectScheduler.startup()
-        try {
-            Thread.sleep(SAFE_STARTUP_MILLIS)
-            assertTrue "Expected stall to have ocurred at least once.",
-                    collectScheduler.triggerFeedCollect(SOURCE_FEEDS[1].url)
-        } finally {
-            collectScheduler.shutdown()
-        }
+        def fakeSource = SOURCE_FEEDS[0]
+        assertTrue collectScheduler.collectAllFeeds()
+        waitForLastCollect()
+        assertEquals SOURCE_FEEDS.collect { it.items }.flatten(),
+                collectScheduler.collectedItems
+    }
+
+    @Test
+    void shouldNotTriggerWhenRunningScheduled() {
+        collectScheduler.scheduleInterval = 20
+        blockCollect()
+        collectScheduler.startup()
+        Thread.sleep(SAFE_STARTUP_MILLIS)
+        assertFalse "Expected stalled collector to block trigger.",
+                collectScheduler.triggerFeedCollect(SOURCE_FEEDS[1].url)
+        releaseCollect()
     }
 
     @Test
     void shouldNeverCollectConcurrently() {
-        collectScheduler.scheduleInterval = 200
-        collectScheduler.sleepOnce = SAFE_STARTUP_MILLIS*2
+        collectScheduler.scheduleInterval = 20
+        blockCollect()
         collectScheduler.startup()
         Thread.sleep(SAFE_STARTUP_MILLIS)
-        assertFalse collectScheduler.collectAllFeeds()
-        Thread.sleep(SAFE_STARTUP_MILLIS)
+        assertFalse "Expected stalled collector to block new collectAll.",
+                collectScheduler.collectAllFeeds()
+        releaseCollect()
     }
 
     @Test(expected=NotAllowedSourceFeedException)
     void shouldFailOnDisallowedSourceUrl() {
+        collectScheduler.startup()
         collectScheduler.triggerFeedCollect(new URL("http://bad.example.org/"))
     }
 
@@ -76,23 +102,35 @@ class DummyScheduler extends AbstractCollectScheduler {
 
     Collection sourceFeedUrls
 
-    def collectedItems
-    def sleepBefore
-    def sleepOnce
+    def collectedItems = []
 
-    void collectFeed(URL feedUrl) {
-        if (sleepOnce > 0) {
-            Thread.sleep(sleepOnce)
-            sleepOnce = 0
+    // TODO: use semaphore.acquire and release instead of sleep?
+    def reachedLastSemaphore = new Semaphore(1)
+    def blockCollectSemaphore
+
+    void collectFeed(URL feedUrl, boolean lastInBatch) {
+        if (blockCollectSemaphore) {
+            blockCollectSemaphore.acquire()
+            blockCollectSemaphore.release()
         }
-        collectedItems = AbstractCollectSchedulerTest.SOURCE_FEEDS.find {
+        AbstractCollectSchedulerTest.SOURCE_FEEDS.find {
                 it.url == feedUrl
-            }.items
+        }.items.each {
+            collectedItems << it
+        }
+        if (lastInBatch) {
+            reachedLastSemaphore.release()
+        }
     }
 
     boolean collectAllFeeds() {
-        if (sleepBefore > 0) Thread.sleep(sleepBefore)
-        super.collectAllFeeds()
+        reachedLastSemaphore.tryAcquire()
+        return super.collectAllFeeds()
     }
 
+    public boolean triggerFeedCollect(final URL feedUrl)
+            throws NotAllowedSourceFeedException {
+        reachedLastSemaphore.tryAcquire()
+        return super.triggerFeedCollect(feedUrl)
+    }
 }
