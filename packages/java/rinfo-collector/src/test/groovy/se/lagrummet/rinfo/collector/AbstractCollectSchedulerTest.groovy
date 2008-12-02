@@ -65,6 +65,11 @@ class AbstractCollectSchedulerTest {
         Thread.sleep(SAFE_STARTUP_MILLIS)
     }
 
+    @Test(expected=NotAllowedSourceFeedException)
+    void shouldFailOnDisallowedSourceUrl() {
+        collectScheduler.triggerFeedCollect(new URL("http://bad.example.org/"))
+    }
+
 }
 
 class DummyScheduler extends AbstractCollectScheduler {

@@ -77,12 +77,12 @@ public abstract class AbstractCollectScheduler {
         }
     }
 
-    public boolean triggerFeedCollect(final URL feedUrl) {
+    public boolean triggerFeedCollect(final URL feedUrl)
+            throws NotAllowedSourceFeedException {
         if (!getSourceFeedUrls().contains(feedUrl)) {
-            // FIXME: throw NotAllowedSourceFeedException?
-            logger.warn("Warning - triggerFeedCollect called with disallowed " +
+            throw new NotAllowedSourceFeedException(
+                    "Called triggerFeedCollect with disallowed " +
                     "feed url: <"+feedUrl+">");
-            return false;
         }
         if (!semaphore.tryAcquire()) {
             logger.info("Busy - skipping collect of <"+feedUrl+">");
@@ -123,10 +123,9 @@ public abstract class AbstractCollectScheduler {
         }
     }
 
-    // TODO:IMPROVE: current semaphore simultaneous collect prevention? E.g.:
-    //  - synchronized triggerFeedCollect or scheduled collectAllFeeds somehow?
-    //  - or safety in FeedCollector instead?
-    //  - or pop from synchronized queue?
+    // TODO:IMPROVE: does the current semaphore work? Consider:
+    //  - demand collect/write concurrenct safety in user instead?
+    //  - pop from synchronized queue?
     protected abstract void collectFeed(URL feedUrl);
 
 }
