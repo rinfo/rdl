@@ -84,7 +84,7 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
         return sourceFeedUrls
     }
 
-    protected void collectFeed(URL feedUrl) {
+    protected void collectFeed(URL feedUrl, boolean lastInBatch) {
         //  .. and (in webapp) that request comes from allowed domain..
         FeedCollector.readFeed(depot, registryRepo, uriMinter, feedUrl)
     }

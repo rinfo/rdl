@@ -20,6 +20,8 @@ import org.restlet.data.Status
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.supply.DepotFinder
 
+import se.lagrummet.rinfo.collector.NotAllowedSourceFeedException
+
 
 class MainApplication extends Application {
 
@@ -93,14 +95,22 @@ class CollectorHandler extends Handler {
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, BAD_MSG)
             return
         }
-        boolean allowedUrl = collectScheduler.triggerFeedCollect(new URL(feedUrl))
-        if (!allowedUrl) {
-            def msg = "The url <${feedUrl}> is not an allowed source feed."
-            getResponse().setStatus(Status.CLIENT_ERROR_FORBIDDEN)
-            getResponse().setEntity(msg, MediaType.TEXT_PLAIN)
+        def msg = "Scheduled collect of <${feedUrl}>."
+        def status = null
+        try {
+            boolean wasScheduled = collectScheduler.triggerFeedCollect(new URL(feedUrl))
+            if (!wasScheduled) {
+                msg = "The service is busy collecting all source feeds."
+                status = Status.SERVER_ERROR_SERVICE_UNAVAILABLE
+            }
+        } catch (NotAllowedSourceFeedException e) {
+                msg = "The url <${feedUrl}> is not an allowed source feed."
+                status = Status.CLIENT_ERROR_FORBIDDEN
         }
-        getResponse().setEntity(
-                "Scheduled collect of <${feedUrl}>.", MediaType.TEXT_PLAIN)
+        if (status != null) {
+            getResponse().setStatus(status)
+        }
+        getResponse().setEntity(msg, MediaType.TEXT_PLAIN)
     }
 
 }
