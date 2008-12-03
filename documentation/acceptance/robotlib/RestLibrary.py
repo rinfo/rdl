@@ -6,7 +6,7 @@ keywords for calling REST-style services and inspecting the response.
 """
 
 __author__ = "Niklas Lindström"
-__version__ = "1.0a"
+__version__ = "trunk"
 
 
 import re
