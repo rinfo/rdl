@@ -5,8 +5,9 @@ README - Acceptance Tests
 The acceptance tests are run with Robot Framework
 (<http://robotframework.org/>). To get started, use::
 
-    $ easy_install roboframework
-    $ easy_install lxml
+    $ sudo easy_install robotframework
+    $ sudo easy_install http://robotframework-restlibrary.googlecode.com/svn/trunk#egg=RestLibrary-dev
+    $ sudo easy_install lxml
 
 , and, optionally:
 
