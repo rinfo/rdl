@@ -2,7 +2,7 @@
 # Local build
 
 @requires('env', provided_by=[staging, production])
-@depends(install_base, install_store)
+@depends(install_base, install_store, install_collector)
 def package_main():
     local("cd $(java_packages)/rinfo-main/; mvn -P$(env) package")
 
