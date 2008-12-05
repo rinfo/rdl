@@ -94,6 +94,7 @@ public abstract class AbstractCollectScheduler {
             return false;
         }
         try {
+            logger.info("Scheduling collect of <${feedUrl}>.");
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.execute(
                   new Runnable() {
@@ -122,7 +123,9 @@ public abstract class AbstractCollectScheduler {
             int count = 0;
             for (URL feedUrl : sourceFeedUrls) {
                 count++;
+                logger.info("Beginning collect of <"+feedUrl+">.");
                 collectFeed(feedUrl, count == sourceFeedUrls.size());
+                logger.info("Completed collect of <"+feedUrl+">.");
             }
             logger.info("Done collecting source feeds.");
             return true;
