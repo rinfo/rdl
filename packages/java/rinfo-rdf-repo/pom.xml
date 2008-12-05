@@ -22,28 +22,22 @@
           <groupId>commons-configuration</groupId>
           <artifactId>commons-configuration</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--          <groupId>org.openrdf.sesame</groupId>-->
-<!--          <artifactId>sesame-repository-api</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--          <groupId>org.openrdf.sesame</groupId>-->
-<!--          <artifactId>sesame-repository-sail</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+          <groupId>org.openrdf.sesame</groupId>
+          <artifactId>sesame-repository-api</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.openrdf.sesame</groupId>
+          <artifactId>sesame-repository-sail</artifactId>
+        </dependency>
 <!--        <dependency>-->
 <!--          <groupId>org.openrdf.sesame</groupId>-->
 <!--          <artifactId>sesame-sail-api</artifactId>-->
 <!--        </dependency>-->
-<!--        <dependency>-->
-<!--          <groupId>org.openrdf.sesame</groupId>-->
-<!--          <artifactId>sesame-sail-memory</artifactId>-->
-<!--        </dependency>-->
-        
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
+          <groupId>org.openrdf.sesame</groupId>
+          <artifactId>sesame-sail-memory</artifactId>
+        </dependency>        
     </dependencies>
 
     <build>
@@ -52,7 +46,7 @@
         <finalName>${artifactId}-${version}</finalName>
         <resources>
             <resource>
-                <filtering>false</filtering>
+<!--                <filtering>false</filtering>-->
                 <directory>src/main/java</directory>
                 <includes>
                     <include>**/*</include>
@@ -62,14 +56,18 @@
                 </excludes>
             </resource>
             <resource>
-                <filtering>false</filtering>
+<!--                <filtering>false</filtering>-->
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*</include>
                 </includes>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
+            </resource>
+            <resource>
+<!--                <filtering>false</filtering>-->
+                <directory>src/environments/${environment}</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
             </resource>
         </resources>
         <testResources>
@@ -95,6 +93,12 @@
             </testResource>
         </testResources>
         
+<!-- 
+
+    TODO: move plugin configuration to project pom plugin management.
+
+ -->        
+        
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -105,7 +109,19 @@
                     <encoding>UTF-8</encoding>                      
                 </configuration>
             </plugin>            
-            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                  <archive>
+                    <manifest>
+                      <mainClass>se.lagrummet.rinfo.rdf.repo.RepositoryUtil</mainClass>
+                      <packageName>se.lagrummet.rinfo.rdf.repo</packageName>
+                    </manifest>
+                  </archive>
+                </configuration>
+          </plugin>            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -147,8 +163,43 @@
           <id>aduna-repo</id>
           <name>Aduna Repository</name>
           <url>http://repo.aduna-software.org/maven2/releases/</url>
-        </repository>
-        
+        </repository>        
     </repositories>  
+      
+	<profiles>
+	  <profile>
+	    <activation>
+	      <property>
+	        <name>!environment</name>
+	      </property>
+	    </activation>
+	    <properties>
+	      <environment>default</environment>
+	    </properties>
+	  </profile>
+	  <profile>
+	    <id>dev-unix</id>
+	    <activation>
+	      <os>
+	        <family>unix</family>
+	      </os>
+	    </activation>
+	    <properties>
+	      <environment>dev-unix</environment>
+	    </properties>
+	  </profile>
+	  <profile>
+	    <id>stg</id>
+	    <properties>
+	      <environment>stg</environment>
+	    </properties>
+	  </profile>
+	  <profile>
+	    <id>prod</id>
+	    <properties>
+	      <environment>prod</environment>
+	    </properties>
+	  </profile>
+	</profiles>	    
       
 </project>
