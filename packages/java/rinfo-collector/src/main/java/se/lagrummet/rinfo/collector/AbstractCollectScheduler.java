@@ -57,7 +57,7 @@ public abstract class AbstractCollectScheduler {
     // TODO:IMPROVE: does the current semaphore work? Consider:
     //  - demand collect/write concurrenct safety in user instead?
     //  - pop from synchronized queue? (To e.g. inform if triggerFeedCollect
-    //    will "soon" tart collecting?)
+    //    will "soon" start collecting?)
     protected abstract void collectFeed(URL feedUrl, boolean lastInBatch);
 
     public void startup() {
