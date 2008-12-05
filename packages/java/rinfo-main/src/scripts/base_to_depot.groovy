@@ -21,6 +21,10 @@ import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.depot.SourceContent
 
 
+if (args.length != 1) {
+    println "Usage: groovy <script> <path-to-depot-config>"
+    System.exit(1)
+}
 depot = FileDepot.newConfigured(args[0])
 
 
