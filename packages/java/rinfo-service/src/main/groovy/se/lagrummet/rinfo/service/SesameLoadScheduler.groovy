@@ -60,7 +60,6 @@ class SesameLoadScheduler extends AbstractCollectScheduler {
         //  .. and (in webapp) that request comes from allowed domain..
         def rdfStoreLoader = new SesameLoader(repo)
         rdfStoreLoader.readFeed(feedUrl)
-        SesameLoader.readFeed(depot, registryRepo, uriMinter, feedUrl)
     }
 
     protected void addRepositoryListener(listener) {
