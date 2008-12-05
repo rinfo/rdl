@@ -79,10 +79,10 @@ def teststep(msg) {
 }
 
 
-def doPing(target) {
-    def parts = target.split(/\?/)
-    def request = new Request(Method.POST, parts[0])
-    request.setEntity(parts[1], MediaType.MULTIPART_FORM_DATA)
+def doPing(reciever, feedUrl) {
+    def request = new Request(Method.POST, reciever)
+    def feedUrlMsg = "feed=${feedUrl}"
+    request.setEntity(feedUrlMsg, MediaType.MULTIPART_FORM_DATA)
     //request.setReferrerRef(...)
     def client = new Client(Protocol.HTTP)
     def response = client.handle(request)
@@ -118,14 +118,14 @@ startAppServer(rinfoPort, {new MainApplication(it, rinfoCfg)})
 
 // simulate ping from a source
 def pingFeedToRInfo(feedUrl) {
-    doPing("http://localhost:${rinfoPort}/collector?feed=${feedUrl}")
+    doPing("http://localhost:${rinfoPort}/collector", feedUrl)
 }
 
 // simulate ping to rinfo service
 // TODO: service is started outside of this package
 //servicePort = 8981
 //def pingRInfoFeedToService(feedUrl) {
-//    doPing("http://localhost:${servicePort}/?feed=${feedUrl}")
+//    doPing("http://localhost:${servicePort}/collector", feedUrl)
 //}
 // TODO: Do ping from MainApplication..
 //  pingRInfoFeedToService(localhost(rinfoPort, "/feed/current"))

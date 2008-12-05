@@ -68,9 +68,9 @@ class RDFLoaderHandler extends Handler {
 
     @Override
     public void handlePost() {
-        // TODO: verify source of request?
-        // (feedUrl must be in loadScheduler.sourceFeedUrls)
-        // FIXME: error handling.. (report and/or (public) log)
+        // TODO: verify source of request (or only via loadScheduler.sourceFeedUrls)?
+        // TODO: error handling.. (report and/or (public) status/log)
+
         def loadScheduler = (SesameLoadScheduler) getContext().getAttributes().get(
                 ServiceApplication.RDF_LOADER_CONTEXT_KEY)
 

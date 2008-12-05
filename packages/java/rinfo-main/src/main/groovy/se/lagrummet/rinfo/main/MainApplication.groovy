@@ -40,6 +40,11 @@ class MainApplication extends Application {
         super(context)
         depot = FileDepot.newConfigured(config)
         collectScheduler = new FeedCollectScheduler(depot, null, config)
+        collectScheduler.batchCompletedCallback = new FeedUpdatePingNotifyer(
+                new URL(config.getString("rinfo.main.publicSubscriptionFeed")),
+                config.getList("rinfo.main.collector.onCompletePingTargets").
+                    collect { new URL(it) }
+            )
         getContext().getAttributes().putIfAbsent(
                 COLLECTOR_RUNNER_CONTEXT_KEY, collectScheduler)
     }
@@ -82,6 +87,9 @@ class CollectorHandler extends Handler {
 
     @Override
     public void handlePost() {
+        // TODO: verify source of request (or only via loadScheduler.sourceFeedUrls)?
+        // TODO: error handling.. (report and/or (public) log)
+
         def collectScheduler = (FeedCollectScheduler) context.getAttributes().get(
                 MainApplication.COLLECTOR_RUNNER_CONTEXT_KEY)
 

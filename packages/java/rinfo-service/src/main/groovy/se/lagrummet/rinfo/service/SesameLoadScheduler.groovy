@@ -57,7 +57,6 @@ class SesameLoadScheduler extends AbstractCollectScheduler {
     }
 
     protected void collectFeed(URL feedUrl, boolean lastInBatch) {
-        //  .. and (in webapp) that request comes from allowed domain..
         def rdfStoreLoader = new SesameLoader(repo)
         rdfStoreLoader.readFeed(feedUrl)
     }

@@ -26,6 +26,8 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     private Repository registryRepo
     private URIMinter uriMinter
 
+    Runnable batchCompletedCallback
+
     FeedCollectScheduler(FileDepot depot, URIMinter uriMinter,
             AbstractConfiguration config) {
         this(depot, uriMinter)
@@ -79,8 +81,10 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     }
 
     protected void collectFeed(URL feedUrl, boolean lastInBatch) {
-        //  .. and (in webapp) that request comes from allowed domain..
         FeedCollector.readFeed(depot, registryRepo, uriMinter, feedUrl)
+        if (batchCompletedCallback != null) {
+            batchCompletedCallback.run()
+        }
     }
 
 }
