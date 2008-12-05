@@ -20,13 +20,23 @@
   <dependencies>
 
     <dependency>
-      <groupId>se.lagrummet.rinfo</groupId>
-      <artifactId>rinfo-store</artifactId>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
     </dependency>
 
     <dependency>
       <groupId>se.lagrummet.rinfo</groupId>
       <artifactId>rinfo-base</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>se.lagrummet.rinfo</groupId>
+      <artifactId>rinfo-collector</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openrdf.sesame</groupId>
+      <artifactId>sesame-model</artifactId>
     </dependency>
 
     <dependency>
@@ -36,7 +46,7 @@
 
     <dependency>
       <groupId>org.openrdf.sesame</groupId>
-      <artifactId>sesame-model</artifactId>
+      <artifactId>sesame-repository-http</artifactId>
     </dependency>
 
     <dependency>

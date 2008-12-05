@@ -26,13 +26,11 @@ import se.lagrummet.rinfo.collector.NotAllowedSourceFeedException
 class MainApplication extends Application {
 
     public static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-main.properties"
-    public static final String DEPOT_CONTEXT_KEY =
-            "rinfo.main.depot.restlet.context"
     public static final String COLLECTOR_RUNNER_CONTEXT_KEY =
             "rinfo.main.collector.restlet.context"
 
-    private FileDepot depot
     private FeedCollectScheduler collectScheduler
+    private FileDepot depot
 
     MainApplication(Context context) {
         this(context, new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME))
@@ -42,9 +40,8 @@ class MainApplication extends Application {
         super(context)
         depot = FileDepot.newConfigured(config)
         collectScheduler = new FeedCollectScheduler(depot, null, config)
-        def attrs = getContext().getAttributes()
-        attrs.putIfAbsent(DEPOT_CONTEXT_KEY, depot)
-        attrs.putIfAbsent(COLLECTOR_RUNNER_CONTEXT_KEY, collectScheduler)
+        getContext().getAttributes().putIfAbsent(
+                COLLECTOR_RUNNER_CONTEXT_KEY, collectScheduler)
     }
 
     @Override
@@ -85,9 +82,7 @@ class CollectorHandler extends Handler {
 
     @Override
     public void handlePost() {
-        def attrs = context.getAttributes()
-        def depot = (FileDepot) attrs.get(MainApplication.DEPOT_CONTEXT_KEY)
-        def collectScheduler = (FeedCollectScheduler) attrs.get(
+        def collectScheduler = (FeedCollectScheduler) context.getAttributes().get(
                 MainApplication.COLLECTOR_RUNNER_CONTEXT_KEY)
 
         String feedUrl = request.getEntityAsForm().getFirstValue("feed")
@@ -95,8 +90,10 @@ class CollectorHandler extends Handler {
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, BAD_MSG)
             return
         }
+
         def msg = "Scheduled collect of <${feedUrl}>."
         def status = null
+
         try {
             boolean wasScheduled = collectScheduler.triggerFeedCollect(new URL(feedUrl))
             if (!wasScheduled) {
@@ -107,6 +104,7 @@ class CollectorHandler extends Handler {
                 msg = "The url <${feedUrl}> is not an allowed source feed."
                 status = Status.CLIENT_ERROR_FORBIDDEN
         }
+
         if (status != null) {
             getResponse().setStatus(status)
         }

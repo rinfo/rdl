@@ -1,16 +1,10 @@
 package se.lagrummet.rinfo.main
 
-import java.util.concurrent.Callable
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
-
 import org.apache.commons.configuration.AbstractConfiguration
 import org.apache.commons.configuration.ConfigurationException
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import org.openrdf.repository.Repository
 import org.openrdf.repository.sail.SailRepository
@@ -69,7 +63,7 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
         }
         sourceFeedUrls = new ArrayList<URL>()
         for (String url : config.getList("rinfo.main.collector.sourceFeedUrls")) {
-          sourceFeedUrls.add(new URL(url))
+            sourceFeedUrls.add(new URL(url))
         }
     }
 

@@ -14,8 +14,7 @@ import org.restlet.data.Request
 import se.lagrummet.rinfo.store.depot.*
 import se.lagrummet.rinfo.store.supply.DepotFinder
 
-import se.lagrummet.rinfo.collector.CollectorRunner
-import se.lagrummet.rinfo.base.URIMinter
+import se.lagrummet.rinfo.main.FeedCollectScheduler
 import se.lagrummet.rinfo.main.MainApplication
 
 
@@ -110,8 +109,8 @@ rinfoCfg = new PropertiesConfiguration(
         "src/environments/dev-unix/rinfo-main.properties")
 def tempRInfoDir = createTempDir("rinfo").toString()
 rinfoCfg.setProperty("rinfo.depot.fileDir", tempRInfoDir+"/depot")
-rinfoCfg.setProperty("rinfo.collector.registryRepoDataDir", tempRInfoDir+"/registry")
-rinfoCfg.setProperty("rinfo.collector.sourceFeedUrls",
+rinfoCfg.setProperty("rinfo.main.collector.registryRepoDataDir", tempRInfoDir+"/registry")
+rinfoCfg.setProperty("rinfo.main.collector.sourceFeedUrls",
         [ localhost(sourcePort, "/feed/current").toString() ])
 rinfoPort = 8980
 teststep "Start rinfo app"

@@ -15,92 +15,47 @@ import org.restlet.data.Method
 import org.restlet.data.Request
 import org.restlet.data.Response
 import org.restlet.data.Status
-import org.restlet.resource.Representation;
-import org.restlet.resource.Resource;
-import org.restlet.resource.StringRepresentation;
-import org.restlet.resource.Variant;
+import org.restlet.resource.Representation
+import org.restlet.resource.Resource
+import org.restlet.resource.StringRepresentation
+import org.restlet.resource.Variant
 
 import org.apache.commons.configuration.AbstractConfiguration
 import org.apache.commons.configuration.ConfigurationException
 import org.apache.commons.configuration.PropertiesConfiguration
 
-import org.openrdf.repository.Repository
-import org.openrdf.repository.http.HTTPRepository
-import org.openrdf.repository.sail.SailRepository
-import org.openrdf.repository.event.base.NotifyingRepositoryWrapper
-import org.openrdf.sail.nativerdf.NativeStore
-
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import se.lagrummet.rinfo.collector.NotAllowedSourceFeedException
 
 
 class ServiceApplication extends Application {
 
     public static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service.properties"
-    public static final String RDF_REPO_CONTEXT_KEY = "rinfo.service.rdfrepo"
-    public static final String THREAD_POOL_CONTEXT_KEY = "rinfo.service.threadpool"
-    public static final String LOGGER_CONTEXT_KEY = "rinfo.service.logger"
+    public static final String RDF_LOADER_CONTEXT_KEY =
+            "rinfo.service.rdfloader.restlet.context"
 
-    private final logger = LoggerFactory.getLogger(ServiceApplication)
+    private SesameLoadScheduler loadScheduler
 
-    private ExecutorService threadPool    
-    private Repository repo
-    
     public ServiceApplication(Context parentContext) {
-        super(parentContext)        
-        
-        threadPool = Executors.newSingleThreadExecutor()
-
+        super(parentContext)
+        loadScheduler = new SesameLoadScheduler(
+                new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME))
         def attrs = getContext().getAttributes()
-        attrs.putIfAbsent(THREAD_POOL_CONTEXT_KEY, threadPool)
-        attrs.putIfAbsent(LOGGER_CONTEXT_KEY, logger)        
+        attrs.putIfAbsent(RDF_LOADER_CONTEXT_KEY, loadScheduler)
 
-        configure(new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME))
-    }
-
-    protected void configure(AbstractConfiguration config) {
-    	def repoPath = config.getString("rinfo.service.sesameRepoPath")
-        def remoteRepoName = config.getString("rinfo.service.sesameRemoteRepoName")
-        
-        if (repo != null) {
-            // close previous repo if set - to enable reconfiguration
-            repo.shutDown()
-        }
-
-        if (repoPath =~ /^https?:/) {
-            repo = new HTTPRepository(repoPath, remoteRepoName)
-        } else {
-            def dataDir = new File(repoPath)
-            repo = new SailRepository(new NativeStore(dataDir))
-        }
-        repo = new NotifyingRepositoryWrapper(repo) // enable notifications     
-        repo.initialize()
-        
-        def attrs = getContext().getAttributes()
-        attrs.put(RDF_REPO_CONTEXT_KEY, repo)
-    }
-
-    protected void addRepositoryListener(listener) {
-    	repo.addRepositoryListener(listener)    	
-    }
-
-    protected void addRepositoryConnectionListener(listener) {
-    	repo.addRepositoryConnectionListener(listener)     
     }
 
     @Override
     public synchronized Restlet createRoot() {
-        def router = new Router(getContext())                
-        router.attach("/status", StatusResource)        
-        router.attachDefault(new Finder(getContext(), RDFLoaderHandler))
+        def router = new Router(getContext())
+        router.attach("/collector", new Finder(getContext(), RDFLoaderHandler))
+        router.attachDefault(StatusResource)
         return router
     }
 
     @Override
     public void stop() {
         super.stop()
-        threadPool.shutdown()
-        repo.shutDown()
+        loadScheduler.shutdown()
     }
 
 }
@@ -113,57 +68,56 @@ class RDFLoaderHandler extends Handler {
 
     @Override
     public void handlePost() {
+        // TODO: verify source of request?
+        // (feedUrl must be in loadScheduler.sourceFeedUrls)
+        // FIXME: error handling.. (report and/or (public) log)
+        def loadScheduler = (SesameLoadScheduler) getContext().getAttributes().get(
+                ServiceApplication.RDF_LOADER_CONTEXT_KEY)
+
         String feedUrl = request.getEntityAsForm().getFirstValue("feed")
         if (feedUrl == null) {
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
                     "Missing feed parameter.")
             return
         }
-        logger.info("ServiceApplication: Scheduling collect of <${feedUrl}>.")
-        triggerFeedCollect(new URL(feedUrl))
-        response.setEntity("Scheduled collect of <${feedUrl}>.", MediaType.TEXT_PLAIN)
-    }
 
-    boolean triggerFeedCollect(URL feedUrl) {
-        // TODO: verify source of request and/or feedUrl
-        // FIXME: error handling.. (report and/or (public) log)
+        def msg = "Scheduled collect of <${feedUrl}>."
+        def status = null
 
-        def repo = (Repository) getContext().getAttributes().get(
-                ServiceApplication.RDF_REPO_CONTEXT_KEY)
-                
-        def pool = (ExecutorService) getContext().getAttributes().get(
-                ServiceApplication.THREAD_POOL_CONTEXT_KEY) 
+        try {
+            boolean wasScheduled = loadScheduler.triggerFeedCollect(new URL(feedUrl))
+            if (!wasScheduled) {
+                msg = "The service is busy collecting data."
+                status = Status.SERVER_ERROR_SERVICE_UNAVAILABLE
+            }
+        } catch (NotAllowedSourceFeedException e) {
+                msg = "The url <${feedUrl}> is not an allowed source feed."
+                status = Status.CLIENT_ERROR_FORBIDDEN
+        }
 
-        def logger = (Logger) getContext().getAttributes().get(
-        		ServiceApplication.LOGGER_CONTEXT_KEY) 
-        		
-		pool.execute({
-            logger.info("Beginning collect of <${feedUrl}>.")            
-            // TODO:IMPROVE: Ok to make a new instance for each request? Shouldn't
-            // be so expensive, and isolates it (shouldn't be app-global..)
-            def rdfStoreLoader = new SesameLoader(repo)
-            rdfStoreLoader.readFeed(feedUrl)
-            logger.info("Completed collect of <${feedUrl}>.")                
-        })
-        return true
+        if (status != null) {
+            getResponse().setStatus(status)
+        }
+        getResponse().setEntity(msg, MediaType.TEXT_PLAIN)
+
     }
 
 }
 
 /*
- *  Basic resource for simple status message.   
- *  
+ *  Basic resource for simple status message.
+ *
  *  TODO: replace this by a handleGet in RDFLoaderHandler?
  *  TODO: some form of collect status page..?
  */
 class StatusResource extends Resource {
-	public StatusResource(Context context, Request request, Response response) {
-		super(context, request, response)
-		getVariants().add(new Variant(MediaType.TEXT_PLAIN))
-	}
-	@Override
-	public Representation getRepresentation(Variant variant) {
-		def representation = new StringRepresentation("OK", MediaType.TEXT_PLAIN)
-		return representation
-	}
+    public StatusResource(Context context, Request request, Response response) {
+        super(context, request, response)
+        getVariants().add(new Variant(MediaType.TEXT_PLAIN))
+    }
+    @Override
+    public Representation getRepresentation(Variant variant) {
+        def representation = new StringRepresentation("OK", MediaType.TEXT_PLAIN)
+        return representation
+    }
 }

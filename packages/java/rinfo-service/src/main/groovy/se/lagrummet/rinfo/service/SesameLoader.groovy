@@ -18,6 +18,10 @@ import org.openrdf.rio.RDFFormat
 import org.openrdf.sail.memory.MemoryStore
 import org.openrdf.sail.nativerdf.NativeStore
 
+import org.apache.abdera.model.AtomDate
+import org.apache.abdera.model.Entry
+import org.apache.abdera.model.Feed
+import org.apache.abdera.i18n.iri.IRI
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.collector.atom.FeedArchivePastToPresentReader
@@ -59,32 +63,22 @@ class SesameLoader extends FeedArchivePastToPresentReader {
         return entryRepoData.isCollected()
     }
 
-    void processFeedPageInOrder(URL pageUrl, Feed feed) {
-        def deletedMap = AtomEntryDeleteUtil.getDeletedMarkers(feed)
+    void processFeedPageInOrder(URL pageUrl, Feed feed,
+            List<Entry> effectiveEntries, Map<IRI, AtomDate> deletedMap) {
 
-        for (Map.Entry<URI, Date> delItem : deletedMap.entrySet()) {
-            def entryRepoData = new EntryRepoData(
-                    delItem.getKey().toURI(), delItem.getValue().getDate(),
-                    conn)
-            logger.info("Deleting RDF from entry <${entryRepoData.id}>")
-            entryRepoData.clearContext() // TODO: error if not exists?
-            // TODO:? ok to just add the tombstone as a marker (for collect) like this?
-            entryRepoData.addContext()
-        }
+        deleteFromMarkers(feed, deletedMap)
 
-        for (Entry entry : feed.getEntries()) {
-            if (deletedMap.containsKey(entry.id)) {
-                continue
-            }
+        for (Entry entry : effectiveEntries) {
             def entryRepoData = new EntryRepoData(entry.id.toURI(), entry.updated, conn)
-            // TODO:IMPROVE: log known entries of last feed in stopOnEntry and
-            // filter by that. Should be done in FeedArchivePastToPresentReader..
+            // TODO: isn't this a strange exceptional state now?
+            // (FeedArchivePastToPresentReader shouldn't supply known stuff..)
             if (entryRepoData.isCollected()) {
-                // TODO: logger.debug
-                logger.info("skipping collected entry <${entry.id}> [${entry.updated}]")
+                logger.debug("skipping collected entry <${entry.id}> [${entry.updated}]")
                 continue
             } else {
                 if (entryRepoData.getStoredContext() != null) {
+                    // NOTE: clear, not remove, since we want to remember seen
+                    // updates *and* deletes
                     entryRepoData.clearContext()
                 }
             }
@@ -95,6 +89,18 @@ class SesameLoader extends FeedArchivePastToPresentReader {
                 logger.info("RDF from <${rdfRef.url}>")
                 loadData(rdfRef, entryRepoData.getContext())
             }
+        }
+    }
+
+    protected void deleteFromMarkers(Feed sourceFeed, Map<IRI, AtomDate> deletedMap) {
+        for (Map.Entry<URI, Date> delItem : deletedMap.entrySet()) {
+            def entryRepoData = new EntryRepoData(
+                    delItem.getKey().toURI(), delItem.getValue().getDate(),
+                    conn)
+            logger.info("Deleting RDF from entry <${entryRepoData.id}>")
+            entryRepoData.clearContext() // TODO: error if not exists?
+            // TODO:? ok to just add the tombstone as a marker (for collect) like this?
+            entryRepoData.addContext()
         }
     }
 

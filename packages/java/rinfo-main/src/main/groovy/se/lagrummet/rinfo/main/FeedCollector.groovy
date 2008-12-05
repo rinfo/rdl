@@ -23,10 +23,8 @@ import org.apache.commons.io.IOUtils
 
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.AtomDate
-import org.apache.abdera.model.Element
 import org.apache.abdera.model.Entry
 import org.apache.abdera.model.Feed
-import org.apache.abdera.model.Source
 import org.apache.abdera.i18n.iri.IRI
 
 import org.openrdf.repository.Repository
@@ -145,7 +143,8 @@ class FeedCollector extends FeedArchivePastToPresentReader {
         collectedBatch = depot.makeEntryBatch()
         try {
             for (entry in effectiveEntries) {
-                // TODO: isn't this a strange exceptional state?
+                // TODO: isn't this a strange exceptional state now?
+                // (FeedArchivePastToPresentReader shouldn't supply known stuff..)
                 if (registry.hasCollected(entry)) {
                     if (logger.isDebugEnabled())
                         logger.debug "skipping collected entry <${entry.id}> [${entry.updated}]"
