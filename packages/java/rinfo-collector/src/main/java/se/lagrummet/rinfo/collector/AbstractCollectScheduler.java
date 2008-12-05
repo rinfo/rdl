@@ -94,7 +94,7 @@ public abstract class AbstractCollectScheduler {
             return false;
         }
         try {
-            logger.info("Scheduling collect of <${feedUrl}>.");
+            logger.info("Scheduling collect of <"+feedUrl+">.");
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.execute(
                   new Runnable() {
