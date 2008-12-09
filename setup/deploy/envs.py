@@ -2,6 +2,23 @@
 ##
 # Environments
 
+def dev_unix():
+    # Name env:
+    config.env = 'dev-unix'
+    # 
+    config(
+        tomcat="/usr/share/tomcat6",
+        tomat_webapps="$(tomcat)/webapps",
+    )
+    # Machines:    
+    config(
+        host_map={
+            'localhost': ['127.0.0.1'],
+        },
+    )
+    config.fab_hosts = config.host_map['localhost']
+    
+
 def staging():
     # Name env:
     config.env = 'stg'
