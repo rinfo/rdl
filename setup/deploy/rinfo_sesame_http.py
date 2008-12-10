@@ -3,18 +3,18 @@
 
 @requires('env', provided_by=[dev_unix, staging, production])
 def deploy_sesame_http():
-    # Prepare parameters
+    # Assemble war file
     pkg_dir = "../packages/java/rinfo-sesame-http"
+    local("cd %s; mvn -P $(env) assembly:directory" % pkg_dir)
+    # Prepare parameters
     import ConfigParser    
     cf = ConfigParser.ConfigParser()
-    cf.read("%s/version.properties" % pkg_dir)
+    cf.read("%s/target/classes/version.properties" % pkg_dir)
     proj_name = cf.get("main", "rinfo.sesame.http.version")
     war_name = cf.get("main", "rinfo.sesame.http.war.name")
     war_dir = "%s/target/%s-$(env).dir/%s/lib" % (pkg_dir, proj_name, proj_name)    
     war_file = "%s/%s.war" % (war_dir, war_name)    
     dest_file = "$(tomat_webapps)/%s.war" % war_name
-    # Assemble war file
-    local("cd %s; mvn -P $(env) assembly:directory" % pkg_dir)
     # Clean old installs
     run("rm -rf $(tomat_webapps)/%s.war" % war_name, fail='warn')
     run("rm -rf $(tomat_webapps)/%s" % war_name, fail='warn')

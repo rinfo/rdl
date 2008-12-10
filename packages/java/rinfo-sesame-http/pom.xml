@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <name>RInfo Sesame HTTP</name>
     <url>http://dev.lagrummet.se/rinfo/</url>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <parent>
       <groupId>se.lagrummet</groupId>
@@ -18,6 +18,18 @@
     </parent>        
     
     <build>
+      <defaultGoal>assembly:directory</defaultGoal>
+      <directory>${basedir}/target</directory>
+      <finalName>${artifactId}-${version}</finalName>
+      <resources>
+          <resource>
+              <filtering>true</filtering>
+              <directory>src/main/resources</directory>
+              <includes>
+                  <include>**/*</include>
+              </includes>
+          </resource>
+      </resources>    
       <plugins>
 	      <plugin>
 	        <groupId>org.apache.maven.plugins</groupId>
