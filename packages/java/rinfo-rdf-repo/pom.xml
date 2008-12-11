@@ -17,7 +17,15 @@
 	  <version>1.0-SNAPSHOT</version>
 	</parent>
     
-    <dependencies>          
+    <dependencies>  
+		<dependency>
+		  <groupId>org.slf4j</groupId>
+		  <artifactId>jcl104-over-slf4j</artifactId>
+		</dependency>        
+		<dependency>
+		  <groupId>org.slf4j</groupId>
+		  <artifactId>slf4j-simple</artifactId>
+		</dependency>                    
         <dependency>
           <groupId>commons-configuration</groupId>
           <artifactId>commons-configuration</artifactId>
@@ -30,14 +38,18 @@
           <groupId>org.openrdf.sesame</groupId>
           <artifactId>sesame-repository-sail</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--          <groupId>org.openrdf.sesame</groupId>-->
-<!--          <artifactId>sesame-sail-api</artifactId>-->
-<!--        </dependency>-->
         <dependency>
           <groupId>org.openrdf.sesame</groupId>
           <artifactId>sesame-sail-memory</artifactId>
         </dependency>        
+		<dependency>
+		  <groupId>org.openrdf.sesame</groupId>
+		  <artifactId>sesame-sail-nativerdf</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>junit</groupId>
+		  <artifactId>junit</artifactId>
+		</dependency>
     </dependencies>
 
     <build>
@@ -46,7 +58,7 @@
         <finalName>${artifactId}-${version}</finalName>
         <resources>
             <resource>
-<!--                <filtering>false</filtering>-->
+                <filtering>false</filtering>
                 <directory>src/main/java</directory>
                 <includes>
                     <include>**/*</include>
@@ -56,14 +68,14 @@
                 </excludes>
             </resource>
             <resource>
-<!--                <filtering>false</filtering>-->
+                <filtering>false</filtering>
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*</include>
                 </includes>
             </resource>
             <resource>
-<!--                <filtering>false</filtering>-->
+                <filtering>false</filtering>
                 <directory>src/environments/${environment}</directory>
                 <includes>
                     <include>**/*</include>
@@ -118,10 +130,22 @@
                     <manifest>
                       <mainClass>se.lagrummet.rinfo.rdf.repo.RepositoryUtil</mainClass>
                       <packageName>se.lagrummet.rinfo.rdf.repo</packageName>
+                      <addClasspath>true</addClasspath>
+                      <classpathPrefix>lib/</classpathPrefix>                      
                     </manifest>
                   </archive>
                 </configuration>
-          </plugin>            
+            </plugin>            
+		    <plugin>
+		      <groupId>org.apache.maven.plugins</groupId>
+		      <artifactId>maven-assembly-plugin</artifactId>
+		      <version>2.2-beta-2</version>
+		      <configuration>
+	             <descriptors>
+	               <descriptor>src/main/assembly/zip-with-dependencies.xml</descriptor>
+	             </descriptors>
+		      </configuration>            
+		    </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
