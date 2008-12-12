@@ -9,85 +9,222 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.openrdf.repository.Repository;
+import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.config.RepositoryConfig;
+import org.openrdf.repository.manager.RemoteRepositoryManager;
+import org.openrdf.repository.sail.SailRepository;
+import org.openrdf.repository.sail.config.SailRepositoryConfig;
 import org.openrdf.sail.Sail;
+import org.openrdf.sail.config.SailImplConfig;
 import org.openrdf.sail.inferencer.fc.DirectTypeHierarchyInferencer;
 import org.openrdf.sail.inferencer.fc.ForwardChainingRDFSInferencer;
+import org.openrdf.sail.inferencer.fc.config.DirectTypeHierarchyInferencerConfig;
+import org.openrdf.sail.inferencer.fc.config.ForwardChainingRDFSInferencerConfig;
 import org.openrdf.sail.memory.MemoryStore;
+import org.openrdf.sail.memory.config.MemoryStoreConfig;
 import org.openrdf.sail.nativerdf.NativeStore;
-import org.openrdf.repository.sail.SailRepository;
+import org.openrdf.sail.nativerdf.config.NativeStoreConfig;
 
+/**
+ * Factory for local and remote repositories.
+ * 
+ * @author msher
+ */
 public class RepositoryFactory {
 
     private static final String PROPERTIES_FILE_NAME = "rinfo-rdf-repo.properties";
 
     private static final List<String> SUPPORTED_TRIPLE_STORES = Arrays.asList(
-			"sesame");
-//    "sesame", "jena", "mulgara", "swiftowlim", "openlink-virtuoso");
+			"sesame" /* "jena", "mulgara", "swiftowlim", "openlink-virtuoso" */);
 
-	private static Repository repository;
+	private static Configuration config;
+	private static Repository localRepository;
+	private static Repository remoteRepository;
+	private static RemoteRepositoryManager remoteRepositoryManager;
 
-
+	/**
+	 * Create RepositoryFactory with default configuration.
+	 * 
+	 * @throws Exception
+	 */
 	public RepositoryFactory() throws Exception {
 		this(getDefaultConfiguration());
 	}
 
+	/**
+	 * Create RepositoryFactory with the provided configuration.
+	 * 
+	 * @param config
+	 * @throws Exception
+	 */
 	public RepositoryFactory(Configuration config) throws Exception {
-		init(config);
-	}
-
-	public static synchronized Repository getRepository() throws Exception {
-		if (repository == null) {
-			init(getDefaultConfiguration());
-		}
-		return repository;
-	}
-	
-	private static Configuration getDefaultConfiguration() 
-	throws ConfigurationException {
-		return new PropertiesConfiguration(PROPERTIES_FILE_NAME);					
-	}
-	
-	private static void init(Configuration config) throws Exception {
-
 		validateConfiguration(config);
+		RepositoryFactory.config = config;
+	}
+
+	/**
+	 * Shuts down all initialised repositories and remote repository manager.
+	 * @throws RepositoryException 
+	 */
+	public void shutDown() throws RepositoryException {
+		if (localRepository != null) {
+			localRepository.shutDown();
+			localRepository = null;
+		}
+		if (remoteRepositoryManager != null) {
+			remoteRepositoryManager.shutDown();
+			remoteRepositoryManager = null;
+			remoteRepository = null;
+		}
+	}
+	
+	/**
+	 * Get local repository. Causes repository to be initialised at first call,
+	 * subsequent calls returns the same repository.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public static synchronized Repository getLocalRepository() throws Exception {
+		if (localRepository == null) {
+			initLocalRepository();
+		}
+		return localRepository;
+	}
+	
+	/**
+	 * Get remote repository. Causes repository to be initialised at first call,
+	 * subsequent calls returns the same repository.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public static synchronized Repository getRemoteRepository() throws Exception {
+		if (remoteRepository == null) {
+			initRemoteRepository();
+		}
+		return remoteRepository;
+	}	
+	
+	/**
+	 * Create or retrieve an existing local repository with settings as provided
+	 * in the configuration.
+	 * 
+	 * @throws Exception
+	 */
+	private static void initLocalRepository() throws Exception {
 
 		String store = config.getString("triple.store").toLowerCase();
 		String backend = config.getString("backend").toLowerCase();
 		String dataDir = config.getString("data.dir");
-		String repoName = config.getString("repository.name");
+		String repoId = config.getString("repository.id");
+		boolean inference = config.getBoolean("inference");
+		boolean inferenceDT = config.getBoolean("inference.direct.type");
 		
 		if (store.equals("sesame")) {
-
-			boolean inference = config.getBoolean("inference");
-			boolean inferenceDT = config.getBoolean("inference.direct.type");
 			
 			Sail sail = null;			
 			if (backend.equals("memory")) {
 				sail = new MemoryStore();
 			} else if (backend.equals("native")) {
-				sail = new NativeStore(new File(dataDir + "/" + repoName));				
+				sail = new NativeStore(new File(dataDir + "/" + repoId));				
 			}
 			
 			if (inference) {				
-				repository = new SailRepository(
+				localRepository = new SailRepository(
 						new ForwardChainingRDFSInferencer(sail));								
 			} else if (inferenceDT) {
-				repository = new SailRepository(
+				localRepository = new SailRepository(
 						new DirectTypeHierarchyInferencer(sail));								
 			} else {
-				repository = new SailRepository(sail);				
+				localRepository = new SailRepository(sail);				
+			}
+			
+			localRepository.initialize();
+			
+		} else {
+			throw new Exception("Unsupported repository type: " + store);
+		}
+	}
+	
+	/**
+	 * Create or retrieve an existing repository on a remote server with 
+	 * settings as provided in the configuration.
+	 * 
+	 * @throws Exception
+	 */
+	private static void initRemoteRepository() throws Exception {
+
+		String store = config.getString("triple.store").toLowerCase();
+		String backend = config.getString("backend").toLowerCase();
+		String repoId = config.getString("repository.id");
+		String serverUrl = config.getString("remote.server.url");
+		boolean inference = config.getBoolean("inference");
+		boolean inferenceDT = config.getBoolean("inference.direct.type");
+
+		if (remoteRepositoryManager == null) {
+			remoteRepositoryManager = new RemoteRepositoryManager(serverUrl);			
+			remoteRepositoryManager.initialize();
+		}
+
+		remoteRepository = remoteRepositoryManager.getRepository(repoId);		
+		// return if repository already exists
+		if (remoteRepository != null) {
+			return;
+		}
+
+		// create new repository 
+		if (store.equals("sesame")) {
+			
+			SailImplConfig storeConfig = null;
+			
+			if (backend.equals("memory")) {
+				storeConfig = new MemoryStoreConfig(true); /* persist = true */
+			} else if (backend.equals("native")) {
+				storeConfig = new NativeStoreConfig();
+			} else {
+				throw new Exception("Unsupported repository backend: " + backend);				
 			}
 
-			repository.initialize();
+			if (inference) {
+				storeConfig = new ForwardChainingRDFSInferencerConfig(storeConfig);
+			} else if (inferenceDT) {
+				storeConfig = new DirectTypeHierarchyInferencerConfig(storeConfig);
+			}			
+			
+			SailRepositoryConfig sailConfig = new SailRepositoryConfig(storeConfig);
+			RepositoryConfig repoConfig = new RepositoryConfig(repoId, sailConfig);			
+			remoteRepositoryManager.addRepositoryConfig(repoConfig);
+			remoteRepository = remoteRepositoryManager.getRepository(repoId);
+			
+		} else {
+			throw new Exception("Unsupported repository type: " + store);
 		}
 		
 	}
 	
+	/**
+	 * Get properties from default configuration file.
+	 *  
+	 * @return
+	 * @throws ConfigurationException
+	 */
+	private static Configuration getDefaultConfiguration() 
+	throws ConfigurationException {
+		return new PropertiesConfiguration(PROPERTIES_FILE_NAME);					
+	}
+
+	/**
+	 * Check configuration for inconsistencies or missing properties.
+	 * 
+	 * @param config
+	 * @throws Exception
+	 */
 	private static void validateConfiguration(Configuration config) throws Exception {		
 		String store = config.getString("triple.store").toLowerCase();
 		String backend = config.getString("backend").toLowerCase();
 		String dataDir = config.getString("data.dir");
-		String repoName = config.getString("repository.name");
+		String repoId = config.getString("repository.id");
 		boolean inference = config.getBoolean("inference");
 		boolean inferenceDT = config.getBoolean("inference.direct.type");
 		
@@ -100,8 +237,8 @@ public class RepositoryFactory {
 		if (backend.equals("native") && StringUtils.isEmpty(dataDir)) {
 			throw new Exception("Missing property 'data.dir'.");									
 		}
-		if (backend.equals("native") && StringUtils.isEmpty(repoName)) {
-			throw new Exception("Missing property 'repository.name'.");									
+		if (backend.equals("native") && StringUtils.isEmpty(repoId)) {
+			throw new Exception("Missing property 'repository.id'.");									
 		}		
 		if (!SUPPORTED_TRIPLE_STORES.contains(store)) {
 			throw new Exception("Unsupported triple store: " + store);			

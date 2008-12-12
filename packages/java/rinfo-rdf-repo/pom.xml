@@ -32,7 +32,19 @@
         </dependency>
         <dependency>
           <groupId>org.openrdf.sesame</groupId>
+          <artifactId>sesame-queryresultio-api</artifactId>
+        </dependency>
+		<dependency>
+		  <groupId>org.openrdf.sesame</groupId>
+		  <artifactId>sesame-queryresultio-binary</artifactId>
+		</dependency>
+        <dependency>
+          <groupId>org.openrdf.sesame</groupId>
           <artifactId>sesame-repository-api</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.openrdf.sesame</groupId>
+          <artifactId>sesame-repository-manager</artifactId>
         </dependency>
         <dependency>
           <groupId>org.openrdf.sesame</groupId>
@@ -128,7 +140,7 @@
                 <configuration>
                   <archive>
                     <manifest>
-                      <mainClass>se.lagrummet.rinfo.rdf.repo.RepositoryUtil</mainClass>
+                      <mainClass>se.lagrummet.rinfo.rdf.repo.RepositoryHelper</mainClass>
                       <packageName>se.lagrummet.rinfo.rdf.repo</packageName>
                       <addClasspath>true</addClasspath>
                       <classpathPrefix>lib/</classpathPrefix>                      
