@@ -140,8 +140,8 @@
                 <configuration>
                   <archive>
                     <manifest>
-                      <mainClass>se.lagrummet.rinfo.rdf.repo.RepositoryHelper</mainClass>
-                      <packageName>se.lagrummet.rinfo.rdf.repo</packageName>
+                      <mainClass>se.lagrummet.rinfo.rdf.repo.main.RepositoryHelper</mainClass>
+                      <packageName>se.lagrummet.rinfo.rdf.repo.main</packageName>
                       <addClasspath>true</addClasspath>
                       <classpathPrefix>lib/</classpathPrefix>                      
                     </manifest>

@@ -1,24 +1,23 @@
 package se.lagrummet.rinfo.rdf.repo;
 
+import junit.framework.TestCase;
+
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openrdf.model.Statement;
 import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.impl.URIImpl;
-import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 
-import junit.framework.TestCase;
+import se.lagrummet.rinfo.rdf.repo.util.ConfigurationUtil;
+import se.lagrummet.rinfo.rdf.repo.util.RepositoryUtil;
 
  
 public class TestRepositoryUtil extends TestCase {
 		
-    private static final String PROPERTIES_FILE_NAME = "rinfo-rdf-repo.properties";
-
     /*
      * TODO: add tests for verifying behaviour of using inference / DT.
      */
-    
+        
 	public void testLocalSesameMemory() throws Exception {
 		testAddDelete("sesame", "memory", true);
 	}
@@ -36,19 +35,13 @@ public class TestRepositoryUtil extends TestCase {
 	}
 
 	@SuppressWarnings("static-access")
-	private void testAddDelete(String tripleStore, String backend, boolean isLocalRepository) 
+	private void testAddDelete(String tripleStore, String backend, boolean useLocalRepository) 
 	throws Exception {
-		Configuration config = getConfiguration(tripleStore, backend);
+		Configuration config = getConfiguration(tripleStore, backend, useLocalRepository);
 		RepositoryFactory factory = new RepositoryFactory(config);
 		RepositoryConnection conn = null;
 		try {
-			Repository repo;
-			if (isLocalRepository) {
-				repo = factory.getLocalRepository();
-			} else {
-				repo = factory.getRemoteRepository();
-			}
-			conn = repo.getConnection();			
+			conn = factory.getRepository().getConnection();			
 			assertTrue("Expected repository to be empty.", conn.isEmpty());
 			String s = "http://example.org/s";
 			String p = "http://example.org/p";
@@ -57,24 +50,18 @@ public class TestRepositoryUtil extends TestCase {
 			conn.add(st);			
 			assertEquals(1, conn.size());
 			conn.close();
-			
-			if (isLocalRepository) {
-				RepositoryUtil.cleanLocalRepository(config);				
-			} else {
-				RepositoryUtil.cleanRemoteRepository(config);								
-			}
-			
-			if (isLocalRepository) {
-				repo = factory.getLocalRepository();
-			} else {
-				repo = factory.getRemoteRepository();
-			}
-			conn = repo.getConnection();
+
+			RepositoryUtil.cleanRepository(config);				
+			conn = factory.getRepository().getConnection();			
 			assertTrue("Expected repository to be empty.", conn.isEmpty());
 			assertEquals(0, conn.getContextIDs().asList().size());		
-			assertEquals(0, conn.getNamespaces().asList().size());    				
+			assertEquals(0, conn.getNamespaces().asList().size()); 
+			// clean up
+			if (!useLocalRepository) {
+				RepositoryUtil.removeRemoteRepository(config);				
+			}
 		} finally {
-			if (conn != null) {
+			if (conn != null && conn.isOpen()) {
 				conn.close();
 			}
 			if (factory != null) {
@@ -82,14 +69,15 @@ public class TestRepositoryUtil extends TestCase {
 			}
 		}
     }
-
-	private Configuration getConfiguration(String tripleStore, String backend) 
-	throws Exception  {
-		Configuration config = new PropertiesConfiguration(PROPERTIES_FILE_NAME);
+	
+	private Configuration getConfiguration(String tripleStore, String backend, 
+			boolean useLocalRepository) throws Exception  {
+		Configuration config = ConfigurationUtil.getDefaultConfiguration();
 		String testRepoId = config.getString("test.repository.id");
 		config.setProperty("repository.id", testRepoId);
 		config.setProperty("triple.store", tripleStore);
 		config.setProperty("backend", backend);
+		config.setProperty("use.local.repository", useLocalRepository);
     	return config;
 	}
 
