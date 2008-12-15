@@ -31,9 +31,22 @@ def clean_repo():
 ##
 # Setup empty repository
 
-#TODO: def setup_repo():
-# java RepositoryUtil setup
-# check exit code
+@requires('env', provided_by=[dev_unix, staging, production])
+def setup_sesame_http_repo():
+    pkg_dir = "../packages/java/rinfo-rdf-repo"
+    local("cd %s; mvn -P $(env) assembly:assembly" % pkg_dir)
+    import ConfigParser    
+    cf = ConfigParser.ConfigParser()
+    cf.read("%s/target/classes/version.properties" % pkg_dir)
+    proj_name = cf.get("main", "rinfo.rdf.repo.version")
+    zip_file = "%s/target/%s-with-dependencies.zip" % (pkg_dir, proj_name)
+    remote_file_name = "%s-$(fab_timestamp)" % proj_name
+    run("mkdir $(dist_dir)", fail='ignore')        
+    put(zip_file, "$(dist_dir)/%s.zip" % remote_file_name)
+    run("cd $(dist_dir); unzip %s.zip" % remote_file_name)
+    run("cd $(dist_dir); mv %s %s" % (proj_name, remote_file_name))
+    run("cd $(dist_dir)/%s; java -jar %s.jar setup remote" % (remote_file_name, proj_name))
+    
 
 #TODO: def setup_tomcat():
 
