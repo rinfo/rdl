@@ -15,6 +15,8 @@ def dev_unix():
         host_map={
             'localhost': ['127.0.0.1'],
         },
+        dist_dir='/opt/_workapps/rinfo/rinfo_dist',
+        rinfo_dir='/opt/_workapps/rinfo',
     )
     config.fab_hosts = config.host_map['localhost']
     
