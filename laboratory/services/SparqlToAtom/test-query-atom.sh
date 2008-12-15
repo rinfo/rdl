@@ -1,7 +1,4 @@
-# to get working data:
-# ./run_sparqltree.py -e http://localhost:8080/openrdf-sesame/repositories/rinfo?infer=false sparqltree-rdata_entry.xml
-# xsltproc tree_to_atom.xslt - | xmllint --format -
-
+#!/bin/bash
 
 xsltproc \
     --stringparam q 1999:175 \

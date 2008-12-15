@@ -1,49 +1,6 @@
-#!/usr/bin/env python
-import os
-from os.path import dirname, join
-from lxml import etree
-from urllib import urlencode
-import httplib2
-
-
-to_xslt = lambda fpath: etree.XSLT(etree.parse(fpath))
-_modfpath = lambda fname: join(dirname(__file__), fname)
-
-SPARQL_XSLT = to_xslt(_modfpath("tree-sparql.xslt"))
-TRANSFORMER_XSLT = to_xslt(_modfpath("tree-transformer.xslt"))
-
-
-class SparqlTree(object):
-
-    def __init__(self, filename):
-        self._filename = filename
-        source_doc = etree.parse(filename)
-        self._trans_doc = TRANSFORMER_XSLT(source_doc)
-        self.sparql = str(SPARQL_XSLT(source_doc))
-        self.transformer = etree.XSLT(self._trans_doc)
-
-    def __call__(self, endpoint):
-        return self.run_query(endpoint)
-
-    def run_query(self, endpoint):
-        rq_res = self._get_result(endpoint)
-        return self.transformer(etree.fromstring(rq_res))
-
-    def _get_result(self, endpoint):
-        return query_sparql(self.sparql, endpoint)
-
-
-def query_sparql(sparql, endpoint):
-    h = httplib2.Http()
-    data = {'query': sparql}
-    headers = {
-        'Accept': "application/sparql-results+xml",
-        'Content-type': 'application/x-www-form-urlencoded'
-    }
-    resp, content = h.request(endpoint, "POST",
-            body=urlencode(data),
-            headers=headers)
-    return content
+# -*- coding: UTF-8 -*-
+import cgi
+from sparqltree import SparqlTree
 
 
 compiler_cache = {}
@@ -56,8 +13,6 @@ def compiled(compiler, fname):
                 fname, mtime, compiler)
     return compiler_cache[fname][1]
 
-
-import cgi
 
 class WSGIApp(object):
 
@@ -139,49 +94,4 @@ def wsgi_server(servername='', port=None, **kwargs):
     except KeyboardInterrupt:
         pass
 
-
-if __name__ == '__main__':
-
-    from optparse import OptionParser
-
-    parser = OptionParser(usage="%prog [options] [-h] <filename>")
-
-    parser.add_option('-e', '--endpoint',
-            help='Url to the sparql endpoint.')
-    parser.add_option('-s', '--serve', type=int,
-            help='Port to serve as web app.')
-
-    parser.add_option('--sparql', action="store_true",
-            help='Show the sparql extracted from the sparqltree')
-    parser.add_option('--xslt', action="store_true",
-            help='Show the xslt created from the sparqltree')
-
-    parser.add_option('--result', action="store_true",
-            help='Show raw sparql response xml')
-    parser.add_option('--apply',
-            help='Apply an xslt to the result tree')
-
-    opts, args = parser.parse_args()
-    if not opts.endpoint:
-        parser.error("Please provide ENDPOINT.")
-
-    if opts.serve:
-        wsgi_server(port=opts.serve, endpoint=opts.endpoint)
-    else:
-        if not args:
-            parser.error("Please provide one filename.")
-
-        rqtree = SparqlTree(args[0])
-        if opts.sparql:
-            print rqtree.sparql
-        elif opts.xslt:
-            print rqtree._trans_doc
-        elif opts.result:
-            print rqtree._get_result(opts.endpoint)
-        else:
-            out = rqtree(opts.endpoint)
-            if opts.apply:
-                print to_xslt(opts.apply)(out)
-            else:
-                print out
 

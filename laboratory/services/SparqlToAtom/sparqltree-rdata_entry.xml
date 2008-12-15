@@ -29,33 +29,33 @@
 
     {
       ?subject
-        ripub:forfattningssamling [
+        rpubl:forfattningssamling [
           rdfs:label <serieLabel/>
         ];
-        ripub:fsNummer <serieNummer/> .
+        rpubl:fsNummer <serieNummer/> .
     } UNION {
         ?subject
-            ripub:utrSerie ?serie;
-            ripub:utrSerienummer ?serieNummer .
+            rpubl:utrSerie ?serie;
+            rpubl:utrSerienummer ?serieNummer .
         OPTIONAL { ?serie rdfs:label ?serieLabel }
     <!-- Rattsfallsreferat
     } UNION {
     -->
     } UNION {
-        ?subject a ripub:KonsolideradGrundforfattning;
-          ripub:konsoliderar [
-            ripub:forfattningssamling [
+        ?subject a rpubl:KonsolideradGrundforfattning;
+          rpubl:konsoliderar [
+            rpubl:forfattningssamling [
             <!-- TODO: shortLabel.. -->
               rdfs:label ?serieLabel;
             ];
-            ripub:fsNummer ?serieNummer
+            rpubl:fsNummer ?serieNummer
           ];
-          ripub:utfardandedatum <konsDatum/> .
+          rpubl:utfardandedatum <konsDatum/> .
     <!-- TODO: see uri-minter for remaining.. -->
     } UNION {
             <!-- TODO: shortLabel (of typeLabel) -->
         ?subject ?rattsdokNrProp <rattsdokNr/> .
-        ?rattsdokNrProp rdfs:subPropertyOf ripub:rattsdokumentnummer .
+        ?rattsdokNrProp rdfs:subPropertyOf rpubl:rattsdokumentnummer .
     }
 
     OPTIONAL {
@@ -95,13 +95,13 @@
       # Current, too loose variant:
       FILTER( !BOUND(?superRel) ||
               ?superRel != dct:hasPart &amp;&amp;
-              ?superRel != ripub:publikationssamling )
+              ?superRel != rpubl:publikationssamling )
       # Using *raw* "some kind of rinfo-doc" filter..:
       -->
       FILTER(
           (!BOUND(?superRel) ||
             ?superRel != dct:hasPart &amp;&amp;
-            ?superRel != ripub:publikationssamling ) &amp;&amp;
+            ?superRel != rpubl:publikationssamling ) &amp;&amp;
           REGEX(STR(?relSubject), "^http://rinfo\\.lagrummet\\.se/publ/")
         )
     }
