@@ -8,7 +8,9 @@ def dev_unix():
     # 
     config(
         tomcat="/usr/share/tomcat6",
-        tomat_webapps="$(tomcat)/webapps",
+        tomcat_webapps="$(tomcat)/webapps",
+        tomcat_start='$(tomcat)/bin/catalina.sh start',
+        tomcat_stop='$(tomcat)/bin/catalina.sh stop',
     )
     # Machines:    
     config(
@@ -17,8 +19,8 @@ def dev_unix():
         },
         dist_dir='/opt/_workapps/rinfo/rinfo_dist',
         rinfo_dir='/opt/_workapps/rinfo',
+        rinfo_rdf_repo_dir='/opt/_workapps/rinfo/aduna',
     )
-    config.fab_hosts = config.host_map['localhost']
     
 
 def staging():
@@ -27,7 +29,7 @@ def staging():
     # SuSE layout:
     config(
         tomcat="/usr/share/tomcat6",
-        tomat_webapps="$(tomcat)/webapps",
+        tomcat_webapps="$(tomcat)/webapps",
         tomcat_start='dtomcat6 start',
         tomcat_stop='dtomcat6 stop',
     )
@@ -35,12 +37,14 @@ def staging():
     config(
         fab_user='rinfo',
         host_map={
+            'localhost': ['127.0.0.1'],
             'main': ['rinfo-main.statskontoret.se'],
             'service': ['rinfo-service.statskontoret.se'],
             'testsources': ['rinfo-sources.statskontoret.se'],
         },
         dist_dir='rinfo_dist',
         rinfo_dir='/opt/rinfo',
+        rinfo_rdf_repo_dir='/opt/rinfo/rdf',
     )
 
 def production():
@@ -54,7 +58,11 @@ def production():
 
 _needs_env = requires(
         'host_map', 'dist_dir', 'tomcat',
-        provided_by=[staging, production])
+        provided_by=[dev_unix, staging, production])
+
+@_needs_env
+def localhost():
+    config.fab_hosts = config.host_map['localhost']
 
 @_needs_env
 def main():
@@ -100,6 +108,6 @@ def restart():
 
 @_needs_target
 def war_props(war="ROOT"):
-    run("unzip -p $(tomat_webapps)/%s.war "
+    run("unzip -p $(tomcat_webapps)/%s.war "
             "WEB-INF/classes/$(app_name).properties" % war)
 
