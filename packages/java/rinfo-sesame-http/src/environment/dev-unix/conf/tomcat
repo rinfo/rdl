@@ -14,7 +14,7 @@
 # User under which tomcat will run
 TOMCAT_USER=tomcat
 CATALINA_HOME=/usr/share/tomcat6
-
+ADUNA_HOME=/opt/_workapps/rinfo/aduna
 RETVAL=0
 
 # start, debug, stop, and status functions
@@ -25,10 +25,10 @@ start() {
         echo "Tomcat already started"
     else
         echo "Starting tomcat..."
-        chown -R $TOMCAT_USER:$TOMCAT_USER /usr/share/tomcat6/*
+        chown -R $TOMCAT_USER:$TOMCAT_USER $CATALINA_HOME/*
         chown -R $TOMCAT_USER:$TOMCAT_USER /home/tomcat/*
-        chown -R $TOMCAT_USER:$TOMCAT_USER /opt/_workapps/rinfo/aduna
-        su -l $TOMCAT_USER -c '/usr/share/tomcat6/bin/catalina.sh start'
+        chown -R $TOMCAT_USER:$TOMCAT_USER $ADUNA_HOME
+        su -l $TOMCAT_USER -c '$CATALINA_HOME/bin/catalina.sh start'
     SHUTDOWN_PORT=`netstat -vatn|grep LISTEN|grep 9915|wc -l`
         while [ $SHUTDOWN_PORT -eq 0 ]; do
             echo "Waiting for Tomcat to start" 
@@ -48,9 +48,9 @@ debug() {
         echo "Tomcat already started"
     else
         echo "Starting tomcat in debug mode..."
-        chown -R $TOMCAT_USER:$TOMCAT_USER /usr/share/tomcat6/*
+        chown -R $TOMCAT_USER:$TOMCAT_USER $CATALINA_HOME/*
         chown -R $TOMCAT_USER:$TOMCAT_USER /home/tomcat/*
-        su -l $TOMCAT_USER -c '/usr/share/tomcat6/bin/catalina.sh jpda start'
+        su -l $TOMCAT_USER -c '$CATALINA_HOME/bin/catalina.sh jpda start'
     SHUTDOWN_PORT=`netstat -vatn|grep LISTEN|grep 9915|wc -l`
         while [ $SHUTDOWN_PORT -eq 0 ]; do
             sleep 1
@@ -68,7 +68,7 @@ stop() {
         echo "Tomcat already stopped"
     else
         echo "Stopping tomcat..."
-        su -l $TOMCAT_USER -c '/usr/share/tomcat6/bin/catalina.sh stop'
+        su -l $TOMCAT_USER -c '$CATALINA_HOME/bin/catalina.sh stop'
     SHUTDOWN_PORT=`netstat -vatn|grep LISTEN|grep 9915|wc -l`
         while [ $SHUTDOWN_PORT -ne 0 ]; do
             sleep 1
@@ -76,7 +76,7 @@ stop() {
         done
     RETVAL=$?
         echo "Tomcat stopped"
-        [ $RETVAL=0 ] && rm -f /var/lock/subsys/tomcat /usr/share/tomcat6/bin/tomcat.pid
+        [ $RETVAL=0 ] && rm -f /var/lock/subsys/tomcat $CATALINA_HOME/bin/tomcat.pid
     fi
 }
 
