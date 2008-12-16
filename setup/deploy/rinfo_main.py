@@ -34,8 +34,8 @@ def deploy_main():
     put("$(java_packages)/rinfo-main/target/rinfo-main-1.0-SNAPSHOT.war",
             '$(dist_dir)/ROOT.war')
     sudo("$(tomcat_stop)", fail='warn')
-    sudo("rm -rf $(tomat_webapps)/ROOT/")
-    sudo("mv $(dist_dir)/ROOT.war $(tomat_webapps)/ROOT.war")
+    sudo("rm -rf $(tomcat_webapps)/ROOT/")
+    sudo("mv $(dist_dir)/ROOT.war $(tomcat_webapps)/ROOT.war")
     sudo("$(tomcat_start)")
 
 @depends(package_main, deploy_main)

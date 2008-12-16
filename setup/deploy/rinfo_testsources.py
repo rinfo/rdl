@@ -24,7 +24,7 @@ def deploy_testdata():
 
 @depends(testsources)
 def index_testdata():
-    wdir = "$(tomat_webapps)/ROOT/WEB-INF"
+    wdir = "$(tomcat_webapps)/ROOT/WEB-INF"
     clpath = '-cp $(for jar in $(ls lib/*.jar); do echo -n "$jar:"; done)'
     cmdclass = "se.lagrummet.rinfo.store.depot.FileDepotCmdTool"
     proppath = "classes/rinfo-depot.properties"
@@ -39,8 +39,8 @@ def deploy_testapp():
     put("$(java_packages)/teststore-examples/target/example-store-1.0-SNAPSHOT.war",
             "$(dist_dir)/ROOT.war")
     sudo("$(tomcat_stop)", fail='warn')
-    sudo("rm -rf $(tomat_webapps)/ROOT/")
-    sudo("mv $(dist_dir)/ROOT.war $(tomat_webapps)/ROOT.war")
+    sudo("rm -rf $(tomcat_webapps)/ROOT/")
+    sudo("mv $(dist_dir)/ROOT.war $(tomcat_webapps)/ROOT.war")
     sudo("$(tomcat_start)")
 
 @depends(package_testapp, deploy_testdata, index_testdata, deploy_testapp)
