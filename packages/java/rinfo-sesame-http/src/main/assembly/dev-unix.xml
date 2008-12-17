@@ -12,7 +12,7 @@
       <directory>src/environment/dev-unix/conf</directory>
       <outputDirectory>conf</outputDirectory>
       <includes>
-        <include>*</include>
+        <include>**</include>
       </includes>
     </fileSet>
     <fileSet>

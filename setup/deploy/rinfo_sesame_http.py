@@ -27,7 +27,7 @@ def prepare_deploy_sesame_http():
     config(
         sesame_http_war_name=war_name,
         sesame_http_war_file="%s/%s.war" % (war_dir, war_name),
-        tomcat_conf_dir=conf_dir,
+        env_conf_dir=conf_dir,
     )
 
 
@@ -88,12 +88,29 @@ def configure_tomcat():
     sudo("$(tomcat_stop)", fail='warn')    
     run("rm -rf $(dist_dir)/tomcat", fail='warn')
     run("mkdir $(dist_dir)/tomcat", fail='warn')
-    put("$(tomcat_conf_dir)/setenv.sh", "$(dist_dir)/tomcat/setenv.sh", fail='ignore')
-    put("$(tomcat_conf_dir)/server.xml", "$(dist_dir)/tomcat/server.xml", fail='warn')
-    put("$(tomcat_conf_dir)/tomcat6.conf", "$(dist_dir)/tomcat/tomcat6.conf", fail='ignore')
+    put("$(env_conf_dir)/tomcat/setenv.sh", "$(dist_dir)/tomcat/setenv.sh", fail='ignore')
+    put("$(env_conf_dir)/tomcat/server.xml", "$(dist_dir)/tomcat/server.xml", fail='ignore')
+    put("$(env_conf_dir)/tomcat/tomcat6.conf", "$(dist_dir)/tomcat/tomcat6.conf", fail='ignore')
     sudo("rm -rf $(tomcat)/bin/setenv.sh", fail='ignore')
     sudo("rm -rf $(tomcat)/conf/server.xml", fail='warn')    
     sudo("cp $(dist_dir)/tomcat/setenv.sh $(tomcat)/bin/setenv.sh", fail='ignore')
-    sudo("cp $(dist_dir)/tomcat/server.xml $(tomcat)/conf/server.xml", fail='warn')
-    sudo("cp $(dist_dir)/tomcat/tomcat6.conf $(tomcat)/conf/tomcat6.conf", fail='warn')
+    sudo("cp $(dist_dir)/tomcat/server.xml $(tomcat)/conf/server.xml", fail='ignore')
+    sudo("cp $(dist_dir)/tomcat/tomcat6.conf $(tomcat)/conf/tomcat6.conf", fail='ignore')
     sudo("$(tomcat_start)")
+
+
+##
+# Apache configuration
+
+@depends(prepare_deploy_sesame_http)
+def configure_apache():
+    run("rm -rf $(dist_dir)/apache", fail='warn')
+    run("mkdir $(dist_dir)/apache", fail='warn')    
+    sudo("mkdir /etc/apache2/rinfo_conf", fail='ignore')
+    put("$(env_conf_dir)/apache/apache2", "$(dist_dir)/apache/apache2", fail='warn')
+    put("$(env_conf_dir)/apache/rinfo-vhost.conf", "$(dist_dir)/apache/rinfo-vhost.conf", fail='warn')
+    sudo("cp $(dist_dir)/apache/rinfo-vhost.conf /etc/apache2/rinfo_conf/rinfo-vhost.conf", fail='warn')
+    sudo("cp $(dist_dir)/apache/apache2 /etc/sysconfig/apache2", fail='warn')
+    sudo("chown root:root /etc/apache2/rinfo_conf/rinfo-vhost.conf", fail='warn')
+    sudo("chown root:root /etc/sysconfig/apache2", fail='warn')
+    sudo("rcapache2 restart", fail='ignore')
