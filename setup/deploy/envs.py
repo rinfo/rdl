@@ -5,23 +5,29 @@
 def dev_unix():
     # Name env:
     config.env = 'dev-unix'
-    # 
+    #
     config(
         tomcat="/usr/share/tomcat6",
         tomcat_webapps="$(tomcat)/webapps",
         tomcat_start='$(tomcat)/bin/catalina.sh start',
         tomcat_stop='$(tomcat)/bin/catalina.sh stop',
     )
-    # Machines:    
+    # Machines:
     config(
         host_map={
-            'localhost': ['127.0.0.1'],
+            'main': ['localhost'],
+            'service': ['localhost'],
+            'testsources': ['localhost'],
+        },
+        store_map={
+            'main': "/opt/_workapps/rinfo/depots/rinfo",
+            'testsources': "/opt/_workapps/rinfo/depots",
         },
         dist_dir='/opt/_workapps/rinfo/rinfo_dist',
         rinfo_dir='/opt/_workapps/rinfo',
         rinfo_rdf_repo_dir='/opt/_workapps/rinfo/aduna',
     )
-    
+
 
 def staging():
     # Name env:
@@ -37,10 +43,13 @@ def staging():
     config(
         fab_user='rinfo',
         host_map={
-            'localhost': ['127.0.0.1'],
             'main': ['rinfo-main.statskontoret.se'],
             'service': ['rinfo-service.statskontoret.se'],
             'testsources': ['rinfo-sources.statskontoret.se'],
+        },
+        store_map={
+            'main': "/opt/rinfo/store",
+            'testsources': "/opt/testsources/depots",
         },
         dist_dir='rinfo_dist',
         rinfo_dir='/opt/rinfo',
@@ -61,14 +70,10 @@ _needs_env = requires(
         provided_by=[dev_unix, staging, production])
 
 @_needs_env
-def localhost():
-    config.fab_hosts = config.host_map['localhost']
-
-@_needs_env
 def main():
     config.fab_hosts = config.host_map['main']
+    config.rinfo_main_store = config.store_map['main']
     config.app_name = 'rinfo-main'
-    config.rinfo_main_store = "/opt/rinfo/store"
 
 @_needs_env
 def service():
@@ -78,8 +83,8 @@ def service():
 @_needs_env
 def testsources():
     config.fab_hosts = config.host_map['testsources']
+    config.test_store = config.store_map['testsources'] #+ "/example.org"
     config.app_name = 'rinfo-depot'
-    config.test_store = "/opt/testsources/depots"
 
 ##
 # Shared diagnostics
