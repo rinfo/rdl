@@ -89,12 +89,8 @@ def configure_tomcat():
     run("rm -rf $(dist_dir)/tomcat", fail='warn')
     run("mkdir $(dist_dir)/tomcat", fail='warn')
     put("$(env_conf_dir)/tomcat/setenv.sh", "$(dist_dir)/tomcat/setenv.sh", fail='ignore')
-    put("$(env_conf_dir)/tomcat/server.xml", "$(dist_dir)/tomcat/server.xml", fail='ignore')
     put("$(env_conf_dir)/tomcat/tomcat6.conf", "$(dist_dir)/tomcat/tomcat6.conf", fail='ignore')
-    sudo("rm -rf $(tomcat)/bin/setenv.sh", fail='ignore')
-    sudo("rm -rf $(tomcat)/conf/server.xml", fail='warn')    
     sudo("cp $(dist_dir)/tomcat/setenv.sh $(tomcat)/bin/setenv.sh", fail='ignore')
-    sudo("cp $(dist_dir)/tomcat/server.xml $(tomcat)/conf/server.xml", fail='ignore')
     sudo("cp $(dist_dir)/tomcat/tomcat6.conf $(tomcat)/conf/tomcat6.conf", fail='ignore')
     sudo("$(tomcat_start)")
 
