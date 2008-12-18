@@ -118,7 +118,9 @@
     <dependency>
       <groupId>org.codehaus.groovy.maven.runtime</groupId>
       <artifactId>gmaven-runtime-1.5</artifactId>
+      <!--
       <scope>test</scope>
+      -->
     </dependency>
 
   </dependencies>
@@ -146,6 +148,27 @@
               <goal>generateTestStubs</goal>
               <goal>testCompile</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <copy todir="${project.build.outputDirectory}/sparqltree">
+                    <!-- FIXME: move these to library/base. -->
+                    <fileset dir="${basedir}/../../../laboratory/services/SparqlToAtom/sparqltree/"
+                             includes="*.xslt"/>
+                </copy>
+              </tasks>
+            </configuration>
           </execution>
         </executions>
       </plugin>

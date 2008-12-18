@@ -17,6 +17,8 @@ class SesameLoadScheduler extends AbstractCollectScheduler {
     private Repository repo
     private Collection<URL> sourceFeedUrls
 
+    public getRepository() { return repo }
+
     SesameLoadScheduler(AbstractConfiguration config) {
         this.configure(config)
     }

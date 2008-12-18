@@ -37,17 +37,23 @@ class ServiceApplication extends Application {
 
     public ServiceApplication(Context parentContext) {
         super(parentContext)
-        loadScheduler = new SesameLoadScheduler(
-                new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME))
+        def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
+        loadScheduler = new SesameLoadScheduler(config)
         def attrs = getContext().getAttributes()
         attrs.putIfAbsent(RDF_LOADER_CONTEXT_KEY, loadScheduler)
-
     }
 
     @Override
     public synchronized Restlet createRoot() {
         def router = new Router(getContext())
         router.attach("/collector", new Finder(getContext(), RDFLoaderHandler))
+        // FIXME: copy in resources and point out in config.
+        def treeDir = new File("../../../laboratory/services/SparqlToAtom/")
+        router.attach("/view", new SparqlTreeRouter(getContext(), treeDir))
+        /* TODO:
+        router.attach("/static", new Directory(getContext(), ".../htdocs"))
+        router.attach("/spec", new Directory(getContext(), ".../documents/acceptance"))
+        */
         router.attachDefault(StatusResource)
         return router
     }
