@@ -39,6 +39,18 @@
 
   <repositories>
     <repository>
+      <id>central</id>
+      <name>Maven Repository Switchboard</name>
+      <layout>default</layout>
+      <url>http://repo1.maven.org/maven2</url>
+      <releases>
+          <enabled>true</enabled>
+      </releases>
+      <snapshots>
+          <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>apache-incubating</id>
       <name>Apache Incubating Repository</name>
       <url>http://people.apache.org/repo/m2-incubating-repository/</url>
@@ -52,9 +64,32 @@
       <id>maven-restlet</id>
       <name>Public online Restlet repository</name>
       <url>http://maven.restlet.org</url>
+    </repository>    
+    <repository>
+      <id>Codehaus Snapshots</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
     </repository>
   </repositories>
-
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>Codehaus Snapshots</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+  
   <dependencyManagement>
     <dependencies>
       <!-- Default scope (compile) {{{ -->
@@ -282,9 +317,14 @@
       </dependency>
 
       <dependency>
-        <groupId>org.codehaus.groovy.maven.runtime</groupId>
-        <artifactId>gmaven-runtime-default</artifactId>
-        <version>1.0-rc-3</version>
+          <groupId>org.codehaus.groovy.maven</groupId>
+          <artifactId>gmaven-mojo</artifactId>
+          <version>1.0-rc-4-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+          <groupId>org.codehaus.groovy.maven.runtime</groupId>
+          <artifactId>gmaven-runtime-1.5</artifactId>
+          <version>1.0-rc-4-SNAPSHOT</version>
       </dependency>
       <!-- }}} -->
 
@@ -297,9 +337,30 @@
       </dependency>
       <!-- }}} -->
 
-
     </dependencies>
   </dependencyManagement>
+
+  <build>
+      <pluginManagement>
+          <plugins>
+              <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.2</version>
+              </plugin>
+    		  <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-2</version>
+              </plugin>
+              <plugin>
+				<groupId>org.codehaus.groovy.maven</groupId>
+				<artifactId>gmaven-plugin</artifactId>
+				<version>1.0-rc-4-SNAPSHOT</version>
+              </plugin>
+           </plugins>
+      </pluginManagement>
+  </build>
 
   <issueManagement>
     <system>rinfo - Trac</system>
