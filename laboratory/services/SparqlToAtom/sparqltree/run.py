@@ -27,7 +27,10 @@ if __name__ == '__main__':
     if not opts.endpoint:
         parser.error("Please provide ENDPOINT.")
 
+    import logging
+
     if opts.serve:
+        logging.basicConfig(level=logging.INFO)
         wsgi_server(port=opts.serve, endpoint=opts.endpoint)
     else:
         if not args:

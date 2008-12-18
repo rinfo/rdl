@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
+import os
 import cgi
-from sparqltree import SparqlTree
+from sparqltree import SparqlTree, to_xslt
 
 
 compiler_cache = {}

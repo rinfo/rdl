@@ -1,9 +1,12 @@
 # -*- coding: UTF-8 -*-
-import os
 from os.path import dirname, join
 from lxml import etree
 from urllib import urlencode
 import httplib2
+import logging
+
+
+_logger = logging.getLogger(__name__)
 
 
 to_xslt = lambda fpath: etree.XSLT(etree.parse(fpath))
@@ -26,8 +29,11 @@ class SparqlTree(object):
         return self.run_query(endpoint)
 
     def run_query(self, endpoint):
+        _logger.info("Querying endpoint..")
         rq_res = self._get_result(endpoint)
+        _logger.info("Transforming to tree..")
         return self.transformer(etree.fromstring(rq_res))
+        _logger.info("Done.")
 
     def _get_result(self, endpoint):
         return query_sparql(self.sparql, endpoint)
