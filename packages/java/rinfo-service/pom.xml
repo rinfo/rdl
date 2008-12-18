@@ -100,7 +100,6 @@
         </configuration>
       </plugin>
 
-      <!--
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
@@ -111,15 +110,18 @@
             </goals>
             <configuration>
               <tasks>
+
+                <!--
                 <delete file="${project.build.outputDirectory}/rinfo-service.properties"/>
                 <copy file="src/environments/${environment}/rinfo-service.properties"
                       tofile="${project.build.outputDirectory}/rinfo-service.properties"/>
+                -->
+
               </tasks>
             </configuration>
           </execution>
         </executions>
       </plugin>
-      -->
 
     </plugins>
   </build>

@@ -11,6 +11,10 @@
         <param-name>org.restlet.application</param-name>
         <param-value>se.lagrummet.rinfo.service.ServiceApplication</param-value>
     </context-param>
+    <context-param>
+        <param-name>org.restlet.clients</param-name>
+        <param-value>HTTP FILE</param-value>
+    </context-param>
 
     <servlet>
         <servlet-name>RestServlet</servlet-name> 

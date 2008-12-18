@@ -5,6 +5,7 @@ import org.slf4j.Logger
 
 import org.restlet.Application
 import org.restlet.Context
+import org.restlet.Directory
 import org.restlet.Finder
 import org.restlet.Handler
 import org.restlet.Restlet
@@ -47,14 +48,14 @@ class ServiceApplication extends Application {
     public synchronized Restlet createRoot() {
         def router = new Router(getContext())
         router.attach("/collector", new Finder(getContext(), RDFLoaderHandler))
-        // FIXME: copy in resources and point out in config.
+        // FIXME: copy to resources and point out in config.
         def treeDir = new File("../../../laboratory/services/SparqlToAtom/")
         router.attach("/view", new SparqlTreeRouter(getContext(), treeDir))
-        /* TODO:
-        router.attach("/static", new Directory(getContext(), ".../htdocs"))
-        router.attach("/spec", new Directory(getContext(), ".../documents/acceptance"))
-        */
-        router.attachDefault(StatusResource)
+        // FIXME:? How to let through to webapp dir instead (if desirable)?
+        router.attach("/css", new Directory(getContext(),
+                new File("src/main/webapp/css").toURI().toString()))
+        //TODO:? router.attach("/spec", new Directory(getContext(), ".../documents/acceptance"))
+        router.attach("/status", StatusResource)
         return router
     }
 

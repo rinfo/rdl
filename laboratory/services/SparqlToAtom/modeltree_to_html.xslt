@@ -18,7 +18,7 @@
       <head profile="http://www.w3.org/ns/rdfa/">
         <title>Ontology Viewer</title>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-        <link rel="stylesheet" href="ontology.css" />
+        <link rel="stylesheet" href="/css/ontology.css" />
       </head>
       <body>
         <div id="main">
