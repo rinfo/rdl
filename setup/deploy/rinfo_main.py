@@ -17,7 +17,7 @@ def setup_main():
 
 @depends(setup_main)
 def deploy_main_resources():
-    # TODO: rsync instead? Or bundle (via pom)?
+    # TODO: bundle necessary files (via pom, and adapt the paths in properties)
     tarname = "$(project)-$(fab_timestamp).tar"
     tmp_tar ="/tmp/%s" % tarname
     dest_tar = "$(dist_dir)/%s" % tarname
