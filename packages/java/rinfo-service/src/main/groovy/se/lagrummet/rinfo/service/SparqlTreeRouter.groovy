@@ -1,6 +1,7 @@
 package se.lagrummet.rinfo.service
 
 import org.restlet.Context
+import org.restlet.Finder
 import org.restlet.Handler
 import org.restlet.Router
 import org.restlet.data.MediaType
@@ -24,64 +25,48 @@ import se.lagrummet.rinfo.base.rdf.SparqlTree
 
 class SparqlTreeRouter extends Router {
 
-    File treeDir
-
-    public static final String SPARQL_TREE_CONTEXT_KEY =
-            "rinfo.service.restlet.context.spareqltree.dir"
-
     SparqlTreeRouter(Context context, File treeDir) {
         super(context)
-        this.treeDir = treeDir
 
-        getContext().getAttributes().putIfAbsent(SPARQL_TREE_CONTEXT_KEY, treeDir)
+        // FIXME: spaghetti - setup repo in ServiceApplication and send to this ctor!
+        def loadScheduler = (SesameLoadScheduler) context.attributes[
+                ServiceApplication.RDF_LOADER_CONTEXT_KEY]
+        def repo = loadScheduler.repository
 
-        attach("/model", ModelResource)
+        attach("/model", new ModelFinder(context, treeDir, repo))
         /* TODO:...
-        attach("rdata/publ/{path:anyPath}", new RDataResource(...))
-        //? attach("search", new SmartOpenSearchResource(...))
+        attach("rdata/publ/{path:anyPath}", new RDataFinder(...))
+        //? attach("search", new SmartOpenSearchFinder(...))
         */
-    }
-
-    @Override
-    Handler findTarget(Request request, Response response) {
-        return null
     }
 
 }
 
-class ModelResource extends Resource {
+class ModelFinder extends Finder {
 
     SparqlTree rqTree
     Templates toHtmlXslt
 
-    ModelResource(Context context, Request request, Response response) {
-        super(context, request, response)
-
-        def attrs = getContext().getAttributes()
-
-        // FIXME: spaghetti - expose repo more generally!
-        def loadScheduler = (SesameLoadScheduler) getContext().getAttributes().get(
-                ServiceApplication.RDF_LOADER_CONTEXT_KEY)
-        def repo = loadScheduler.getRepository()
-
-        def treeDir = (File) attrs.get(SparqlTreeRouter.SPARQL_TREE_CONTEXT_KEY)
-
+    ModelFinder(Context context, File treeDir, Repository repo) {
+        super(context)
         rqTree = new SparqlTree(repo, new File(treeDir, "sparqltree-model.xml"))
         toHtmlXslt = SparqlTree.TRANSFORMER_FACTORY.newTemplates(
                 new StreamSource(new File(treeDir, "modeltree_to_html.xslt")))
     }
 
     @Override
-    public boolean isReadable() { return true; }
+    Handler findTarget(Request request, Response response) {
+        def resource = new Resource(getContext(), request, response)
+        resource.variants << newModelHtml()
+        return resource
+    }
 
-    @Override
-    public void handleGet() {
+    Representation newModelHtml() {
         def outStream = new ByteArrayOutputStream()
         rqTree.queryAndChainToResult(new StreamResult(outStream), toHtmlXslt)
-        getResponse().setEntity(
-                new InputRepresentation(
-                        new ByteArrayInputStream(outStream.toByteArray()),
-                        MediaType.TEXT_HTML))
+        return new InputRepresentation(
+                new ByteArrayInputStream(outStream.toByteArray()),
+                MediaType.TEXT_HTML)
     }
 
 }
