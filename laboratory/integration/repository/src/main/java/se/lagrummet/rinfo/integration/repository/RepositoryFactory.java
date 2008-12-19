@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openrdf.repository.Repository;
 import org.openrdf.sail.inferencer.fc.DirectTypeHierarchyInferencer;
 import org.openrdf.sail.inferencer.fc.ForwardChainingRDFSInferencer;
@@ -19,18 +21,28 @@ public class RepositoryFactory {
 
 	private static Repository repository;
 
-	/*
-	 * TODO:
-	 * Constructor without config
-	 * 
-	 * public init method
-	 * call init in getRepo if not yet initialized 
-	 * 
-	 * shutdown?
-	 */
-    
-	public RepositoryFactory(Configuration config) throws Exception {
 
+	public RepositoryFactory() throws Exception {
+		this(getDefaultConfiguration());
+	}
+
+	public RepositoryFactory(Configuration config) throws Exception {
+		init(config);
+	}
+
+	public static synchronized Repository getRepository() throws Exception {
+		if (repository == null) {
+			init(getDefaultConfiguration());
+		}
+		return repository;
+	}
+	
+	private static Configuration getDefaultConfiguration() 
+	throws ConfigurationException {
+		return new PropertiesConfiguration(PROPERTIES_FILE_NAME);					
+	}
+	
+	private static void init(Configuration config) throws Exception {
 		validateConfiguration(config);
 
 		String store = config.getString("triple.store").toLowerCase();
@@ -53,10 +65,7 @@ public class RepositoryFactory {
 
 			repository.initialize();
 		}
-	}
-
-	public static synchronized Repository getRepository() {
-		return repository;
+		
 	}
 	
 	private static void validateConfiguration(Configuration config) throws Exception {		
