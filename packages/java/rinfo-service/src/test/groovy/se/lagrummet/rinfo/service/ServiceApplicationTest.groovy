@@ -29,7 +29,7 @@ import se.lagrummet.rinfo.service.util.FeedApplication
  */
 class ServiceApplicationTest {
 
-    static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service-test.properties"
+    static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service.properties"
 
     static serviceAppUrl
     static serviceAppPort
@@ -64,9 +64,6 @@ class ServiceApplicationTest {
         // create a local ServiceApplication
         def serviceApplication = new ServiceApplication(context.createChildContext())
 
-        // reconfigure ServiceApplication
-        serviceApplication.configure(config)
-
         // create a local application that serves feeds
         def feedApplication = new FeedApplication(context.createChildContext())     
         
@@ -99,7 +96,7 @@ class ServiceApplicationTest {
     void testReadMetaFromFeed() {
 
     	// add metadata
-        def request = new Request(Method.POST, "${serviceAppUrl}")
+        def request = new Request(Method.POST, "${serviceAppUrl}/collector")
         def param = "feed=${feedAppUrl}/1-init.atom"        
         request.setEntity(param, MediaType.MULTIPART_FORM_DATA)    	
         def client = new Client(Protocol.HTTP)     

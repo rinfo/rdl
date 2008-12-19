@@ -28,7 +28,7 @@ import se.lagrummet.rinfo.service.util.RepoConnectionListener
  */
 class ServiceApplicationConnectionTest {
 
-    static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service-test.properties"
+    static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service.properties"
 
     static serviceAppUrl
     static feedAppUrl
@@ -52,11 +52,9 @@ class ServiceApplicationConnectionTest {
         // create a local ServiceApplication
         def serviceApplication = new ServiceApplication(context.createChildContext())
 
-        // reconfigure ServiceApplication
-        serviceApplication.configure(config)
         repoListener = new RListener()
-        serviceApplication.addRepositoryListener(repoListener)
-        serviceApplication.addRepositoryConnectionListener(repoListener)
+        serviceApplication.loadScheduler.addRepositoryListener(repoListener)
+        serviceApplication.loadScheduler.addRepositoryConnectionListener(repoListener)
         
         // create a local application that serves feeds
         def feedApplication = new FeedApplication(context.createChildContext())     
@@ -107,18 +105,21 @@ class ServiceApplicationConnectionTest {
     	repoListener.noofConnections = 0
         repoListener.isConcurrent = false
     	
-        def request = new Request(Method.POST, "${serviceAppUrl}")
+        def request = new Request(Method.POST, "${serviceAppUrl}/collector")
         def param = "feed=${feedAppUrl}/1-init.atom"        
         request.setEntity(param, MediaType.MULTIPART_FORM_DATA)     
         def client = new Client(Protocol.HTTP)     
         def response = client.handle(request)
         assertEquals Status.SUCCESS_OK , response.status                    
 
-        request = new Request(Method.POST, "${serviceAppUrl}")
+        request = new Request(Method.POST, "${serviceAppUrl}/collector")
+        param = "feed=${feedAppUrl}/2-updated_t1.atom"        
         request.setEntity(param, MediaType.MULTIPART_FORM_DATA)     
         response = client.handle(request)
         assertEquals Status.SUCCESS_OK , response.status        
         
+        // TODO: Allow time for collect to finish. Causes deadlock otherwise, 
+        // read feed seems to wait indefinitely for closed feed.
         Thread.sleep(3000)
 
         assertFalse "Concurrent connections to repository.", repoListener.isConcurrent        
