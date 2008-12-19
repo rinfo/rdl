@@ -105,8 +105,7 @@ class CollectorHandler extends Handler {
         try {
             boolean wasScheduled = collectScheduler.triggerFeedCollect(new URL(feedUrl))
             if (!wasScheduled) {
-                msg = "The service is busy collecting all source feeds."
-                status = Status.SERVER_ERROR_SERVICE_UNAVAILABLE
+                msg = "The url <${feedUrl}> is already scheduled for collect."
             }
         } catch (NotAllowedSourceFeedException e) {
                 msg = "The url <${feedUrl}> is not an allowed source feed."
