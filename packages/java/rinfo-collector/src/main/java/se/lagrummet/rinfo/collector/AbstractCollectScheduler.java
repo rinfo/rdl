@@ -1,15 +1,17 @@
 package se.lagrummet.rinfo.collector;
 
-import java.util.*;
 import java.net.URL;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,13 +26,19 @@ public abstract class AbstractCollectScheduler {
 
     private int initialDelay = DEFAULT_INITIAL_DELAY;
     private int scheduleInterval = DEFAULT_SCHEDULE_INTERVAL;
-    private String timeUnitName;
-
     private TimeUnit timeUnit;
-    private Semaphore semaphore = new Semaphore(1);
-
+    
     private ScheduledExecutorService scheduleService;
 
+    private ExecutorService defaultExecutorService = 
+    	Executors.newSingleThreadExecutor(); 
+
+    private ConcurrentLinkedQueue<URL> feedQueue = 
+    	new ConcurrentLinkedQueue<URL>();
+    
+    private List<URL> feedInProcess = 
+    	Collections.synchronizedList(new ArrayList<URL>()); 
+    
     public int getInitialDelay() {
         return initialDelay;
     }
@@ -52,14 +60,31 @@ public abstract class AbstractCollectScheduler {
         this.timeUnit = TimeUnit.valueOf(timeUnitName);
     }
 
+    /**
+     * Get default single threaded executor. Override to implement other thread 
+     * executor strategy.
+     * @return
+     */
+    public ExecutorService getExecutorService() {
+    	return defaultExecutorService;
+    }
+    
+    /**
+     * @return Collection of approved source feed URLs.
+     */
     public abstract Collection<URL> getSourceFeedUrls();
 
-    // TODO:IMPROVE: does the current semaphore work? Consider:
-    //  - demand collect/write concurrenct safety in user instead?
-    //  - pop from synchronized queue? (To e.g. inform if triggerFeedCollect
-    //    will "soon" start collecting?)
+    /**
+     * Perform collect of feed from the given URL.
+     * @param feedUrl
+     * @param lastInBatch
+     */
     protected abstract void collectFeed(URL feedUrl, boolean lastInBatch);
 
+    /**
+     * Initiate a fixed rate schedule for collecting all feeds, with an interval
+     * of <code>scheduleInterval</code>, unless it is set to -1.
+     */
     public void startup() {
         if (scheduleInterval == -1) {
             logger.info("Disabled scheduled collects.");
@@ -76,12 +101,58 @@ public abstract class AbstractCollectScheduler {
         }
     }
 
-    public void shutdown() {
+    /**
+     * Shuts down the fixed rate collect schedule and aborts all queued up 
+     * collects that have not yet started. All currently running collects are 
+     * allowed to finish. 
+     */
+    public void shutdown() {    	
         if (scheduleService != null) {
             scheduleService.shutdown();
         }
+        
+        getExecutorService().shutdown();
+        
+        if (feedQueue != null) {
+        	if (feedQueue.size() > 0) {
+            	String feeds = "";
+            	for (URL u : feedQueue) {
+            		feeds += "<"+u+">, ";
+            	}
+                feedQueue.clear();
+            	StringUtils.removeEnd(feeds, ", ");
+            	logger.info("Shutdown prevented the following scheduled feeds to " 
+            			+ "be collected: " + feeds);
+        	}
+        }
     }
 
+    /**
+     * Schedule all source feeds for collect.
+     */
+    public void collectAllFeeds() {
+        Collection<URL> sourceFeedUrls = getSourceFeedUrls();
+        if (sourceFeedUrls != null) {
+            logger.info("Starting scheduling for collect of " + 
+            		sourceFeedUrls.size() + " source feeds.");            
+            for (URL feedUrl : sourceFeedUrls) {
+                enqueueCollect(feedUrl);        	
+            }            
+            logger.info("Done scheduling source feeds.");
+        } else {
+            logger.info("No source feeds to schedule.");        	
+        }        
+    }
+
+    /**
+     * Schedule feed to be collected.
+     * 
+     * @param feedUrl The URL of the feed to collect.
+     * @return true if the URL was added to the queue, false if it already was
+     * enqueued.
+     * @throws NotAllowedSourceFeedException if feed URL is not on the list of
+     * approved sources.
+     */
     public boolean triggerFeedCollect(final URL feedUrl)
             throws NotAllowedSourceFeedException {
         if (!getSourceFeedUrls().contains(feedUrl)) {
@@ -89,49 +160,40 @@ public abstract class AbstractCollectScheduler {
                     "Called triggerFeedCollect with disallowed " +
                     "feed url: <"+feedUrl+">");
         }
-        if (!semaphore.tryAcquire()) {
-            logger.info("Busy - skipping collect of <"+feedUrl+">");
-            return false;
-        }
-        try {
+        return enqueueCollect(feedUrl);
+    }
+
+    private synchronized boolean enqueueCollect(final URL feedUrl) {
+    	if (feedQueue.contains(feedUrl) || feedInProcess.contains(feedUrl)) {
+            logger.info("Feed <"+feedUrl+"> is already scheduled for collect.");
+            return false;    		
+    	} else {
+    		feedQueue.add(feedUrl);
             logger.info("Scheduling collect of <"+feedUrl+">.");
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.execute(
-                  new Runnable() {
-                    public void run() { collectFeed(feedUrl, true); }
-                  }
-                );
-            executor.shutdown();
+    		getExecutorService().execute(
+    				new Runnable() {
+    					public void run() { executeCollect(); }
+    				}
+    		);
             return true;
-        } finally {
-            semaphore.release();
-        }
+    	}
     }
 
-    public boolean collectAllFeeds() {
-        Collection<URL> sourceFeedUrls = getSourceFeedUrls();
-        if (sourceFeedUrls == null) {
-            return true;
-        }
-        if (!semaphore.tryAcquire()) {
-            logger.info("Busy - skipping collect of all source feeds.");
-            return false;
-        }
-        try {
-            logger.info("Starting to collect " + sourceFeedUrls.size() +
-                    " source feeds.");
-            int count = 0;
-            for (URL feedUrl : sourceFeedUrls) {
-                count++;
-                logger.info("Beginning collect of <"+feedUrl+">.");
-                collectFeed(feedUrl, count == sourceFeedUrls.size());
-                logger.info("Completed collect of <"+feedUrl+">.");
-            }
-            logger.info("Done collecting source feeds.");
-            return true;
-        } finally {
-            semaphore.release();
-        }
+    private synchronized URL getNextFeed() {
+    	URL feedUrl = feedQueue.peek();
+    	if (feedUrl != null) {
+    		feedInProcess.add(feedUrl);
+    		feedQueue.remove(feedUrl);
+    	}
+    	return feedUrl;
     }
-
+    
+    private void executeCollect() {
+    	URL feedUrl = getNextFeed();
+    	if (feedUrl != null) {
+        	collectFeed(feedUrl, true);
+    		feedInProcess.remove(feedUrl);
+            logger.info("Completed collect of <"+feedUrl+">.");
+    	}
+    }
 }
