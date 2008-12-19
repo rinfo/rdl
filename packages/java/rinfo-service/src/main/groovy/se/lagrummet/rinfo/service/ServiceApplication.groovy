@@ -34,7 +34,7 @@ class ServiceApplication extends Application {
     public static final String RDF_LOADER_CONTEXT_KEY =
             "rinfo.service.rdfloader.restlet.context"
 
-    private SesameLoadScheduler loadScheduler
+    public SesameLoadScheduler loadScheduler
 
     public ServiceApplication(Context parentContext) {
         super(parentContext)
@@ -94,8 +94,7 @@ class RDFLoaderHandler extends Handler {
         try {
             boolean wasScheduled = loadScheduler.triggerFeedCollect(new URL(feedUrl))
             if (!wasScheduled) {
-                msg = "The service is busy collecting data."
-                status = Status.SERVER_ERROR_SERVICE_UNAVAILABLE
+                msg = "The url <${feedUrl}> is already scheduled for collect."
             }
         } catch (NotAllowedSourceFeedException e) {
                 msg = "The url <${feedUrl}> is not an allowed source feed."
