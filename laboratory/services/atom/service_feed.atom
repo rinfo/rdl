@@ -36,8 +36,9 @@
     <id>http://rinfo.lagrummet.se/publ/sfs/1999:175</id>
     <!-- TODO: Controversial: entry/id as Resource URI? Too smudged? Alts: -->
     <link href="http://rinfo.lagrummet.se/publ/sfs/1999:175"/>
-    <link rel="[foaf:primaryTopicOf]" href="http://rinfo.lagrummet.se/publ/sfs/1999:175"/>
-    <!-- or dc:identifier? Too loose? Not an ObjectProperty... (may be a plus: "canonical URI string") -->
+    <link rel="[foaf:primaryTopic]" href="http://rinfo.lagrummet.se/publ/sfs/1999:175"/>
+    <!-- or dc:source? -->
+    <!-- or dc:identifier? (must be a literal: "canonical URI string") -->
 
     <updated>2006-08-28T12:54:59.393Z</updated>
     <published>1999-12-12T23:59:59Z</published>

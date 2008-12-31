@@ -61,7 +61,7 @@ class SesameLoaderTest {
         loader.readFeed(url("${baseUrl}/1-init.atom"))
         assertEquals 2, countContexts()
         assertTrue conn.hasStatement(thing(1), RDFS.LABEL, lit("Thing 1"), false)
-        assertTrue conn.hasStatement(thing(2), RDFS.LABEL, lit("Thing 2"), false)        
+        assertTrue conn.hasStatement(thing(2), RDFS.LABEL, lit("Thing 2"), false)
 
         // No changes
         loader.readFeed(url("${baseUrl}/1-init.atom"))

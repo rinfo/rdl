@@ -21,6 +21,8 @@ import org.restlet.resource.Resource
 import org.restlet.resource.StringRepresentation
 import org.restlet.resource.Variant
 
+import org.openrdf.repository.Repository
+
 import org.apache.commons.configuration.AbstractConfiguration
 import org.apache.commons.configuration.ConfigurationException
 import org.apache.commons.configuration.PropertiesConfiguration
@@ -28,18 +30,22 @@ import org.apache.commons.configuration.PropertiesConfiguration
 import se.lagrummet.rinfo.collector.NotAllowedSourceFeedException
 
 
+// TODO: time for IoC composition of all the service parts?
+
 class ServiceApplication extends Application {
 
     public static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service.properties"
     public static final String RDF_LOADER_CONTEXT_KEY =
             "rinfo.service.rdfloader.restlet.context"
 
-    public SesameLoadScheduler loadScheduler
+    SesameLoadScheduler loadScheduler
+    Repository repository
 
     public ServiceApplication(Context parentContext) {
         super(parentContext)
         def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
-        loadScheduler = new SesameLoadScheduler(config)
+        repository = RepositoryFactory.createRepository(config)
+        loadScheduler = new SesameLoadScheduler(config, repository)
         def attrs = getContext().getAttributes()
         attrs.putIfAbsent(RDF_LOADER_CONTEXT_KEY, loadScheduler)
     }
@@ -49,8 +55,8 @@ class ServiceApplication extends Application {
         def router = new Router(getContext())
         router.attach("/collector", new Finder(getContext(), RDFLoaderHandler))
         // FIXME: copy to resources and point out in config.
-        def treeDir = new File("../../../laboratory/services/SparqlToAtom/")
-        router.attach("/view", new SparqlTreeRouter(getContext(), treeDir))
+        def treeDir = new File("../../../laboratory/services/SparqlToAtom/examples/")
+        router.attach("/view", new SparqlTreeRouter(getContext(), repository, treeDir))
         // FIXME:? How to let through to webapp dir instead (if desirable)?
         router.attach("/css", new Directory(getContext(),
                 new File("src/main/webapp/css").toURI().toString()))

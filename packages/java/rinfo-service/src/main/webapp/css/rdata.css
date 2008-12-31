@@ -1,0 +1,125 @@
+@namespace url("http://www.w3.org/2005/Atom");
+@namespace rdata url("http://purl.org/net/court/ns/2008/09/rdata");
+
+* {
+    display: block;
+}
+
+entry {
+    color: #4A4A4A;
+    padding: 1em 0 0 1em;
+}
+
+id, uri {
+    color: #87395F;
+    display: inline;
+    font-family: courier;
+}
+
+entry > id {
+    font-weight: bold;
+}
+
+title, subtitle {
+    font-family: serif;
+    font-weight: bold;
+    margin: 0.3em 0;
+}
+title {
+    font-size: 14pt;
+}
+subtitle {
+    font-size: 12pt;
+}
+
+content:before {
+    content: "Content:";
+}
+content:after {
+    content: attr(src);
+}
+
+author:before {
+    content: "Author:";
+}
+
+author > uri {
+    font-size: 0.9em;
+}
+
+rdata|entryLink[relLabel]:before {
+    content: attr(relLabel);
+}
+
+content:before,
+author:before,
+link:before,
+rdata|entryLink:before {
+    background-color: #e7e7e7;
+    display: inline-block;
+    font-size: 0.9em;
+    padding: 0.1em 0.5em;
+    margin: 0 1em 0.2em 0;
+}
+
+link:before {
+    content: attr(rel);
+}
+link:after {
+    content: attr(href);
+}
+
+content:after,
+link:after {
+    color: #01819A;
+    font-family: courier;
+    font-size: 0.9em;
+}
+
+rdata|entryLink[relLabel]:before {
+    content: attr(relLabel);
+}
+
+rdata|entryLink[revLabel]:before {
+    content: attr(revLabel);
+}
+
+rdata|entryLink {
+    font-family: courier;
+    display: block;
+}
+
+rdata|entryLink id {
+    color: #01819A;
+    font-size: 0.9em;
+}
+
+category:before {
+    font-style: italic;
+    font-size: 0.7em;
+    /*border: 1px outset #01819A;*/
+    background-color: #01819A;
+    color: white;
+    display: inline-block;
+    padding: 0 0.3em;
+    margin-right: 0.2em;
+    content: attr(term);
+}
+category {
+    display: inline-block;
+    margin-bottom: 0.2em;
+}
+
+rdata|entryLink[href],
+link[href] {
+    -moz-binding: url(rdata.xbl#link);
+    color: inherit;
+    text-decoration: none;
+}
+
+content[src] {
+    -moz-binding: url(rdata.xbl#src);
+    color: inherit;
+    text-decoration: none;
+}
+

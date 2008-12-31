@@ -13,6 +13,7 @@ import org.restlet.resource.InputRepresentation
 import org.restlet.resource.Representation
 import org.restlet.resource.Resource
 import org.restlet.resource.Variant
+import org.restlet.util.Variable
 
 import javax.xml.transform.Templates
 import javax.xml.transform.stream.StreamResult
@@ -25,48 +26,92 @@ import se.lagrummet.rinfo.base.rdf.SparqlTree
 
 class SparqlTreeRouter extends Router {
 
-    SparqlTreeRouter(Context context, File treeDir) {
+    SparqlTreeRouter(Context context, Repository repository, File treeDir) {
         super(context)
 
-        // FIXME: spaghetti - setup repo in ServiceApplication and send to this ctor!
-        def loadScheduler = (SesameLoadScheduler) context.attributes[
-                ServiceApplication.RDF_LOADER_CONTEXT_KEY]
-        def repo = loadScheduler.repository
+        attach("/model", new ModelFinder(context, repository, treeDir))
 
-        attach("/model", new ModelFinder(context, treeDir, repo))
+        // TODO: nice capture of rest of path.. {path:anyPath} (+ /entry?)
+        def route = attach("/rdata/{path}", new RDataFinder(context, repository, treeDir))
+        Map<String, Variable> routeVars = route.getTemplate().getVariables()
+        routeVars.put("path", new Variable(Variable.TYPE_URI_PATH))
+
         /* TODO:...
-        attach("rdata/publ/{path:anyPath}", new RDataFinder(...))
+        attach("/rdata/publ", new RDataSearchFinder(context, repository, treeDir))
         //? attach("search", new SmartOpenSearchFinder(...))
         */
     }
 
 }
 
-class ModelFinder extends Finder {
+
+class SparqlTreeFinder extends Finder {
 
     SparqlTree rqTree
-    Templates toHtmlXslt
+    Templates outputXslt
+    MediaType mediaType
 
-    ModelFinder(Context context, File treeDir, Repository repo) {
+    SparqlTreeFinder() {}
+
+    SparqlTreeFinder(Context context, Repository repository,
+            File treeFile, File outXsltFile, MediaType mediaType) {
         super(context)
-        rqTree = new SparqlTree(repo, new File(treeDir, "sparqltree-model.xml"))
-        toHtmlXslt = SparqlTree.TRANSFORMER_FACTORY.newTemplates(
-                new StreamSource(new File(treeDir, "modeltree_to_html.xslt")))
+        rqTree = new SparqlTree(repository, treeFile)
+        outputXslt = SparqlTree.TRANSFORMER_FACTORY.newTemplates(
+                new StreamSource(outXsltFile))
+        this.mediaType = mediaType
     }
 
     @Override
     Handler findTarget(Request request, Response response) {
         def resource = new Resource(getContext(), request, response)
-        resource.variants << newModelHtml()
+        resource.variants.add(
+                generateRepresentation(
+                        prepareQuery(request, rqTree.queryString))
+            )
         return resource
     }
 
-    Representation newModelHtml() {
+    Representation generateRepresentation(String query) {
         def outStream = new ByteArrayOutputStream()
-        rqTree.queryAndChainToResult(new StreamResult(outStream), toHtmlXslt)
+        rqTree.queryAndChainToResult(
+                query, new StreamResult(outStream), outputXslt)
         return new InputRepresentation(
                 new ByteArrayInputStream(outStream.toByteArray()),
+                mediaType)
+    }
+
+    String prepareQuery(Request request, String query) {
+        return query
+    }
+
+}
+
+class ModelFinder extends SparqlTreeFinder {
+
+    ModelFinder(Context context, Repository repository, File treeDir) {
+        super(context, repository,
+                new File(treeDir, "model/sparqltree-model.xml"),
+                new File(treeDir, "model/modeltree_to_html.xslt"),
                 MediaType.TEXT_HTML)
+    }
+
+}
+
+class RDataFinder extends SparqlTreeFinder {
+
+    RDataFinder(Context context, Repository repository, File treeDir) {
+        super(context, repository,
+                new File(treeDir, "rdata/rpubl-rqtree.xml"),
+                new File(treeDir, "rdata/rpubl_to_rdata.xslt"),
+                MediaType.APPLICATION_XML) // APPLICATION_ATOM_XML
+    }
+
+    String prepareQuery(Request request, String query) {
+        def path = request.attributes["path"]
+        def rinfoUri = "http://rinfo.lagrummet.se/${path}"
+        def QUERY_URI_TOKEN = "http://rinfo.lagrummet.se/publ/sfs/1999:175"
+        return query.replace(QUERY_URI_TOKEN, rinfoUri)
     }
 
 }

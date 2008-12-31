@@ -19,8 +19,8 @@ class SparqlTreeTest {
     void setup() {
         def repo = RDFUtil.createMemoryRepository()
         // FIXME: move these to library/base..
-        treeDir = new File("../../../laboratory/services/SparqlToAtom/")
-        rqTree = new SparqlTree(repo, new File(treeDir, "sparqltree-model.xml"))
+        treeDir = new File("../../../laboratory/services/SparqlToAtom/examples/")
+        rqTree = new SparqlTree(repo, new File(treeDir, "model/sparqltree-model.xml"))
     }
 
     @Test
@@ -31,7 +31,7 @@ class SparqlTreeTest {
     @Test
     void shouldQueryAndChainToResult() {
         def toHtmlXslt = SparqlTree.TRANSFORMER_FACTORY.newTemplates(
-                new StreamSource(new File(treeDir, "modeltree_to_html.xslt")))
+                new StreamSource(new File(treeDir, "model/modeltree_to_html.xslt")))
         def outStream = new ByteArrayOutputStream()
         rqTree.queryAndChainToResult(new StreamResult(outStream), toHtmlXslt)
     }

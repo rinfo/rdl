@@ -67,6 +67,20 @@ class SparqlTree {
                 new StreamSource(inStream))
     }
 
+    void queryAndChainToResult(Result result, Templates ... templates) {
+        queryAndChainToResult(queryString, result, templates)
+    }
+
+    void queryAndChainToResult(String queryString, Result result,
+            Templates ... templates) {
+        SparqlTree.queryAndChainToResult(
+                repo, queryString, result, rqToTreeTemplates, templates)
+    }
+
+    Document queryToDocument() {
+        return SparqlTree.queryToDocument(repo, queryString)
+    }
+
     Document queryToTreeDocument() {
         def rqInputStream = queryToInputStream(repo, queryString)
         logger.debug("Transforming to tree..")
@@ -76,42 +90,16 @@ class SparqlTree {
         return doc
     }
 
-    void queryAndChainToResult(Result result, Templates ... templates) {
-        logger.debug("Transforming results..")
-
-        def saxTransFctry = (SAXTransformerFactory) TRANSFORMER_FACTORY
-
-        def filter = saxTransFctry.newXMLFilter(rqToTreeTemplates)
-        for (Templates tplt : templates) {
-            def nextFilter = saxTransFctry.newXMLFilter(tplt)
-            nextFilter.setParent(filter)
-            filter = nextFilter
-        }
-
-        def rqInputStream = queryToInputStream(repo, queryString)
-
-        SAXSource transformSource = new SAXSource(
-                filter, new InputSource(rqInputStream))
-        def chainedTransformer = saxTransFctry.newTransformer()
-        chainedTransformer.transform(transformSource, result)
-
-        logger.debug("Transform completed.")
-    }
-
-    Document queryToDocument() {
-        return SparqlTree.queryToDocument(repo, queryString)
+    static InputStream transformToInputStream(Templates xslt, Source source) {
+        def outStream = new ByteArrayOutputStream()
+        xslt.newTransformer().transform(source, new StreamResult(outStream))
+        return new ByteArrayInputStream(outStream.toByteArray())
     }
 
     static Document transformToDocument(Templates xslt, Source source) {
         DOMResult domResult = new DOMResult()
         xslt.newTransformer().transform(source, domResult)
         return (Document) domResult.getNode()
-    }
-
-    static InputStream transformToInputStream(Templates xslt, Source source) {
-        def outStream = new ByteArrayOutputStream()
-        xslt.newTransformer().transform(source, new StreamResult(outStream))
-        return new ByteArrayInputStream(outStream.toByteArray())
     }
 
     protected static InputStream classPathStream(String name) {
@@ -121,11 +109,35 @@ class SparqlTree {
     // TODO: move these to RDFUtil (and reuse in URIMinter as well)
     // .. unless URIMinter should be/use SparqlTree?
 
+    static void queryAndChainToResult(
+            Repository repo, String queryString, Result result,
+            Templates firstTemplates, Templates ... templates) {
+        def saxTransFctry = (SAXTransformerFactory) TRANSFORMER_FACTORY
+
+        def filter = saxTransFctry.newXMLFilter(firstTemplates)
+        for (Templates tplt : templates) {
+            def nextFilter = saxTransFctry.newXMLFilter(tplt)
+            nextFilter.setParent(filter)
+            filter = nextFilter
+        }
+
+        def rqInputStream = queryToInputStream(repo, queryString)
+
+        logger.debug("Transforming results..")
+        SAXSource transformSource = new SAXSource(
+                filter, new InputSource(rqInputStream))
+        def chainedTransformer = saxTransFctry.newTransformer()
+        chainedTransformer.transform(transformSource, result)
+        logger.debug("Transform completed.")
+    }
+
     static byte[] queryToByteArray(Repository repo, String queryString) {
         logger.debug("Querying endpoint..")
         def conn = repo.getConnection()
         def tupleQuery = conn.prepareTupleQuery(
                 QueryLanguage.SPARQL, queryString)
+        // TODO: configurable?
+        tupleQuery.setIncludeInferred(false)
         def outStream = new ByteArrayOutputStream()
         tupleQuery.evaluate(new SPARQLResultsXMLWriter(outStream))
         try {
