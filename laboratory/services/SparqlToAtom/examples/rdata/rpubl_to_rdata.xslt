@@ -117,6 +117,12 @@
       </xsl:if>
     </xsl:for-each>
 
+    <!-- TODO: The categorizing done for dates may be extremely worthwhile as a
+            generic tagging mechanism:
+            - prepend with term *from predicate*
+            - term from either uri or year-in-date
+        Examine how to manage category documents for such aggregates.
+    -->
     <xsl:for-each select="type">
       <category>
         <xsl:attribute name="scheme">
