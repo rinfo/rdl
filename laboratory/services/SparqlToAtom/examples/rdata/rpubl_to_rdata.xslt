@@ -141,6 +141,8 @@
     <xsl:for-each select="dateRel">
       <category scheme="{@uri}">
         <xsl:attribute name="term">
+          <xsl:call-template name="uri-term"/>
+          <xsl:text>-</xsl:text>
           <xsl:value-of select="date:year(dateValue)"/>
         </xsl:attribute>
       </category>

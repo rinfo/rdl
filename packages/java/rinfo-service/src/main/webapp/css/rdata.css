@@ -101,7 +101,7 @@ category:before {
     background-color: #01819A;
     color: white;
     display: inline-block;
-    padding: 0 0.3em;
+    padding: 0.1em 0.3em;
     margin-right: 0.2em;
     content: attr(term);
 }
