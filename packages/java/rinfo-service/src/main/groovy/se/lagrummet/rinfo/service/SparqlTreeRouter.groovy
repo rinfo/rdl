@@ -37,7 +37,6 @@ class SparqlTreeRouter extends Router {
         routeVars.put("path", new Variable(Variable.TYPE_URI_PATH))
 
         /* TODO:...
-        attach("/rdata/publ", new RDataSearchFinder(context, repository, treeDir))
         //? attach("search", new SmartOpenSearchFinder(...))
         */
     }
@@ -100,6 +99,9 @@ class ModelFinder extends SparqlTreeFinder {
 
 class RDataFinder extends SparqlTreeFinder {
 
+    static final FILTER_TOKEN = "#FILTERS#"
+    static final DEFAULT_MAX_ITEMS = 100
+
     RDataFinder(Context context, Repository repository, File treeDir) {
         super(context, repository,
                 new File(treeDir, "rdata/rpubl-rqtree.xml"),
@@ -109,9 +111,31 @@ class RDataFinder extends SparqlTreeFinder {
 
     String prepareQuery(Request request, String query) {
         def path = request.attributes["path"]
-        def rinfoUri = "http://rinfo.lagrummet.se/${path}"
-        def QUERY_URI_TOKEN = "http://rinfo.lagrummet.se/publ/sfs/1999:175"
-        return query.replace(QUERY_URI_TOKEN, rinfoUri)
+        def filter = ""
+        if (!path || path.startsWith("-/")) { // prepare query
+            filter = createSearchFilter(path)
+        } else { // expect entry uri
+            def rinfoUri = "http://rinfo.lagrummet.se/${path}"
+            filter = "FILTER(?subject = <${rinfoUri}>)"
+        }
+        return query.replace(FILTER_TOKEN, filter)
+    }
+
+    static String createSearchFilter(String path) {
+        def categoryTokens = path.replace("-/", "").split("/")
+        def filterParts = []
+        for (token in categoryTokens) {
+            if (token.indexOf("-") > -1) {
+                def bits = token.split("-")
+                if (bits[1] =~ /^\d+$/) {
+                    filterParts.add('REGEX(STR(?dateRel), "[#/]'+bits[0]+'$")')
+                    filterParts.add('REGEX(STR(?dateValue), "^'+bits[1]+'")')
+                }
+            } else {
+                filterParts.add('REGEX(STR(?type), "[#/]'+token+'")')
+            }
+        }
+        return (filterParts.size() == 0)? "" : "FILTER(" + filterParts.join(" && ") + ")"
     }
 
 }

@@ -1,4 +1,3 @@
-
 <st:sparqltree xmlns:st="http://oort.to/ns/2008/09/sparqltree"
                xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
                xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
@@ -12,7 +11,7 @@
 
   <!-- FIXME: replacable marker for subject (and lang) -->
 
-  <subject uri="http://rinfo.lagrummet.se/publ/sfs/1999:175">
+  <subject>
       a <type> .
       OPTIONAL {
         ?type rdfs:label <typeLabel/> .
@@ -110,6 +109,8 @@
         }
     }
     </rev>
+
+    #FILTERS#
 
   </subject>
 

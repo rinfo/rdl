@@ -47,9 +47,9 @@ def offset = (args.length > 2) ? new Integer(args[2]) : 0
 
 def filters
 filters = """
-    FILTER(?updated > "2008-12-01T00:00:00Z"^^xsd:dateTime)
+    FILTER(?updated > "2007-12-31T00:00:00Z"^^xsd:dateTime)
 """
-filters = ""
+//filters = ""
 
 // TODO: "felanvänd" awol:id.. foaf:primaryTopic? eller .. vad?
 def queryStr = """
@@ -60,7 +60,7 @@ def queryStr = """
 
     SELECT * WHERE {
 
-        ?entry #a awol:Entry;
+        ?entry a awol:Entry;
             awol:id ?doc;
             awol:title ?title;
             awol:updated ?updated .
@@ -90,6 +90,7 @@ def queryStr = """
 def conn = repo.getConnection()
 def tupleQuery = conn.prepareTupleQuery(
         QueryLanguage.SPARQL, queryStr)
+tupleQuery.includeInferred = false
 
 def start = new Date()
 println "Querying.."

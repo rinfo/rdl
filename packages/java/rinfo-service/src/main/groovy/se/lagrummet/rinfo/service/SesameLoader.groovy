@@ -89,6 +89,7 @@ class SesameLoader extends FeedArchivePastToPresentReader {
                 logger.info("RDF from <${rdfRef.url}>")
                 loadData(rdfRef, entryRepoData.getContext())
             }
+            // TODO:? rdataService.indexEntryContext(...)
         }
     }
 
