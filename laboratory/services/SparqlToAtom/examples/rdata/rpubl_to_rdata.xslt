@@ -14,12 +14,13 @@
 
   <xsl:param name="sourceBase">http://rinfo.lagrummet.se/</xsl:param>
   <xsl:param name="rdataBase">/view/rdata/</xsl:param>
+  <xsl:param name="asFeed" select="boolean(/st:tree/subject[2])"/>
 
   <xsl:template match="/st:tree">
     <xsl:processing-instruction
       name="xml-stylesheet">href="/css/rdata.css" type="text/css"</xsl:processing-instruction>
     <xsl:choose>
-        <xsl:when test="subject[2]">
+        <xsl:when test="$asFeed">
             <feed>
                 <id></id>
                 <xsl:apply-templates select="subject"/>
@@ -29,6 +30,7 @@
             <xsl:apply-templates select="subject"/>
         </xsl:when>
         <xsl:otherwise>
+            <entry/>
         </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

@@ -112,12 +112,29 @@ class RDataFinder extends SparqlTreeFinder {
     String prepareQuery(Request request, String query) {
         def path = request.attributes["path"]
         def filter = ""
+
         if (!path || path.startsWith("-/")) { // prepare query
+            // FIXME: either make different queries, or modularize it somehow instead!
+            def strip = false
+            def sb = new StringBuffer()
+            for (l in query.split("\n")) {
+                if (l.trim() == "#END relRevs#") {
+                    strip = false; continue
+                }
+                else if (l.trim() == "#BEGIN relRevs#") {
+                    strip = true; continue
+                }
+                if (strip) { continue }
+                sb.append(l + "\n")
+            }
+            query = sb.toString()
             filter = createSearchFilter(path)
+
         } else { // expect entry uri
             def rinfoUri = "http://rinfo.lagrummet.se/${path}"
             filter = "FILTER(?subject = <${rinfoUri}>)"
         }
+
         return query.replace(FILTER_TOKEN, filter)
     }
 
