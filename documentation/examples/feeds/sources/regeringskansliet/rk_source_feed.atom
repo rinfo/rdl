@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:le="http://purl.org/atompub/link-extensions/1.0"
+      xml:lang="sv">
+
+  <!--
+    * http://tools.ietf.org/html/rfc4287
+  -->
+
+  <id>tag:regeringen.se,2009:rinfo:feed</id>
+  <!-- Viktig!
+
+    Elementet <code>id</code> anger en <em>persistent</em> identifierare (URI) 
+    för denna datakälla.
+
+    Rent tekniskt spelar det ingen roll vad för slags URI som används så länge 
+    denna inte ändras. Men i detta exempel används en <a 
+      href="http://tools.ietf.org/html/rfc4151">TAG URI</a>. Sådana är 
+    praktiska i feed-sammanhang, eftersom de inte är bundna till http-platsen 
+    för dokument. Eftersom identifieraren ska vara persistent över tid kan en 
+    HTTP-uri som inte längre leder någonstans vara vilseledande.
+
+  -->
+
+  <title>Svensk Författningssamling</title>
+  <!--
+    Anger någon slags titel på detta feed. Används inte till någonting av 
+    Rättsinformationssystemet. Men den kan var användbar för någon som tar del 
+    av denna källa via andra verktyg eller i andra sammanhang.
+  -->
+
+  <updated>2009-01-23T12:42:32Z</updated>
+  <!--
+    Ska ange tidssstämpel då något i detta feed-dokument ändrats. Anges som <a 
+      href="http://tools.ietf.org/html/rfc4287#section-3.3">W3C Date Time 
+      Format</a>.
+
+    Observera att i exempet används "Zulu Time". Det är inte samma sak som 
+    svensk tid. En del programmeringsspråk har inbyggt stöd för att generera 
+    dessa, i andra fall finns det i regel tredjepartsbibliotek för W3C DTF.
+
+    (Anledningen till att vi väljer Zulu Time här är för att dessa är oberoende 
+    av tidszoner, <em>inklusive</em> sommartidsavvikelser. Tekniskt är det okej 
+    att istället för "Z" ange t.ex. "+01:00", för svensk vintertid, "+02:00" 
+    för sommartid osv. Korrekt parsning av DTF ska resultera i samma tidpunkt 
+    oavsett.)
+  -->
+
+  <author>
+    <name>Regeringskansliet</name>
+    <uri>http://regeringen.se/</uri>
+    <email>rinfo@regeringen.se</email>
+  </author>
+  <!-- Viktig!
+
+    Anger kontaktinformation till ansvarig för publiceringen av denna 
+    datakälla.
+
+    Planen är att Rättsinformationssystemet ska använda denna information för 
+    att rapportera om eventuella felaktigheter har uppstått vid inhämtning av 
+    informationen.
+
+    Därför är det lämpligt att e-postadressen går till en funktionsbrevlåda 
+    istället för en enskild handläggare.
+
+    Namn och URL användsdäremot inte av Rättsinformationssystemet, men kan vara 
+    nyttig i andra sammanhang.
+  -->
+
+  <link href="https://sfs.regeringen.se/feed/index.atom" rel="self"/>
+  <!--
+    Anger den adress där detta feed-dokument ligger. Är inte strikt tekniskt
+    nödvändig, men underlättar för någon som t.ex. sparar ner dokumentet lokalt
+    utan att notera ursprungsplats.
+  -->
+
+  <link href="https://sfs.regeringen.se/feed/archive/2008/index.atom" rel="prev-archive"/>
+  <!-- Viktig!
+
+    Anger plats för ett tidigare dokument i den sammanhängande kedjan av
+    publicerade feed-dokument över tid.
+
+    Se <a href="http://tools.ietf.org/html/rfc5005">RFC 5005: Feed Paging and Archiving</a>.
+
+    Rättsinformationssystemet ställer <em>höga</em> krav på att dessa är 
+    konstistenta, samt beständiga över tid så pass att det är garanterat att 
+    systemet har hunnit hämta in informationen.
+
+    (Exakta krav är inte fastställda, men livslängder på minst ett år är 
+    rimliga.)
+
+    Observera att arkiverade feed-dokument inte är nödvändiga. Om man har en 
+    lågt antal rättsinformationsdokument kan samtliga förekomma i samma 
+    dokument under en överskådlig tid. Syftet mer feed archiving är att hantera 
+    storleken på feed-dokument över tid, så att dessa inte växer till 
+    ohanterliga storlekar (tekniskt normativt, rimligen kan ett par tusen 
+    entry-element hanteras utan större problem.)
+  -->
+
+  <entry>
+    <id>http://rinfo.lagrummet.se/publ/sfs/2000:80</id>
+    <!-- Viktig!
+
+      Rättsinformationssystemet betraktar id:t i entry för ett 
+      rättsinformationsdokument som angivande den officiella URI:n (den 
+      elektroniska identifieraren) för detta dokument. Den kommer att användas 
+      av alla system som hanterar poster i rättsinformationssystemet.
+
+      [Principen är att rättsinformationkällorna ska ange denna officiella URI 
+      direkt i sina egna datalager.
+
+      Eftersom en av grundpelarna i designen av Rättsinformationssystemet är 
+      att dessa URI:er ska vara HTTP-URI:er som är beständiga i framtiden 
+      använder vi dessa direkt (i motsats till rådet om TAG-URI:er för 
+      feed-URI:n ovan).]
+    -->
+
+    <updated>2000-03-07T00:00:00.000Z</updated>
+    <!-- Viktig!
+      Detta är den tidsstämpel som Rättsinformationssystemet använder för att 
+      avgöra om posten för ett rättsinformationsdokument har uppdaterats. Det 
+      är kritiskt att denna är korrekt angiven.
+
+    -->
+
+    <published>2000-03-07T00:00:00.000Z</published>
+    <!-- Viktig?
+      Denna tidsstämpel anger när posten officiellt publiceras i källan.
+
+      För merparten av dokument kommer denna att vara densamma som updated (se 
+      ovan), då förändringar av rättsinformationsdokument i huvudsak görs i 
+      form av nya rättsinformationsdokument (såsom rättelseblad och 
+      ändringsförfattningar). Enbart i undantagsfall ska poster uppdateras 
+      (eller tas bort [TODO: se annorstädes]) elektroniskt.
+
+      [TODO: Diskussion om tekniska problem såsom saknad metadata o.dyl.]
+    -->
+
+    <title>Förordning (2000:80) om ändring i rättsinformationsförordningen (1999:175)</title>
+    <!-- Måste finnas enligt Atom-standarden.
+
+      Detta element används inte av Rättsinformationssystemet.
+      Vi rekommenderar ändå att något läsbart värde används för att andra 
+      verktyg ska kunna presentera läsbar information av detta feed. Utan värde 
+      kommer t.ex. många vanliga feed-läsare inte kunna skapa en användbar 
+      presentation av feed:et.
+    -->
+
+    <summary></summary>
+    <!--
+      Måste enligt Atom-standarden finnas om elementet <code>content</code> 
+      refererar innehåll med attributet <code>src</code>.
+
+      Detta element används inte av Rättsinformationssystemet.
+      Vi rekommenderar ändå att något läsbart värde används för att andra 
+      verktyg ska kunna presentera läsbar information av detta feed. Många 
+      feed-läsare visar innehållet i detta element.
+
+    -->
+
+    <content type="application/pdf"
+             src="https://sfs.regeringen.se/publikationer/foreskrifter/SFS-2000_80.pdf"
+             le:md5="3d0e39ad852d6e29ca3087ffae39d3ab"/>
+    <!-- Viktig!
+
+      En primär representation ska representera det faktiska 
+      rättsinformationsdokumentet på ett av Rättsinformationssystemet godkänt 
+      format.
+
+      Planen är dock att tolerera avsaknad av sådan representation (så länge en 
+      RDF-beskrivning finns tillgänglig; se nedan). Om enbart sådan finnes kan 
+      den hänvisas till i <code>content</code>-elementet (istället för som 
+      nedan länkad till som alternativrepresentation).
+
+      [TODO: eller ska content vara tomt inline-element (ist. för summary) i 
+      sådana fall? Är kanske mer tydligt?]
+    -->
+
+    <link rel="alternate"
+          href="https://sfs.regeringen.se/publikationer/foreskrifter/SFS-2000_80.rdf"
+          type="application/rdf+xml"
+          length="1150" le:md5="cfe75fc5cc5180e346543cbea51717cd"/>
+    <!-- Viktig!
+
+      Exakt en representation som innehåller serialiserad RDF måste finnas för 
+      att Rättsinformationssystemet ska acceptera inhämtning av ett 
+      rättsinformationsdokument. Det är denna RDF som utgör substansen i den 
+      beskrivningen och sammanlänkningen av rättsinformationen.
+    -->
+
+  </entry>
+
+  <entry>
+    <id>http://rinfo.lagrummet.se/publ/sfs/1999:175</id>
+    <updated>1999-04-13T00:00:00.000Z</updated>
+    <published>1999-04-13T00:00:00.000Z</published>
+    <title>SFS 1999:175</title>
+    <subtitle>Rättsinformationsförordning</subtitle>
+    <summary></summary>
+    <content type="application/pdf" src="https://sfs.regeringen.se/publikationer/foreskrifter/SFS-1999_175.pdf"
+             le:md5="bcb492e5a26b4610958b0568b4961550"/>
+    <link rel="alternate" href="https://sfs.regeringen.se/publikationer/foreskrifter/SFS-1999_175.rdf" type="application/rdf+xml"
+          length="1465" le:md5="143aa16eb05095675651b5e8380aff8d"/>
+  </entry>
+
+</feed>
