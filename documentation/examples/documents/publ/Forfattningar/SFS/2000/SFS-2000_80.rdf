@@ -14,9 +14,9 @@
     <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2000-03-07</utkomFranTryck>
     <!-- ursprung -->
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/justitiedepartementet"/>
-    <!-- kopplingar -->
+    <!-- dokumentkopplingar -->
     <andrar rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1999:175"/>
-    <!-- sammansätting -->
+    <!-- dokumentsammansätting -->
   </Forordning>
 
 </rdf:RDF>

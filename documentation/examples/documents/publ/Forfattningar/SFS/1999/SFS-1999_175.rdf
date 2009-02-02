@@ -14,10 +14,10 @@
     <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1999-04-13</utkomFranTryck>
     <!-- ursprung -->
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/justitiedepartementet"/>
-    <!-- kopplingar -->
+    <!-- dokumentkopplingar -->
     <forarbete rdf:resource="http://rinfo.lagrummet.se/publ/ds/1998:10"/>
     <upphaver rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1980:628"/>
-    <!-- sammansätting -->
+    <!-- dokumentsammansätting -->
     <overgangsbestammelsetext xml:lang="sv">Skyldigheten att genom rättsinformationssystemet göra sådan information som avses i 3–8 §§ tillgänglig inträder den 1 juli 2000. För länsstyrelser inträder dock skyldigheten den 1 januari 2001.</overgangsbestammelsetext>
   </Forordning>
 
