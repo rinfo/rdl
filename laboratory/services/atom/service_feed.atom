@@ -14,7 +14,9 @@
   <title>RInfo - RData Service - Publikationer</title>
   <updated>2007-11-10T16:54:26.191Z</updated>
 
-  <!-- TODO: For labels.. But: require true RDF like this? See thoughts in <relation-labels.xmlf>.. -->
+  <!-- TODO: For labels.. But: require true RDF like this? See thoughts in <relation-labels.xmlf>.
+       Do note that link/@title may be enough if labels are inlined in entry links.
+  -->
   <link rel="http://www.w3.org/2000/01/rdf-schema#seeAlso"
         href="http://www.w3.org/2000/01/rdf-schema#" type="application/rdf+xml"/>
   <link rel="http://www.w3.org/2000/01/rdf-schema#seeAlso"
