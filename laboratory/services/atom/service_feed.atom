@@ -22,6 +22,14 @@
   <link rel="http://www.w3.org/2000/01/rdf-schema#seeAlso"
         href="http://rinfo.lagrummet.se/ns/2008/04/publ#" type="application/rdf+xml"/>
 
+  <!-- TODO: Also, labels above are reasonably (primarily) for the @rel and @rev stuff.
+       Category labels can be placed in a category document (and/or carried in
+       the exposed categories for each entry). This category doc *may* also
+       include *our* notion of "subcategories" (e.g. for cat:s made from
+       rdf:type (rdfs:subClassOf), dct:publisher(?), even sioc:container
+       (sioc:contains..)).
+  -->
+
   <link rel="self" href="http://rdata.lagrummet.se/feeds/publ,sv/-/1999/SFS/Document?max-results=25" type="application/atom+xml"/>
 
   <link rel="first" href="http://rdata.lagrummet.se/feeds/publ,sv/-/1999/SFS/Document?max-results=25" type="application/atom+xml"/>
