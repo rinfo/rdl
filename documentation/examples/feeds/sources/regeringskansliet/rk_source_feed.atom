@@ -15,9 +15,9 @@
 
     Rent tekniskt spelar det ingen roll vad för slags URI som används så länge 
     denna inte ändras. Men i detta exempel används en <a 
-      href="http://tools.ietf.org/html/rfc4151">TAG URI</a>. Sådana är 
-    praktiska i feed-sammanhang, eftersom de inte är bundna till http-platsen 
-    för dokument. Eftersom identifieraren ska vara persistent över tid kan en 
+    href="http://tools.ietf.org/html/rfc4151">TAG URI</a>. Sådana är praktiska
+    i feed-sammanhang, eftersom de inte är bundna till http-platsen för
+    dokument. Eftersom identifieraren ska vara persistent över tid kan en
     HTTP-uri som inte längre leder någonstans vara vilseledande.
 
   -->
@@ -32,8 +32,8 @@
   <updated>2009-01-23T12:42:32Z</updated>
   <!--
     Ska ange tidssstämpel då något i detta feed-dokument ändrats. Anges som <a 
-      href="http://tools.ietf.org/html/rfc4287#section-3.3">W3C Date Time 
-      Format</a>.
+    href="http://tools.ietf.org/html/rfc4287#section-3.3">W3C Date Time
+    Format</a>.
 
     Observera att i exempet används "Zulu Time". Det är inte samma sak som 
     svensk tid. En del programmeringsspråk har inbyggt stöd för att generera 

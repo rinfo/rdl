@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dct="http://purl.org/dc/terms/"
+         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+
+  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1">
+
+    <!-- identifiering -->
+    <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/vervafs"/>
+    <fsNummer>2007:1</fsNummer>
+    <dct:title xml:lang="sv">Vervas föreskrifter om statliga myndigheters elektroniska fakturor;</dct:title>
+
+    <!-- tidsaspekter -->
+    <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-01-12</beslutsdatum>
+    <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-03-01</ikrafttradandedatum>
+    <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-01-16</utkomFranTryck>
+
+    <!-- ursprung -->
+    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/verva"/>
+
+    <!-- dokumentkopplingar -->
+    <!-- TODO: koppla till paragraf och/eller dokument? -->
+    <bemyndigande rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770#paragraf-3"
+                  rdf:parseType="Resource">
+        <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770"/>
+    </bemyndigande>
+    <!-- TODO: hänvisning om "undantag i det enskilda fallet":
+      rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770#paragraf-4"
+    -->
+
+    <!-- dokumentsammansätting -->
+    <paragraf rdf:resource="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-1">
+      <paragrafnummer>1</paragrafnummer>
+    </paragraf>
+    <paragraf rdf:resource="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-2">
+      <paragrafnummer>2</paragrafnummer>
+    </paragraf>
+    <paragraf rdf:resource="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-3">
+      <paragrafnummer>3</paragrafnummer>
+    </paragraf>
+
+  </Myndighetsforeskrift>
+
+</rdf:RDF>

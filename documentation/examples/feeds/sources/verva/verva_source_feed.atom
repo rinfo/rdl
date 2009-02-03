@@ -5,7 +5,18 @@
       xml:base="http://rinfo.verva.se/"
       xml:lang="sv">
 
-  <id>http://rinfo.verva.se/feed</id>
+  <!-- TODO:
+    Note that the domain `@xml:base` doesn't belong to `verva.se`. This domain
+    was inactivated when the agency was dismantled (in December 2008). This is
+    thus an example of the relocation of a feed without disrupting any
+    identifier. As long as the collector of Rättsinformationssystemet is
+    notified of this, the source remains active, and more importantly,
+    logically unchanged. (Apart from any feed archive links!)
+
+    TODO: source: <http://regeringen.se/sb/d/1994/a/118247>
+  -->
+
+  <id>tag:verva.se,2007:rinfo:feed</id>
   <title>Vervas föreskrifter</title>
   <updated>2008-06-09T09:46:00.000Z</updated>
 
@@ -21,7 +32,7 @@
   <link rel="related" href="http://verva.se/publikationer/foreskrifter/"/>
 
   <entry>
-    <id>http://rinfo.verva.se/publ/vervafs/2007/2</id>
+    <id>http://rinfo.lagrummet.se/publ/vervafs/2007:2</id>
     <updated>2007-11-19T00:00:00.000Z</updated>
     <published>2007-11-19T00:00:00.000Z</published>
     <title>VERVAFS 2007:2</title>
@@ -36,7 +47,7 @@
   </entry>
 
   <entry>
-    <id>http://rinfo.verva.se/publ/vervafs/2007/1</id>
+    <id>http://rinfo.lagrummet.se/publ/vervafs/2007:1</id>
     <updated>2007-01-12T00:00:00.000Z</updated>
     <published>2007-01-12T00:00:00.000Z</published>
     <title>VERVAFS 2007:1</title>
