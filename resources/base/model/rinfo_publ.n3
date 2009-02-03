@@ -193,8 +193,10 @@
         ],
         [ a owl:Restriction;
             owl:onProperty :utkomFranTryck;
-            owl:cardinality 1
-            # TODO: vad gäller med framtida, ej på papper tryckta ting?
+            owl:minCardinality 0;
+            owl:maxCardinality 1
+            # TODO: vad gäller med framtida, ej på papper tryckta ting? Och forntida pergament?
+            # Ändring [090202]: Inte alltid tryckt: ändrade cardinality ändrad till 0.
         ],
         [ a owl:Restriction;
             owl:onProperty :kapitel;
@@ -558,7 +560,7 @@
 
 #---------------------------------------
 # TODO: fler gamla begrepp (som är rdfs:subClassOf :FSDokument); t.ex.:
-#   Cirkulär, Kungörelse, Stadga..
+#   Cirkulär, Kungörelse, Stadga, Bihang..
 #   - vilken supertyp respektive typ ha?
 #       - kan vara rdfs:subClassOf :Forfattning? eller bara :FSDokument (om alls?)
 #    rdfs:comment "Övriga typer av dokument utgivna i någon författningssamling."@sv;
