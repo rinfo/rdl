@@ -44,7 +44,9 @@
                   mode="make-uri">
         <xsl:value-of select="$uriBase"/>
         <xsl:value-of select="s:binding[@name='containerId']/*"/>
-        <xsl:value-of select="s:binding[@name='rattsdokumentnummer']/*"/>
+        <xsl:call-template name="encode-identifier">
+            <xsl:with-param name="value" select="s:binding[@name='rattsdokumentnummer']/*"/>
+        </xsl:call-template>
     </xsl:template>
 
     <xsl:template match="s:result[s:binding[@name='konsoliderar']]"
@@ -55,6 +57,10 @@
         <xsl:value-of select="s:binding[@name='konsDatum']/*"/>
     </xsl:template>
 
-
+    <xsl:template name="encode-identifier">
+        <xsl:param name="value"/>
+        <xsl:value-of select="translate($value, ' ', '_')"/>
+        <!-- TODO: fail on not allowed characters! -->
+    </xsl:template>
 
 </xsl:stylesheet>
