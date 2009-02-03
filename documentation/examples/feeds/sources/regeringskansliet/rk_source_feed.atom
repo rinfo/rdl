@@ -10,8 +10,8 @@
   <id>tag:regeringen.se,2009:rinfo:feed</id>
   <!-- Viktig!
 
-    Elementet <code>id</code> anger en <em>persistent</em> identifierare (URI) 
-    för denna datakälla.
+    Elementet `id` anger en *persistent* identifierare (URI) för denna
+    datakälla.
 
     Rent tekniskt spelar det ingen roll vad för slags URI som används så länge 
     denna inte ändras. Men i detta exempel används en <a 
@@ -40,32 +40,32 @@
     dessa, i andra fall finns det i regel tredjepartsbibliotek för W3C DTF.
 
     (Anledningen till att vi väljer Zulu Time här är för att dessa är oberoende 
-    av tidszoner, <em>inklusive</em> sommartidsavvikelser. Tekniskt är det okej 
+    av tidszoner, *inklusive* sommartidsavvikelser. Tekniskt är det okej 
     att istället för "Z" ange t.ex. "+01:00", för svensk vintertid, "+02:00" 
     för sommartid osv. Korrekt parsning av DTF ska resultera i samma tidpunkt 
     oavsett.)
   -->
 
   <author>
+    <!-- Viktig!
+
+      Anger kontaktinformation till ansvarig för publiceringen av denna 
+      datakälla.
+
+      Planen är att Rättsinformationssystemet ska använda denna information för 
+      att rapportera om eventuella felaktigheter har uppstått vid inhämtning av 
+      informationen.
+
+      Därför är det lämpligt att e-postadressen går till en funktionsbrevlåda 
+      istället för en enskild handläggare.
+
+      Namn och URL användsdäremot inte av Rättsinformationssystemet, men kan vara 
+      nyttig i andra sammanhang.
+    -->
     <name>Regeringskansliet</name>
     <uri>http://regeringen.se/</uri>
     <email>rinfo@regeringen.se</email>
   </author>
-  <!-- Viktig!
-
-    Anger kontaktinformation till ansvarig för publiceringen av denna 
-    datakälla.
-
-    Planen är att Rättsinformationssystemet ska använda denna information för 
-    att rapportera om eventuella felaktigheter har uppstått vid inhämtning av 
-    informationen.
-
-    Därför är det lämpligt att e-postadressen går till en funktionsbrevlåda 
-    istället för en enskild handläggare.
-
-    Namn och URL användsdäremot inte av Rättsinformationssystemet, men kan vara 
-    nyttig i andra sammanhang.
-  -->
 
   <link href="https://sfs.regeringen.se/feed/index.atom" rel="self"/>
   <!--
@@ -83,7 +83,7 @@
     Se <a href="http://tools.ietf.org/html/rfc5005">RFC 5005: Feed Paging and
     Archiving</a>.
 
-    Rättsinformationssystemet ställer <em>höga</em> krav på att dessa är 
+    Rättsinformationssystemet ställer *höga* krav på att dessa är 
     konstistenta, samt beständiga över tid så pass att det är garanterat att 
     systemet har hunnit hämta in informationen.
 
@@ -156,8 +156,8 @@
 
     <summary></summary>
     <!--
-      Måste enligt Atom-standarden finnas om elementet <code>content</code> 
-      refererar innehåll med attributet <code>src</code>.
+      Måste enligt Atom-standarden finnas om elementet `content` refererar
+      innehåll med attributet `src`.
 
       Detta element används inte av Rättsinformationssystemet.
       Vi rekommenderar ändå att något läsbart värde används för att andra 
@@ -179,7 +179,7 @@
       avsaknad av en digital dokumentrepresentation, så länge RDF-data
       om dokumentet finns tillgänglig. Se följande entry för ett sådant
       exempel. Denna tolerans är enbart till för de fall då det inte
-      <em>går</em> att få fram en digital representation, inte för att minska
+      *går* att få fram en digital representation, inte för att minska
       kraven på vad rättskällorna ska publicera.)
     -->
 
@@ -200,9 +200,8 @@
   <entry>
     <!--
       Detta entry exemplifierar hur nyligen digitaliserat gammalt material
-      publiceras. Den tidpunkt som anges i <code>published</code> (och
-      <code>updated</code>, se ovan) ska ange tidpunkten då materialet dök upp i
-      <em>detta feed</em>.
+      publiceras. Den tidpunkt som anges i `published` (och `updated`, se ovan)
+      ska ange tidpunkten då materialet dök upp i *detta feed*.
 
       Exemplet visar även hur material utan någon (av systemet accepterad)
       digital dokumentrepresentation publiceras. D.v.s. enbart med RDF-data.
@@ -210,7 +209,7 @@
     <id>http://rinfo.lagrummet.se/publ/sfs/1899:bih._40_s._3</id>
     <updated>2009-02-02T15:43:04Z</updated>
     <published>2009-02-02T15:43:04Z</published>
-    <title>Resolution (1899:bih. 40 s.3) angående rättighet för anglikanska kyrkans prästerskap i allmänhet att med laga verkan förrätta vigsel här i riket</title>
+    <title>Kungl. Maj:ts Resolution angående rättighet för anglikanska kyrkans prästerskap i allmänhet att med laga verkan förrätta vigsel här i riket</title>
     <summary></summary>
     <content src="https://sfs.regeringen.se/publikationer/foreskrifter/SFS-1899_bih._40_s._3.rdf"
              type="application/rdf+xml"
@@ -223,6 +222,13 @@
     <published>1999-04-13T00:00:00.000Z</published>
     <title>SFS 1999:175</title>
     <subtitle>Rättsinformationsförordning</subtitle>
+    <!--
+    Användningen av `title` och `subtitle` här exemplifierar ett annat sätt att
+    ange läsbar text för detta entry. Notera att, som ovan anges, dessa inte
+    används av systemet. Detaljinformation för presentation i tjänster ovanpå
+    rättsinformationen ska hämtas ur den publicerade RDF-datan, inte de
+    "förpackningar" som feed-entries utgör.
+    -->
     <summary></summary>
     <content src="https://sfs.regeringen.se/publikationer/foreskrifter/SFS-1999_175.pdf"
              type="application/pdf"
