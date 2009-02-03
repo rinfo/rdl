@@ -28,6 +28,10 @@
        include *our* notion of "subcategories" (e.g. for cat:s made from
        rdf:type (rdfs:subClassOf), dct:publisher(?), even sioc:container
        (sioc:contains..)).
+
+       (Category documents are (exclusively?) linked to from service docs; e.g.:
+        <app:categories href="/cat/publisher.atomcat" />
+       )
   -->
 
   <link rel="self" href="http://rdata.lagrummet.se/feeds/publ,sv/-/1999/SFS/Document?max-results=25" type="application/atom+xml"/>
