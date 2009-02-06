@@ -283,6 +283,10 @@ public class DepotEntry {
         return new File(entryContentDir, MANIFEST_FILE_NAME);
     }
 
+    protected void saveManifest(Entry manifest) throws IOException {
+        manifest.writeTo(new FileOutputStream(getManifestFile()));
+    }
+
 
     protected DepotContent enclosedDepotContent(File file) {
         String uriPath = toEnclosedUriPath(file);
@@ -346,7 +350,7 @@ public class DepotEntry {
         manifest.setUpdated(createTime);
 
         setPrimaryContent(manifest, sourceContents);
-        manifest.writeTo(new FileOutputStream(getManifestFile()));
+        saveManifest(manifest);
 
         for (SourceContent content : sourceContents) {
             addContent(content);
@@ -392,7 +396,7 @@ public class DepotEntry {
         Entry manifest = getEntryManifest();
         manifest.setUpdated(updateTime);
         setPrimaryContent(manifest, sourceContents);
-        manifest.writeTo(new FileOutputStream(getManifestFile()));
+        saveManifest(manifest);
 
         depot.onEntryModified(this);
         if (selfLocked) {
@@ -419,7 +423,7 @@ public class DepotEntry {
         // .. (opt. move away..? zip?)
         rollOffToHistory();
 
-        manifest.writeTo(new FileOutputStream(getManifestFile()));
+        saveManifest(manifest);
         depot.onEntryModified(this);
         if (selfLocked) {
             unlock();
