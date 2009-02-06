@@ -284,7 +284,9 @@ public class DepotEntry {
     }
 
     protected void saveManifest(Entry manifest) throws IOException {
-        manifest.writeTo(new FileOutputStream(getManifestFile()));
+        OutputStream outStream = new FileOutputStream(getManifestFile());
+        manifest.writeTo(outStream);
+        outStream.close();
     }
 
 

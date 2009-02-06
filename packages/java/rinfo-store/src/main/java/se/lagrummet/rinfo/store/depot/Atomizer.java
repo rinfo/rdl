@@ -301,6 +301,7 @@ public class Atomizer {
         } else {
             feed.writeTo(outStream);
         }
+        outStream.close();
     }
 
     protected void indexEntry(Feed feed, DepotEntry depotEntry)
@@ -354,6 +355,7 @@ public class Atomizer {
         } else {
             atomEntry.writeTo(outStream);
         }
+        outStream.close();
         return atomEntry;
     }
 
