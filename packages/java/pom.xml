@@ -44,10 +44,10 @@
       <layout>default</layout>
       <url>http://repo1.maven.org/maven2</url>
       <releases>
-          <enabled>true</enabled>
+        <enabled>true</enabled>
       </releases>
       <snapshots>
-          <enabled>false</enabled>
+        <enabled>false</enabled>
       </snapshots>
     </repository>
     <repository>
@@ -64,7 +64,7 @@
       <id>maven-restlet</id>
       <name>Public online Restlet repository</name>
       <url>http://maven.restlet.org</url>
-    </repository>    
+    </repository>
     <repository>
       <id>Codehaus Snapshots</id>
       <url>http://snapshots.repository.codehaus.org/</url>
@@ -76,7 +76,7 @@
       </releases>
     </repository>
   </repositories>
-  
+
   <pluginRepositories>
     <pluginRepository>
       <id>Codehaus Snapshots</id>
@@ -89,7 +89,7 @@
       </releases>
     </pluginRepository>
   </pluginRepositories>
-  
+
   <dependencyManagement>
     <dependencies>
       <!-- Default scope (compile) {{{ -->
@@ -173,17 +173,17 @@
       <dependency>
         <groupId>org.restlet</groupId>
         <artifactId>org.restlet</artifactId>
-        <version>1.1.1</version>
+        <version>1.1.2</version>
       </dependency>
       <dependency>
         <groupId>com.noelios.restlet</groupId>
         <artifactId>com.noelios.restlet</artifactId>
-        <version>1.1.1</version>
+        <version>1.1.2</version>
       </dependency>
       <dependency>
         <groupId>com.noelios.restlet</groupId>
         <artifactId>com.noelios.restlet.ext.servlet</artifactId>
-        <version>1.1.1</version>
+        <version>1.1.2</version>
       </dependency>
 
       <dependency>
@@ -344,21 +344,21 @@
       <pluginManagement>
           <plugins>
               <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.2</version>
-              </plugin>
-    		  <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2-beta-2</version>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-jar-plugin</artifactId>
+                  <version>2.2</version>
               </plugin>
               <plugin>
-				<groupId>org.codehaus.groovy.maven</groupId>
-				<artifactId>gmaven-plugin</artifactId>
-				<version>1.0-rc-4-SNAPSHOT</version>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-assembly-plugin</artifactId>
+                  <version>2.2-beta-2</version>
               </plugin>
-           </plugins>
+              <plugin>
+                  <groupId>org.codehaus.groovy.maven</groupId>
+                  <artifactId>gmaven-plugin</artifactId>
+                  <version>1.0-rc-4-SNAPSHOT</version>
+              </plugin>
+          </plugins>
       </pluginManagement>
   </build>
 
@@ -366,4 +366,47 @@
     <system>rinfo - Trac</system>
     <url>https://source.verva.se/trac/rinfo/</url>
   </issueManagement>
+
+  <profiles>
+    <profile>
+      <activation>
+        <property>
+          <name>!environment</name>
+        </property>
+      </activation>
+      <properties>
+        <environment>default</environment>
+      </properties>
+    </profile>
+    <profile>
+      <id>dev-unix</id>
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+      <properties>
+        <environment>dev-unix</environment>
+      </properties>
+    </profile>
+    <profile>
+      <id>virt-test</id>
+      <properties>
+        <environment>virt-test</environment>
+      </properties>
+    </profile>
+    <profile>
+      <id>stg</id>
+      <properties>
+        <environment>stg</environment>
+      </properties>
+    </profile>
+    <profile>
+      <id>prod</id>
+      <properties>
+        <environment>prod</environment>
+      </properties>
+    </profile>
+  </profiles>
+
 </project>

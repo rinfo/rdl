@@ -144,43 +144,4 @@
     </plugins>
   </build>
 
-
-  <!--
-  <profiles>
-    <profile>
-      <activation>
-        <property>
-          <name>!environment</name>
-        </property>
-      </activation>
-      <properties>
-        <environment>default</environment>
-      </properties>
-    </profile>
-    <profile>
-      <id>dev-unix</id>
-      <activation>
-        <os>
-          <family>unix</family>
-        </os>
-      </activation>
-      <properties>
-        <environment>dev-unix</environment>
-      </properties>
-    </profile>
-    <profile>
-      <id>stg</id>
-      <properties>
-        <environment>stg</environment>
-      </properties>
-    </profile>
-    <profile>
-      <id>prod</id>
-      <properties>
-        <environment>prod</environment>
-      </properties>
-    </profile>
-  </profiles>
-  -->
-
 </project>

@@ -1,7 +1,7 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/xsd/maven-v4_0_0.xsd">
-         
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>se.lagrummet.rinfo</groupId>
@@ -15,8 +15,8 @@
       <groupId>se.lagrummet</groupId>
       <artifactId>rinfo</artifactId>
       <version>1.0-SNAPSHOT</version>
-    </parent>        
-    
+    </parent>
+
     <build>
       <defaultGoal>assembly:directory</defaultGoal>
       <directory>${basedir}/target</directory>
@@ -29,55 +29,19 @@
                   <include>**/*</include>
               </includes>
           </resource>
-      </resources>    
+      </resources>
       <plugins>
-	      <plugin>
-	        <groupId>org.apache.maven.plugins</groupId>
-	        <artifactId>maven-assembly-plugin</artifactId>
-	        <version>2.2-beta-2</version>
-	        <configuration>
-    		  <descriptors>
-				<descriptor>src/main/assembly/${environment}.xml</descriptor>
-			  </descriptors>
-	        </configuration>	        
-	      </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.2-beta-2</version>
+          <configuration>
+          <descriptors>
+        <descriptor>src/main/assembly/${environment}.xml</descriptor>
+        </descriptors>
+          </configuration>
+        </plugin>
       </plugins>
-    </build>    
+    </build>
 
-	<profiles>
-	  <profile>
-	    <activation>
-	      <property>
-	        <name>!environment</name>
-	      </property>
-	    </activation>
-	    <properties>
-	      <environment>default</environment>
-	    </properties>
-	  </profile>
-	  <profile>
-	    <id>dev-unix</id>
-	    <activation>
-	      <os>
-	        <family>unix</family>
-	      </os>
-	    </activation>
-	    <properties>
-	      <environment>dev-unix</environment>
-	    </properties>
-	  </profile>
-	  <profile>
-	    <id>stg</id>
-	    <properties>
-	      <environment>stg</environment>
-	    </properties>
-	  </profile>
-	  <profile>
-	    <id>prod</id>
-	    <properties>
-	      <environment>prod</environment>
-	    </properties>
-	  </profile>
-	</profiles>
-      
 </project>
