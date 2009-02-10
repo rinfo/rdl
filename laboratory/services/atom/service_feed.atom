@@ -88,6 +88,10 @@
     <!--
     <link rev="..." href="..." type="..."/>
     -->
+    <!--
+    <gd:feedLink rev="...#lagrum">...</gd:feedLink>
+    <gd:feedLink rev="...#andrar">...</gd:feedLink>
+    -->
     <author>
       <name>Regeringskansliet</name>
       <uri>http://regeringen.se/</uri>
