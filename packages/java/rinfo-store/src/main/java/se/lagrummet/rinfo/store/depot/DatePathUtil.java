@@ -25,7 +25,7 @@ public class DatePathUtil {
     public static FileFilter DAY_DIR_FILTER = new FileFilter() {
         public boolean accept(File it) {
             return it.isDirectory() && it.getName().matches(
-                    "^(0[1-9]|1[0-2])-(0[1-9]|[1-2][1-9]|3[0-1])$");
+                    "^(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$");
         }
     };
 
