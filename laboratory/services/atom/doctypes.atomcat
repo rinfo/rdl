@@ -1,0 +1,19 @@
+<app:categories href="/cat/doctypes.atomcat" xml:lang="sv">
+
+  <title>Dokumenttyper</title>
+
+  <category scheme="http://xmlns.com/foaf/0.1/" term="Document" label="Dokument">
+    <rdata:source predicate="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                  using="scheme+term"/>
+    <category scheme="http://rinfo.lagrummet.se/ns/2008/05/publ#"
+              term="Rattsinformationsdokument" label="Rättsinformationsdokument">
+      <category term="FSDokument" label="Författningssamlingsdokument">
+        <category term="Forfattning" label="Författning">
+          <category term="Forordning" label="Förordning"/>
+          <category term="Myndighetsforeskrift" label="Myndighetsföreskrift"/>
+        </category>
+      </category>
+    </category>
+  </category>
+
+</app:categories>
