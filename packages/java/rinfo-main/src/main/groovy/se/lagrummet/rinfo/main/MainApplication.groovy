@@ -39,12 +39,21 @@ class MainApplication extends Application {
     MainApplication(Context context, AbstractConfiguration config) {
         super(context)
         depot = FileDepot.newConfigured(config)
+
+        URL publicSubscriptionFeed = null
+        List<URL> onCompletePingTargets = []
+        try {
+            publicSubscriptionFeed = new URL(
+                    config.getString("rinfo.main.publicSubscriptionFeed"))
+            onCompletePingTargets = config.getList(
+                    "rinfo.main.collector.onCompletePingTargets").collect { new URL(it) }
+        } catch (MalformedURLException) {
+            // FIXME: alert on bad config url:s for collectScheduler!
+        }
+
         collectScheduler = new FeedCollectScheduler(depot, null, config)
         collectScheduler.batchCompletedCallback = new FeedUpdatePingNotifyer(
-                new URL(config.getString("rinfo.main.publicSubscriptionFeed")),
-                config.getList("rinfo.main.collector.onCompletePingTargets").
-                    collect { new URL(it) }
-            )
+                publicSubscriptionFeed, onCompletePingTargets)
         getContext().getAttributes().putIfAbsent(
                 COLLECTOR_RUNNER_CONTEXT_KEY, collectScheduler)
     }
@@ -100,7 +109,7 @@ class CollectorHandler extends Handler {
         }
 
         def msg = "Scheduled collect of <${feedUrl}>."
-        def status = null
+        def status = null // FIXME: Status.CLIENT_ACCEPTED (202)
 
         try {
             boolean wasScheduled = collectScheduler.triggerFeedCollect(new URL(feedUrl))
