@@ -39,8 +39,15 @@ public class DepotFinder extends Finder {
             // TODO:? E.g in a servlet container, how to handle </webapp/> base?
             // fileDepot may not want such an "instrumental" base segment,
             // in case it should reinterpret non-full url as e.g. a tag uri..?
-            results = fileDepot.find(
-                    request.getResourceRef().getPath().toString());
+            // Is resourceRef.relativeRef ok? Only if we *don't* want the public ref!
+            // See also resourceRef.baseRef
+
+            String relativePath =
+                    request.getResourceRef().getRelativeRef().getPath().toString();
+            if (!relativePath.startsWith("/")) {
+                relativePath = "/" + relativePath;
+            }
+            results = fileDepot.find(relativePath);
         } catch (DeletedDepotEntryException e) {
             // TODO: Gone or 404?
             response.setStatus(Status.CLIENT_ERROR_GONE);
