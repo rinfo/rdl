@@ -1,10 +1,11 @@
+
 ##
 # Local build
 
-@requires('env', provided_by=[staging, production])
-@depends(install_base, install_store, install_collector)
+@requires('env', provided_by=sysenvs)
+@depends(install_rinfo_pkg)
 def package_main():
-    local("cd $(java_packages)/rinfo-main/; mvn -P$(env) package")
+    local("cd $(java_packages)/rinfo-main/; mvn -P$(env) clean package")
 
 ##
 # Server deploy
@@ -18,10 +19,10 @@ def setup_main():
 @depends(setup_main)
 def deploy_main_resources():
     # TODO: bundle necessary files (via pom, and adapt the paths in properties)
-    tarname = "$(project)-$(fab_timestamp).tar"
+    tarname = "$(project)-$(fab_timestamp).tar.gz"
     tmp_tar ="/tmp/%s" % tarname
     dest_tar = "$(dist_dir)/%s" % tarname
-    local("tar -czf %s %s" % (tmp_tar, config.base_data))
+    local("tar -czf %s $(base_data)" % tmp_tar)
     try:
         put(tmp_tar, dest_tar, fail='warn')
         sudo("rm -rf $(rinfo_dir)/resources", fail='warn') # TODO: +/base
@@ -31,12 +32,9 @@ def deploy_main_resources():
 
 @depends(deploy_main_resources)
 def deploy_main():
-    put("$(java_packages)/rinfo-main/target/rinfo-main-1.0-SNAPSHOT.war",
-            '$(dist_dir)/ROOT.war')
-    sudo("$(tomcat_stop)", fail='warn')
-    sudo("rm -rf $(tomcat_webapps)/ROOT/")
-    sudo("mv $(dist_dir)/ROOT.war $(tomcat_webapps)/ROOT.war")
-    sudo("$(tomcat_start)")
+    deploy_war(
+            "$(java_packages)/rinfo-main/target/rinfo-main-1.0-SNAPSHOT.war",
+            "rinfo-main")
 
 @depends(package_main, deploy_main)
 def main_all(): pass
@@ -44,7 +42,7 @@ def main_all(): pass
 ##
 # Diagnostics
 
-@requires('host_map', provided_by=[staging, production])
+@requires('host_map', provided_by=[virt_test, staging, production])
 def ping_main_collector():
     collector_url = "http://%s:8080/collector/" % config.host_map['main'][0]
     feed_url = "http://%s:8080/feed/current" % config.host_map['testsources'][0]

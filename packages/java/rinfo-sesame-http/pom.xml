@@ -2,46 +2,48 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/xsd/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <groupId>se.lagrummet.rinfo</groupId>
-    <artifactId>rinfo-sesame-http</artifactId>
+  <groupId>se.lagrummet.rinfo</groupId>
+  <artifactId>rinfo-sesame-http</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>RInfo Sesame HTTP</name>
+  <url>http://dev.lagrummet.se/rinfo/</url>
+  <packaging>jar</packaging>
+
+  <parent>
+    <groupId>se.lagrummet</groupId>
+    <artifactId>rinfo</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>RInfo Sesame HTTP</name>
-    <url>http://dev.lagrummet.se/rinfo/</url>
-    <packaging>jar</packaging>
+  </parent>
 
-    <parent>
-      <groupId>se.lagrummet</groupId>
-      <artifactId>rinfo</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </parent>
-
-    <build>
-      <defaultGoal>assembly:directory</defaultGoal>
-      <directory>${basedir}/target</directory>
-      <finalName>${artifactId}-${version}</finalName>
-      <resources>
-          <resource>
-              <filtering>true</filtering>
-              <directory>src/main/resources</directory>
-              <includes>
-                  <include>**/*</include>
-              </includes>
-          </resource>
-      </resources>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.2-beta-2</version>
-          <configuration>
+  <!--
+  <build>
+    <defaultGoal>assembly:directory</defaultGoal>
+    <directory>${basedir}/target</directory>
+    <finalName>${artifactId}-${version}</finalName>
+    <resources>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-2</version>
+        <configuration>
           <descriptors>
-        <descriptor>src/main/assembly/${environment}.xml</descriptor>
-        </descriptors>
-          </configuration>
-        </plugin>
-      </plugins>
-    </build>
+            <descriptor>src/main/assembly/lib.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  -->
 
 </project>

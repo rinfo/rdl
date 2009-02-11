@@ -1,8 +1,8 @@
 ##
 # Local build
 
-@requires('env', provided_by=[staging, production])
-@depends(install_store)
+@requires('env', provided_by=sysenvs)
+@depends(install_rinfo_pkg)
 def package_testapp():
     local("cd $(java_packages)/teststore-examples/; mvn -P$(env) package")
 
@@ -25,10 +25,14 @@ def deploy_testdata():
 @depends(testsources)
 def index_testdata():
     wdir = "$(tomcat_webapps)/ROOT/WEB-INF"
-    clpath = '-cp $(for jar in $(ls lib/*.jar); do echo -n "$jar:"; done)'
+    clspath = '-cp $(for jar in $(ls lib/*.jar); do echo -n "$jar:"; done)'
     cmdclass = "se.lagrummet.rinfo.store.depot.FileDepotCmdTool"
     proppath = "classes/rinfo-depot.properties"
-    sudo("sh -c 'cd %s; java %s %s %s index'" % (wdir, clpath, cmdclass, proppath))
+    #sudo("sh -c 'cd %s; java %s %s %s index'" % (wdir, clspath, cmdclass, proppath))
+    #config.extend(vars())
+    #sudo("sh -c 'cd $(wdir); java $(clspath) $(cmdclass) $(proppath) index'")
+    sudo("sh -c 'cd %(wdir)s; java %(clspath)s %(cmdclass)s %(proppath)s index'"
+            % vars())
 
 @depends(testsources)
 def list_testdata():
