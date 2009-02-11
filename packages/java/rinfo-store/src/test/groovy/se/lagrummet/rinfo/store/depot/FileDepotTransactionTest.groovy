@@ -78,8 +78,9 @@ class FileDepotTransactionTest extends FileDepotTempBase {
                             null, null, "images/icon.png"),
                 ]
             )
+        assertFalse entry.hasHistory()
 
-        Thread.sleep(900)
+        Thread.sleep(1000)
         def updateTime = new Date()
         entry = fileDepot.getEntry(UPD_ID_1)
         entry.update(updateTime, [
@@ -94,6 +95,7 @@ class FileDepotTransactionTest extends FileDepotTempBase {
                             null, null, "images/icon.png"),
                 ]
             )
+        assertTrue entry.hasHistory()
         assertEquals updateTime, entry.updated
         assertEquals 3, entry.findContents().size()
         assertEquals 2, entry.findEnclosures().size()
@@ -101,7 +103,7 @@ class FileDepotTransactionTest extends FileDepotTempBase {
         entry.getMetaFile("TEST_META_FILE").setText("TEST")
         assertTrue entry.getMetaFile("TEST_META_FILE").exists()
 
-        Thread.sleep(900)
+        Thread.sleep(1000)
         entry = fileDepot.getEntry(UPD_ID_1)
         entry.update(new Date(), [
                     new SourceContent(exampleEntryFile("content-en.pdf"),
@@ -117,7 +119,8 @@ class FileDepotTransactionTest extends FileDepotTempBase {
         assertTrue storedModified < entry.lastModified()
         assertFalse entry.getMetaFile("TEST_META_FILE").exists()
 
-        Thread.sleep(900)
+        Thread.sleep(1000)
+        assertTrue entry.hasHistory()
         entry.rollback()
 
         entry = fileDepot.getEntry(UPD_ID_1)
