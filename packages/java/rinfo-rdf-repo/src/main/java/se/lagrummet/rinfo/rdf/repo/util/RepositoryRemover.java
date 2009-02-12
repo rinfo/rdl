@@ -30,52 +30,45 @@ import org.openrdf.repository.manager.RepositoryManager;
  */
 public class RepositoryRemover {
 
-	/**
-	 * Query that yields the context of a specific repository configuration.
-	 */
-	private static final String CONTEXT_QUERY;
+    /**
+     * Query that yields the context of a specific repository configuration.
+     */
+    private static final String CONTEXT_QUERY =
+            "SELECT C FROM CONTEXT C " +
+            "   {} rdf:type {sys:Repository};" +
+            "      sys:repositoryID {ID} " +
+            "USING NAMESPACE sys = <http://www.openrdf.org/config/repository#>";
 
-	static {
-		StringBuilder query = new StringBuilder(256);
-		query.append("SELECT C ");
-		query.append("FROM CONTEXT C ");
-		query.append("   {} rdf:type {sys:Repository};");
-		query.append("      sys:repositoryID {ID} ");
-		query
-				.append("USING NAMESPACE sys = <http://www.openrdf.org/config/repository#>");
-		CONTEXT_QUERY = query.toString();
-	}
+    public static void dropRepository(String id, RepositoryManager manager) throws Exception {
+        Repository systemRepo = manager.getSystemRepository();
+        RepositoryConnection con = systemRepo.getConnection();
+        try {
+            Resource context = findContext(id, con);
+            manager.getRepository(id).shutDown();
+            con.clear(context);
+        } finally {
+            con.close();
+        }
+    }
 
-	public static void dropRepository(String id, RepositoryManager manager) throws Exception {
-		Repository systemRepo = manager.getSystemRepository();
-		RepositoryConnection con = systemRepo.getConnection();
-		try {
-			Resource context = findContext(id, con);
-			manager.getRepository(id).shutDown();
-			con.clear(context);
-		} finally {
-			con.close();
-		}
-	}
-
-	private static Resource findContext(String id, RepositoryConnection con)
-			throws Exception {
-		TupleQuery query = con.prepareTupleQuery(SERQL, CONTEXT_QUERY);
-		ValueFactory vf = con.getRepository().getValueFactory();
-		query.setBinding("ID", vf.createLiteral(id));
-		TupleQueryResult result = query.evaluate();
-		try {
-			if (!result.hasNext())
-				throw new Exception("Cannot find repository of id: " + id);
-			BindingSet bindings = result.next();
-			Resource context = (Resource) bindings.getValue("C");
-			if (result.hasNext())
-				throw new Exception(
-						"Multiple contexts found for repository '" + id + "'");
-			return context;
-		} finally {
-			result.close();
-		}
-	}
-	
+    private static Resource findContext(String id, RepositoryConnection con)
+            throws Exception {
+        TupleQuery query = con.prepareTupleQuery(SERQL, CONTEXT_QUERY);
+        ValueFactory vf = con.getRepository().getValueFactory();
+        query.setBinding("ID", vf.createLiteral(id));
+        TupleQueryResult result = query.evaluate();
+        try {
+            if (!result.hasNext())
+                throw new Exception("Cannot find repository of id: " + id);
+            BindingSet bindings = result.next();
+            Resource context = (Resource) bindings.getValue("C");
+            if (result.hasNext())
+                throw new Exception(
+                        "Multiple contexts found for repository '" + id + "'");
+            return context;
+        } finally {
+            result.close();
+        }
+    }
+    
 }
