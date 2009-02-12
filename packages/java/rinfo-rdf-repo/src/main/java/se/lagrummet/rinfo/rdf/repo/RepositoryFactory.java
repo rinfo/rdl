@@ -69,40 +69,6 @@ public class RepositoryFactory {
         RepositoryFactory.config = config;
     }
 
-    /**
-     * Shuts down all initialised repositories and remote repository manager.
-     */
-    public void shutDown() throws RepositoryException {
-        if (localRepository != null) {
-            localRepository.shutDown();
-            localRepository = null;
-        }
-        if (remoteRepositoryManager != null) {
-            remoteRepositoryManager.shutDown();
-            remoteRepositoryManager = null;
-            remoteRepository = null;
-        }
-    }
-
-    /**
-     * Get local/remote repository according to configuration. Causes repository
-     * to be initialised at first call, subsequent calls returns the same
-     * repository.
-     */
-    public static synchronized Repository getRepository() throws Exception {
-        if (config.getBoolean("use.local.repository")) {
-            if (localRepository == null) {
-                initLocalRepository();
-            }
-            return localRepository;
-        } else {
-            if (remoteRepository == null) {
-                initRemoteRepository();
-            }
-            return remoteRepository;
-        }
-    }
-
     public static synchronized void removeLocalRepository() throws Exception {
         // TODO
         throw new NotImplementedException();
@@ -131,17 +97,60 @@ public class RepositoryFactory {
     }
 
     /**
-     * Create or retrieve an existing local repository with settings as provided
-     * in the configuration.
+     * Shuts down all initialised repositories and remote repository manager.
      */
-    private static void initLocalRepository() throws Exception {
+    public void shutDown() throws RepositoryException {
+        if (localRepository != null) {
+            localRepository.shutDown();
+            localRepository = null;
+        }
+        if (remoteRepositoryManager != null) {
+            remoteRepositoryManager.shutDown();
+            remoteRepositoryManager = null;
+            remoteRepository = null;
+        }
+    }
 
+    /**
+     * Get local/remote repository according to configuration. Causes repository
+     * to be initialised at first call, subsequent calls returns the same
+     * repository.
+     */
+    public static synchronized Repository getRepository() throws Exception {
         String store = config.getString("triple.store").toLowerCase();
         String backend = config.getString("backend").toLowerCase();
-        String dataDir = config.getString("data.dir");
         String repoId = config.getString("repository.id");
         boolean inference = config.getBoolean("inference");
         boolean inferenceDT = config.getBoolean("inference.direct.type");
+
+        if (config.getBoolean("use.local.repository")) {
+            String dataDir = config.getString("data.dir");
+            if (localRepository == null) {
+                initLocalRepository(store, backend, dataDir, repoId, inference, inferenceDT);
+            }
+            return localRepository;
+        } else {
+            if (remoteRepository == null) {
+                String repoId = config.getString("repository.id");
+                String serverUrl = config.getString("remote.server.url");
+                initRemoteRepository(store, backend, serverUrl, repoId, inference, inferenceDT);
+            }
+            return remoteRepository;
+        }
+    }
+
+    /**
+     * Create or retrieve an existing local repository with settings as provided
+     * in the configuration.
+     */
+    private static void initLocalRepository(
+            String store,
+            String backend,
+            String dataDir,
+            String repoId,
+            boolean inference,
+            boolean inferenceDT
+        ) throws Exception {
 
         if (store.equals("sesame")) {
 
@@ -173,14 +182,14 @@ public class RepositoryFactory {
      * Create or retrieve an existing repository on a remote server with
      * settings as provided in the configuration.
      */
-    private static void initRemoteRepository() throws Exception {
-
-        String store = config.getString("triple.store").toLowerCase();
-        String backend = config.getString("backend").toLowerCase();
-        String repoId = config.getString("repository.id");
-        String serverUrl = config.getString("remote.server.url");
-        boolean inference = config.getBoolean("inference");
-        boolean inferenceDT = config.getBoolean("inference.direct.type");
+    private static void initRemoteRepository(
+            String store,
+            String backend,
+            String serverUrl,
+            String repoId,
+            boolean inference,
+            boolean inferenceDT
+        ) throws Exception {
 
         if (remoteRepositoryManager == null) {
             remoteRepositoryManager = new RemoteRepositoryManager(serverUrl);
