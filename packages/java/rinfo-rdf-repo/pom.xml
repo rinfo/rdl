@@ -61,6 +61,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -150,6 +151,7 @@
         <configuration>
           <includes>
             <include>**/*Test.java</include>
+            <include>**/Test*.java</include>
           </includes>
         </configuration>
       </plugin>

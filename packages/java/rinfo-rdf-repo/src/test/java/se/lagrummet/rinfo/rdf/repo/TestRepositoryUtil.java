@@ -8,9 +8,6 @@ import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.RepositoryConnection;
 
-import se.lagrummet.rinfo.rdf.repo.util.ConfigurationUtil;
-import se.lagrummet.rinfo.rdf.repo.util.RepositoryUtil;
-
 
 public class TestRepositoryUtil extends TestCase {
 
@@ -34,14 +31,16 @@ public class TestRepositoryUtil extends TestCase {
         testAddDelete("sesame", "native", false);
     }
 
-    @SuppressWarnings("static-access")
     private void testAddDelete(String tripleStore, String backend, boolean useLocalRepository)
     throws Exception {
-        Configuration config = getConfiguration(tripleStore, backend, useLocalRepository);
-        RepositoryFactory factory = new RepositoryFactory(config);
+        RepositoryHandler repoHandler = createRepositoryHandler(
+                tripleStore, backend, useLocalRepository);
+        repoHandler.initialize();
+        repoHandler.cleanRepository();
+
         RepositoryConnection conn = null;
         try {
-            conn = factory.getRepository().getConnection();
+            conn = repoHandler.getRepository().getConnection();
             assertTrue("Expected repository to be empty.", conn.isEmpty());
             String s = "http://example.org/s";
             String p = "http://example.org/p";
@@ -51,34 +50,33 @@ public class TestRepositoryUtil extends TestCase {
             assertEquals(1, conn.size());
             conn.close();
 
-            RepositoryUtil.cleanRepository(config);
-            conn = factory.getRepository().getConnection();
+            repoHandler.cleanRepository();
+            conn = repoHandler.getRepository().getConnection();
             assertTrue("Expected repository to be empty.", conn.isEmpty());
             assertEquals(0, conn.getContextIDs().asList().size());
             assertEquals(0, conn.getNamespaces().asList().size());
             // clean up
             if (!useLocalRepository) {
-                RepositoryUtil.removeRemoteRepository(config);
+                repoHandler.removeRepository();
             }
         } finally {
             if (conn != null && conn.isOpen()) {
                 conn.close();
             }
-            if (factory != null) {
-                factory.shutDown();
+            if (repoHandler != null) {
+                repoHandler.shutDown();
             }
         }
     }
 
-    private Configuration getConfiguration(String tripleStore, String backend,
+    private RepositoryHandler createRepositoryHandler(String tripleStore, String backend,
             boolean useLocalRepository) throws Exception  {
-        Configuration config = ConfigurationUtil.getDefaultConfiguration();
-        String testRepoId = config.getString("test.repository.id");
-        config.setProperty("repository.id", testRepoId);
-        config.setProperty("triple.store", tripleStore);
-        config.setProperty("backend", backend);
-        config.setProperty("use.local.repository", useLocalRepository);
-        return config;
+        return new RepositoryHandler(tripleStore, backend,
+                useLocalRepository,
+                "http://localhost:8080/openrdf-sesame",
+                "target/sesame-test-data",
+                "rinfo-test",
+                false, false);
     }
 
 }
