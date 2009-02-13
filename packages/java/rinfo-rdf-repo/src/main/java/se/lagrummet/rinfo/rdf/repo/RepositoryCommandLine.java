@@ -16,7 +16,7 @@ import org.openrdf.repository.RepositoryConnection;
  */
 public class RepositoryCommandLine {
 
-    private static final String PROPERTIES_FILE_NAME = "rinfo-rdf-repo.properties";
+    private static final String DEFAULT_PROPERTIES_FILE_NAME = "rinfo-rdf-repo.properties";
 
     public static final List<String> SUPPORTED_COMMANDS = Arrays.asList(
             "setup", "clean", "remove", "testdata");
@@ -34,7 +34,7 @@ public class RepositoryCommandLine {
             }
 
             // TODO: or supply config file via args.
-            Configuration config = new PropertiesConfiguration(PROPERTIES_FILE_NAME);
+            Configuration config = new PropertiesConfiguration(DEFAULT_PROPERTIES_FILE_NAME);
             if (args.length > 1) {
                 if (args[1].equals("local")) {
                     config.setProperty("use.local.repository", true);
@@ -49,7 +49,7 @@ public class RepositoryCommandLine {
                 config.setProperty("repository.id", args[2]);
             }
 
-            RepositoryHandler repoHandler = new RepositoryHandler(config);
+            RepositoryHandler repoHandler = RepositoryHandler.create(config);
             try {
                 handleCommand(repoHandler, args[0]);
             } finally {

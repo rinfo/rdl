@@ -60,19 +60,6 @@ public class RepositoryHandler {
     private boolean inferenceDT;
 
 
-    public RepositoryHandler(Configuration config) throws Exception {
-        this(
-                config.getString("triple.store").toLowerCase(),
-                config.getString("backend").toLowerCase(),
-                config.getBoolean("use.local.repository"),
-                config.getString("remote.server.url"),
-                config.getString("data.dir"),
-                config.getString("repository.id"),
-                config.getBoolean("inference"),
-                config.getBoolean("inference.direct.type")
-            );
-    }
-
     public RepositoryHandler(String store, String backend,
             boolean useLocalRepository, String serverUrl, String dataDir,
             String repoId,
@@ -86,6 +73,22 @@ public class RepositoryHandler {
         this.inference = inference;
         this.inferenceDT = inferenceDT;
         validate();
+    }
+
+    /**
+     * Create a new RepositoryHandler from the provided configuration.
+     */
+    public static final RepositoryHandler create(Configuration config) throws Exception {
+        return new RepositoryHandler(
+                config.getString("triple.store").toLowerCase(),
+                config.getString("backend").toLowerCase(),
+                config.getBoolean("use.local.repository"),
+                config.getString("remote.server.url"),
+                config.getString("data.dir"),
+                config.getString("repository.id"),
+                config.getBoolean("inference"),
+                config.getBoolean("inference.direct.type")
+            );
     }
 
     /**
@@ -121,9 +124,7 @@ public class RepositoryHandler {
     }
 
     /**
-     * Get local/remote repository according to configuration. Causes repository
-     * to be initialised at first call, subsequent calls returns the same
-     * repository.
+     * Initialize local/remote repository according to configuration.
      */
     public synchronized void initialize() throws Exception {
         if (useLocalRepository) {
