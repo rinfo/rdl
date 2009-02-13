@@ -47,6 +47,9 @@
   </dependencies>
 
   <build>
+    <defaultGoal>package</defaultGoal>
+    <finalName>${artifactId}-${environment}</finalName>
+
     <plugins>
 
       <plugin>
@@ -81,25 +84,6 @@
           <scanIntervalSeconds>10</scanIntervalSeconds>
           <contextPath>/</contextPath>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <delete file="${project.build.outputDirectory}/rinfo-main.properties"/>
-                <copy file="src/environments/${environment}/rinfo-main.properties"
-                      tofile="${project.build.outputDirectory}/rinfo-main.properties"/>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
 
     </plugins>

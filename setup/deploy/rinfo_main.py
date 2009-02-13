@@ -33,7 +33,7 @@ def deploy_main_resources():
 @depends(deploy_main_resources)
 def deploy_main():
     deploy_war(
-            "$(java_packages)/rinfo-main/target/rinfo-main-1.0-SNAPSHOT.war",
+            "$(java_packages)/rinfo-main/target/rinfo-main-$(env).war",
             "rinfo-main")
 
 @depends(package_main, deploy_main)

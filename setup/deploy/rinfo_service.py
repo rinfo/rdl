@@ -20,7 +20,7 @@ def setup_service():
 @depends(setup_service)
 def deploy_service():
     deploy_war(
-            "$(java_packages)/rinfo-service/target/rinfo-service-1.0-SNAPSHOT.war",
+            "$(java_packages)/rinfo-service/target/rinfo-service-$(env).war",
             "rinfo-service")
 
 @depends(package_service, deploy_service)
@@ -49,9 +49,9 @@ def deploy_repo_util():
 
 @depends(service_with_repo)
 def setup_repo():
-    run("cd $(dist_dir); java -jar rinfo-rdf-repo-1.0-SNAPSHOT.jar setup remote")
+    run("cd $(dist_dir); java -jar $(rinfo_repo_jar) setup remote")
 
 @depends(service_with_repo)
 def clean_repo():
-    run("cd $(dist_dir); java -jar rinfo-rdf-repo-1.0-SNAPSHOT.jar clean remote")
+    run("cd $(dist_dir); java -jar $(rinfo_repo_jar) clean remote")
 

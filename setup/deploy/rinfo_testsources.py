@@ -28,9 +28,6 @@ def index_testdata():
     clspath = '-cp $(for jar in $(ls lib/*.jar); do echo -n "$jar:"; done)'
     cmdclass = "se.lagrummet.rinfo.store.depot.FileDepotCmdTool"
     proppath = "classes/rinfo-depot.properties"
-    #sudo("sh -c 'cd %s; java %s %s %s index'" % (wdir, clspath, cmdclass, proppath))
-    #config.extend(vars())
-    #sudo("sh -c 'cd $(wdir); java $(clspath) $(cmdclass) $(proppath) index'")
     sudo("sh -c 'cd %(wdir)s; java %(clspath)s %(cmdclass)s %(proppath)s index'"
             % vars())
 

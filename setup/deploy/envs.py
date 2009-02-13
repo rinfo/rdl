@@ -92,7 +92,7 @@ sysenvs = [dev_unix, virt_test, staging, production]
 ##
 # Service targets
 
-_needs_sysenv = requires('host_map', 'dist_dir', 'tomcat',
+_needs_sysenv = requires('env', 'host_map', 'dist_dir', 'tomcat',
         provided_by=sysenvs)
 
 @_needs_sysenv
