@@ -31,7 +31,7 @@ public class SourceContent {
     private Map<Check, Object> datachecks = new HashMap<Check, Object>();
 
     /**
-     * @param sourceStream. An open InputStream. This will be closed when
+     * @param sourceStream An open InputStream. This will be closed when
      *  {@link #writeTo} is called.
      */
     public SourceContent(InputStream sourceStream,
@@ -89,7 +89,7 @@ public class SourceContent {
     }
 
     /**
-     * A map with token, value checks to perform when calling {@link writeTo}.
+     * A map with token, value checks to perform when calling {@link #writeTo}.
      */
     public Map<Check, Object> getDatachecks() {
         return datachecks;

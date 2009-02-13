@@ -8,7 +8,7 @@ public class FileDepotCmdTool {
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {
             System.out.println(String.format(
-                    "Usage: s <confile-file> <%s>", COMMANDS));
+                    "Expected arguments: <config-file> <%s>", COMMANDS));
             System.exit(0);
         }
         FileDepot depot = FileDepot.newConfigured(args[0]);
