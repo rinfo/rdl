@@ -1,4 +1,4 @@
-package se.lagrummet.rinfo.rdf.repo.main;
+package se.lagrummet.rinfo.rdf.repo;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,14 +11,10 @@ import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.RepositoryConnection;
 
-import se.lagrummet.rinfo.rdf.repo.RepositoryHandler;
-
 /**
- * Main class for executable jar.
- *
- * @author msher
+ * A Command Line for managing repositories.
  */
-public class RepositoryHelper {
+public class RepositoryCommandLine {
 
     private static final String PROPERTIES_FILE_NAME = "rinfo-rdf-repo.properties";
 
@@ -60,7 +56,7 @@ public class RepositoryHelper {
                 repoHandler.shutDown();
             }
 
-            System.out.println("RepositoryHelper: Done.");
+            System.out.println("Done.");
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -71,21 +67,21 @@ public class RepositoryHelper {
     private static void handleCommand(RepositoryHandler repoHandler, String cmd)
             throws Exception {
         if (cmd.equals("setup")) {
-            System.out.println("RepositoryHelper: Setup of repository...");
+            System.out.println("Setup of repository...");
             repoHandler.initialize();
 
         } else if (cmd.equals("clean")) {
-            System.out.println("RepositoryHelper: Cleaning repository...");
+            System.out.println("Cleaning repository...");
             repoHandler.initialize();
             repoHandler.cleanRepository();
 
         } else if (cmd.equals("remove")) {
-            System.out.println("RepositoryHelper: Removing repository...");
+            System.out.println("Removing repository...");
             repoHandler.initialize();
             repoHandler.removeRepository();
 
         } else if (cmd.equals("testdata")) {
-            System.out.println("RepositoryHelper: Adding test statement to repository...");
+            System.out.println("Adding test statement to repository...");
             repoHandler.initialize();
             addTestStatement(repoHandler);
         }

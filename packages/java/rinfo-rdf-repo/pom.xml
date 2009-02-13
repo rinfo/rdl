@@ -70,55 +70,6 @@
     <directory>${basedir}/target</directory>
     <finalName>${artifactId}-${version}</finalName>
 
-    <resources>
-      <resource>
-        <filtering>false</filtering>
-        <directory>src/main/java</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
-      <resource>
-        <filtering>true</filtering>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </resource>
-      <resource>
-        <filtering>false</filtering>
-        <directory>src/environments/${environment}</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </resource>
-    </resources>
-    <testResources>
-      <testResource>
-        <filtering>false</filtering>
-        <directory>src/test/java</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </testResource>
-      <testResource>
-        <filtering>false</filtering>
-        <directory>src/test/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </testResource>
-    </testResources>
-
     <plugins>
 
       <plugin>
@@ -139,7 +90,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>se.lagrummet.rinfo.rdf.repo.main.RepositoryHelper</mainClass>
+              <mainClass>se.lagrummet.rinfo.rdf.repo.RepositoryCommandLine</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -151,7 +102,6 @@
         <configuration>
           <includes>
             <include>**/*Test.java</include>
-            <include>**/Test*.java</include>
           </includes>
         </configuration>
       </plugin>

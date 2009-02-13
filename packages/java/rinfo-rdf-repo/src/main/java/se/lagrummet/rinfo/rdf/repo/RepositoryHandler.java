@@ -25,8 +25,6 @@ import org.openrdf.sail.memory.config.MemoryStoreConfig;
 import org.openrdf.sail.nativerdf.NativeStore;
 import org.openrdf.sail.nativerdf.config.NativeStoreConfig;
 
-import se.lagrummet.rinfo.rdf.repo.util.RepositoryRemover;
-
 
 // TODO: split this into subclasses for local and remote (and other future stores).
 // TODO: always call initialize? (see "setup" of the cmdline-tool..)
@@ -62,9 +60,6 @@ public class RepositoryHandler {
     private boolean inferenceDT;
 
 
-    /**
-     * Create RepositoryHandler with the provided configuration.
-     */
     public RepositoryHandler(Configuration config) throws Exception {
         this(
                 config.getString("triple.store").toLowerCase(),

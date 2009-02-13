@@ -9,7 +9,7 @@ import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.RepositoryConnection;
 
 
-public class TestRepositoryUtil extends TestCase {
+public class RepositoryHandlerTest extends TestCase {
 
     /*
      * TODO: add tests for verifying behaviour of using inference / DT.

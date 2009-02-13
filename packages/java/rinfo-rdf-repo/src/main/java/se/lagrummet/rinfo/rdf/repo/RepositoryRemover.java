@@ -1,4 +1,4 @@
-package se.lagrummet.rinfo.rdf.repo.util;
+package se.lagrummet.rinfo.rdf.repo;
 
 import static org.openrdf.query.QueryLanguage.SERQL;
 
