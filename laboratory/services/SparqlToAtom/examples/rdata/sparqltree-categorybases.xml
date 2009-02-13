@@ -29,8 +29,6 @@
         ?subject ?item ?symbol .
         FILTER(datatype(?symbol) = xsd:date)
     }
-    # TODO: bind when called if needed (huge speedup!)
-    #FILTER(?subject = &lt;http://rinfo.lagrummet.se/publ/01fs/1911:42>)
     </item>
 
 </st:sparqltree>
