@@ -23,11 +23,13 @@ import org.restlet.resource.Variant
 
 import org.openrdf.repository.Repository
 
-import org.apache.commons.configuration.AbstractConfiguration
+import org.apache.commons.configuration.Configuration
 import org.apache.commons.configuration.ConfigurationException
 import org.apache.commons.configuration.PropertiesConfiguration
 
 import se.lagrummet.rinfo.collector.NotAllowedSourceFeedException
+import se.lagrummet.rinfo.rdf.repo.RepositoryHandler
+import se.lagrummet.rinfo.rdf.repo.RepositoryHandlerFactory
 
 
 // TODO: time for IoC composition of all the service parts?
@@ -35,17 +37,23 @@ import se.lagrummet.rinfo.collector.NotAllowedSourceFeedException
 class ServiceApplication extends Application {
 
     public static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service.properties"
+    public static final String REPO_PROPERTIES_SUBSET_KEY = "rinfo.service.repo"
+
     public static final String RDF_LOADER_CONTEXT_KEY =
             "rinfo.service.rdfloader.restlet.context"
 
     SesameLoadScheduler loadScheduler
-    Repository repository
+    RepositoryHandler repositoryHandler
 
     public ServiceApplication(Context parentContext) {
         super(parentContext)
         def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
-        repository = RepositoryFactory.createRepository(config)
-        loadScheduler = new SesameLoadScheduler(config, repository)
+
+        repositoryHandler = RepositoryHandlerFactory.create(config.subset(
+                REPO_PROPERTIES_SUBSET_KEY))
+        repositoryHandler.initialize()
+
+        loadScheduler = new SesameLoadScheduler(config, repositoryHandler.repository)
         def attrs = getContext().getAttributes()
         attrs.putIfAbsent(RDF_LOADER_CONTEXT_KEY, loadScheduler)
     }
@@ -56,7 +64,8 @@ class ServiceApplication extends Application {
         router.attach("/collector", new Finder(getContext(), RDFLoaderHandler))
         // FIXME: copy to resources and point out in config.
         def treeDir = new File("../../../laboratory/services/SparqlToAtom/examples/")
-        router.attach("/view", new SparqlTreeRouter(getContext(), repository, treeDir))
+        router.attach("/view", new SparqlTreeRouter(
+                getContext(), repositoryHandler.repository, treeDir))
         // FIXME:? How to let through to webapp dir instead (if desirable)?
         router.attach("/css", new Directory(getContext(),
                 new File("src/main/webapp/css").toURI().toString()))
@@ -69,6 +78,7 @@ class ServiceApplication extends Application {
     public void stop() {
         super.stop()
         loadScheduler.shutdown()
+        repositoryHandler.shutDown()
     }
 
 }

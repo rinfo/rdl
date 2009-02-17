@@ -19,7 +19,9 @@ import org.openrdf.repository.Repository
 import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.nativerdf.NativeStore
 
+import se.lagrummet.rinfo.rdf.repo.RepositoryHandler
 import se.lagrummet.rinfo.service.util.FeedApplication
+
 
 /**
  * Test for verifying that a ping to the ServiceApplication leads to reading
@@ -29,31 +31,26 @@ import se.lagrummet.rinfo.service.util.FeedApplication
  */
 class ServiceApplicationTest {
 
-    static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service.properties"
+    static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service-test.properties"
 
     static serviceAppUrl
     static serviceAppPort
     static feedAppUrl
     static feedAppPort
-    static sesameRepoPath
+    //static sesameRepoPath
     static component
-    static config
+
+    RepositoryHandler repositoryHandler
 
     @BeforeClass
     static void setupClass() {
-        config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
-        serviceAppPort = config.getInt("rinfo.service.serviceAppPort")
-        feedAppPort = config.getInt("rinfo.service.feedAppPort")
-        def appUrlBase = config.getString("rinfo.service.appUrlBase")
+        def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
+        serviceAppPort = config.getInt("test.serviceAppPort")
+        feedAppPort = config.getInt("test.feedAppPort")
+        def appUrlBase = config.getString("test.appUrlBase")
         serviceAppUrl = appUrlBase + ":" + serviceAppPort
         feedAppUrl = appUrlBase + ":" + feedAppPort
-        sesameRepoPath = config.getString("rinfo.service.sesameRepoPath")
-        cleanRepository()
-    }
-
-    @AfterClass
-    static void tearDownClass() {
-        cleanRepository()
+        //sesameRepoPath = config.getString("rinfo.service.sesameRepoPath")
     }
 
     @Before
@@ -63,6 +60,8 @@ class ServiceApplicationTest {
 
         // create a local ServiceApplication
         def serviceApplication = new ServiceApplication(context.createChildContext())
+        repositoryHandler = serviceApplication.repositoryHandler
+        repositoryHandler.cleanRepository()
 
         // create a local application that serves feeds
         def feedApplication = new FeedApplication(context.createChildContext())
@@ -89,6 +88,7 @@ class ServiceApplicationTest {
 
     @After
     void stopComponent() {
+        repositoryHandler.cleanRepository()
         component.stop()
     }
 
@@ -103,34 +103,17 @@ class ServiceApplicationTest {
         def response = client.handle(request)
         assertEquals Status.SUCCESS_OK , response.status
 
-        Thread.sleep(3000)
-
-        stopComponent()
+        Thread.sleep(999)
 
         assertEquals 2, countContexts()
     }
 
-    static void cleanRepository() {
-        def dataDir = new File(sesameRepoPath)
-        def sesameRepo = new SailRepository(new NativeStore(dataDir))
-        sesameRepo.initialize()
-        def conn = sesameRepo.connection
-        conn.clear()
-        conn.clearNamespaces()
-        conn.close()
-        sesameRepo.shutDown()
-    }
-
-    static int countContexts() {
-        def dataDir = new File(sesameRepoPath)
-        def sesameRepo = new SailRepository(new NativeStore(dataDir))
-        sesameRepo.initialize()
-        def conn = sesameRepo.connection
+    int countContexts() {
+        def conn = repositoryHandler.repository.connection
         def res = conn.contextIDs
         def i = res.asList().size()
         res.close()
         conn.close()
-        sesameRepo.shutDown()
         return i
     }
 

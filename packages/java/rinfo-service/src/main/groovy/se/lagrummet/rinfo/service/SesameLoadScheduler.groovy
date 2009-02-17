@@ -1,34 +1,30 @@
 package se.lagrummet.rinfo.service
 
-import org.apache.commons.configuration.AbstractConfiguration
+import org.apache.commons.configuration.Configuration
 import org.apache.commons.configuration.ConfigurationException
 
 import org.openrdf.repository.Repository
+import org.openrdf.repository.event.base.NotifyingRepositoryWrapper
 
 import se.lagrummet.rinfo.collector.AbstractCollectScheduler
 
 
 class SesameLoadScheduler extends AbstractCollectScheduler {
 
-    private Repository repository
+    private NotifyingRepositoryWrapper repository
     private Collection<URL> sourceFeedUrls
 
-    SesameLoadScheduler(AbstractConfiguration config, Repository repository) {
-        this.repository = repository
+    SesameLoadScheduler(Configuration config, Repository repository) {
+        this.repository = new NotifyingRepositoryWrapper(repository)
         this.configure(config)
     }
 
-    void configure(AbstractConfiguration config) {
+    void configure(Configuration config) {
         setInitialDelay(-1) // TODO:? never schedule running collects?
         sourceFeedUrls = new ArrayList<URL>()
         for (String url : config.getList("rinfo.service.sourceFeedUrls")) {
             sourceFeedUrls.add(new URL(url))
         }
-    }
-
-    void shutdown() {
-        super.shutdown()
-        repository.shutDown()
     }
 
     public Collection getSourceFeedUrls() {

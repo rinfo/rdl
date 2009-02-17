@@ -28,23 +28,21 @@ import se.lagrummet.rinfo.service.util.RepoConnectionListener
  */
 class ServiceApplicationConnectionTest {
 
-    static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service.properties"
+    static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service-test.properties"
 
     static serviceAppUrl
     static feedAppUrl
-    static sesameRepoPath
     static repoListener
     static component
 
     @BeforeClass
     static void setupClass() {
         def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
-        def serviceAppPort = config.getInt("rinfo.service.serviceAppPort")
-        def feedAppPort = config.getInt("rinfo.service.feedAppPort")
-        def appUrlBase = config.getString("rinfo.service.appUrlBase")
+        def serviceAppPort = config.getInt("test.serviceAppPort")
+        def feedAppPort = config.getInt("test.feedAppPort")
+        def appUrlBase = config.getString("test.appUrlBase")
         serviceAppUrl = appUrlBase + ":" + serviceAppPort
         feedAppUrl = appUrlBase + ":" + feedAppPort
-        sesameRepoPath = config.getString("rinfo.service.sesameRepoPath")
 
         component = new Component()
         def context = component.getContext()
