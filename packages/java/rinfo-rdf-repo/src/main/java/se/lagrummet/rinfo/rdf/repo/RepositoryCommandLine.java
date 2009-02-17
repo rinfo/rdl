@@ -22,7 +22,7 @@ public class RepositoryCommandLine {
             "setup", "clean", "remove", "testdata");
 
     private static final String usage =
-        "Usage: [setup|clean|remove|testdata] [local|remote] [repository id]";
+        "Usage: [setup|clean|remove|testdata] <path-to-repo-properties-file>";
 
 
     public static void main(String[] args) {
@@ -33,23 +33,11 @@ public class RepositoryCommandLine {
                 System.exit(1);
             }
 
-            // TODO: or supply config file via args.
-            Configuration config = new PropertiesConfiguration(DEFAULT_PROPERTIES_FILE_NAME);
-            if (args.length > 1) {
-                if (args[1].equals("local")) {
-                    config.setProperty("use.local.repository", true);
-                } else if (args[1].equals("remote")) {
-                    config.setProperty("use.local.repository", false);
-                } else {
-                    System.out.println(usage);
-                    System.exit(1);
-                }
-            }
-            if (args.length > 2) {
-                config.setProperty("repository.id", args[2]);
-            }
+            String propertiesPath = (args.length > 1)?
+                    args[1] : DEFAULT_PROPERTIES_FILE_NAME;
 
-            RepositoryHandler repoHandler = RepositoryHandler.create(config);
+            Configuration config = new PropertiesConfiguration(propertiesPath);
+            RepositoryHandler repoHandler = RepositoryHandlerFactory.create(config);
             try {
                 handleCommand(repoHandler, args[0]);
             } finally {

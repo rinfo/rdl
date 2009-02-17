@@ -2,7 +2,8 @@ package se.lagrummet.rinfo.rdf.repo;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.lang.NotImplementedException;
 import org.openrdf.model.Statement;
 import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.impl.URIImpl;
@@ -11,34 +12,52 @@ import org.openrdf.repository.RepositoryConnection;
 
 public class RepositoryHandlerTest extends TestCase {
 
+    private static String TEST_PROPERTIES_FILE_NAME = "rinfo-rdf-repo.properties";
+
+    private static String TEST_DATA_DIR = "target/sesame-test-data";
+    private static String TEST_REMOTE_SERVER_URL = "http://localhost:8080/openrdf-sesame";
+    private static String TEST_REPO_ID = "rinfo-test";
+
     /*
      * TODO: add tests for verifying behaviour of using inference / DT.
      */
 
     public void testLocalSesameMemory() throws Exception {
-        testAddDelete("sesame", "memory", true);
+        testAddDelete(createLocalRepositoryHandler("memory", null));
+    }
+
+    public void testLocalSesameMemoryRdfs() throws Exception {
+        testAddDelete(createLocalRepositoryHandler("memory", "rdfs"));
+    }
+
+    public void testLocalSesameMemoryDt() throws Exception {
+        testAddDelete(createLocalRepositoryHandler("memory", "dt"));
     }
 
     public void testLocalSesameNative() throws Exception {
-        testAddDelete("sesame", "native", true);
+        testAddDelete(createLocalRepositoryHandler("native", null));
     }
 
     public void testRemoteSesameMemory() throws Exception {
-        testAddDelete("sesame", "memory", false);
+        testAddDelete(createRemoteRepositoryHandler("memory", null));
     }
 
     public void testRemoteSesameNative() throws Exception {
-        testAddDelete("sesame", "native", false);
+        testAddDelete(createRemoteRepositoryHandler("native", null));
     }
 
-    private void testAddDelete(String tripleStore, String backend, boolean useLocalRepository)
-    throws Exception {
-        RepositoryHandler repoHandler = createRepositoryHandler(
-                tripleStore, backend, useLocalRepository);
+    public void testConfiguredViaProperties() throws Exception {
+        testAddDelete(
+                RepositoryHandlerFactory.create(
+                    new PropertiesConfiguration(TEST_PROPERTIES_FILE_NAME))
+            );
+    }
+
+
+    private void testAddDelete(RepositoryHandler repoHandler) throws Exception {
+        RepositoryConnection conn = null;
         repoHandler.initialize();
         repoHandler.cleanRepository();
-
-        RepositoryConnection conn = null;
         try {
             conn = repoHandler.getRepository().getConnection();
             assertTrue("Expected repository to be empty.", conn.isEmpty());
@@ -56,8 +75,10 @@ public class RepositoryHandlerTest extends TestCase {
             assertEquals(0, conn.getContextIDs().asList().size());
             assertEquals(0, conn.getNamespaces().asList().size());
             // clean up
-            if (!useLocalRepository) {
+            try {
                 repoHandler.removeRepository();
+            } catch (NotImplementedException e) {
+                // TODO: not supported by LocalRepositoryHandler
             }
         } finally {
             if (conn != null && conn.isOpen()) {
@@ -69,14 +90,16 @@ public class RepositoryHandlerTest extends TestCase {
         }
     }
 
-    private RepositoryHandler createRepositoryHandler(String tripleStore, String backend,
-            boolean useLocalRepository) throws Exception  {
-        return new RepositoryHandler(tripleStore, backend,
-                useLocalRepository,
-                "http://localhost:8080/openrdf-sesame",
-                "target/sesame-test-data",
-                "rinfo-test",
-                false, false);
+    private RepositoryHandler createLocalRepositoryHandler(
+            String storeType, String inferenceType) throws Exception  {
+        return new LocalRepositoryHandler(
+                TEST_REPO_ID, storeType, inferenceType, TEST_DATA_DIR);
+    }
+
+    private RepositoryHandler createRemoteRepositoryHandler(
+            String storeType, String inferenceType) throws Exception  {
+        return new RemoteRepositoryHandler(
+                TEST_REPO_ID, storeType, inferenceType, TEST_REMOTE_SERVER_URL);
     }
 
 }
