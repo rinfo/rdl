@@ -1,5 +1,7 @@
 package se.lagrummet.rinfo.rdf.repo;
 
+import java.util.*;
+
 import junit.framework.TestCase;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -12,11 +14,13 @@ import org.openrdf.repository.RepositoryConnection;
 
 public class RepositoryHandlerTest extends TestCase {
 
-    private static String TEST_PROPERTIES_FILE_NAME = "rinfo-rdf-repo.properties";
+    static List<String> TEST_PROPERTIES_FILES = Arrays.asList(
+            "test-rdf-repo-native.properties",
+            "test-rdf-repo-http.properties");
 
-    private static String TEST_DATA_DIR = "target/sesame-test-data";
-    private static String TEST_REMOTE_SERVER_URL = "http://localhost:8080/openrdf-sesame";
-    private static String TEST_REPO_ID = "rinfo-test";
+    static String TEST_DATA_DIR = "target/sesame-test-data";
+    static String TEST_REMOTE_SERVER_URL = "http://localhost:8080/openrdf-sesame";
+    static String TEST_REPO_ID = "rinfo-test";
 
     /*
      * TODO: add tests for verifying behaviour of using inference / DT.
@@ -47,10 +51,12 @@ public class RepositoryHandlerTest extends TestCase {
     }
 
     public void testConfiguredViaProperties() throws Exception {
-        testAddDelete(
-                RepositoryHandlerFactory.create(
-                    new PropertiesConfiguration(TEST_PROPERTIES_FILE_NAME))
-            );
+        for (String propsFilePath : TEST_PROPERTIES_FILES) {
+            testAddDelete(
+                    RepositoryHandlerFactory.create(
+                        new PropertiesConfiguration(propsFilePath))
+                );
+        }
     }
 
 

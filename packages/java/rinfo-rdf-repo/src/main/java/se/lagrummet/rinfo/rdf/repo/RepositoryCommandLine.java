@@ -22,8 +22,7 @@ public class RepositoryCommandLine {
             "setup", "clean", "remove", "testdata");
 
     private static final String usage =
-        "Usage: [setup|clean|remove|testdata] <path-to-repo-properties-file>";
-
+        "Usage: [setup|clean|remove|testdata] <path-to-repo-properties-file> [properties subset prefix]";
 
     public static void main(String[] args) {
         try {
@@ -35,8 +34,13 @@ public class RepositoryCommandLine {
 
             String propertiesPath = (args.length > 1)?
                     args[1] : DEFAULT_PROPERTIES_FILE_NAME;
+            String subsetPrefix = (args.length > 2)? args[2] : null;
 
             Configuration config = new PropertiesConfiguration(propertiesPath);
+            if (subsetPrefix != null) {
+                config = config.subset(subsetPrefix);
+            }
+
             RepositoryHandler repoHandler = RepositoryHandlerFactory.create(config);
             try {
                 handleCommand(repoHandler, args[0]);
