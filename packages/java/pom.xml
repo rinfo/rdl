@@ -319,12 +319,12 @@
       <dependency>
           <groupId>org.codehaus.groovy.maven</groupId>
           <artifactId>gmaven-mojo</artifactId>
-          <version>1.0-rc-4-SNAPSHOT</version>
+          <version>1.0-rc-4</version>
       </dependency>
       <dependency>
           <groupId>org.codehaus.groovy.maven.runtime</groupId>
-          <artifactId>gmaven-runtime-1.5</artifactId>
-          <version>1.0-rc-4-SNAPSHOT</version>
+          <artifactId>gmaven-runtime-1.6</artifactId>
+          <version>1.0-rc-4</version>
       </dependency>
       <!-- }}} -->
 
