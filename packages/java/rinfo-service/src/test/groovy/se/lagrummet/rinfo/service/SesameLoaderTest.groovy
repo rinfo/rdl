@@ -26,12 +26,10 @@ class SesameLoaderTest {
         repo = RDFUtil.createMemoryRepository()
         loader = new SesameLoader(repo)
         component = new Component()
-        component.with {
-            servers.add(Protocol.HTTP, testHttpPort)
-            clients.add(Protocol.FILE)
-            defaultHost.attach(new ChangedFeedApp())
-            start()
-        }
+        component.servers.add(Protocol.HTTP, testHttpPort)
+        component.clients.add(Protocol.FILE)
+        component.defaultHost.attach(new ChangedFeedApp())
+        component.start()
     }
 
     @AfterClass

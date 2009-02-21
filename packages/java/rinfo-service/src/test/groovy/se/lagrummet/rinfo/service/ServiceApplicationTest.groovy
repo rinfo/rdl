@@ -75,15 +75,13 @@ class ServiceApplicationTest {
         serviceHost.setHostPort("" + serviceAppPort)
         serviceHost.attach(serviceApplication)
 
-        component.with {
-            servers.add(Protocol.HTTP, serviceAppPort)
-            servers.add(Protocol.HTTP, feedAppPort)
-            clients.add(Protocol.HTTP)
-            clients.add(Protocol.FILE)
-            hosts.add(serviceHost)
-            hosts.add(feedHost)
-            start()
-        }
+        component.servers.add(Protocol.HTTP, serviceAppPort)
+        component.servers.add(Protocol.HTTP, feedAppPort)
+        component.clients.add(Protocol.HTTP)
+        component.clients.add(Protocol.FILE)
+        component.hosts.add(serviceHost)
+        component.hosts.add(feedHost)
+        component.start()
     }
 
     @After
