@@ -22,7 +22,7 @@ public class RepositoryCommandLine {
             "setup", "clean", "remove", "testdata");
 
     private static final String usage =
-        "Usage: [setup|clean|remove|testdata] <path-to-repo-properties-file> [properties subset prefix]";
+        "Usage: [setup|clean|remove|testdata] <path-to-repo-properties-file> [properties-subset-prefix]";
 
     public static void main(String[] args) {
         try {
