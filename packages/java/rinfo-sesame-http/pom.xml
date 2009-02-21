@@ -17,8 +17,8 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <!--
   <build>
+    <!--
     <defaultGoal>assembly:directory</defaultGoal>
     <directory>${basedir}/target</directory>
     <finalName>${artifactId}-${version}</finalName>
@@ -35,7 +35,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2-beta-2</version>
         <configuration>
           <descriptors>
             <descriptor>src/main/assembly/lib.xml</descriptor>
@@ -43,7 +42,46 @@
         </configuration>
       </plugin>
     </plugins>
+    -->
+    <defaultGoal>package</defaultGoal>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+
+                <artifactItem>
+                  <groupId>org.openrdf.sesame</groupId>
+                  <artifactId>sesame-http-server</artifactId>
+                  <version>2.2.4</version>
+                  <type>war</type>
+                  <overWrite>true</overWrite>
+                  <destFileName>openrdf-sesame.war</destFileName>
+                </artifactItem>
+
+                <artifactItem>
+                  <groupId>org.openrdf.sesame</groupId>
+                  <artifactId>sesame-http-workbench</artifactId>
+                  <version>2.2.4</version>
+                  <type>war</type>
+                  <overWrite>true</overWrite>
+                  <destFileName>sesame-workbench.war</destFileName>
+                </artifactItem>
+
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
-  -->
 
 </project>
