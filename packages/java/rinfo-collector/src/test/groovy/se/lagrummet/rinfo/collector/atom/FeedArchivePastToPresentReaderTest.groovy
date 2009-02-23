@@ -73,6 +73,22 @@ class FeedArchivePastToPresentReaderTest {
         assertEquals 1, reader.visitedPages.size()
     }
 
+    /* TODO: high-level meaningful specs(s) related to "putUriDateIfNewOrYoungest":
+        - shouldReportResurrectedEntry:
+            an older delete mustn't supress a younged updated
+            - given continuous feed events:
+                - Entry(id="123", published=1)
+                - Entry(id="123", updated=2)
+                - Entry(id="123", deleted=3)
+                - Entry(id="123", updated=4)
+            - should report:
+                - Entry(id="123", deleted=3)
+                - Entry(id="123", updated=4)
+
+        * TODO: write runnable specs like the above for most tests!
+            - robotframework or BDD unit-tests?
+    */
+
     @Test
     void shouldPutUriDateIfNewOrYoungest() {
         def map = [:]
