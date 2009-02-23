@@ -27,18 +27,18 @@ public abstract class AbstractCollectScheduler {
     private int initialDelay = DEFAULT_INITIAL_DELAY;
     private int scheduleInterval = DEFAULT_SCHEDULE_INTERVAL;
     private TimeUnit timeUnit;
-    
+
     private ScheduledExecutorService scheduleService;
 
-    private ExecutorService defaultExecutorService = 
-    	Executors.newSingleThreadExecutor(); 
+    private ExecutorService defaultExecutorService =
+        Executors.newSingleThreadExecutor();
 
-    private ConcurrentLinkedQueue<URL> feedQueue = 
-    	new ConcurrentLinkedQueue<URL>();
-    
-    private List<URL> feedInProcess = 
-    	Collections.synchronizedList(new ArrayList<URL>()); 
-    
+    private ConcurrentLinkedQueue<URL> feedQueue =
+        new ConcurrentLinkedQueue<URL>();
+
+    private List<URL> feedInProcess =
+        Collections.synchronizedList(new ArrayList<URL>());
+
     public int getInitialDelay() {
         return initialDelay;
     }
@@ -61,14 +61,14 @@ public abstract class AbstractCollectScheduler {
     }
 
     /**
-     * Get default single threaded executor. Override to implement other thread 
+     * Get default single threaded executor. Override to implement other thread
      * executor strategy.
      * @return
      */
     public ExecutorService getExecutorService() {
-    	return defaultExecutorService;
+        return defaultExecutorService;
     }
-    
+
     /**
      * @return Collection of approved source feed URLs.
      */
@@ -102,28 +102,28 @@ public abstract class AbstractCollectScheduler {
     }
 
     /**
-     * Shuts down the fixed rate collect schedule and aborts all queued up 
-     * collects that have not yet started. All currently running collects are 
-     * allowed to finish. 
+     * Shuts down the fixed rate collect schedule and aborts all queued up
+     * collects that have not yet started. All currently running collects are
+     * allowed to finish.
      */
-    public void shutdown() {    	
+    public void shutdown() {
         if (scheduleService != null) {
             scheduleService.shutdown();
         }
-        
+
         getExecutorService().shutdown();
-        
+
         if (feedQueue != null) {
-        	if (feedQueue.size() > 0) {
-            	String feeds = "";
-            	for (URL u : feedQueue) {
-            		feeds += "<"+u+">, ";
-            	}
+            if (feedQueue.size() > 0) {
+                String feeds = "";
+                for (URL u : feedQueue) {
+                    feeds += "<"+u+">, ";
+                }
                 feedQueue.clear();
-            	StringUtils.removeEnd(feeds, ", ");
-            	logger.info("Shutdown prevented the following scheduled feeds to " 
-            			+ "be collected: " + feeds);
-        	}
+                StringUtils.removeEnd(feeds, ", ");
+                logger.info("Shutdown prevented the following scheduled feeds to "
+                        + "be collected: " + feeds);
+            }
         }
     }
 
@@ -133,20 +133,20 @@ public abstract class AbstractCollectScheduler {
     public void collectAllFeeds() {
         Collection<URL> sourceFeedUrls = getSourceFeedUrls();
         if (sourceFeedUrls != null) {
-            logger.info("Starting scheduling for collect of " + 
-            		sourceFeedUrls.size() + " source feeds.");            
+            logger.info("Starting scheduling for collect of " +
+                    sourceFeedUrls.size() + " source feeds.");
             for (URL feedUrl : sourceFeedUrls) {
-                enqueueCollect(feedUrl);        	
-            }            
+                enqueueCollect(feedUrl);
+            }
             logger.info("Done scheduling source feeds.");
         } else {
-            logger.info("No source feeds to schedule.");        	
-        }        
+            logger.info("No source feeds to schedule.");
+        }
     }
 
     /**
      * Schedule feed to be collected.
-     * 
+     *
      * @param feedUrl The URL of the feed to collect.
      * @return true if the URL was added to the queue, false if it already was
      * enqueued.
@@ -164,36 +164,39 @@ public abstract class AbstractCollectScheduler {
     }
 
     private synchronized boolean enqueueCollect(final URL feedUrl) {
-    	if (feedQueue.contains(feedUrl) || feedInProcess.contains(feedUrl)) {
+        if (feedQueue.contains(feedUrl) || feedInProcess.contains(feedUrl)) {
             logger.info("Feed <"+feedUrl+"> is already scheduled for collect.");
-            return false;    		
-    	} else {
-    		feedQueue.add(feedUrl);
+            return false;
+        } else {
+            feedQueue.add(feedUrl);
             logger.info("Scheduling collect of <"+feedUrl+">.");
-    		getExecutorService().execute(
-    				new Runnable() {
-    					public void run() { executeCollect(); }
-    				}
-    		);
+            getExecutorService().execute(
+                    new Runnable() {
+                        public void run() { executeCollect(); }
+                    }
+            );
             return true;
-    	}
+        }
     }
 
     private synchronized URL getNextFeed() {
-    	URL feedUrl = feedQueue.peek();
-    	if (feedUrl != null) {
-    		feedInProcess.add(feedUrl);
-    		feedQueue.remove(feedUrl);
-    	}
-    	return feedUrl;
+        URL feedUrl = feedQueue.peek();
+        if (feedUrl != null) {
+            feedInProcess.add(feedUrl);
+            feedQueue.remove(feedUrl);
+        }
+        return feedUrl;
     }
-    
+
     private void executeCollect() {
-    	URL feedUrl = getNextFeed();
-    	if (feedUrl != null) {
-        	collectFeed(feedUrl, true);
-    		feedInProcess.remove(feedUrl);
+        URL feedUrl = getNextFeed();
+        if (feedUrl != null) {
+            try {
+                collectFeed(feedUrl, true);
+            } finally {
+                feedInProcess.remove(feedUrl);
+            }
             logger.info("Completed collect of <"+feedUrl+">.");
-    	}
+        }
     }
 }

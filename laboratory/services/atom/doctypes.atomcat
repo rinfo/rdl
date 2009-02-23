@@ -3,8 +3,8 @@
   <title>Dokumenttyper</title>
 
   <category scheme="http://xmlns.com/foaf/0.1/" term="Document" label="Dokument">
-    <rdata:source predicate="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-                  using="scheme+term"/>
+    <rdata:machinetag predicate="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                      using="scheme+term"/>
     <category scheme="http://rinfo.lagrummet.se/ns/2008/05/publ#"
               term="Rattsinformationsdokument" label="Rättsinformationsdokument">
       <category term="FSDokument" label="Författningssamlingsdokument">
@@ -15,5 +15,21 @@
       </category>
     </category>
   </category>
+
+  <!-- Alternative (less collision-prone):
+       Given:
+        xmlns:foaf="foaf=http://xmlns.com/foaf/0.1/" (or prefix="foaf=..")
+  -->
+  <rdata:machinetags form="cuire=curie"/>
+  <category scheme=".../doctypes.atomcat" term="rdf:type=foaf:Document" label="Dokument">
+    <!-- ... -->
+  </category>
+
+  <!-- More subcategory (nesting) logic:
+    date-types (2009 > 2009-02 > 2009-02-22)
+    skos:narrowerThan
+    sioc:partOf (better with "entry/feed" (I-R) rels? ok with cat:s if N/A)
+    .. "suborganisation" etc.? (-||-?)
+  -->
 
 </app:categories>

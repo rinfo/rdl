@@ -20,6 +20,8 @@ import org.w3c.dom.Document
 import org.xml.sax.InputSource
 import org.xml.sax.SAXException
 
+import org.apache.commons.io.IOUtils
+
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -43,26 +45,47 @@ class SparqlTree {
     private static final TRANSFORMER_FACTORY = TransformerFactory.newInstance()
 
     static final SPARQL_XSLT = TRANSFORMER_FACTORY.newTemplates(
-            new StreamSource(classPathStream("sparqltree/tree-sparql.xslt")))
+            new StreamSource(classLoaderStream("sparqltree/tree-sparql.xslt")))
     static final TREE_XSLT = TRANSFORMER_FACTORY.newTemplates(
-            new StreamSource(classPathStream("sparqltree/tree-transformer.xslt")))
+            new StreamSource(classLoaderStream("sparqltree/tree-transformer.xslt")))
 
     Repository repo
-    File sparqlTreeSrc
     String queryString
     Templates rqToTreeTemplates
 
-    SparqlTree(Repository repo, File sparqlTreeSrc) {
+    SparqlTree(Repository repo, URL treeUrl) {
+        this(repo)
+        extractQueryString(new StreamSource(treeUrl.openStream()))
+        extractRqToTreeTemplates(new StreamSource(treeUrl.openStream()))
+    }
+
+    SparqlTree(Repository repo, File treeFile) {
+        this(repo)
+        extractQueryString(new StreamSource(treeFile))
+        extractRqToTreeTemplates(new StreamSource(treeFile))
+    }
+
+    SparqlTree(Repository repo, InputStream treeInput) {
+        this(repo)
+        def bis = new ByteArrayInputStream(
+                IOUtils.toByteArray(treeInput))
+        extractQueryString(new StreamSource(bis))
+        bis.reset()
+        extractRqToTreeTemplates(new StreamSource(bis))
+    }
+
+    protected SparqlTree(Repository repo) {
         this.repo = repo
-        this.sparqlTreeSrc = sparqlTreeSrc
+    }
 
-        def newSource = { new StreamSource(new FileReader(sparqlTreeSrc)) }
-
+    protected extractQueryString(StreamSource source) {
         def bytes = new ByteArrayOutputStream()
-        SPARQL_XSLT.newTransformer().transform(newSource(), new StreamResult(bytes))
+        SPARQL_XSLT.newTransformer().transform(source, new StreamResult(bytes))
         this.queryString = bytes.toString()
+    }
 
-        def inStream = transformToInputStream(TREE_XSLT, newSource())
+    protected extractRqToTreeTemplates(StreamSource source) {
+        def inStream = transformToInputStream(TREE_XSLT, source)
         this.rqToTreeTemplates = TRANSFORMER_FACTORY.newTemplates(
                 new StreamSource(inStream))
     }
@@ -102,12 +125,12 @@ class SparqlTree {
         return (Document) domResult.getNode()
     }
 
-    protected static InputStream classPathStream(String name) {
-        return SparqlTree.getClassLoader().getResourceAsStream(name)
+    protected static InputStream classLoaderStream(String name) {
+        return getClassLoader().getResourceAsStream(name)
     }
 
     // TODO: move these to RDFUtil (and reuse in URIMinter as well)
-    // .. unless URIMinter should be/use SparqlTree?
+    // .. unless URIMinter should be/use a SparqlTree?
 
     static void queryAndChainToResult(
             Repository repo, String queryString, Result result,

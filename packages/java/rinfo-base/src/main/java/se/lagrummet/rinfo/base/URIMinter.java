@@ -125,8 +125,7 @@ public class URIMinter {
             Document rqDoc = runQueryToDoc(mergedRepo, queryString);
             officialUri = resultsToUri(rqDoc);
             return new URI(officialUri);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new URIComputationException(
                     "Could not compute canonical URI for: "+sourceHint, e);
         }
@@ -176,8 +175,8 @@ public class URIMinter {
 
         String value = (String) xpathExpr.evaluate(domResult.getNode());
         if (value == null || value.equals("")) {
-            // TODO: throw new URIComputationException
-            // .. eventual error "hint" in results?
+            throw new RuntimeException("Computation resulted in an empty URI.");
+            // TODO: .. eventual error "hint" in results?
         }
         return value;
     }

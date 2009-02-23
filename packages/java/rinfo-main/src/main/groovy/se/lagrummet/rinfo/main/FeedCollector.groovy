@@ -19,29 +19,27 @@ import org.apache.http.params.BasicHttpParams
 import org.apache.http.params.HttpParams
 import org.apache.http.params.HttpProtocolParams
 
-import org.apache.commons.io.IOUtils
-
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.AtomDate
 import org.apache.abdera.model.Entry
 import org.apache.abdera.model.Feed
+import org.apache.abdera.model.Link
 import org.apache.abdera.i18n.iri.IRI
 
 import org.openrdf.repository.Repository
 
 import se.lagrummet.rinfo.store.depot.Atomizer
 import se.lagrummet.rinfo.store.depot.FileDepot
-import se.lagrummet.rinfo.store.depot.DepotContent
 import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.DepotEntryBatch
 import se.lagrummet.rinfo.store.depot.DuplicateDepotEntryException
 import se.lagrummet.rinfo.store.depot.SourceContent
 
 import se.lagrummet.rinfo.base.URIMinter
+import se.lagrummet.rinfo.base.URIComputationException
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 import se.lagrummet.rinfo.collector.atom.FeedArchivePastToPresentReader
-import se.lagrummet.rinfo.collector.atom.AtomEntryDeleteUtil
 
 /* TODO: (see details in inline comments)
 
@@ -62,7 +60,7 @@ import se.lagrummet.rinfo.collector.atom.AtomEntryDeleteUtil
 
 class FeedCollector extends FeedArchivePastToPresentReader {
 
-    private final logger = LoggerFactory.getLogger(FeedCollector)
+    private final Logger logger = LoggerFactory.getLogger(FeedCollector)
 
     public static final String SOURCE_META_FILE_NAME = "collector-source-info.entry"
 
@@ -139,7 +137,7 @@ class FeedCollector extends FeedArchivePastToPresentReader {
             List<Entry> effectiveEntries, Map<IRI, AtomDate> deletedMap) {
         logger.info("Processing feed page: <${pageUrl}> (id <${feed.id}>)")
 
-        registry.logVisitedFeedPage(feed)
+        registry.logVisitedFeedPage(pageUrl, feed)
         collectedBatch = depot.makeEntryBatch()
         try {
             for (entry in effectiveEntries) {
@@ -183,7 +181,7 @@ class FeedCollector extends FeedArchivePastToPresentReader {
         URI sourceEntryId = sourceEntry.getId().toURI()
         logger.info "Reading Entry <${sourceEntryId}> ..."
 
-        List contents = initialContents(sourceEntry)
+        List contents = new ArrayList()
         List enclosures = new ArrayList()
         fillContentsAndEnclosures(sourceEntry, contents, enclosures)
 
@@ -255,22 +253,9 @@ class FeedCollector extends FeedArchivePastToPresentReader {
         //TODO:..registry.logDeletedEntry
     }
 
-    protected List initialContents(Entry sourceEntry) {
-        def contentElem = sourceEntry.getContentElement()
-        def contentUrlPath = contentElem.getResolvedSrc().toString()
-        def contentMimeType = contentElem.getMimeType().toString()
-        def contentLang = contentElem.getLanguage()
-        List contents = new ArrayList()
-        def contentMd5hex = contentElem.getAttributeValue(Atomizer.LINK_EXT_MD5)
-        // TODO: allow inline content!
-        contents.add(createSourceContent(
-                contentUrlPath, contentMimeType, contentLang, null, contentMd5hex))
-        return contents
-    }
-
     protected void fillContentsAndEnclosures(Entry sourceEntry,
             List contents, List enclosures) {
-        URI sourceEntryId = sourceEntry.getId().toURI()
+        contents.add(getMainContent(sourceEntry))
         for (link in sourceEntry.links) {
             def urlPath = link.resolvedHref.toString()
             def mediaType = link.mimeType.toString()
@@ -280,24 +265,31 @@ class FeedCollector extends FeedArchivePastToPresentReader {
             if (link.rel == "alternate") {
                 contents.add(createSourceContent(
                         urlPath, mediaType, lang, null, md5hex, len))
-            }
-            if (link.rel == "enclosure") {
-                if (!urlPath.startsWith(sourceEntryId.toString())) {
-                    // TODO: fail with what?
-                    throw new RuntimeException("Entry <"+sourceEntryId +
-                            "> references <${urlPath}> out of its domain.")
-                }
-                def slug = urlPath.replaceFirst(sourceEntryId, "")
+            } else if (link.rel == "enclosure") {
+                def slug = getEnclosureSlug(
+                        sourceEntry.getId().toURI(), link.resolvedHref.toURI())
                 enclosures.add(createSourceContent(
                         urlPath, mediaType, null, slug, md5hex, len))
             }
         }
     }
 
-    protected SourceContent createSourceContent(urlPath, mediaType, lang, slug=null,
+    protected RemoteSourceContent getMainContent(Entry sourceEntry) {
+        def contentElem = sourceEntry.getContentElement()
+        def contentUrlPath = contentElem.getResolvedSrc().toString()
+        def contentMimeType = contentElem.getMimeType().toString()
+        def contentLang = contentElem.getLanguage()
+        def contentMd5hex = contentElem.getAttributeValue(Atomizer.LINK_EXT_MD5)
+        // TODO: allow inline content!
+        return createSourceContent(
+                contentUrlPath, contentMimeType, contentLang, null, contentMd5hex)
+    }
+
+    protected RemoteSourceContent createSourceContent(urlPath,
+            mediaType, lang, slug=null,
             md5hex=null, length=null) {
         urlPath = unescapeColon(urlPath)
-        def srcContent = new CollectingSourceContent(
+        def srcContent = new RemoteSourceContent(
                 this, urlPath, mediaType, lang, slug)
         if (md5hex != null) {
             srcContent.datachecks[SourceContent.Check.MD5] = md5hex
@@ -309,7 +301,20 @@ class FeedCollector extends FeedArchivePastToPresentReader {
     }
 
 
-    protected boolean sourceIsNotAnUpdate(Entry sourceEntry, DepotEntry depotEntry) {
+    protected static String getEnclosureSlug(URI sourceEntryUri, URI enclosureUri) {
+        String entryIdBase = sourceEntryUri.getPath()
+        String enclPath = enclosureUri.getPath()
+        if (!enclPath.startsWith(entryIdBase)) {
+            // TODO: fail with what?
+            throw new RuntimeException("Entry <"+sourceEntryUri +
+                    "> references <${enclosureUri}> out of its domain.")
+        }
+        return enclPath
+    }
+
+
+    protected static boolean sourceIsNotAnUpdate(Entry sourceEntry,
+            DepotEntry depotEntry) {
         File metaFile = depotEntry.getMetaFile(SOURCE_META_FILE_NAME)
         Entry metaEntry = null
         try {
@@ -323,7 +328,7 @@ class FeedCollector extends FeedArchivePastToPresentReader {
         return !(sourceEntry.getUpdated() > metaEntry.getUpdated())
     }
 
-    protected void saveSourceMetaInfo(Feed sourceFeed, Entry sourceEntry,
+    protected static void saveSourceMetaInfo(Feed sourceFeed, Entry sourceEntry,
             DepotEntry depotEntry) {
         /* TODO:IMPROVE:
             easier to store and use depotEntry.edited = sourceEntry.updated?
@@ -340,26 +345,35 @@ class FeedCollector extends FeedArchivePastToPresentReader {
     }
 
 
+    // TODO: factor out rdf-churning parts.
+
     protected URI processRdfInPlace(
             URI sourceEntryId, List<SourceContent> contents) {
 
         def rdfContent = getRdfContent(sourceEntryId, contents)
         def repo = rdfContentToRepository(rdfContent)
 
-        def newUri = uriMinter.computeOfficialUri(repo) // TODO: give sourceEntryId for subj?
-        if (!sourceEntryId.equals(newUri)) {
-            logger.info("New URI: <${newUri}>")
-            repo = RDFUtil.replaceURI(repo, sourceEntryId, newUri)
+        // TODO: switch handling based on RDF.TYPE?
+        def canonicalUri = sourceEntryId
+        try {
+            def newUri = uriMinter.computeOfficialUri(repo) // TODO: give sourceEntryId for subj?
+            if (newUri && !newUri.equals(sourceEntryId)) {
+                logger.info("New URI: <${newUri}>")
+                repo = RDFUtil.replaceURI(repo, sourceEntryId, newUri)
+                canonicalUri = newUri
+            }
+        } catch (URIComputationException e) {
+            // FIXME: establish rules for which resources to compute URI:s for!
         }
 
-        verifyRdf(newUri, repo)
+        verifyRdf(canonicalUri, repo)
 
         // TODO:IMPROVE: nicer to keep exact input rdf serialization if not rewritten?
         rdfContent.setSourceStream(RDFUtil.serializeAsInputStream(
                 repo, rdfContent.mediaType), true)
 
         repo.shutDown()
-        return newUri
+        return canonicalUri
     }
 
     protected SourceContent getRdfContent(URI sourceEntryId,
@@ -404,12 +418,12 @@ class FeedCollector extends FeedArchivePastToPresentReader {
 
 }
 
-class CollectingSourceContent extends SourceContent {
+class RemoteSourceContent extends SourceContent {
 
     private FeedCollector collector;
-    private String urlPath;
+    String urlPath;
 
-    public CollectingSourceContent(FeedCollector collector, String urlPath,
+    public RemoteSourceContent(FeedCollector collector, String urlPath,
             String mediaType, String lang, String enclosedUriPath) {
         super(mediaType, lang, enclosedUriPath);
         this.collector = collector;

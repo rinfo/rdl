@@ -120,23 +120,29 @@ def createAtomCollection(feedUri, feedTitle, baseUri, items) {
     def feed = Abdera.instance.newFeed()
     feed.id = feedUri
     feed.setTitle(feedTitle)
+    def youngestUpdated = null
 
     for (item in items) {
-        def entry = Abdera.instance.newEntry()
-        entry.id = item.uri
-        entry.setTitle(item.uri)
-        entry.setUpdated(item.updated)
+        def updated = item.updated
+        if (!youngestUpdated || updated > youngestUpdated) {
+            youngestUpdated = updated
+        }
         def contentHref = makeHref(baseUri, item.uri, "rdf")
-        entry.setContent(new IRI(contentHref), item.content.mediaType as String)
         collection[contentHref] = item.content
+        def entry = Abdera.instance.newEntry()
+        entry.setId(item.uri)
+        entry.setTitle(item.uri)
+        entry.setUpdated(updated)
+        entry.setContent(new IRI(contentHref), item.content.mediaType as String)
 
         for (encl in item.enclosures) {
+            collection[encl.href] = encl
             entry.addLink(encl.href, "enclosure", encl.mediaType as String,
                     null/*title*/, null/*lang*/, -1)
-            collection[encl.href] = encl
         }
         feed.insertEntry(entry)
     }
+    feed.setUpdated(youngestUpdated ?: new Date())
 
     collection["/"] = [
         data: {

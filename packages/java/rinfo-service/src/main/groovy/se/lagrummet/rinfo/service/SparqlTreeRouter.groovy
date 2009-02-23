@@ -19,6 +19,8 @@ import javax.xml.transform.Templates
 import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
 
+import org.apache.commons.configuration.ConfigurationUtils
+
 import org.openrdf.repository.Repository
 
 import se.lagrummet.rinfo.base.rdf.SparqlTree
@@ -26,19 +28,14 @@ import se.lagrummet.rinfo.base.rdf.SparqlTree
 
 class SparqlTreeRouter extends Router {
 
-    SparqlTreeRouter(Context context, Repository repository, File treeDir) {
+    SparqlTreeRouter(Context context, Repository repository) {
         super(context)
-
-        attach("/model", new ModelFinder(context, repository, treeDir))
-
+        attach("/model", new ModelFinder(context, repository))
         // TODO: nice capture of rest of path.. {path:anyPath} (+ /entry?)
-        def route = attach("/rdata/{path}", new RDataFinder(context, repository, treeDir))
+        def route = attach("/rdata/{path}", new RDataFinder(context, repository))
         Map<String, Variable> routeVars = route.getTemplate().getVariables()
         routeVars.put("path", new Variable(Variable.TYPE_URI_PATH))
-
-        /* TODO:...
-        //? attach("search", new SmartOpenSearchFinder(...))
-        */
+        // TODO:? attach("search", new OpenSearchFinder(...))
     }
 
 }
@@ -53,11 +50,11 @@ class SparqlTreeFinder extends Finder {
     SparqlTreeFinder() {}
 
     SparqlTreeFinder(Context context, Repository repository,
-            File treeFile, File outXsltFile, MediaType mediaType) {
+            URL treeUrl, URL outputXsltUrl, MediaType mediaType) {
         super(context)
-        rqTree = new SparqlTree(repository, treeFile)
+        rqTree = new SparqlTree(repository, treeUrl)
         outputXslt = SparqlTree.TRANSFORMER_FACTORY.newTemplates(
-                new StreamSource(outXsltFile))
+                new StreamSource(outputXsltUrl.openStream()))
         this.mediaType = mediaType
     }
 
@@ -84,14 +81,18 @@ class SparqlTreeFinder extends Finder {
         return query
     }
 
+    protected static URL locate(String name) {
+        return ConfigurationUtils.locate(name)
+    }
+
 }
 
 class ModelFinder extends SparqlTreeFinder {
 
-    ModelFinder(Context context, Repository repository, File treeDir) {
+    ModelFinder(Context context, Repository repository) {
         super(context, repository,
-                new File(treeDir, "model/sparqltree-model.xml"),
-                new File(treeDir, "model/modeltree_to_html.xslt"),
+                locate("sparqltree/model/sparqltree-model.xml"),
+                locate("sparqltree/model/modeltree_to_html.xslt"),
                 MediaType.TEXT_HTML)
     }
 
@@ -102,10 +103,10 @@ class RDataFinder extends SparqlTreeFinder {
     static final FILTER_TOKEN = "#FILTERS#"
     static final DEFAULT_MAX_ITEMS = 100
 
-    RDataFinder(Context context, Repository repository, File treeDir) {
+    RDataFinder(Context context, Repository repository) {
         super(context, repository,
-                new File(treeDir, "rdata/rpubl-rqtree.xml"),
-                new File(treeDir, "rdata/rpubl_to_rdata.xslt"),
+                locate("sparqltree/rdata/rpubl-rqtree.xml"),
+                locate("sparqltree/rdata/rpubl_to_rdata.xslt"),
                 MediaType.APPLICATION_XML) // APPLICATION_ATOM_XML
     }
 

@@ -47,9 +47,10 @@ class FeedCollectorRegistry {
         conn.close()
     }
 
-    void logVisitedFeedPage(Feed feed) {
+    void logVisitedFeedPage(URL pageUrl, Feed feed) {
         // TODO: log what?
-        def selfUri = vf.createURI(feed.getSelfLinkResolvedHref().toString())
+        def url = feed.getSelfLinkResolvedHref() ?: pageUrl
+        def selfUri = vf.createURI(url.toString())
         def updated = RDFUtil.createDateTime(vf, feed.getUpdated())
         conn.remove(selfUri, UPDATED, null)
         conn.add(selfUri, UPDATED, updated)

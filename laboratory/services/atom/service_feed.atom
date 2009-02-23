@@ -48,6 +48,17 @@
   <entry>
 
     <id>http://rinfo.lagrummet.se/publ/sfs/1999:175</id>
+
+    <!-- atom-triple sketches
+    <md:resource about="http://rinfo.lagrummet.se/publ/sfs/1999:175"
+                 typeof="http://rinfo.lagrummet.se/ns/2008/05/publ#Forordning"/>
+    <y:adjunct version="1.0" name="se.lagrummet.rinfo"
+               xmlns:y="http://search.yahoo.com/datarss/"
+               xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+        <y:type typeof="rpubl:Forordning"/>
+    </y:adjunct>
+    -->
+
     <!-- TODO: Controversial: entry/id as Resource URI? Too smudged? Alts: -->
     <link href="http://rinfo.lagrummet.se/publ/sfs/1999:175"/>
     <link rel="[foaf:primaryTopic]" href="http://rinfo.lagrummet.se/publ/sfs/1999:175"/>

@@ -7,10 +7,11 @@ def dev_unix():
     config.env = 'dev-unix'
     #
     config(
-        tomcat="/usr/share/tomcat6",
+        tomcat="/opt/tomcat",
         tomcat_webapps="$(tomcat)/webapps",
         tomcat_start='$(tomcat)/bin/catalina.sh start',
         tomcat_stop='$(tomcat)/bin/catalina.sh stop',
+        tomcat_user='tomcat',
     )
     # Machines:
     config(
@@ -38,6 +39,7 @@ def virt_test():
         tomcat_webapps="$(tomcat)/webapps",
         tomcat_start='/etc/init.d/tomcat6 start',
         tomcat_stop='/etc/init.d/tomcat6 stop',
+        tomcat_user='tomcat6',
     )
     # Machines:
     config(
@@ -63,6 +65,7 @@ def staging():
         tomcat_webapps="$(tomcat)/webapps",
         tomcat_start='dtomcat6 start',
         tomcat_stop='dtomcat6 stop',
+        tomcat_user='tomcat6',
     )
     # Machines:
     config(
@@ -123,7 +126,7 @@ def deploy_war(localwar, warname):
     l = vars()
     put(localwar, '$(dist_dir)/%(warname)s.war' % l)
     sudo("$(tomcat_stop)", fail='warn')
-    sudo("rm -rf $(tomcat_webapps)/%(warname)s/" % l)
+    sudo("rm -rf $(tomcat_webapps)/%(warname)s/" % l, fail='warn')
     sudo("mv $(dist_dir)/%(warname)s.war $(tomcat_webapps)/" % l)
     sudo("$(tomcat_start)")
 
@@ -133,7 +136,7 @@ def deploy_war(localwar, warname):
 @_needs_target
 def list_dist(ls=""):
     if ls: ls = "-"+ls
-    run("ls %s $(dist_dir)/" % ls)
+    run("ls -latr %s $(dist_dir)/" % ls)
 
 @_needs_target
 def clean_dist():
@@ -141,12 +144,19 @@ def clean_dist():
 
 @_needs_target
 def tail():
-    sudo("tail -f $(tomcat)/logs/catalina.out")
+    sudo("ls -t $(tomcat)/logs/catalina*.* | head -1 | xargs tail -f")
 
 @_needs_target
 def restart():
     sudo("$(tomcat_stop)", fail='warn')
     sudo("$(tomcat_start)")
+
+@_needs_target
+def restart_apache():
+    #sudo("apache2ctl stop", fail='warn')
+    #sudo("apache2ctl start")
+    sudo("/etc/init.d/apache2 stop", fail='warn')
+    sudo("/etc/init.d/apache2 start")
 
 @_needs_target
 def war_props(war="ROOT"):

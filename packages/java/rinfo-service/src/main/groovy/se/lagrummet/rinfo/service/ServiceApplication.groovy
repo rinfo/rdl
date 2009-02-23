@@ -62,13 +62,10 @@ class ServiceApplication extends Application {
     public synchronized Restlet createRoot() {
         def router = new Router(getContext())
         router.attach("/collector", new Finder(getContext(), RDFLoaderHandler))
-        // FIXME: copy to resources and point out in config.
-        def treeDir = new File("../../../laboratory/services/SparqlToAtom/examples/")
         router.attach("/view", new SparqlTreeRouter(
-                getContext(), repositoryHandler.repository, treeDir))
-        // FIXME:? How to let through to webapp dir instead (if desirable)?
-        router.attach("/css", new Directory(getContext(),
-                new File("src/main/webapp/css").toURI().toString()))
+                getContext(), repositoryHandler.repository))
+        // TODO:? put path to css dir in properties (different when out-of-war deployed)
+        router.attach("/css", new Directory(getContext(), "war:///css/"))
         //TODO:? router.attach("/spec", new Directory(getContext(), ".../documents/acceptance"))
         router.attach("/status", StatusResource)
         return router
