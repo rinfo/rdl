@@ -20,23 +20,29 @@
 
     <!-- dokumentkopplingar -->
     <!-- TODO: koppla till paragraf och/eller dokument? -->
-    <bemyndigande rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770#paragraf-3"
-                  rdf:parseType="Resource">
-        <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770"/>
+    <bemyndigande rdf:parseType="Resource">
+      <paragrafnummer>1</paragrafnummer>
+      <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770"/>
     </bemyndigande>
     <!-- TODO: hänvisning om "undantag i det enskilda fallet":
       rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770#paragraf-4"
     -->
 
     <!-- dokumentsammansätting -->
-    <paragraf rdf:resource="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-1">
-      <paragrafnummer>1</paragrafnummer>
+    <paragraf>
+      <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-1">
+        <paragrafnummer>1</paragrafnummer>
+      </Paragraf>
     </paragraf>
-    <paragraf rdf:resource="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-2">
-      <paragrafnummer>2</paragrafnummer>
+    <paragraf>
+      <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-2">
+        <paragrafnummer>2</paragrafnummer>
+      </Paragraf>
     </paragraf>
-    <paragraf rdf:resource="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-3">
-      <paragrafnummer>3</paragrafnummer>
+    <paragraf>
+      <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-3">
+        <paragrafnummer>3</paragrafnummer>
+      </Paragraf>
     </paragraf>
 
   </Myndighetsforeskrift>

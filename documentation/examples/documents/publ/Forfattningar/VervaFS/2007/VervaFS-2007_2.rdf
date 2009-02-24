@@ -28,26 +28,40 @@
     -->
 
     <!-- dokumentsammansätting -->
-    <paragraf rdf:resource="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-1">
-      <paragrafnummer>1</paragrafnummer>
+    <paragraf>
+        <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-1">
+            <paragrafnummer>1</paragrafnummer>
+        </Paragraf>
     </paragraf>
-    <paragraf rdf:resource="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-2">
-      <paragrafnummer>2</paragrafnummer>
+    <paragraf>
+        <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-2">
+            <paragrafnummer>2</paragrafnummer>
+        </Paragraf>
     </paragraf>
-    <paragraf rdf:resource="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-3">
-      <paragrafnummer>3</paragrafnummer>
+    <paragraf>
+        <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-3">
+            <paragrafnummer>3</paragrafnummer>
+        </Paragraf>
     </paragraf>
-    <paragraf rdf:resource="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-4">
-      <paragrafnummer>4</paragrafnummer>
+    <paragraf>
+        <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-4">
+            <paragrafnummer>4</paragrafnummer>
+        </Paragraf>
     </paragraf>
-    <paragraf rdf:resource="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-5">
-      <paragrafnummer>5</paragrafnummer>
+    <paragraf>
+        <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-5">
+            <paragrafnummer>5</paragrafnummer>
+        </Paragraf>
     </paragraf>
-    <paragraf rdf:resource="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-6">
-      <paragrafnummer>6</paragrafnummer>
+    <paragraf>
+        <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-6">
+            <paragrafnummer>6</paragrafnummer>
+        </Paragraf>
     </paragraf>
-    <paragraf rdf:resource="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-7">
-      <paragrafnummer>7</paragrafnummer>
+    <paragraf>
+        <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-7">
+            <paragrafnummer>7</paragrafnummer>
+        </Paragraf>
     </paragraf>
 
   </Myndighetsforeskrift>
