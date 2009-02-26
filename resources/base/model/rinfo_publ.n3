@@ -20,6 +20,7 @@
 # .. fler owl:inverseOf labels för (åtmistone Object)Properties?
 # .. En *god* idé är att för vissa typer/egenskaper hänvisa till "Gröna boken" <Ds. 1998:66>!
 # - Definiera plural-egenskaper med (förslagsvis): <http://purl.org/net/vocab/2004/03/label#>
+# - ange labels utan "Title"-case (går deterministiskt att uppercase:a, men inte tvärtom)
 
 # TODO: fsNummer och liknande är rimligen owl:FunctionalProperty (kombineras med DatatypeProperty eller ObjectProperty!)
 
