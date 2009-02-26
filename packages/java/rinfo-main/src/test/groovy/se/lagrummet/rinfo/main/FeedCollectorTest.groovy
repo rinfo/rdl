@@ -1,5 +1,6 @@
 package se.lagrummet.rinfo.main
 
+//import org.junit.After
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.junit.Test
@@ -8,9 +9,10 @@ import static org.junit.Assert.*
 
 class FeedCollectorTest {
 
-    def value = null
-    def given = { value = it }
-    def expect = { assertEquals it, value }
+    def value, given = { value = it }, expect = { assertEquals it, value }
+    //def values = []
+    //def given = { values << it }, expect = { assertEquals it, values.pop() }
+    //@After void forget() { values.clear() }
 
     @BeforeClass
     static void setupClass() {

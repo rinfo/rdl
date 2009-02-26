@@ -93,7 +93,7 @@ numberOfItems.times {
         rels: randomRel(docUris)
     ]
 
-    docUris << item.doc
+    docUris << item.doc // TODO: on large numberOfItems, how slow does this get?
     load(repo, tplt.make(item).toString())
 }
 println("Done.")

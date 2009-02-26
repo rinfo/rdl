@@ -30,6 +30,7 @@ def main() {
     startServer(port,
         createAtomCollection(FEED_URI, FEED_TITLE, BASE_URI,
             collectItems(base) ) )
+    // TODO: pingMainWithMe?
 }
 
 //======================================================================

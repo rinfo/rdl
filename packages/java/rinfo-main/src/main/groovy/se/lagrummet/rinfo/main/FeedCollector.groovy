@@ -184,7 +184,6 @@ class FeedCollector extends FeedArchivePastToPresentReader {
         List contents = new ArrayList()
         List enclosures = new ArrayList()
         fillContentsAndEnclosures(sourceEntry, contents, enclosures)
-
         URI finalUri = processRdfInPlace(sourceEntryId, contents)
 
         logger.info("Collecting entry <${sourceEntryId}>  as <${finalUri}>..")
