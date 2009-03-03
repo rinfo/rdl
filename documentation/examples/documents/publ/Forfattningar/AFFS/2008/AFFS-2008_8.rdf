@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dct="http://purl.org/dc/terms/"
+         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+
+  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/affs/2008:8">
+
+    <!-- identifiering -->
+    <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/affs"/>
+	<fsNummer>2008:8</fsNummer>
+	<dct:title xml:lang="sv">Arbetsförmedlingens administrativa föreskrifter om uppgiftsfördelning i det systematiska arbetsmiljöarbetet vid Arbetsförmedlingen;</dct:title>
+
+    <!-- tidsaspekter -->
+    <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2008-08-19</beslutsdatum>
+    <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2008-09-01</ikrafttradandedatum>
+    <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2008-08-21</utkomFranTryck>
+
+    <!-- ursprung -->
+    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/arbetsformedlingen"/>
+
+	<!-- dokumentkopplingar -->
+	<!-- Bemyndigande? -->
+    <!-- bemyndigande rdf:parseType="Resource">
+        <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1991:446"/>
+        <paragrafnummer>11</paragrafnummer>
+    </bemyndigande>
+    <bemyndigande rdf:parseType="Resource">
+        <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1991:446"/>
+        <paragrafnummer>12</paragrafnummer>
+    </bemyndigande -->
+
+  </Myndighetsforeskrift>
+
+</rdf:RDF>
