@@ -15,6 +15,6 @@ Environments (see usage of "environment" in pom.xml)::
 
 Running as war::
 
-    $ mvn -Djetty.port=8182 jetty:run
+    $ mvn -Djetty.port=8281 jetty:run
 
 
