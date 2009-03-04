@@ -38,7 +38,7 @@ dct:modified a rdf:Property;
 
 dct:issued a rdf:Property;
     rdfs:label "Utfärdad"@sv;
-    rdfs:comment ""@sv .
+    rdfs:comment "Datum då resursen formellt utfärdades (t.ex. publicering)."@sv .
 
 
 
