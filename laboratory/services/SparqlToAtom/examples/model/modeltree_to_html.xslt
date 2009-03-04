@@ -16,7 +16,7 @@
   <xsl:template match="/st:tree">
     <html xml:lang="sv">
       <head profile="http://www.w3.org/ns/rdfa/">
-        <title>Ontology Viewer</title>
+        <title><xsl:value-of select="ontology/title | ontology/label"/></title>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
         <link rel="stylesheet" href="/css/ontology.css" />
       </head>
