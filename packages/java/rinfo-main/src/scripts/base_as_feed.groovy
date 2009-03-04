@@ -78,7 +78,7 @@ def datasetItem(uriPath, List<File> files) {
 
     def setRepo = RDFUtil.createMemoryRepository()
     def conn = setRepo.connection
-    for (file in files) {
+    files.each { file ->
         def slug = "/"+uriPath+"/"+file.name.replace(".n3", ".rdf")
 
         conn.add(
@@ -89,7 +89,7 @@ def datasetItem(uriPath, List<File> files) {
         enclosures << [
             href: slug,
             data: {
-                def enclRepo = RDFUtil.createMemoryRepository()
+                final enclRepo = RDFUtil.createMemoryRepository()
                 RDFUtil.loadDataFromFile(enclRepo, file)
                 repoToInStream(enclRepo)
             },
