@@ -234,7 +234,7 @@
     rdfs:isDefinedBy : ;
     rdfs:subPropertyOf dct:hasPart;
     rdfs:label "Kapitel"@sv;
-    rdfs:comment "Referenser till författningens kapitel."@sv;
+    rdfs:comment "Angivelse av i författningen ingående kapitel."@sv;
     rdfs:range :Kapitel;
     owl:inverseOf [ rdfs:label "Kapitel i"@sv ]; .
 
@@ -242,7 +242,7 @@
     rdfs:isDefinedBy : ;
     rdfs:subPropertyOf dct:hasPart;
     rdfs:label "Paragraf"@sv;
-    rdfs:comment "Referenser till författningens paragrafer."@sv;
+    rdfs:comment "Angivelse av i författningen ingående paragraf."@sv;
     rdfs:range :Paragraf;
     owl:inverseOf [ rdfs:label "Paragraf i"@sv ]; .
 
