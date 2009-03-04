@@ -36,4 +36,9 @@ dct:modified a rdf:Property;
     rdfs:label "Senast ändrad"@sv;
     rdfs:comment ""@sv .
 
+dct:issued a rdf:Property;
+    rdfs:label "Utfärdad"@sv;
+    rdfs:comment ""@sv .
+
+
 
