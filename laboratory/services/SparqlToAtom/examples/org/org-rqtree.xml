@@ -1,0 +1,30 @@
+<st:sparqltree xmlns:st="http://oort.to/ns/2008/09/sparqltree"
+               xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+               xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+               xmlns:foaf="http://xmlns.com/foaf/0.1/"
+               xmlns:oldskos="http://www.w3.org/2004/02/skos/core#"
+               xmlns:skos="http://www.w3.org/2008/05/skos#"
+               xmlns:dct="http://purl.org/dc/terms/"
+               xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
+               order-by="DESC(?org)"
+               distinct="true">
+
+    <org> a foaf:Organization;
+        foaf:name <orgName/> .
+        <serie> a ?serieType .
+            <serieType>
+                rdfs:label <serieTypeLabel/> .
+            </serieType>
+            ?serie dct:publisher ?org .
+            {
+                ?serie rdfs:label <serieName/> .
+            } UNION {
+                ?serie skos:prefLabel <serieName/> .
+            }
+            OPTIONAL {
+                ?serie skos:altLabel <serieShortname/> .
+            }
+        </serie>
+    </org>
+
+</st:sparqltree>

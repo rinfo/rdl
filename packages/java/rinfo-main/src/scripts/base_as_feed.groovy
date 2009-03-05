@@ -47,6 +47,10 @@ def collectItems(base) {
             FU.listFiles(new File(base, "extended/rdf"),
                 ["n3"] as String[], true))
 
+    items << datasetItem("org",
+            FU.listFiles(new File(base, "datasets/org"),
+                ["n3"] as String[], true))
+
     items << datasetItem("serie",
             FU.listFiles(new File(base, "datasets/serie"),
                 ["n3"] as String[], true))

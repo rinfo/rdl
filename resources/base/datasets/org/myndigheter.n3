@@ -3,18 +3,269 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
 # TODO:
-#   - this is an initial source; fill from where?
 #   - should be a rinfo-admin editable resource.
 
 <http://rinfo.lagrummet.se/org/justitiedepartementet>
     a foaf:Organization;
-    rdfs:label "Justitiedepartementet"@sv .
-
-<http://rinfo.lagrummet.se/org/domstolsverket>
-    a foaf:Organization;
-    rdfs:label "Domstolsverket"@sv .
+    foaf:name "Justitiedepartementet"@sv .
 
 <http://rinfo.lagrummet.se/org/verva>
     a foaf:Organization;
-    rdfs:label "Verva"@sv .
+    foaf:name "Verva"@sv .
+    # FIXME: see "Verket för förvaltningsutveckling" below.
+
+
+## all below are extracted from <https://lagen.nu/1976:725>
+
+<http://rinfo.lagrummet.se/org/aff%C3%A4rsverket_svenska_kraftn%C3%A4t>
+    a foaf:Organization;
+    foaf:name "Affärsverket svenska kraftnät"@sv .
+
+<http://rinfo.lagrummet.se/org/arbetsf%C3%B6rmedlingen>
+    a foaf:Organization;
+    foaf:name "Arbetsförmedlingen"@sv .
+
+<http://rinfo.lagrummet.se/org/arbetsgivarverket>
+    a foaf:Organization;
+    foaf:name "Arbetsgivarverket"@sv .
+
+<http://rinfo.lagrummet.se/org/arbetsmilj%C3%B6verket>
+    a foaf:Organization;
+    foaf:name "Arbetsmiljöverket"@sv .
+
+<http://rinfo.lagrummet.se/org/banverket>
+    a foaf:Organization;
+    foaf:name "Banverket"@sv .
+
+<http://rinfo.lagrummet.se/org/bolagsverket>
+    a foaf:Organization;
+    foaf:name "Bolagsverket"@sv .
+
+<http://rinfo.lagrummet.se/org/boverket>
+    a foaf:Organization;
+    foaf:name "Boverket"@sv .
+
+<http://rinfo.lagrummet.se/org/centrala_studiest%C3%B6dsn%C3%A4mnden>
+    a foaf:Organization;
+    foaf:name "Centrala studiestödsnämnden"@sv .
+
+<http://rinfo.lagrummet.se/org/datainspektionen>
+    a foaf:Organization;
+    foaf:name "Datainspektionen"@sv .
+
+<http://rinfo.lagrummet.se/org/domstolsverket>
+    a foaf:Organization;
+    foaf:name "Domstolsverket"@sv .
+
+<http://rinfo.lagrummet.se/org/els%C3%A4kerhetsverket>
+    a foaf:Organization;
+    foaf:name "Elsäkerhetsverket"@sv .
+
+<http://rinfo.lagrummet.se/org/energimarknadsinspektionen>
+    a foaf:Organization;
+    foaf:name "Energimarknadsinspektionen"@sv .
+
+<http://rinfo.lagrummet.se/org/finansinspektionen>
+    a foaf:Organization;
+    foaf:name "Finansinspektionen"@sv .
+
+<http://rinfo.lagrummet.se/org/fiskeriverket>
+    a foaf:Organization;
+    foaf:name "Fiskeriverket"@sv .
+
+<http://rinfo.lagrummet.se/org/f%C3%B6rsvarsmakten>
+    a foaf:Organization;
+    foaf:name "Försvarsmakten"@sv .
+
+<http://rinfo.lagrummet.se/org/f%C3%B6rs%C3%A4kringskassan>
+    a foaf:Organization;
+    foaf:name "Försäkringskassan"@sv .
+
+<http://rinfo.lagrummet.se/org/h%C3%B6gskoleverket>
+    a foaf:Organization;
+    foaf:name "Högskoleverket"@sv .
+
+<http://rinfo.lagrummet.se/org/inspektionen_f%C3%B6r_arbetsl%C3%B6shetsf%C3%B6rs%C3%A4kringen>
+    a foaf:Organization;
+    foaf:name "Inspektionen för arbetslöshetsförsäkringen"@sv .
+
+<http://rinfo.lagrummet.se/org/institutet_f%C3%B6r_tillv%C3%A4xtpolitiska_studier>
+    a foaf:Organization;
+    foaf:name "Institutet för tillväxtpolitiska studier"@sv .
+
+<http://rinfo.lagrummet.se/org/kammarkollegiet>
+    a foaf:Organization;
+    foaf:name "Kammarkollegiet"@sv .
+
+<http://rinfo.lagrummet.se/org/kemikalieinspektionen>
+    a foaf:Organization;
+    foaf:name "Kemikalieinspektionen"@sv .
+
+<http://rinfo.lagrummet.se/org/kommerskollegium>
+    a foaf:Organization;
+    foaf:name "Kommerskollegium"@sv .
+
+<http://rinfo.lagrummet.se/org/konkurrensverket>
+    a foaf:Organization;
+    foaf:name "Konkurrensverket"@sv .
+
+<http://rinfo.lagrummet.se/org/konsumentverket>
+    a foaf:Organization;
+    foaf:name "Konsumentverket"@sv .
+
+<http://rinfo.lagrummet.se/org/kronofogdemyndigheten>
+    a foaf:Organization;
+    foaf:name "Kronofogdemyndigheten"@sv .
+
+<http://rinfo.lagrummet.se/org/lantm%C3%A4teriet>
+    a foaf:Organization;
+    foaf:name "Lantmäteriet"@sv .
+
+<http://rinfo.lagrummet.se/org/livsmedelsverket>
+    a foaf:Organization;
+    foaf:name "Livsmedelsverket"@sv .
+
+<http://rinfo.lagrummet.se/org/lotteriinspektionen>
+    a foaf:Organization;
+    foaf:name "Lotteriinspektionen"@sv .
+
+<http://rinfo.lagrummet.se/org/l%C3%A4kemedelsverket>
+    a foaf:Organization;
+    foaf:name "Läkemedelsverket"@sv .
+
+<http://rinfo.lagrummet.se/org/migrationsverket>
+    a foaf:Organization;
+    foaf:name "Migrationsverket"@sv .
+
+<http://rinfo.lagrummet.se/org/myndigheten_f%C3%B6r_samh%C3%A4llsskydd_och_beredskap>
+    a foaf:Organization;
+    foaf:name "Myndigheten för samhällsskydd och beredskap"@sv .
+
+<http://rinfo.lagrummet.se/org/naturv%C3%A5rdsverket>
+    a foaf:Organization;
+    foaf:name "Naturvårdsverket"@sv .
+
+<http://rinfo.lagrummet.se/org/patent-_och_registreringsverket>
+    a foaf:Organization;
+    foaf:name "Patent- och registreringsverket"@sv .
+
+<http://rinfo.lagrummet.se/org/post-_och_telestyrelsen>
+    a foaf:Organization;
+    foaf:name "Post- och telestyrelsen"@sv .
+
+<http://rinfo.lagrummet.se/org/radio-_och_tv-verket>
+    a foaf:Organization;
+    foaf:name "Radio- och TV-verket"@sv .
+
+<http://rinfo.lagrummet.se/org/revisorsn%C3%A4mnden>
+    a foaf:Organization;
+    foaf:name "Revisorsnämnden"@sv .
+
+<http://rinfo.lagrummet.se/org/riksarkivet>
+    a foaf:Organization;
+    foaf:name "Riksarkivet"@sv .
+
+<http://rinfo.lagrummet.se/org/riksg%C3%A4ldskontoret>
+    a foaf:Organization;
+    foaf:name "Riksgäldskontoret"@sv .
+
+<http://rinfo.lagrummet.se/org/rikspolisstyrelsen>
+    a foaf:Organization;
+    foaf:name "Rikspolisstyrelsen"@sv .
+
+<http://rinfo.lagrummet.se/org/sametinget>
+    a foaf:Organization;
+    foaf:name "Sametinget"@sv .
+
+<http://rinfo.lagrummet.se/org/sj%C3%B6fartsverket>
+    a foaf:Organization;
+    foaf:name "Sjöfartsverket"@sv .
+
+<http://rinfo.lagrummet.se/org/skatteverket>
+    a foaf:Organization;
+    foaf:name "Skatteverket"@sv .
+
+<http://rinfo.lagrummet.se/org/skogsstyrelsen>
+    a foaf:Organization;
+    foaf:name "Skogsstyrelsen"@sv .
+
+<http://rinfo.lagrummet.se/org/socialstyrelsen>
+    a foaf:Organization;
+    foaf:name "Socialstyrelsen"@sv .
+
+<http://rinfo.lagrummet.se/org/statens_energimyndighet>
+    a foaf:Organization;
+    foaf:name "Statens energimyndighet"@sv .
+
+<http://rinfo.lagrummet.se/org/statens_folkh%C3%A4lsoinstitut>
+    a foaf:Organization;
+    foaf:name "Statens folkhälsoinstitut"@sv .
+
+<http://rinfo.lagrummet.se/org/statens_jordbruksverk>
+    a foaf:Organization;
+    foaf:name "Statens jordbruksverk"@sv .
+
+<http://rinfo.lagrummet.se/org/statens_kulturr%C3%A5d>
+    a foaf:Organization;
+    foaf:name "Statens kulturråd"@sv .
+
+<http://rinfo.lagrummet.se/org/statens_skolverk>
+    a foaf:Organization;
+    foaf:name "Statens skolverk"@sv .
+
+<http://rinfo.lagrummet.se/org/statistiska_centralbyr%C3%A5n>
+    a foaf:Organization;
+    foaf:name "Statistiska centralbyrån"@sv .
+
+<http://rinfo.lagrummet.se/org/str%C3%A5ls%C3%A4kerhetsmyndigheten>
+    a foaf:Organization;
+    foaf:name "Strålsäkerhetsmyndigheten"@sv .
+
+<http://rinfo.lagrummet.se/org/styrelsen_f%C3%B6r_ackreditering_och_teknisk_kontroll>
+    a foaf:Organization;
+    foaf:name "Styrelsen för ackreditering och teknisk kontroll"@sv .
+
+<http://rinfo.lagrummet.se/org/sveriges_geologiska_unders%C3%B6kning>
+    a foaf:Organization;
+    foaf:name "Sveriges geologiska undersökning"@sv .
+
+<http://rinfo.lagrummet.se/org/tandv%C3%A5rds-_och_l%C3%A4kemedelsf%C3%B6rm%C3%A5nsverket>
+    a foaf:Organization;
+    foaf:name "Tandvårds- och läkemedelsförmånsverket"@sv .
+
+<http://rinfo.lagrummet.se/org/totalf%C3%B6rsvarets_pliktverk>
+    a foaf:Organization;
+    foaf:name "Totalförsvarets pliktverk"@sv .
+
+<http://rinfo.lagrummet.se/org/transportstyrelsen>
+    a foaf:Organization;
+    foaf:name "Transportstyrelsen"@sv .
+
+<http://rinfo.lagrummet.se/org/tullverket>
+    a foaf:Organization;
+    foaf:name "Tullverket"@sv .
+
+<http://rinfo.lagrummet.se/org/valmyndigheten>
+    a foaf:Organization;
+    foaf:name "Valmyndigheten"@sv .
+
+<http://rinfo.lagrummet.se/org/verket_f%C3%B6r_f%C3%B6rvaltningsutveckling>
+    a foaf:Organization;
+    foaf:name "Verket för förvaltningsutveckling"@sv .
+
+<http://rinfo.lagrummet.se/org/verket_f%C3%B6r_n%C3%A4ringslivsutveckling>
+    a foaf:Organization;
+    foaf:name "Verket för näringslivsutveckling"@sv .
+
+<http://rinfo.lagrummet.se/org/vetenskapsr%C3%A5det>
+    a foaf:Organization;
+    foaf:name "Vetenskapsrådet"@sv .
+
+<http://rinfo.lagrummet.se/org/v%C3%A4gverket>
+    a foaf:Organization;
+    foaf:name "Vägverket"@sv .
+
+<http://rinfo.lagrummet.se/org/%C3%85klagarmyndigheten>
+    a foaf:Organization;
+    foaf:name "Åklagarmyndigheten"@sv .
 

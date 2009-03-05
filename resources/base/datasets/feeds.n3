@@ -1,4 +1,5 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
 @prefix sioc: <http://rdfs.org/sioc/ns#> .
 @prefix awol: <http://bblfish.net/work/atom-owl/2006-06-06/#> .
 @prefix iana: <http://www.iana.org/assignments/relation/> .
@@ -6,6 +7,7 @@
 # TODO:
 #
 # - How to link org. and feed? Not just "feed"..
+#   .. previously: is sioc:feed of ..
 #   - just use "legalDataFeed", or categorize the feed?
 #       - Categorize.. sioc:topic? foaf:primaryTopic?
 #
@@ -20,17 +22,17 @@
 #   We might do even better, e.g. a subscriptionFeed property?
 
 <tag:regeringen.se,2009:rinfo:feed> a awol:Feed;
-    is sioc:feed of <http://rinfo.lagrummet.se/org/justitiedepartementet>;
+    dct:publisher <http://rinfo.lagrummet.se/org/justitiedepartementet>;
     iana:current <http://regeringen.se/sfs/feed/current>;
     awol:id "tag:regeringen.se,2009:rinfo:feed"^^xsd:anyURI .
 
 <tag:dom.se,2009:rinfo:feed> a awol:Feed;
-    is sioc:feed of <http://rinfo.lagrummet.se/org/domstolsverket>;
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
     iana:current <http://dom.se/dvfs/feed/current>;
     awol:id "tag:dom.se,2009:rinfo:feed"^^xsd:anyURI .
 
 <tag:verva.se,2007:rinfo:feed> a awol:Feed;
-    is sioc:feed of <http://rinfo.lagrummet.se/org/verva>;
+    dct:publisher <http://rinfo.lagrummet.se/org/verva>;
     iana:current <http://regeringen.se/vervafs/feed/current>;
     awol:id "tag:verva.se,2007:rinfo:feed"^^xsd:anyURI .
 

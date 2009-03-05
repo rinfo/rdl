@@ -31,6 +31,7 @@ class SparqlTreeRouter extends Router {
     SparqlTreeRouter(Context context, Repository repository) {
         super(context)
         attach("/model", new ModelFinder(context, repository))
+        attach("/org", new OrgFinder(context, repository))
         // TODO: nice capture of rest of path.. {path:anyPath} (+ /entry?)
         def route = attach("/rdata/{path}", new RDataFinder(context, repository))
         Map<String, Variable> routeVars = route.getTemplate().getVariables()
@@ -93,6 +94,17 @@ class ModelFinder extends SparqlTreeFinder {
         super(context, repository,
                 locate("sparqltree/model/sparqltree-model.xml"),
                 locate("sparqltree/model/modeltree_to_html.xslt"),
+                MediaType.TEXT_HTML)
+    }
+
+}
+
+class OrgFinder extends SparqlTreeFinder {
+
+    OrgFinder(Context context, Repository repository) {
+        super(context, repository,
+                locate("sparqltree/org/org-rqtree.xml"),
+                locate("sparqltree/org/org-html.xslt"),
                 MediaType.TEXT_HTML)
     }
 

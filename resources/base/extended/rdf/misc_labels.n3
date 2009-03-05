@@ -9,9 +9,10 @@ rdfs:Literal
 rdfs:Resource
     rdfs:label "Resurs"@sv; .
 
-rdfs:seeAlso
+rdfs:seeAlso a rdf:Property;
     rdfs:label "Se även"@sv;
-    rdfs:comment "Ytterligare information om given resurs."@sv; .
+    rdfs:comment "Ytterligare information om given resurs."@sv;
+    rdfs:isDefinedBy rdfs: .
 
 xsd:date
     rdfs:label "Datum"@sv .
