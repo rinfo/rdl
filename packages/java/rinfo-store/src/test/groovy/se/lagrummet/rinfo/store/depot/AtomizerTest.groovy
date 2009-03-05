@@ -20,4 +20,14 @@ class AtomizerTest  {
         atomizer.configure(new PropertiesConfiguration())
     }
 
+    @Test
+    void shouldUseFeedSkeletonResource() {
+        // using file location
+        atomizer.setFeedSkeleton("src/test/resources/test_feed_skeleton.atom")
+        assertEquals "Test Feed", atomizer.skeletonFeed.title
+        // using (class) resource location
+        atomizer.setFeedSkeleton("test_feed_skeleton.atom")
+        assertEquals "Test Feed", atomizer.skeletonFeed.title
+    }
+
 }

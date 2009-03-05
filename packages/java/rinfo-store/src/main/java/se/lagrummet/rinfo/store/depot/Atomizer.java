@@ -13,7 +13,8 @@ import javax.xml.namespace.QName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.commons.configuration.AbstractConfiguration;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationUtils;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -87,8 +88,8 @@ public class Atomizer {
         setDepot(depot);
     }
 
-    public void configure(AbstractConfiguration config)
-            throws ConfigurationException, FileNotFoundException {
+    public void configure(Configuration config)
+            throws ConfigurationException, IOException {
         setFeedSkeleton(
                 config.getString(CONF_BASE_KEY+"feedSkeleton"));
         setFeedBatchSize(
@@ -169,11 +170,16 @@ public class Atomizer {
         return getUseFeedSync() || getUseGdataDeleted();
     }
 
-    void setFeedSkeleton(String feedSkeleton) throws FileNotFoundException {
+    void setFeedSkeleton(String feedSkeleton) throws IOException {
         if (feedSkeleton!=null && !feedSkeleton.equals("")) {
             skeletonFeed = (Feed) Abdera.getInstance().getParser().parse(
-                    new FileInputStream(feedSkeleton)).getRoot();
+                    ConfigurationUtils.locate(feedSkeleton).openStream()
+                ).getRoot();
         }
+    }
+
+    public Feed getSkeletonFeed() {
+        return skeletonFeed;
     }
 
 

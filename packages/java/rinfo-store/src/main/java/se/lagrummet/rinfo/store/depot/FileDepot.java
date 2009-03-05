@@ -43,20 +43,20 @@ public class FileDepot {
 
     public static FileDepot newAutoConfigured()
         throws ConfigurationException,
-               URISyntaxException, FileNotFoundException {
+               URISyntaxException, IOException {
         return newConfigured(CONFIG_PROPERTIES_FILE_NAME);
     }
 
     public static FileDepot newConfigured(String fileName)
         throws ConfigurationException,
-               URISyntaxException, FileNotFoundException {
+               URISyntaxException, IOException {
         PropertiesConfiguration config = new PropertiesConfiguration(fileName);
         return newConfigured(config);
     }
 
     public static FileDepot newConfigured(AbstractConfiguration config)
         throws ConfigurationException,
-               URISyntaxException, FileNotFoundException {
+               URISyntaxException, IOException {
         FileDepot depot = new FileDepot();
         depot.configure(config);
         return depot;
@@ -64,7 +64,7 @@ public class FileDepot {
 
     public void configure(AbstractConfiguration config)
         throws ConfigurationException,
-               URISyntaxException, FileNotFoundException {
+               URISyntaxException, IOException {
         setBaseUri(new URI(config.getString(CONF_BASE_KEY+"baseUri")));
         setBaseDir(new File(config.getString(CONF_BASE_KEY+"fileDir")));
         setFeedPath(config.getString(CONF_BASE_KEY+"feedPath"));

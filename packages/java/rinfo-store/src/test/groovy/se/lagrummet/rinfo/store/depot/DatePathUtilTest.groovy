@@ -8,7 +8,7 @@ import static org.junit.Assert.*
 class DatePathUtilTest {
 
     @Test
-    void shouldMachValidDatePaths() {
+    void shouldMatchValidDatePaths() {
         /* TODO:
         assertTrue match("09-30")
         assertTrue match("19-30")
