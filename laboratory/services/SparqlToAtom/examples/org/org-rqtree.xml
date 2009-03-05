@@ -11,11 +11,11 @@
 
     <org> a foaf:Organization;
         foaf:name <orgName/> .
+        ?serie dct:publisher ?org .
         <serie> a ?serieType .
             <serieType>
                 rdfs:label <serieTypeLabel/> .
             </serieType>
-            ?serie dct:publisher ?org .
             {
                 ?serie rdfs:label <serieName/> .
             } UNION {

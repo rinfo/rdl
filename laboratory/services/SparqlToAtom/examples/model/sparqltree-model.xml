@@ -22,7 +22,7 @@
                 ?ontology dct:title <title/>
             }
             OPTIONAL {
-                ?ontology dct:description <description/> 
+                ?ontology dct:description <description/>
             }
 
         } UNION {
@@ -112,8 +112,10 @@
                  ontology defined things (w/o getting *all* in the repo)?
             -->
             ?property a rdf:Property;
-                rdfs:label ?label;
-                rdfs:comment ?comment .
+                rdfs:label ?label .
+            OPTIONAL {
+                ?property rdfs:comment ?comment .
+            }
 
         }
 
