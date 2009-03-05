@@ -1,18 +1,5 @@
 <?xml version="1.0"?>
 
-<!-- TriX: http://www.hpl.hp.com/techreports/2004/HPL-2004-56.pdf -->
-<link rel="related" href="http://rdata.lagrummet.se/extras/relation-labels/publ.trix" type="application/x-trix+xml"/>
-...
-<TriX xmlns="http://www.w3.org/2004/03/trix/trix-1/">
-    <graph>
-        <triple>
-            <uri>http://rinfo.lagrummet.se/ns/2008/04/publ#forarbete</uri>
-            <uri>http://www.w3.org/2000/01/rdf-schema#label</uri>
-            <plainLiteral xml:lang="sv">förarbete</uri>
-        </triple>
-    </graph>
-</TriX>
-
 <!-- semantic xhtml -->
 <link rel="related" href="http://rdata.lagrummet.se/extras/relation-labels/publ,sv.xhtml" type="application/xhtml+xml" hreflang="sv"/>
 ...
@@ -28,4 +15,17 @@
 
 <!-- or just: -->
 <link rel="http://rinfo.lagrummet.se/ns/2008/05/publ#forarbete" title="förarbete" ... />
+
+<!-- TriX: http://www.hpl.hp.com/techreports/2004/HPL-2004-56.pdf -->
+<link rel="related" href="http://rdata.lagrummet.se/extras/relation-labels/publ.trix" type="application/x-trix+xml"/>
+...
+<TriX xmlns="http://www.w3.org/2004/03/trix/trix-1/">
+    <graph>
+        <triple>
+            <uri>http://rinfo.lagrummet.se/ns/2008/04/publ#forarbete</uri>
+            <uri>http://www.w3.org/2000/01/rdf-schema#label</uri>
+            <plainLiteral xml:lang="sv">förarbete</uri>
+        </triple>
+    </graph>
+</TriX>
 
