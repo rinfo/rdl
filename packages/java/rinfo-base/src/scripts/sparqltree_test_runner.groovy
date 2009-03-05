@@ -9,21 +9,13 @@ import static org.apache.commons.io.FileUtils.iterateFiles
 
 
 def repo = RDFUtil.createMemoryRepository()
-def addN3 = {
-    RDFUtil.loadDataFromFile(repo, it)
-}
 
-def base = "../../../resources/base/"
-iterateFiles(new File(base, "model"),
-        ["n3"] as String[], true).each {
-    addN3 it
+["model", "extended/rdf"].each {
+    iterateFiles(new File("../../../resources/base/", it),
+            ["n3"] as String[], true).each {
+        RDFUtil.loadDataFromFile(repo, it)
+    }
 }
-
-iterateFiles(new File(base, "extended/rdf"),
-    ["n3"] as String[], true).each {
-    addN3 it
-}
-
 
 def treeDir = new File("../../../laboratory/services/SparqlToAtom/examples/")
 def rqTree = new SparqlTree(repo, new File(treeDir, "model/sparqltree-model.xml"))
