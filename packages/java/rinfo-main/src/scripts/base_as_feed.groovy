@@ -12,7 +12,7 @@ import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 import org.restlet.Restlet
 import org.restlet.Server
-import org.restlet.data.MediaType
+import org.restlet.data.MediaType as MT
 import org.restlet.data.Protocol
 import org.restlet.data.Request
 import org.restlet.data.Response
@@ -60,15 +60,30 @@ def modelItem(File file) {
     RDFUtil.loadDataFromFile(repo, file)
     def modelUri = null
     RDFUtil.one(conn, null, RDF.TYPE, OWL.ONTOLOGY, true).each {
-        modelUri = it.subject as String
+        modelUri = it.subject
     }
+
+    //def enclosures = []
+    //collectObjects(conn, modelUri, OWL.IMPORTS).each {
+    //    enclosures << [ href: it as String, mediaType: MT.APPLICATION_RDF_XML ]
+    //}
     conn.close()
     return [
-        uri: modelUri,
+        uri: modelUri as String,
         updated: new Date(file.lastModified()),
-        content: [data: { repoToInStream(repo) }, mediaType: MediaType.APPLICATION_RDF_XML],
+        content: [data: { repoToInStream(repo) }, mediaType: MT.APPLICATION_RDF_XML],
         enclosures: null
     ]
+}
+
+def collectObjects(conn, uri, property) {
+    def stmts = conn.getStatements(uri, property, null, false);
+    def res = []
+    while (stmts.hasNext()) {
+        res << stmts.next().object
+    }
+    stmts.close()
+    return res
 }
 
 def datasetItem(uriPath, List<File> files) {
@@ -93,7 +108,7 @@ def datasetItem(uriPath, List<File> files) {
                 RDFUtil.loadDataFromFile(enclRepo, file)
                 repoToInStream(enclRepo)
             },
-            mediaType: MediaType.APPLICATION_RDF_XML
+            mediaType: MT.APPLICATION_RDF_XML
         ]
         def fileDate = new Date(file.lastModified())
         if (!youngestEnclDate || fileDate > youngestEnclDate) {
@@ -104,7 +119,7 @@ def datasetItem(uriPath, List<File> files) {
     return [
         uri: itemUri,
         updated: youngestEnclDate,
-        content: [data: { repoToInStream(setRepo) }, mediaType: MediaType.APPLICATION_RDF_XML],
+        content: [data: { repoToInStream(setRepo) }, mediaType: MT.APPLICATION_RDF_XML],
         enclosures: enclosures
     ]
 }
@@ -152,7 +167,7 @@ def createAtomCollection(feedUri, feedTitle, baseUri, items) {
             bos.close()
             return new ByteArrayInputStream(bos.toByteArray())
         },
-        mediaType: MediaType.APPLICATION_ATOM_XML
+        mediaType: MT.APPLICATION_ATOM_XML
     ]
     return collection
 }

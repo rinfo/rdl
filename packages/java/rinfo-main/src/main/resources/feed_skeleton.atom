@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
     <id>http://rinfo.lagrummet.se/feed</id>
-    <title xml:lang="sv">Rättsinformationssystemets baskälla</title>
+    <title xml:lang="sv">Rättsinformationssystemets källdata</title>
 
     <author>
         <name>Rättsinformationssystemet</name>
