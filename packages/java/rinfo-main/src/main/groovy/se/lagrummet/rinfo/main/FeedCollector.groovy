@@ -85,7 +85,9 @@ class FeedCollector extends FeedArchivePastToPresentReader {
 
     public static void readFeed(FileDepot depot, Repository registryRepo,
             URIMinter uriMinter, URL url) {
-        new FeedCollector(depot, registryRepo, uriMinter).readFeed(url)
+        def collector = new FeedCollector(depot, registryRepo, uriMinter)
+        collector.readFeed(url)
+        collector.shutdown()
     }
 
     @Override
@@ -115,8 +117,8 @@ class FeedCollector extends FeedArchivePastToPresentReader {
         try {
             super.shutdown()
         } finally {
-            getClient().getConnectionManager().shutdown()
             this.registry.shutdown()
+            getClient().getConnectionManager().shutdown()
         }
     }
 

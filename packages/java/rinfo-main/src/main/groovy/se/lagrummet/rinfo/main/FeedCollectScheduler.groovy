@@ -70,9 +70,12 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     }
 
     void shutdown() {
-        super.shutdown()
-        if (registryRepo != null) {
-            registryRepo.shutDown()
+        try {
+            super.shutdown()
+        } finally {
+            if (registryRepo != null) {
+                registryRepo.shutDown()
+            }
         }
     }
 

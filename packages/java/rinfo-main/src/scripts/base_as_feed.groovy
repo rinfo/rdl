@@ -55,6 +55,10 @@ def collectItems(base) {
             FU.listFiles(new File(base, "datasets/serie"),
                 ["n3"] as String[], true))
 
+    items << datasetItem("system",
+            FU.listFiles(new File(base, "datasets"),
+                ["n3"] as String[], false))
+
     return items
 }
 
@@ -80,15 +84,15 @@ def modelItem(File file) {
     ]
 }
 
-def collectObjects(conn, uri, property) {
-    def stmts = conn.getStatements(uri, property, null, false);
-    def res = []
-    while (stmts.hasNext()) {
-        res << stmts.next().object
-    }
-    stmts.close()
-    return res
-}
+//def collectObjects(conn, uri, property) {
+//    def stmts = conn.getStatements(uri, property, null, false);
+//    def res = []
+//    while (stmts.hasNext()) {
+//        res << stmts.next().object
+//    }
+//    stmts.close()
+//    return res
+//}
 
 def datasetItem(uriPath, List<File> files) {
     def itemUri = BASE_URI+"/"+uriPath
