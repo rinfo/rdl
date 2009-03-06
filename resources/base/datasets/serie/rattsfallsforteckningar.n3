@@ -1,6 +1,7 @@
 #=======================================================================
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2008/05/skos#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix prism: <http://prismstandard.org/namespaces/1.2/basic/> .
 @prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
@@ -34,43 +35,41 @@
 
 
 <http://rinfo.lagrummet.se/serie/rff/nja> a :Rattsfallsforteckning;
-    rdfs:label "NJA"@sv;
-    rdfs:comment "Nytt Juridiskt Arkiv"@sv .
+    skos:altLabel "NJA"@sv;
+    skos:prefLabel "Nytt Juridiskt Arkiv"@sv .
 
 <http://rinfo.lagrummet.se/serie/rff/rh> a :Rattsfallsforteckning;
-    rdfs:label "RH"@sv;
-    rdfs:comment "Rättsfall från hovrätterna"@sv .
+    skos:altLabel "RH"@sv;
+    skos:prefLabel "Rättsfall från hovrätterna"@sv .
 
 <http://rinfo.lagrummet.se/serie/rff/mod> a :Rattsfallsforteckning;
-    rdfs:label "MÖD"@sv;
-    rdfs:comment "Miljööverdomstolen"@sv .
+    skos:altLabel "MÖD"@sv;
+    skos:prefLabel "Miljööverdomstolen"@sv .
 
 <http://rinfo.lagrummet.se/serie/rff/ra> a :Rattsfallsforteckning;
-    rdfs:label "RÅ"@sv;
-    rdfs:comment "Regeringsrättens årsbok"@sv .
+    skos:altLabel "RÅ"@sv;
+    skos:prefLabel "Regeringsrättens årsbok"@sv .
 
 <http://rinfo.lagrummet.se/serie/rff/mig> a :Rattsfallsforteckning;
-    rdfs:label "MIG"@sv;
-    rdfs:comment "Migrationsöverdomstolen"@sv .
+    skos:altLabel "MIG"@sv;
+    skos:prefLabel "Migrationsöverdomstolen"@sv .
 
 <http://rinfo.lagrummet.se/serie/rff/ad> a :Rattsfallsforteckning;
-    rdfs:label "AD"@sv;
-    rdfs:comment "Arbetsdomstolen"@sv .
+    skos:altLabel "AD"@sv;
+    skos:prefLabel "Arbetsdomstolen"@sv .
 
 <http://rinfo.lagrummet.se/serie/rff/md> a :Rattsfallsforteckning;
-    rdfs:label "MD"@sv;
-    rdfs:comment "Marknadsdomstolen"@sv .
+    skos:altLabel "MD"@sv;
+    skos:prefLabel "Marknadsdomstolen"@sv .
 
 <http://rinfo.lagrummet.se/serie/rff/fod> a :Rattsfallsforteckning;
-    rdfs:label "FÖD"@sv;
-    rdfs:comment "Försäkringsöverdomstolen"@sv .
+    skos:altLabel "FÖD"@sv;
+    skos:prefLabel "Försäkringsöverdomstolen"@sv .
 
 # TODO: vad är detta för slags förteckning; vilken status har den?
 #<...>;
-#    rdfs:label "ARN"@sv;
-#    rdfs:comment "Allmänna Reklamationsnämnden"@sv .
-
-
+#    skos:altLabel "ARN"@sv;
+#    skos:prefLabel "Allmänna Reklamationsnämnden"@sv .
 
 
 # KR = Kammarrätterna (inga referat)

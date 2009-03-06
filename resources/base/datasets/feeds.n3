@@ -1,15 +1,20 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dct: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix sioc: <http://rdfs.org/sioc/ns#> .
 @prefix awol: <http://bblfish.net/work/atom-owl/2006-06-06/#> .
 @prefix iana: <http://www.iana.org/assignments/relation/> .
+@prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
 
 # TODO:
 #
-# - How to link org. and feed? Not just "feed"..
-#   .. previously: is sioc:feed of ..
-#   - just use "legalDataFeed", or categorize the feed?
-#       - Categorize.. sioc:topic? foaf:primaryTopic?
+# - How to link org. and feed?
+#   - previously: <org> sioc:feed <feed>; now: <feed> dct:publisher <org>.
+# - How to relate the rinfo system and its sources?
+#   - A central "legalDataFeed" rel, or categorize the feed? Both?
+#   - How to categorize: sioc:topic? foaf:primaryTopic?
+#   - Or centralized source mgmt: <rinfo-main-feed-id> iana:via <org-feed-id> .
 #
 # - Reconsider use of iana:current. AtomOwl says it should be:
 #
@@ -22,17 +27,21 @@
 #   We might do even better, e.g. a subscriptionFeed property?
 
 <tag:regeringen.se,2009:rinfo:feed> a awol:Feed;
-    dct:publisher <http://rinfo.lagrummet.se/org/justitiedepartementet>;
+    foaf:primaryTopic rpubl: ;
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
     iana:current <http://regeringen.se/sfs/feed/current>;
     awol:id "tag:regeringen.se,2009:rinfo:feed"^^xsd:anyURI .
 
 <tag:dom.se,2009:rinfo:feed> a awol:Feed;
+    foaf:primaryTopic rpubl: ;
     dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
     iana:current <http://dom.se/dvfs/feed/current>;
     awol:id "tag:dom.se,2009:rinfo:feed"^^xsd:anyURI .
 
 <tag:verva.se,2007:rinfo:feed> a awol:Feed;
-    dct:publisher <http://rinfo.lagrummet.se/org/verva>;
+    foaf:primaryTopic rpubl: ;
+    #TODO:korrekt;gammal? dct:publisher <http://rinfo.lagrummet.se/org/verva>;
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
     iana:current <http://regeringen.se/vervafs/feed/current>;
     awol:id "tag:verva.se,2007:rinfo:feed"^^xsd:anyURI .
 

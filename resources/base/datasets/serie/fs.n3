@@ -225,7 +225,7 @@
     dct:publisher <http://rinfo.lagrummet.se/org/energimarknadsinspektionen>;
     a :Forfattningssamling .
 
-<http://rinfo.lagrummet.se/serie/fs/els%C3%84k-fs>
+<http://rinfo.lagrummet.se/serie/fs/els%C3%A4k-fs>
     skos:altLabel "ELSÄK-FS"@sv;
     skos:prefLabel "Elsäkerhetsverkets författningssamling"@sv;
     dct:publisher <http://rinfo.lagrummet.se/org/els%C3%A4kerhetsverket>;
@@ -420,8 +420,8 @@
 
 <http://rinfo.lagrummet.se/serie/fs/msbfs>
     skos:altLabel "MSBFS"@sv;
-    skos:prefLabel "Utnyttjas också av Riksvärderingsnämnden"@sv;
-    rdfs:comment "Myndigheten för samhällsskydd och beredskaps författningssamling."@sv;
+    skos:prefLabel "Myndigheten för samhällsskydd och beredskaps författningssamling."@sv;
+    rdfs:comment "Utnyttjas också av Riksvärderingsnämnden"@sv;
     dct:publisher <http://rinfo.lagrummet.se/org/myndigheten_f%C3%B6r_samh%C3%A4llsskydd_och_beredskap>;
     a :Forfattningssamling .
 
@@ -506,7 +506,7 @@
 <http://rinfo.lagrummet.se/serie/fs/sfs>
     skos:altLabel "SFS"@sv;
     skos:prefLabel "Svensk författningssamling"@sv;
-    dct:publisher <http://rinfo.lagrummet.se/org/justitiedepartementet>;
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
     a :Forfattningssamling .
 
 <http://rinfo.lagrummet.se/serie/fs/sgu-fs>
@@ -516,7 +516,7 @@
     rdfs:seeAlso <http://www.sgu.se/sgu/sv/om_sgu/foreskr_s.htm>;
     a :Forfattningssamling .
 
-<http://rinfo.lagrummet.se/serie/fs/sj%C3%96fs>
+<http://rinfo.lagrummet.se/serie/fs/sj%C3%B6fs>
     skos:altLabel "SJÖFS"@sv;
     skos:prefLabel "Sjöfartsverkets författningssamling"@sv;
     rdfs:comment "Utnyttjas också av Rederinämnden."@sv;
@@ -661,7 +661,8 @@
 <http://rinfo.lagrummet.se/serie/fs/vervafs>
     skos:altLabel "VERVAFS"@sv;
     skos:prefLabel "Verket för förvaltningsutvecklings (Verva) författningssamling"@sv;
-    dct:publisher <http://rinfo.lagrummet.se/org/verket_f%C3%B6r_f%C3%B6rvaltningsutveckling>;
+    #TODO:korrekt;gammal? dct:publisher <http://rinfo.lagrummet.se/org/verva>;
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
     rdfs:seeAlso <http://www.verva.se/web/t/Page____490.aspx>;
     a :Forfattningssamling .
 
@@ -680,10 +681,10 @@
     rdfs:seeAlso <http://www.vv.se/templates/page3____1029.aspx>;
     a :Forfattningssamling .
 
-<http://rinfo.lagrummet.se/serie/fs/%C3%85fs>
+<http://rinfo.lagrummet.se/serie/fs/%C3%A5fs>
     skos:altLabel "ÅFS"@sv;
     skos:prefLabel "Åklagarmyndighetens författningssamling"@sv;
-    dct:publisher <http://rinfo.lagrummet.se/org/%C3%85klagarmyndigheten>;
+    dct:publisher <http://rinfo.lagrummet.se/org/%C3%A5klagarmyndigheten>;
     rdfs:seeAlso <http://www.aklagare.se/Dokument/Foreskrifter-och-riktlinjer/>;
     a :Forfattningssamling .
 

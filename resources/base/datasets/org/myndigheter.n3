@@ -1,19 +1,14 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix skos: <http://www.w3.org/2008/05/skos#> .
 
 # TODO:
 #   - should be a rinfo-admin editable resource.
 
-<http://rinfo.lagrummet.se/org/justitiedepartementet>
+<http://rinfo.lagrummet.se/org/regeringskansliet>
     a foaf:Organization;
-    foaf:name "Justitiedepartementet"@sv .
-
-<http://rinfo.lagrummet.se/org/verva>
-    a foaf:Organization;
-    foaf:name "Verva"@sv .
-    # FIXME: see "Verket för förvaltningsutveckling" below.
-
+    foaf:name "Regeringskansliet"@sv .
 
 ## all below are extracted from <https://lagen.nu/1976:725>
 
@@ -249,9 +244,13 @@
     a foaf:Organization;
     foaf:name "Valmyndigheten"@sv .
 
-<http://rinfo.lagrummet.se/org/verket_f%C3%B6r_f%C3%B6rvaltningsutveckling>
+# TODO: uri-minter-regeln enligt detta är "slugify(skos:altLabel or foaf:name)"
+#<http://rinfo.lagrummet.se/org/verket_f%C3%B6r_f%C3%B6rvaltningsutveckling>
+<http://rinfo.lagrummet.se/org/verva>
     a foaf:Organization;
-    foaf:name "Verket för förvaltningsutveckling"@sv .
+    foaf:name "Verket för förvaltningsutveckling"@sv;
+    rdfs:comment "Nedlagd sedan 2008-12-31."@sv;
+    skos:altLabel "Verva"@sv .
 
 <http://rinfo.lagrummet.se/org/verket_f%C3%B6r_n%C3%A4ringslivsutveckling>
     a foaf:Organization;
@@ -265,7 +264,7 @@
     a foaf:Organization;
     foaf:name "Vägverket"@sv .
 
-<http://rinfo.lagrummet.se/org/%C3%85klagarmyndigheten>
+<http://rinfo.lagrummet.se/org/%C3%A5klagarmyndigheten>
     a foaf:Organization;
     foaf:name "Åklagarmyndigheten"@sv .
 
