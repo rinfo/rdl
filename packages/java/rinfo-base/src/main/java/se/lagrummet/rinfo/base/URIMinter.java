@@ -121,17 +121,20 @@ public class URIMinter {
         throws RepositoryException, URIComputationException
     {
         String officialUri = null;
+        RepositoryConnection conn = mergedRepo.getConnection();
         try {
-            Document rqDoc = runQueryToDoc(mergedRepo, queryString);
+            Document rqDoc = runQueryToDoc(conn, queryString);
             officialUri = resultsToUri(rqDoc);
             return new URI(officialUri);
         } catch (Exception e) {
             throw new URIComputationException(
                     "Could not compute canonical URI for: "+sourceHint, e);
+        } finally {
+            conn.close();
         }
     }
 
-    private Document runQueryToDoc(Repository repo, String queryString)
+    private Document runQueryToDoc(RepositoryConnection conn, String queryString)
         throws IOException,
                RepositoryException,
                MalformedQueryException, QueryEvaluationException,
@@ -139,7 +142,6 @@ public class URIMinter {
                ParserConfigurationException, SAXException,
                XPathExpressionException
     {
-        RepositoryConnection conn = repo.getConnection();
         TupleQuery tupleQuery = conn.prepareTupleQuery(
                 QueryLanguage.SPARQL, queryString);
 

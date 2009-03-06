@@ -112,7 +112,12 @@ public class RDFUtil {
             throws RepositoryException {
         RepositoryConnection targetConn = targetRepo.getConnection();
         RepositoryConnection connToAdd = repoToAdd.getConnection();
-        targetConn.add(connToAdd.getStatements(null, null, null, false));
+        try {
+            targetConn.add(connToAdd.getStatements(null, null, null, false));
+        } finally {
+            targetConn.close();
+            connToAdd.close();
+        }
     }
 
     public static void addFile(Repository repo, String fpath, RDFFormat format)
@@ -120,8 +125,12 @@ public class RDFUtil {
         File file = new File(fpath);
         String baseUri = file.toURI().toString();
         RepositoryConnection conn = repo.getConnection();
-        conn.add(file, baseUri, format);
-        conn.commit();
+        try {
+            conn.add(file, baseUri, format);
+            conn.commit();
+        } finally {
+            conn.close();
+        }
     }
 
     public static void serialize(
@@ -139,8 +148,11 @@ public class RDFUtil {
             writer = factory.getWriter(outStream);
         //}
         RepositoryConnection conn = repo.getConnection();
-        conn.exportStatements(null, null, null, false, writer);
-        conn.close();
+        try {
+            conn.exportStatements(null, null, null, false, writer);
+        } finally {
+            conn.close();
+        }
         //writer.close()
     }
 
@@ -228,37 +240,40 @@ public class RDFUtil {
         Repository newRepo = createMemoryRepository();
         RepositoryConnection newRepoConn = newRepo.getConnection();
 
-        RepositoryResult<Namespace> nsIter = repoConn.getNamespaces();
-        while (nsIter.hasNext()) {
-            Namespace ns = nsIter.next();
-            newRepoConn.setNamespace(ns.getPrefix(), ns.getName());
+        try {
+            RepositoryResult<Namespace> nsIter = repoConn.getNamespaces();
+            while (nsIter.hasNext()) {
+                Namespace ns = nsIter.next();
+                newRepoConn.setNamespace(ns.getPrefix(), ns.getName());
+            }
+            nsIter.close();
+
+            ValueFactory vf = newRepo.getValueFactory();
+
+            RepositoryResult<Statement> stmts =
+                    repoConn.getStatements(null, null, null, true);
+            while (stmts.hasNext()) {
+                Statement st = stmts.next();
+                Resource subject = st.getSubject();
+                URI predicate = st.getPredicate();
+                Value object = st.getObject();
+                if (subject instanceof URI) {
+                    subject = changeURI(vf, ((URI) subject), oldUri, newUri);
+                }
+                if (replacePredicates) {
+                    predicate = changeURI(vf, predicate, oldUri, newUri);
+                }
+                if (object instanceof URI) {
+                    object = changeURI(vf, ((URI)object), oldUri, newUri);
+                }
+
+                newRepoConn.add(subject, predicate, object);
+            }
+            stmts.close();
+        } finally {
+            repoConn.close();
+            newRepoConn.close();
         }
-        nsIter.close();
-
-        ValueFactory vf = newRepo.getValueFactory();
-
-        RepositoryResult<Statement> stmts =
-                repoConn.getStatements(null, null, null, true);
-        while (stmts.hasNext()) {
-            Statement st = stmts.next();
-            Resource subject = st.getSubject();
-            URI predicate = st.getPredicate();
-            Value object = st.getObject();
-            if (subject instanceof URI) {
-                subject = changeURI(vf, ((URI) subject), oldUri, newUri);
-            }
-            if (replacePredicates) {
-                predicate = changeURI(vf, predicate, oldUri, newUri);
-            }
-            if (object instanceof URI) {
-                object = changeURI(vf, ((URI)object), oldUri, newUri);
-            }
-
-            newRepoConn.add(subject, predicate, object);
-        }
-        stmts.close();
-        repoConn.close();
-        newRepoConn.close();
         return newRepo;
     }
 
