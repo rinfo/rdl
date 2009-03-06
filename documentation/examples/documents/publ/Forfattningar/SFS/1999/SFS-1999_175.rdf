@@ -13,7 +13,7 @@
     <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1999-05-01</ikrafttradandedatum>
     <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1999-04-13</utkomFranTryck>
     <!-- ursprung -->
-    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/justitiedepartementet"/>
+    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
     <!-- dokumentkopplingar -->
     <forarbete rdf:resource="http://rinfo.lagrummet.se/publ/ds/1998:10"/>
     <upphaver rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1980:628"/>
