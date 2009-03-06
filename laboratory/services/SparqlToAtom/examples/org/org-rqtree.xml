@@ -2,29 +2,50 @@
                xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
                xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
                xmlns:foaf="http://xmlns.com/foaf/0.1/"
-               xmlns:oldskos="http://www.w3.org/2004/02/skos/core#"
                xmlns:skos="http://www.w3.org/2008/05/skos#"
                xmlns:dct="http://purl.org/dc/terms/"
                xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
+               xmlns:awol="http://bblfish.net/work/atom-owl/2006-06-06/#"
+               xmlns:iana="http://www.iana.org/assignments/relation/"
                order-by="DESC(?org)"
                distinct="true">
 
     <org> a foaf:Organization;
         foaf:name <orgName/> .
-        ?serie dct:publisher ?org .
-        <serie> a ?serieType .
-            <serieType>
-                rdfs:label <serieTypeLabel/> .
-            </serieType>
-            {
-                ?serie rdfs:label <serieName/> .
-            } UNION {
-                ?serie skos:prefLabel <serieName/> .
-            }
-            OPTIONAL {
-                ?serie skos:altLabel <serieShortname/> .
-            }
-        </serie>
+        OPTIONAL {
+            ?org skos:altLabel <orgAlt/> .
+        }
+        OPTIONAL {
+            ?org rdfs:comment <orgComment/> .
+        }
+        OPTIONAL {
+            <serie>
+                dct:publisher ?org;
+                a ?serieType .
+                <serieType>
+                    rdfs:label <serieTypeLabel/> .
+                </serieType>
+                {
+                    ?serie rdfs:label <serieName/> .
+                } UNION {
+                    ?serie skos:prefLabel <serieName/> .
+                }
+                OPTIONAL {
+                    ?serie skos:altLabel <serieShortname/> .
+                }
+                OPTIONAL {
+                    ?serie rdfs:comment <serieComment/> .
+                }
+            </serie>
+        }
+        OPTIONAL {
+            <feed>
+                a awol:Feed;
+                awol:id <feedId/>;
+                dct:publisher ?org;
+                iana:current <currentFeed/> .
+            </feed>
+        }
     </org>
 
 </st:sparqltree>

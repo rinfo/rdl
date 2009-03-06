@@ -28,9 +28,35 @@ def main() {
     def base = args ? args[0] : "../../../resources/base/"
     def port = 8280
     startServer(port,
-        createAtomCollection(FEED_URI, FEED_TITLE, BASE_URI,
-            collectItems(base) ) )
+        { createAtomCollection(FEED_URI, FEED_TITLE, BASE_URI,
+            collectItems(base) ) } )
     // TODO: pingMainWithMe?
+}
+
+//======================================================================
+
+class BaseRestlet extends Restlet {
+    Closure makeCollection
+    def collection
+    BaseRestlet(makeCollection) {
+        this.makeCollection = makeCollection
+    }
+    void handle(Request request, Response response) {
+        def path = request.resourceRef.relativeRef.path as String
+        if (collection == null || path == "/") {
+            collection = makeCollection()
+        }
+        def repr = collection[path]
+        if (repr) {
+            response.setEntity(
+                new InputRepresentation(repr.data(), repr.mediaType) )
+        }
+    }
+}
+
+def startServer(port, makeCollection) {
+    def restlet = new BaseRestlet(makeCollection)
+    new Server(Protocol.HTTP, port, restlet).start()
 }
 
 //======================================================================
@@ -182,28 +208,6 @@ def createAtomCollection(feedUri, feedTitle, baseUri, items) {
 
 def makeHref(baseUri, uri, ext) {
     return uri.replace(baseUri, "").replace('#', '')+"/"+ext
-}
-
-//======================================================================
-
-class BaseRestlet extends Restlet {
-    def collection
-    BaseRestlet(collection) {
-        this.collection = collection
-    }
-    void handle(Request request, Response response) {
-        def path = request.resourceRef.relativeRef.path
-        def repr = collection[path as String]
-        if (repr) {
-            response.setEntity(
-                new InputRepresentation(repr.data(), repr.mediaType) )
-        }
-    }
-}
-
-def startServer(port, collection) {
-    def restlet = new BaseRestlet(collection)
-    new Server(Protocol.HTTP, port, restlet).start()
 }
 
 //======================================================================

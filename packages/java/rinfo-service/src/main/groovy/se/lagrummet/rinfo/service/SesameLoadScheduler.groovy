@@ -34,6 +34,7 @@ class SesameLoadScheduler extends AbstractCollectScheduler {
     protected void collectFeed(URL feedUrl, boolean lastInBatch) {
         def rdfStoreLoader = new SesameLoader(repository)
         rdfStoreLoader.readFeed(feedUrl)
+        rdfStoreLoader.shutdown()
     }
 
     protected void addRepositoryListener(listener) {
