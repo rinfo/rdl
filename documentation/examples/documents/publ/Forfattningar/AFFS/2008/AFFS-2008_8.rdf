@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:dct="http://purl.org/dc/terms/"
+         xmlns:dces="http://purl.org/dc/elements/1.1/"
          xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
 
   <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/affs/2008:8">
@@ -16,7 +17,10 @@
     <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2008-08-21</utkomFranTryck>
 
     <!-- ursprung -->
-    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/arbetsformedlingen"/>
+    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/arbetsf%C3%B6rmedlingen"/>
+
+    <!-- nyckelord: ett element per nyckelord -->
+    <dces:subject xml:lang="sv">Arbetsmiljöarbete</dces:subject>
 
 	<!-- dokumentkopplingar -->
 	<!-- Bemyndigande? -->
