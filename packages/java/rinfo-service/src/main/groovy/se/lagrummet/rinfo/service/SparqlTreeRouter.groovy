@@ -127,7 +127,16 @@ class RDataFinder extends SparqlTreeFinder {
         def filter = ""
 
         if (!path || path.startsWith("-/")) { // prepare query
-            // FIXME: either make different queries, or modularize it somehow instead!
+            /* TODO: either make different queries, or modularize it somehow instead!
+                - <rdata_search-rqtree.xml>
+                    - q in awol:title, awol:subtitle, awol:summary
+                    - inserted category filters.. .. how?
+                        .. ?rel endswith part1; ?value endswith part2
+                        .. ?dateRel -||-; ?dateValue startswith part2
+                        .. incl. narrower categories?
+                - <rpubl_to_rdata_index-rqtree.xml>
+                - <rdata_indexed_rpubl-rqtree.xml>
+            */
             def strip = false
             def sb = new StringBuffer()
             for (l in query.split("\n")) {

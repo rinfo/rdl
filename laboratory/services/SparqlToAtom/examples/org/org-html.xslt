@@ -37,8 +37,8 @@
               </p>
             </xsl:if>
             <dl>
-              <dt>Serier</dt>
               <xsl:if test="serie">
+                <dt>Serier</dt>
                 <dd>
                   <ul>
                     <xsl:for-each select="serie">
