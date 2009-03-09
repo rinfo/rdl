@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+  xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
+>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#unsignedLong"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#positiveInteger"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#integer"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#gDay"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#normalizedString"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#NMTOKEN"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#unsignedInt"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#negativeInteger"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#hexBinary"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#int"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#token"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#string"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#gYear"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#float"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#date"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#language"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#base64Binary"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#long"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#NCName"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#gMonthDay"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#unsignedShort"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#Name"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#short"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#double"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#time"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#boolean"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#gMonth"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#unsignedByte"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#gYearMonth"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#byte"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#nonPositiveInteger"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#decimal"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#dateTime"/>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#anyURI"/>
+</rdf:RDF>
