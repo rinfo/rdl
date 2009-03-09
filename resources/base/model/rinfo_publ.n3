@@ -309,11 +309,11 @@
         ],
         [ a owl:Restriction;
             owl:onProperty :beslutande;
-            owl:cardinality 1
+            owl:minCardinality 0
         ],
         [ a owl:Restriction;
             owl:onProperty :foredragande;
-            owl:cardinality 1 # TODO: maxCardinality? minCardinality?
+            owl:minCardinality 0
         ],
         [ a owl:Restriction;
             owl:onProperty :bemyndigande;

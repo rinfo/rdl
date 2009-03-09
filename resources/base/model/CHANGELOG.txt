@@ -2,14 +2,13 @@
 CHANGELOG
 ########################################################################
 
-2008-11-04
+2009-03-09
 --------------------
 
-* Bytte ut all användning av legacy-namespace
-  <http://purl.org/dc/elements/1.1/> ("DC") till <http://purl.org/dc/terms/>
-  ("DCT").
+* Ändrade kardinalitet för beslutande och föredragande till 0 för
+författningar. efter möte med JuDep. Personinformationen anses ointressant.
 
-  Se `<http://www.dublincore.org/documents/2008/01/14/dcmi-terms/>`_.
+
 
 2008-11-10
 --------------------
@@ -19,3 +18,13 @@ CHANGELOG
 
 * Ändrade bas-segmentet för modell-URI:er till "ns". Döpte om publikationsmodellens segmentnamn (löv) till "publ".
 
+
+
+2008-11-04
+--------------------
+
+* Bytte ut all användning av legacy-namespace
+  <http://purl.org/dc/elements/1.1/> ("DC") till <http://purl.org/dc/terms/>
+  ("DCT").
+
+  Se `<http://www.dublincore.org/documents/2008/01/14/dcmi-terms/>`_.
