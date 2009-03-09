@@ -1,8 +1,7 @@
 <!-- This is the FOAF formal vocabulary description, expressed using W3C RDFS and OWL markup. -->
 <!-- For more information about FOAF:                                            -->
 <!--   see the FOAF project homepage, http://www.foaf-project.org/               -->
-<!--   FOAF developers site, http://rdfweb.org/                                  -->
-<!--   FOAF specification, http://xmlns.com/foaf/0.1/                            -->
+<!--   FOAF specification, http://xmlns.com/foaf/spec/                             -->
 <!--                                                                             -->
 <!-- first we introduce a number of RDF namespaces we will be using... -->
 <rdf:RDF 
@@ -14,7 +13,7 @@
 	xmlns:wot="http://xmlns.com/wot/0.1/" 
 	xmlns:dc="http://purl.org/dc/elements/1.1/">
 <!-- Here we describe general characteristics of the FOAF vocabulary ('ontology'). -->
-  <owl:Ontology rdf:about="http://xmlns.com/foaf/0.1/" dc:title="Friend of a Friend (FOAF) vocabulary" dc:description="The Friend of a Friend (FOAF) RDF vocabulary, described using W3C RDF Schema and the Web Ontology Language." dc:date="$Date: 2006-01-29 22:38:45 $">
+  <owl:Ontology rdf:about="http://xmlns.com/foaf/0.1/" dc:title="Friend of a Friend (FOAF) vocabulary" dc:description="The Friend of a Friend (FOAF) RDF vocabulary, described using W3C RDF Schema and the Web Ontology Language." dc:date="$Date: 2007-06-16 23:18:26 $">
 
 <!-- outdated    <rdfs:seeAlso rdf:resource="http://www.w3.org/2001/08/rdfweb/foaf"/> -->
 <!-- unfashionable, removing...
@@ -76,7 +75,7 @@
     <owl:disjointWith rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
     <owl:disjointWith rdf:resource="http://xmlns.com/foaf/0.1/Project"/>
   </rdfs:Class>
-  <rdfs:Class rdf:about="http://xmlns.com/foaf/0.1/Organization" rdfs:label="Organization" rdfs:comment="An organization." vs:term_status="unstable">
+  <rdfs:Class rdf:about="http://xmlns.com/foaf/0.1/Organization" rdfs:label="Organization" rdfs:comment="An organization." vs:term_status="stable">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
     <rdfs:subClassOf><owl:Class rdf:about="http://xmlns.com/wordnet/1.6/Organization"/></rdfs:subClassOf>
     <rdfs:subClassOf rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
@@ -84,11 +83,11 @@
     <owl:disjointWith rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
     <owl:disjointWith rdf:resource="http://xmlns.com/foaf/0.1/Document"/>
   </rdfs:Class>
-  <rdfs:Class rdf:about="http://xmlns.com/foaf/0.1/Group" vs:term_status="unstable" rdfs:label="Group" rdfs:comment="A class of Agents.">
+  <rdfs:Class rdf:about="http://xmlns.com/foaf/0.1/Group" vs:term_status="stable" rdfs:label="Group" rdfs:comment="A class of Agents.">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
     <rdfs:subClassOf rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
   </rdfs:Class>
-  <rdfs:Class rdf:about="http://xmlns.com/foaf/0.1/Agent" vs:term_status="unstable" rdfs:label="Agent" rdfs:comment="An agent (eg. person, group, software or physical artifact).">
+  <rdfs:Class rdf:about="http://xmlns.com/foaf/0.1/Agent" vs:term_status="stable" rdfs:label="Agent" rdfs:comment="An agent (eg. person, group, software or physical artifact).">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
     <rdfs:subClassOf><owl:Class rdf:about="http://xmlns.com/wordnet/1.6/Agent-3"/></rdfs:subClassOf>
     <owl:disjointWith rdf:resource="http://xmlns.com/foaf/0.1/Document"/>
@@ -316,6 +315,19 @@ we don't want the implied rdfs:domain here.
     <rdfs:range rdf:resource="http://xmlns.com/foaf/0.1/Document"/>
     <rdfs:isDefinedBy rdf:resource="http://xmlns.com/foaf/0.1/"/>
   </rdf:Property>
+
+  <rdf:Property rdf:about="http://xmlns.com/foaf/0.1/openid" vs:term_status="unstable" rdfs:label="openid" rdfs:comment="An OpenID 
+for an Agent.">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:subPropertyOf rdf:resource="http://xmlns.com/foaf/0.1/isPrimaryTopicOf"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#InverseFunctionalProperty"/>
+    <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
+    <rdfs:range rdf:resource="http://xmlns.com/foaf/0.1/Document"/>
+    <rdfs:isDefinedBy rdf:resource="http://xmlns.com/foaf/0.1/"/>
+  </rdf:Property>
+
+
+
   <rdf:Property rdf:about="http://xmlns.com/foaf/0.1/tipjar" vs:term_status="testing" rdfs:label="tipjar" rdfs:comment="A tipjar document for this agent, describing means for payment and reward.">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:subPropertyOf rdf:resource="http://xmlns.com/foaf/0.1/page"/>
@@ -329,14 +341,15 @@ we don't want the implied rdfs:domain here.
     <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Person"/>
     <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
   </rdf:Property>
-  <rdf:Property rdf:about="http://xmlns.com/foaf/0.1/made" vs:term_status="testing" rdfs:label="made" rdfs:comment="Something that was made by this agent.">
+  <rdf:Property rdf:about="http://xmlns.com/foaf/0.1/made" vs:term_status="stable" rdfs:label="made" rdfs:comment="Something that was made by this agent.">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
     <rdfs:range rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
     <rdfs:isDefinedBy rdf:resource="http://xmlns.com/foaf/0.1/"/>
     <owl:inverseOf rdf:resource="http://xmlns.com/foaf/0.1/maker"/>
   </rdf:Property>
-  <rdf:Property rdf:about="http://xmlns.com/foaf/0.1/maker" vs:term_status="testing" rdfs:label="maker" rdfs:comment="An agent that made this thing.">
+  <rdf:Property rdf:about="http://xmlns.com/foaf/0.1/maker"  vs:term_status="stable" rdfs:label="maker" rdfs:comment="An agent that 
+made this thing.">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
     <rdfs:range rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
@@ -510,7 +523,7 @@ we don't want the implied rdfs:domain here.
     <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
     <rdfs:isDefinedBy rdf:resource="http://xmlns.com/foaf/0.1/"/>
   </rdf:Property>
-  <rdf:Property rdf:about="http://xmlns.com/foaf/0.1/member" vs:term_status="unstable" rdfs:label="member" rdfs:comment="Indicates a member of a Group">
+  <rdf:Property rdf:about="http://xmlns.com/foaf/0.1/member" vs:term_status="stable" rdfs:label="member" rdfs:comment="Indicates a member of a Group">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:domain rdf:resource="http://xmlns.com/foaf/0.1/Group"/>
     <rdfs:range rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
@@ -544,8 +557,3 @@ we don't want the implied rdfs:domain here.
 
 </rdf:RDF>
 
-<!-- FOAF...                                                            -->
-<!--                                                                    -->
-<!-- ...is semantic web vapourware for the masses                       -->
-<!--                                                                    -->
-<!-- coming soon: LOAF support...                                       -->
