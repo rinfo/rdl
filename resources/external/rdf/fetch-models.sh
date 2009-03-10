@@ -18,8 +18,9 @@ fetch-rdf 'http://www.w3.org/2002/07/owl#' owl.owl
 #fetch-rdf 'http://www.w3.org/2001/XMLSchema#' xsd.rdfs # TODO: 404
 
 # W3C Draft Standards Data
+# TODO: skos is expected to revert to the original ns fetched below,
+# but currently, the latest model resides at: 'http://www.w3.org/2008/05/skos#'
 fetch-rdf 'http://www.w3.org/2004/02/skos/core#' skos_core.rdfs
-fetch-rdf 'http://www.w3.org/2008/05/skos#' skos.rdfs
 
 # Standard Community Data
 fetch-rdf 'http://purl.org/dc/terms/' dcterms.rdfs

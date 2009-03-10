@@ -6,6 +6,7 @@
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
 @prefix protege: <http://protege.stanford.edu/plugins/owl/protege#> .
 @prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
 #=======================================================================
@@ -119,7 +120,7 @@
 
 
 :publikationssamling a owl:ObjectProperty;
-    # TODO: rdfs:subPropertyOf .. bibo? dct:isPartOf ?
+    rdfs:subPropertyOf dct:isPartOf;
     rdfs:label "Publikationssamling"@sv;
     rdfs:comment """Anger medlemsskap i någon form av (rättsinformationsspecifik) publikationssamling, såsom en författningssamling eller utredningsserie."""@sv;
     protege:abstract "true";
@@ -140,6 +141,7 @@
 #-----------------------------------------------------------------------
 
 :Publikationssamling a owl:Class;
+    rdfs:subClassOf bibo:Collection;
     rdfs:label "Publikationssamling"@sv;
     rdfs:comment """Någon slags samling (förteckning, serie) över rättsinformationspublikationer."""@sv;
     protege:abstract "true";
@@ -1116,7 +1118,7 @@
             owl:onProperty :lagrum;
             owl:minCardinality 0
         ]
-        # TODO: sökord? dct:subject?
+        # TODO:? sökord: dc:subject; konceptreferenser: dct:subject
     .
 
 
