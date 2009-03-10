@@ -1,0 +1,52 @@
+########################################################################
+Workshop Riksarkivet
+########################################################################
+# @prefix : <http://rinfo.lagrummet.se/model/2006/11/legal-core#> .
+
+Mötesdeltagare:
+    Verva: anders, jag
+    riksark: Peter Sivervall, Ulla Ahlqvist, Henrik *, TODO
+
+
+Bakgrund, nuläge, reflektioner
+========================================================================
+
+* Om Auktoritetsposter:
+    Per-Gunnar Ottosson; många år, internationellt
+    Torbjörn Hörnfelt; informationsutbyte; arbetat med verva
+        -  chef för TUVE (tillsyn, utveckling, e-förvaltning)
+
+* Känslig personinformation i t.ex. s.k. *Registerförfattningar*!
+
+* Bok: "Handbok i författningsskrifter" Ds 1998:43
+    - för att använda rätt vokabulär
+
+* Riksarkivet har en handbok i Hur man skriver RAMS:ar
+
+* Hur exportera befintlig data till nya formatet?
+
+* Kunna använda befintlig inmatning och få målformatterad data?
+
+
+Modellanteckningar
+========================================================================
+
+* ny typ :AllmantRad?
+
+:SwedishLegalDocument
+    * dc:publisher
+
+:Forfattning - alldeles för grov (vi verkar i regel mena :Lag)
+    > ny egenskap "utfärdare", för :Forfattning
+        riksdag beslutar, regering utfärdar
+        förordningar beslutas *och* utfärdas av regeringen
+
+:Myndighetsforeskrift
+    - :rattsgrundsReferens
+        > döp om till :bemyndigande(+rattsgrund)?
+    - :beslutadAv -> å en myndighets vägnar, så värdet är en organisationsreferens
+        (här riksarkivet)
+    - :utfardatDatum - samma kritik här; kallas :beslutsDatum
+    .. kapitel.
+
+

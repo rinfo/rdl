@@ -1,0 +1,104 @@
+########################################################################
+Workshop Domstolsverket
+########################################################################
+# @prefix : <http://rinfo.lagrummet.se/model/2006/11/legal-core#> .
+
+Mötesdeltagare:
+    Verva: anders, albin, jag
+    domst: TODO
+
+
+Bakgrund, nuläge
+========================================================================
+
+* Sammanställer vägledande avgöranden (från alla domstolar i se)
+    - Gula lappen - kortform
+    - Fulltextreferat
+
+* Vera, RIF
+
+
+Modellanteckningar
+========================================================================
+
+
+:SwedishLegalDocument
+    - skos:subject, dc:subject
+        # ta bort ur vår modell, betona i förädlingsexempel
+
+:Forfattning
+    - :rattsgrundsReferens
+        >? @alias :bemyndigandereferens (:bemyndiganderattsgrund)
+    - :ikrafttradandeDatum
+        > ny variant "ikrafttradandeText" # "två dagar efter att ..."
+    - :utfardatDatum
+        > @renameTo :beslutsdatum
+
+
+:VagledandeDomstolsavgorande
+    # FIXME: uri-genereringen: minst släng på avgörandedatum
+    #   (t.ex. domstolsref/målnr/avgörandedatum)
+    #
+    - :rattsfallsreferens
+        # referens till andra :VagledandeAvgorande-n *eller* "annat"
+        # t.ex. "något med NJA"..
+        > vi behöver rimligen från början stöd för BNode + "vissa egenskaper"
+          för många saker som kan refereras men saknar URI
+    - :domstolsavdelning
+        # ett eller uppåt
+        # behövs inte som del av "sammansatt nyckel"
+    - :domensMalnummer
+        > owl:minCardinality 1
+    - domstolsverket har egna interna löpnummer för VagledandeDomstolsavgorande:n
+
+    - *gammal* egenskap: innan målnummer fanns domsnummer!
+        # arbetsdomstolen har den fortfarande, som primär!
+
+    - ny egenskap:: :iLagaKraft; a owl:DatatypeProperty; rdfs:range xsd:boolean .
+
+    # TODO: det kan finnas flera avgöranden på *samma mål*. Ofta med olika
+    # :avgorandedatum (dock inte teoretiskt nödvändigt).
+
+
+"En dom"
+    - identifieras med :domensMalnummer +.. "utgivare"?
+
+
+:Rattsfallsreferat
+    - :referatRubrik
+        >? >rdfs:subPropertyOf dc:title?
+        # är *inte* nödvändigtvis samma sak som VagledandeDomstolsavgorande -> dc:title
+    - "skapare"
+        > ha :beslutadAv även här? Eller "något annat"? "rätten"? inget?
+    - :njaOrdinal, :njaSidNummer, :njaUtgava
+        - Fel! NJA bara för HD!
+            - Lösning(?) t.ex. sammansatt egenskap Publikationsreferens?
+                - publikationsbeteckning
+                    - utgava + sidnummer, alt. löpnummer
+                - utgivet i "NJA", "RÅ", "AD", "MÖD", "MIG" etc..
+                - "referens-label"?
+            - småfixar:
+                - :njaOrdinal -> ändra till :njaLopnummer?
+
+
+:VagledandeMyndighetsavgorande
+
+
+:VagledandeAvgorande
+
+
+"Notiser"
+    # avgörande av lägre dignitet som inte registreras
+    # Refereras dock till här och var (rättsfallsreferenser)
+
+
+Framtid
+========================================================================
+
+Fråga: Vem kontakta för att diskutera hur domstolsverkets data kan tillgängliggöras som RDF?
+    - URI:er till rättsfallsreferat
+    - RDF-describe för respektive URI
+        - vår modell
+Svar: Tommy etc.
+
+

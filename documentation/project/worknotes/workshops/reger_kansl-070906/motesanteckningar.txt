@@ -1,0 +1,91 @@
+########################################################################
+Möte med Regeringskansliet 2007-09-06
+########################################################################
+# @prefix : <http://rinfo.lagrummet.se/model/2006/11/legal-core#> .
+# @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+# @prefix owl:  <http://www.w3.org/2002/07/owl#> .
+
+
+* :KonsolideradGrundForfattning
+    .. obs! döp om till :KonsolideradGrundforfattning
+    - ta bort den ur arvshierarkin; denna är inget lagbärande dokument
+    - är en artefakt, en articiell sammanställning
+    - är :Rattsinformationsdokument, men inte mer
+        - se dock :Omtryck!
+
+* :Omtryck är ett konsoliderat dokument
+    - dyker upp i servicesammanhang utan demokratiskt beslut
+    - är egentligen inget officiellt dokument
+    - är en mer formell konsolidering
+    - rdfs:subClassOf :KonsolideradGrundForfattning
+    - omtryck i samband med ändring:
+        - då *är* de en ändringsförfattning
+            - *i de delar där de ändras*
+            - har :fsNummer med mera
+
+* Gamla typer:
+    - Brev, Cirkulär, Kungörelse, Stadga
+    - Cirkulär: 16 gällande finns kvar; inget som tillämpas
+    - TODO: vilken gemensam typ ska dessa ha?
+        - igen, kan ibland vara rdfs:subClassOf :Forfattning,
+          ibland bara :Forfattningssamlingsdokument (om alls)
+    - annotera? med owl:DeprecatedClass?
+
+* :beslutande (och :beslutadAv)
+    - tillfälligheter, är det någonsin intressant?
+
+* TODO: ny egenskap :utfardadAv?
+    - beslutad av riksdagen, utfärdad av regeringen
+    - TODO: om det anges. RK kollar. Gör det det inte, ange inte.
+
+* ny egenskap :departement .. direkt relation till dokumentet..?
+
+* :foredragande
+    - det intressanta är *vilket departement* som denna person tillhör vid
+      tillfället
+    - men denna kan ändras över tid(?)
+
+* TODO: :Forfattning tillhör visst departement (+ev. enhet)
+    - men denna tillhörighet kan ändras över tid?
+
+* :ikrafttradanderegel
+    - finns ett fall - ändring i ändring - då denna "finns" men inte anges
+        - skulle kanske räcka med att skriva detta i egenskapens rdfs:comment
+
+* enl. RK motsvarar AllmantRad RKs :Tillkannagivande
+    - TODO: vi tar nog med dessa; och söker officiellt beslut om detta
+        - dvs att :AllmantRad ska ingå enl. förordningen
+
+* strukturera om :Rattsregeldokument, :Forfattning m.m.
+    - föreskrift och författning är praktiskt synonyma
+    - ny typ :Forfattningssamlingsdokument (eller :FSDokument)
+        - delar av nuvarande :Rattsregeldokument
+        - det som publiceras i någon FS
+    - behåll :Forfattning, men
+        - mer generell, får egenskaper från :Rattsregeldokument
+          som inte hör hemma i :FSDokument
+        - flytta ner utfardandedatum till de dokument som utges i SFS
+            - :Forordning
+            - :Lag
+            - gamla typer..
+        - :Myndighetsforeskrift rdfs:subClassOf :Forfattning
+        - :Tillkannagivande rdfs:subClassOf :Forfattningssamlingsdokument
+        - :AllmantRad rdfs:subClassOf :Forfattningssamlingsdokument
+
+* :bemyndigande
+    - behöver inte vara ett lagrum, kan vara hänvisning till annat än
+      rättsinfo; t.ex. regleringsbrev, prop etc.
+    - TODO: döp om till :bemyndigandeLagrum ?
+        - i så fall: återinför rdfs:subPropertyOf :lagrum
+
+* :overgangsbestammelse
+    - .. gör inte detta, det är en viss skillnad
+        - slå samman med :ikrafttradandeanvisning (?)
+
+
+----
+
+* ta bort skos:subject och dc:subject
+    - lägg ev. till dc:subject bara för :Rattsfallsreferat (eller :VagledandeAvgorande?)
+
+

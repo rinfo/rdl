@@ -1,0 +1,52 @@
+########################################################################
+Workshop Skatteverket
+########################################################################
+# @prefix : <http://rinfo.lagrummet.se/model/2006/11/legal-core#> .
+
+Mötesdeltagare:
+    Verva: anders, albin, jag
+    skv: TODO (bl.a. torbjörn <torbjorn.lundmark@skatteverket.se>)
+
+
+Bakgrund, nuläge, reflektioner
+========================================================================
+
+Systemkrav: Hur ska Verva säkerställa att RIFS får *allting*?
+    - workflow hos inlämnare som gör att det är "klart" först när Verva tar emot och lämnar kvitto?
+
+(PUL, avreferens, märka i..)
+
+Vår presentation:
+    - vad vi gör
+    - hur NI gör
+    - effekten för bläddring i RIFS / upptäckbarhet
+    - rinfo-front-exempel
+
+
+Modellanteckningar
+========================================================================
+
+:Forfattning
+    - :ikrafttradandeDatum
+        > flera varianter:
+            - kan anges i annan lag
+            - i förväg bestämt upphörande?
+
+Anteckningar från papper:
+
+    - egenskapen :kontrasignent!
+
+    - refererar (dc:references) för teknisk, vill ha "hänvisar"
+        .. TODO: annan label eller annat begrepp?
+
+    - ikraftträdande, någon slags varianter på!
+        - t.ex. datum, flera, text/referens om "bestämmelse om ikraftträdande" (finns ex. om lag på)
+
+    - egna utökningar (av modellen):
+        - styrsignaler (triggade) på ändringar
+
+    - Exempelvyer:
+        - "Vad hände 31/3 -03"
+        - "Den fjärde boxen" (typ intern info)
+
+

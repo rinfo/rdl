@@ -1,0 +1,178 @@
+########################################################################
+Workshop Domstolsverket - 2007-08-29
+########################################################################
+# @prefix : <http://rinfo.lagrummet.se/model/2006/11/legal-core#> .
+# @prefix dc: <http://purl.org/dc/elements/1.1/> .
+
+Mötesdeltagare:
+    Verva: anders, jag
+    domst: TODO
+
+
+Bakgrund, nuläge, reflektioner
+========================================================================
+
+[kopierad till todo:n]
+* jag kom just på: En till "komponent" (utöver bläddraren):
+    - ConversionSupportLibrary
+        - URL-genererare etc.
+    .. både denna och DomainSelector baseras på RinfoBase..
+        - som innehåller modeledit, rinfo_enity_selector:s, urlstrategy etc.
+
+[kopierad till todo:n]
+* browse/find/show - text för Vägledande avgörande:
+    - domstol + målnummer + datum
+
+* malnummer är lagrade komprimerade hos domstolsverket
+    - finns en del logik - domstolsverket har bra koll på detta!
+        - "B [vanligen mellanslag], minst två siffror på slutet"
+
+* referenser till mer obskyra ting (och/eller externa ting såsom europakonventionen)
+    <> :rattsfall [
+        dc:title ""@en;
+    ] .
+    <> :rattsfallsangivelse "..."@sv .
+    <> :rattsfall <http://rinfo.se/external/2007/07/12/eu-eurolex-saken_som_kallas_Y> .
+    <http://rinfo.se/external/2007/07/12/eu-eurolex-saken_som_kallas_Y> owl:sameAs <http://rinfo.eu/the_correct_id>.
+
+
+
+Bakgrundsfördjupning - min summering av mailade exempel + kommentarer
+========================================================================
+
+* Sammanställd info från Domstolsverket om identifieringar:
+    .. [frågor nedan besvaras ännu längre ner]
+
+    - Ett mål:
+        - kan ha ett eller flera beslutsdatum
+            - därmed ingå i ett eller flera avgöranden/referat
+
+    - Ett avgörande/referat:
+        - kan omfatta ett eller flera målnummer
+        -  den unika identiteten (f. avgörande) är alltså:
+            - mål-/ärendereferensen (målnummer|domsnummer|diarienummer) *plus* avgörandedatum
+                - domst.verket har också ett extra löpnummerfält
+                    - för att skilja olika avgöranden för samma målnummer
+    + FRÅGOR:
+        - malnummer, domsnummer, diarienummer, hur kan de kombineras?
+
+    - Endast ett referat borde normalt lagras per avgörande
+        - men med domst.verkets byggda datamodell var man tvungna att:
+            - om referatet omfattade flera målnummer
+                - lagra referaten en gång per målnummer
+          vilket innebär att vissa referat finns lagrade i mer än en upplaga i db:n
+
+    - publikationsbeteckning:
+        - för NJA, RÅ, RH, AD och MD
+        - sätts i samband med att avgörandet publiceras i respektive rättsfallsförteckning/årsbok
+        - publ.beteckn. kan inte användas som unikt nyckelvärde för avgörandena eftersom:
+            - I Lagrummet finns flera myndigheter som inte har någon tryckt årspublikation
+                - men som ändå skapar referat som MIG och MÖD
+                - KR, PBR och RN publicerar inga referat alls
+    + FRÅGOR:
+        - avgörandena? Men för referaten väl? Om de publiceras på någon form måste det gå att referera
+          till denna publicering - "publikationsID + publikationsOrdinal (alt. årsutgåva+sidnr)"
+            - publikationsID = rättsfallsförteckning eller myndighetens/domstolens "egennamn"
+
+    - Utöver identitetsbegreppen ovan används ett fristående nummerbaserat primärnyckelvärde i databasen
+
+    - rättsfallsreferats-id:n
+        - domst.verket: betraktar rättsfallsreferensen som odelbar
+            - de har (inmatningsbaserad) formatkontroll för de svenska rättsfallen fr.o.m 1980-talet.
+                (- äldre referenser har domstolarna skrivit utan formatkontroll)
+
+
+
+Modellanteckningar
+========================================================================
+
+
+* Rattsinformationsdokument
+    - skos:subject label "Ämneshänvisning"
+    - dc:subject label "Sökord"?
+
+    - *ta bort* skos:subject + dc:subject
+        - lägg in i utökad klient som myndighetsspecifik utökning
+          (och egeninställd ämneslistebläddring)
+
+
+* VagledandeAvgorande
+    - Obs! Speciell dokumentyp:
+        - visa inga andra fält i "Rattsinformationsdokument"-blocket än de relevanta
+            - (dölj ämne, titel, hänvisar)
+
+    - ska precis som Rattsfallsreferat ha (i stil med) referatrubrik:
+        - vad den ska kallas är en het potatis, får lämna öppen..
+            - vi lägger in dc:description här så länge.
+
+
+* VagledandeDomstolsavgorande
+    - TODO: ska vi kalla detta "kortform"? Njae, det är mer domstverkets arbetssätt..
+        - kortform är rimligen en "post" i det flödet; typ "i nuläget känd info om X"
+
+    - dock *vanligen* finns bara dessa för VagledandeDomstolsavgorande
+        - utgivare, avgörandedatum, målnummer (domst.avd.)
+
+    - domstolsavdelning är okej och rätt (och ska vara fritext)
+        - men det är nog lite överkurs (bör iaf vara valfri - en del har inte ens avdelning)
+
+    - övrigt ska *kanske* flyttas till Rattsfallsreferat?
+
+        - ibland (HD) kommer med lagrum och rattsfall (se nedan; gamla beaktarAvgorande)
+                - och "lite senare" dc:description
+
+        - beaktarAvgorande är obegripligt: - beaktarAvgorande döpOmTill rattsfall
+            - *eller* rattsfallsreferens?
+            - omfång: Rattsfallsreferat?
+
+
+* VagledandeMyndighetsavgorande
+    - TODO: vad är detta i sammanhanget?
+
+
+* Rattsfallsreferat
+    - Obs! Speciell dokumentyp:
+        - visa inga andra fält i "Rattsinformationsdokument"-blocket än de relevanta
+            - (dölj ämne, titel, hänvisar)
+
+    - referera domstolsavgörande
+    - få egen beteckning (identifierare)
+    - "texten"/referatrubrik
+        - referatrubrik är (förvisso bara) en "vy" av avgörandets dc:description
+            - andra namn: referatsmening
+        - finns i dokumentet (som kopia av dc:description)
+        - således: referatrubrik döpOmTill dc:description
+
+    - den "sammansatta nyckeln" är publikationsbeteckning
+        - rattsfallsforteckning döpOmTill rattsfallspublikation
+        - forteckningsordinal döpOmTill publikationsordinal
+        - forteckningsplatsangivelse döpOmTill publikationsplatsangivelse
+            - är dock enhetliga sedan 1980-talet
+            - Obs! det gamla är något annat än .. avgöranden?
+                - obs! annat, t.ex. Notis, publiceras inte; men refereras till
+            - kan behövas "platsangivelse" för?
+
+
+
+Frågor och Svar
+========================================================================
+
+* FRÅGA:
+    - malnummer, domsnummer, diarienummer, hur kan de kombineras?
+        - kallas internt malnummer
+    - SVAR: antingen eller!
+        - vilka som använder vad finns definierat!
+            - är bra underlag för smart visning/bläddring/input
+        - HD hade också domsnummer som *alternativ information*
+
+* FRÅGA:
+    - avgörandena? Men för referaten väl?
+        - SVAR: ja; men se även om "inte som referat"-svaret nedan
+
+* FRÅGA:
+    - Om de (referaten) publiceras på någon form måste det gå att referera
+      till denna publicering - "publikationsID + publikationsOrdinal (alt. årsutgåva+sidnr)"
+        - publikationsID = rättsfallsförteckning eller myndighetens/domstolens "egennamn"
+    - SVAR: ja, men inte som referat ibland; då som domstol+målnummer+datum
+
+

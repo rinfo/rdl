@@ -1,0 +1,28 @@
+########################################################################
+Kommersiella aktörer - 2007-10-11
+########################################################################
+
+
+Bakgrund, nuläge, reflektioner, framtid
+========================================================================
+
+* Notisum.se
+    - gratis lagbok på nätet
+        - jämför deras implicita modellering med rinfo-modellen
+    .. eurojust.com
+
+* Nordstedts Juridik
+    - ny plats: Zeteo
+        - ny sökmotor: ESP
+
+
+Behov
+========================================================================
+
+* hur ska vi hantera mer precis metadata som tillkommer efter ett tag?
+    - inte visa versionerat; men vi vill ha det i lagret?
+
+* tillägg av kompletterande precision
+
+
+

@@ -1,0 +1,20 @@
+########################################################################
+Gemensam workshop 2007-10-23
+########################################################################
+
+Hur ska man kunna tala om att det finns referenser in i RInfo?
+
+    - t.ex. "det finns en broschyr om denna föreskrift <här>"
+
+    - "se kategoriseringen av detta dok. enligt sjöfartsverket <här>"..
+
+
+Dokumentformat
+    - stor önskan att få t.ex. XHTML2+RDFa (hos t.ex. sjöv)
+
+
+Inhämtning är bra
+    - mest likt idag
+    - interna workflows exponeras inte
+
+

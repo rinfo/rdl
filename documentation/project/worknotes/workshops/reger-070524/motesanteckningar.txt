@@ -1,0 +1,124 @@
+########################################################################
+Workshop Regeringskansliet
+########################################################################
+# @prefix : <http://rinfo.lagrummet.se/model/2006/11/legal-core#> .
+
+Mötesdeltagare:
+    Verva: anders, albin, jag
+    reger: TODO
+
+
+Bakgrund, nuläge
+========================================================================
+
+
+* Registerdatabasen är komplett; ingenting tas bort
+* Fulltextdatabasen rensas från upphävda saker
+
+
+hos Regeringskansliet ingår alla rättsinfodokument ingår i ordnade serier;
+    - formaliserat beslutsfattande
+
+
+* Kommittéberättelsen, alla kommittédirektiv finns i en databas
+    - bör gå att få ut denna data som RDF på den form vi behöver
+
+
+"Ämnesord"
+    - ska man ha en lista eller fylla i egna
+
+
+Modellanteckningar
+========================================================================
+
+:SwedishLegalDocument
+    > dc:publisher;
+        - begreppet funkar bara på SFS, och är då en officiell tjänstemannafunktion
+            - rdfs:range foaf:Agent
+        - saknas generellt (som begrepp - kanske att dc:publisher ändå är rätt?)
+            - alla regeringsdokument, regeringen
+            - kommittédirektiv av kommittén
+                - en kommitté *är* en självständig myndighet
+            - Ds:ar är konstiga, uppluckrat (tjänstemän?)
+        - optional? (dvs "kan ej tillämpas")
+        -? ska vi ha helt nya begrepp, säg:
+            .. passar nog bäst i en RK-ontologi (som extendar rinfo)
+            - "ägare"/"beslutande myndighet"
+            - "uppdragsgivare"
+            - "ansvarig producent"
+            - "ansvarig myndighet"
+            - "ansvarig 'uppmärkare'"
+            - "informationsansvarig (dvs inte ansvar om *innehållet*)" *önskvärd* (se förordningen)
+
+    - lägg till :bilaga(?)
+
+
+# det ska inte finnas ämnesord i föreskrifien; men en egen katalog och egna kopplingar är bra
+# *och* reger (person x) *vill* ha ämnesord
+
+
+:KommitteDirektiv
+    - ny egenskap "sammanfattning"!
+        - skulle vara mer informativt än den sällsynta :foreslarUtredningAvAndringI
+    - speciell kritik kring dc:publisher
+        - relationsnamnet, distinktioner mellan olika typer av organisationer
+    -! lägg till egenskapen: :andrar !
+
+
+:KommitteSammanfattningsDokument
+    # Dessa dokument är *levande*
+    - :deltagande
+        - TODO: här finns behov av mer precis modellering
+            - klienten visar inte de egenskaper vi har löst definierat,
+              vi behöver en sammansatt resursbeskrivning
+        - :deltagarRoll - värdena här finns uppräknade, definierade
+
+
+* En utredning har ett eget nummer
+
+
+:Utredningsbetankande
+    - lägg till :bilaga(?)
+    - hur tala om "förslag om ny lag"?
+    - döp om :utrNummer till :utredningsserienummer
+
+
+:Proposition
+    - ta bort :bilaga *omm* den flyttas upp till :SwedishLegalDocument
+    - :utgarFran
+        -? rds:domain inte alltid :Utredningsbetankande, även..
+    - :utfardatDatum 
+    - :utgarFran *noll eller flera*
+
+
+# NOTE: Riksbanken publicerar sina Föreskrifter i SFS
+
+
+# TODO: Forfattning måste delas upp i olika typer (se nedan); vi ska ha en workshop enkom för detta!
+:Forfattning
+    > :beslutadAv - döpa om till undertecknare (signent?)?
+        - väl onödigt att ange :beslutadAv <riksdagen>?
+      - är *inte alltid en person* (utan riksdagen (el. regeringen));
+        däremot är undertecknare det. Byta till?
+        - rdfs:range foaf:Agent
+
+        - denna (och t.ex. ??) är fixerad (t.ex. ref. till riksdagen) för given subtyp
+            - t.ex. Lag restriction onProperty beslutadAv hasValue <riksdagen>
+
+    - TODO: :utfardatDatum generellt :beslutsDatum (för Författning och Prop (dock :propBeslutsDatum?! Relevant?)),
+        - *men* för SFS:er (Författningar) *säger* man utfardatDatum! owl:equivalentProperty?
+            - modellera om? (bastyp utan detta datum för :Forfattning och :Myndighetsforeskrift)
+
+    - .. moment, anvisningar.. (komplement till paragrafer?)
+
+    - Förordning vs Lag vs Tillkännagivande (gamla: Kungörelse, Cirkulär (numera Tillkännagivande))
+        - en Förordning ska ha en rättsgrundsreferens
+        - Lag och Förordning: utfardatDatum; Tillkännagivande: beslutsDatum
+
+    # NOTE: en ändringsföreskrifts "nya paragrafrepresentation" *är* en paragraf
+
+
+:ForordningsMotiv
+    # TODO
+
+

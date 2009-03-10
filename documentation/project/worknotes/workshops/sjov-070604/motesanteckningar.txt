@@ -1,0 +1,129 @@
+########################################################################
+Workshop Sjöfartsverket
+########################################################################
+# @prefix : <http://rinfo.lagrummet.se/model/2006/11/legal-core#> .
+
+Mötesdeltagare:
+    Verva: anders, albin, jag
+    sjov: jocke (tek), tuva (språk), kristina (jur), anna (jur), anette (språk)
+
+
+Bakgrund, nuläge
+========================================================================
+
+Min tanke:
+    - "slask" för saker som inte är inom RIFS-domänen, men man vill ha
+      åtkomligt på samma sätt.. (jmf. interna dokument)
+
+.. forsränningsolyckorna.. regeringen tyckte SJÖV skulle ha föreskriftsrätt..
+.. göra föreskrifter bemyndigande..
+.. remissvar på föreskrifter, samlas i proppar..
+
+.. införlivande..
+
+Automatiska konsolideringar vore trevliga..
+
+SingleSourcePublishing - interna behov, begreppskataloger, etc.
+
+SFS - finns bilagor som inte går att komma åt.
+
+
+Tekniska krav/önskemål
+========================================================================
+
+* Hur lista myndighetsspecifika ontologier hos myndigheten?
+    - bara internt?
+    - på deras sajt?
+    - planetmyndighetsrdf.se?
+
+* *Viktigt* att dokumentera vad man *inte* tar med
+    - synergieffekter
+
+* Ev. t.ex. Vinova sponsrar parallella initiativ
+
+* Vi bör absolut ta fram "User Stories"
+
+
+* Dokumentproducering; alternativ, t.ex.:
+    - FrameMaker
+
+
+* Inlämning:
+    - kunna lämna in dokument uppdelade i flera delar
+        - "TOC" + delar?
+        - bifogade bilder
+        - jm.f MS-XDOC (paket), ODF ("will we ever have RDFa there?")
+    - kunna lämna in rikt formatterad information?
+        - t.ex. rejält avancerade tabeller
+
+* bra i rapporten: Scenarier som inte RIFS hanterar, "hur förhålla sig till"
+    - t.ex. *stora* bilagor; tankar kring angivelse av hur stor del av dokumentet en del upptar
+
+* Torg-/Wikipedia-liknande samarbetsyta
+    - översättningar, termer etc.
+    - det finns mkt dubbelarbete bland myndigheter
+
+* hur hantera samma dokument på olika språk?
+    - rimligen inte samma resurs? eller? svårt att säga 'dc:language "sv"' isf?
+
+* (min idé) - alternativ "inlämning":
+    - ATOM-kanal (per.. månad? plus *arkivet* - allt (per månad? ;D)) för rinfo-doks
+        - RDF per dokument
+            - lista "finns på format X, Y, ..." (DC.. TODO)
+    - skrapas, tilldelas officiell URI, läses in i RDF-DB med SPARQL-interface
+
+
+Modellanteckningar
+========================================================================
+
+
+:SwedishLegalDocument
+    - dc:publisher, vs. t.ex. den som ger trycklov
+    - dc:references
+        - vill ha "Hänvisar"
+
+:Forfattning
+    - titel - heter författningsrubrik!
+    - :fsNummer - *heter författningsnummer*
+    - :rattsgrundsReferens - som övriga: döp om till bemyndigande
+    - :beslutadAv - inte så viktig
+    - :forarbete
+        - range kan vara bortom RIFS?
+
+    - avdelningar - bara intern struktur
+        - kapitel - *kan refereras*
+            - paragrafer - *så klart*
+
+    - :overgangsbestammelse
+        - SJÖV har långa sådana
+        .. TODO: hur gör vi då då?
+
+    - hur koppla allmäna råd till rättsinfodokument?
+        - externa dokument som pekar in i RIFS
+
+    .. ev. av intresse för sammanställningsinfo om paragraf (av intresse för statistik/förädling etc.)
+        - allmäna råd - "detta dokument innehåller inbäddade allmäna råd"
+        - fotnot - "detta dokument innehåller inbäddade fotnoter"
+       [Not 071128: räcker nog med t.ex. xpath-analys för ]
+
+    - "bifoga bilaga"
+
+    - *Nytt och/eller att-förhålla-sig-till* - internationella begrepp:
+        - kapitel/moment/avsnitt/regel - "regulation"
+            - innehåller punkter (avsnitt)
+        - regel finns ofta i bilaga!
+        - paragraf - "article"
+
+:Myndighetsforeskrift
+    .. Grundförfattning, Ändringsförfattning
+        .. jag tror att vi bör införa en härledningsregel för detta (åtminstone)
+            .. eller kanske faktiskt föra in dessa typer?
+    - föreskrift, typ av författning
+    - i samlingen, även tillkännagivande och allmänt råd
+        .. inpublicerad i SJÖFS men *publicerades inte där*, utan i "A, B eller C" (rapportserien)
+           "heter bara ÅÅÅÅ:SN [A|B|C]"
+        .. en gång i tiden (fram till början av 2000-talet) omtrycktes (vissa) SFS *även i* SJÖFS!
+    - någon liten postbox-baserad myndighet (typ rederinämnden) ska även publicera i SJÖFS
+    - Tillkännagivande *kan inte upphävas*, har inte alltid ett bemyndigande
+
+

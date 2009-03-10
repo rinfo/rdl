@@ -1,0 +1,101 @@
+########################################################################
+Workshop med Regeringskansliet 2007-09-11
+########################################################################
+# @prefix : <http://rinfo.lagrummet.se/model/2006/11/legal-core#> .
+# @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+# @prefix owl:  <http://www.w3.org/2002/07/owl#> .
+
+
+Bakgrund, nuläge, reflektioner, framtid
+========================================================================
+
+* egen tanke; vad sägs om::
+    <.../ref/fs/sfs>
+            skos:label "Svensk författningssamling";
+            skos:altLabel "SFS" .
+
+* även RK vill ha en labbmijlö att sitta och jobba i för att
+  komma på vad som behöver justeras.
+
+
+Modellanteckningar
+========================================================================
+
+* Generellt, kolla att våra "råa YYYY[-YY]:XX"-nummer håller;
+  det har skett förändringar (i.o.m. en skrivelse?) - t.ex. "98-99:11"..?
+
+* :Rättelseblad
+    - :andrar, inte alltid en :Forfattning, utan även t.ex. proppar..
+      Rimligen bara ändra scope till :Rattsinformationsdokument
+
+* :Rattsinformationsdokument
+    - "handläggare/förvaltare" - "rörlig" egenskap
+        - anges i annan källa (är intern information)
+        - finns i konsolideringsdatabaserna!
+            - kan vara intressant som tilläggsinfo för :KonsolideradGrundforfattning
+
+* :Lag - :forarbete
+    - en eller flera
+        - dock, kan vara internt, därför svårt att identifiera..
+            - men.. minst till propositionen
+    - kan även vara interna dokument, t.ex. en intern promemoria
+        - ska vi ange det som en bnode?
+            - kan dock t.ex. finnas på näter
+            - finns även i akten (mappen med lagen)
+        - men det anges troligen i :Proposition-en
+        - ofta har man både ett betänkande och en promemoria
+
+:Proposition (m.fl.)
+    - har också :beslutande, :foredragande
+
+--------
+
+# TODO: vi borde ha en genomarbetning av Kommitéinformationen!
+# Vi ska väl integrera befintlig källa med poster i kommitéregistret?
+
+* :KommitteDirektiv
+    - ska :departement finnas här också?
+        - det är dessa som man ska rapportera till
+        - vid t.ex. regeringsombildning kan det flyttas..
+
+* :KommitteSammanfattningsDokument
+    - fresnel-dölj dc:title?
+    - ska :departement finnas här också?
+    - :kommittenummer har även en bokstav först för att unikt beteckna detta
+    - :lopnummer - intern db-specifik info?
+    - :kommittestatus
+        - TODO: range Enumation-sak med "pågåande kommittéarbete", "avslutat
+          kommittéarbete"
+
+    - vad *är* detta? information om en kommité *vid ett givet tillfälle*?
+        - då bör väl datum vara med i url:en?
+
+* Tilläggsdirektiv - vad är det?
+    - modellera på samma sätt som "ändringsförfattning"
+      , dvs ny egenskap :tillaggTillDirektiv ?
+
+--------
+
+# TODO: även genomarbetning av t.ex. :InternationellOverenskommelse (SÖ) etc.
+
+--------
+
+* :Utredningsbetankande
+    - :foreslarAndringAv - inte alltid
+    - :utrNummer - döp om till.. :utredningsserienummer ..
+    - :utgarFran
+        - ofta :KommitteDirektiv, men inte *alltid*
+        - Ds-betänkanden bygger.. aldrig på ett KommitteDirektiv?
+    - är inte alltid publicerad i en utredningsserie
+      , men ska den då med i rättsinformationssystemet? *Nej* - bara SOU och Ds
+        - kanske borde vara bara :Betankande? .. eller är det bara de som inte är i SOU/Ds?
+        - .. en del (utredningar?) utmynnar i skrivelser, som ej publiceras..?
+
+* :Proposition
+    - kallas även skrivelse... (i betydelsen "Regeringens skrivelse..")
+        - icke att förväxlas med riksdagens skrivelser..
+    - :utgarFran - kan vara flera!
+        - noll eller flera! (på riktigt s.a.s, dvs inte bara "resten är oidentifierat")
+        - är likt :forarbete? .. iaf i fråga om "finns i mappen"
+
+
