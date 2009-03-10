@@ -2,6 +2,15 @@
 CHANGELOG
 ########################################################################
 
+2009-03-10
+--------------------
+
+* Ändrade kardinalitet för dct:title i Rattsinformationsdokument till 1. Lade
+till referatrubrik för att särskilja referatens mer utförliga rubriker från
+title. 
+
+
+
 2009-03-09
 --------------------
 

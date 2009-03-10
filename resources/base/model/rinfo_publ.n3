@@ -64,9 +64,8 @@
         [ a owl:Restriction;
             owl:onProperty dct:title;
             owl:allValuesFrom rdfs:Literal;
-            owl:minCardinality 0
+            owl:minCardinality 1
         ],
-        # TODO: helt okej (rimligen?), men "fresnel-döljs" per default..
         [ a owl:Restriction;
             owl:onProperty dct:description;
             owl:allValuesFrom rdfs:Literal;
@@ -466,8 +465,6 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Beslutsdatum"@sv;
     rdfs:comment "Datum då innehållet i dokumentet beslutades."@sv;
-    # TODO: tidigare både: "Datum då föreskriften utfärdades."@sv;
-    #       och: "Det datum då Regeringen beslutade ett visst kommittédirektiv."@sv;
     rdfs:range xsd:date; .
 
 # NOTE: vad är skillnaden mellan utfardandedatum och beslutsdatum? owl:equivalentProperty?
@@ -842,6 +839,7 @@
     rdfs:label "Kommittédirektiv"@sv;
     rdfs:comment "Ett kommittédirektiv."@sv;
     rdfs:subClassOf :Rattsinformationsdokument;
+    # TODO: Lägg till information om departementstillhörighet
     rdfs:subClassOf
         [ a owl:Restriction;
             owl:onProperty :direktivnummer;
@@ -985,6 +983,8 @@
         ]
     .
 
+
+
 # TODO: detta är kompletterande information; ska vi ha det som en egen post?
 :Rattsfallsreferat
     rdfs:subClassOf
@@ -1012,6 +1012,14 @@
         ]
     .
 
+
+# TODO: Kontrollera i samband med genomgång av vägledande avgöranden och referat.
+:referatrubrik a rdf:Property;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf dct:title;
+    rdfs:label "Referatrubrik"@sv;
+    rdfs:comment "Beskrivande rubrik för ett rättsfallsreferat."@sv;
+    rdfs:range :Rattsfallsreferat .
 
 :rattsfallspublikation a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
