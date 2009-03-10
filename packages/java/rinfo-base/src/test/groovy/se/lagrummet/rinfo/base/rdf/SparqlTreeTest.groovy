@@ -18,8 +18,8 @@ class SparqlTreeTest {
     @Before
     void setup() {
         def repo = RDFUtil.createMemoryRepository()
-        // FIXME: move these to test resources
-        treeDir = new File("../../../laboratory/services/SparqlToAtom/examples/")
+        // TODO: use self-contained tests (in src/test/resources)
+        treeDir = new File("../../../resources/sparqltrees/")
         rqTree = new SparqlTree(repo, new File(treeDir, "model/sparqltree-model.xml"))
     }
 

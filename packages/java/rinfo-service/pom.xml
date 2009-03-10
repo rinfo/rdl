@@ -120,9 +120,9 @@
             </goals>
             <configuration>
               <tasks>
-                <!-- TODO: move these to src/resources/main/sparqltree -->
+                <!-- TODO: move these to src/resources/main/sparqltrees -->
                 <copy todir="${project.build.outputDirectory}/sparqltree">
-                    <fileset dir="${basedir}/../../../laboratory/services/SparqlToAtom/examples/"
+                    <fileset dir="${basedir}/../../../resources/sparqltrees/"
                              includes="*/*.xml, */*.xslt"/>
                 </copy>
               </tasks>

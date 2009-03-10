@@ -19,7 +19,7 @@ def loadedRepo() {
 }
 
 def runSparqlTree(repo, tree, formatter) {
-    def treeDir = new File("../../../laboratory/services/SparqlToAtom/examples/")
+    def treeDir = new File("../../../resources/sparqltrees/")
     def rqTree = new SparqlTree(repo, new File(treeDir, tree))
     println "Using SPARQL: " + rqTree.queryString
 
