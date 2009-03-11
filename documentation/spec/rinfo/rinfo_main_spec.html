@@ -4,7 +4,7 @@
   <head>
     <title>RInfo Main REST Specification</title>
     <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
-    <link rel="stylesheet" type="text/css" href="spec.css" />
+    <link rel="stylesheet" type="text/css" href="../spec.css" />
   </head>
   <body>
 
@@ -38,7 +38,7 @@
       </thead>
       <tbody>
         <tr><td class="bot">Resource</td>
-          <td class="src"><a href="init.html">init.html</a></td>
+          <td class="src"><a href="../init.html">../init.html</a></td>
         </tr>
         <tr><td class="bot">Test Setup</td>
           <td class="act">Define Namespaces and Base URL</td>
@@ -164,6 +164,12 @@
           <td class="arg">/publ/sfs/1999:175/entry</td>
           <td class="arg"></td>
         </tr>
+        <tr><td></td>
+          <td class="act">Find XPath</td>
+          <td class="arg">/atom:entry/atom:id</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
 
         <tr class="sep"><td>&#160;</td></tr>
 
@@ -217,6 +223,11 @@
         <tr class="sep"><td>&#160;</td></tr>
 
         <tr><td>Defaults to Atom Entry</td>
+          <td class="act">Set Header</td>
+          <td class="arg">Accept</td>
+          <td class="arg">\</td>
+        </tr>
+        <tr><td></td>
           <td class="act">GET</td>
           <td class="arg">/publ/sfs/1999:175</td>
           <td class="arg"></td>
@@ -230,12 +241,6 @@
           <td class="act">Header</td>
           <td class="arg">Content-Type</td>
           <td class="arg">application/atom+xml;type=entry</td>
-        </tr>
-        <tr><td></td>
-          <td class="act">Find XPath</td>
-          <td class="arg">/atom:entry/atom:id</td>
-          <td class="arg"></td>
-          <td class="arg"></td>
         </tr>
 
         <!-- TODO:
@@ -308,8 +313,8 @@
           <td class="act">Body is</td>
           <td class="arg">
             /publ/sfs/1999:175/rdf\r\n
-            /publ/sfs/1999:175/entry\r\n
             /publ/sfs/1999:175/pdf,sv\r\n
+            /publ/sfs/1999:175/entry\r\n
           </td>
           <td class="arg"></td>
         </tr>

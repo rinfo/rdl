@@ -4,7 +4,7 @@
   <head>
     <title>Store Module REST Spec</title>
     <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
-    <link rel="stylesheet" type="text/css" href="spec.css" />
+    <link rel="stylesheet" type="text/css" href="../spec.css" />
   </head>
   <body>
 
@@ -19,7 +19,7 @@
       </thead>
       <tbody>
         <tr><td class="bot">Resource</td>
-          <td class="src"><a href="init.html">init.html</a></td>
+            <td class="src"><a href="../init.html">../init.html</a></td>
         </tr>
         <tr><td class="bot">Test Setup</td>
           <td class="act">Define Namespaces and Base URL</td>
@@ -36,9 +36,6 @@
       <tbody>
         <tr><td class="def">${MAIN_URL}</td>
           <td class="arg">http://localhost:8182/</td>
-        </tr>
-        <tr><td class="def">${200_OK}</td>
-          <td class="arg">200 The request has succeeded</td>
         </tr>
       </tbody>
     </table>
@@ -85,8 +82,8 @@
           <td class="arg"></td>
         </tr>
         <tr><td></td>
-          <td class="act">Response</td>
-          <td class="arg">${200_OK}</td>
+          <td class="act">Response Status</td>
+          <td class="arg">OK</td>
           <td class="arg"></td>
         </tr>
         <tr><td></td>
@@ -119,7 +116,7 @@
         Atom Entry by path:
 
         GET: http://localhost:8182/publ/1901/100/entry
-        Response: 200 The request has succeeded
+        Response Status: 200
         Content-Type: application/atom+xml;type=entry
         Has Body
 
@@ -182,8 +179,8 @@
           <td class="arg"></td>
         </tr>
         <tr><td></td>
-          <td class="act">Response</td>
-          <td class="arg">${200_OK}</td>
+          <td class="act">Response Status</td>
+          <td class="arg">OK</td>
           <td class="arg"></td>
         </tr>
         <tr><td></td>
@@ -205,8 +202,8 @@
           <td class="arg"></td>
         </tr>
         <tr><td></td>
-          <td class="act">Response</td>
-          <td class="arg">${200_OK}</td>
+          <td class="act">Response Status</td>
+          <td class="arg">OK</td>
           <td class="arg"></td>
         </tr>
         <tr><td></td>
@@ -228,8 +225,8 @@
           <td class="arg"></td>
         </tr>
         <tr><td></td>
-          <td class="act">Response</td>
-          <td class="arg">503 The server is currently unable to handle the request due to a temporary overloading or maintenance of the server</td>
+          <td class="act">Response Status</td>
+          <td class="arg">Service Unavailable</td>
           <td class="arg"></td>
         </tr>
 
@@ -241,8 +238,8 @@
           <td class="arg"></td>
         </tr>
         <tr><td></td>
-          <td class="act">Response</td>
-          <td class="arg">410 The requested resource is no longer available at the server and no forwarding address is known</td>
+          <td class="act">Response Status</td>
+          <td class="arg">Gone</td>
           <td class="arg"></td>
         </tr>
 

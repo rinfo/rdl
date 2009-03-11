@@ -7,12 +7,14 @@
 #=======================================================================
 
 <http://rinfo.lagrummet.se/serie/utr/ds> a :Utredningsserie;
+    skos:altLabel "Ds"@sv;
     skos:prefLabel "Departementsserien"@sv;
-    skos:altLabel "Ds"@sv .
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet> .
 
 <http://rinfo.lagrummet.se/serie/utr/sou> a :Utredningsserie;
+    skos:altLabel "SOU"@sv;
     skos:prefLabel "Statens offentliga utredningar"@sv;
-    skos:altLabel "SOU"@sv .
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet> .
 
 # TODO: FM?
 

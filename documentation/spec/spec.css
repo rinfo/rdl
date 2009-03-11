@@ -4,6 +4,10 @@ body {
     font-size: small;
 }
 
+dl dt {
+    font-style: italic;
+}
+
 table {
     width: 96%;
     margin-bottom: 1.6em;
