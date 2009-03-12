@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>Leverantörspostförteckningsspecifikation</title>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="../spec.css" />
+  </head>
+  <body>
+
+    <h1>Leverantörspostförteckningsspecifikation</h1>
+
+    <h2>Inställningar för körbarhet.</h2>
+    <table>
+      <thead>
+        <tr><th>Setting</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="bot">Resource</td>
+          <td class="src"><a href="../init.html">../init.html</a></td>
+        </tr>
+        <tr><td class="bot">Test Setup</td>
+          <td class="act">Define Namespaces and Base URL</td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Shared Variables</h2>
+    <table>
+      <thead>
+        <tr><th>Variable</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="def">${MAIN_URL}</td>
+          <td class="arg">http://localhost:8000/</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <h2>Scenarion</h2>
+    <p>Här detaljeras (körbara) krav på postförteckningarnas innehåll. Enligt gängse svengelska används följande termer:</p>
+    <dl>
+      <dt>Postförteckning</dt>
+      <dd>Feed</dd>
+      <dt>Dokumentpost</dt>
+      <dd>Entry</dd>
+    </dl>
+    <table>
+      <colgroup>
+        <col width="20%" /> <col width="20%" />
+        <col width="30%" /> <col width="30%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Test Case</th>
+          <th>Action</th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr><td>Åtkomst av postförteckning (<a href="http://tools.ietf.org/html/rfc5005#section-4.2">subscription-feed</a>) <em>med</em> arkiv.</td>
+          <td class="act">GET Atom Feed</td>
+          <td class="arg">/feed/index.atom</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Find XPath</td>
+          <td class="arg">/atom:feed/atom:entry/atom:id</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">No XPath</td>
+          <td class="arg">/atom:feed/fh:archive</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">GET Prev Atom Archive</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">XPath Value</td>
+          <td class="arg">/atom:feed/atom:link[
+  @rel='current']/@href</td>
+          <td class="arg">/feed/index.atom</td>
+          <td class="arg"></td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+        <tr><td>Uppdatering av dokumentpost.</td>
+          <td class="act">GET Atom Feed</td>
+          <td class="arg">/feed/index.atom</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="def">${latest_updated}=</td>
+          <td class="act">XPath Regexp</td>
+          <td class="arg">/atom:feed/
+atom:entry[
+  atom:id='http://example.org/entry/2']/
+    atom:updated/text()</td>
+  <td class="arg">${W3C_DATETIME_RE}</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">GET Prev Atom Archive</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="def">${prev_updated}=</td>
+          <td class="act">XPath Regexp</td>
+          <td class="arg">/atom:feed/
+atom:entry[
+  atom:id='http://example.org/entry/2']/
+    atom:updated/text()</td>
+  <td class="arg">${W3C_DATETIME_RE}</td>
+        </tr>
+        <!-- FIXME: Should Be Later Than -->
+        <tr><td></td>
+          <td class="act">Should Not Be Equal</td>
+          <td class="arg">${latest_updated} </td>
+          <td class="arg">${prev_updated} </td>
+          <td class="arg"></td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+        <tr><td>Radering av dokumentpost.</td>
+          <td class="act">GET Atom Feed</td>
+          <td class="arg">/feed/index.atom</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Find XPath</td>
+          <td class="arg">/atom:feed/
+  at:deleted-entry[
+  @ref='http://example.org/docs/fs/5'
+  and
+  @when='2008-10-08T00:00:04.000Z']</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+
+      </tbody>
+    </table>
+
+  </body>
+</html>
