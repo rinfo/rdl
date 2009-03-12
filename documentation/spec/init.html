@@ -40,6 +40,10 @@
         <tr><td class="def">${MAIN_URL}</td>
           <td class="arg">http://rinfo-main/</td>
         </tr>
+        <tr class="sep"><td>&#160;</td></tr>
+        <tr><td class="def">${W3C_DATETIME_RE}</td>
+          <td class="arg">^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$</td>
+        </tr>
       </tbody>
     </table>
 
@@ -72,9 +76,15 @@
         </tr>
         <tr><td></td>
           <td class="act">XMLNS</td>
+          <td class="arg">at</td>
+          <td class="arg">http://purl.org/atompub/tombstones/1.0</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">XMLNS</td>
           <td class="arg">rdf</td>
           <td class="arg">http://www.w3.org/1999/02/22-rdf-syntax-ns#</td>
         </tr>
+        <tr class="sep"><td>&#160;</td></tr>
         <tr><td></td>
           <td class="act">Base URL</td>
           <td class="arg">${MAIN_URL}</td>
@@ -90,34 +100,64 @@
           <th>Action</th>
           <th></th>
           <th></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
+
         <tr><td class="key">GET Atom Feed</td>
           <td class="bot">[Arguments]</td>
           <td class="def">${feed_url}</td>
-          <td class="def"></td>
         </tr>
         <tr><td></td>
           <td class="act">GET</td>
           <td class="arg">${feed_url}</td>
+          <td class="arg"></td>
           <td class="arg"></td>
         </tr>
         <tr><td></td>
           <td class="act">Response Status</td>
           <td class="arg">200</td>
           <td class="arg"></td>
+          <td class="arg"></td>
         </tr>
         <tr><td></td>
           <td class="act">Header</td>
           <td class="arg">Content-Type</td>
           <td class="arg">application/atom+xml</td>
+          <td class="arg"></td>
         </tr>
         <tr><td></td>
           <td class="act">Has Body</td>
           <td class="arg"></td>
           <td class="arg"></td>
+          <td class="arg"></td>
         </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+        <tr><td class="key">GET Prev Atom Archive</td>
+          <td class="bot">[Arguments]</td>
+        </tr>
+        <tr><td></td>
+          <td class="def">${prev_arch}=</td>
+          <td class="act">XPath Regexp</td>
+          <td class="arg">/atom:feed/atom:link[
+  @rel='prev-archive']/@href</td>
+          <td class="arg">^/.+$</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">GET Atom Feed</td>
+          <td class="arg">${prev_arch}</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Find XPath</td>
+          <td class="arg">/atom:feed/fh:archive</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+
       </tbody>
     </table>
 

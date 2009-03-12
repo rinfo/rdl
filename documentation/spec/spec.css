@@ -9,7 +9,7 @@ dl dt {
 }
 
 table {
-    width: 96%;
+    width: 86%;
     margin-bottom: 1.6em;
 }
 
@@ -41,6 +41,7 @@ tr.group td {
 .arg {
     font-family: courier;
     color: green;
+    white-space: pre;
 }
 
 .def {
