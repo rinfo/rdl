@@ -3,20 +3,26 @@
       xmlns:at="http://purl.org/atompub/tombstones/1.0"
       xmlns:fh="http://purl.org/syndication/history/1.0">
 
-    <id>http://example.org/feed</id>
-    <updated>2000-01-01T00:00:02Z</updated>
-    <fh:archive/>
-    <link href="/feed/index.atom" rel="current"/>
-    <link href="/feed/archive-2009-02.atom" rel="next-archive"/>
-    <link href="/feed/archive-2009-01.atom" rel="self"/>
-    <link href="/feed/archive-2009-02.atom" rel="prev-archive"/>
+  <id>tag:example.org,2009:rinfo/feed</id>
+  <updated>2000-01-01T00:00:02Z</updated>
+  <fh:archive/>
+  <link href="/feed/index.atom" rel="current"/>
+  <link href="/feed/archive-2009-02.atom" rel="next-archive"/>
+  <link href="/feed/archive-2009-01.atom" rel="self"/>
+  <link href="/feed/archive-2009-02.atom" rel="prev-archive"/>
 
-    <entry>
-        <id>http://example.org/fs/2009/1</id>
-        <updated>2000-01-01T00:00:01Z</updated>
-        <published>2000-01-01T00:00:01Z</published>
-        <title type="text">Entry 1</title>
-        <content type="text/plain">Entry 1 content.</content>
-    </entry>
+  <author>
+    <name>Exempelmyndighet</name>
+    <uri>http://example.org/myndighten/kontakt</uri>
+    <email>kontakt@example.org</email>
+  </author>
+
+  <entry>
+    <id>http://example.org/fs/2009/1</id>
+    <updated>2000-01-01T00:00:01Z</updated>
+    <published>2000-01-01T00:00:01Z</published>
+    <title type="text">Entry 1</title>
+    <content type="text/plain">Entry 1 content.</content>
+  </entry>
 
 </feed>

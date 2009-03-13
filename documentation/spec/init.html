@@ -48,6 +48,10 @@
         <tr><td class="def">${A W3C-DateTime}</td>
           <td class="arg">^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$</td>
         </tr>
+        <tr class="sep"><td>&#160;</td></tr>
+        <tr><td class="def">${A URI}</td>
+          <td class="arg">(https?://|tag:|urn:).+</td>
+        </tr>
       </tbody>
     </table>
 
@@ -112,6 +116,8 @@
         <tr><td class="key">GET Atom Feed</td>
           <td class="bot">[Arguments]</td>
           <td class="def">${feed_url}</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
         </tr>
         <tr><td></td>
           <td class="act">GET</td>
@@ -137,10 +143,32 @@
           <td class="arg"></td>
           <td class="arg"></td>
         </tr>
+        <!-- NOTE: verifying *basic* atom structure -->
+        <tr><td></td>
+          <td class="act">XPath Regexp</td>
+          <td class="arg">/atom:feed/atom:id/text()</td>
+          <td class="arg">${A URI}</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="def">${feed_updated}=</td>
+          <td class="act">Find XPath</td>
+          <td class="arg">/atom:feed/atom:updated/text()</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Is DateTime</td>
+          <td class="arg">${feed_updated}</td>
+          <td></td>
+          <td></td>
+        </tr>
 
         <tr class="sep"><td>&#160;</td></tr>
         <tr><td class="key">GET Prev Atom Archive</td>
           <td class="bot">[Arguments]</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+          <td class="arg"></td>
         </tr>
         <tr><td></td>
           <td class="def">${prev_arch}=</td>
@@ -161,6 +189,49 @@
           <td class="arg"></td>
           <td class="arg"></td>
         </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+        <tr><td class="key">Has Atom Contact Info</td>
+          <td class="bot">[Arguments]</td>
+          <td class="def"></td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Find XPath</td>
+          <td class="arg">/atom:feed/atom:author[
+  atom:name and
+  (atom:uri or atom:email)]</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+        <tr><td class="key">Has Valid Atom Entries</td>
+          <td class="bot">[Arguments]</td>
+          <td class="def"></td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <!-- TODO: for all entries: -->
+        <tr><td></td>
+          <td class="act">XPath Regexp</td>
+          <td class="arg">/atom:feed/atom:entry/atom:id/text()</td>
+          <td class="arg">${A URI}</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <!-- TODO: for all entries, assert "date_should_be_younger_or_equal"
+                   for updated and published:
+        <tr><td></td>
+          <td class="def">${updated}=</td>
+          <td class="act">Find XPath</td>
+          <td class="arg">/atom:feed/atom:entry[
+  atom:id='']/
+    atom:updated/text()</td>
+          <td class="arg"></td>
+        </tr>
+        -->
 
       </tbody>
     </table>

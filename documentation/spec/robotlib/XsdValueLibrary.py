@@ -8,9 +8,15 @@ class XsdValueLibrary:
                 "Expected date time %s to be younger than %s" % (
                     youngvalue, oldvalue))
 
-    def is_date(value):
+    def date_should_be_younger_or_equal(self, youngvalue, oldvalue):
+        assert date_is_younger(youngvalue, oldvalue
+                ) or youngvalue == oldvalue, (
+                "Expected date time %s to be younger than or equal to %s" % (
+                    youngvalue, oldvalue))
+
+    def is_datetime(self, value):
         try:
-            parse_date_time(v)
+            parse_datetime(value)
         except ValueError, e:
             assert False, e
 
@@ -23,12 +29,12 @@ def date_is_younger(youngvalue, oldvalue):
     >>> date_is_younger("2009-01-01T00:00:00Z", "2009-01-01T00:00:00Z")
     False
     """
-    young_dtime = parse_date_time(youngvalue)
-    old_dtime = parse_date_time(oldvalue)
+    young_dtime = parse_datetime(youngvalue)
+    old_dtime = parse_datetime(oldvalue)
     return young_dtime > old_dtime
 
 # From rdflib/term.py (modified to raise ValueError if failing to parse).
-def parse_date_time(v) :
+def parse_datetime(v) :
     """
     Attempt to cast to datetime, or raise ValueError.
     """
