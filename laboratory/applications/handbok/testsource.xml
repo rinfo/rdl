@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dct="http://purl.org/dc/terms/"
+         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+
+  <Forordning rdf:about="http://rinfo.lagrummet.se/publ/sfs/2000:80">
+    <!-- identifiering -->
+    <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
+    <fsNummer>2000:80</fsNummer>
+    <dct:title xml:lang="sv">Förordning om ändring i rättsinformationsförordningen (1999:175);</dct:title>
+    <!-- tidsaspekter -->
+    <utfardandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2000-02-24</utfardandedatum>
+    <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2000-04-10</ikrafttradandedatum>
+    <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2000-03-07</utkomFranTryck>
+    <!-- ursprung -->
+    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
+    <!-- dokumentkopplingar -->
+    <andrar rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1999:175"/>
+    <!-- dokumentsammansätting -->
+  </Forordning>
+
+</rdf:RDF>

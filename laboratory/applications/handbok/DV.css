@@ -1,103 +1,128 @@
 @page {
-	size: A4;
-	margin: 1cm 3.5cm 2cm 4cm;
-	-fs-flow-bottom: "footer";
-	-fs-flow-top: "header";
+    size: A4;
+    margin: 3cm 1cm 3cm 1cm;
+
+    font-family: Garamond, serif; 
+    font-size: 12pt; 
+    font-weight: normal;
+    line-height: 120%;
+    color: #000000; 
+
+    background-color: transparent;
+
+    @top-left-corner {
+        content: element(header);
+    }
+
+    @top-right-corner {
+        content: element(pagemeta);
+    }
 }
 
-img.logo {
-	width: 5em;
-	height: 3em;
+body {
+    margin: 0 2.5cm 0 3cm;
 }
 
-html {
-	font-family: Garamond, serif; 
-	font-size: 12pt; 
-	font-weight: normal;
-	color: #000000; 
-	background-color: transparent;
-	line-height: 120%;
+div.header {
+    position: running(header);
 }
 
-#header {
-	position: absolute; top: 0; left: 0; 
-	-fs-move-to-flow: "header";
-	font-family: Garamond, serif;
-	font-size: 12pt;
+div.header img.logo {
+    width:5cm;
+    margin-top: 1cm;
+    margin-left: 1cm;
 }
 
-#footer {
-	position: absolute; top: 0; left: 0;
-	-fs-move-to-flow: "footer";
-	text-align: center;
-	margin-bottom: 1cm;
-	line-height: 110%;
-	margin-right: -2cm;
-	margin-left: -2cm;
+div.pagemeta {
+    position: running(pagemeta);
+    font-family: "Trebuchet MS", Arial, sans-serif;
+    font-size: 9pt;
+    margin-right: 1cm;
+    margin-left: -5cm;
 }
 
-p.footercontent {
-	font-family: Trebuchet, sans-serif;
-	font-size: 7pt;
-	border-top: solid 0.5pt #000;
+div.pagemeta p {
+    text-align:right;
+    margin-right: 1cm;
+}
+
+div.pagemeta table tr td {
+    font-family: "Trebuchet MS", Arial, sans-serif;
+    font-size: 9pt;
+    padding: 0;
+    margin: 0;
+    text-align:left;
+    line-height: 100%;
+}
+
+div.pagemeta table tr th {
+    font-family: "Trebuchet MS", Arial, sans-serif;
+    font-size: 5pt;
+    padding: 0;
+    margin: 0;
+    text-align:left;
+    line-height: 100%;
+}
+
+div.pagemeta table {
+    width: 4cm;
+    background-color: #e6e6e6;
+    margin-right: 1cm;
+    padding: 0;
 }
 
 #pagenumber:before {
-	content: counter(page); 
-}
-
-#pagecount:before {
-	content: counter(pages);  
+    content: counter(page) "(" counter(pages) ")"; 
 }
 
 table.docinfo {
-	background-color: #e6e6e6;
-	width: 6cm;
-	border: solid 1px #000000;
+    background-color: #e6e6e6;
+    width: 6cm;
+    border: solid 1px #000000;
 }
 
 table.docinfo tr th {
-	width: 3cm;
-	font-size: 5pt;
-	font-family: Trebuchet, sans-serif;
-	text-align:left;
+    width: 3cm;
+    font-size: 5pt;
+    font-family: "Trebuchet MS", sans-serif;
+    text-align:left;
 }
 
 table.docinfo tr td {
-	width: 3cm;
+    width: 3cm;
 }
 
 b, 
 strong { 
-	font-weight: bold; 
+    font-weight: bold; 
 }
 
 i, 
 em { 
-	font-style: italic; 
+    font-style: italic; 
 }
 
 u {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
 s,
 strike {
-	text-decoration: line-through;
+    text-decoration: line-through;
 }
 
 a {
-	text-decoration: underline;
-	color: blue;
+    text-decoration: underline;
+    color: blue;
 }
 
 ins {
-	color: green;
-	text-decoration: underline;
+    color: green;
+    text-decoration: underline;
 }
 del {
-	color: red;
-	text-decoration: line-through;
+    color: red;
+    text-decoration: line-through;
 }
 
 pre,
@@ -105,7 +130,7 @@ code,
 kbd,
 samp,
 tt {
-	font-family: "Courier", sans-serif;
+    font-family: "Courier", sans-serif;
 }
 
 h1,
@@ -114,25 +139,26 @@ h3,
 h4,
 h5,
 h6 {
-	font-weight:bold;
-	font-family:Trebuchet, Arial, sans-serif;
+    font-weight:bold;
+    font-family:"Trebuchet MS", Arial, sans-serif;
 }
 
 h1 {
-	font-size:15pt; 
+    line-height: 120%;
+    font-size:15pt; 
 }
 
 h2 {
-	font-size:13pt;
+    font-size:13pt;
 }
 
 h3 {
-	font-size:11pt;
+    font-size:11pt;
 }
 
 h4 {
-	font-family: Garamond, serif;
-	font-size:11.5pt;
+    font-family: Garamond, serif;
+    font-size:11.5pt;
 }
 
 h1,
@@ -144,134 +170,110 @@ h6,
 p,
 pre,
 hr {
-	margin:1em 0;
+    margin:1em 0;
 }
 
 p {
-	font-family: Garamond, "Times New Roman", serif;
-	font-size: 12pt;
+    font-family: Garamond, "Times New Roman", serif;
+    font-size: 12pt;
 }
 
 tr,
 th,
 td {
 
-	vertical-align: middle;
-	width: auto;
+    vertical-align: middle;
+    width: auto;
 }
 
 th {
-	text-align: left;
-	font-weight: bold;
+    text-align: left;
+    font-weight: bold;
 }
 
 center {
-	text-align: center;
+    text-align: center;
 }
 
 big {
-	font-size: 125%;
+    font-size: 125%;
 }
 
 small {
-	font-size: 75%;
+    font-size: 75%;
 }
 
 
 ul {
-	list-style-type: disc;
+    list-style-type: disc;
 }
 
 ul li, ol li {
-	margin-left: 1cm;
-	font-family: Garamond, serif;
+    font-family: Garamond, serif;
 }
 
 ul ul {
-	list-style-type: circle;
+    list-style-type: circle;
 }
 
 ul ul ul {
-	list-style-type: square;
+    list-style-type: square;
 }
 
 ol {
-	list-style-type: decimal;
-	margin-left: 1.5em;
+    list-style-type: decimal;
+    margin-left: 1.5em;
 }
 
 pre {
-	white-space: pre;
-	line-height: 110%;
+    white-space: pre;
+    line-height: 110%;
 }
 
 blockquote {
-	margin-left: 1.5em;
-	margin-right: 1.5em;
+    margin-left: 1.5em;
+    margin-right: 1.5em;
 }
 
-.syntax pre {
-	font-size: 7pt;
+div.block {
+    overflow: visible;
+    margin-left: -2cm;
+    margin-right: -2cm;
 }
-.syntax .hll { background-color: #ffffcc }
-.syntax .c { color: #000; font-style: italic } /* Comment */
-.syntax .err { border: 1px solid #FF0000 } /* Error */
-.syntax .k { color: #007020; font-weight: bold } /* Keyword */
-.syntax .o { color: #666666 } /* Operator */
-.syntax .cm { color: #60a0b0; font-style: italic } /* Comment.Multiline */
-.syntax .cp { color: #007020 } /* Comment.Preproc */
-.syntax .c1 { color: #60a0b0; font-style: italic } /* Comment.Single */
-.syntax .cs { color: #60a0b0; background-color: #fff0f0 } /* Comment.Special */
-.syntax .gd { color: #A00000 } /* Generic.Deleted */
-.syntax .ge { font-style: italic } /* Generic.Emph */
-.syntax .gr { color: #FF0000 } /* Generic.Error */
-.syntax .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.syntax .gi { color: #00A000 } /* Generic.Inserted */
-.syntax .go { color: #808080 } /* Generic.Output */
-.syntax .gp { color: #c65d09; font-weight: bold } /* Generic.Prompt */
-.syntax .gs { font-weight: bold } /* Generic.Strong */
-.syntax .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.syntax .gt { color: #0040D0 } /* Generic.Traceback */
-.syntax .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
-.syntax .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
-.syntax .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
-.syntax .kp { color: #007020 } /* Keyword.Pseudo */
-.syntax .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
-.syntax .kt { color: #902000 } /* Keyword.Type */
-.syntax .m { color: #40a070 } /* Literal.Number */
-.syntax .s { color: #4070a0 } /* Literal.String */
-.syntax .na { color: #4070a0 } /* Name.Attribute */
-.syntax .nb { color: #007020 } /* Name.Builtin */
-.syntax .nc { color: #0e84b5; font-weight: bold } /* Name.Class */
-.syntax .no { color: #60add5 } /* Name.Constant */
-.syntax .nd { color: #555555; font-weight: bold } /* Name.Decorator */
-.syntax .ni { color: #d55537; font-weight: bold } /* Name.Entity */
-.syntax .ne { color: #007020 } /* Name.Exception */
-.syntax .nf { color: #06287e } /* Name.Function */
-.syntax .nl { color: #002070; font-weight: bold } /* Name.Label */
-.syntax .nn { color: #0e84b5; font-weight: bold } /* Name.Namespace */
-.syntax .nt { color: #062873; font-weight: bold } /* Name.Tag */
-.syntax .nv { color: #bb60d5 } /* Name.Variable */
-.syntax .ow { color: #007020; font-weight: bold } /* Operator.Word */
-.syntax .w { color: #bbbbbb } /* Text.Whitespace */
-.syntax .mf { color: #40a070 } /* Literal.Number.Float */
-.syntax .mh { color: #40a070 } /* Literal.Number.Hex */
-.syntax .mi { color: #40a070 } /* Literal.Number.Integer */
-.syntax .mo { color: #40a070 } /* Literal.Number.Oct */
-.syntax .sb { color: #4070a0 } /* Literal.String.Backtick */
-.syntax .sc { color: #4070a0 } /* Literal.String.Char */
-.syntax .sd { color: #4070a0; font-style: italic } /* Literal.String.Doc */
-.syntax .s2 { color: #4070a0 } /* Literal.String.Double */
-.syntax .se { color: #4070a0; font-weight: bold } /* Literal.String.Escape */
-.syntax .sh { color: #4070a0 } /* Literal.String.Heredoc */
-.syntax .si { color: #70a0d0; font-style: italic } /* Literal.String.Interpol */
-.syntax .sx { color: #c65d09 } /* Literal.String.Other */
-.syntax .sr { color: #235388 } /* Literal.String.Regex */
-.syntax .s1 { color: #4070a0 } /* Literal.String.Single */
-.syntax .ss { color: #517918 } /* Literal.String.Symbol */
-.syntax .bp { color: #007020 } /* Name.Builtin.Pseudo */
-.syntax .vc { color: #bb60d5 } /* Name.Variable.Class */
-.syntax .vg { color: #bb60d5 } /* Name.Variable.Global */
-.syntax .vi { color: #bb60d5 } /* Name.Variable.Instance */
-.syntax .il { color: #40a070 } /* Literal.Number.Integer.Long */
+.syntax {
+    font-style: pre;
+    font-size: 7pt;
+    font-family: "Courier New", monospace;
+}
+
+.xml_tag_symbols {
+color: rgb(0,59,255);
+}
+.xml_rife_tag {
+color: rgb(0,0,0); background-color: rgb(228,230,160);
+}
+.xml_plain {
+color: rgb(0,0,0);
+}
+.xml_comment {
+color: rgb(147,147,147); background-color: rgb(247,247,247);
+}
+.xml_attribute_name {
+color: rgb(0,0,0); font-weight: bold;
+}
+.xml_tag_name {
+color: rgb(0,55,255);
+}
+.xml_char_data {
+color: rgb(0,0,0);
+}
+.xml_processing_instruction {
+color: rgb(0,0,0); font-weight: bold; font-style: italic;
+}
+.xml_attribute_value {
+color: rgb(193,0,0);
+}
+.xml_rife_name {
+color: rgb(0,0,196); background-color: rgb(228,230,160);
+}
 

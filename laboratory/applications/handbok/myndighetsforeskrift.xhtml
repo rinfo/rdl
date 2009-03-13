@@ -7,16 +7,26 @@
 		<link rel="stylesheet" type="text/css" media="print" href="DV.css"/>
     </head>
     <body>
-        <div id="header">
-            <p class="pagemeta">Skapat <span id="docdate">2008-09-31</span>, <span id="pagenumber"/> (<span id="pagecount"/>)</p>
-        </div>
-		<div id="footer">
-            <p class="footercontent">551 81 Jönköping • Besöksadress: Kyrkogatan 34 • Telefon: 036-15 53 00 • Fax: 036-16 57 21 • domstolsverket@dom.se • www.domstol.se<br/>Expeditionstid: Måndag-fredag 08.00-16.30</p>
-        </div>
-
+        <div class="header">
             <img src="logotyp.png" class="logo" alt=""/>
+        </div>
+        <div class="pagemeta">
+            <p><span id="pagenumber"/></p>
+            <table>
+                <tr>
+                    <th>DATUM</th>
+                    <th>VERSION</th>
+                </tr>
+                <tr>
+                    <td class="docdate">2008-12-01</td>
+                    <td class="svnversion">531</td>
+                </tr>
+            </table>
+        </div>
 
-<div class="syntax"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<div class="syntax block">
+    <h1>Exempel på större kodblock utanför marginalerna (t.ex. i en bilaga)</h1>
+<pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
 <span class="nt">&lt;rdf:RDF</span> <span class="na">xmlns:rdf=</span><span class="s">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;</span>
          <span class="na">xmlns:dct=</span><span class="s">&quot;http://purl.org/dc/terms/&quot;</span>
          <span class="na">xmlns=</span><span class="s">&quot;http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#&quot;</span><span class="nt">&gt;</span>
@@ -51,13 +61,20 @@
 </pre></div>
 
 
-        <h1>Startpaket för publicering av elektronisk rättsinformation</h1>
-        <p>Detta dokument är en introduktion till elektronisk publicering av rättsinformation enligt de principer som utarbetats i rättsinformationssystemet. Dokumentet är i första hand avsett för att en deltagande organisation skall kunna bilda sig en uppfattning om konskvenserna för deltagande.</p>
-        <p>Dokumentet är indelat i följande delar:</p>
+        <h1>Rubrik Startpaket för publicering av elektronisk rättsinformation</h1>
+        <p>Brödtext: Detta dokument är en introduktion till elektronisk publicering av rättsinformation enligt de principer som utarbetats i rättsinformationssystemet. Dokumentet är i första hand avsett för att en deltagande organisation skall kunna bilda sig en uppfattning om konskvenserna för deltagande.</p>
+        <p>En punktlista:</p>
         <ol>
             <li>Översikt av principer och standarder för publicering av rättsinformation i rättsinformationssystemet.</li>
             <li>Exempel på publicering av rättsinformation</li>
         </ol>
+
+        <h2>Inlinekod</h2>
+        <div class="syntax"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+        <span class="nt">&lt;rdf:RDF</span> <span class="na">xmlns:rdf=</span><span class="s">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;</span>
+         <span class="na">xmlns:dct=</span><span class="s">&quot;http://purl.org/dc/terms/&quot;</span>
+         </pre>
+         </div>
 
         <h2>Översikt av principer och standarder</h2>
         <p>En central funktion för rättsinformationssystemet är att möjliggöra elektroniska referenser mellan informationsposter. Exempel på sådana referenser är den mellan en författning och ett förarbete, mellan en föreskrift  och de dokument som utgör dess rättsliga grund samt mellan föreskrifter från olika källor.</p>
