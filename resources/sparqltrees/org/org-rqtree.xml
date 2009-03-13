@@ -10,6 +10,9 @@
                order-by="DESC(?org)"
                distinct="true">
 
+    <!--
+    #FILTER(?org = <http://rinfo.lagrummet.se/org/regeringskansliet>).
+    -->
     <org> a foaf:Organization;
         foaf:name <orgName/> .
         OPTIONAL {

@@ -98,6 +98,7 @@ class SesameLoader extends FeedArchivePastToPresentReader {
             def entryRepoData = new EntryRepoData(
                     delItem.getKey().toURI(), delItem.getValue().getDate(),
                     conn)
+            // TODO: unless already deleted..
             logger.info("Deleting RDF from entry <${entryRepoData.id}>")
             entryRepoData.clearContext() // TODO: error if not exists?
             // TODO:? ok to just add the tombstone as a marker (for collect) like this?
@@ -121,8 +122,8 @@ class SesameLoader extends FeedArchivePastToPresentReader {
         }
         for (link in entry.links) {
             def urlPath = unescapeColon( link.resolvedHref.toString() )
-            def mediaType = link.mimeType.toString()
-            if (mediaType.equals(rdfMimeType)) {
+            def mediaType = link.getMimeType().toString()
+            if ("enclosure".equals(link.rel) && rdfMimeType.equals(mediaType)) {
                 rdfReferences.add(new ReprRef(new URL(urlPath), mediaType))
             }
         }

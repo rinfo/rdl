@@ -63,25 +63,37 @@ def startServer(port, makeCollection) {
 
 def collectItems(base) {
     def items = []
+    def addItem = {
+        if (it) items << it
+    }
 
     FU.iterateFiles(new File(base, "model"),
             ["n3"] as String[], true).each {
-        items << modelItem(it)
+        addItem modelItem(it)
     }
 
-    items << datasetItem("ext/modeldata",
+    // Doesn't work - will use external model URI:s (collector won't load those).
+    //FU.iterateFiles(new File(base, "../external/rdf"),
+    //        ["rdfs", "owl"] as String[], true).each {
+    //    addItem modelItem(it)
+    //}
+    addItem datasetItem("ext/models",
+            FU.listFiles(new File(base, "../external/rdf"),
+                ["rdfs", "owl"] as String[], true))
+
+    addItem datasetItem("ext/extended_modeldata",
             FU.listFiles(new File(base, "extended/rdf"),
                 ["n3"] as String[], true))
 
-    items << datasetItem("org",
+    addItem datasetItem("org",
             FU.listFiles(new File(base, "datasets/org"),
                 ["n3"] as String[], true))
 
-    items << datasetItem("serie",
+    addItem datasetItem("serie",
             FU.listFiles(new File(base, "datasets/serie"),
                 ["n3"] as String[], true))
 
-    items << datasetItem("system",
+    addItem datasetItem("system",
             FU.listFiles(new File(base, "datasets"),
                 ["n3"] as String[], false))
 
@@ -92,20 +104,23 @@ def modelItem(File file) {
     def repo = RDFUtil.createMemoryRepository()
     def conn = repo.connection
     RDFUtil.loadDataFromFile(repo, file)
-    def modelUri = null
-    RDFUtil.one(conn, null, RDF.TYPE, OWL.ONTOLOGY, true).each {
-        modelUri = it.subject
-    }
-
+    def modelUri = getModelUri(conn)
     //def enclosures = []
     //collectObjects(conn, modelUri, OWL.IMPORTS).each {
     //    enclosures << [ href: it as String, mediaType: MT.APPLICATION_RDF_XML ]
     //}
     conn.close()
+    if (modelUri == null) {
+        repo.shutDown()
+        return null
+    }
     return [
         uri: modelUri as String,
         updated: new Date(file.lastModified()),
-        content: [data: { repoToInStream(repo) }, mediaType: MT.APPLICATION_RDF_XML],
+        content: [
+            data: managedRdfInputStream(file, repo),
+            mediaType: MT.APPLICATION_RDF_XML
+        ],
         enclosures: null
     ]
 }
@@ -137,11 +152,7 @@ def datasetItem(uriPath, List<File> files) {
 
         enclosures << [
             href: slug,
-            data: {
-                final enclRepo = RDFUtil.createMemoryRepository()
-                RDFUtil.loadDataFromFile(enclRepo, file)
-                repoToInStream(enclRepo)
-            },
+            data: managedRdfInputStream(file),
             mediaType: MT.APPLICATION_RDF_XML
         ]
         def fileDate = new Date(file.lastModified())
@@ -156,6 +167,31 @@ def datasetItem(uriPath, List<File> files) {
         content: [data: { repoToInStream(setRepo) }, mediaType: MT.APPLICATION_RDF_XML],
         enclosures: enclosures
     ]
+}
+
+def getModelUri(conn) {
+    def uri = null
+    RDFUtil.one(conn, null, RDF.TYPE, OWL.ONTOLOGY, true).each {
+        uri = it.subject
+    }
+    return uri
+}
+
+/**
+ * Either uses the file as-is and closes the repo, or returns a lazy serializer..
+ */
+// TODO: Skip Closure; serialize directly?
+Closure managedRdfInputStream(file, final repo=null) {
+    if (file.name.endsWith(".n3")) {
+        if (repo == null) {
+            repo = RDFUtil.createMemoryRepository()
+            RDFUtil.loadDataFromFile(repo, file)
+        }
+        return { repoToInStream(repo) }
+        repo.shutDown()
+    } else {
+        return { new FileInputStream(file) }
+    }
 }
 
 def repoToInStream(repo) {
@@ -186,8 +222,13 @@ def createAtomCollection(feedUri, feedTitle, baseUri, items) {
         entry.setContent(new IRI(contentHref), item.content.mediaType as String)
 
         for (encl in item.enclosures) {
-            collection[encl.href] = encl
-            entry.addLink(encl.href, "enclosure", encl.mediaType as String,
+
+            // FIXME: when abdera *parses* this (in collector), it seems to
+            // *remove* "mismatch" of fileext and mediaType!
+            def href = encl.href.replace(".owl", ".rdf").replace(".rdfs", ".rdf")
+
+            collection[href] = encl
+            entry.addLink(href, "enclosure", encl.mediaType as String,
                     null/*title*/, null/*lang*/, -1)
         }
         feed.insertEntry(entry)

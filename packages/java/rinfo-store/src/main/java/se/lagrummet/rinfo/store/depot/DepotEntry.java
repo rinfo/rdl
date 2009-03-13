@@ -340,6 +340,7 @@ public class DepotEntry {
             List<SourceContent> sourceEnclosures, boolean releaseLock)
             throws DepotWriteException, FileNotFoundException, IOException {
         if(entryContentDir.exists()) {
+            // TODO:? if entry is deleted, spec. that it can be recreated.
             throw new DuplicateDepotEntryException(this);
         }
         entryContentDir.mkdir();
