@@ -16,7 +16,7 @@ doc_xml = infile.getText("UTF-8")
 
     source= new File(match[1]).getText("UTF-8")
 
-    hl_renderer = XhtmlRendererFactory.getRenderer(FileUtils.getExtension("test.xml"))
+    hl_renderer = XhtmlRendererFactory.getRenderer(FileUtils.getExtension("test.xml")) //Picks renderer based on file extension
     hl_source_fragment = hl_renderer.highlight("", source, "iso-8859-1", true)
 
     //Replace sourcecode section with highlighted source
