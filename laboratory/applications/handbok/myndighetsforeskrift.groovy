@@ -20,7 +20,7 @@ doc_xml = infile.getText("UTF-8")
     hl_source_fragment = hl_renderer.highlight("", source, "iso-8859-1", true)
 
     //Replace sourcecode section with highlighted source
-    doc_xml = doc_xml.replace("<div class=\"sourcecode\">" + match[1] + "</div>", "<div class=\"sourcecode\">" + hl_source_fragment + "</div>")
+    doc_xml = doc_xml.replace("<div class=\"sourcecode\">" + match[1] + "</div>", "<div class=\"sourcecode\">\n\n" + hl_source_fragment + "\n\n</div>")
 }
 
 builder     = DocumentBuilderFactory.newInstance().newDocumentBuilder()

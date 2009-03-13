@@ -1,0 +1,25 @@
+.xml_tag_symbols {
+color: rgb(0,59,255);
+}
+.xml_plain {
+color: rgb(0,0,0);
+}
+.xml_comment {
+    color: #000;
+}
+.xml_attribute_name {
+color: rgb(0,0,0); font-weight: bold;
+}
+.xml_tag_name {
+color: rgb(0,55,255);
+}
+.xml_char_data {
+color: rgb(0,0,0);
+}
+.xml_processing_instruction {
+color: rgb(0,0,0); font-weight: bold; font-style: italic;
+}
+.xml_attribute_value {
+color: rgb(193,0,0);
+}
+
