@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv">
+  <head>
+    <title>Init Locale: sv</title>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="spec.css" />
+  </head>
+  <body>
+
+    <table>
+      <thead>
+        <tr><th>Keyword</th>
+          <th>Action</th>
+          <th>Args</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr><td class="key">Är lika</td>
+          <td class="bot">[Arguments]</td><td class="def">@{args}</td></tr>
+        <tr><td></td>
+          <td class="act">Should Be Equal</td><td class="arg">@{args}</td>
+        </tr>
+        <tr><td class="key">Är inte lika</td>
+          <td class="bot">[Arguments]</td><td class="def">@{args}</td></tr>
+        <tr><td></td>
+          <td class="act">Should Not Be Equal</td><td class="arg">@{args}</td>
+        </tr>
+
+        <tr><td class="key">Är yngre än</td>
+          <td class="bot">[Arguments]</td><td class="def">@{args}</td></tr>
+        <tr><td></td>
+          <td class="act">Date Should Be Younger</td><td class="arg">@{args}</td>
+        </tr>
+
+        <tr><td class="key">Hämta Atom-feed</td>
+          <td class="bot">[Arguments]</td><td class="def">@{args}</td></tr>
+        <tr><td></td>
+          <td class="act">GET Atom Feed</td><td class="arg">@{args}</td>
+        </tr>
+        <tr><td class="key">Hämta föregående Atom-arkiv</td>
+          <td class="bot">[Arguments]</td><td class="def">@{args}</td></tr>
+        <tr><td></td>
+          <td class="act">GET Prev Atom Archive</td><td class="arg">@{args}</td>
+        </tr>
+
+      </tbody>
+    </table>
+
+  </body>
+</html>

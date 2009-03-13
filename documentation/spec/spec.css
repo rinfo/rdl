@@ -9,7 +9,7 @@ dl dt {
 }
 
 table {
-    width: 86%;
+    width: 72em;
     margin-bottom: 1.6em;
 }
 
@@ -26,8 +26,21 @@ tr.group td {
     border-top-width: 4px;
 }
 
-.sep {
+th.tc {
+    /** /
+    width: 40%; /**/
+}
+
+td.tc {
+    background-color: #eef;
+}
+
+tr.sep {
     background-color: #eee;
+}
+
+tr.sep td {
+    border: 0;
 }
 
 .bot {

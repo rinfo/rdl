@@ -1,14 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv">
   <head>
-    <title>Leverantörspostförteckningsspecifikation</title>
+    <title>Specifikation för postförteckningar</title>
     <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
     <link rel="stylesheet" type="text/css" href="../spec.css" />
   </head>
   <body>
 
-    <h1>Leverantörspostförteckningsspecifikation</h1>
+    <h1>Specifikation för postförteckningar</h1>
 
     <h2>Inställningar för körbarhet.</h2>
     <table>
@@ -26,7 +26,7 @@
         </tr>
       </tbody>
     </table>
-    <h2>Shared Variables</h2>
+    <h2>Delade variabler</h2>
     <table>
       <thead>
         <tr><th>Variable</th>
@@ -34,9 +34,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td class="def">${MAIN_URL}</td>
+        <tr><td class="def">${Base URL}</td>
           <td class="arg">http://localhost:8000/</td>
         </tr>
+        <tr><td class="def">${ex}</td>
+          <td class="arg">http://example.org</td>
+        </tr>
+
       </tbody>
     </table>
 
@@ -45,7 +49,7 @@
     <p>Här detaljeras (körbara) krav på postförteckningarnas innehåll. Enligt gängse svengelska används följande termer:</p>
     <dl>
       <dt>Postförteckning</dt>
-      <dd>Feed</dd>
+      <dd>Feed (<a href="http://tools.ietf.org/html/rfc5005#section-4.2">subscription-feed</a>)</dd>
       <dt>Dokumentpost</dt>
       <dd>Entry</dd>
     </dl>
@@ -56,7 +60,7 @@
       </colgroup>
       <thead>
         <tr>
-          <th>Test Case</th>
+          <th class="tc">Test Case</th>
           <th>Action</th>
           <th></th>
           <th></th>
@@ -65,7 +69,7 @@
       </thead>
       <tbody>
 
-        <tr><td>Åtkomst av postförteckning (<a href="http://tools.ietf.org/html/rfc5005#section-4.2">subscription-feed</a>) <em>med</em> arkiv.</td>
+        <tr><td class="tc">Åtkomst av postförteckning <em>med</em> arkiv</td>
           <td class="act">GET Atom Feed</td>
           <td class="arg">/feed/index.atom</td>
           <td class="arg"></td>
@@ -98,20 +102,47 @@
         </tr>
 
         <tr class="sep"><td>&#160;</td></tr>
-        <tr><td>Uppdatering av dokumentpost.</td>
-          <td class="act">GET Atom Feed</td>
+        <tr><td class="tc">Uppdatering av dokumentpost</td>
+          <td class="act">Hämta Atom-feed</td>
           <td class="arg">/feed/index.atom</td>
           <td class="arg"></td>
           <td class="arg"></td>
         </tr>
         <tr><td></td>
-          <td class="def">${latest_updated}=</td>
+          <td class="def">${Senaste uppdateringen}=</td>
           <td class="act">XPath Regexp</td>
-          <td class="arg">/atom:feed/
-atom:entry[
-  atom:id='http://example.org/entry/2']/
+          <td class="arg">/atom:feed/atom:entry[
+  atom:id='${ex}/fs/2009/2']/
     atom:updated/text()</td>
-  <td class="arg">${W3C_DATETIME_RE}</td>
+  <td class="arg">${A W3C-DateTime}</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Hämta föregående Atom-arkiv</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="def">${Förra uppdateringen}=</td>
+          <td class="act">XPath Regexp</td>
+          <td class="arg">/atom:feed/atom:entry[
+  atom:id='${ex}/fs/2009/2']/
+    atom:updated/text()</td>
+  <td class="arg">${A W3C-DateTime}</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Är yngre än</td>
+          <td class="arg">${Senaste uppdateringen} </td>
+          <td class="arg">${Förra uppdateringen} </td>
+          <td class="arg"></td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+        <tr><td class="tc">Radering av dokumentpost</td>
+          <td class="act">GET Atom Feed</td>
+          <td class="arg">/feed/index.atom</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
         </tr>
         <tr><td></td>
           <td class="act">GET Prev Atom Archive</td>
@@ -120,37 +151,26 @@ atom:entry[
           <td class="arg"></td>
         </tr>
         <tr><td></td>
-          <td class="def">${prev_updated}=</td>
-          <td class="act">XPath Regexp</td>
-          <td class="arg">/atom:feed/
-atom:entry[
-  atom:id='http://example.org/entry/2']/
-    atom:updated/text()</td>
-  <td class="arg">${W3C_DATETIME_RE}</td>
-        </tr>
-        <!-- FIXME: Should Be Later Than -->
-        <tr><td></td>
-          <td class="act">Should Not Be Equal</td>
-          <td class="arg">${latest_updated} </td>
-          <td class="arg">${prev_updated} </td>
-          <td class="arg"></td>
-        </tr>
-
-        <tr class="sep"><td>&#160;</td></tr>
-        <tr><td>Radering av dokumentpost.</td>
-          <td class="act">GET Atom Feed</td>
-          <td class="arg">/feed/index.atom</td>
-          <td class="arg"></td>
-          <td class="arg"></td>
-        </tr>
-        <tr><td></td>
+          <td class="def">${Tid för felpublicering}=</td>
           <td class="act">Find XPath</td>
-          <td class="arg">/atom:feed/
-  at:deleted-entry[
-  @ref='http://example.org/docs/fs/5'
-  and
-  @when='2008-10-08T00:00:04.000Z']</td>
+          <td class="arg">/atom:feed/atom:entry[
+  atom:id='${ex}/fs/2009/5']/
+    atom:updated/text()</td>
           <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="def">${Raderingstid}=</td>
+          <td class="act">Find XPath</td>
+          <td class="arg">/atom:feed/at:deleted-entry[
+    @ref='${ex}/fs/2009/5']/@when</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Är yngre än</td>
+          <td class="arg">${Raderingstid} </td>
+          <td class="def">${Tid för felpublicering}</td>
           <td class="arg"></td>
         </tr>
 

@@ -4,8 +4,6 @@
   <head>
     <title>RInfo Suite Initialization</title>
     <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
-    <meta http-equiv="Content-Style-Type" content="text/css" />
-    <meta http-equiv="Content-Language" content="en" />
     <link rel="stylesheet" type="text/css" href="spec.css" />
   </head>
   <body>
@@ -26,6 +24,12 @@
         <tr><td class="bot">Library</td>
           <td class="src">RestLibrary</td>
         </tr>
+        <tr><td class="bot">Library</td>
+          <td class="src">robotlib/XsdValueLibrary.py</td>
+        </tr>
+        <tr><td class="bot">Resource</td>
+          <td class="src">init-locale-sv.html</td>
+        </tr>
       </tbody>
     </table>
 
@@ -37,11 +41,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td class="def">${MAIN_URL}</td>
+        <tr><td class="def">${Base URL}</td>
           <td class="arg">http://rinfo-main/</td>
         </tr>
         <tr class="sep"><td>&#160;</td></tr>
-        <tr><td class="def">${W3C_DATETIME_RE}</td>
+        <tr><td class="def">${A W3C-DateTime}</td>
           <td class="arg">^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$</td>
         </tr>
       </tbody>
@@ -87,7 +91,7 @@
         <tr class="sep"><td>&#160;</td></tr>
         <tr><td></td>
           <td class="act">Base URL</td>
-          <td class="arg">${MAIN_URL}</td>
+          <td class="arg">${Base URL}</td>
           <td class="arg"></td>
         </tr>
       </tbody>

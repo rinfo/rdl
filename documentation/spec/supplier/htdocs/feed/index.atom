@@ -1,28 +1,24 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
-      xmlns:fh="http://purl.org/syndication/history/1.0"
-      xmlns:at="http://purl.org/atompub/tombstones/1.0">
+      xmlns:fh="http://purl.org/syndication/history/1.0">
 
     <id>http://example.org/feed</id>
-    <updated>2000-01-01T00:01:00.000Z</updated>
+    <updated>2000-01-01T00:01:00Z</updated>
     <link href="/feed/index.atom" rel="self"/>
     <link href="/feed/archive-2009-02.atom" rel="prev-archive"/>
 
-    <at:deleted-entry ref="http://example.org/docs/fs/5"
-                      when="2008-10-08T00:00:04.000Z"/>
-
     <entry>
-        <id>http://example.org/entry/3</id>
-        <updated>2000-01-01T00:00:03.000Z</updated>
-        <published>2000-01-01T00:00:03.000Z</published>
+        <id>http://example.org/fs/2009/3</id>
+        <updated>2000-01-01T00:00:03Z</updated>
+        <published>2000-01-01T00:00:03Z</published>
         <title type="text">Entry 3</title>
         <content type="text/plain">Entry 3 content.</content>
     </entry>
 
     <entry>
-        <id>http://example.org/entry/2</id>
-        <updated>2000-01-01T00:01:00.000Z</updated>
-        <published>2000-01-01T00:00:00.000Z</published>
+        <id>http://example.org/fs/2009/2</id>
+        <updated>2000-01-01T00:01:00Z</updated>
+        <published>2000-01-01T00:00:00Z</published>
         <title type="text">Entry 2</title>
         <content type="text/plain">Entry 2 content.</content>
     </entry>

@@ -68,7 +68,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td>Subscription Feed</td>
+        <tr><td class="tc">Subscription Feed</td>
           <td class="act">GET Atom Feed</td>
           <td class="arg">/feed/current</td>
           <td class="arg"></td>
@@ -83,7 +83,8 @@
         <tr><td></td>
           <td class="def">${prev_arch}=</td>
           <td class="act">XPath Regexp</td>
-          <td class="arg">/atom:feed/atom:link[ @rel='prev-archive']/@href</td>
+          <td class="arg">/atom:feed/atom:link[
+  @rel='prev-archive']/@href</td>
           <td class="arg">^/feed/.+/.+/T.+/.+Z$</td>
         </tr>
         <tr class="sep"><td>&#160;</td></tr>
@@ -101,7 +102,8 @@
         </tr>
         <tr><td></td>
           <td class="act">XPath Value</td>
-          <td class="arg">/atom:feed/atom:link[ @rel='current']/@href</td>
+          <td class="arg">/atom:feed/atom:link[
+  @rel='current']/@href</td>
           <td class="arg">/feed/current</td>
           <td class="arg"></td>
         </tr>
@@ -124,7 +126,7 @@
       </thead>
       <tbody>
         <!-- TODO: -->
-        <tr><td>Model RDF</td>
+        <tr><td class="tc">Model RDF</td>
           <td class="act">Negotiate Entry Content</td>
           <td class="arg">/ns/2008/11/rinfo/publ</td>
           <td class="arg">application/rdf+xml</td>
@@ -154,7 +156,7 @@
       </thead>
       <tbody>
 
-        <tr><td>Atom Entry</td>
+        <tr><td class="tc">Atom Entry</td>
           <td class="act">Negotiate Entry Content</td>
           <td class="arg">/publ/sfs/1999:175</td>
           <td class="arg">application/atom+xml;type=entry</td>
@@ -173,7 +175,7 @@
 
         <tr class="sep"><td>&#160;</td></tr>
 
-        <tr><td>RDF Content of Entry</td>
+        <tr><td class="tc">RDF Content of Entry</td>
           <td class="act">Negotiate Entry Content</td>
           <td class="arg">/publ/sfs/1999:175</td>
           <td class="arg">application/rdf+xml</td>
@@ -186,7 +188,7 @@
 
         <tr class="sep"><td>&#160;</td></tr>
 
-        <tr><td>PDF Content of Entry</td>
+        <tr><td class="tc">PDF Content of Entry</td>
           <td class="act">Set Header</td>
           <td class="arg">Accept-Language</td>
           <td class="arg">sv</td>
@@ -204,7 +206,7 @@
 
         <tr class="sep"><td>&#160;</td></tr>
 
-        <tr><td>PDF Header Data</td>
+        <tr><td class="tc">PDF Header Data</td>
             <td class="act">HEAD</td>
           <td class="arg">/publ/sfs/1999:175/pdf,sv</td>
           <td class="arg"></td>
@@ -222,7 +224,7 @@
 
         <tr class="sep"><td>&#160;</td></tr>
 
-        <tr><td>Defaults to Atom Entry</td>
+        <tr><td class="tc">Defaults to Atom Entry</td>
           <td class="act">Set Header</td>
           <td class="arg">Accept</td>
           <td class="arg">\</td>
@@ -281,7 +283,7 @@
       </thead>
       <tbody>
 
-        <tr><td>Missing Entry</td>
+        <tr><td class="tc">Missing Entry</td>
           <td class="act">GET</td>
           <td class="arg">/publ/sfs/-1</td>
           <td class="arg"></td>
@@ -294,7 +296,7 @@
 
         <tr class="sep"><td>&#160;</td></tr>
 
-        <tr><td>No Representation</td>
+        <tr><td class="tc">No Representation</td>
           <td class="act">Set Header</td>
           <td class="arg">Accept</td>
           <td class="arg">application/msword</td>
@@ -312,16 +314,16 @@
         <tr><td></td>
           <td class="act">Body is</td>
           <td class="arg">
-            /publ/sfs/1999:175/rdf\r\n
-            /publ/sfs/1999:175/pdf,sv\r\n
-            /publ/sfs/1999:175/entry\r\n
+/publ/sfs/1999:175/rdf\r\n
+/publ/sfs/1999:175/pdf,sv\r\n
+/publ/sfs/1999:175/entry\r\n
           </td>
           <td class="arg"></td>
         </tr>
 
         <!-- TODO: overzealous?
         <tr class="sep"><td>&#160;</td></tr>
-        <tr><td>Query Not Allowed</td>
+        <tr><td class="tc">Query Not Allowed</td>
           <td class="act">GET</td>
           <td class="arg">/publ/sfs/1999:175?x=1</td>
           <td class="arg"></td>
@@ -340,7 +342,7 @@
 
         <tr class="sep"><td>&#160;</td></tr>
 
-        <tr><td>Only Get Allowed</td>
+        <tr><td class="tc">Only Get Allowed</td>
           <td class="act">POST</td>
           <td class="arg">/publ/sfs/1999:175</td>
           <td class="arg">some data</td>
