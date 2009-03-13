@@ -2,7 +2,6 @@ import org.xhtmlrenderer.pdf.ITextRenderer
 import com.lowagie.text.DocumentException
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
-import java.io.*
 import org.w3c.dom.Document
 import com.uwyn.jhighlight.renderer.XhtmlRendererFactory
 import com.uwyn.jhighlight.tools.FileUtils
