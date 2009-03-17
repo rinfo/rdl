@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
       xmlns:at="http://purl.org/atompub/tombstones/1.0"
-      xmlns:fh="http://purl.org/syndication/history/1.0">
+      xmlns:fh="http://purl.org/syndication/history/1.0"
+      xmlns:le="http://purl.org/atompub/link-extensions/1.0">
 
   <id>tag:example.org,2009:rinfo/feed</id>
   <updated>2000-01-01T00:00:02Z</updated>
@@ -22,7 +23,7 @@
     <updated>2000-01-01T00:00:01Z</updated>
     <published>2000-01-01T00:00:01Z</published>
     <title type="text">Entry 1</title>
-    <content type="text/plain">Entry 1 content.</content>
+    <content src="/publ/fs/2009/1.rdf" type="application/rdf+xml" le:md5="7264c60644d2672eaa20ccbf6c8f8c8c"/>
   </entry>
 
 </feed>

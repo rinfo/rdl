@@ -28,7 +28,7 @@
           <td class="src">robotlib/XsdValueLibrary.py</td>
         </tr>
         <tr><td class="bot">Resource</td>
-          <td class="src">init-locale-sv.html</td>
+          <td class="src"><a href="init-locale-sv.html">init-locale-sv.html</a></td>
         </tr>
       </tbody>
     </table>
@@ -50,7 +50,7 @@
         </tr>
         <tr class="sep"><td>&#160;</td></tr>
         <tr><td class="def">${A URI}</td>
-          <td class="arg">(https?://|tag:|urn:).+</td>
+          <td class="arg">(https?://|tag:|urn:)\\S+</td>
         </tr>
       </tbody>
     </table>
@@ -86,6 +86,11 @@
           <td class="act">XMLNS</td>
           <td class="arg">at</td>
           <td class="arg">http://purl.org/atompub/tombstones/1.0</td>
+        </tr>
+        <tr><td></td>
+          <td class="act">XMLNS</td>
+          <td class="arg">le</td>
+          <td class="arg">http://purl.org/atompub/link-extensions/1.0</td>
         </tr>
         <tr><td></td>
           <td class="act">XMLNS</td>
@@ -192,12 +197,6 @@
 
         <tr class="sep"><td>&#160;</td></tr>
         <tr><td class="key">Has Atom Contact Info</td>
-          <td class="bot">[Arguments]</td>
-          <td class="def"></td>
-          <td class="arg"></td>
-          <td class="arg"></td>
-        </tr>
-        <tr><td></td>
           <td class="act">Find XPath</td>
           <td class="arg">/atom:feed/atom:author[
   atom:name and
@@ -206,32 +205,159 @@
           <td class="arg"></td>
         </tr>
 
+      </tbody>
+    </table>
+
+    <h3>Entry Examination</h3>
+    <table>
+      <thead>
+        <tr><th>Keyword</th>
+          <th>Action</th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr><td class="key">All Entries Contain RDF</td>
+          <td class="act">No XPath</td>
+          <td class="arg">/atom:feed/atom:entry[
+  not(*[(self::atom:content
+      or self::atom:link)
+    and @type='application/rdf+xml'])]</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+        <tr><td class="key">For Each Atom Entry ID</td>
+          <td class="bot">[Arguments]</td>
+          <td class="def">${keyword}</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="def">@{Entry IDs}=</td>
+          <td class="act">Find XPath Nodes</td>
+          <td class="arg">/atom:feed/atom:entry/
+  atom:id/text()</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="bot">:FOR</td>
+          <td class="arg">${entryId}</td>
+          <td class="bot">IN</td>
+          <td class="arg">@{Entry IDs}</td>
+        </tr>
+        <tr><td></td>
+          <td class=""></td>
+          <td class="act">Run Keyword</td>
+          <td class="arg">${keyword}</td>
+          <td class="arg">${entryId}</td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+        <tr><td class="key">Is Valid Atom Entry</td>
+          <td class="bot">[Arguments]</td>
+          <td class="def">${entryId}</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Should Match Regexp</td>
+          <td class="arg">${entryId}</td>
+          <td class="arg">${A URI}</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="def">${published}=</td>
+          <td class="act">Find XPath</td>
+          <td class="arg">/atom:feed/atom:entry[
+  atom:id='${entryId}']/
+    atom:published/text()</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="def">${updated}=</td>
+          <td class="act">Find XPath</td>
+          <td class="arg">/atom:feed/atom:entry[
+  atom:id='${entryId}']/
+    atom:updated/text()</td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Date Should Be Younger Or Equal</td>
+          <td class="arg">${updated}</td>
+          <td class="arg">${published}</td>
+          <td class="arg"></td>
+        </tr>
+
         <tr class="sep"><td>&#160;</td></tr>
         <tr><td class="key">Has Valid Atom Entries</td>
+          <td class="act">For Each Atom Entry Id</td>
+          <td class="act">Is Valid Atom Entry</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+
+        <tr class="sep"><td>&#160;</td></tr>
+        <tr><td class="key">Entry Links Have Valid Checksums</td>
           <td class="bot">[Arguments]</td>
           <td class="def"></td>
           <td class="arg"></td>
           <td class="arg"></td>
         </tr>
-        <!-- TODO: for all entries: -->
         <tr><td></td>
-          <td class="act">XPath Regexp</td>
-          <td class="arg">/atom:feed/atom:entry/atom:id/text()</td>
-          <td class="arg">${A URI}</td>
+          <td class="def">${current feed url}=</td>
+          <td class="act">Get Current URL</td>
           <td class="arg"></td>
+          <td class=""></td>
+        </tr>
+        <tr><td></td>
+          <td class="def">@{md5sums}=</td>
+          <td class="act">Find XPath Nodes</td>
+          <td class="arg">/atom:feed/atom:entry/
+  atom:content/@le:md5 |
+/atom:feed/atom:entry/
+  atom:link/@le:md5
+            </td>
           <td class="arg"></td>
         </tr>
-        <!-- TODO: for all entries, assert "date_should_be_younger_or_equal"
-                   for updated and published:
         <tr><td></td>
-          <td class="def">${updated}=</td>
-          <td class="act">Find XPath</td>
-          <td class="arg">/atom:feed/atom:entry[
-  atom:id='']/
-    atom:updated/text()</td>
+          <td class="bot">:FOR</td>
+          <td class="arg">${md5}</td>
+          <td class="bot">IN</td>
+          <td class="arg">@{md5sums}</td>
+        </tr>
+        <tr><td></td>
+          <td class=""></td>
+          <td class="act">${ref}=</td>
+          <td class="arg">Find XPath</td>
+          <td class="arg">//*[@le:md5='${md5}']/
+    @src
+  |
+//*[@le:md5='${md5}']/
+    @href</td>
+        </tr>
+        <tr><td></td>
+          <td class=""></td>
+          <td class="act">GET</td>
+          <td class="arg">${ref}</td>
           <td class="arg"></td>
         </tr>
-        -->
+        <tr><td></td>
+          <td class=""></td>
+          <td class="act">Body Checksum Is</td>
+          <td class="arg">md5</td>
+          <td class="arg">${md5}</td>
+        </tr>
+        <tr><td></td>
+          <td class=""></td>
+          <td class="act">GET</td>
+          <td class="arg">${current feed url}</td>
+          <td class="arg"></td>
+        </tr>
 
       </tbody>
     </table>

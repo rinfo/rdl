@@ -7,9 +7,9 @@
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/example-fs"/>
     <fsNummer>2009:1</fsNummer>
     <dct:title xml:lang="sv">Första exempelföreskriften;</dct:title>
-    <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-03-01</beslutsdatum>
-    <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-03-22</ikrafttradandedatum>
-    <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-03-11</utkomFranTryck>
+    <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-01-01</beslutsdatum>
+    <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-01-21</ikrafttradandedatum>
+    <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-01-11</utkomFranTryck>
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/example"/>
     <bemyndigande rdf:parseType="Resource">
       <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770"/>
@@ -19,11 +19,6 @@
     <paragraf>
       <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/example-fs/2009:1#paragraf-1">
         <paragrafnummer>1</paragrafnummer>
-      </Paragraf>
-    </paragraf>
-    <paragraf>
-      <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/example-fs/2009:1#paragraf-2">
-        <paragrafnummer>2</paragrafnummer>
       </Paragraf>
     </paragraf>
 

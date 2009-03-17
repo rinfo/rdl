@@ -1,6 +1,7 @@
 from datetime import datetime
 from time import strptime
 
+
 class XsdValueLibrary:
 
     def date_should_be_younger(self, youngvalue, oldvalue):
@@ -19,6 +20,7 @@ class XsdValueLibrary:
             parse_datetime(value)
         except ValueError, e:
             assert False, e
+
 
 def date_is_younger(youngvalue, oldvalue):
     """
@@ -52,4 +54,5 @@ def parse_datetime(v) :
                 raise ValueError("Could not parse %s as a W3C/XSD dateTime" % v)
     return datetime(tstr.tm_year, tstr.tm_mon, tstr.tm_mday,
             tstr.tm_hour, tstr.tm_min, tstr.tm_sec)
+
 
