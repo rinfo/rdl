@@ -90,12 +90,12 @@
     (Exakta krav är inte fastställda, men livslängder på minst ett år är 
     rimliga.)
 
-    Observera att arkiverade feed-dokument inte är nödvändiga. Om man har en 
+    Observera att arkiverade feed-dokument inte är nödvändiga. Om man har ett 
     lågt antal rättsinformationsdokument kan samtliga förekomma i samma 
-    dokument under en överskådlig tid. Syftet mer feed archiving är att hantera 
-    storleken på feed-dokument över tid, så att dessa inte växer till 
-    ohanterliga storlekar (tekniskt normativt, rimligen kan ett par tusen 
-    entry-element hanteras utan större problem.)
+    dokument under en överskådlig tid. Syftet med feed-arkivering är att
+    hantera storleken på feed-dokument över tid, så att dessa inte växer till
+    ohanterliga storlekar (tekniskt normativt, rimligen kan ett par tusen
+    entry-element hanteras utan större problem).
   -->
 
   <entry>
@@ -191,7 +191,7 @@
 
       Exakt en representation som innehåller serialiserad RDF måste finnas för 
       att Rättsinformationssystemet ska acceptera inhämtning av ett 
-      rättsinformationsdokument. Det är denna RDF som utgör substansen i den 
+      rättsinformationsdokument. Det är denna RDF som utgör substansen i 
       beskrivningen och sammanlänkningen av rättsinformationen.
     -->
 
