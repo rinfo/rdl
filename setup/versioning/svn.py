@@ -1,5 +1,5 @@
 config(
-    repo_base="https://source.verva.se/svn/rinfo",
+    repo_base="https://dev.lagrummet.se/svn/rinfo",
     repo_tags="$(repo_base)/tags",
 )
 
