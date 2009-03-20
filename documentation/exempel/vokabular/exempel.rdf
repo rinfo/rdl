@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF 
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#" 
+    xmlns:dces="http://purl.org/dc/elements/1.1/" 
+    xmlns:foaf="http://xmlns.com/foaf/0.1/">
+
+    <!-- Beskrining av vokabulären -->
+    <skos:ConceptScheme rdf:about="http://www.exempel.se/termlista/">
+        
+        <!-- Rubrik -->
+        <dces:title xml:lang="sv">Exempelmyndighetens ämnesordsförteckning</dces:title>
+
+        <!-- Kortare beskrivning av denna termlista -->
+        <dces:description xml:lang="sv">Förteckning och definitioner över ämnesord inom Exempelmyndighetens verksamhetsområde.</dces:description>
+
+        <!-- Vilken organisation det är som gjort den tillgänglig -->
+        <dces:publisher xml:lang="sv">Exempelmyndigheten</dces:publisher>
+
+        <!-- Person som skapat dokumentet -->
+        <dces:creator xml:lang="sv">Karl Karlsson</dces:creator>
+
+        <!-- Ev. länk till webbsida där man kan hitta mer information om termlistan -->
+        <foaf:homepage rdf:resource="http://www.exempel.se/termlista/"/>
+    </skos:ConceptScheme>
+
+    <!-- 
+    Beskrivning av ett enskilt ämnesord/koncept inom denna termlista.
+    Observera att det finns fler detalker inom SKOS för den som vill göra
+    utförligare definitioner som t.ex. relationer mellan olika begrepp.
+
+    För detaljer se http://www.w3.org/TR/skos-primer/#secconcept
+    -->
+    <skos:Concept rdf:about="http://www.exempel.se/termlista/#aktivitetsstod">
+
+        <!-- Föredragen etikett för detta begrepp -->
+        <skos:prefLabel xml:lang="sv">Akitivitetsstöd</skos:prefLabel>
+
+        <!-- Alternativ etikett för detta begrepp -->
+        <skos:altLabel xml:lang="sv">Jobbpeng</skos:altLabel>
+
+        <!-- Definition av begreppet -->
+        <skos:definition xml:lang="sv">(En förklarande text om vad begreppet innebär.)</skos:definition>
+    </skos:Concept>
+
+    <skos:Concept rdf:about="http://www.exempel.se/termlista/#anstallningsstod">
+        <skos:prefLabel xml:lang="sv">Anställningsstöd</skos:prefLabel>
+        <skos:definition xml:lang="sv">(En förklarande text om vad begreppet innebär.)</skos:definition>
+    </skos:Concept>
+
+    <skos:Concept rdf:about="http://www.exempel.se/termlista/#arbetsmiljoarbete">
+        <skos:prefLabel xml:lang="sv">Arbetsmiljöarbete</skos:prefLabel>
+        <skos:definition xml:lang="sv">(En förklarande text om vad begreppet innebär.)</skos:definition>
+    </skos:Concept>
+
+</rdf:RDF>
