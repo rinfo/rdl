@@ -1,56 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <title xml:lang="sv">Handbok myndighetsföreskrifter</title>
-	<link rel="stylesheet" type="text/css" media="print" href="DV.css"/>
-	<link rel="stylesheet" type="text/css" media="print" href="SYNTAX.css"/>
-    </head>
-    <body>
-        <div class="header">
-            <img src="logotyp.png" class="logo" alt=""/>
-        </div>
-        <div class="pagemeta">
-            <p><span id="pagenumber"/></p>
-            <table>
-                <tr>
-                    <th>DATUM</th>
-                    <th>VERSION</th>
-                </tr>
-                <tr>
-                    <td class="docdate">2008-12-01</td>
-                    <td class="svnversion">531</td>
-                </tr>
-            </table>
-        </div>
-
-    <div class="syntax block">
-        <h1>Exempel på större kodblock utanför marginalerna (t.ex. i en bilaga)</h1>
-        <div class="sourcecode">testsource.xml</div>
-    </div>
-
+  <head>
+    <title>Myndighetsföreskrifter</title>
+  </head>
+  <body>
 
     <h1>Rubrik Startpaket för <strong>publicering</strong> av elektronisk <em>rättsinformation</em></h1>
     <p>Brödtext: <em>Detta</em> dokument är en <strong>introduktion till</strong> elektronisk publicering av rättsinformation enligt de principer som utarbetats i rättsinformationssystemet. Dokumentet är i första hand avsett för att en deltagande organisation skall kunna bilda sig en uppfattning om konskvenserna för deltagande.</p>
-        <p>En punktlista:</p>
-        <ol>
-            <li>Översikt av principer och standarder för publicering av rättsinformation i rättsinformationssystemet.</li>
-            <li>Exempel på publicering av rättsinformation</li>
-        </ol>
+    <p>En punktlista:</p>
+    <ol>
+      <li>Översikt av principer och standarder för publicering av rättsinformation i rättsinformationssystemet.</li>
+      <li>Exempel på publicering av rättsinformation</li>
+    </ol>
 
-        <h2>Inlinekod</h2>
-        <div class="syntax"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
-        <span class="nt">&lt;rdf:RDF</span> <span class="na">xmlns:rdf=</span><span class="s">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;</span>
-         <span class="na">xmlns:dct=</span><span class="s">&quot;http://purl.org/dc/terms/&quot;</span>
-         </pre>
-         </div>
+    <h2>Inlinekod</h2>
+    <div class="syntax">
+      <code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;rdf:RDF xmlns:rdf=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;
+        xmlns:dct=&quot;http://purl.org/dc/terms/&quot;
+      </code>
+    </div>
 
-        <h2>Översikt av principer och standarder</h2>
-        <p>En central funktion för rättsinformationssystemet är att möjliggöra elektroniska referenser mellan informationsposter. Exempel på sådana referenser är den mellan en författning och ett förarbete, mellan en föreskrift  och de dokument som utgör dess rättsliga grund samt mellan föreskrifter från olika källor.</p>
-        <p>För att dessa referenser skall fungera måste informationsposter ha entydiga unika elektroniska referenser. Därför har projektet utarbetat ett sätt att skapa sådana  Referenserna tilldelas av rättsinformationssystemet och kan avläsas via ett servicegränssnitt i då man vill bruka dem (t.ex. inför publiceringen av ny rättsinformation). </p>
-        <p>För att detta skall fungera måste rättsinformationssystemet känna alla informationsposter. Detta sker genom att rättsinformationssystemet samlar in det som informationsansvariga organisationer publicerar på sina egna webbplatser genom att läsa av en förteckning i ett standardiserat format. Denna förteckning ger även möjlighet för andra att på ett standardiserat sätt läsa av förändringar över tid i en enskild myndighets samling av rättsinformation. Därmed möjliggörs en kortad tid från tillgängliggörandet till dess att rättsinformationen har nått mottagaren.</p>
-        <p>En annan viktig funktion är att innehållet i dokumenten i sig skall kunna läsas av så många som möjligt. Därför har vi valt format som fungerar för användare med särskilda behov (t.ex. för personer med nedsatt synförmåga som ofta använder hjälpmedel i form av skärmläsare och annan programvara).</p>
-        
-    </body>
+    <h2>Översikt av principer och standarder</h2>
+    <p>En central funktion för rättsinformationssystemet är att möjliggöra elektroniska referenser mellan informationsposter. Exempel på sådana referenser är den mellan en författning och ett förarbete, mellan en föreskrift  och de dokument som utgör dess rättsliga grund samt mellan föreskrifter från olika källor.</p>
+    <p>För att dessa referenser skall fungera måste informationsposter ha entydiga unika elektroniska referenser. Därför har projektet utarbetat ett sätt att skapa sådana  Referenserna tilldelas av rättsinformationssystemet och kan avläsas via ett servicegränssnitt i då man vill bruka dem (t.ex. inför publiceringen av ny rättsinformation). </p>
+    <p>För att detta skall fungera måste rättsinformationssystemet känna alla informationsposter. Detta sker genom att rättsinformationssystemet samlar in det som informationsansvariga organisationer publicerar på sina egna webbplatser genom att läsa av en förteckning i ett standardiserat format. Denna förteckning ger även möjlighet för andra att på ett standardiserat sätt läsa av förändringar över tid i en enskild myndighets samling av rättsinformation. Därmed möjliggörs en kortad tid från tillgängliggörandet till dess att rättsinformationen har nått mottagaren.</p>
+    <p>En annan viktig funktion är att innehållet i dokumenten i sig skall kunna läsas av så många som möjligt. Därför har vi valt format som fungerar för användare med särskilda behov (t.ex. för personer med nedsatt synförmåga som ofta använder hjälpmedel i form av skärmläsare och annan programvara).</p>
+
+
+    <div class="appendix">
+      <h1>Bilaga 1: Exempelpost</h1>
+      <p>Exempel på större kodblock utanför marginalerna (t.ex. i en bilaga)</p>
+      <div class="syntax">
+        <code class="xml"><object class="include" src="testsource.xml"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 2: Modellbeskrivning</h1>
+      <object class="xinclude" src="model.xhtml#Myndighetsforeskrift"/>
+    </div>
+
+  </body>
 </html>

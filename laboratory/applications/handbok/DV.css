@@ -23,17 +23,17 @@ body {
     margin: 0 2.5cm 0 3cm;
 }
 
-div.header {
+div#header {
     position: running(header);
 }
 
-div.header img.logo {
+div#header img.logo {
     width:5cm;
     margin-top: 1cm;
     margin-left: 1cm;
 }
 
-div.pagemeta {
+div#pagemeta {
     position: running(pagemeta);
     font-family: "Trebuchet MS", Arial, sans-serif;
     font-size: 9pt;
@@ -41,12 +41,12 @@ div.pagemeta {
     margin-left: -5cm;
 }
 
-div.pagemeta p {
+div#pagemeta p {
     text-align:right;
     margin-right: 1cm;
 }
 
-div.pagemeta table tr td {
+div#pagemeta table tr td {
     font-family: "Trebuchet MS", Arial, sans-serif;
     font-size: 9pt;
     padding: 0;
@@ -55,7 +55,7 @@ div.pagemeta table tr td {
     line-height: 100%;
 }
 
-div.pagemeta table tr th {
+div#pagemeta table tr th {
     font-family: "Trebuchet MS", Arial, sans-serif;
     font-size: 5pt;
     padding: 0;
@@ -64,7 +64,7 @@ div.pagemeta table tr th {
     line-height: 100%;
 }
 
-div.pagemeta table {
+div#pagemeta table {
     width: 4cm;
     background-color: #e6e6e6;
     margin-right: 1cm;
@@ -130,7 +130,7 @@ code,
 kbd,
 samp,
 tt {
-    font-family: "Courier", sans-serif;
+    font-family: "Courier New", monospace, sans-serif;
 }
 
 h1,
@@ -235,14 +235,18 @@ blockquote {
     margin-right: 1.5em;
 }
 
-div.block {
+div.chapter {
+    page-break-before: always;
+}
+
+div.appendix {
+    page-break-before: always;
     overflow: visible;
     margin-left: -2cm;
     margin-right: -2cm;
 }
+
 .syntax {
-    font-style: pre;
     font-size: 7pt;
-    font-family: "Courier New", monospace;
 }
 
