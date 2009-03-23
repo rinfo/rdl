@@ -10,9 +10,7 @@
   <xsl:template match="/st:sparqltree">
     <alias:stylesheet version="1.0"
                       xmlns:s="http://www.w3.org/2005/sparql-results#"
-                      xmlns:exslt="http://exslt.org/common"
-                      xmlns:date="http://exslt.org/dates-and-times"
-                      extension-element-prefixes="date">
+                      xmlns:exslt="http://exslt.org/common">
       <alias:output method="xml" indent="yes" encoding="utf-8" omit-xml-declaration="no"/>
       <alias:template match="/s:sparql">
         <alias:apply-templates select="s:results"/>

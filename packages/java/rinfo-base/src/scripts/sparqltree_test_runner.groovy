@@ -8,9 +8,9 @@ import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 def loadedRepo() {
     def repo = RDFUtil.createMemoryRepository()
-    ["model", "extended/rdf", "datasets"].each {
-        iterateFiles(new File("../../../resources/base/", it),
-                ["n3"] as String[], true).each {
+    ["base/model", "base/extended/rdf", "external/rdf", "base/datasets"].each {
+        iterateFiles(new File("../../../resources/", it),
+                ["n3", "rdf", "rdfs", "owl"] as String[], true).each {
             println "Loading: ${it}"
             RDFUtil.loadDataFromFile(repo, it)
         }
@@ -23,13 +23,17 @@ def runSparqlTree(repo, tree, formatter) {
     def rqTree = new SparqlTree(repo, new File(treeDir, tree))
     println "Using SPARQL: " + rqTree.queryString
 
-    def outputXslt = SparqlTree.TRANSFORMER_FACTORY.newTemplates(
-            new StreamSource(new File(treeDir, formatter)))
-    rqTree.queryAndChainToResult(new StreamResult(System.out), outputXslt)
+    def out = new StreamResult(System.out)
+    if (formatter) {
+        def outputXslt = SparqlTree.TRANSFORMER_FACTORY.newTemplates(
+                new StreamSource(new File(treeDir, formatter)))
+        rqTree.queryAndChainToResult(out, outputXslt)
+    } else {
+        rqTree.queryAndChainToResult(out)
+    }
 }
 
-def argl = args as List
-def tree = argl[0] ?: "model/sparqltree-model.xml"
-def formatter = argl[1] ?: "model/modeltree_to_html.xslt"
+def tree = args[0]
+def formatter = args.length==2? args[1] : null
 runSparqlTree loadedRepo(), tree, formatter
 
