@@ -15,16 +15,20 @@ rdfs:seeAlso a rdf:Property;
     rdfs:isDefinedBy rdfs: .
 
 xsd:date
-    rdfs:label "Datum"@sv .
+    rdfs:label "Datum"@sv;
+    rdfs:isDefinedBy xsd: .
 
 xsd:dateTime
-    rdfs:label "Datum och tid"@sv; .
+    rdfs:label "Datum och tid"@sv;
+    rdfs:isDefinedBy xsd: .
 
 xsd:gYear
-    rdfs:label "År"@sv; .
+    rdfs:label "År"@sv;
+    rdfs:isDefinedBy xsd: .
 
 xsd:nonNegativeInteger
-    rdfs:label "Ej negativt heltal"@sv; .
+    rdfs:label "Ej negativt heltal"@sv;
+    rdfs:isDefinedBy xsd: .
 
 #---------------------------------------
 
