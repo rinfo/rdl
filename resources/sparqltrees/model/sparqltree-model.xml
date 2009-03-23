@@ -35,6 +35,7 @@
             }
             <class> a <classType/>;
                 rdfs:isDefinedBy ?ontology;
+                rdfs:isDefinedBy <isDefinedBy/>;
                 rdfs:label <label/> .
                 OPTIONAL {
                     ?class rdfs:comment <comment/>
@@ -55,6 +56,9 @@
                         owl:onProperty <onProperty/> .
                         OPTIONAL {
                             ?restriction owl:allValuesFrom <allValuesFrom/>
+                        }
+                        OPTIONAL {
+                            ?restriction owl:someValuesFrom <someValuesFrom/>
                         }
                         OPTIONAL {
                             ?restriction owl:cardinality <cardinality/>
@@ -82,9 +86,11 @@
             }
 
             <property> a <propertyType/>;
-                rdfs:label <label/>;
-                rdfs:comment <comment/> .
-                ?property rdfs:isDefinedBy ?ontology;
+                rdfs:isDefinedBy ?ontology;
+                rdfs:label <label/> .
+                OPTIONAL {
+                    ?property rdfs:comment <comment/> .
+                }
                 OPTIONAL {
                     ?property rdfs:subPropertyOf <subPropertyOf/>;
                 }
@@ -106,20 +112,58 @@
 
             </property>
 
+        <!-- TODO: how to get only props (and classes) *referenced* via
+                ontology defined things (w/o getting *all* in the repo)?
+
         } UNION {
 
-            <!-- TODO: how to get only props (and classes) *referenced* via
-                 ontology defined things (w/o getting *all* in the repo)?
-            -->
+            # * for each class above,
+            #   select labels for each subClassOf or range, or allValuesFrom/someValuesFrom
+            #   where isDefinedBy != ?ontology
+            # * for each property above, select labels for each subPropertyOf or onProperty
+            #   where isDefinedBy != ?ontology
+
+            {
+                [
+                    rdfs:isDefinedBy ?ontology
+                ] rdfs:subClassOf ?baseClass .
+            } UNION {
+                [
+                    rdfs:isDefinedBy ?ontology
+                ] rdfs:range ?baseClass .
+            }
+
+            ?baseClass rdfs:label ?label .
+            OPTIONAL {
+                ?baseClass rdfs:comment ?comment
+            }
+
+        -->
+        } UNION {
+
+            ?someProperty rdfs:range ?class .
+            ?class rdfs:isDefinedBy ?isDefinedBy;
+                rdfs:label ?label .
+            OPTIONAL {
+                ?class rdfs:comment ?comment .
+            }
+            FILTER(?isDefinedBy != ?ontology)
+
+        } UNION {
+
             ?property a rdf:Property;
+                rdfs:isDefinedBy ?isDefinedBy;
                 rdfs:label ?label .
             OPTIONAL {
                 ?property rdfs:comment ?comment .
             }
+            FILTER(?isDefinedBy != ?ontology)
 
         }
 
     </ontology>
     FILTER( ?ontology = rpubl: ) .
+    <!--
+    -->
 
 </st:sparqltree>
