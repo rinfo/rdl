@@ -6,41 +6,66 @@ import org.w3c.dom.Document
 import com.uwyn.jhighlight.renderer.XhtmlRendererFactory
 import com.uwyn.jhighlight.tools.FileUtils
 
-input_file = "exempel.xhtml"
-pdf_filename = "exempel.pdf"
-infile = new File(input_file) 
-doc_xml = infile.getText("UTF-8")
 
-//Find div.sourcecode sections and load references highlighted source files
-(doc_xml =~ /<div class=\"sourcecode\">(.*)<\\/div>/).each {match -> 
+@Grab(group='com.lowagie', module='itext', version='2.0.8')
+@Grab(group='org.xhtmlrenderer', module='core-renderer', version='R8pre2')
+@Grab(group='com.uwyn', module='jhighlight', version='1.0')
+class HandbookMaker {
 
-    source= new File(match[1]).getText("UTF-8")
+    static void main(String[] args) {
+        if (args.length != 2) {
+            println "Usage: %prog <input-file> <output-file>"
+            System.exit 1
+        }
+        def inputFilename = args[0]
+        def pdfFilename = args[1]
+        def doc = getInputDocument(inputFilename)
+        def renderer = createRenderer()
+        renderer.setDocument(doc, null)
+        renderer.layout()
+        def os = new FileOutputStream(pdfFilename)
+        renderer.createPDF(os)
+        os.close()
+    }
 
-    hl_renderer = XhtmlRendererFactory.getRenderer(FileUtils.getExtension("test.xml")) //Picks renderer based on file extension
-    hl_source_fragment = hl_renderer.highlight("", source, "iso-8859-1", true)
+    static Document getInputDocument(inputFilename) {
+        def infile = new File(inputFilename)
+        def docXml = processIncludeDirectives(infile.getText("UTF-8"))
+        def inputStream = new ByteArrayInputStream(docXml.getBytes("UTF-8"))
+        def doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream)
+        inputStream.close()
+        return doc
+    }
 
-    //Replace sourcecode section with highlighted source
-    doc_xml = doc_xml.replace("<div class=\"sourcecode\">" + match[1] + "</div>", "<div class=\"sourcecode\">\n\n" + hl_source_fragment + "\n\n</div>")
+    /**
+    * Finds "div.sourcecode" sections loads, referenced source files, highlights
+    * them and then puts them inline.
+    */
+    static String processIncludeDirectives(docText) {
+        (docText =~ /<div class="sourcecode">(.*)<\/div>/).each {match ->
+            def source = new File(match[1]).getText("UTF-8")
+            // Pick renderer based on file extension
+            def hlRenderer = XhtmlRendererFactory.getRenderer(
+                    FileUtils.getExtension("test.xml"))
+            def hlSourceFragment = hlRenderer.highlight("", source, "iso-8859-1", true)
+            //Replace sourcecode section with highlighted source
+            docText = docText.replace("<div class=\"sourcecode\">" + match[1] + "</div>",
+                    "<div class=\"sourcecode\">\n\n" + hlSourceFragment + "\n\n</div>")
+        }
+        return docText
+    }
+
+    static ITextRenderer createRenderer() {
+        def renderer = new ITextRenderer()
+        //Add font variants for embedding
+        [
+            "gara.ttf", "garait.ttf", "garabd.ttf",
+            "trebuc.ttf", "trebucit.ttf", "trebucbi.ttf", "trebucbd.ttf"
+        ].each {
+            if (new File(it).exists())
+                renderer.fontResolver.addFont(it, true)
+        }
+        return renderer
+    }
+
 }
-
-builder     = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-inputStream = new ByteArrayInputStream(doc_xml.getBytes("UTF-8"))
-org.w3c.dom.Document doc = builder.parse(inputStream)
-inputStream.close()
-
-renderer = new ITextRenderer()
-
-//Add font variants for embedding
-renderer.getFontResolver().addFont("gara.ttf", true);
-renderer.getFontResolver().addFont("garait.ttf", true);
-renderer.getFontResolver().addFont("garabd.ttf", true);
-renderer.getFontResolver().addFont("trebuc.ttf", true);
-renderer.getFontResolver().addFont("trebucit.ttf", true);
-renderer.getFontResolver().addFont("trebucbi.ttf", true);
-renderer.getFontResolver().addFont("trebucbd.ttf", true);
-
-renderer.setDocument(doc, null)
-renderer.layout()
-os = new FileOutputStream(pdf_filename)
-renderer.createPDF(os)
-os.close()
