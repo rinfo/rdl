@@ -2,8 +2,6 @@
     size: A4;
     margin: 3cm 1cm 3cm 1cm;
 
-    font-family: Garamond, serif; 
-    font-size: 12pt; 
     font-weight: normal;
     line-height: 120%;
     color: #000000; 
@@ -20,6 +18,8 @@
 }
 
 body {
+    font-family: Garamond, "Times New Roman", serif;
+    font-size: 12pt;
     margin: 0 2.5cm 0 3cm;
 }
 
@@ -73,23 +73,6 @@ div#pagemeta table {
 
 #pagenumber:before {
     content: counter(page) "(" counter(pages) ")"; 
-}
-
-table.docinfo {
-    background-color: #e6e6e6;
-    width: 6cm;
-    border: solid 1px #000000;
-}
-
-table.docinfo tr th {
-    width: 3cm;
-    font-size: 5pt;
-    font-family: "Trebuchet MS", sans-serif;
-    text-align:left;
-}
-
-table.docinfo tr td {
-    width: 3cm;
 }
 
 b, 
@@ -146,14 +129,19 @@ h6 {
 h1 {
     line-height: 120%;
     font-size:15pt; 
+    margin-top: 21pt;
+    margin-bottom: 6pt;
 }
 
 h2 {
     font-size:13pt;
+    margin-top: 15pt;
+    margin-bottom: 2pt;
 }
 
 h3 {
     font-size:11pt;
+    margin-top:11pt;
 }
 
 h4 {
@@ -161,21 +149,8 @@ h4 {
     font-size:11.5pt;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-pre,
 hr {
     margin:1em 0;
-}
-
-p {
-    font-family: Garamond, "Times New Roman", serif;
-    font-size: 12pt;
 }
 
 tr,
@@ -203,6 +178,10 @@ small {
     font-size: 75%;
 }
 
+p {
+    margin-top: 4pt;
+    margin-bottom: 7pt;
+}
 
 ul {
     list-style-type: disc;
@@ -210,6 +189,7 @@ ul {
 
 ul li, ol li {
     font-family: Garamond, serif;
+    margin-bottom: 4pt;
 }
 
 ul ul {
@@ -235,6 +215,66 @@ blockquote {
     margin-right: 1.5em;
 }
 
+
+
+
+table.docinfo {
+    background-color: #e6e6e6;
+    width: 6cm;
+    border: solid 1px #000000;
+}
+
+table.docinfo tr th {
+    width: 3cm;
+    font-size: 5pt;
+    font-family: "Trebuchet MS", sans-serif;
+    text-align:left;
+}
+
+table.docinfo tr td {
+    width: 3cm;
+}
+
+
+.classInfo table {
+    border: solid 0.3pt #000000;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.classInfo table th {
+    padding: 0.1em 0.3em;
+    text-align:left;
+    font-weight: bold;
+}
+
+.classInfo table td {
+    padding: 0.1em 0.3em;
+    vertical-align: top;
+    border: solid 0.3pt #000000;
+    font-family: Garamond, serif; 
+}
+
+.classInfo table td p {
+    margin: 0 0 0.5em 0;
+}
+
+.classInfo table td .warning {
+    color: #f00;
+}
+
+.classInfo table td dt {
+    font-weight: bold;
+}
+
+.classInfo table td dd {
+    margin: 0 0 1em 1em;
+}
+
+.pagebreakbefore {
+    page-break-before: always;
+}
+
 div.chapter {
     page-break-before: always;
 }
@@ -247,6 +287,12 @@ div.appendix {
 }
 
 .syntax {
-    font-size: 7pt;
+    font-size: 8pt;
 }
 
+div.alert {
+    border: solid 1pt #f00;
+    padding: 4pt 4pt 0 4pt;
+    margin-left: -1.5cm;
+    margin-right: -1.5cm;
+}
