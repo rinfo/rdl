@@ -39,6 +39,20 @@ class HandbookMaker {
         }
     }
 
+
+    static String getSvnVersionNumber() {
+        def command = """svn info --xml"""
+        def proc = command.execute()
+        proc.waitFor()  
+        if (proc.exitValue() == 0) {
+            def svninfo_doc = new XmlParser().parseText(proc.in.text)
+            return svninfo_doc.entry.'@revision'.text()
+        } else {
+            return "0"
+        }
+    }
+
+
     static Document processDocument(doc, tpltDoc) {
         if (tpltDoc) {
             doc = fillTemplate(tpltDoc, doc)
@@ -46,7 +60,7 @@ class HandbookMaker {
         processIncludeDirectives(doc)
         setValues(doc, [
             docdate: new SimpleDateFormat("yyyy-MM-dd").format(new Date()),
-            svnversion: 0
+            svnversion: getSvnVersionNumber()
         ])
         highlightSourceBlocks(doc)
         return doc
