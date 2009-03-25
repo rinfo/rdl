@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "dtd/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Myndighetsföreskrifter</title>
+    </head>
+    <body>
+        <div class="alert">
+            <p>Observera att detta dokument inte är fastställt i alla delar ännu. För publicering av myndighetsföreskrifter enligt modell 1 (PDF-dokument + metadata) bedömer vi dock att inga större ändringar kommer att ske.</p>
+        </div>
+
+        <h1>Startpaket för publicering av myndighetsföreskrifter i rättsinformationssystemet</h1>
+        <p>
+            Detta dokument är en introduktion till elektronisk publicering av
+            rättsinformation enligt de principer som utarbetats i
+            rättsinformationssystemet. Dokumentet är i första hand avsett för
+            att en deltagande organisation skall kunna bilda sig en uppfattning
+            om konskvenserna för ett införande. Därmed är merparten av
+            materialet av teknisk karaktär.  För mer information om
+            rättsinformationssystemet se SFS 1999:175 eller kontakta
+            projektledare Peter Krantz, Domstolsverket på
+            peter.b.krantz@dom.se. Fler exempel på uppmärkning av
+            dokumentposter finns tillgängliga.
+        </p>
+        <h2>Översikt av principer och standarder</h2>
+        <p>
+            En central funktion för rättsinformationssystemet är att möjliggöra elektroniska
+            referenser mellan informationsposter. Exempel på sådana referenser är den mellan en
+            författning och ett förarbete, mellan en föreskrift och de dokument som utgör
+            dess rättsliga grund samt mellan föreskrifter från olika källor.
+            För att dessa referenser skall fungera måste informationsposter ha entydiga unika
+            elektroniska referenser. Därför har projektet utarbetat ett sätt att skapa sådana.
+        </p>
+        <p>
+            För att möjliggöra olika typer av sammanställningar och sökningar i
+            materialet behöver rättsinformationssystemet känna alla
+            informationsposter. Detta sker genom att rättsinformationssystemet
+            samlar in det som informationsansvariga organisationer publicerar
+            på sina egna webbplatser genom att läsa av en förteckning i ett
+            standardiserat format. Denna förteckning ger även möjlighet för
+            andra, t.ex. företag som förädlar rättsinformation, att på ett
+            standardiserat sätt läsa av förändringar över tid i en enskild
+            myndighets samling av rättsinformation. Därmed möjliggörs en kortad
+            tid från tillgängliggörandet till dess att rättsinformationen har
+            nått olika mottagare.
+        </p>
+        <p>
+            En annan viktig funktion är att innehållet i dokumenten i sig skall
+            kunna läsas av så många som möjligt. Därför har vi valt format som
+            fungerar för användare med särskilda behov.
+        </p>
+        <h2>
+            Elektronisk publicering av rättsinformation
+        </h2>
+
+        <p>
+            Tillgängliggörande av rättsinformation sker enligt följande process:
+        </p>
+        <ol>
+            <li>
+                    Informationsansvarig organisation utarbetar dokument A.
+                    Sättet som rättsinformation framställs på omfattas inte av
+                    rättsinformationssystemet.
+            </li>
+            <li>
+                    Informationsansvarig organisation publicerar dokument A på
+                    den egna webbplatsen på en bestämd adress.
+            </li>
+            <li>
+                    Informationsansvarig organisation uppdaterar postförteckning på den egna webbplatsen.
+            </li>
+            <li>
+                    Rättsinformationssystemet (och andra) läser av
+                    postförteckning och får information om länkar till dokument
+                    A och metadata om detta.
+            </li>
+            <li>
+                    Rättsinformationssystemet läser in dokument A och metadata om detta.
+            </li>
+            <li>
+                    Rättsinformationssystemet tillhandahåller metadata och dokument via tjänstegränssnitt.
+            </li>
+        </ol>
+        <p>
+            För att stödja denna process har rättsinformationsprojektet valt ett antal standarder
+            för märkning, strukturering och möjliggörande av sökning. I arbetet med dessa har stor
+            vikt lagts vid att välja standarder som är lätta att implementera till en låg kostnad.
+        </p>
+        <p>
+            För märkning och strukturering av rättsinformation finns två modeller i samband med
+            publicering: 1) Publicering av information i standarden PDF/A med tillhörande entydigt
+            definierad metadata utanför dokumentet i standarden RDF och 2) Publicering av
+            information i XHTML i vilket metadata inkluderats i dokumentet. Dessa kan användas
+            ihop, eller var för sig beroende på vilken typ av material det rör sig om. Det ger även
+            möjlighet för en myndighet att stegvis ansluta sig till standardiserad publicering,
+            först genom att göra mindre justeringar för att publicera enligt modell 1 och vid ett
+            senare tillfälle enligt modell 2.
+        </p>
+        <p>
+            För strukturering av rättsinformationen ur ett samlingsperspektiv
+            (och för att möjliggöra sammanlänkning av informationsansvariga
+            organisationers databaser) används standarden Atom Syndication
+            Format ( <a href= "http://tools.ietf.org/html/rfc4287">IETF RFC
+                4287</a>). Med denna upprättas en postförteckning över den
+            information en deltagande organisation avser inkludera i
+            rättsinformationssystemet.  Denna postförteckning gör det möjligt
+            för konsumenter av informationen att få reda på förändringar i
+            samlingen över tid (t.ex. nytillkommet material).
+        </p>
+        <p>
+            Sammantaget ger information i dessa format det stöd som behövs för sökning och
+            sammanställning för presentation på ett enhetligt sätt.
+        </p>
+        <h3>
+            Steg för att delta i rättinformationssystemet
+        </h3>
+        <p>
+            För att delta i rättsinformationssystemet behöver en informationsansvarig organisation
+            göra följande:
+        </p>
+
+        <ol>
+            <li>
+                    Utse en person som är
+                    ansvarig för att publicera organisationens rättsinformation (nedan
+                    ”kontaktperson”). Denna person är huvudsaklig kontaktperson i ärenden som rör
+                    information i rättsinformationssystemet.
+            </li>
+            <li>
+                    Bestämma
+                    en adress på organisationens webbplats för den postförteckning som skall läsas
+                    av, t.ex.<br/><code>https://www.myndighet.se/rattsinfo/current.atom</code>
+            </li>
+            <li>
+                    Anskaffa ett
+                    servercertifikat (om sådant inte redan finns) för att kunna tillhandahålla
+                    information över en krypterad transportkanal (https). På detta sätt minskas
+                    risken för att information förvanskas vid transport samtidigt som
+                    informationskonsumenter kan verifiera att man hämtar information från rätt
+                    källa.
+            </li>
+            <li>
+                    Meddela samordningsmyndigheten uppgifter om kontaktperson,
+                    postförteckningsadress och servercertifikat.
+            </li>
+            <li>
+                    Publicera en postförteckning i Atom-formatet på den i punkt
+                    2 definierade adressen. Postförteckningen skall innehålla
+                    information om den rättsinformation som organisationen
+                    ansvarar för. För exempel se Bilaga 2 och 5: Postförteckning i
+                    Atom.
+            </li>
+            <li>
+                    Publicera informationsposter (t.ex. en föreskrift) som PDF
+                    (i standarden PDF/A för nytt material) med tillhörande
+                    metadata enligt den struktur projektet utarbetat. För krav
+                    på obligatorisk information se Bilaga 1: Egenskaper för
+                    myndighetsföreskrift samt Bilaga 3, 4, 6, 7 och 8 för
+                    exempel på metadata i RDF. Inom kort kommer projektet även
+                    att fastställa ett XML-baserat format för föreskrifter.
+            </li>
+        </ol>
+        <div class="chapter">
+        <h2>
+            Frågor och svar
+        </h2>
+        <h3>
+            Hur skapar man dokument i PDF/A-formatet?
+        </h3>
+        <p>
+            Det är troligt att din organisation hanterar material i PDF-formatet redan idag. De
+            flesta programvaror för att skapa PDF-dokument har inställningsmöjligheter för att
+            spara dokumenten enligt ISO-standarden 19005-1:2005 (PDF/A). Se över inställningarna i
+            din programvara och säkerställ att du angivit PDF/A.
+        </p>
+        <p>
+            Några tips:
+        </p>
+        <ol>
+            <li>
+                    För att dokumenten skall fungera för personer som använder
+                    hjälpmedel bör du se till att du använder rätt funktioner i
+                    ordbehandlingsprogrammet för formatering. Det är troligt
+                    att du redan gör det. För mer information om hur man
+                    säkerställer detta i olika programvaror se <a
+                        href="http://www.adobe.com/se/enterprise/accessibility/pdfs/acro6_pg_ue.pd"
+                        xml:lang="sv">Creating Accessible Adobe PDF Files: A
+                        Guide for Document Authors (PDF)</a> och den <a href=
+                        "http://www5.goteborg.se/prod/dalis2/dalis2mjh.nsf/81921c9652f3471ac1256a5c002ea985/003eff3e301973f6c125727d004e776d!OpenDocument">vägledning
+                        Göteborgs stad</a> har tagit fram.
+            </li>
+            <li>
+                    Undvik att publicera skannade dokument. Ett dokument som
+                    består av skannade bilder av text är inte tillgängligt,
+                    eftersom dokumentinnehållet är bilder och inte sökbar text.
+                    Hjälpmedel kan inte läsa eller extrahera orden, användarna
+                    kan inte markera eller redigera texten. Dessa blir
+                    oanvändbara för många personer med hjälpmedel och kan inte
+                    användas av sökmotorer vilket gör dem svårare att hitta.
+            </li>
+        </ol>
+        <h3>Hur hanteras allmänna råd?</h3>
+        <p>
+        I dagsläget omfattas inte allmänna råd av rättsinformationssystemet, men det kan komma att ändras framgent. För de föreskrifter där allmänna råd är varvade med författningstext behöver ingen justering ske i existerande dokument. Om rättsinformationsförordningen utökas till att även omfatta allmänna råd kommer en ny dokumenttyp och egenskaper för denna att skapas av projektet.
+        </p>
+    </div>
+
+    <div class="appendix">
+        <h1>Bilaga 1: Egenskaper för myndighetsföreskrift (Modellbeskrivning)</h1>
+        <p>
+        Utöver dessa egenskaper kan myndigheten välja att inkludera
+        information som är specifik för den egna verksamheten (t.ex.
+        ämnesklassificering mm). För mer information och exempel på hur det går
+        till, kontakta projektet.
+        </p>
+        <object class="xinclude" src="model.xhtml#Myndighetsforeskrift"/>
+    </div>
+
+
+    <div class="appendix">
+      <h1>Bilaga 2: Postförteckning i Atom (Riksarkivet)</h1>
+      <div class="syntax">
+        <code class="xml"><object class="include" src="../../../documentation/exempel/feeds/sources/riksarkivet/riksarkivet_source_feed.atom"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 3: Exempel på metadata i RDF (Riksarkivet RA-FS 2006:6)</h1>
+      <div class="syntax">
+        <code class="xml"><object class="include" src="../../../documentation/exempel/documents/publ/Forfattningar/RA-FS/2006/RA-FS-2006_6.rdf"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+        <h1>Bilaga 4: Exempel på metadata i RDF (Riksarkivet RA-FS 2004:2)</h1>
+      <div class="syntax">
+        <code class="xml"><object class="include" src="../../../documentation/exempel/documents/publ/Forfattningar/RA-FS/2004/RA-FS-2004_2.rdf"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 5: Postförteckning i Atom (Arbetsförmedlingen)</h1>
+      <div class="syntax">
+        <code class="xml"><object class="include" src="../../../documentation/exempel/feeds/sources/arbetsformedlingen/arbetsformedlingen_source_feed.atom"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 6: Exempel på metadata i RDF (Arbetsförmedlingen AFFS 2008:8)</h1>
+      <div class="syntax">
+        <code class="xml"><object class="include" src="../../../documentation/exempel/documents/publ/Forfattningar/AFFS/2008/AFFS-2008_8.rdf"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 7: Exempel på metadata i RDF ändringsföreskrift (Arbetsförmedlingen AMSFS 2007:28)</h1>
+      <div class="syntax">
+        <code class="xml"><object class="include" src="../../../documentation/exempel/documents/publ/Forfattningar/AMSFS/2007/AMSFS-2007_28.rdf"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 8: Exempel på metadata i RDF (Arbetsförmedlingen AMSFS 2007:2)</h1>
+      <div class="syntax">
+        <code class="xml"><object class="include" src="../../../documentation/exempel/documents/publ/Forfattningar/AMSFS/2007/AMSFS-2007_2.rdf"/></code>
+      </div>
+    </div>
+
+    </body>
+</html>
+
