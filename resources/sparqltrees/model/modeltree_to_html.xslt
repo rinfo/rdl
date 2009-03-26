@@ -5,12 +5,18 @@
                 xmlns:str="http://exslt.org/strings"
                 xmlns:lf="tag:localhost,2008:exslt-local-functions"
                 extension-element-prefixes="func"
-                exclude-result-prefixes="exslt func str lf"
+                exclude-result-prefixes="exslt func str lf st"
                 xmlns:st="http://oort.to/ns/2008/09/sparqltree"
-                xmlns="http://www.w3.org/1999/xhtml">
+                xmlns="http://www.w3.org/1999/xhtml"
+                >
 
-  <xsl:output method="html" indent="yes" encoding="utf-8" omit-xml-declaration="yes"
-              doctype-public="-//W3C//DTD XHTML+RDFa 1.0//EN"/>
+  <!-- Xalan and javax serialization chain doesn't play with this.
+  <xsl:output method="xml" indent="yes" encoding="utf-8" omit-xml-declaration="no"
+              doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+              doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+              />
+              doctype-public="-//W3C//DTD XHTML+RDFa 1.0//EN"
+  -->
 
   <xsl:param name="ontologyUri"
              >http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#</xsl:param>
@@ -24,6 +30,9 @@
 
 
   <xsl:template match="/st:tree">
+    <xsl:text disable-output-escaping="yes"><![CDATA[<!DOCTYPE html
+              PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+              "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">]]></xsl:text>
     <html xml:lang="{$lang}">
       <head profile="http://www.w3.org/ns/rdfa/">
         <title><xsl:value-of select="ontology/title | ontology/label"/></title>
@@ -62,13 +71,21 @@
   <xsl:template match="class">
     <div class="classInfo" about="{@uri}" id="{lf:uri-term(@uri)}">
       <h2><xsl:value-of select="label"/></h2>
-      <xsl:variable name="superClassLabels">
+      <xsl:variable name="superClassLinks">
         <xsl:for-each select="subClassOf">
-          <xsl:value-of select="lf:get-class(@uri)/label"/>
+          <xsl:variable name="label" select="lf:get-class(@uri)/label"/>
+          <xsl:if test="$label != ''">
+            <xsl:if test="position() > 1">
+              <xsl:text>, </xsl:text>
+            </xsl:if>
+            <a href="#{lf:uri-term(@uri)}">
+              <xsl:value-of select="$label"/>
+            </a>
+          </xsl:if>
         </xsl:for-each>
       </xsl:variable>
-      <xsl:if test="$superClassLabels != ''">
-        <h3>(en typ av <xsl:copy-of select="$superClassLabels"/>)</h3>
+      <xsl:if test="string($superClassLinks) != ''">
+        <h3>(en typ av <xsl:copy-of select="$superClassLinks"/>)</h3>
       </xsl:if>
       <xsl:if test="abstract='true'">
         <h4 class="warning">[abstrakt typ]</h4>
@@ -82,7 +99,9 @@
       <xsl:variable name="all-restrictions" select="restriction"/>
       -->
       <xsl:variable name="all-restrictions-rt">
-        <xsl:apply-templates select="." mode="copy-restrictions"/>
+        <xsl:call-template name="copy-restrictions">
+          <xsl:with-param name="class" select="."/>
+        </xsl:call-template>
       </xsl:variable>
       <xsl:variable name="all-restrictions" select="exslt:node-set($all-restrictions-rt)/restriction"/>
       <!-- TODO: should be part of $all-restrictions... -->
@@ -117,11 +136,21 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="class" mode="copy-restrictions">
-      <xsl:for-each select="subClassOf">
-        <xsl:apply-templates select="lf:get-class(@uri)" mode="copy-restrictions"/>
-      </xsl:for-each>
-    <xsl:copy-of select="restriction"/>
+  <xsl:template name="copy-restrictions">
+    <xsl:param name="class"/>
+    <xsl:param name="collected-restrictions" select="*[false()]"/>
+    <xsl:variable name="restrictions" select="$class/restriction"/>
+    <xsl:for-each select="$class/subClassOf">
+      <xsl:call-template name="copy-restrictions">
+        <xsl:with-param name="class" select="lf:get-class(@uri)"/>
+        <xsl:with-param name="collected-restrictions" select="$restrictions | $collected-restrictions"/>
+      </xsl:call-template>
+    </xsl:for-each>
+    <xsl:for-each select="$restrictions">
+      <xsl:if test="not($collected-restrictions[onProperty/@uri = current()/onProperty/@uri])">
+        <xsl:copy-of select="."/>
+      </xsl:if>
+    </xsl:for-each>
   </xsl:template>
 
   <func:function name="lf:get-property">
@@ -173,9 +202,19 @@
         </xsl:if>
         <xsl:if test="$restriction">
           <xsl:for-each select="lf:computed-range($restriction)/label[@xml:lang = $lang]">
+            <xsl:variable name="uri" select="../@uri"/>
             <p>
               <em class="rangeType">
-                (Anges som: <xsl:value-of select="."/>)
+                <xsl:text>(Anges som: </xsl:text>
+                <xsl:choose>
+                  <xsl:when test="starts-with($uri, $ontologyUri)">
+                    <a href="#{lf:uri-term($uri)}"><xsl:value-of select="."/></a>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                  </xsl:otherwise>
+                </xsl:choose>
+                <xsl:text>)</xsl:text>
               </em>
             </p>
           </xsl:for-each>
