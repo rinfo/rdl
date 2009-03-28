@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="$locale$">
   <head profile="http://www.w3.org/ns/rdfa/">
-    <title>Modelldokumentation</title>
+    <title>$labels.title$</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <link rel="stylesheet" href="ontology.css" />
   </head>
@@ -20,25 +20,25 @@
             <div class="classInfo" id="$it.uri_term$" about="$it.uri$">
             <h2>$it.label$</h2>
             $if (first(it.subClassOf).label)$
-              <h3>(en typ av $it.subClassOf: {
+              <h3>($labels.a_kind_of$ $it.subClassOf: {
                 $if (it.label)$
                   $if (i0)$ , $endif$
                   <a href="#$it.uri_term$">$it.label$</a>
                 $endif$}$)</h3>
             $endif$
             $if (it.abstract)$
-              <h4 class="warning">[abstrakt typ]</h4>
+              <h4 class="warning">[$labels.abstract_type$]</h4>
             $endif$
             $if (it.deprecated)$
-              <h4 class="warning">[obsolet typ]</h4>
+              <h4 class="warning">[$labels.obsolete_type$]</h4>
             $endif$
             <p class="comment">$it.comment$</p>
             $if (it.merged_restrictions_properties)$
               <table>
                 <thead>
-                  <th style="width: 22%">Egenskap</th>
-                  <th style="width: 66%">Beskrivning</th>
-                  <th style="width: 12%">F&ouml;rekomst</th>
+                  <th style="width: 22%">$labels.property$</th>
+                  <th style="width: 66%">$labels.description$</th>
+                  <th style="width: 12%">$labels.occurrence$</th>
                 </thead>
                 <tbody>
                   $it.merged_restrictions_properties: {
@@ -47,7 +47,7 @@
                       <td about="$it.uri$">
                         <strong>$it.label$</strong>
                         $if (it.abstract)$
-                          <div class="warning">[abstrakt egenskap]</div>
+                          <div class="warning">[$labels.abstract_property$]</div>
                         $endif$
                       </td>
                       <td>
@@ -57,7 +57,7 @@
 
                         $if (it.abstract)$
                           <p>
-                            Mer specifika egenskaper:
+                            $labels.more_specific_properties$:
                             <dl>
                               $it.hasSubProperty:{
                                 <dt>$it.label$</dt>
@@ -74,7 +74,7 @@
                         $it.restriction.computed_range:{
                           <p>
                             <em class="rangeType" about="$it.uri$">
-                              (Anges som:
+                              ($labels.is_given_as$:
                               $if (it.same_ontology)$
                                 <a href="#$it.uri_term$">$it.label$</a>
                               $else$

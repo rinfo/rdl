@@ -1,0 +1,19 @@
+{
+    "title": {"@sv": "Modelldokumentation"},
+    "a_kind_of": {"@sv": "en typ av"},
+    "abstract_type": {"@sv": "abstrakt typ"},
+    "obsolete_type": {"@sv": "obsolet typ"},
+    "abstract_property": {"@sv": "abstrakt egenskap"},
+    "property": {"@sv": "Egenskap"},
+    "description": {"@sv": "Beskrivning"},
+    "occurrence": {"@sv": "Förekomst"},
+    "more_specific_properties": {"@sv": "Mer specifika egenskaper"},
+    "is_given_as": {"@sv": "Anges som"},
+    "cardinalities": {
+        "zero_or_one": {"@sv": "noll eller en"},
+        "exactly_one": {"@sv": "exakt en"},
+        "exactly": {"@sv": "exakt"},
+        "at_least_one": {"@sv":  "minst en"},
+        "max": {"@sv": "max"}
+    }
+}
