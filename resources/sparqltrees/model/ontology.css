@@ -59,11 +59,18 @@ h2 {
     /*color: #333;*/
 }
 
-h3, h4 {
-    margin: 0.3em 0 0.4em;
-    /*color: #333;*/
+h3 {
+    margin: 0.3em 0 0.5em;
 }
 
+h4 {
+    margin: 0.3em 0 0.4em;
+}
+
+
+ul, ol, dl {
+    margin: 0.6em 0;
+}
 
 dt  {
     font-weight: bold;
@@ -95,6 +102,9 @@ dt  {
 
 .ontologyInfo .classInfo p.comment {
     margin: 0.2em 0 1em;
+}
+
+.ontologyInfo .classInfo .kindof {
     font-style: italic;
 }
 

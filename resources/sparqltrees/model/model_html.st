@@ -2,8 +2,7 @@
           "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">
 <!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xml:lang="$locale$">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="$locale$">
   <head profile="http://www.w3.org/ns/rdfa/">
     <title>$labels.title$</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
@@ -20,7 +19,7 @@
             <div class="classInfo" id="$it.uri_term$" about="$it.uri$">
             <h2>$it.label$</h2>
             $if (first(it.subClassOf).label)$
-              <h3>($labels.a_kind_of$ $it.subClassOf: {
+              <h3 class="kindof">($labels.a_kind_of$ $it.subClassOf: {
                 $if (it.label)$
                   $if (i0)$ , $endif$
                   <a href="#$it.uri_term$">$it.label$</a>
@@ -45,7 +44,10 @@
 
                     <tr>
                       <td about="$it.uri$">
-                        <strong>$it.label$</strong>
+                        <strong>$if (it.direct)$
+                            $it.label$
+                          $else$<em>$it.label$</em>
+                          $endif$</strong>
                         $if (it.abstract)$
                           <div class="warning">[$labels.abstract_property$]</div>
                         $endif$
@@ -56,20 +58,20 @@
                         $endif$
 
                         $if (it.abstract)$
-                          <p>
+                          <p class="kindof">
                             $labels.more_specific_properties$:
-                            <dl>
-                              $it.hasSubProperty:{
-                                <dt>$it.label$</dt>
-                                <dd>
-                                  $it.comment$
-                                  $if (it.range)$
-                                    <em>($it.range.label$)</em>
-                                  $endif$
-                                </dd>
-                              }$
-                            </dl>
                           </p>
+                          <dl>
+                            $it.hasSubProperty:{
+                              <dt>$it.label$</dt>
+                              <dd>
+                                $it.comment$
+                                $if (it.range)$
+                                  <em>($it.range.label$)</em>
+                                $endif$
+                              </dd>
+                            }$
+                          </dl>
                         $endif$
                         $it.restriction.computed_range:{
                           <p>
