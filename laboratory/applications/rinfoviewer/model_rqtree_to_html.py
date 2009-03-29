@@ -2,6 +2,7 @@
 import os.path as p
 from stringtemplate3 import StringTemplateGroup
 from oort.sparqltree.run import run_query_to_tree, json
+
 from modeldata import ModelData
 
 

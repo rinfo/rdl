@@ -1,25 +1,34 @@
 from oort.sparqltree.autotree import URI_KEY
-from oort.sparqltree.treelens import AttrDict, TreeLens
+from oort.sparqltree.treelens import TreeLens, AttrDict
+
+
+class UriTreeLens(TreeLens):
+    def __init__(self, *args, **kw):
+        super(UriTreeLens, self).__init__(*args, **kw)
+        uri = self.get(URI_KEY)
+        if uri:
+            self['uri'] = uri
+            self['uri_term'] = self.uri_term(uri)
+    @staticmethod
+    def uri_term(uri):
+        if '#' in uri:
+            return uri.rsplit('#', 1)[-1]
+        else:
+            return uri.rsplit('/', 1)[-1]
 
 
 class ModelData(object):
 
     def __init__(self, locale, tree, labeltree):
-        del tree['someProperty']
         self.locale = locale
-        self.lens = TreeLens(tree, locale, decorator=self._uri_decorator)
-        self.labels = TreeLens(labeltree, locale)
-        self._all_properties=[prop for onto in self.lens.ontology
+        self.labels = UriTreeLens(labeltree, locale)
+        del tree['someProperty']
+        lens = UriTreeLens(tree, locale)
+        self._all_properties = [prop for onto in lens.ontology
                                 for prop in onto.property]
-        self.ontologies = [self._ontology(it) for it in self.lens.ontology]
+        self.ontologies = [self._a_ontology(it) for it in lens.ontology]
 
-    def _uri_decorator(self, node):
-        uri = node.get(URI_KEY)
-        if uri:
-            node['uri'] = uri
-            node['uri_term'] = self.uri_term(uri)
-
-    def _ontology(self, onto):
+    def _a_ontology(self, onto):
         onto['sorted_classes'] = sorted(
                 ( self._a_class(c) for c in onto['class']
                     if self._is_defined_by(c, onto) ),
@@ -91,12 +100,5 @@ class ModelData(object):
         return it.label.lower() if (
                 'label' in it and isinstance(it.label, basestring)
             ) else it.uri_term.lower()
-
-    @staticmethod
-    def uri_term(uri):
-        if '#' in uri:
-            return uri.rsplit('#', 1)[-1]
-        else:
-            return uri.rsplit('/', 1)[-1]
 
 
