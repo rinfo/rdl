@@ -7,7 +7,6 @@
                 xmlns:str="http://exslt.org/strings"
                 xmlns="http://www.w3.org/2005/Atom"
                 xmlns:a="http://www.w3.org/2005/Atom"
-                extension-element-prefixes="date str"
                 exclude-result-prefixes="st">
 
   <xsl:output method="xml" indent="yes" encoding="utf-8" omit-xml-declaration="no"/>
