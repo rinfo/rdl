@@ -87,15 +87,12 @@ SELECT DISTINCT * WHERE {
         ?ontology__property a ?ontology__property__type;
             rdfs:isDefinedBy ?ontology;
             rdfs:isDefinedBy ?ontology__property__1_isDefinedBy;
-            rdfs:label ?ontology__property__1_label .
+            rdfs:label ?ontology__property__1_label
         OPTIONAL {
-            ?ontology__property rdfs:comment ?ontology__property__1_comment .
+            ?ontology__property rdfs:comment ?ontology__property__1_comment
         }
         OPTIONAL {
-            ?ontology__property rdfs:subPropertyOf ?ontology__property__subPropertyOf;
-        }
-        OPTIONAL {
-            ?ontology__property__hasSubProperty rdfs:subPropertyOf ?ontology__property;
+            ?ontology__property rdfs:subPropertyOf ?ontology__property__subPropertyOf
         }
         OPTIONAL {
             ?ontology__property rdfs:domain ?ontology__property__1_domain

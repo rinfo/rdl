@@ -11,12 +11,12 @@
   <body>
     <div id="main">
       $ ontologies: {
-        <div class="ontologyInfo" about="$it.uri$">
+        <div class="ontologyInfo" about="$it.resource_uri$">
           <h1>$it.title $$ it.label$</h1>
           $if (it.comment)$ <p>$it.comment$</p> $endif$
           $if (it.description)$ <p>$it.description$</p> $endif$
           $it.sorted_classes: {
-            <div class="classInfo" id="$it.uri_term$" about="$it.uri$">
+            <div class="classInfo" id="$it.uri_term$" about="$it.resource_uri$">
             <h2>$it.label$</h2>
             $if (first(it.subClassOf).label)$
               <h3 class="kindof">($labels.a_kind_of$ $it.subClassOf: {
@@ -27,6 +27,14 @@
             $endif$
             $if (it.abstract)$
               <h4 class="warning">[$labels.abstract_type$]</h4>
+            $endif$
+            $if (it.subclasses)$
+              <p class="kindof">$labels.more_specific_types$:
+                $it.subclasses:{
+                    $if (i0)$ , $endif$
+                    <a href="#$it.uri_term$">$it.label$</a>
+                }$
+              </p>
             $endif$
             $if (it.deprecated)$
               <h4 class="warning">[$labels.obsolete_type$]</h4>
@@ -43,7 +51,7 @@
                   $it.merged_restrictions_properties: {
 
                     <tr>
-                      <td about="$it.uri$">
+                      <td about="$it.resource_uri$">
                         <strong>$if (it.direct)$
                             $it.label$
                           $else$<em>$it.label$</em>
@@ -62,7 +70,7 @@
                             $labels.more_specific_properties$:
                           </p>
                           <dl>
-                            $it.hasSubProperty:{
+                            $it.subproperties:{
                               <dt>$it.label$</dt>
                               <dd>
                                 $it.comment$
@@ -75,7 +83,7 @@
                         $endif$
                         $it.restriction.computed_range:{
                           <p>
-                            <em class="rangeType" about="$it.uri$">
+                            <em class="rangeType" about="$it.resource_uri$">
                               ($labels.is_given_as$:
                               $if (it.same_ontology)$
                                 <a href="#$it.uri_term$">$it.label$</a>
