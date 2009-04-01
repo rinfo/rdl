@@ -144,7 +144,9 @@
       (eller tas bort) elektroniskt.
     -->
 
-    <title>Arbetsförmedlingens administrativa föreskrifter om uppgiftsfördelning i det systematiska arbetsmiljöarbetet vid Arbetsförmedlingen;</title>
+    <title>Arbetsförmedlingens administrativa föreskrifter om
+        uppgiftsfördelning i det systematiska arbetsmiljöarbetet vid
+        Arbetsförmedlingen;</title>
     <!-- Måste finnas enligt Atom-standarden.
 
       Detta element används inte av Rättsinformationssystemet.
@@ -204,7 +206,8 @@
     <id>http://rinfo.lagrummet.se/publ/amsfs/2007:28</id>
     <updated>2007-12-06T00:00:00.000Z</updated>
     <published>2007-12-06T00:00:00.000Z</published>
-    <title>Föreskrifter om ändring i Arbetsmarknadsstyrelsens administrativa föreskrifter (AMSFS 2007:2) om ekonomiadministration;</title>
+    <title>Föreskrifter om ändring i Arbetsmarknadsstyrelsens administrativa
+        föreskrifter (AMSFS 2007:2) om ekonomiadministration;</title>
     <summary></summary>
     <content src="https://www.arbetsformedlingen.se/regelbok/dokument/amsfs_pdf/a0728.pdf"
              type="application/pdf"

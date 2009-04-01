@@ -144,7 +144,9 @@
       (eller tas bort) elektroniskt.
     -->
 
-    <title>Föreskrifter om ändring av Riksarkivets föreskrifter och allmänna råd (RA-FS 2004:2) om gallring och återlämnande av handlingar vid upphandling;</title>
+    <title>Föreskrifter om ändring av Riksarkivets föreskrifter och allmänna
+        råd (RA-FS 2004:2) om gallring och återlämnande av handlingar vid
+        upphandling;</title>
     <!-- Måste finnas enligt Atom-standarden.
 
       Detta element används inte av Rättsinformationssystemet.
@@ -155,7 +157,9 @@
     -->
 
 
-    <summary>Ändringen innebär att undantaget för myndigheter under Försvarsdepartementet har tagits bort och att de allmänna försäkringskassorna har tagits bort ur uppräkningen.</summary>
+    <summary>Ändringen innebär att undantaget för myndigheter under
+        Försvarsdepartementet har tagits bort och att de allmänna
+        försäkringskassorna har tagits bort ur uppräkningen.</summary>
     <!--
       Måste enligt Atom-standarden finnas om elementet `content` refererar
       innehåll med attributet `src`.
@@ -207,7 +211,8 @@
     <id>http://rinfo.lagrummet.se/publ/ra-fs/2004:2</id>
     <updated>2004-09-27T00:00:00.000Z</updated>
     <published>2004-09-27T00:00:00.000Z</published>
-    <title>Riksarkivets föreskrifter och allmänna råd om gallring och återlämnande av handlingar vid upphandling;</title>
+    <title>Riksarkivets föreskrifter och allmänna råd om gallring och
+        återlämnande av handlingar vid upphandling;</title>
     <summary></summary>
     <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
              type="application/pdf"

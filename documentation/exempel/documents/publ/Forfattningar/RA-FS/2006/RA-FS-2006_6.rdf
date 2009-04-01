@@ -4,18 +4,25 @@
          xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
 
   <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/ra-fs/2006:6">
+      
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/ra-fs"/>
     <fsNummer>2006:6</fsNummer>
-    <dct:title xml:lang="sv">Föreskrifter om ändring av Riksarkivets föreskrifter och allmänna råd (RA-FS 2004:2) om gallring och återlämnande av handlingar vid upphandling;</dct:title>
+    <dct:title xml:lang="sv">Föreskrifter om ändring av Riksarkivets
+        föreskrifter och allmänna råd (RA-FS 2004:2) om gallring och
+        återlämnande av handlingar vid upphandling;</dct:title>
+
     <!-- tidsaspekter -->
     <utfardandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-02-09</utfardandedatum>
     <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-03-01</ikrafttradandedatum>
     <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-02-09</utkomFranTryck>
+    
     <!-- ursprung -->
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/riksarkivet"/>
+    
     <!-- dokumentkopplingar -->
     <andrar rdf:resource="http://rinfo.lagrummet.se/publ/ra-fs/2004:2"/>
+    
     <!-- dokumentkopplingar -->
     <bemyndigande rdf:parseType="Resource">
         <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1991:446"/>

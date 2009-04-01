@@ -2,6 +2,7 @@
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:dct="http://purl.org/dc/terms/"
          xmlns:dces="http://purl.org/dc/elements/1.1/"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/" 
          xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
 
   <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/affs/2008:8">
@@ -9,7 +10,9 @@
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/affs"/>
 	<fsNummer>2008:8</fsNummer>
-	<dct:title xml:lang="sv">Arbetsförmedlingens administrativa föreskrifter om uppgiftsfördelning i det systematiska arbetsmiljöarbetet vid Arbetsförmedlingen;</dct:title>
+        <dct:title xml:lang="sv">Arbetsförmedlingens administrativa
+            föreskrifter om uppgiftsfördelning i det systematiska
+            arbetsmiljöarbetet vid Arbetsförmedlingen;</dct:title>
 
     <!-- tidsaspekter -->
     <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2008-08-19</beslutsdatum>
@@ -19,19 +22,17 @@
     <!-- ursprung -->
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/arbetsf%C3%B6rmedlingen"/>
 
-    <!-- nyckelord: ett element per nyckelord -->
+    <!-- Egna ämnesord (ett element per ämnesord) -->
     <dces:subject xml:lang="sv">Arbetsmiljöarbete</dces:subject>
 
-	<!-- dokumentkopplingar -->
-	<!-- Bemyndigande? -->
-    <!-- bemyndigande rdf:parseType="Resource">
-        <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1991:446"/>
-        <paragrafnummer>11</paragrafnummer>
-    </bemyndigande>
+    <!-- dokumentkopplingar -->
     <bemyndigande rdf:parseType="Resource">
-        <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1991:446"/>
-        <paragrafnummer>12</paragrafnummer>
-    </bemyndigande -->
+        <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/afs/2001:1"/>
+        <paragrafnummer>6</paragrafnummer>
+    </bemyndigande>
+
+    <!-- referens till webbsida för detta dokument (om sådan finns) -->
+    <foaf:homepage rdf:resource="http://www2.ams.se/regelbok/dokument/a088.htm" />
 
   </Myndighetsforeskrift>
 

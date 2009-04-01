@@ -8,7 +8,8 @@
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/ra-fs"/>
     <fsNummer>2004:2</fsNummer>
-    <dct:title xml:lang="sv">Riksarkivets föreskrifter och allmänna råd om gallring och återlämnande av handlingar vid upphandling;</dct:title>
+    <dct:title xml:lang="sv">Riksarkivets föreskrifter och allmänna råd om
+        gallring och återlämnande av handlingar vid upphandling;</dct:title>
 
     <!-- tidsaspekter -->
     <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2004-08-30</beslutsdatum>

@@ -8,7 +8,8 @@
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/amsfs"/>
 	<fsNummer>2007:2</fsNummer>
-	<dct:title xml:lang="sv">Arbetsmarknadsstyrelsens administrativa föreskrifter om ekonomiadministration;</dct:title>
+        <dct:title xml:lang="sv">Arbetsmarknadsstyrelsens administrativa
+            föreskrifter om ekonomiadministration;</dct:title>
 
     <!-- tidsaspekter -->
     <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-02-12</beslutsdatum>
@@ -23,6 +24,9 @@
         <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2001:623"/>
         <paragrafnummer>4</paragrafnummer>
     </bemyndigande>
+
+    <!-- referens till webbsida för detta dokument (om sådan finns) -->
+    <foaf:homepage rdf:resource="http://www2.ams.se/regelbok/dokument/a072.htm" />
 
   </Myndighetsforeskrift>
 
