@@ -30,8 +30,19 @@ class SparqlTreeRouter extends Router {
 
     SparqlTreeRouter(Context context, Repository repository) {
         super(context)
-        attach("/model", new ModelFinder(context, repository))
-        attach("/org", new OrgFinder(context, repository))
+
+        attach("/model",
+            new SparqlTreeFinder(context, repository,
+                    "sparqltree/model/sparqltree-model.xml",
+                    "sparqltree/model/modeltree_to_html.xslt",
+                    MediaType.TEXT_HTML))
+
+        attach("/org",
+            new SparqlTreeFinder(context, repository,
+                    "sparqltree/org/org-rqtree.xml",
+                    "sparqltree/org/org-html.xslt",
+                    MediaType.TEXT_HTML))
+
         // TODO: nice capture of rest of path.. {path:anyPath} (+ /entry?)
         def route = attach("/rdata/{path}", new RDataFinder(context, repository))
         Map<String, Variable> routeVars = route.getTemplate().getVariables()
@@ -49,6 +60,12 @@ class SparqlTreeFinder extends Finder {
     MediaType mediaType
 
     SparqlTreeFinder() {}
+
+    SparqlTreeFinder(Context context, Repository repository,
+            String treePath, String outputXsltPath, MediaType mediaType) {
+        this(context, repository,
+                locate(treePath), locate(outputXsltPath), mediaType)
+    }
 
     SparqlTreeFinder(Context context, Repository repository,
             URL treeUrl, URL outputXsltUrl, MediaType mediaType) {
@@ -88,27 +105,6 @@ class SparqlTreeFinder extends Finder {
 
 }
 
-class ModelFinder extends SparqlTreeFinder {
-
-    ModelFinder(Context context, Repository repository) {
-        super(context, repository,
-                locate("sparqltree/model/sparqltree-model.xml"),
-                locate("sparqltree/model/modeltree_to_html.xslt"),
-                MediaType.TEXT_HTML)
-    }
-
-}
-
-class OrgFinder extends SparqlTreeFinder {
-
-    OrgFinder(Context context, Repository repository) {
-        super(context, repository,
-                locate("sparqltree/org/org-rqtree.xml"),
-                locate("sparqltree/org/org-html.xslt"),
-                MediaType.TEXT_HTML)
-    }
-
-}
 
 class RDataFinder extends SparqlTreeFinder {
 
