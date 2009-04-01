@@ -156,19 +156,23 @@ class SparqlTree {
 
     static byte[] queryToByteArray(Repository repo, String queryString) {
         logger.debug("Querying endpoint..")
-        def conn = repo.getConnection()
-        def tupleQuery = conn.prepareTupleQuery(
-                QueryLanguage.SPARQL, queryString)
-        // TODO: configurable?
-        tupleQuery.setIncludeInferred(false)
         def outStream = new ByteArrayOutputStream()
-        tupleQuery.evaluate(new SPARQLResultsXMLWriter(outStream))
+        def conn = repo.getConnection()
         try {
-            outStream.close()
-        } catch (IOException e) {
-            throw new RuntimeException("Internal stream error.", e)
+            def tupleQuery = conn.prepareTupleQuery(
+                    QueryLanguage.SPARQL, queryString)
+            // TODO: configurable?
+            tupleQuery.setIncludeInferred(false)
+            tupleQuery.evaluate(new SPARQLResultsXMLWriter(outStream))
+            try {
+                outStream.close()
+            } catch (IOException e) {
+                throw new RuntimeException("Internal stream error.", e)
+            }
+            logger.debug("Endpoint query completed.")
+        } finally {
+            conn.close()
         }
-        logger.debug("Endpoint query completed.")
         return outStream.toByteArray()
     }
 

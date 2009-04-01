@@ -21,6 +21,13 @@ def loadedRepo() {
 def runSparqlTree(repo, tree, formatter) {
     def treeDir = new File("../../../resources/sparqltrees/")
     def rqTree = new SparqlTree(repo, new File(treeDir, tree))
+    def time = new Date()
+
+    /*
+    groovy.xml.dom.DOMUtil.serialize(
+            rqTree.queryToDocument().documentElement, System.out)
+    */
+
     println "Using SPARQL: " + rqTree.queryString
 
     def out = new StreamResult(System.out)
@@ -31,6 +38,9 @@ def runSparqlTree(repo, tree, formatter) {
     } else {
         rqTree.queryAndChainToResult(out)
     }
+
+    def diff = (new Date().time - time.time) / 1000.0
+    println "Done in ${diff} s."
 }
 
 def tree = args[0]
