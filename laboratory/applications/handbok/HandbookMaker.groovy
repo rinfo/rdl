@@ -32,7 +32,7 @@ class HandbookMaker {
                 (args.length == 3)? getDocument(new File(args[2])) : null)
 
         if (outFile.name.endsWith("pdf")) {
-            renderAsPdf(doc, outFile)
+            renderAsPdf(doc, inFile.toURL().toString(), outFile)
         } else {
             def out = outFile.name == "-" ? System.out : new FileOutputStream(outFile)
             DOMUtil.serialize(doc.documentElement, out)
@@ -153,9 +153,9 @@ class HandbookMaker {
         }
     }
 
-    static void renderAsPdf(doc, outFile) {
+    static void renderAsPdf(doc, docUrl, outFile) {
         def renderer = createRenderer()
-        renderer.setDocument(doc, null)
+        renderer.setDocument(doc, docUrl)
         renderer.layout()
         def os = new FileOutputStream(outFile)
         renderer.createPDF(os)
