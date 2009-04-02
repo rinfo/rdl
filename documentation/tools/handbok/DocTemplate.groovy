@@ -99,6 +99,7 @@ class DocTemplate {
     }
 
     static void replaceWithContent(doc, elem, srcRef) {
+        // TODO: opt. ref to url or "named ref" to document in variables
         def (ref, fragment) = srcRef.split("#")
         def srcFile = new File(ref)
         if (!srcFile.isFile())
