@@ -23,12 +23,12 @@ def render_model(basedir, data_location, locale):
     #        for o in data.ontologies for c in o.sorted_classes])
     #print "# ModelData done in %f s." % (time() - start)
 
-    model_html = StringTemplateGroup("templates",
+    tplt = StringTemplateGroup("templates",
             basedir).getInstanceOf("model_html")
-    model_html['locale'] = data.locale
-    model_html['labels'] = data.labels
-    model_html['ontologies'] = data.ontologies
-    out = unicode(model_html).encode('utf-8')
+    tplt['locale'] = data.locale
+    tplt['labels'] = data.labels
+    tplt['ontologies'] = data.ontologies
+    out = unicode(tplt).encode('utf-8')
     #print "# Template done in %f s." % (time() - start)
     return out
 
@@ -37,9 +37,11 @@ if __name__ == '__main__':
 
     from sys import argv
 
-    data_location = "http://localhost:8080/openrdf-sesame/repositories/rinfo"
     if len(argv) > 1:
         data_location = argv[1]
+    else:
+        #data_location = "http://localhost:8080/openrdf-sesame/repositories/rinfo"
+        data_location = "http://localhost:2020/sparql"
 
     viewdir = p.join(p.dirname(__file__),
             "../../../resources/sparqltrees/model/")
