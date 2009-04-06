@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="$locale$">
   <head profile="http://www.w3.org/ns/rdfa/">
     <title>$labels.title$</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html;charset=$encoding$" />
     <link rel="stylesheet" href="ontology.css" />
   </head>
   <body>

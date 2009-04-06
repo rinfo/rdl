@@ -25,6 +25,7 @@ def render_model(basedir, data_location, locale):
 
     tplt = StringTemplateGroup("templates",
             basedir).getInstanceOf("model_html")
+    tplt['encoding'] = 'utf-8'
     tplt['locale'] = data.locale
     tplt['labels'] = data.labels
     tplt['ontologies'] = data.ontologies
