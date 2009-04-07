@@ -1,9 +1,5 @@
 package se.lagrummet.rinfo.base.rdf.sparqltree
 
-import static se.lagrummet.rinfo.base.rdf.sparqltree.SparqlTree.isResource
-import static se.lagrummet.rinfo.base.rdf.sparqltree.SparqlTree.URI_KEY
-import static se.lagrummet.rinfo.base.rdf.sparqltree.SparqlTree.BNODE_KEY
-
 
 class GraphBuilder {
 
@@ -24,7 +20,7 @@ class GraphBuilder {
     }
 
      protected processNode(Object node, via) {
-        if (isResource(node)) {
+        if (SparqlTree.isResource(node)) {
             return makeResource(node, via)
         }
         else if (node instanceof List) {
@@ -58,15 +54,15 @@ class GraphBuilder {
      }
 
     Map getIndexedResource(Map resource) {
-        return (index.get(resource[URI_KEY]) ?:
-                index.get("_:"+resource[BNODE_KEY]))
+        return (index.get(resource[SparqlTree.URI_KEY]) ?:
+                index.get("_:"+resource[SparqlTree.BNODE_KEY]))
     }
 
     void indexResource(Map resource) {
-        if (resource.containsKey(URI_KEY)) {
-            index[resource[URI_KEY]] = resource
-        } else if (resource.containsKey(BNODE_KEY)) {
-            index["_:"+resource[BNODE_KEY]] = resource
+        if (resource.containsKey(SparqlTree.URI_KEY)) {
+            index[resource[SparqlTree.URI_KEY]] = resource
+        } else if (resource.containsKey(SparqlTree.BNODE_KEY)) {
+            index["_:"+resource[SparqlTree.BNODE_KEY]] = resource
         }
     }
 

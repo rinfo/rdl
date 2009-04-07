@@ -23,13 +23,13 @@ class SparqlTree {
 
     private static final Logger logger = LoggerFactory.getLogger(SparqlTree.class)
 
-    static URI_KEY = '$uri'
-    static BNODE_KEY = '$id'
-    static DATATYPE_KEY = '$datatype'
-    static VALUE_KEY = '$value'
-    static LANG_TAG = '@'
-    static SEP = '__'
-    static ONE_MARKER = '1_'
+    static String URI_KEY = '$uri'
+    static String BNODE_KEY = '$id'
+    static String DATATYPE_KEY = '$datatype'
+    static String VALUE_KEY = '$value'
+    static String LANG_TAG = '@'
+    static String SEP = '__'
+    static String ONE_MARKER = '1_'
 
     SparqlTree() {
     }
