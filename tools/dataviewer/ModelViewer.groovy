@@ -1,26 +1,22 @@
-import net.sf.json.groovy.JsonSlurper
+import static org.apache.commons.io.FileUtils.iterateFiles
 
 import se.lagrummet.rinfo.base.rdf.sparqltree.SmartLens
 import static se.lagrummet.rinfo.base.rdf.sparqltree.GraphBuilder.buildGraph
 
-import static SparqlTreeViewer.*
+import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 
-/* FIXME:
-Classifier doesn't work yet, see <http://jira.codehaus.org/browse/GROOVY-3427>
-For now I did this after grape-fail:
-    $ curl http://repo2.maven.org/maven2/net/sf/json-lib/json-lib/2.2.3/json-lib-2.2.3-jdk15.jar -o ~/.groovy/grapes/net.sf.json-lib/json-lib/jars/json-lib-2.2.3.jar
-*/
-@Grab(group='net.sf.json-lib', module='json-lib', version='2.2.3'/*,
-        classifier='jdk15'*/)
-class ModelViewer {
+class ModelViewer extends SparqlTreeViewer {
 
     static void main(String[] args) {
-        def labelTree = new JsonSlurper().parse( new File(
-                "../../resources/sparqltrees/model/model_labels.json"))
+        def labelTree = toJSON(
+                new File("../../resources/sparqltrees/model/model_labels.json"))
 
-        def repo = loadRepo("../../resources/",
-                ["base/model", "base/extended/rdf", "external/rdf"])
+        //def repo = slurpRdf(
+        //        "../../resources/base/model",
+        //        "../../resources/base/extended/rdf",
+        //        "../../resources/external/rdf")
+        def repo = getRepo("http://localhost:8080/openrdf-sesame", "rinfo")
 
         def query = new File(
                 "../../resources/sparqltrees/model/model-tree.rq").text
@@ -42,6 +38,18 @@ class ModelViewer {
             labels: labels,
             ontologies: new ModelViewer(graph, labels).ontologies
         ]
+    }
+
+    static Repository slurpRdf(String... datadirs) {
+        def repo = RDFUtil.createMemoryRepository()
+        datadirs.each {
+            iterateFiles(new File(it),
+                    ["n3", "rdf", "rdfs", "owl"] as String[], true).each {
+                System.err.println "Loading: ${it}"
+                RDFUtil.loadDataFromFile(repo, it)
+            }
+        }
+        return repo
     }
 
 
@@ -124,43 +132,38 @@ class ModelViewer {
     }
 
     String cardinalityLabel(labels, restr) {
-        return "TODO" /* TODO:
-        if restr.cardinality == 0:
-            return labels.zero_or_more#at_least_zero
-        elif restr.cardinality == 1:
+        if (restr.cardinality == 0)
+            return labels.zero_or_more // TODO: isn't this "not allowed"?
+        else if (restr.cardinality == 1)
             return labels.exactly_one
-        elif restr.cardinality > 1:
-            return "%s %s" % (labels.exactly, restr.cardinality)
-        else:
-            if restr.minCardinality >= 0:
-                if restr.minCardinality == 0 and not restr.maxCardinality:
-                    return labels.zero_or_more#at_least_zero
-                if restr.minCardinality == 0 and restr.maxCardinality == 1:
-                    return labels.zero_or_one
-                if restr.minCardinality == 1:
-                    l = labels.at_least_one
-                elif restr.minCardinality:
-                    l = "%s %s" % (labels.at_least, restr.minCardinality)
-                if l and restr.maxCardinality:
-                    l += ", %s %s" % (labels.max, restr.maxCardinality)
-                if l:
-                    return l
-            else:
+        else if (restr.cardinality > 1)
+            return "${labels.exactly} ${restr.cardinality}"
+        else if (restr.minCardinality != null) {
+            if (restr.minCardinality == 0 && !restr.maxCardinality)
                 return labels.zero_or_more
-        */
+            if (restr.minCardinality == 0 && restr.maxCardinality == 1)
+                return labels.zero_or_one
+            def l = null
+            if (restr.minCardinality == 1)
+                l = labels.at_least_one
+            else if (restr.minCardinality)
+                l = "${labels.at_least} ${restr.minCardinality}"
+            if (l && restr.maxCardinality)
+                l += ", ${labels.max} ${restr.maxCardinality}"
+            if (l)
+                return l
+        }
+        return labels.zero_or_more
     }
 
     def computedRange(restr) {
-        return null /* TODO:
-        ranges = filter(None,
-                [restr.allValuesFrom, restr.someValuesFrom,
-                    restr.onProperty.get('range')]
-            )
-        onto = restr.onProperty.get('isDefinedBy')
-        for rg in ranges:
-            rg['same_ontology'] = onto and _is_defined_by(rg, onto)
+        def ranges = [restr.allValuesFrom, restr.someValuesFrom,
+                restr.onProperty.range].findAll { it }
+        def onto = restr.onProperty.isDefinedBy
+        for (rg in ranges) {
+            rg['same_ontology'] = onto != null && isDefinedBy(rg, onto)
+        }
         return ranges
-        */
     }
 
 }

@@ -1,7 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
-          "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">
-<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
+          "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd"-->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="$locale$">
   <head profile="http://www.w3.org/ns/rdfa/">
     <title>$labels.title$</title>
@@ -18,12 +18,11 @@
           $it.sorted_classes: {
             <div class="classInfo" id="$it.uri_term$" about="$it.resource_uri$">
             <h2>$it.label$</h2>
-            $if (first(it.subClassOf).label)$
+            $if (first(it.subClassOf))$ $if (first(it.subClassOf).label)$
               <h3 class="kindof">($labels.a_kind_of$ $it.subClassOf: {
-                $if (it.label)$
-                  <a href="#$it.uri_term$"> $it.label$</a>
-                $endif$}; separator=", "$)</h3>
-            $endif$
+                <a href="#$it.uri_term$"> $it.label$</a>};
+              separator=", "$)</h3>
+            $endif$ $endif$
             $if (it.abstract)$
               <h4 class="warning">[$labels.abstract_type$]</h4>
             $endif$

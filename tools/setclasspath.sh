@@ -8,6 +8,7 @@ generate_classpath_file() {
     popd
     echo -n ":$pkgdir/target/classes/" >> $outfile
     echo -n ":$pkgdir/src/main/groovy/" >> $outfile
+    echo -n ":$pkgdir/src/main/resources/" >> $outfile
 }
 
 if [ "$1" != "" ]; then

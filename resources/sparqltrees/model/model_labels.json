@@ -14,10 +14,10 @@
         "zero_or_one": {"@sv": "noll eller en"},
         "exactly_one": {"@sv": "exakt en"},
         "exactly": {"@sv": "exakt"},
-        "at_least_zero": {"@sv":  "valfri"},
         "at_least_one": {"@sv":  "minst en"},
         "at_least": {"@sv":  "minst"},
         "max": {"@sv": "max"},
-        "zero_or_more": {"@sv": "noll eller flera"}
+        "zero_or_more": {"@sv": "noll eller flera"},
+        "optional": {"@sv":  "valfri"}
     }
 }
