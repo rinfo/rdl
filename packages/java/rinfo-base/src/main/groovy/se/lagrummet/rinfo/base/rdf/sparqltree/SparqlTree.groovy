@@ -31,44 +31,35 @@ class SparqlTree {
     static SEP = '__'
     static ONE_MARKER = '1_'
 
-    Repository repo
-    String query
-
-    def varModel // stateful during debugging; refactor to VarTreeModel class
-
-    SparqlTree(Repository repo, String query) {
-        this.repo = repo
-        this.query = query
+    SparqlTree() {
     }
 
-    Map runQuery() {
-        def root = [:] // TODO: extended or turn to graph in-place? pojo+setProp?
-        return runQuery(root)
-    }
-
-    Map runQuery(Map root) {
+    static Map runQuery(Repository repo, String query) {
+        def root = [:]
         def conn = repo.getConnection()
-        def tree
+        def resultTree
         try {
             def tupleQuery = conn.prepareTupleQuery(
                     QueryLanguage.SPARQL, query)
-            // TODO: configurable?
+            // TODO: configurable..
             tupleQuery.setIncludeInferred(false)
-            def result = tupleQuery.evaluate() // TODO: or treeBuilder as resulthandler?
-            tree = buildTree(result, root)
+            def result = tupleQuery.evaluate()
+            resultTree = new SparqlTree().buildTree(
+                    new QueryResult(result), root)
             result.close()
         } catch (IOException e) {
             throw new RuntimeException("Internal stream error.", e)
         } finally {
             conn.close()
         }
-        return tree
+        return resultTree
     }
 
-    Map buildTree(TupleQueryResult result, Map root) {
+    // TODO: remove runQuery and start here?
+    Map buildTree(QueryResult result, Map root) {
         logger.debug("Building tree..")
-        varModel = makeVarTreeModel(result.getBindingNames())
-        fillNodes(varModel, root, new ResultIterator(result))
+        def varModel = makeVarTreeModel(result.getBindingNames())
+        fillNodes(varModel, root, result)
         logger.debug("Tree done.")
         return root
     }
@@ -103,8 +94,6 @@ class SparqlTree {
             def key = mapEntry.key
             def (useOne, varName, subVarModel) = mapEntry.value
             List nodes = []
-            // FIXME: must pick more values from same bindingSet!
-            // TODO: .. while no or cur-var-binding: get var+value+recurse; next..
 
             for (Map.Entry<String, List> resultMapEntry : groupBy(bindings,
                     { it.getValue(varName) }).entrySet()) {
@@ -139,20 +128,21 @@ class SparqlTree {
 
     Object makeNode(Value value) {
         def node = [:]
-        def rawValue = value.stringValue()
+        // FIXME: surely this encoding dance must be a bug in.. sesame or java-on-osx.
+        def stringValue = new String(value.stringValue().getBytes("utf-8"))
         if (value instanceof RdfURI) {
-            node[URI_KEY] = rawValue
+            node[URI_KEY] = stringValue
         } else if (value instanceof BNode) {
-            node[BNODE_KEY] = rawValue
+            node[BNODE_KEY] = stringValue
         } else if (value instanceof Literal) {
             def lang = value.getLanguage()
             def datatype = value.getDatatype()
             if (lang != null) {
-                node[LANG_TAG+lang] = rawValue
+                node[LANG_TAG+lang] = stringValue
             } else if (datatype != null) {
                 node = typeCast(datatype, value)
             } else {
-                node = rawValue
+                node = stringValue
             }
         } else {
             throw new Exception("TypeError: unknown value type for: " + value)
@@ -244,20 +234,22 @@ class SparqlTree {
     }
 
     static boolean isResource(obj) {
-        // FIXME: currently we do allow for "pure" anonymous nodes (w/o BNODE_KEY:s)
-        // but this check is expensive(!):
+        // TODO: currently we do allow for "pure" anonymous nodes (w/o BNODE_KEY:s)
+        // but this check is more expensive:
         return ! isLiteral(obj)
     }
-
-
 
 }
 
 
-class ResultIterator implements Iterator, Iterable {
+// TODO: Turn QueryResult result into an interface with adapter impls.
+class QueryResult implements Iterator, Iterable {
     TupleQueryResult tqResult
-    ResultIterator(TupleQueryResult tqResult) {
+    QueryResult(TupleQueryResult tqResult) {
         this.tqResult = tqResult
+    }
+    List getBindingNames() {
+        return tqResult.getBindingNames()
     }
     boolean hasNext() {
         return tqResult.hasNext()
