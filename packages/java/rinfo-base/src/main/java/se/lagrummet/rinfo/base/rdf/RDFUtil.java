@@ -15,6 +15,11 @@ import java.net.URLConnection;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.apache.commons.io.FileUtils;
+
 import org.openrdf.model.Literal;
 import org.openrdf.model.Namespace;
 import org.openrdf.model.Resource;
@@ -39,6 +44,9 @@ import org.openrdf.sail.memory.MemoryStore;
 
 
 public class RDFUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(RDFUtil.class);
+
 
     // Repo-level operations
 
@@ -166,14 +174,28 @@ public class RDFUtil {
         return new ByteArrayInputStream(outStream.toByteArray());
     }
 
+    static Repository slurpRdf(String... datadirs)
+            throws IOException, RepositoryException, RDFParseException {
+        Repository repo = createMemoryRepository();
+        for (String datadir : datadirs) {
+            for (Object o : FileUtils.listFiles(new File(datadir),
+                    new String[] {"n3", "rdf", "rdfs", "owl"}, true)) {
+                File file = (File) o;
+                logger.info("Loading: "+file);
+                loadDataFromFile(repo, file);
+            }
+        }
+        return repo;
+    }
+
+
     // Statement-level operations
     // NOTE: GraphUtil looked promising, but Graph:s aren't prominent in
     // Sesame 2 (as in hard to create, disconnected from repo etc)
 
     public static Statement one(RepositoryConnection conn,
             Resource s, URI p, Value o)
-        throws RepositoryException
-    {
+        throws RepositoryException {
         return one(conn, s, p, o, false);
     }
 
