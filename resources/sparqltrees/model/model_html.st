@@ -21,9 +21,8 @@
             $if (first(it.subClassOf).label)$
               <h3 class="kindof">($labels.a_kind_of$ $it.subClassOf: {
                 $if (it.label)$
-                  $if (i0)$ , $endif$
-                  <a href="#$it.uri_term$">$it.label$</a>
-                $endif$}$)</h3>
+                  <a href="#$it.uri_term$"> $it.label$</a>
+                $endif$}; separator=", "$)</h3>
             $endif$
             $if (it.abstract)$
               <h4 class="warning">[$labels.abstract_type$]</h4>
@@ -31,9 +30,8 @@
             $if (it.subclasses)$
               <p class="kindof">$labels.more_specific_types$:
                 $it.subclasses:{
-                    $if (i0)$ , $endif$
-                    <a href="#$it.uri_term$">$it.label$</a>
-                }$
+                    <a href="#$it.uri_term$">$it.label$</a>};
+                separator=", "$
               </p>
             $endif$
             $if (it.deprecated)$
