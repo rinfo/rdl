@@ -9,7 +9,7 @@ if (args.length < 1 || args.length == 2) {
     System.exit 1
 }
 
-// TODO: use rinfo-rdf-repo as in service!
+// TODO: use rinfo-rdf-repo + config as in service!
 def repo = new HTTPRepository("http://localhost:8080/openrdf-sesame", "rinfo")
 def query = new File(args[0]).text
 

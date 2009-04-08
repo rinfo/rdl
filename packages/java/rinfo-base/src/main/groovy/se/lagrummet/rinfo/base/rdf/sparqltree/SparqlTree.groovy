@@ -122,7 +122,7 @@ class SparqlTree {
                     fillNodes(subVarModel, node, groupedBindings)
                 }
             }
-            treeNode[key] = useOne? oneify(nodes) : nodes
+            treeNode[key] = useOne? toOne(nodes) : nodes
         }
     }
 
@@ -169,7 +169,7 @@ class SparqlTree {
         }
     }
 
-    Object oneify(nodes) {
+    Object toOne(nodes) {
         if (nodes.size() == 0) {
             return null
         }
@@ -179,11 +179,11 @@ class SparqlTree {
             for (node in nodes) {
                 if (!(node instanceof Map)) {
                     node = [(LANG_TAG): node]
+                    // TODO: warn if a node isn't a dict:
+                    //   "value was expected to be a lang dict but was %r."
                 }
                 if (node.size() == 0) {
                     continue
-                    // TODO: warn if a node isn't a dict:
-                    //   "value was expected to be a lang dict but was %r."
                 }
                 // NOTE: lists of lang nodes only have 1 entry (lang+value)
                 def item = node.entrySet().toArray()[0]

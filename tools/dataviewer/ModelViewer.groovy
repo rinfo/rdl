@@ -1,169 +1,28 @@
-import static org.apache.commons.io.FileUtils.iterateFiles
-
-import se.lagrummet.rinfo.base.rdf.sparqltree.SmartLens
-import static se.lagrummet.rinfo.base.rdf.sparqltree.GraphBuilder.buildGraph
-
-import se.lagrummet.rinfo.base.rdf.RDFUtil
+import se.lagrummet.rinfo.base.rdf.sparqltree.GraphBuilder
+import se.lagrummet.rinfo.service.dataview.SparqlTreeViewer
 
 
 class ModelViewer extends SparqlTreeViewer {
 
-    static void main(String[] args) {
-        def labelTree = toJSON(
-                new File("../../resources/sparqltrees/model/model_labels.json"))
+    Map labels
 
-        //def repo = slurpRdf(
-        //        "../../resources/base/model",
-        //        "../../resources/base/extended/rdf",
-        //        "../../resources/external/rdf")
-        def repo = getRepo("http://localhost:8080/openrdf-sesame", "rinfo")
-
-        def query = new File(
-                "../../resources/sparqltrees/model/model-tree.rq").text
-        def tree = queryToTree(repo, query)
-
-        def st = preparedTemplate(
-                "../../resources/sparqltrees/model/model_html.st",
-                modelData('sv', tree, labelTree))
-        st.setAttribute("encoding", "utf-8")
-        println st.toString()
+    ModelViewer(repo, query, lens, templatePath, jsonPath) {
+        super(repo, query, lens, templatePath)
+        this.labels = GraphBuilder.buildGraph(lens,
+                toJSON(new File(jsonPath)))
     }
 
-    static Map modelData(locale, tree, labelTree) {
-        def lens = new SmartLens(locale)
+    Map queryToTree() {
+        def tree = super.queryToTree()
         tree.remove('someProperty')
-        def graph = buildGraph(lens, tree)
-        def labels = buildGraph(lens, labelTree)
-        return [
-            labels: labels,
-            ontologies: new ModelViewer(graph, labels).ontologies
-        ]
+        return tree;
     }
 
-    static Repository slurpRdf(String... datadirs) {
-        def repo = RDFUtil.createMemoryRepository()
-        datadirs.each {
-            iterateFiles(new File(it),
-                    ["n3", "rdf", "rdfs", "owl"] as String[], true).each {
-                System.err.println "Loading: ${it}"
-                RDFUtil.loadDataFromFile(repo, it)
-            }
-        }
-        return repo
-    }
-
-
-    protected labels
-    List ontologies
-    List allProperties
-
-    ModelViewer(Map graph, Map labels) {
-        this.labels = labels
-        this.ontologies = graph.ontology.collect { prepOntology(it) }
-        this.allProperties = graph.ontology.collectAll { it.property }.flatten()
-    }
-
-    def prepOntology(onto) {
-        onto['sorted_classes'] = onto['class'].findAll {
-            isDefinedBy(it, onto)
-            }. collect {
-                prepClass(it)
-            }.sort(lsort)
-        return onto
-    }
-
-    def prepClass(cls) {
-        if (cls.ref_via.subClassOf) {
-            cls['subclasses'] = cls.ref_via.subClassOf.sort(lsort)
-        }
-        cls['deprecated'] = cls.type.find {
-                it.uri_term == 'DeprecatedClass'
-            } != null
-        def aggr = [:]
-        mergeRestrictionsProperties(cls, aggr)
-        cls['merged_restrictions_properties'] = aggr.values().sort(lsort)
-        return cls
-    }
-
-    def prepProperty(prop) {
-        if (prop.ref_via.subPropertyOf) {
-            prop['subproperties'] = prop.ref_via.subPropertyOf.sort(lsort)
-        }
-        return prop
-    }
-
-    void mergeRestrictionsProperties(cls, aggr, direct=true) {
-        def getSuper = true
-        def add = {
-            if (!aggr.containsKey(it.resource_uri)) {
-                it['direct'] = direct
-                aggr[it.resource_uri] = prepProperty(it)
-            }
-        }
-        cls.restriction?.collect { propertyWithRestriction(it) }.each(add)
-
-        allProperties.findAll {
-            it.domain && it.domain.resource_uri == cls.resource_uri
-        }.each(add)
-
-        if (getSuper && cls.subClassOf) {
-            for (superClass in cls.subClassOf) {
-                mergeRestrictionsProperties(superClass, aggr, false)
-            }
-        }
-    }
-
-    def propertyWithRestriction(restr) {
-        restr['cardinality_label'] = cardinalityLabel(
-                labels.cardinalities, restr)
-        restr['computed_range'] = computedRange(restr)
-        def obj = new HashMap(restr.onProperty)
-        obj.restriction=restr
-        return obj
-    }
-
-
-    Closure lsort = {
-        return it.label?.toLowerCase() ?: it.uri_term.toLowerCase()
-    }
-
-    boolean isDefinedBy(o, onto) {
-        return (o.isDefinedBy?.resource_uri == onto.resource_uri)
-    }
-
-    String cardinalityLabel(labels, restr) {
-        if (restr.cardinality == 0)
-            return labels.zero_or_more // TODO: isn't this "not allowed"?
-        else if (restr.cardinality == 1)
-            return labels.exactly_one
-        else if (restr.cardinality > 1)
-            return "${labels.exactly} ${restr.cardinality}"
-        else if (restr.minCardinality != null) {
-            if (restr.minCardinality == 0 && !restr.maxCardinality)
-                return labels.zero_or_more
-            if (restr.minCardinality == 0 && restr.maxCardinality == 1)
-                return labels.zero_or_one
-            def l = null
-            if (restr.minCardinality == 1)
-                l = labels.at_least_one
-            else if (restr.minCardinality)
-                l = "${labels.at_least} ${restr.minCardinality}"
-            if (l && restr.maxCardinality)
-                l += ", ${labels.max} ${restr.maxCardinality}"
-            if (l)
-                return l
-        }
-        return labels.zero_or_more
-    }
-
-    def computedRange(restr) {
-        def ranges = [restr.allValuesFrom, restr.someValuesFrom,
-                restr.onProperty.range].findAll { it }
-        def onto = restr.onProperty.isDefinedBy
-        for (rg in ranges) {
-            rg['same_ontology'] = onto != null && isDefinedBy(rg, onto)
-        }
-        return ranges
+    Map queryToGraph() {
+        def data = new ModelData(super.queryToGraph(), labels)
+        return [encoding: "utf-8",
+                labels: data.labels,
+                ontologies: data.ontologies]
     }
 
 }

@@ -26,18 +26,26 @@ class SparqlTreeViewer {
         this.templatePath = templatePath
     }
 
+    StringTemplate execute() {
+        return execute(new HashMap())
+    }
+
+    StringTemplate execute(Map data) {
+        def result = queryToResult()
+        data.putAll(result)
+        return runTemplate(result)
+    }
+
+    Map queryToResult() {
+        return (lens != null)? queryToGraph() : queryToTree()
+    }
+
     Map queryToTree() {
         return SparqlTree.runQuery(repo, query)
     }
 
-    Map queryToGraph(Lens lens) {
+    Map queryToGraph() {
         return GraphBuilder.buildGraph(lens, queryToTree())
-    }
-
-    StringTemplate execute(Map data=[:]) {
-        def result = (lens != null)? queryToGraph(lens) : queryToTree()
-        data.putAll(result)
-        return runTemplate(data)
     }
 
     StringTemplate runTemplate(Map data) {
