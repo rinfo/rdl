@@ -45,14 +45,15 @@ class SparqlTreeRouter extends Router {
 
         attach("/org", new SparqlTreeFinder(context,
                     new SparqlTreeViewer(repository, templates,
-                            "org/org-tree-rq", "org/org-html"),
+                            "sparqltrees/org/org-tree-rq", "sparqltrees/org/org-html"),
                     MediaType.TEXT_HTML))
 
         def labelTree = new JsonSlurper().parse(
-                ConfigurationUtils.locate("model/model_labels.json"))
+                ConfigurationUtils.locate("sparqltrees/model/model_labels.json"))
         attach("/model", new ModelFinder(context,
                     new SparqlTreeViewer(repository, templates,
-                            "model/model-tree-rq", "model/model_html"),
+                            "sparqltrees/model/model-tree-rq",
+                            "sparqltrees/model/model_html"),
                     MediaType.TEXT_HTML))
 
         // TODO: nice capture of rest of path.. {path:anyPath} (+ /entry?)

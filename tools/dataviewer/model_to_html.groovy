@@ -1,5 +1,5 @@
+import org.apache.commons.configuration.ConfigurationUtils
 import net.sf.json.groovy.JsonSlurper
-
 import org.antlr.stringtemplate.StringTemplateGroup
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
@@ -16,13 +16,12 @@ def repo = RDFUtil.slurpRdf(
         "../../resources/external/rdf")
 //def repo = getRepo("http://localhost:8080/openrdf-sesame", "rinfo")
 
-def templates = new StringTemplateGroup("sparqltrees",
-        "../../resources/sparqltrees")
+def templates = new StringTemplateGroup("sparqltrees")
 def rqViewer = new SparqlTreeViewer(repo, templates,
-        "model/model-tree-rq", "model/model_html")
+        "sparqltrees/model/model-tree-rq", "sparqltrees/model/model-html")
 
-def labelTree = new JsonSlurper().parse(new File(
-                "../../resources/sparqltrees/model/model_labels.json"))
+def labelTree = new JsonSlurper().parse(ConfigurationUtils.locate(
+                "sparqltrees/model/model-labels.json"))
 
 def locale = 'sv'
 println rqViewer.execute(new ModelViewHandler(locale, null, labelTree))
