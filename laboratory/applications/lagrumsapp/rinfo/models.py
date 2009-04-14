@@ -1,6 +1,7 @@
 # coding=utf-8
 
 from django.db import models
+from django.db.models import permalink
 
 class Forfattningssamling(models.Model):
     # Namn på författningssamling
@@ -83,6 +84,10 @@ class Myndighetsforeskrift(models.Model):
 
     # PDF-version av dokumentet
     dokument = models.FileField("PDF-version av föreskrift", upload_to="dokument", blank=False, help_text="Se till att dokumentet är i PDF/A format.")
+
+    @models.permalink
+    def get_absolute_url(self): 
+        return ('lagrumsapp.rinfo.views.item', [str(self.forfattningssamling.kortnamn), str(self.fsnummer)])
 
     def __unicode__(self):
         return u'%s %s' % (self.fsnummer, self.titel)

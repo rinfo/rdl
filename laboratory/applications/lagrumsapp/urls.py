@@ -1,17 +1,24 @@
+# coding=utf-8
 from django.conf.urls.defaults import *
 
-# Uncomment the next two lines to enable the admin:
+import os
+
+# Slå på Djangos automatiska administrationssgränssnitt
 from django.contrib import admin
 admin.autodiscover()
 
+# Konfigurera URL-routing
+
 urlpatterns = patterns('',
-    # Example:
-    # (r'^lagrumsapp/', include('lagrumsapp.foo.urls')),
+    # Se till att filer i mappen static skickas
+    (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(os.path.dirname(__file__), 'static').replace('\\','/')}),
 
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
-    # to INSTALLED_APPS to enable admin documentation:
-    #(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    # Startsidan ("/")
+    (r'^$', 'lagrumsapp.rinfo.views.index'),
 
-    # Uncomment the next line to enable the admin:
+    # Enskild föreskrift (t.ex. "/publ/RA-FS/2006:6"
+    (r'^publ/(?P<fskortnamn>.*)/(?P<fsnummer>.*)/$', 'lagrumsapp.rinfo.views.item'),
+
+    # Slå på administrationsgränssnitt
     (r'^admin/(.*)', admin.site.root),
 )
