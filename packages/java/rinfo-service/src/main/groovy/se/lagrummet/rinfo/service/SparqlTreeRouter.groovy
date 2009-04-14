@@ -4,12 +4,14 @@ import org.restlet.Context
 import org.restlet.Finder
 import org.restlet.Handler
 import org.restlet.Router
+import org.restlet.data.Language
 import org.restlet.data.MediaType
 import org.restlet.data.Method
 import org.restlet.data.Request
 import org.restlet.data.Response
 import org.restlet.data.Status
 import org.restlet.resource.InputRepresentation
+import org.restlet.resource.StringRepresentation
 import org.restlet.resource.Representation
 import org.restlet.resource.Resource
 import org.restlet.resource.Variant
@@ -23,7 +25,14 @@ import org.apache.commons.configuration.ConfigurationUtils
 
 import org.openrdf.repository.Repository
 
+import org.antlr.stringtemplate.StringTemplateGroup
+
+import net.sf.json.groovy.JsonSlurper
+
 import se.lagrummet.rinfo.base.rdf.SparqlTree
+
+import se.lagrummet.rinfo.service.dataview.SparqlTreeViewer
+import se.lagrummet.rinfo.service.dataview.ModelResultHandler
 
 
 class SparqlTreeRouter extends Router {
@@ -31,23 +40,25 @@ class SparqlTreeRouter extends Router {
     SparqlTreeRouter(Context context, Repository repository) {
         super(context)
 
-        attach("/model",
-            new SparqlTreeFinder(context, repository,
-                    "sparqltree/model/sparqltree-model.xml",
-                    "sparqltree/model/modeltree_to_html.xslt",
+        def templates = new StringTemplateGroup("sparqltrees")
+        templates.setRefreshInterval(0) // TODO: cache-control; make configurable
+
+        attach("/org", new SparqlTreeFinder(context,
+                    new SparqlTreeViewer(repository, templates,
+                            "org/org-tree-rq", "org/org-html"),
                     MediaType.TEXT_HTML))
 
-        attach("/org",
-            new SparqlTreeFinder(context, repository,
-                    "sparqltree/org/org-rqtree.xml",
-                    "sparqltree/org/org-html.xslt",
+        def labelTree = new JsonSlurper().parse(
+                ConfigurationUtils.locate("model/model_labels.json"))
+        attach("/model", new ModelFinder(context,
+                    new SparqlTreeViewer(repository, templates,
+                            "model/model-tree-rq", "model/model_html"),
                     MediaType.TEXT_HTML))
 
         // TODO: nice capture of rest of path.. {path:anyPath} (+ /entry?)
         def route = attach("/rdata/{path}", new RDataFinder(context, repository))
         Map<String, Variable> routeVars = route.getTemplate().getVariables()
         routeVars.put("path", new Variable(Variable.TYPE_URI_PATH))
-        // TODO:? attach("search", new OpenSearchFinder(...))
     }
 
 }
@@ -55,19 +66,61 @@ class SparqlTreeRouter extends Router {
 
 class SparqlTreeFinder extends Finder {
 
+    MediaType mediaType
+    SparqlTreeViewer rqViewer
+    String query
+
+    SparqlTreeFinder(Context context,
+            String queryPath,
+            SparqlTreeViewer rqViewer,
+            MediaType mediaType) {
+        super(context)
+        this.mediaType = mediaType
+        this.rqViewer = rqViewer
+        // TODO: query <= queryPath
+    }
+
+    @Override
+    Handler findTarget(Request request, Response response) {
+        def resource = new Resource(getContext(), request, response)
+        resource.variants.add(
+                generateRepresentation(request)
+            )
+        return resource
+    }
+
+    Representation generateRepresentation(Request request) {
+        def locale = computeLocale(request)
+        return new StringRepresentation(
+                rqViewer.execute(createResultHandler(locale, request)),
+                mediaType,
+                new Language(locale))
+    }
+
+    String computeLocale(Request request) {
+        return "sv" // FIXME: from path or conneg
+    }
+
+    String createResultHandler(String locale, Request request) {
+        return query
+    }
+
+}
+
+
+class LegacySparqlTreeFinder extends Finder {
+
     SparqlTree rqTree
     Templates outputXslt
     MediaType mediaType
 
-    SparqlTreeFinder() {}
-
-    SparqlTreeFinder(Context context, Repository repository,
+    LegacySparqlTreeFinder(Context context, Repository repository,
             String treePath, String outputXsltPath, MediaType mediaType) {
         this(context, repository,
                 locate(treePath), locate(outputXsltPath), mediaType)
     }
 
-    SparqlTreeFinder(Context context, Repository repository,
+    LegacySparqlTreeFinder(Context context, Repository repository,
             URL treeUrl, URL outputXsltUrl, MediaType mediaType) {
         super(context)
         rqTree = new SparqlTree(repository, treeUrl)
@@ -106,15 +159,15 @@ class SparqlTreeFinder extends Finder {
 }
 
 
-class RDataFinder extends SparqlTreeFinder {
+class RDataFinder extends LegacySparqlTreeFinder {
 
     static final FILTER_TOKEN = "#FILTERS#"
     static final DEFAULT_MAX_ITEMS = 100
 
     RDataFinder(Context context, Repository repository) {
         super(context, repository,
-                locate("sparqltree/rdata/rpubl-rqtree.xml"),
-                locate("sparqltree/rdata/rpubl_to_rdata.xslt"),
+                locate("sparqltrees/rdata/rpubl-rqtree.xml"),
+                locate("sparqltrees/rdata/rpubl_to_rdata.xslt"),
                 MediaType.APPLICATION_XML) // APPLICATION_ATOM_XML
     }
 

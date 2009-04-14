@@ -3,9 +3,7 @@ package se.lagrummet.rinfo.service.dataview
 import org.openrdf.repository.Repository
 
 import org.antlr.stringtemplate.StringTemplate
-
-import net.sf.json.JSON
-import net.sf.json.groovy.JsonSlurper
+import org.antlr.stringtemplate.StringTemplateGroup
 
 import se.lagrummet.rinfo.base.rdf.sparqltree.GraphBuilder
 import se.lagrummet.rinfo.base.rdf.sparqltree.Lens
@@ -15,49 +13,40 @@ import se.lagrummet.rinfo.base.rdf.sparqltree.SparqlTree
 class SparqlTreeViewer {
 
     Repository repo
-    String query
-    Lens lens
-    String templatePath
+    StringTemplateGroup templates
+    String queryPath
+    String viewPath
 
-    SparqlTreeViewer(repo, query, lens=null, templatePath=null) {
+    SparqlTreeViewer(Repository repo, String queryPath, String viewPath) {
+        this(repo, null, queryPath, viewPath)
+    }
+
+    SparqlTreeViewer(Repository repo, StringTemplateGroup templates,
+            String queryPath, String viewPath) {
         this.repo = repo
-        this.query = query
-        this.lens = lens
-        this.templatePath = templatePath
+        this.templates = templates
+        this.queryPath = queryPath
+        this.viewPath = viewPath
     }
 
-    StringTemplate execute() {
-        return execute(new HashMap())
+    String execute(ViewHandler handler) {
+        def query = runTemplate(queryPath, handler.getQueryData())
+        def tree = handler.handleTree(SparqlTree.runQuery(repo, query))
+        def result = handler.handleGraph(
+                GraphBuilder.buildGraph(handler.getLens(), tree))
+        return runTemplate(viewPath, result)
     }
 
-    StringTemplate execute(Map data) {
-        def result = queryToResult()
-        data.putAll(result)
-        return runTemplate(result)
-    }
-
-    Map queryToResult() {
-        return (lens != null)? queryToGraph() : queryToTree()
-    }
-
-    Map queryToTree() {
-        return SparqlTree.runQuery(repo, query)
-    }
-
-    Map queryToGraph() {
-        return GraphBuilder.buildGraph(lens, queryToTree())
-    }
-
-    StringTemplate runTemplate(Map data) {
-        def st = new StringTemplate(new File(templatePath).text)
-        data.each { key, value ->
-            st.setAttribute(key, value)
+    protected String runTemplate(String templatePath, Map data) {
+        def st = (templates != null)?
+                templates.getInstanceOf(templatePath) :
+                new StringTemplate(new File(templatePath).text)
+        if (data != null) {
+            data.each { key, value ->
+                st.setAttribute(key, value)
+            }
         }
-        return st
-    }
-
-    static JSON toJSON(source) {
-        return new JsonSlurper().parse(source)
+        return st.toString()
     }
 
 }

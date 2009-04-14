@@ -133,7 +133,7 @@
             <configuration>
               <tasks>
                 <!-- TODO: move these to src/resources/main/sparqltrees -->
-                <copy todir="${project.build.outputDirectory}/sparqltree">
+                <copy todir="${project.build.outputDirectory}/sparqltrees">
                     <fileset dir="${basedir}/../../../resources/sparqltrees/"
                              includes="*/*.xml, */*.xslt"/>
                 </copy>
