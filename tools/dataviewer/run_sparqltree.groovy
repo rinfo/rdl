@@ -1,4 +1,6 @@
 import org.openrdf.repository.http.HTTPRepository
+import net.sf.json.JSONSerializer
+
 import se.lagrummet.rinfo.base.rdf.sparqltree.SparqlTree
 import se.lagrummet.rinfo.service.dataview.SparqlTreeViewer
 import se.lagrummet.rinfo.service.dataview.BasicViewHandler
@@ -26,6 +28,6 @@ if (args.length == 3) {
     def time = new Date()
     def tree = SparqlTree.runQuery(repo, query)
     def diff = (new Date().time - time.time) / 1000.0
-    println "SparqlTree done in ${diff} s."
-    tree.each { println it }
+    println "// SparqlTree done in ${diff} s."
+    println JSONSerializer.toJSON(tree).toString(4)
 }

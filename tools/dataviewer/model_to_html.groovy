@@ -14,7 +14,7 @@ def repo = RDFUtil.slurpRdf(
         "../../resources/base/model",
         "../../resources/base/extended/rdf",
         "../../resources/external/rdf")
-//def repo = getRepo("http://localhost:8080/openrdf-sesame", "rinfo")
+//def repo = getRepo("http://localhost:8080/sesame-workbench", "rinfo")
 
 def templates = new StringTemplateGroup("sparqltrees")
 def rqViewer = new SparqlTreeViewer(repo, templates,

@@ -4,6 +4,7 @@ import org.restlet.Context
 import org.restlet.Finder
 import org.restlet.Handler
 import org.restlet.Router
+import org.restlet.data.CharacterSet
 import org.restlet.data.Language
 import org.restlet.data.MediaType
 import org.restlet.data.Method
@@ -32,7 +33,8 @@ import net.sf.json.groovy.JsonSlurper
 import se.lagrummet.rinfo.base.rdf.SparqlTree
 
 import se.lagrummet.rinfo.service.dataview.SparqlTreeViewer
-import se.lagrummet.rinfo.service.dataview.ModelResultHandler
+import se.lagrummet.rinfo.service.dataview.BasicViewHandler
+import se.lagrummet.rinfo.service.dataview.ModelViewHandler
 
 
 class SparqlTreeRouter extends Router {
@@ -46,14 +48,18 @@ class SparqlTreeRouter extends Router {
         attach("/org", new SparqlTreeFinder(context,
                     new SparqlTreeViewer(repository, templates,
                             "sparqltrees/org/org-tree-rq", "sparqltrees/org/org-html"),
+                    { locale, request ->
+                            new BasicViewHandler(locale, [encoding: "utf-8"]) },
                     MediaType.TEXT_HTML))
 
         def labelTree = new JsonSlurper().parse(
-                ConfigurationUtils.locate("sparqltrees/model/model_labels.json"))
-        attach("/model", new ModelFinder(context,
+                ConfigurationUtils.locate("sparqltrees/model/model-labels.json"))
+        attach("/model", new SparqlTreeFinder(context,
                     new SparqlTreeViewer(repository, templates,
                             "sparqltrees/model/model-tree-rq",
-                            "sparqltrees/model/model_html"),
+                            "sparqltrees/model/model-html"),
+                    { locale, request ->
+                            new ModelViewHandler(locale, null, labelTree) },
                     MediaType.TEXT_HTML))
 
         // TODO: nice capture of rest of path.. {path:anyPath} (+ /entry?)
@@ -70,15 +76,16 @@ class SparqlTreeFinder extends Finder {
     MediaType mediaType
     SparqlTreeViewer rqViewer
     String query
+    Closure createResultHandler
 
     SparqlTreeFinder(Context context,
-            String queryPath,
             SparqlTreeViewer rqViewer,
+            Closure createResultHandler,
             MediaType mediaType) {
         super(context)
         this.mediaType = mediaType
         this.rqViewer = rqViewer
-        // TODO: query <= queryPath
+        this.createResultHandler = createResultHandler
     }
 
     @Override
@@ -95,15 +102,13 @@ class SparqlTreeFinder extends Finder {
         return new StringRepresentation(
                 rqViewer.execute(createResultHandler(locale, request)),
                 mediaType,
-                new Language(locale))
+                new Language(locale),
+                // FIXME: do we *send* macroman? Wrong anyhow!
+                new CharacterSet("macroman"))
     }
 
     String computeLocale(Request request) {
         return "sv" // FIXME: from path or conneg
-    }
-
-    String createResultHandler(String locale, Request request) {
-        return query
     }
 
 }
