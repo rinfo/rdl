@@ -88,8 +88,8 @@ class Myndighetsforeskrift(models.Model):
     # Koppling till ämnesord
     amnesord = models.ManyToManyField(Amnesord, blank=True, verbose_name=u"ämnesord")
 
-    def ikrafttrandendear(self):
-        return str(self.ikrafttrandendedag.year)
+    def ikrafttradandear(self):
+        return self.ikrafttradandedag.year
 
     @models.permalink
     def get_absolute_url(self): 

@@ -39,6 +39,6 @@ def amnesord(request):
 def artal(request):
     """Visa föreskrifter indelade efter ikraftträdandeår."""
 
-    foreskrifter = Myndighetsforeskrift.objects.all().order_by("ikrafttradandedag")
+    foreskrifter = Myndighetsforeskrift.objects.all().order_by("-ikrafttradandedag")
 
     return render_to_response('per_ar.html', locals())
