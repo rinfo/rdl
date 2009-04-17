@@ -91,14 +91,6 @@
             owl:onProperty :bilaga;
             owl:minCardinality 0
         ],
-        # TODO: okej? för att för att kunna ange info om var man kan läsa mer
-        # om dokumentet *eller hur det/dess innnehåll kan hittas*. Pekar på
-        # lite vad som, t.ex. en tipssida el.dyl.
-        [ a owl:Restriction;
-            owl:onProperty rdfs:seeAlso;
-            owl:allValuesFrom rdfs:Resource;
-            owl:minCardinality 0
-        ] ;
     rdfs:isDefinedBy : .
 
 

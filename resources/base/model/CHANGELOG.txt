@@ -2,6 +2,13 @@
 CHANGELOG
 ########################################################################
 
+2009-04-17
+--------------------
+
+* Tog bort seeAlso från Rattsinformationsdokument. Bör vara med i exempel, men
+dokumentet definieras inte av denna egenskap.
+
+
 2009-03-10
 --------------------
 
