@@ -40,7 +40,7 @@ class ServiceApplicationTest {
     //static sesameRepoPath
     static component
 
-    RepositoryHandler repositoryHandler
+    static RepositoryHandler repositoryHandler
 
     @BeforeClass
     static void setupClass() {
@@ -51,10 +51,8 @@ class ServiceApplicationTest {
         serviceAppUrl = appUrlBase + ":" + serviceAppPort
         feedAppUrl = appUrlBase + ":" + feedAppPort
         //sesameRepoPath = config.getString("rinfo.service.sesameRepoPath")
-    }
 
-    @Before
-    void startComponent() {
+        //void startComponent() {
         component = new Component()
         def context = component.getContext()
 
@@ -84,8 +82,8 @@ class ServiceApplicationTest {
         component.start()
     }
 
-    @After
-    void stopComponent() {
+    @AfterClass
+    static void stopComponent() {
         repositoryHandler.cleanRepository()
         component.stop()
     }
@@ -101,7 +99,7 @@ class ServiceApplicationTest {
         def response = client.handle(request)
         assertEquals Status.SUCCESS_OK , response.status
 
-        Thread.sleep(999)
+        Thread.sleep(2000)
 
         assertEquals 2, countContexts()
     }

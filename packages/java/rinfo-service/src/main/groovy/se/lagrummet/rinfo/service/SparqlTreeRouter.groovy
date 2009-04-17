@@ -120,6 +120,8 @@ class LegacySparqlTreeFinder extends Finder {
     Templates outputXslt
     MediaType mediaType
 
+    LegacySparqlTreeFinder() {}
+
     LegacySparqlTreeFinder(Context context, Repository repository,
             String treePath, String outputXsltPath, MediaType mediaType) {
         this(context, repository,

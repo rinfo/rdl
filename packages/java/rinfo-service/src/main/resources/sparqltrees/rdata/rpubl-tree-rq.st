@@ -10,11 +10,11 @@ PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
 
 SELECT DISTINCT * WHERE {
 
-  # TODO: filter-var for doc (and use locale-var?)
+    # TODO: filter-var for doc (and use locale-var?)
 
-  #FILTER(?doc = <http://rinfo.lagrummet.se/publ/sfs/1999:175>).
+    #FILTER(?doc = <http://rinfo.lagrummet.se/publ/sfs/1999:175>).
 
-  ?doc a ?doc__1_type .
+    ?doc a ?doc__1_type .
 
     OPTIONAL {
         ?doc__1_type rdfs:label ?doc__1_type__1_label .
@@ -95,7 +95,7 @@ SELECT DISTINCT * WHERE {
             #   - depends on if query is run against store or incoming subgraph.
             # Current, too loose variant:
             #FILTER( !BOUND(?superRel) ||
-            #        ?superRel != dct:hasPart &amp;&amp;
+            #        ?superRel != dct:hasPart &&
             #        ?superRel != rpubl:publikationssamling )
             # Using *raw* "some kind of rinfo-doc" filter..:
 
