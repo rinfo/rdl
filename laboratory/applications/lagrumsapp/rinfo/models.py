@@ -77,13 +77,19 @@ class Myndighetsforeskrift(models.Model):
     utkom_fran_tryck = models.DateField("Utkom från tryck", blank=False)
 
     # Författningssamling (referens till post i de upprättade författningssamlingarna)
-    forfattningssamling = models.ForeignKey(Forfattningssamling, blank=False, verbose_name="författningssamling")
+    forfattningssamling = models.ForeignKey(Forfattningssamling, blank=False, verbose_name=u"författningssamling")
 
     # Bemyndiganden (referenser till bemyndigandeparagrafer)
-    bemyndigandeparagrafer = models.ManyToManyField(Bemyndigandeparagraf, blank=False, verbose_name="referenser till bemyndiganden")
+    bemyndigandeparagrafer = models.ManyToManyField(Bemyndigandeparagraf, blank=False, verbose_name=u"referenser till bemyndiganden")
 
     # PDF-version av dokumentet
-    dokument = models.FileField("PDF-version av föreskrift", upload_to="dokument", blank=False, help_text="Se till att dokumentet är i PDF/A format.")
+    dokument = models.FileField(u"PDF-version av föreskrift", upload_to="dokument", blank=False, help_text=u"Se till att dokumentet är i PDF/A format.")
+
+    # Koppling till ämnesord
+    amnesord = models.ManyToManyField(Amnesord, blank=True, verbose_name=u"ämnesord")
+
+    def ikrafttrandendear(self):
+        return str(self.ikrafttrandendedag.year)
 
     @models.permalink
     def get_absolute_url(self): 

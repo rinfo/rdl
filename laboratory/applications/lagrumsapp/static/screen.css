@@ -8,6 +8,18 @@ body {
    background-color: #e7e7de;
    font-family: Georgia, Verdana, sans-serif;
 }
+
+table tr td {
+    text-align:left;
+    vertical-align: top;
+}
+
+table tr th {
+    text-align:left;
+    font-weight:bold;
+    vertical-align: top;
+}
+
 .header{
    width: 73%;
    left: 13.5%
