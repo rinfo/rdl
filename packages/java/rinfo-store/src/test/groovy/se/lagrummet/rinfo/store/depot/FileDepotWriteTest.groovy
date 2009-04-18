@@ -109,6 +109,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
         assertEquals entry.published, entry.updated
         assertEquals entry.updated, createTime
 
+	Thread.sleep(100)
         def updateTime = new Date()
         entry.update(updateTime, [
                 new SourceContent(exampleEntryFile("content-en.pdf"),

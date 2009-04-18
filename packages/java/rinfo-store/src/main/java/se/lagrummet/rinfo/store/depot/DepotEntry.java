@@ -270,10 +270,12 @@ public class DepotEntry {
     protected Entry getEntryManifest() {
         if (manifest==null) {
             try {
+                InputStream inStream = new FileInputStream(getManifestFile());
                 manifest = (Entry) Abdera.getInstance().getParser().parse(
-                        new FileInputStream(getManifestFile())).getRoot();
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException("Missing manifest file.", e);
+                        inStream).getRoot();
+                inStream.close();
+            } catch (Exception e) {
+                throw new RuntimeException("Error reading manifest file.", e);
             }
         }
         return manifest;

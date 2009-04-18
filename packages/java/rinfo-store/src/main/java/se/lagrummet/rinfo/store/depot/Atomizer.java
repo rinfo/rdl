@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
@@ -262,17 +263,20 @@ public class Atomizer {
         return feed;
     }
 
-    protected Feed getFeed(String uriPath) {
+    protected Feed getFeed(String uriPath) throws IOException {
         File feedFile = depot.getFeedFile(uriPath);
         try {
-            return (Feed) Abdera.getInstance().getParser().parse(
-                    new FileInputStream(feedFile)).getRoot();
+            InputStream inStream = new FileInputStream(feedFile);
+            Feed feed = (Feed) Abdera.getInstance().getParser().parse(
+                    inStream).getRoot();
+            inStream.close();
+            return feed;
         } catch (FileNotFoundException e) {
             return null;
         }
     }
 
-    protected Feed getPrevArchiveAsFeed(Feed feed) {
+    protected Feed getPrevArchiveAsFeed(Feed feed) throws IOException {
         IRI prev = FeedPagingHelper.getNextArchive(feed);
         if (prev==null) {
             return null;
@@ -351,8 +355,11 @@ public class Atomizer {
         if (!force &&
             entryFile.isFile() &&
             entryFile.lastModified() > depotEntry.lastModified()) {
-            return (Entry) Abdera.getInstance().getParser().parse(
-                    new FileInputStream(entryFile)).getRoot();
+            InputStream inStream = new FileInputStream(entryFile);
+            Entry entry = (Entry) Abdera.getInstance().getParser().parse(
+                    inStream).getRoot();
+            inStream.close();
+            return entry;
         }
         Entry atomEntry = createAtomEntry(depotEntry);
         OutputStream outStream = new FileOutputStream(entryFile);
