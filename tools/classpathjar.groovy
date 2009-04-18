@@ -1,6 +1,7 @@
 
+MVN_EXE = System.properties['os.name'] =~ /Windows/? "mvn.bat" : "mvn"
 DEP_SEP = ":"
-MVN_DEP_CMD = "mvn dependency:build-classpath -Dmdep.pathSeparator=${DEP_SEP}"
+MVN_DEP_CMD = "${MVN_EXE} dependency:build-classpath -Dmdep.pathSeparator=${DEP_SEP}"
 
 List mavenPackageJars(pkgDir) {
     return MVN_DEP_CMD.execute(null, pkgDir).text.readLines().find {
