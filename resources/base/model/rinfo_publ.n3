@@ -90,7 +90,7 @@
         [ a owl:Restriction;
             owl:onProperty :bilaga;
             owl:minCardinality 0
-        ],
+        ];
     rdfs:isDefinedBy : .
 
 
