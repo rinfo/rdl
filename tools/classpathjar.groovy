@@ -1,6 +1,6 @@
 
 MVN_EXE = System.properties['os.name'] =~ /Windows/? "mvn.bat" : "mvn"
-DEP_SEP = ":"
+DEP_SEP = ";"
 MVN_DEP_CMD = "${MVN_EXE} dependency:build-classpath -Dmdep.pathSeparator=${DEP_SEP}"
 
 List mavenPackageJars(pkgDir) {
@@ -11,9 +11,10 @@ List mavenPackageJars(pkgDir) {
 
 void makePathingJar(jarPaths, destFile) {
     def ant = new AntBuilder()
-    ant.manifestclasspath(property:"jar.classpath", jarfile:destFile) {
+    ant.manifestclasspath(property:"jar.classpath", jarfile:destFile, maxParentLevels:10) {
         classpath {
             for (path in jarPaths) {
+                if (path =~ /xerces.*\.jar$|xml-apis.*\.jar$/) continue
                 pathelement location:path
             }
         }
