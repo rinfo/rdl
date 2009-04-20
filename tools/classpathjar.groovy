@@ -11,15 +11,18 @@ List mavenPackageJars(pkgDir) {
 
 void makePathingJar(jarPaths, destFile) {
     def ant = new AntBuilder()
-    ant.manifestclasspath(property:"jar.classpath", jarfile:destFile, maxParentLevels:10) {
+    ant.manifestclasspath(property:"jar.classpath", jarfile:destFile,
+            maxParentLevels:10) {
         classpath {
             for (path in jarPaths) {
-                if (path =~ /xerces.*\.jar$|xml-apis.*\.jar$/) continue
+                // TODO: due to bug <http://jira.codehaus.org/browse/GROOVY-3356>:
+                if (path =~ /xerces.*\.jar$|xml-apis.*\.jar$/)
+                    continue
                 pathelement location:path
             }
         }
     }
-    ant.jar(destfile:destFile) {
+    ant.jar(destfile:destFile, update:true) {
         manifest {
             attribute name:"Class-Path", value: '${jar.classpath}'
         }
