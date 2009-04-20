@@ -1,0 +1,14 @@
+<entry>
+    <id>{{rinfo_site_url}}{{entry_id}}</id>
+    <updated>{{updated|date:"Y-m-d\TH:i:s\Z"}}</updated>
+    <published>{{published|date:"Y-m-d\TH:i:s\Z"}}</published>
+    <title>{{foreskrift.titel}}</title>
+    <summary></summary>
+    <content src="{{rinfo_site_url}}/{{foreskrift.dokument.url|safe}}"
+        type="application/pdf"
+        le:md5="{{content_md5}}"/>
+    <link rel="alternate"
+        href="{{rinfo_site_url}}{{foreskrift.get_absolute_url}}?format=rdf"
+        type="application/rdf+xml"
+        length="{{rdf_length}}" le:md5="{{rdf_md5}}"/>
+</entry>

@@ -20,13 +20,16 @@ urlpatterns = patterns('',
     (r'^$', 'lagrumsapp.rinfo.views.index'),
 
     # Enskild föreskrift (t.ex. "/publ/RA-FS/2006:6"
-    (r'^publ/(?P<fskortnamn>.*)/(?P<fsnummer>.*)/$', 'lagrumsapp.rinfo.views.item'),
+    (r'^publ/(?P<fskortnamn>.*)/(?P<fsnummer>.*)/$', 'lagrumsapp.rinfo.views.foreskrift'),
 
     # Indelade per ämnesord ("/amnesord/")
     (r'^amnesord/$', 'lagrumsapp.rinfo.views.amnesord'),
 
     # Indelade per ikraftträdandeår ("/artal/")
     (r'^artal/$', 'lagrumsapp.rinfo.views.artal'),
+
+    # Atom-feed med ändringar i författningssamlingen
+    (r'^feed/$', 'lagrumsapp.rinfo.views.atomfeed'),
 
     # Slå på administrationsgränssnitt
     (r'^admin/(.*)', admin.site.root),

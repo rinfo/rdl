@@ -2,8 +2,10 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 import datetime
-
-from rinfo.models import Myndighetsforeskrift, Forfattningssamling, Amnesord
+from rinfo.models import Myndighetsforeskrift, Forfattningssamling, Amnesord, AtomEntry
+from django.utils.feedgenerator import rfc3339_date
+from django.conf import settings
+from django.template import loader, Context
 
 def index(request):
     """Visa startsidan."""
@@ -15,7 +17,7 @@ def index(request):
 
 
 
-def item(request, fskortnamn, fsnummer):
+def foreskrift(request, fskortnamn, fsnummer):
     """Visa enskild föreskrift i författningssamling."""
 
     # Hämta författningssamlingen
@@ -24,7 +26,13 @@ def item(request, fskortnamn, fsnummer):
     # Hämta föreskriften
     foreskrift = Myndighetsforeskrift.objects.get(fsnummer=fsnummer, forfattningssamling=fs)
 
-    return render_to_response('foreskrift.html', locals())
+    if request.GET.get("format", "").lower() == "rdf":
+        # Skicka rdf-data för denna post
+        return HttpResponse(foreskrift.to_rdfxml(), mimetype="application/rdf+xml") 
+    else:
+        # Visa vanlig html-sida
+        return render_to_response('foreskrift.html', locals())
+
 
 
 def amnesord(request):
@@ -36,9 +44,35 @@ def amnesord(request):
     return render_to_response('per_amnesord.html', locals())
 
 
+
 def artal(request):
     """Visa föreskrifter indelade efter ikraftträdandeår."""
 
     foreskrifter = Myndighetsforeskrift.objects.all().order_by("-ikrafttradandedag")
 
     return render_to_response('per_ar.html', locals())
+
+
+def atomfeed(request):
+    """Presentera en postförteckning över aktiviteter i författningssamlingen i
+    Atom-format."""
+
+    entries = AtomEntry.objects.order_by("-updated")
+    last_updated = rfc3339_date(entries[0].updated)
+    feed_uri = settings.RINFO_FEED_URI
+    feed_title = settings.RINFO_FEED_TITLE
+    feed_contact_name = settings.RINFO_FEED_CONTACT_NAME
+    feed_contact_url = settings.RINFO_FEED_CONTACT_URL
+    feed_contact_email = settings.RINFO_FEED_CONTACT_EMAIL
+    rinfo_site_url = settings.RINFO_SITE_URL
+
+    template = loader.get_template('atomfeed.xml')
+    context = Context(locals())
+
+    return HttpResponse(template.render(context), mimetype="application/atom+xml") 
+    
+
+
+
+
+

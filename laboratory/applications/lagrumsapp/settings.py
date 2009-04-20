@@ -20,9 +20,22 @@ DATABASE_HOST = ''             # Set to empty string for localhost. Not used wit
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
 # Unik URI för organisationen som utfärdar föreskrifter i denna applikation.
-# Erhålls från projektet.
-RINFO_ORG_URI = "http://rinfo.lagrummet.se/org/riksarkivet"
+# Erhålls från rättsinformationsprojektet.
+RINFO_ORG_URI = "http://rinfo.lagrummet.se/org/exempelmyndigheten"
+RINFO_BASE_URI = "http://rinfo.lagrummet.se/publ/exfs/"
 
+# Plats för Atom-feedens dataposter
+RINFO_ENTRIES_PATH = os.path.join(os.path.dirname(__file__), 'rinfo-feed/entries').replace('\\','/') 
+
+# Egenskaper för Atom-feeden
+RINFO_FEED_URI = "tag:exempelmyndigheten.se,2009:rinfo:feed"
+RINFO_FEED_TITLE = "Exempelmyndighetens författningssamling"
+RINFO_FEED_CONTACT_NAME = "[Exempelmyndighetens kontaktperson]"
+RINFO_FEED_CONTACT_URL = "http://www.exempelmyndigheten.se"
+RINFO_FEED_CONTACT_EMAIL = "juridik@exempelmyndigheten.se"
+
+# Webbplatsens adress och port (utan avslutande '/')
+RINFO_SITE_URL = "http://127.0.0.1:8000"
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -34,6 +47,8 @@ TIME_ZONE = 'Europe/Stockholm'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'sv-se'
+
+DATE_FORMAT = 'Y-m-d'
 
 SITE_ID = 1
 
