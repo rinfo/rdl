@@ -24,5 +24,13 @@ def labelTree = new JsonSlurper().parse(ConfigurationUtils.locate(
                 "sparqltrees/model/model-labels.json"))
 
 def locale = 'sv'
-println rqViewer.execute(new ModelViewHandler(locale, null, labelTree))
+def out = { rqViewer.execute(new ModelViewHandler(locale, null, labelTree)) }
+
+if (args.length == 1) {
+    def fname = args[0]
+    println "Writing to: $fname"
+    new File(fname) << out()
+} else {
+    println out()
+}
 
