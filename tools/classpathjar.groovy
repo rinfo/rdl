@@ -22,7 +22,8 @@ void makePathingJar(jarPaths, destFile) {
             }
         }
     }
-    ant.jar(destfile:destFile, update:true) {
+    ant.delete file:destFile, quiet:true
+    ant.jar(destfile:destFile) {
         manifest {
             attribute name:"Class-Path", value: '${jar.classpath}'
         }
