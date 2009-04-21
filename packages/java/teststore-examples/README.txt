@@ -12,9 +12,7 @@ Environments (see usage of "environment" in pom.xml)::
     # Use config in src/environments/prod/:
     $ mvn -Pprod <...>
 
-
 Running as war::
 
     $ mvn -Djetty.port=8281 jetty:run
-
 

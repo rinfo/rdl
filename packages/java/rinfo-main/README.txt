@@ -12,11 +12,6 @@ Environments (see usage of "environment" in pom.xml)::
     # Use config in src/environments/prod/:
     $ mvn -Pprod <...>
 
-
-Specific testing::
-    # ...
-
-
 Running as war::
 
     $ mvn -Djetty.port=8180 jetty:run
@@ -24,5 +19,4 @@ Running as war::
 Manually pinging rinfo-main to collect from a test source::
 
     $ curl --data "feed=http://localhost:8182/feed/current" http://localhost:8180/collector
-
 

@@ -1,17 +1,18 @@
 ########################################################################
-RInfo - Project README
+README - RInfo Project
 ########################################################################
 
 
 Getting Started
 ========================================================================
 
+See ``setup/development/running_rinfo_locally.txt``.
 
 
 Repository Contents
 ========================================================================
 
-The top-level directories separate packages by intrinsic purpose.
+The top-level directories are divided by intrinsic purpose:
 
 documentation/
     All forms of documentation, including system descriptions, data examples
@@ -54,4 +55,6 @@ packages/
 setup/
     Core development and deployment setup tools.
 
+tools/
+    Instrumental tools for development and (non-setup related) management.
 

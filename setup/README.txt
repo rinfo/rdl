@@ -14,7 +14,7 @@ On systems where python-setuptools is bundled (hence having the
 
     $ sudo easy_install Fabric
 
-This includes OS X 10.5. On ununtu, you can often first need to do::
+This is the case on OS X 10.5+. On ununtu, you may first need to::
 
     $ sudo apt-get install python-dev python-setuptools
 
