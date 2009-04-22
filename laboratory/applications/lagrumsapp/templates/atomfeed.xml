@@ -13,6 +13,6 @@
     <link href="{{rinfo_site_url}}/feed/" rel="self"/>
 
     {% for entry in entries %}
-    {{entry.to_entryxml}}
+{{entry.to_entryxml}}
     {% endfor %}
 </feed>

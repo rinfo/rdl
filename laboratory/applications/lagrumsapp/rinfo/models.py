@@ -7,14 +7,15 @@ from datetime import datetime
 from django.contrib.sites.models import Site
 from django.core.files import File
 import hashlib
+from django.utils.feedgenerator import rfc3339_date
 
 
 class Forfattningssamling(models.Model):
     # Namn på författningssamling
-    titel = models.CharField(max_length=255, unique=True, help_text="Namn på författningssamling, t.ex. <em>Riksarkivets författningssamling'</em>")
+    titel = models.CharField(max_length=255, unique=True, help_text="Namn på författningssamling, t.ex. <em>Exempelmyndighetens författningssamling'</em>")
 
     # Kortnamn på författningssamling, t.ex. "RA-FS"
-    kortnamn = models.CharField(max_length=10, unique=True, help_text="T.ex. <em>RA-FS</em>")
+    kortnamn = models.CharField(max_length=10, unique=True, help_text="T.ex. <em>EXFS</em>")
 
     # Författningssamlingens unika identifierare, t.ex.
     # "http://rinfo.lagrummet.se/serie/fs/ra-fs". Denna erhålls från
@@ -104,6 +105,10 @@ class Myndighetsforeskrift(models.Model):
     def get_absolute_url(self): 
         return ('lagrumsapp.rinfo.views.foreskrift', [str(self.forfattningssamling.kortnamn), str(self.fsnummer)])
 
+    # Metod för att skapa rättsinformationssystemets unika identifierare för denna post
+    def get_rinfo_uri(self):
+        return settings.RINFO_BASE_URI + self.fsnummer
+
     # Metod för att returnera textrepresentation av en föreskrift (används i
     # admin-gränssnittets listor)
     def __unicode__(self):
@@ -188,8 +193,8 @@ class AtomEntry(models.Model):
     def to_entryxml(self):
         template = loader.get_template('foreskrift_entry.xml')
         context = Context({ 'foreskrift': self.myndighetsforeskrift,
-                            'updated': self.updated, 
-                            'published': self.published, 
+                            'updated': rfc3339_date(self.updated), 
+                            'published': rfc3339_date(self.published), 
                             'entry_id': self.entry_id, 
                             'content_md5': self.content_md5, 
                             'rdf_length': self.rdf_length, 

@@ -19,9 +19,12 @@ DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
-# Unik URI för organisationen som utfärdar föreskrifter i denna applikation.
-# Erhålls från rättsinformationsprojektet.
+# Unik identifierare i URI-format för organisationen som utfärdar föreskrifter
+# i denna applikation. Erhålls från rättsinformationsprojektet.
 RINFO_ORG_URI = "http://rinfo.lagrummet.se/org/exempelmyndigheten"
+
+# Första delen av unik identifierare för dokument för denna organisation.
+# Erhålls från rättsinformationsprojektet.
 RINFO_BASE_URI = "http://rinfo.lagrummet.se/publ/exfs/"
 
 # Plats för Atom-feedens dataposter
