@@ -1,5 +1,6 @@
+{% if foreskrift %}
     <entry>
-        <id>{{foreskrift.get_rinfo_uri}}</id>
+        <id>{{entry_id}}</id>
         <updated>{{updated}}</updated>
         <published>{{published}}</published>
         <title>{{foreskrift.titel}}</title>
@@ -12,3 +13,6 @@
             type="application/rdf+xml"
             length="{{rdf_length}}" le:md5="{{rdf_md5}}"/>
     </entry>
+{% else %}
+    <at:deleted-entry ref="{{entry_id}}" when="{{updated}}"/>
+{% endif %}
