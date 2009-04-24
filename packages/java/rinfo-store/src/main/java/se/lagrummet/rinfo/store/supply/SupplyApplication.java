@@ -25,10 +25,10 @@ public class SupplyApplication extends Application {
     @Override
     public synchronized Restlet createRoot() {
         try {
-            FileDepot fileDepot = (fileDepotConfig!=null)?
+            FileDepot depot = (fileDepotConfig!=null)?
                     FileDepot.newConfigured(fileDepotConfig) :
                     FileDepot.newAutoConfigured();
-            return new DepotFinder(getContext(), fileDepot);
+            return new DepotFinder(getContext(), depot);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

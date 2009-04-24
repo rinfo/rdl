@@ -23,13 +23,13 @@ import se.lagrummet.rinfo.store.depot.LockedDepotEntryException;
 
 public class DepotFinder extends Finder {
 
-    private FileDepot fileDepot;
+    private FileDepot depot;
 
     public DepotFinder() { super(); }
     public DepotFinder(Context context) { super(context); }
-    public DepotFinder(Context context, FileDepot fileDepot) {
+    public DepotFinder(Context context, FileDepot depot) {
         this(context);
-        this.fileDepot = fileDepot;
+        this.depot = depot;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class DepotFinder extends Finder {
         List<DepotContent> results = null;
         try {
             // TODO:? E.g in a servlet container, how to handle </webapp/> base?
-            // fileDepot may not want such an "instrumental" base segment,
+            // depot may not want such an "instrumental" base segment,
             // in case it should reinterpret non-full url as e.g. a tag uri..?
             // Is resourceRef.relativeRef ok? Only if we *don't* want the public ref!
             // See also resourceRef.baseRef
@@ -47,7 +47,7 @@ public class DepotFinder extends Finder {
             if (!relativePath.startsWith("/")) {
                 relativePath = "/" + relativePath;
             }
-            results = fileDepot.find(relativePath);
+            results = depot.find(relativePath);
         } catch (DeletedDepotEntryException e) {
             // TODO: Gone or 404?
             response.setStatus(Status.CLIENT_ERROR_GONE);

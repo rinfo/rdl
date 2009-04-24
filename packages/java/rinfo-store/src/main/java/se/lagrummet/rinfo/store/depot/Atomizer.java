@@ -36,7 +36,7 @@ public class Atomizer {
 
     public static final String CONF_BASE_KEY = "rinfo.depot.atom.";
 
-    // TODO: in Abdera somewhere? Or get from depot(.pathHandler)?
+    // TODO:? Get from (or ue in?) depot(.pathHandler)?
     public static final String ATOM_ENTRY_MEDIA_TYPE = "application/atom+xml;type=entry";
 
     // TODO:IMPROVE: depend on base and use base.atom.AtomEntryDeleteUtil?
@@ -66,6 +66,13 @@ public class Atomizer {
 
         depot.getFeedFile(uriPath)
 
+       .. Better:
+        - have depot contain:
+            - pathHandler (swappable or just configurable?)
+            - Backend interface:
+                handles all read and write operations, including toFilePath(logicalPath)
+            - Indexer interface: the "pure algorithm" (lazy if backend is db?)
+            - Atomizer: left to do syntax only
     */
     private FileDepot depot;
 
@@ -331,9 +338,8 @@ public class Atomizer {
             dryOutHistoricalEntries(depotEntry)
             */
         }
-        /* TODO: Test to ensure this insert is only done if atomEntry represents
-            a deletion in itself (and not only feed-level tombstone markers).
-        */
+        // NOTE: Test to ensure this insert is only done if atomEntry represents
+        //  a deletion in itself (and not only feed-level tombstone markers).
         if (!depotEntry.isDeleted() || isUsingEntriesAsTombstones()) {
             Entry atomEntry = generateAtomEntryContent(depotEntry, false);
             atomEntry.setSource(null);
