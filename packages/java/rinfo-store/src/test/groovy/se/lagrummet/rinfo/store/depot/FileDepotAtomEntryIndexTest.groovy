@@ -13,7 +13,7 @@ class FileDepotAtomIndexTest extends FileDepotTempBase {
     @Test
     void shouldGenerateAtomEntry() {
         def entry = fileDepot.getEntry("/publ/1901/100")
-        assertEquals 0, entry.findContents(fileDepot.pathProcessor.
+        assertEquals 0, entry.findContents(fileDepot.pathHandler.
                 hintForMediaType("application/atom+xml;type=entry")).size()
         fileDepot.onEntryModified(entry)
         def atomContent = entry.findContents("application/atom+xml;type=entry")[0]

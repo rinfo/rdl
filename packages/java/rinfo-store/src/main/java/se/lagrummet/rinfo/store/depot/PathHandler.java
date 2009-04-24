@@ -9,7 +9,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 
 
-public class UriPathProcessor {
+public class PathHandler {
 
     public static final String CONF_BASE_KEY = "rinfo.depot.uris.";
 
@@ -36,7 +36,7 @@ public class UriPathProcessor {
 
     private Map<String, String> mediaTypeHints;
 
-    public UriPathProcessor() {
+    public PathHandler() {
         setNamedMediaTypes(DEFAULT_NAMED_MEDIA_TYPES);
     }
 

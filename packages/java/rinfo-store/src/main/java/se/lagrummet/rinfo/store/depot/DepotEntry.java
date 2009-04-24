@@ -214,7 +214,7 @@ public class DepotEntry {
                 continue;
             }
             String mediaHint = match.group(2);
-            String mediaType = depot.getPathProcessor().mediaTypeForHint(mediaHint);
+            String mediaType = depot.getPathHandler().mediaTypeForHint(mediaHint);
             if (forMediaType!=null && !mediaType.equals(forMediaType)) {
                 continue;
             }
@@ -228,8 +228,8 @@ public class DepotEntry {
             //  .. and mediaHint *is* very concise.
             //  - receiving forMediaType in findContents
             //  - calling depot.mediaTypeForSuffix that forwards to mediaTypeForHint..
-            //  .. could allow mediaHint to be collection-dependent in pathProcessor..
-            String uriPath = depot.getPathProcessor().makeNegotiatedUriPath(
+            //  .. could allow mediaHint to be collection-dependent in pathHandler..
+            String uriPath = depot.getPathHandler().makeNegotiatedUriPath(
                     getEntryUriPath(), mediaType, lang);
             found.add(new DepotContent(file, uriPath, mediaType, lang));
         }
@@ -538,7 +538,7 @@ public class DepotEntry {
         if (lang!=null) {
             filename += "-" + lang;
         }
-        String suffix = depot.getPathProcessor().hintForMediaType(mediaType);
+        String suffix = depot.getPathHandler().hintForMediaType(mediaType);
         filename += "." + suffix;
         return new File(entryContentDir, filename);
     }

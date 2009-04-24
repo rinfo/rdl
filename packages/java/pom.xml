@@ -75,6 +75,10 @@
         <enabled>false</enabled>
       </releases>
     </repository>
+    <repository>
+      <id>easyb</id>
+      <url>http://www.easyb.org/maven2/</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -87,6 +91,10 @@
       <releases>
         <enabled>true</enabled>
       </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>easyb</id>
+      <url>http://www.easyb.org/maven2/</url>
     </pluginRepository>
   </pluginRepositories>
 
@@ -433,6 +441,11 @@
           <groupId>org.codehaus.groovy.maven</groupId>
           <artifactId>gmaven-plugin</artifactId>
           <version>1.0-rc-5</version>
+        </plugin>
+        <plugin>
+          <groupId>org.easyb</groupId>
+          <artifactId>maven-easyb-plugin</artifactId>
+          <version>0.9.5.2</version>
         </plugin>
       </plugins>
     </pluginManagement>

@@ -36,7 +36,7 @@ public class Atomizer {
 
     public static final String CONF_BASE_KEY = "rinfo.depot.atom.";
 
-    // TODO: in Abdera somewhere? Or get from depot(.pathProcessor)?
+    // TODO: in Abdera somewhere? Or get from depot(.pathHandler)?
     public static final String ATOM_ENTRY_MEDIA_TYPE = "application/atom+xml;type=entry";
 
     // TODO:IMPROVE: depend on base and use base.atom.AtomEntryDeleteUtil?
@@ -60,7 +60,7 @@ public class Atomizer {
     /* TODO: factor out dep to depot?
        As a Depot (super-)interface, with minimal path- and write operations?
 
-        depot.getPathProcessor().makeNegotiatedUriPath(...)
+        depot.getPathHandler().makeNegotiatedUriPath(...)
         depot.getSubscriptionPath()
         depot.pathToArchiveFeed(date)
 
@@ -406,7 +406,7 @@ public class Atomizer {
         atomEntry.setSummary("");//getId().toString()
 
         if (useEntrySelfLink) {
-            String selfUriPath = depot.getPathProcessor().makeNegotiatedUriPath(
+            String selfUriPath = depot.getPathHandler().makeNegotiatedUriPath(
                     depotEntry.getEntryUriPath(), ATOM_ENTRY_MEDIA_TYPE);
             atomEntry.addLink(selfUriPath, "self");
         }

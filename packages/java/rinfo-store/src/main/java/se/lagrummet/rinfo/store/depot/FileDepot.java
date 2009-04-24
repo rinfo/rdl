@@ -27,7 +27,7 @@ public class FileDepot {
     private File baseDir;
     private String feedPath;
     private Atomizer atomizer;
-    private UriPathProcessor pathProcessor = new UriPathProcessor();
+    private PathHandler pathHandler = new PathHandler();
 
     public FileDepot() {
         this.atomizer = new Atomizer(this);
@@ -69,7 +69,7 @@ public class FileDepot {
         setBaseDir(new File(config.getString(CONF_BASE_KEY+"fileDir")));
         setFeedPath(config.getString(CONF_BASE_KEY+"feedPath"));
         atomizer.configure(config);
-        pathProcessor.configure(config);
+        pathHandler.configure(config);
     }
 
 
@@ -96,7 +96,7 @@ public class FileDepot {
 
     public Atomizer getAtomizer() { return atomizer; }
 
-    public UriPathProcessor getPathProcessor() { return pathProcessor; }
+    public PathHandler getPathHandler() { return pathHandler; }
 
 
     //== Entry and Content Lookups ==
@@ -113,7 +113,7 @@ public class FileDepot {
             return Arrays.asList(feed);
         }
 
-        ParsedPath parsed = pathProcessor.parseUriPath(uriPath);
+        ParsedPath parsed = pathHandler.parseUriPath(uriPath);
         if (parsed==null || parsed.equals("")) {
             return null;
         }
@@ -123,7 +123,7 @@ public class FileDepot {
             String mediaType = null;
             String mediaHint = parsed.getMediaHint();
             if (mediaHint != null) {
-                mediaType = pathProcessor.mediaTypeForHint(mediaHint);
+                mediaType = pathHandler.mediaTypeForHint(mediaHint);
             }
             results = depotEntry.findContents(mediaType, parsed.getLang());
         } else { // enclosure..
@@ -187,7 +187,7 @@ public class FileDepot {
     // TODO:IMPROVE: don't hard-code ".atom" (or don't even do it at all?)
     // Most importantly, DepotContent for a feed now has a non-working uriPath!
     // I.e. we must consider that public feed uri:s are non-suffixed (currently)..
-    // All of this should be stiched together with uriPathProcessor..
+    // All of this should be stiched together with pathHandler..
 
     protected DepotContent getFeedContent(String uriPath) {
         // TODO: Require suffix in req? And/or conneg?
@@ -233,7 +233,7 @@ public class FileDepot {
         if (mtype==null) {
             String[] dotSplit = file.getName().split("\\.");
             try {
-                mtype = pathProcessor.mediaTypeForHint( dotSplit[dotSplit.length-1] );
+                mtype = pathHandler.mediaTypeForHint( dotSplit[dotSplit.length-1] );
             } catch (UnknownMediaTypeException e) {
                 ; // pass
             }
