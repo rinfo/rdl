@@ -8,7 +8,6 @@ import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 
-// TODO: Make this configurable/extensible
 
 public class UriPathProcessor {
 
@@ -94,7 +93,6 @@ public class UriPathProcessor {
 
     public String makeNegotiatedUriPath(String entryUriPath, String mediaType) {
         return makeNegotiatedUriPath(entryUriPath, mediaType, null);
-
     }
 
     public String makeNegotiatedUriPath(String entryUriPath, String mediaType,
