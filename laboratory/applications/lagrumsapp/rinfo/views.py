@@ -16,6 +16,19 @@ def index(request):
     return render_to_response('index.html', locals())
 
 
+def foreskrift_rdf(request, fskortnamn, fsnummer):
+    """Visa RDF-data för enskild föreskrift i författningssamling."""
+
+    # Hämta författningssamlingen
+    fs = Forfattningssamling.objects.get(kortnamn=fskortnamn)
+
+    # Hämta föreskriften
+    foreskrift = Myndighetsforeskrift.objects.get(fsnummer=fsnummer, forfattningssamling=fs)
+
+    # Skicka rdf-data för denna post
+    return HttpResponse(foreskrift.to_rdfxml(), mimetype="application/rdf+xml; charset=utf-8") 
+
+
 
 def foreskrift(request, fskortnamn, fsnummer):
     """Visa enskild föreskrift i författningssamling."""
@@ -26,12 +39,7 @@ def foreskrift(request, fskortnamn, fsnummer):
     # Hämta föreskriften
     foreskrift = Myndighetsforeskrift.objects.get(fsnummer=fsnummer, forfattningssamling=fs)
 
-    if request.GET.get("format", "").lower() == "rdf":
-        # Skicka rdf-data för denna post
-        return HttpResponse(foreskrift.to_rdfxml(), mimetype="application/rdf+xml") 
-    else:
-        # Visa vanlig html-sida
-        return render_to_response('foreskrift.html', locals())
+    return render_to_response('foreskrift.html', locals())
 
 
 
@@ -58,7 +66,7 @@ def atomfeed(request):
     Atom-format."""
 
     entries = AtomEntry.objects.order_by("-updated")
-    last_updated = rfc3339_date(entries[0].updated)
+    last_updated = rfc3339_date(entries[0].updated) if entries else ""
     feed_uri = settings.RINFO_FEED_URI
     feed_title = settings.RINFO_FEED_TITLE
     feed_contact_name = settings.RINFO_FEED_CONTACT_NAME

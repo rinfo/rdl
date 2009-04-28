@@ -19,6 +19,9 @@ urlpatterns = patterns('',
     # Startsidan ("/")
     (r'^$', 'lagrumsapp.rinfo.views.index'),
 
+    # Enskild föreskrift i RDF-format (t.ex. "/publ/RA-FS/2006:6/rdf"
+    (r'^publ/(?P<fskortnamn>.*)/(?P<fsnummer>.*)/rdf$', 'lagrumsapp.rinfo.views.foreskrift_rdf'),
+
     # Enskild föreskrift (t.ex. "/publ/RA-FS/2006:6"
     (r'^publ/(?P<fskortnamn>.*)/(?P<fsnummer>.*)/$', 'lagrumsapp.rinfo.views.foreskrift'),
 

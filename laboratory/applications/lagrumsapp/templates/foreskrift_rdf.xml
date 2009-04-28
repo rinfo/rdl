@@ -3,7 +3,7 @@
     xmlns:dct="http://purl.org/dc/terms/"
     xmlns:dces="http://purl.org/dc/elements/1.1/"
     xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
-    <Myndighetsforeskrift rdf:about="{{foreskrift.het_rinfo_uri}}">
+    <Myndighetsforeskrift rdf:about="{{foreskrift.get_rinfo_uri}}">
         <forfattningssamling rdf:resource="{{foreskrift.forfattningssamling.identifierare}}"/>
         <fsNummer>{{foreskrift.fsnummer}}</fsNummer>
         <dct:title xml:lang="sv">{{foreskrift.titel}}</dct:title>
