@@ -36,7 +36,7 @@ public class Atomizer {
 
     public static final String CONF_BASE_KEY = "rinfo.depot.atom.";
 
-    // TODO:? Get from (or ue in?) depot(.pathHandler)?
+    // TODO:? Get from (or use in?) depot(.pathHandler)?
     public static final String ATOM_ENTRY_MEDIA_TYPE = "application/atom+xml;type=entry";
 
     // TODO:IMPROVE: depend on base and use base.atom.AtomEntryDeleteUtil?
@@ -72,7 +72,9 @@ public class Atomizer {
             - Backend interface:
                 handles all read and write operations, including toFilePath(logicalPath)
             - Indexer interface: the "pure algorithm" (lazy if backend is db?)
+                .. DepotWriter to do all create+update (state with currentFeed etc)?
             - Atomizer: left to do syntax only
+            - pluggable ContentValidator:s (is it enough to wrap streams)?
     */
     private FileDepot depot;
 
@@ -258,19 +260,7 @@ public class Atomizer {
         // TODO:? remove LOCKED (see above)
     }
 
-    protected Feed newFeed(String uriPath) {
-        Feed feed;
-        if (skeletonFeed != null) {
-            feed = (Feed) skeletonFeed.clone();
-        } else {
-            feed = Abdera.getInstance().newFeed();
-        }
-        feed.setUpdated(new Date()); // TODO:? always use "now" utcDateTime?
-        feed.addLink(uriPath, "self");
-        return feed;
-    }
-
-    protected Feed getFeed(String uriPath) throws IOException {
+    public Feed getFeed(String uriPath) throws IOException {
         File feedFile = depot.getFeedFile(uriPath);
         try {
             InputStream inStream = new FileInputStream(feedFile);
@@ -283,12 +273,28 @@ public class Atomizer {
         }
     }
 
-    protected Feed getPrevArchiveAsFeed(Feed feed) throws IOException {
-        IRI prev = FeedPagingHelper.getNextArchive(feed);
-        if (prev==null) {
+    public Feed getPrevArchiveAsFeed(Feed feed) throws IOException {
+        IRI prev = FeedPagingHelper.getPreviousArchive(feed);
+        if (prev == null) {
             return null;
         }
         return getFeed(prev.toString());
+    }
+
+    public String uriPathFromFeed(Feed feed) {
+        return feed.getSelfLink().getHref().toString();
+    }
+
+    protected Feed newFeed(String uriPath) {
+        Feed feed;
+        if (skeletonFeed != null) {
+            feed = (Feed) skeletonFeed.clone();
+        } else {
+            feed = Abdera.getInstance().newFeed();
+        }
+        feed.setUpdated(new Date()); // TODO:? always use "now" utcDateTime?
+        feed.addLink(uriPath, "self");
+        return feed;
     }
 
     /* TODO: to use for e.g. "emptying" deleted entries.
@@ -299,10 +305,6 @@ public class Atomizer {
         return null;
     }
     */
-
-    protected String uriPathFromFeed(Feed feed) {
-        return feed.getSelfLink().getHref().toString();
-    }
 
     protected void writeFeed(Feed feed) throws IOException, FileNotFoundException {
         String uriPath = uriPathFromFeed(feed);

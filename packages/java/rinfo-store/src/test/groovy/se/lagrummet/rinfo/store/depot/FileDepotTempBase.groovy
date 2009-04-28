@@ -23,11 +23,11 @@ class FileDepotTempBase {
         TempDirUtil.removeTempDir(tempDepotDir)
     }
 
-    protected exampleEntryFile(path) {
+    static exampleEntryFile(path) {
         new File(depotSrc, "publ/1901/100/ENTRY-INFO/${path}")
     }
 
-    protected exampleFile(path) {
+    static exampleFile(path) {
         new File(depotSrc, "publ/1901/100/${path}")
     }
 
