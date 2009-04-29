@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv">
+  <head>
+    <title>Specifikation för postförteckningar</title>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="../spec.css" />
+  </head>
+  <body>
+
+    <h1>Specifikation för postförteckningar</h1>
+
+    <h2>Inställningar för körbarhet.</h2>
+    <table>
+      <thead>
+        <tr><th>Setting</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="bot">Resource</td>
+          <td class="src"><a href="../init.html">../init.html</a></td>
+        </tr>
+        <tr><td class="bot">Test Setup</td>
+          <td class="act">Define Namespaces and Base URL</td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Delade variabler</h2>
+    <table>
+      <thead>
+        <tr><th>Variable</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="def">${Base URL}</td>
+          <td class="arg">http://localhost:8000/</td>
+        </tr>
+        <tr><td class="def">${ex}</td>
+          <td class="arg">http://example.org</td>
+        </tr>
+
+      </tbody>
+    </table>
+
+
+    <h2>Scenarion</h2>
+    <dl>
+      <dt>Postförteckning</dt>
+      <dd>Feed (<a href="http://tools.ietf.org/html/rfc5005#section-4.2">subscription-feed</a>)</dd>
+      <dt>Dokumentpost</dt>
+      <dd>Entry</dd>
+    </dl>
+    <table>
+      <colgroup>
+        <col width="20%" /> <col width="20%" />
+        <col width="30%" /> <col width="30%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="tc">Test Case</th>
+          <th>Action</th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr><td class="tc">Åtkomst av postförteckning med arkiv</td>
+          <td class="act">GET Atom Feed</td>
+          <td class="arg">/feed/</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">No XPath</td>
+          <td class="arg">/atom:feed/fh:archive</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Has Atom Contact Info</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">All Entries Contain RDF</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Has Valid Atom Entries</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+        <tr><td></td>
+          <td class="act">Entry Links Have Valid Checksums</td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+          <td class="arg"></td>
+        </tr>
+
+      </tbody>
+    </table>
+
+  </body>
+</html>
