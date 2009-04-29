@@ -27,15 +27,12 @@ RINFO_ORG_URI = "http://rinfo.lagrummet.se/org/exempelmyndigheten"
 # Erhålls från rättsinformationsprojektet.
 RINFO_BASE_URI = "http://rinfo.lagrummet.se/publ/exfs/"
 
-# Plats för Atom-feedens dataposter
-RINFO_ENTRIES_PATH = os.path.join(os.path.dirname(__file__), 'rinfo-feed/entries').replace('\\','/') 
-
 # Egenskaper för Atom-feeden
 RINFO_FEED_URI = "tag:exempelmyndigheten.se,2009:rinfo:feed"
 RINFO_FEED_TITLE = u"Exempelmyndighetens författningssamling"
-RINFO_FEED_CONTACT_NAME = u"Åke Åkesson"
+RINFO_FEED_CONTACT_NAME = u"Erik Exempelson"
 RINFO_FEED_CONTACT_URL = "http://www.exempelmyndigheten.se/"
-RINFO_FEED_CONTACT_EMAIL = "juridik@exempelmyndigheten.se"
+RINFO_FEED_CONTACT_EMAIL = "lagrum@exempelmyndigheten.se"
 
 # Webbplatsens adress och port (utan avslutande '/')
 RINFO_SITE_URL = "http://127.0.0.1:8000"
