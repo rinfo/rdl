@@ -11,6 +11,8 @@
         <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">{{foreskrift.ikrafttradandedag|date}}</ikrafttradandedatum>
         <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">{{foreskrift.utkom_fran_tryck|date}}</utkomFranTryck>
         <dct:publisher rdf:resource="{{publisher_uri}}"/>
+        {% if foreskrift.andrar %}
+        <andrar rdf:resource="{{foreskrift.andrar.get_rinfo_uri}}"/>{% endif %}
         {% for bemyndigande in foreskrift.bemyndigandeparagrafer.all %}
         <bemyndigande rdf:parseType="Resource">
             <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/{{bemyndigande.sfsnummer}}"/>

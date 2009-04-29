@@ -13,6 +13,8 @@ lämplighet och frånsäger sig ansvar för eventuella fel och brister.
 
 Vi är dock tacksamma för feedback och rapporter om eventuella fel.
 
+
+
 Installationsansvisningar
 -------------------------
 
@@ -30,20 +32,51 @@ http://peak.telecommunity.com/DevCenter/EasyInstall)
 
 4. Installera Sqllite 3 (Se http://www.sqlite.org/)
 
-6. Redigera settings.py och ange:
-    DATABASE_NAME    Sökväg till databasfilen
-    Modifiera vid behov de inställningar som börjar med RINFO
+6. Öppna filen settings.py och modifiera vid behov de inställningar som börjar
+med RINFO.
 
-7. Installera databasschemat
-    $ python manage.py syncdb
+7. Installera databasschemat:
+    $ python manage.py syncdb   
 
-8. Starta den inbyggda webbservern
+Efter information att tabeller skapas skall du få en fråga om du vill skapa
+en 'superuser'. Svara ja på frågan och ange information om användaren.
+
+8. Starta den inbyggda webbservern:
     $ python manage.py runserver
 
 9. Öppna webbläsaren med följande adress: http://127.0.0.1:8000/
-    Exempelwebbplatsen visas. För att redigera innehåll navigera till
-http://127.0.0.1/admin/ och logga in som användare "admin" med lösenord
-"admin".
+Exempelwebbplatsen visas. För att redigera innehåll navigera till
+http://127.0.0.1:8000/admin/ och logga in som den användare du skapade i steg 7.
 
 
 
+Nästa steg
+----------
+
+Applikationen illustrerar hur föreskrifter relateras till varandra och hur
+metadata av olika slag kan fångas upp och presenteras på ett standardiserat
+sätt. 
+
+Börja med att lågga in i administrationsgränssnittet och skapa lite grunddata
+(Författningssamling, några ämnesord och bemyndigandeparagrafer).
+
+Några saker att utgå från:
+
+1. Filen urls.py visar vilka olika typer av länkar som webbplatsen hanterar.
+Varje länkformat är kopplat till en metod i rinfo/views.py. 
+
+2. I rinfo/models.py hittar du klasserna för de olika informationsobjekten.
+Klassen Myndighetsforeskrift visar några olika typer av metadata och relationer
+till andra objekt. 
+
+3. Mallen templates/foreskrift_rdf.xml visar hur en grundläggande post är uppbyggd.
+
+4. Atomfeeden berättar om förändringar som skett med poster i samlingen. Feeden
+finns på adressen http://127.0.0.1:8000/feed/. Nya poster, uppdateringar av
+poster (skall inte ske om man inte gjort fel tidigare) och radering av poster
+(i händelse av en grov felpublicering) gör att ett AtomEntry-objekt skapas.
+Dessa sammanställs i en feed i templates/atomfeed.xml.
+
+Eftersom applikationen är baserad på ramverket Django kan det vara bra att
+känna till grunderna om detta. Mer information om Django hittar du här:
+http://docs.djangoproject.com/en/dev/intro/overview/

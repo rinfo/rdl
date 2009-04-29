@@ -39,8 +39,8 @@ class Forfattningssamling(models.Model):
 
     # Inställningar för etiketter i administrationsgränssnittet.
     class Meta:
-        verbose_name=u"Författnings-samling"
-        verbose_name_plural=u"Författnings-samlingar"
+        verbose_name=u"Författningssamling"
+        verbose_name_plural=u"Författningssamlingar"
 
 
 
@@ -113,7 +113,7 @@ class Myndighetsforeskrift(models.Model):
     utfardandedag=models.DateField("Utfärdandedag", blank=False)
 
     # Ikraftträdandedatum, t.ex. 2007-02-01
-    ikrafttradandedag=models.DateField("Ikraftträdande-dag", blank=False)
+    ikrafttradandedag=models.DateField("Ikraftträdandedag", blank=False)
 
     # Utkom från tryck datum, t.ex. 2007-02-09
     utkom_fran_tryck=models.DateField("Utkom från tryck", blank=False)
