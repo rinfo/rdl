@@ -38,4 +38,13 @@
         </tr>
         {% endif %}
     </table>
+
+    {% if foreskrift.andringar.all %}
+    <h2>Ändringar</h2>
+    <ul class="andringar">
+        {% for andringsforeskrift in foreskrift.andringar.all %}
+        <li><a href="{{andringsforeskrift.get_absolute_url}}">{{andringsforeskrift}}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 {% endblock %}

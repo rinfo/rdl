@@ -92,6 +92,7 @@ class Bemyndigandeparagraf(models.Model):
 
 
 
+
 class Myndighetsforeskrift(models.Model):
     """Modell för myndighetsföreskrifter. Denna hanterar det huvudsakliga
     innehållet i en författningssamling - själva föreskrifterna. Den kan enkelt
@@ -120,7 +121,7 @@ class Myndighetsforeskrift(models.Model):
     # Författningssamling (referens till post i de upprättade
     # författningssamlingarna)
     forfattningssamling=models.ForeignKey(Forfattningssamling, blank=False,
-            verbose_name=u"författningssamling")
+            verbose_name=u"författnings-samling")
 
     # Bemyndiganden (referenser till bemyndigandeparagrafer)
     bemyndigandeparagrafer=models.ManyToManyField(Bemyndigandeparagraf,
@@ -135,19 +136,24 @@ class Myndighetsforeskrift(models.Model):
     # Koppling till ämnesord
     amnesord=models.ManyToManyField(Amnesord, blank=True, verbose_name=u"ämnesord")
 
-    # Returnera bara årtalet från ikraftträdandedagen
+    # Eventuell koppling till föreskrift som ändras (limit_choices_to
+    # säkerställer att bara grundföreskrifter visas i admingränssnittet (dvs
+    # man skall inte kunna ändra en ändringsföreskrift).
+    andrar = models.ForeignKey("self", null=True, blank=True, 
+            related_name="andringar", limit_choices_to={'andrar': None}, verbose_name=u"Ändrar")
+
     def ikrafttradandear(self):
+        """Returnera bara årtalet från ikraftträdandedagen."""
         return self.ikrafttradandedag.year
 
-    # Metod för att erhålla URL:en till en eneksild föreskrift
     @models.permalink
     def get_absolute_url(self): 
+        """Genererar webbplatsens länk till denna post."""
         return ('lagrumsapp.rinfo.views.foreskrift',
                 [str(self.forfattningssamling.kortnamn), str(self.fsnummer)])
 
-    # Metod för att skapa rättsinformationssystemets unika identifierare för
-    # denna post.
     def get_rinfo_uri(self):
+        """Metod för att skapa rättsinformationssystemets unika identifierare för denna post."""
         return settings.RINFO_BASE_URI + self.fsnummer
 
     # Metod för att returnera textrepresentation av en föreskrift (används i
@@ -217,6 +223,10 @@ class AtomEntry(models.Model):
 from django.db.models.signals import post_delete
 
 def create_delete_entry(sender, instance, **kwargs):
+    """Skapa en speciell AtomEntry-post i samband med att en
+    myndighetsföreskrift raderas. AtomEntry-posten plockas upp av
+    rättsinformationssystemet (och andra) och ger möjlighet att snabbt
+    korrigera felaktigheter i eventuellt redan hämtad information."""
 
     # Skapa AtomEntry-posten
     entry=AtomEntry( title=instance.titel,
