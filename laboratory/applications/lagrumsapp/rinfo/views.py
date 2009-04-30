@@ -77,7 +77,7 @@ def atomfeed(request):
     template = loader.get_template('atomfeed.xml')
     context = Context(locals())
 
-    return HttpResponse(template.render(context), mimetype="application/atom+xml") 
+    return HttpResponse(template.render(context), mimetype="application/atom+xml; charset=utf-8") 
     
 
 

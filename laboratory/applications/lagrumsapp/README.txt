@@ -48,6 +48,10 @@ en 'superuser'. Svara ja på frågan och ange information om användaren.
 Exempelwebbplatsen visas. För att redigera innehåll navigera till
 http://127.0.0.1:8000/admin/ och logga in som den användare du skapade i steg 7.
 
+10. Verifiera att applikationen är installerad korrekt genom att köra de
+automatiska testerna med:
+    $ python manage.py test
+
 
 
 Nästa steg
