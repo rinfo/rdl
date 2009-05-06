@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv">
+  <head>
+    <title>URI:er i Rättsinformationssystemet</title>
+  </head>
+  <body>
+    <h1>URI:er i Rättsinformationssystemet</h1>
+
+    <div class="section">
+      <h2>1. Inledning</h2>
+      <p>Här beskrivs principer för och konstruktionen av de identifierare som rättsinformationssystemet använder för alla ingående reurser.</p>
+    </div>
+
+    <div class="section">
+      <h2>2. Vägledande principer för designen</h2>
+      <div>
+        <h3>Grunder</h3>
+        <pre><code>
+    http://www.ietf.org/rfc/rfc3986.txt
+    http://h3h.net/2007/01/designing-urls-for-multilingual-web-sites/
+    http://www.w3.org/Provider/Style/URI.html
+    http://www.w3.org/TR/cooluris/
+    http://sites.wiwiss.fu-berlin.de/suhl/bizer/pub/LinkedDataTutorial/
+    http://www.w3.org/2001/tag/doc/alternatives-discovery.html
+        </code></pre>
+      </div>
+      <div>
+        <h3>Databeroenden</h3>
+        <p>Identifierare ska konstrueras ur befintlig information om en resurs. Detta gör dem förutsägbara, vilket medför att man kan beräkna en identiferare om man har tillgång till tillräcklig information.</p>
+        <p>En begränsad mängd centralt kontrollerad <em>data</em> kan vara nödvändig för att kunna beräkna dessa, men algoritmen ska vara enkel nog för att inte kräva delad programkod. Detta är viktigt för att minimera beroendet av ett central <em>tjänst</em> för URI-tilldelning.</p>
+        <p>Genom kontrollerad administration av bas-segment garanteras även att URI-rymden undviker namnkollision, om t.ex. framtida termer dyker upp som är snarlika historiska begrepp. Detta betyder att enbart de segment som ligger under förutsägbar kontrollerade bas-URI:er ska genereras ur resursens data.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>3. Krav på utformningen</h2>
+      <div>
+        <h3>Format</h3>
+        <p>URI:erna anges som HTTP-URL:er. En hierarkisk struktur uppnås m.h.a <code>/</code>-separerade segment.</p>
+        <p>Respektive segment ska namnges med korta, enkla namn. Unikhet ska så långt det är möjligt uppnås m.h.a. centralt kontrollerade namn. För resterande delar ska <em>per resurstyp</em> unika identiferare (tillhörighet, serienummer o.dyl.) användas.</p>
+      </div>
+      <div>
+        <h3>Lokal öppenhet</h3>
+        <p>För att i möjligaste mån bespara informationsproducenter arbetet att konstruera en URI "från början" ska bas-URI:er för en myndighets publikation vara centralt konstruerade och beständiga. Detta så att kvarstående arbete för att skapa en URI för ett rättsinformationsdokument begränsas till att transformera dess identifierade egenskap(er), t.ex. författningssamlingsnummer, till URI-form.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>4. Regler för konstruktion per resurstyp</h2>
+      <div>
+        <h3>Bas-URI:n för rättsinformationssystemet</h3>
+        <p>
+          <code>http://rinfo.lagrummet.se/</code>
+        </p>
+      </div>
+      <div>
+        <h3>Toppnivån</h3>
+        <p>De direkt underliggande segmenten är uppdelade på resurstyp. Följande segment är definierade:</p>
+        <dl>
+          <dt><code>publ</code></dt>
+          <dd>
+            <p>Publicerade dokument. Den stora massan av rättsinformation faller under detta segment. Unikhet uppnås m.h.a. centralt kontrollerade segment baserade på någon slags tillhörighet (publikationsserie eller utgivande organisation) samt ett för respektive segment unikt serienummer eller -namn (helt beroende på hur sådana tilldelas för respektive samlingstyp).</p>
+          </dd>
+          <dt><code>ns</code></dt>
+          <dd>
+            <p>Namnrymd för modeller, taxonomier och ämnestermer. Dessa är helt centralt kontrollerade. Unikhet uppnås m.h.a. datumsegment och ett enkelt namn.</p>
+          </dd>
+          <dt><code>org</code></dt>
+          <dd>
+            <p>Organisationer/grupper som är centrala för rättsinformationsdomänen (såsom myndigheter (inkl. domstolar), kommittéer).</p>
+          </dd>
+          <dt><code>serie</code></dt>
+          <dd>
+            <p>Publikationsserier som är centrala för rättsinformationsdomänen.</p>
+          </dd>
+        </dl>
+      </div>
+      <div>
+        <h3>Publikationer under "publ"</h3>
+        <p>Direkt under segmentet <code>publ</code> finns ett flertal segment som representerar tillhörighet. Alla dessa är centralt definierade och kan inte påverkas med mindre än att förvaltningen av rättsinformationsdomänen instrueras om att skapa en ny plats för tillkommande tillhörighetsangivelser.</p>
+        <p>Exempel på segment för publikationstillhörighet är:</p>
+        <dl>
+          <dt><code>/publ/sfs/</code></dt>
+          <dd><p>Dokument publicerade i SFS (Svensk Författningsamling).</p></dd>
+          <dt><code>/publ/nja/</code></dt>
+          <dd><p>Dokument publicerade i NJA (Nytt Juridiskt Arkiv).</p></dd>
+          <dt><code>/publ/prop/</code></dt>
+          <dd><p>Propositioner.</p></dd>
+          <dt><code>/publ/mynd/domstolsverket/</code></dt>
+          <dd><p>Vägledande domstolsavgöranden utgivna av Domstolsverket.</p></dd>
+        </dl>
+        <div>
+          <h4>Regler för URI:er under respektive segment i "publ"</h4>
+          <p> TODO: RDF-data för segment + SPARQL + transformations- och sammansättningsalgoritm </p>
+        </div>
+      </div>
+      <div>
+        <h3>Den centrala namnrymden "ns"</h3>
+        <p>Denna rymd partitioneras med datum (år, månad, namn(delar)).</p>
+        <p>MALL = <code>&lt;ns/{yyyy/mm[/dd]}/{namn[/...]}></code></p>
+        <div>
+          <h4>Definierade modell-URI:er</h4>
+          <!-- TODO: beskrivningar? -->
+          <ul>
+            <li>
+              <code>http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#</code>
+            </li>
+            <li>
+              <code>http://rinfo.lagrummet.se/ns/2008/11/rinfo/kommitte#</code>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>A. Informationsresurser</h2>
+      <p>Den stora massan av resurser för vilka rättsinformationssystemet tilldelar URI:er är s.k. "informationsresurser". Dessa är hämtbara digitala dokument som finns på ett eller flera format.</p>
+      <div>
+        <h3>Digitala representationer</h3>
+        <p>Digitalt material utgör representationer av informationsresurser såsom textdokument, bilder m.m. Dessa är direkt underordnade en logisk identifierare, och är i systemet även strukturellt underordnade en given primär URI (likt filer i en katalog).</p>
+        <p>Maximalt en given representation ska finnas per mediaformat och språk. Mediaformat och språk används för att namnge representationen under den givna primära URI:ns segment.</p>
+        <div>
+          <h4>Exempel på URI:er för digitala representationer</h4>
+          <dl>
+            <dt>PDF på svenska för SFS 1999:175</dt>
+            <dd><code>http://rinfo.lagrummet.se/publ/sfs/1999:175/pdf,sv</code></dd>
+            <dt>RDF för SFS 1999:175</dt>
+            <dd><code>http://rinfo.lagrummet.se/publ/sfs/1999:175/rdf</code></dd>
+          </dl>
+        </div>
+      </div>
+      <div>
+        <h3>Associerade filer</h3>
+        <p>Vissa representationer kan ha en eller flera associerade filer i form av t.ex. bilagor eller stilinformation. Dessa underordnas en primär URI på samma sätt som representationerna. Deras namngivning är löst kontrollerad, med krav på:</p>
+        <ol>
+          <li>Lokal unikhet</li>
+          <li>Hänvisningar i en given representation ska utgå från en relativ placering i "samma katalog", med underkataloger separerade med <code>/</code> på sedvanligt vis.</li>
+        </ol>
+        <div>
+          <h4>Exempel på URI:er för associerade filer</h4>
+          <dl>
+            <dt>Bilaga som PDF associerad med SFS 1999:175</dt>
+            <dd><code>http://rinfo.lagrummet.se/publ/sfs/1999:175/Bilaga_1.pdf</code></dd>
+            <dt>CSS associerad med (HTML-representation av) SFS 1999:175</dt>
+            <dd><code>http://rinfo.lagrummet.se/publ/sfs/1999:175/style/print.css</code></dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>B. Teori</h2>
+    </div>
+
+  </body>
+</html>
