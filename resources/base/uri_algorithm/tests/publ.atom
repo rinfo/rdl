@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+      xmlns:dct="http://purl.org/dc/terms/"
+      xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+
+    <id>http://rinfo.lagrummet.se/system/uri_algorithm/tests/publ</id>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/sfs/1999:175</id>
+        <content type="application/rdf+xml">
+            <rpubl:Forordning>
+                <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
+                <rpubl:fsNummer>1999:175</rpubl:fsNummer>
+            </rpubl:Forordning>
+        </content>
+    </entry>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/sfs/1899:bih._40_s._3</id>
+        <content type="application/rdf+xml">
+            <rpubl:Forordning>
+                <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
+                <rpubl:fsNummer>1899:bih. 40 s. 3</rpubl:fsNummer>
+            </rpubl:Forordning>
+        </content>
+    </entry>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/ra-fs/2006:6</id>
+        <content type="application/rdf+xml">
+            <rpubl:Myndighetsforeskrift>
+                <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/ra-fs"/>
+                <rpubl:fsNummer>2006:6</rpubl:fsNummer>
+            </rpubl:Myndighetsforeskrift>
+        </content>
+    </entry>
+
+    <!-- TODO:
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/</id>
+        <content type="application/rdf+xml">
+            <rpubl:KonsolideradGrundforfattning>
+                <rpubl:konsoliderar rdf:resource=""/>
+                <rpubl:utfardandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+                                       ></rpubl:utfardandedatum>
+            </rpubl:KonsolideradGrundforfattning>
+        </content>
+    </entry>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/</id>
+        <content type="application/rdf+xml">
+            <rpubl:Utredningsbetankande>
+                <rpubl:utrSerie rdf:resource=""/>
+                <rpubl:utrSerienummer></rpubl:utrSerienummer>
+            </rpubl:Utredningsbetankande>
+        </content>
+    </entry>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/</id>
+        <content type="application/rdf+xml">
+            <rpubl:Rattsfallsreferat>
+                <rpubl:rattsfallspublikation rdf:resource=""/>
+                <rpubl:publikationsordinal></rpubl:publikationsordinal>
+            </rpubl:Rattsfallsreferat>
+        </content>
+    </entry>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/</id>
+        <content type="application/rdf+xml">
+            <rpubl:Rattelseblad>
+                <rpubl:rattningAv rdf:resource=""/>
+                <rpubl:beslutsdatum></rpubl:beslutsdatum>
+            </rpubl:Rattelseblad>
+        </content>
+    </entry>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/</id>
+        <content type="application/rdf+xml">
+            <rpubl:VagledandeMyndighetsavgorande>
+                <dct:publisher rdf:resource=""/>
+                <rpubl:diarienummer></rpubl:diarienummer>
+            </rpubl:VagledandeMyndighetsavgorande>
+        </content>
+    </entry>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/</id>
+        <content type="application/rdf+xml">
+            <rpubl:VagledandeDomstolsavgorande>
+                <dct:publisher rdf:resource=""/>
+                <rpubl:malnummer></rpubl:malnummer>
+            </rpubl:VagledandeDomstolsavgorande>
+        </content>
+    </entry>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/</id>
+        <content type="application/rdf+xml">
+            <rpubl:Proposition>
+                <rpubl:propositionsnummer></rpubl:propositionsnummer>
+            </rpubl:Proposition>
+        </content>
+    </entry>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/</id>
+        <content type="application/rdf+xml">
+            <rpubl:Forordningsmotiv>
+                <rpubl:fmNummer></rpubl:fmNummer>
+            </rpubl:Forordningsmotiv>
+        </content>
+    </entry>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/</id>
+        <content type="application/rdf+xml">
+            <rpubl:Kommittedirektiv>
+                <rpubl:direktivnummer></rpubl:direktivnummer>
+            </rpubl:Kommittedirektiv>
+        </content>
+    </entry>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/</id>
+        <content type="application/rdf+xml">
+            <rpubl:InternationellOverenskommelse>
+                <rpubl:soNummer></rpubl:soNummer>
+            </rpubl:InternationellOverenskommelse>
+        </content>
+    </entry>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/</id>
+        <content type="application/rdf+xml">
+        </content>
+    </entry>
+
+    -->
+
+</feed>
