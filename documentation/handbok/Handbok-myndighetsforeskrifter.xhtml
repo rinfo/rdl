@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "dtd/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv">
+<?xml-stylesheet type="text/xml" href="templates/dv-handbok.xslt"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Myndighetsföreskrifter</title>
@@ -260,56 +263,56 @@
         ämnesklassificering mm). För mer information och exempel på hur det går
         till, kontakta projektet.
         </p>
-        <object class="xinclude" src="model.xhtml#Myndighetsforeskrift"/>
+        <xi:include href="data/model.xhtml" xpointer="Myndighetsforeskrift"/>
     </div>
 
 
     <div class="appendix">
       <h1>Bilaga 2: Postförteckning i Atom (Riksarkivet)</h1>
       <div class="syntax">
-        <code class="xml"><object class="include" src="../../documentation/exempel/feeds/sources/riksarkivet/riksarkivet_source_feed.atom"/></code>
+        <code class="xml"><xi:include href="../../documentation/exempel/feeds/sources/riksarkivet/riksarkivet_source_feed.atom" parse="text"/></code>
       </div>
     </div>
 
     <div class="appendix">
       <h1>Bilaga 3: Exempel på metadata i RDF (Riksarkivet RA-FS 2006:6)</h1>
       <div class="syntax">
-        <code class="xml"><object class="include" src="../../documentation/exempel/documents/publ/Forfattningar/RA-FS/2006/RA-FS-2006_6.rdf"/></code>
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Forfattningar/RA-FS/2006/RA-FS-2006_6.rdf" parse="text"/></code>
       </div>
     </div>
 
     <div class="appendix">
         <h1>Bilaga 4: Exempel på metadata i RDF (Riksarkivet RA-FS 2004:2)</h1>
       <div class="syntax">
-        <code class="xml"><object class="include" src="../../documentation/exempel/documents/publ/Forfattningar/RA-FS/2004/RA-FS-2004_2.rdf"/></code>
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Forfattningar/RA-FS/2004/RA-FS-2004_2.rdf" parse="text"/></code>
       </div>
     </div>
 
     <div class="appendix">
       <h1>Bilaga 5: Postförteckning i Atom (Arbetsförmedlingen)</h1>
       <div class="syntax">
-        <code class="xml"><object class="include" src="../../documentation/exempel/feeds/sources/arbetsformedlingen/arbetsformedlingen_source_feed.atom"/></code>
+        <code class="xml"><xi:include href="../../documentation/exempel/feeds/sources/arbetsformedlingen/arbetsformedlingen_source_feed.atom" parse="text"/></code>
       </div>
     </div>
 
     <div class="appendix">
       <h1>Bilaga 6: Exempel på metadata i RDF (Arbetsförmedlingen AFFS 2008:8)</h1>
       <div class="syntax">
-        <code class="xml"><object class="include" src="../../documentation/exempel/documents/publ/Forfattningar/AFFS/2008/AFFS-2008_8.rdf"/></code>
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Forfattningar/AFFS/2008/AFFS-2008_8.rdf" parse="text"/></code>
       </div>
     </div>
 
     <div class="appendix">
       <h1>Bilaga 7: Exempel på metadata i RDF ändringsföreskrift (Arbetsförmedlingen AMSFS 2007:28)</h1>
       <div class="syntax">
-        <code class="xml"><object class="include" src="../../documentation/exempel/documents/publ/Forfattningar/AMSFS/2007/AMSFS-2007_28.rdf"/></code>
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Forfattningar/AMSFS/2007/AMSFS-2007_28.rdf" parse="text"/></code>
       </div>
     </div>
 
     <div class="appendix">
       <h1>Bilaga 8: Exempel på metadata i RDF (Arbetsförmedlingen AMSFS 2007:2)</h1>
       <div class="syntax">
-        <code class="xml"><object class="include" src="../../documentation/exempel/documents/publ/Forfattningar/AMSFS/2007/AMSFS-2007_2.rdf"/></code>
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Forfattningar/AMSFS/2007/AMSFS-2007_2.rdf" parse="text"/></code>
       </div>
     </div>
 
@@ -317,7 +320,7 @@
         <h1>Bilaga 9: Ämnesordsförteckning i SKOS</h1>
         <p>Detta är ett grundläggande exempel. SKOS innehåller ett stort antal möjligheter att beskriva samband, alternativa skrivningar och etiketter på andra språk. För mer information se <a href="http://www.w3.org/2004/02/skos/intro" lang="en">Introduction to SKOS</a>.</p>
       <div class="syntax">
-        <code class="xml"><object class="include" src="../../documentation/exempel/vokabular/exempel.rdf"/></code>
+        <code class="xml"><xi:include href="../../documentation/exempel/vokabular/exempel.rdf" parse="text"/></code>
       </div>
     </div>
 
