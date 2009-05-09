@@ -1,4 +1,8 @@
+/**
+ * Create a manifest jar referencing the supplied maven project and its dependencies.
+ */
 
+// NOTE: maven ant tasks <http://maven.apache.org/ant-tasks/usage.html> could possibly eliminate this exec use.
 MVN_EXE = System.properties['os.name'] =~ /Windows/? "mvn.bat" : "mvn"
 DEP_SEP = ";"
 MVN_DEP_CMD = "${MVN_EXE} dependency:build-classpath -Dmdep.pathSeparator=${DEP_SEP}"
