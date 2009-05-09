@@ -23,7 +23,7 @@ WHERE {
         ?about a ?type; # rpubl:FSDokument
             rpubl:forfattningssamling ?_fs;
             rpubl:fsNummer ?rattsdokumentnummer .
-        ?containerUri a sioc:Container;
+        ?container a sioc:Container;
             sioc:has_host <http://rinfo.lagrummet.se>;
             foaf:primaryTopic ?_fs;
             sioc:id ?containerId .
@@ -34,7 +34,7 @@ WHERE {
         ?about a ?type; # rpubl:Utredningsbetankande
             rpubl:utrSerie ?_utrSerie;
             rpubl:utrSerienummer ?rattsdokumentnummer .
-        ?containerUri
+        ?container
             foaf:primaryTopic ?_utrSerie;
             sioc:id ?containerId .
     }
@@ -47,7 +47,7 @@ WHERE {
             # FIXME: eventuellt även arsutgava, sidnummer?
             # *men* ibland publiceras de inte som referat; då referera som
             # domstol+målnummer+datum.. (se modellens kommentarer)
-        ?containerUri
+        ?container
             foaf:primaryTopic ?_rfpubl;
             sioc:id ?containerId .
     }
@@ -78,10 +78,11 @@ WHERE {
         ?about a rpubl:VagledandeMyndighetsavgorande;
             dct:publisher ?_publisher;
             rpubl:diarienummer ?rattsdokumentnummer .
-        ?containerUri
+        ?container
             # TODO: more specific? by type or property?
             # TODO: by specific type for sub-partitions?
             foaf:primaryTopic ?_publisher;
+            # Not interesting for the container (any primary rel to agent qualifies):
             #sioc:topic dct:publisher;
             foaf:topic foaf:Document;
             sioc:id ?containerId .
@@ -94,7 +95,7 @@ WHERE {
         ?about a rpubl:VagledandeDomstolsavgorande;
             dct:publisher ?_publisher;
             rpubl:malnummer ?rattsdokumentnummer .
-        ?containerUri
+        ?container
             foaf:primaryTopic ?_publisher;
             # FIXME: more specific topic? by type or property?
             foaf:topic foaf:Document;
@@ -108,7 +109,7 @@ WHERE {
     {
         ?about a rpubl:Proposition;
             rpubl:propositionsnummer ?rattsdokumentnummer .
-        ?containerUri
+        ?container
             foaf:primaryTopic rpubl:Proposition;
             sioc:id ?containerId .
     }
@@ -117,7 +118,7 @@ WHERE {
     {
         ?about a rpubl:Forordningsmotiv;
             rpubl:fmNummer ?rattsdokumentnummer .
-        ?containerUri
+        ?container
             foaf:primaryTopic rpubl:Forordningsmotiv;
             sioc:id ?containerId .
     }
@@ -126,7 +127,7 @@ WHERE {
     {
         ?about a rpubl:Kommittedirektiv;
             rpubl:direktivnummer ?rattsdokumentnummer .
-        ?containerUri
+        ?container
             foaf:primaryTopic rpubl:Kommittedirektiv;
             sioc:id ?containerId .
     }
@@ -135,7 +136,7 @@ WHERE {
     {
         ?about a rpubl:InternationellOverenskommelse;
             rpubl:soNummer ?rattsdokumentnummer .
-        ?containerUri
+        ?container
             foaf:primaryTopic rpubl:InternationellOverenskommelse;
             sioc:id ?containerId .
     }
