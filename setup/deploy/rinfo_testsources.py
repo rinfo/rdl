@@ -1,29 +1,29 @@
 ##
 # Local build
 
-@requires('env', provided_by=sysenvs)
-@depends(install_rinfo_pkg)
-def package_testapp():
+def package_testapp(deps="1"):
+    if int(deps): install_rinfo_pkg()
+    require('deployenv', provided_by=deployenvs)
     local("cd $(java_packages)/teststore-examples/; mvn -P$(env) package")
 
 ##
 # Server deploy
 
-@depends(testsources)
 def setup_testsources():
+    testsources()
     run("mkdir $(dist_dir)", fail='ignore')
     sudo("mkdir -p $(test_store)", fail='ignore')
 
-@depends(setup_testsources)
 def deploy_testdata():
+    setup_testsources()
     tarname = "example.org.tar.gz"
     dest_tar = "$(dist_dir)/%s" % tarname
     put("$(projectroot)/laboratory/testdata/%s" % tarname, dest_tar)
     sudo("rm -rf $(test_store)/example.org", fail='warn')
     sudo("tar -C $(test_store) -xzf %s" % dest_tar)
 
-@depends(testsources)
 def index_testdata():
+    testsources()
     wdir = "$(tomcat_webapps)/ROOT/WEB-INF"
     clspath = '-cp $(for jar in $(ls lib/*.jar); do echo -n "$jar:"; done)'
     cmdclass = "se.lagrummet.rinfo.store.depot.FileDepotCmdTool"
@@ -31,12 +31,12 @@ def index_testdata():
     sudo("sh -c 'cd %(wdir)s; java %(clspath)s %(cmdclass)s %(proppath)s index'"
             % vars())
 
-@depends(testsources)
 def list_testdata():
+    testsources()
     run("ls $(test_store)/example.org/*/")
 
-@depends(setup_testsources)
 def deploy_testapp():
+    setup_testsources()
     put("$(java_packages)/teststore-examples/target/example-store-1.0-SNAPSHOT.war",
             "$(dist_dir)/ROOT.war")
     sudo("$(tomcat_stop)", fail='warn')
@@ -44,6 +44,9 @@ def deploy_testapp():
     sudo("mv $(dist_dir)/ROOT.war $(tomcat_webapps)/ROOT.war")
     sudo("$(tomcat_start)")
 
-@depends(package_testapp, deploy_testdata, index_testdata, deploy_testapp)
-def testapp_all(): pass
+def testapp_all(deps="1"):
+    package_testapp(deps)
+    deploy_testdata()
+    index_testdata()
+    deploy_testapp()
 

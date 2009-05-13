@@ -1,64 +1,72 @@
+from fabric.api import *
+from fabric.contrib.files import exists
+from fmt import fmt
+from envs import *
+from envs import _deploy_war
 
 ##
 # Local build
 
-@requires('env', provided_by=sysenvs)
-@depends(install_rinfo_pkg)
-def package_service():
-    local("cd $(java_packages)/rinfo-service/; mvn -P$(env) clean package")
+def package_service(deps="1"):
+    if int(deps): install_rinfo_pkg()
+    require('deployenv', provided_by=deployenvs)
+    local(fmt("cd ${java_packages}/rinfo-service/; mvn -P${deployenv} clean package"))
 
 ##
 # Server deploy
 
-@requires('dist_dir', 'rinfo_dir', 'rinfo_rdf_repo_dir', provided_by=sysenvs)
-@depends(service)
 def setup_service():
-    run("mkdir $(dist_dir)", fail='ignore')
-    sudo("mkdir $(rinfo_dir)", fail='ignore')
-    sudo("mkdir $(rinfo_rdf_repo_dir)", fail='ignore')
+    service()
+    require('dist_dir', 'rinfo_dir', 'rinfo_rdf_repo_dir', provided_by=deployenvs)
+    if not exists(env.dist_dir): run(fmt("mkdir $dist_dir"))
+    if not exists(env.rinfo_dir): sudo(fmt("mkdir $rinfo_dir"))
+    if not exists(env.rinfo_rdf_repo_dir):
+        sudo(fmt("mkdir ${rinfo_rdf_repo_dir}"))
 
-@depends(setup_service)
 def deploy_service():
-    deploy_war(
-            "$(java_packages)/rinfo-service/target/rinfo-service-$(env).war",
+    setup_service()
+    _deploy_war(
+            fmt("${java_packages}/rinfo-service/target/rinfo-service-${deployenv}.war"),
             "rinfo-service")
 
-@depends(package_service, deploy_service)
-def service_all(): pass
+def service_all():
+    package_service()
+    deploy_service()
 
 ##
 # Sesame and Repo Util deploy
 
 def package_sesame():
-    pkgdir = "$(java_packages)/rinfo-sesame-http"
-    local("cd %s; mvn package" % pkgdir)
-    config.local_sesame_dir = "%s/target/dependency" % pkgdir
+    pkgdir = fmt("${java_packages}/rinfo-sesame-http")
+    local(fmt("cd ${pkgdir} && mvn package"))
+    config.local_sesame_dir = fmt("${pkgdir}/target/dependency")
 
-@depends(setup_service, package_sesame)
 def deploy_sesame():
+    setup_service()
+    package_sesame()
     for warname in ['openrdf-sesame', 'sesame-workbench']:
-        deploy_war("$(local_sesame_dir)/%s.war" % warname, warname)
+        _deploy_war(fmt("${local_sesame_dir}/${warname}.war"), warname)
 
-@depends(setup_service)
 def service_repo_util():
+    setup_service()
     config.rinfo_repo_jar = "rinfo-rdf-repo-1.0-SNAPSHOT-jar-with-dependencies.jar"
     config.rinfo_service_props = "rinfo-service.properties"
 
-@depends(service_repo_util)
 def deploy_repo_util():
-    local("cd $(java_packages)/rinfo-rdf-repo; mvn -P $(env) assembly:assembly")
-    put("$(java_packages)/rinfo-service/src/environments/$(env)/$(rinfo_service_props)",
-            "$(dist_dir)/")
-    put("$(java_packages)/rinfo-rdf-repo/target/$(rinfo_repo_jar)", "$(dist_dir)/")
+    service_repo_util()
+    local(fmt("cd ${java_packages}/rinfo-rdf-repo; mvn -P ${deployenv} assembly:assembly"))
+    put(fmt("${java_packages}/rinfo-service/src/environments/${deployenv}/${rinfo_service_props}"),
+            fmt("${dist_dir}/"))
+    put(fmt("${java_packages}/rinfo-rdf-repo/target/${rinfo_repo_jar}"), "${dist_dir}/")
 
 ##
 # Manage repository
 
-@depends(service_repo_util)
 def setup_repo():
-    run("cd $(dist_dir); java -jar $(rinfo_repo_jar) setup $(rinfo_service_props) rinfo.service.repo")
+    service_repo_util()
+    run(fmt("cd ${dist_dir}; java -jar ${rinfo_repo_jar} setup ${rinfo_service_props} rinfo.service.repo"))
 
-@depends(service_repo_util)
 def clean_repo():
-    run("cd $(dist_dir); java -jar $(rinfo_repo_jar) setup $(rinfo_service_props) rinfo.service.repo")
+    service_repo_util()
+    run(fmt("cd ${dist_dir}; java -jar ${rinfo_repo_jar} setup ${rinfo_service_props} rinfo.service.repo"))
 

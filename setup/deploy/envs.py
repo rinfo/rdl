@@ -1,165 +1,162 @@
+from fabric.api import *
+from fmt import fmt
 
 ##
-# System environments
+# Deployment environments
 
 def dev_unix():
     # Name env:
-    config.env = 'dev-unix'
+    env.deployenv = 'dev-unix'
     #
-    config(
-        tomcat="/opt/tomcat",
-        tomcat_webapps="$(tomcat)/webapps",
-        tomcat_start='$(tomcat)/bin/catalina.sh start',
-        tomcat_stop='$(tomcat)/bin/catalina.sh stop',
-        tomcat_user='tomcat',
-    )
+    env.tomcat = "/opt/tomcat"
+    env.tomcat_webapps = fmt("${tomcat}/webapps")
+    env.tomcat_start = fmt("${tomcat}/bin/catalina.sh start")
+    env.tomcat_stop = fmt("${tomcat}/bin/catalina.sh stop")
+    env.tomcat_user = "tomcat"
+
     # Machines:
-    config(
-        host_map={
-            'main': ['localhost'],
-            'service': ['localhost'],
-            'testsources': ['localhost'],
-        },
-        store_map={
-            'main': "/opt/_workapps/rinfo/depots/rinfo",
-            'testsources': "/opt/_workapps/rinfo/depots",
-        },
-        dist_dir='/opt/_workapps/rinfo/rinfo_dist',
-        rinfo_dir='/opt/_workapps/rinfo',
-        rinfo_rdf_repo_dir='/opt/_workapps/rinfo/aduna',
-    )
+    env.host_map = {
+        'main': ['localhost'],
+        'service': ['localhost'],
+        'testsources': ['localhost'],
+    }
+    env.store_map = {
+        'main': "/opt/_workapps/rinfo/depots/rinfo",
+        'testsources': "/opt/_workapps/rinfo/depots",
+    }
+    env.dist_dir = '/opt/_workapps/rinfo/rinfo_dist'
+    env.rinfo_dir = '/opt/_workapps/rinfo'
+    env.rinfo_rdf_repo_dir = '/opt/_workapps/rinfo/aduna'
 
 
-def virt_test():
+def integration():
     # Name env:
-    config.env = 'virt-test'
+    env.deployenv = 'integration'
     # Ubuntu layout:
-    config(
-        tomcat="/var/lib/tomcat6",
-        tomcat_webapps="$(tomcat)/webapps",
-        tomcat_start='/etc/init.d/tomcat6 start',
-        tomcat_stop='/etc/init.d/tomcat6 stop',
-        tomcat_user='tomcat6',
-    )
+    env.tomcat = "/var/lib/tomcat6"
+    env.tomcat_webapps = fmt("${tomcat}/webapps")
+    env.tomcat_start = '/etc/init.d/tomcat6 start'
+    env.tomcat_stop = '/etc/init.d/tomcat6 stop'
+    env.tomcat_user = 'tomcat6'
     # Machines:
-    config(
-        host_map={
-            'main': ['rinfo-main'],
-            'service': ['rinfo-service'],
-            'testsources': ['rinfo-sources'],
-        },
-        store_map={
-            'main': "/opt/rinfo/store",
-        },
-        dist_dir='rinfo_dist',
-        rinfo_dir='/opt/rinfo',
-        rinfo_rdf_repo_dir='/opt/rinfo/rdf',
-    )
+    env.host_map={
+        'main': ['rinfo-main'],
+        'service': ['rinfo-service'],
+        'testsources': ['rinfo-sources'],
+    }
+    env.store_map={
+        'main': "/opt/rinfo/store",
+    }
+    env.dist_dir = 'rinfo_dist'
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
 
 def staging():
     # Name env:
-    config.env = 'stg'
+    env.deployenv = 'stg'
     # SuSE layout:
-    config(
-        tomcat="/usr/share/tomcat6",
-        tomcat_webapps="$(tomcat)/webapps",
-        tomcat_start='dtomcat6 start',
-        tomcat_stop='dtomcat6 stop',
-        tomcat_user='tomcat6',
-    )
+    env.tomcat = "/usr/share/tomcat6"
+    env.tomcat_webapps = fmt("${tomcat}/webapps")
+    env.tomcat_start = 'dtomcat6 start'
+    env.tomcat_stop = 'dtomcat6 stop'
+    env.tomcat_user = 'tomcat6'
+
     # Machines:
-    config(
-        fab_user='rinfo',
-        host_map={
-            'main': ['rinfo-main.statskontoret.se'],
-            'service': ['rinfo-service.statskontoret.se'],
-            'testsources': ['rinfo-sources.statskontoret.se'],
-        },
-        store_map={
-            'main': "/opt/rinfo/store",
-            'testsources': "/opt/testsources/depots",
-        },
-        dist_dir='rinfo_dist',
-        rinfo_dir='/opt/rinfo', # TODO: remove if base is packaged in
-        rinfo_rdf_repo_dir='/opt/rinfo/rdf',
-    )
+    env.user = 'rinfo'
+    env.host_map = {
+        'main': ['rinfo-main.statskontoret.se'],
+        'service': ['rinfo-service.statskontoret.se'],
+        'testsources': ['rinfo-sources.statskontoret.se'],
+    }
+    env.store_map = {
+        'main': "/opt/rinfo/store",
+        'testsources': "/opt/testsources/depots",
+    }
+    env.dist_dir = 'rinfo_dist'
+    env.rinfo_dir = '/opt/rinfo' # TODO: remove if base is packaged in
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
 
 def production():
     # Name env:
-    config.env = 'prod'
+    env.deployenv = 'prod'
     raise NotImplementedError
 
-sysenvs = [dev_unix, virt_test, staging, production]
+deployenvs = [dev_unix, integration, staging, production]
 
 
 ##
-# Service targets
+# Service roles
 
-_needs_sysenv = requires('env', 'host_map', 'dist_dir', 'tomcat',
-        provided_by=sysenvs)
+def _needs_deployenv():
+    require('deployenv', 'host_map', 'dist_dir', 'tomcat',
+            provided_by=deployenvs)
 
-@_needs_sysenv
 def main():
-    config.fab_hosts = config.host_map['main']
-    config.rinfo_main_store = config.store_map['main']
-    config.app_name = 'rinfo-main'
+    _needs_deployenv()
+    env.hosts = env.host_map['main']
+    env.rinfo_main_store = env.store_map['main']
+    env.app_name = 'rinfo-main'
 
-@_needs_sysenv
 def service():
-    config.fab_hosts = config.host_map['service']
-    config.app_name = 'rinfo-service'
+    _needs_deployenv()
+    env.hosts = env.host_map['service']
+    env.app_name = 'rinfo-service'
 
-@_needs_sysenv
 def testsources():
-    config.fab_hosts = config.host_map['testsources']
-    config.test_store = config.store_map['testsources'] #+ "/example.org"
-    config.app_name = 'rinfo-depot'
+    _needs_deployenv()
+    env.hosts = env.host_map['testsources']
+    env.test_store = env.store_map['testsources'] #+ "/example.org"
+    env.app_name = 'rinfo-depot'
 
-_needs_target = requires('fab_hosts', 'dist_dir', 'tomcat', 'app_name',
-        provided_by=[main, service, testsources])
+
+def _needs_role():
+    require('hosts', 'dist_dir', 'tomcat', 'app_name',
+            provided_by=[main, service, testsources])
 
 ##
 # Instrumental commands
 
-@_needs_target
-def deploy_war(localwar, warname):
-    l = vars()
-    put(localwar, '$(dist_dir)/%(warname)s.war' % l)
-    sudo("$(tomcat_stop)", fail='warn')
-    sudo("rm -rf $(tomcat_webapps)/%(warname)s/" % l, fail='warn')
-    sudo("mv $(dist_dir)/%(warname)s.war $(tomcat_webapps)/" % l)
-    sudo("$(tomcat_start)")
+@runs_once
+def install_rinfo_pkg():
+    local(fmt("cd ${java_packages}/ && mvn install"))
+    # TODO:? This also "installs" final war:s etc.. Use mvn-param for install dest.?
+
+def _deploy_war(localwar, warname):
+    _needs_role()
+    put(localwar, fmt("${dist_dir}/${warname}.war"))
+    sudo(fmt("${tomcat_stop}"))
+    sudo(fmt("rm -rf ${tomcat_webapps}/${warname}/"))
+    sudo(fmt("mv ${dist_dir}/${warname}.war ${tomcat_webapps}/"))
+    sudo(fmt("${tomcat_start}"))
 
 ##
 # Shared diagnostics
 
-@_needs_target
 def list_dist(ls=""):
+    _needs_role()
     if ls: ls = "-"+ls
-    run("ls -latr %s $(dist_dir)/" % ls)
+    run(fmt("ls -latr ${ls} ${dist_dir}/"))
 
-@_needs_target
 def clean_dist():
-    run("rm -rf $(dist_dir)/*", fail='warn')
+    _needs_role()
+    run(fmt("rm -rf ${dist_dir}/*"))
 
-@_needs_target
 def tail():
-    sudo("ls -t $(tomcat)/logs/catalina*.* | head -1 | xargs tail -f")
+    _needs_role()
+    sudo(fmt("ls -t ${tomcat}/logs/catalina*.* | head -1 | xargs tail -f"))
 
-@_needs_target
 def restart():
-    sudo("$(tomcat_stop)", fail='warn')
-    sudo("$(tomcat_start)")
+    _needs_role()
+    sudo(fmt("${tomcat_stop}"))
+    sudo(fmt("${tomcat_start}"))
 
-@_needs_target
 def restart_apache():
-    #sudo("apache2ctl stop", fail='warn')
-    #sudo("apache2ctl start")
-    sudo("/etc/init.d/apache2 stop", fail='warn')
+    _needs_role()
+    # .. apache2ctl
+    sudo("/etc/init.d/apache2 stop")
     sudo("/etc/init.d/apache2 start")
 
-@_needs_target
 def war_props(war="ROOT"):
-    run("unzip -p $(tomcat_webapps)/%s.war "
-            "WEB-INF/classes/$(app_name).properties" % war)
+    _needs_role()
+    run(fmt("unzip -p ${tomcat_webapps}/${war}.war WEB-INF/classes/${app_name}.properties"))
 
