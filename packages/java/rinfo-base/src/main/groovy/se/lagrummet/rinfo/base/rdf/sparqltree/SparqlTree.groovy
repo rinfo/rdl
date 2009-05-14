@@ -164,7 +164,7 @@ class SparqlTree {
         } else {
             def node = [:]
             node[VALUE_KEY] = value.stringValue()
-            node[DATATYPE_KEY] = datatype
+            node[DATATYPE_KEY] = datatype.toString()
             return node
         }
     }
