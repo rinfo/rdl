@@ -27,7 +27,6 @@ class URIMinterTest {
 
     @Test
     void shouldMintURIFromStream() {
-        def repo = RDFUtil.createMemoryRepository()
         def sourceStream = null
 
         def feed = DOMBuilder.parse(new FileReader(testFeedPath)).documentElement
@@ -37,11 +36,13 @@ class URIMinterTest {
                 def content = it.content[0]
                 def data = DOMUtil.serialize(content.'*'[0])
                 def format = RDFFormat.forMIMEType(content.'@type')
-                def conn = repo.connection
+                def repo = RDFUtil.createMemoryRepository()
+                def conn = repo.getConnection()
                 try {
                     conn.add(new StringReader(data), "", format)
-                    assertEquals expectedUri,
-                            uriMinter.computeOfficialUri(repo)
+                    def computedUri = uriMinter.computeOfficialUri(repo)
+                    assertEquals "Error in entry:\n${it}\n",
+                            expectedUri, computedUri
                 } finally {
                     conn.close()
                 }

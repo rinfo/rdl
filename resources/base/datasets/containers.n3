@@ -626,4 +626,16 @@
     sioc:id "/publ/so/";
     foaf:primaryTopic rpubl:InternationellOverenskommelse .
 
+# TODO: Based on subordination to primary resource
+[] a sioc:Container;
+    sioc:id "konsolidering/";
+    # TODO: how to say "part of 'entry' for a resource of type X"?
+    #rc:qualifier [ a owl:Restriction;
+    #    owl:onProperty rdf:type;
+    #    owl:hasValue rpubl:KonsolideradGrundforfattning
+    #]
+    sioc:part_of [
+        a sioc:Item;
+        foaf:primaryTopic rpubl:KonsolideradGrundforfattning
+    ] .
 
