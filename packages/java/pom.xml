@@ -404,9 +404,9 @@
       </properties>
     </profile>
     <profile>
-      <id>virt-test</id>
+      <id>integration</id>
       <properties>
-        <environment>virt-test</environment>
+        <environment>integration</environment>
       </properties>
     </profile>
     <profile>
