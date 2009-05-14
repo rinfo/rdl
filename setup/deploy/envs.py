@@ -28,7 +28,6 @@ def dev_unix():
     env.rinfo_dir = '/opt/_workapps/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/_workapps/rinfo/aduna'
 
-
 def integration():
     # Name env:
     env.deployenv = 'integration'
@@ -158,5 +157,5 @@ def restart_apache():
 
 def war_props(war="ROOT"):
     _needs_role()
-    run(fmt("unzip -p ${tomcat_webapps}/${war}.war WEB-INF/classes/${app_name}.properties"))
+    run(fmt("unzip -p ${tomcat_webapps}/${war}.war WEB-INF/classes/*.properties"))
 
