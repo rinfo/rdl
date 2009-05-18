@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 
@@ -40,7 +39,7 @@ public class PathHandler {
         setNamedMediaTypes(DEFAULT_NAMED_MEDIA_TYPES);
     }
 
-    public void configure(AbstractConfiguration config)
+    public void configure(Configuration config)
             throws ConfigurationException {
         Configuration namedMediaConf = config.subset(CONF_BASE_KEY+"namedMediaType");
         if (!namedMediaConf.isEmpty()) {

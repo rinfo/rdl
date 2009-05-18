@@ -10,7 +10,7 @@ import java.net.URLEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.commons.configuration.AbstractConfiguration;
+import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
@@ -54,7 +54,7 @@ public class FileDepot {
         return newConfigured(config);
     }
 
-    public static FileDepot newConfigured(AbstractConfiguration config)
+    public static FileDepot newConfigured(Configuration config)
         throws ConfigurationException,
                URISyntaxException, IOException {
         FileDepot depot = new FileDepot();
@@ -62,7 +62,7 @@ public class FileDepot {
         return depot;
     }
 
-    public void configure(AbstractConfiguration config)
+    public void configure(Configuration config)
         throws ConfigurationException,
                URISyntaxException, IOException {
         setBaseUri(new URI(config.getString(CONF_BASE_KEY+"baseUri")));
