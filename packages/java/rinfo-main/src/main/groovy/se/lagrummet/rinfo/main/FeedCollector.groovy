@@ -83,9 +83,9 @@ class FeedCollector extends FeedArchivePastToPresentReader {
         this.uriMinter = uriMinter
     }
 
-    public static void readFeed(FileDepot depot, Repository registryRepo,
-            URIMinter uriMinter, URL url) {
-        def collector = new FeedCollector(depot, registryRepo, uriMinter)
+    public static void readFeed(DataHub dataHub, URL url) {
+        def collector = new FeedCollector(dataHub.getDepot(),
+                dataHub.getRegistryRepo(), dataHub.getUriMinter())
         collector.readFeed(url)
         collector.shutdown()
     }

@@ -46,53 +46,23 @@ import se.lagrummet.rinfo.base.rdf.RDFUtil;
 
 public class URIMinter {
 
-    // TODO: paths in property file? Set each?
-    public static final String BASE_DATA_FPATH = "datasets/containers.n3";
-    public static final String COLLECT_URI_DATA_SPARQL = "uri_algorithm/collect-uri-data.rq";
-    public static final String CREATE_URI_XSLT = "uri_algorithm/create-uri.xslt";
-
-    private String rinfoBaseDir;
-
     private Repository baseRepo;
     private String queryString;
     private Templates createUriStylesheet;
 
-    public URIMinter() {
-    }
-
-    public URIMinter(String rinfoBaseDir)
+    public URIMinter(Repository baseRepo,
+            String collectUriDataSparql, String createUriXslt)
         throws IOException, FileNotFoundException, RepositoryException
     {
-        this.setRinfoBaseDir(rinfoBaseDir);
-    }
-
-    public String getRinfoBaseDir() {
-        return rinfoBaseDir;
-    }
-
-    public void setRinfoBaseDir(String rinfoBaseDir)
-        throws IOException, FileNotFoundException, RepositoryException
-    {
-        this.rinfoBaseDir = rinfoBaseDir;
-        String baseDataFpath = pathToCoreFile(BASE_DATA_FPATH);
-        String collectUriDataSparql = pathToCoreFile(COLLECT_URI_DATA_SPARQL);
-        String createUriXslt = pathToCoreFile(CREATE_URI_XSLT);
-
-        queryString = FileUtils.readFileToString(
+        this.baseRepo = baseRepo;
+        this.queryString = FileUtils.readFileToString(
                 new File(collectUriDataSparql));
-
         try {
-            createUriStylesheet = TransformerFactory.newInstance().newTemplates(
+            this.createUriStylesheet = TransformerFactory.newInstance().newTemplates(
                 new StreamSource(new FileReader(createUriXslt)));
-
-            baseRepo = RDFUtil.createMemoryRepository();
-            //baseRepo.shutDown()
-            RDFUtil.addFile(baseRepo, baseDataFpath, RDFFormat.N3);
         } catch (TransformerConfigurationException e) {
             throw new RuntimeException(
                     "Caught TransformerConfigurationException.", e);
-        } catch (RDFParseException e) {
-            throw new RuntimeException("Malformed RDF base data.", e);
         }
     }
 
@@ -181,28 +151,6 @@ public class URIMinter {
             // TODO: .. eventual error "hint" in results?
         }
         return value;
-    }
-
-    private String pathToCoreFile(String localFPath) {
-        return new File(rinfoBaseDir, localFPath).toString();
-    }
-
-
-    /* TODO: debug; remove?
-    static printDoc(node) {
-        TransformerFactory.newInstance().newTransformer().transform(
-            new DOMSource(node), new StreamResult(System.out));
-    }
-    */
-
-    public static void main(String[] args)
-        throws IOException, RepositoryException, RDFParseException,
-               URIComputationException {
-        String rinfoBaseDir = args[0];
-        URIMinter minter = new URIMinter(rinfoBaseDir);
-        for (int i = 1; i < args.length; i++) {
-            System.out.println(minter.computeOfficialUri(args[i], RDFFormat.RDFXML));
-        }
     }
 
 }

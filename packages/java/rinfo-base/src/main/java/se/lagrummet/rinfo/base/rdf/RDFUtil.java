@@ -174,12 +174,23 @@ public class RDFUtil {
         return new ByteArrayInputStream(outStream.toByteArray());
     }
 
-    static Repository slurpRdf(String... datadirs)
+    static Repository slurpRdf(String... paths)
             throws IOException, RepositoryException, RDFParseException {
         Repository repo = createMemoryRepository();
-        for (String datadir : datadirs) {
-            for (Object o : FileUtils.listFiles(new File(datadir),
-                    new String[] {"n3", "rdf", "rdfs", "owl"}, true)) {
+        slurpRdf(repo, paths);
+        return repo;
+    }
+
+    static Repository slurpRdf(Repository repo, String... paths)
+            throws IOException, RepositoryException, RDFParseException {
+        String[] patterns = new String[] {"n3", "rdf", "rdfs", "owl"};
+        for (String path : paths) {
+            File fileOrDir = new File(path);
+            if (fileOrDir.isFile()) {
+                loadDataFromFile(repo, fileOrDir);
+                continue;
+            }
+            for (Object o : FileUtils.listFiles(fileOrDir, patterns, true)) {
                 File file = (File) o;
                 logger.info("Loading: "+file);
                 loadDataFromFile(repo, file);

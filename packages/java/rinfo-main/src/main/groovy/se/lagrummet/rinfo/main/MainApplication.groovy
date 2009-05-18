@@ -1,6 +1,6 @@
 package se.lagrummet.rinfo.main
 
-import org.apache.commons.configuration.AbstractConfiguration
+import org.apache.commons.configuration.Configuration
 import org.apache.commons.configuration.ConfigurationException
 import org.apache.commons.configuration.PropertiesConfiguration
 
@@ -17,7 +17,6 @@ import org.restlet.data.Request
 import org.restlet.data.Response
 import org.restlet.data.Status
 
-import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.supply.DepotFinder
 
 import se.lagrummet.rinfo.collector.NotAllowedSourceFeedException
@@ -30,15 +29,15 @@ class MainApplication extends Application {
             "rinfo.main.collector.restlet.context"
 
     private FeedCollectScheduler collectScheduler
-    private FileDepot depot
+    private DataHub dataHub
 
     MainApplication(Context context) {
         this(context, new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME))
     }
 
-    MainApplication(Context context, AbstractConfiguration config) {
+    MainApplication(Context context, Configuration config) {
         super(context)
-        depot = FileDepot.newConfigured(config)
+        dataHub = new DataHub(config)
 
         URL publicSubscriptionFeed = null
         List<URL> onCompletePingTargets = []
@@ -47,11 +46,12 @@ class MainApplication extends Application {
                     config.getString("rinfo.main.publicSubscriptionFeed"))
             onCompletePingTargets = config.getList(
                     "rinfo.main.collector.onCompletePingTargets").collect { new URL(it) }
-        } catch (MalformedURLException) {
-            // FIXME: alert on bad config url:s for collectScheduler!
+        } catch (MalformedURLException e) {
+            // TODO: handle or fail on bad url:s for collectScheduler
+            logger.error("Malformed URL:s in configuration", e)
         }
 
-        collectScheduler = new FeedCollectScheduler(depot, null, config)
+        collectScheduler = new FeedCollectScheduler(dataHub, config)
         collectScheduler.batchCompletedCallback = new FeedUpdatePingNotifyer(
                 publicSubscriptionFeed, onCompletePingTargets)
         getContext().getAttributes().putIfAbsent(
@@ -62,7 +62,7 @@ class MainApplication extends Application {
     synchronized Restlet createRoot() {
         def router = new Router(getContext())
         router.attach("/collector", new Finder(getContext(), CollectorHandler))
-        router.attachDefault(new DepotFinder(getContext(), depot))
+        router.attachDefault(new DepotFinder(getContext(), dataHub.getDepot()))
         return router
     }
 
@@ -75,7 +75,11 @@ class MainApplication extends Application {
     @Override
     public void stop() {
         super.stop()
-        collectScheduler.shutdown()
+        try {
+            collectScheduler.shutdown()
+        } finally {
+            dataHub.shutdown()
+        }
     }
 
 }

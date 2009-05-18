@@ -20,9 +20,12 @@ class URIMinterTest {
 
     @BeforeClass
     static void setupClass() {
-        def rinfoBaseDir = "../../../resources/base/"
-        uriMinter = new URIMinter(rinfoBaseDir)
-        testFeedPath = rinfoBaseDir + "uri_algorithm/tests/publ.atom"
+        def baseDir = "../../../resources/base"
+        def repo = RDFUtil.slurpRdf("${baseDir}/datasets/containers.n3")
+        def minterDir = "${baseDir}/uri_algorithm"
+        uriMinter = new URIMinter(repo,
+                "${minterDir}/collect-uri-data.rq", "${minterDir}/create-uri.xslt")
+        testFeedPath = "${minterDir}/tests/publ.atom"
     }
 
     @Test
