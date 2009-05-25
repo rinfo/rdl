@@ -325,6 +325,10 @@
             owl:maxCardinality 1;
         ],
         [ a owl:Restriction;
+            owl:onProperty :genomforDirektiv;
+            owl:minCardinality 0
+        ],
+        [ a owl:Restriction;
             owl:onProperty :ikrafttradanderegel;
             owl:minCardinality 0
             # TODO: i det mer speciella fallet "ändring i ändring" "finns"
@@ -367,6 +371,14 @@
     rdfs:label "Bemyndigande"@sv;
     rdfs:comment "Referens till en bemyndigande rättsgrund som rättsregeldokumentet grundar sig på."@sv;
     owl:inverseOf [ rdfs:label "Bemyndigar"@sv ]; .
+
+
+:genomforDirektiv a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Genomför direktiv"@sv;
+    rdfs:comment "Referens till EG-direktiv som helt eller delvis genomförs med denna författning."@sv;
+    owl:inverseOf [ rdfs:label "Genomförs av"@sv ]; .
+
 
 :andrar a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
