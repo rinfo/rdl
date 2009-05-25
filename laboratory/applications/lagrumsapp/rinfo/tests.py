@@ -37,6 +37,14 @@ class RinfoTestCase(TestCase):
         self.assertContains(response, "<dces:subject xml:lang=\"sv\">Administration</dces:subject>")
 
 
+    # Verifiera att publicerad föreskrift har metadata i RDF-format
+    def test_egdirektiv(self):
+        response = self.client.get('/publ/EXFS/2009:1/rdf')
+        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response['content-type'], 'application/rdf+xml; charset=utf-8')
+        self.assertContains(response, "<genomforDirektiv rdf:resource=\"http://rinfo.lagrummet.se/ext/eur-lex/31979L0409\"/>")
+
+
     # Verifiera att feed kan läsas och att den innehåller tre <entry>-poster
     def test_atomfeed(self):
         response = self.client.get('/feed/')

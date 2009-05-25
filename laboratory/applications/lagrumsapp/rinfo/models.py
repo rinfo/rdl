@@ -142,6 +142,10 @@ class Myndighetsforeskrift(models.Model):
     andrar = models.ForeignKey("self", null=True, blank=True, 
             related_name="andringar", limit_choices_to={'andrar': None}, verbose_name=u"Ändrar")
 
+    # Ett CELEX-nummer för ett EG-direktiv som denna föreskrift helt eller
+    # delvis genomför.
+    celexnummer=models.CharField("Genomför EG-direktiv", max_length=10, blank=True, help_text="T.ex. <em>31979L0409</em>")
+
     def ikrafttradandear(self):
         """Returnera bara årtalet från ikraftträdandedagen."""
         return self.ikrafttradandedag.year

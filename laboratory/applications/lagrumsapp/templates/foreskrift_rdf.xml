@@ -13,6 +13,8 @@
         <dct:publisher rdf:resource="{{publisher_uri}}"/>
         {% if foreskrift.andrar %}
         <andrar rdf:resource="{{foreskrift.andrar.get_rinfo_uri}}"/>{% endif %}
+        {% if foreskrift.celexnummer %}
+        <genomforDirektiv rdf:resource="http://rinfo.lagrummet.se/ext/eur-lex/{{foreskrift.celexnummer}}"/>{% endif %}
         {% for bemyndigande in foreskrift.bemyndigandeparagrafer.all %}
         <bemyndigande rdf:parseType="Resource">
             <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/{{bemyndigande.sfsnummer}}"/>
