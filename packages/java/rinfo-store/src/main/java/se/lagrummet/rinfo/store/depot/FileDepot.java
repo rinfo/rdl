@@ -106,7 +106,6 @@ public class FileDepot {
 
         if (uriPath.startsWith(feedPath)) {
             DepotContent feed = getFeedContent(uriPath);
-            // TODO: (the plan is that) subscription feed can be locked!
             if (feed==null) {
                 return null;
             }
@@ -187,7 +186,8 @@ public class FileDepot {
     // TODO:IMPROVE: don't hard-code ".atom" (or don't even do it at all?)
     // Most importantly, DepotContent for a feed now has a non-working uriPath!
     // I.e. we must consider that public feed uri:s are non-suffixed (currently)..
-    // All of this should be stiched together with pathHandler..
+    // This should reasonably be stiched together with pathHandler..
+    // TODO: *or* simply conneg on suffix (for all "plain" content)!
 
     protected DepotContent getFeedContent(String uriPath) {
         // TODO: Require suffix in req? And/or conneg?
