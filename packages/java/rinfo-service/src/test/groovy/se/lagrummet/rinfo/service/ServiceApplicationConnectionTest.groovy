@@ -7,13 +7,13 @@ import org.apache.commons.configuration.PropertiesConfiguration
 
 import org.restlet.Client
 import org.restlet.Component
-import org.restlet.VirtualHost
 import org.restlet.data.MediaType
 import org.restlet.data.Method
 import org.restlet.data.Protocol
 import org.restlet.data.Request
 import org.restlet.data.Response
 import org.restlet.data.Status
+import org.restlet./*routing.*/VirtualHost
 
 import org.openrdf.repository.Repository
 import org.openrdf.repository.RepositoryConnection

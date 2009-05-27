@@ -13,13 +13,14 @@ import se.lagrummet.rinfo.base.URIMinter
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 
-class DataHub {
+class Storage {
 
     FileDepot depot
     URIMinter uriMinter // TODO: a set of resource/rdf validators..
-    Repository registryRepo // TODO: eventRegistry?
 
-    DataHub(Configuration config) {
+    private Repository registryRepo // TODO: eventRegistry?
+
+    Storage(Configuration config) {
         configure(config)
     }
 
@@ -45,6 +46,10 @@ class DataHub {
         }
         registryRepo = new SailRepository(new NativeStore(dataDir))
         registryRepo.initialize()
+    }
+
+    FeedCollectorRegistry newFeedCollectorRegistry() {
+        return new FeedCollectorRegistry(registryRepo)
     }
 
     void shutdown() {

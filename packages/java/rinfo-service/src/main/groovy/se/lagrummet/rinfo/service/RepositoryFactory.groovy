@@ -6,13 +6,13 @@ import org.openrdf.repository.sail.SailRepository
 import org.openrdf.repository.event.base.NotifyingRepositoryWrapper
 import org.openrdf.sail.nativerdf.NativeStore
 
-import org.apache.commons.configuration.AbstractConfiguration
+import org.apache.commons.configuration.Configuration
 import org.apache.commons.configuration.ConfigurationException
 
 
 class RepositoryFactory {
 
-    static Repository createRepository(AbstractConfiguration config) {
+    static Repository createRepository(Configuration config) {
         def repoPath = config.getString("rinfo.service.sesameRepoPath")
         def remoteRepoName = config.getString("rinfo.service.sesameRemoteRepoName")
         def repo

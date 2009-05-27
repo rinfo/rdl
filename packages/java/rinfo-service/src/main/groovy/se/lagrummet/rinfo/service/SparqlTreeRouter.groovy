@@ -1,9 +1,6 @@
 package se.lagrummet.rinfo.service
 
 import org.restlet.Context
-import org.restlet.Finder
-import org.restlet.Handler
-import org.restlet.Router
 import org.restlet.data.CharacterSet
 import org.restlet.data.Language
 import org.restlet.data.MediaType
@@ -11,11 +8,14 @@ import org.restlet.data.Method
 import org.restlet.data.Request
 import org.restlet.data.Response
 import org.restlet.data.Status
-import org.restlet.resource.InputRepresentation
-import org.restlet.resource.StringRepresentation
-import org.restlet.resource.Representation
+import org.restlet.resource./*.representation.*/InputRepresentation
+import org.restlet.resource./*.representation.*/StringRepresentation
+import org.restlet.resource./*.representation.*/Representation
+import org.restlet.resource./*.representation.*/Variant
+import org.restlet./*resource.*/Finder
+import org.restlet./*resource.*/Handler
 import org.restlet.resource.Resource
-import org.restlet.resource.Variant
+import org.restlet./*routing.*/Router
 import org.restlet.util.Variable
 
 import javax.xml.transform.Templates

@@ -5,21 +5,21 @@ import org.slf4j.Logger
 
 import org.restlet.Application
 import org.restlet.Context
-import org.restlet.Directory
-import org.restlet.Finder
-import org.restlet.Handler
 import org.restlet.Restlet
-import org.restlet.Router
 import org.restlet.data.CharacterSet
 import org.restlet.data.MediaType
 import org.restlet.data.Method
 import org.restlet.data.Request
 import org.restlet.data.Response
 import org.restlet.data.Status
-import org.restlet.resource.Representation
+import org.restlet.resource./*.representation.*/Representation
+import org.restlet.resource./*.representation.*/StringRepresentation
+import org.restlet.resource./*.representation.*/Variant
+import org.restlet./*resource.*/Directory
+import org.restlet./*resource.*/Finder
+import org.restlet./*resource.*/Handler
 import org.restlet.resource.Resource
-import org.restlet.resource.StringRepresentation
-import org.restlet.resource.Variant
+import org.restlet./*routing.*/Router
 
 import org.openrdf.repository.Repository
 

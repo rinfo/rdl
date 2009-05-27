@@ -11,9 +11,9 @@ import org.apache.abdera.model.Entry
 import org.restlet.Application
 import org.restlet.Component
 import org.restlet.Context
-import org.restlet.Directory
 import org.restlet.Restlet
 import org.restlet.data.Protocol
+import org.restlet./*resource.*/Directory
 
 
 class FeedArchiveReaderTest {

@@ -16,7 +16,7 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 
 class FeedCollectorRegistry {
 
-    static final COLLECTOR_NS = "http://rinfo.lagrummet.se/2008/10/collector#"
+    static final COLLECTOR_NS = "http://rinfo.lagrummet.se/ns/2008/10/collector#"
     static final DELETED
     static final FROM_FEED
     static final LAST_COLLECTED

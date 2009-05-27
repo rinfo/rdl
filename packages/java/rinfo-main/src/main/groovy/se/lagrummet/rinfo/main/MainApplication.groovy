@@ -6,16 +6,12 @@ import org.apache.commons.configuration.PropertiesConfiguration
 
 import org.restlet.Application
 import org.restlet.Context
-import org.restlet.Finder
-import org.restlet.Handler
 import org.restlet.Restlet
-import org.restlet.Router
-import org.restlet.data.CharacterSet
-import org.restlet.data.MediaType
 import org.restlet.data.Method
 import org.restlet.data.Request
 import org.restlet.data.Response
-import org.restlet.data.Status
+import org.restlet./*resource.*/Finder
+import org.restlet./*routing.*/Router
 
 import se.lagrummet.rinfo.store.supply.DepotFinder
 
@@ -29,7 +25,7 @@ class MainApplication extends Application {
             "rinfo.main.collector.restlet.context"
 
     private FeedCollectScheduler collectScheduler
-    private DataHub dataHub
+    private Storage storage
 
     MainApplication(Context context) {
         this(context, new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME))
@@ -37,7 +33,7 @@ class MainApplication extends Application {
 
     MainApplication(Context context, Configuration config) {
         super(context)
-        dataHub = new DataHub(config)
+        storage = new Storage(config)
 
         URL publicSubscriptionFeed = null
         List<URL> onCompletePingTargets = []
@@ -51,7 +47,7 @@ class MainApplication extends Application {
             logger.error("Malformed URL:s in configuration", e)
         }
 
-        collectScheduler = new FeedCollectScheduler(dataHub, config)
+        collectScheduler = new FeedCollectScheduler(storage, config)
         collectScheduler.batchCompletedCallback = new FeedUpdatePingNotifyer(
                 publicSubscriptionFeed, onCompletePingTargets)
         getContext().getAttributes().putIfAbsent(
@@ -62,7 +58,7 @@ class MainApplication extends Application {
     synchronized Restlet createRoot() {
         def router = new Router(getContext())
         router.attach("/collector", new Finder(getContext(), CollectorHandler))
-        router.attachDefault(new DepotFinder(getContext(), dataHub.getDepot()))
+        router.attachDefault(new DepotFinder(getContext(), storage.getDepot()))
         return router
     }
 
@@ -78,57 +74,8 @@ class MainApplication extends Application {
         try {
             collectScheduler.shutdown()
         } finally {
-            dataHub.shutdown()
+            storage.shutdown()
         }
-    }
-
-}
-
-
-class CollectorHandler extends Handler {
-
-    static String BAD_MSG = "Requires POST and a feed query parameter (URL)."
-
-    @Override
-    public boolean allowPost() { return true; }
-
-    @Override
-    public void handleGet() {
-        // TODO: some form of collect status page..
-        getResponse().setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED, BAD_MSG)
-    }
-
-    @Override
-    public void handlePost() {
-        // TODO: verify source of request (or only via loadScheduler.sourceFeedUrls)?
-        // TODO: error handling.. (report and/or (public) log)
-
-        def collectScheduler = (FeedCollectScheduler) context.getAttributes().get(
-                MainApplication.COLLECTOR_RUNNER_CONTEXT_KEY)
-
-        String feedUrl = request.getEntityAsForm().getFirstValue("feed")
-        if (feedUrl == null) {
-            getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, BAD_MSG)
-            return
-        }
-
-        def msg = "Scheduled collect of <${feedUrl}>."
-        def status = null // FIXME: Status.CLIENT_ACCEPTED (202)
-
-        try {
-            boolean wasScheduled = collectScheduler.triggerFeedCollect(new URL(feedUrl))
-            if (!wasScheduled) {
-                msg = "The url <${feedUrl}> is already scheduled for collect."
-            }
-        } catch (NotAllowedSourceFeedException e) {
-                msg = "The url <${feedUrl}> is not an allowed source feed."
-                status = Status.CLIENT_ERROR_FORBIDDEN
-        }
-
-        if (status != null) {
-            getResponse().setStatus(status)
-        }
-        getResponse().setEntity(msg, MediaType.TEXT_PLAIN)
     }
 
 }

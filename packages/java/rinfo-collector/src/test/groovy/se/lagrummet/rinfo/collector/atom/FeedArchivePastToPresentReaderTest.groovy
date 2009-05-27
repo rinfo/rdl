@@ -12,6 +12,7 @@ import org.apache.abdera.i18n.iri.IRI
 
 import org.restlet.*
 import org.restlet.data.Protocol
+import org.restlet./*resource.*/Directory
 
 
 class FeedArchivePastToPresentReaderTest {

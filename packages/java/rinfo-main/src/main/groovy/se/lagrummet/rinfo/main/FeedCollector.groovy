@@ -48,16 +48,16 @@ import se.lagrummet.rinfo.collector.atom.FeedArchivePastToPresentReader
 
     ---- Documentation ----
 
-    * gets all feeds until last collected, then reads entries forwards in time..
+    * gets all feeds until last collected, then reads entries forwards in time.
 
     * uses registry...
 
     * All entries read will have new timestamps based on their actual
       (successful) addition into this depot. This because the resulting feed
-      must be ordered by "collect" time (not "jumbled" source times).
+      must be ordered by "collect" time (not source times, since multiple
+      sources have no interdependent ordering).
 
 */
-
 class FeedCollector extends FeedArchivePastToPresentReader {
 
     private final Logger logger = LoggerFactory.getLogger(FeedCollector)
@@ -75,17 +75,18 @@ class FeedCollector extends FeedArchivePastToPresentReader {
 
     private DepotEntryBatch collectedBatch
 
-    // TODO:IMPROVE: Not thread safe - is private ctor ok? Synchronized readFeed?
-
-    private FeedCollector(FileDepot depot, Repository registryRepo, URIMinter uriMinter) {
-        this.depot = depot
-        this.registry = new FeedCollectorRegistry(registryRepo)
-        this.uriMinter = uriMinter
+    /**
+     * Important: this class is not thread safe. Create a new instance for each
+     * collect session.
+     */
+    private FeedCollector(Storage storage) {
+        this.depot = storage.getDepot()
+        this.registry = storage.newFeedCollectorRegistry()
+        this.uriMinter = storage.uriMinter
     }
 
-    public static void readFeed(DataHub dataHub, URL url) {
-        def collector = new FeedCollector(dataHub.getDepot(),
-                dataHub.getRegistryRepo(), dataHub.getUriMinter())
+    public static void readFeed(Storage storage, URL url) {
+        def collector = new FeedCollector(storage)
         collector.readFeed(url)
         collector.shutdown()
     }
@@ -117,8 +118,11 @@ class FeedCollector extends FeedArchivePastToPresentReader {
         try {
             super.shutdown()
         } finally {
-            this.registry.shutdown()
-            getClient().getConnectionManager().shutdown()
+            try {
+                this.registry.shutdown()
+            } finally {
+                getClient().getConnectionManager().shutdown()
+            }
         }
     }
 
@@ -144,7 +148,7 @@ class FeedCollector extends FeedArchivePastToPresentReader {
         try {
             for (entry in effectiveEntries) {
                 // TODO: isn't this a strange exceptional state now?
-                // (FeedArchivePastToPresentReader shouldn't supply known stuff..)
+                // FeedArchivePastToPresentReader should never encounter known stuff..
                 if (registry.hasCollected(entry)) {
                     if (logger.isDebugEnabled())
                         logger.debug "skipping collected entry <${entry.id}> [${entry.updated}]"
@@ -331,10 +335,6 @@ class FeedCollector extends FeedArchivePastToPresentReader {
 
     protected static void saveSourceMetaInfo(Feed sourceFeed, Entry sourceEntry,
             DepotEntry depotEntry) {
-        /* TODO:IMPROVE:
-            easier to store and use depotEntry.edited = sourceEntry.updated?
-            .. but this metadata should be kept, so we can use it
-               (reasonably not too much of a performance hit) */
         File metaFile = depotEntry.getMetaFile(SOURCE_META_FILE_NAME)
         // TODO:IMPROVE: only keep id, updated (published)?
         Entry metaEntry = sourceEntry.clone()
@@ -408,9 +408,6 @@ class FeedCollector extends FeedArchivePastToPresentReader {
                 new ByteArrayInputStream(rdfOutStream.toByteArray()),
                 "", rdfContent.mediaType)
         return repo
-    }
-
-    protected URI computeNewUri(Repository repo, URI sourceEntryId) {
     }
 
     protected void verifyRdf(URI docUri, Repository repo) {

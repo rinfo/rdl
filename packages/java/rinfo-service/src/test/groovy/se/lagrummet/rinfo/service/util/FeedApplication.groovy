@@ -3,7 +3,7 @@ package se.lagrummet.rinfo.service.util
 import org.restlet.Application
 import org.restlet.Context
 import org.restlet.Restlet
-import org.restlet.Directory
+import org.restlet./*resource.*/Directory
 
 /**
  * Basic application for serving feeds from file.

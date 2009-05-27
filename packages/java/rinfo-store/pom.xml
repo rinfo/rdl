@@ -65,6 +65,16 @@
       <groupId>org.restlet</groupId>
       <artifactId>org.restlet</artifactId>
     </dependency>
+    <!--
+    <dependency>
+      <groupId>org.restlet</groupId>
+      <artifactId>org.restlet.ext.servlet</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.restlet.engine</groupId>
+      <artifactId>org.restlet.ext.servlet</artifactId>
+    </dependency>
+    -->
     <dependency>
       <groupId>com.noelios.restlet</groupId>
       <artifactId>com.noelios.restlet</artifactId>

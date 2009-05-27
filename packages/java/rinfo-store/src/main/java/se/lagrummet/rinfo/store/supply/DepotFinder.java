@@ -3,16 +3,16 @@ package se.lagrummet.rinfo.store.supply;
 import java.util.*;
 
 import org.restlet.Context;
-import org.restlet.Finder;
-import org.restlet.Handler;
 import org.restlet.data.Language;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
-import org.restlet.resource.FileRepresentation;
+import org.restlet.resource./*.representation.*/FileRepresentation;
+import org.restlet.resource./*.representation.*/Variant;
+import org.restlet./*resource.*/Finder;
+import org.restlet./*resource.*/Handler;
 import org.restlet.resource.Resource;
-import org.restlet.resource.Variant;
 
 import se.lagrummet.rinfo.store.depot.DeletedDepotEntryException;
 import se.lagrummet.rinfo.store.depot.DepotContent;

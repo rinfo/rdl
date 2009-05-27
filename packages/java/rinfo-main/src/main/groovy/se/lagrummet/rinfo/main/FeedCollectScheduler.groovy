@@ -15,17 +15,17 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
 
     private Collection<URL> sourceFeedUrls
 
-    private DataHub dataHub
+    private Storage storage
 
     Runnable batchCompletedCallback
 
-    FeedCollectScheduler(DataHub dataHub, Configuration config) {
-        this(dataHub)
+    FeedCollectScheduler(Storage storage, Configuration config) {
+        this(storage)
         this.configure(config)
     }
 
-    FeedCollectScheduler(DataHub dataHub) {
-        this.dataHub = dataHub
+    FeedCollectScheduler(Storage storage) {
+        this.storage = storage
     }
 
     void configure(Configuration config) {
@@ -46,7 +46,7 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     }
 
     protected void collectFeed(URL feedUrl, boolean lastInBatch) {
-        FeedCollector.readFeed(depot, registryRepo, uriMinter, feedUrl)
+        FeedCollector.readFeed(storage, feedUrl)
         if (batchCompletedCallback != null) {
             batchCompletedCallback.run()
         }
