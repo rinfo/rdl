@@ -37,6 +37,12 @@
             <td>{% for ord in foreskrift.amnesord.all %}{{ord.titel}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
         </tr>
         {% endif %}
+        {% if foreskrift.celexnummer %}
+        <tr>
+            <th scope="row">Genomför direktiv</th>
+            <td><a href="http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=CELEX:{{foreskrift.celexnummer}}:SV:HTML">{{foreskrift.celexnummer}}</a></td>
+        </tr>
+        {% endif %}
     </table>
 
     {% if foreskrift.andringar.all %}
