@@ -8,7 +8,7 @@ class SecurityFilters {
                 // Exclude the "public" controller.
                 if (controllerName == "public") return true
 
-                // Rest of a
+                // Rest requires Admin privs
                 accessControl { role("Administrator") } 
             } 
         }
