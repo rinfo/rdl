@@ -1,7 +1,12 @@
 class Publicationcollection {
 
     static constraints = {
+        name(blank:false, maxSize:500)
+        shortname(blank:false, maxSize:500)
+        organization(blank:false)
+        homepage(blank:false, maxSize:400)
         lastUpdated(nullable: true)
+        dateCreated()
     }
 
     static belongsTo = Organization

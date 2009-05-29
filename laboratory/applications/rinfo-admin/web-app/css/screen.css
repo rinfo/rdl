@@ -11,6 +11,16 @@ body {
    text-align:center;
 }
 
+
+h1, h2, h3, h4, h5, h6 {
+   font-family: Verdana, sans-serif;
+}
+
+
+h1 {
+    font-size: 1.5em;
+}
+
 table tr td {
     text-align:left;
     vertical-align: top;
@@ -83,7 +93,7 @@ a img {
    background: #ffffff
 }
 .col1{
-   padding: 0px 0px 1em 0px;
+   padding: 1em 0px 1em 2px;
    overflow: hidden;
    float: left;
    position: relative;
@@ -91,7 +101,7 @@ a img {
    text-align:left;
 }
 .col2{
-   padding: 0px 0px 1em 0px;
+   padding: 1em 0px 1em 0px;
    overflow: hidden;
    float: left;
    position: relative;
@@ -158,16 +168,43 @@ label {
     font-size:1em;
 }
 
-table#events {
+table.grid {
     border:solid 1px #ccc;
     border-collapse:collapse;
-    width: 97%;
+    width: 100%;
     font-family: Verdana, Arial, sans-serif;
     font-size:0.9em;
-    margin: 1em 10px 1em 1px;
+    margin: 1em 0 1em 0;
 }
 
-table#events td, table#events th {
+table.grid td, table.grid th {
     border:solid 1px #ccc;
     padding: 3px 5px;
+}
+
+p.set {
+    padding: 0 1em 0 1em;
+}
+
+
+p.set span.example {
+    clear:both;
+    display:block;
+    font-family:Arial, Verdana, sans-serif;
+    color: #666;
+    font-size: 0.8em;
+}
+
+p.set input[type='text'] {
+    width:25em;
+}
+
+p.errors {
+    background-color: #f99;
+}
+
+div.objactions {
+    border-bottom: solid 1px #ccc;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 0.9em;
 }
