@@ -42,14 +42,13 @@
                         
                             <td>${fieldValue(bean:organizationInstance, field:'contact_email')}</td>
                         
-                            <td>${fieldValue(bean:organizationInstance, field:'lastUpdated')}</td>
-                        
+                            <td><g:formatDate format="yyyy-MM-dd HH:mm:ss" date="${organizationInstance.lastUpdated}"/></td>
                         </tr>
                     </g:each>
                     </tbody>
                 </table>
             </div>
-            <div class="paginateButtons">
+            <div class="paginate">
                 <g:paginate total="${organizationInstanceTotal}" />
             </div>
         </div>

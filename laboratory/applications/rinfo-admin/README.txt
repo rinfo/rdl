@@ -24,7 +24,19 @@ För att starta applikationen kör
 
  $ grails run-app
 
+Om du använder Windows och har en profilkatalog på en nätverksdisk går det
+fortare att kompilera och köra applikaitonen om du anger en lokal
+arbetskatalog. Skapa t.ex. mappen c:\grails-workdir och lägg till parametern
+grails.work.dir då du kör grails-kommandon för snabbare exekvering:
+
+ $ grails -Dgrails.work.dir=C:/grails-workdir run-app
+
 ...och surfa till http://localhost:8080/rinfo-admin
+
+
+För att köra igenom testscenarion kör
+
+ $ grails test
 
 
 Viktiga delar

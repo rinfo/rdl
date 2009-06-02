@@ -1,7 +1,7 @@
 class Feed {
 
     static constraints = {
-        url(blank:false, maxSize:400)
+        url(url:true, blank:false, maxSize:400)
         identifier(blank:false, maxSize:300)
         organization(blank:false) 
         lastUpdated(nullable: true)
@@ -11,8 +11,12 @@ class Feed {
     static belongsTo = Organization
     Organization organization    
 
-    URL url
+    String url
     String identifier
+
+    String toString() { 
+        return "Källa: " + url
+    }
 
     // Uppdateras automatiskt av Grails
     Date dateCreated

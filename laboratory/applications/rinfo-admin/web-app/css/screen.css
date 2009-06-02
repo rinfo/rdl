@@ -199,12 +199,50 @@ p.set input[type='text'] {
     width:25em;
 }
 
+p.set ul {
+    margin:0;
+    padding:0;
+}
+
 p.errors {
     background-color: #f99;
 }
 
 div.objactions {
-    border-bottom: solid 1px #ccc;
     font-family: Verdana, Arial, sans-serif;
     font-size: 0.9em;
+    background-color: #ffb;
+    padding: 0.4em 0.6em;
+}
+
+div.objactions p {
+    clear:both;
+    margin:0;
+}
+
+div.paginate a, div.paginate span {
+    margin-right: 6px;
+    padding: 6px 4px;
+    border: solid 1px #ccc;
+}
+
+div.paginate a:hover {
+    background-color: #ffc;
+}
+
+
+td.value ul {
+    margin:0;
+    padding:0;
+    list-style-type:none;
+}
+
+td.value ul li {
+    margin:0;
+    padding:0;
+}
+
+td.value a.add {
+    margin: 0.8em 0 0 1em;
+    display:block;
 }

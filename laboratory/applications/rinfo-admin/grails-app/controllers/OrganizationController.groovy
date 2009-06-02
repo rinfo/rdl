@@ -16,7 +16,7 @@ class OrganizationController {
         def organizationInstance = Organization.get( params.id )
 
         if(!organizationInstance) {
-            flash.message = "Organization not found with id ${params.id}"
+            flash.message = "Organisation med id ${params.id} kunde inte hittas"
             redirect(action:list)
         }
         else { return [ organizationInstance : organizationInstance ] }
@@ -27,16 +27,16 @@ class OrganizationController {
         if(organizationInstance) {
             try {
                 organizationInstance.delete()
-                flash.message = "Organization ${params.id} deleted"
+                flash.message = "Organisation med id ${params.id} raderades"
                 redirect(action:list)
             }
             catch(org.springframework.dao.DataIntegrityViolationException e) {
-                flash.message = "Organization ${params.id} could not be deleted"
+                flash.message = "Organisation med id ${params.id} kunde inte raderas"
                 redirect(action:show,id:params.id)
             }
         }
         else {
-            flash.message = "Organization not found with id ${params.id}"
+            flash.message = "Organisation med id ${params.id} kunde inte hittas"
             redirect(action:list)
         }
     }
@@ -45,7 +45,7 @@ class OrganizationController {
         def organizationInstance = Organization.get( params.id )
 
         if(!organizationInstance) {
-            flash.message = "Organization not found with id ${params.id}"
+            flash.message = "Organisation med id ${params.id} kunde inte hittas"
             redirect(action:list)
         }
         else {
@@ -60,14 +60,14 @@ class OrganizationController {
                 def version = params.version.toLong()
                 if(organizationInstance.version > version) {
                     
-                    organizationInstance.errors.rejectValue("version", "organization.optimistic.locking.failure", "Another user has updated this Organization while you were editing.")
+                    organizationInstance.errors.rejectValue("version", "organization.optimistic.locking.failure", "En annan användare har uppdaterat denna organisation medan du redigerade den.")
                     render(view:'edit',model:[organizationInstance:organizationInstance])
                     return
                 }
             }
             organizationInstance.properties = params
             if(!organizationInstance.hasErrors() && organizationInstance.save()) {
-                flash.message = "Organization ${params.id} updated"
+                flash.message = "Organisation med id ${params.id} uppdaterad"
                 redirect(action:show,id:organizationInstance.id)
             }
             else {
@@ -75,7 +75,7 @@ class OrganizationController {
             }
         }
         else {
-            flash.message = "Organization not found with id ${params.id}"
+            flash.message = "Organisation med id ${params.id} kunde inte hittas"
             redirect(action:edit,id:params.id)
         }
     }
@@ -89,7 +89,7 @@ class OrganizationController {
     def save = {
         def organizationInstance = new Organization(params)
         if(!organizationInstance.hasErrors() && organizationInstance.save()) {
-            flash.message = "Organization ${organizationInstance.id} created"
+            flash.message = "Organisation ${organizationInstance.id} skapades"
             redirect(action:show,id:organizationInstance.id)
         }
         else {
