@@ -4,15 +4,12 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="main" />
-        <title>Create Publicationcollection</title>         
+        <title>Skapa ny författningssamling</title>         
     </head>
     <body>
-        <div class="nav">
-            <span class="menuButton"><a class="home" href="${createLinkTo(dir:'')}">Home</a></span>
-            <span class="menuButton"><g:link class="list" action="list">Publicationcollection List</g:link></span>
-        </div>
         <div class="body">
-            <h1>Create Publicationcollection</h1>
+            <h1>Skapa ny författningssamling</h1>
+            <p>Ange det officiella namnet och kortnamnet enligt <a href="https://lagen.nu/1976:725">författningssamlingsförordningen (1976:725)</a>. Länken bör gå till en sida på myndighetens webbplats där man kan ta del av författningssamlingen. Om sådan inte finns bör länken gå till myndighetens startsida.</p>
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
@@ -22,70 +19,41 @@
             </div>
             </g:hasErrors>
             <g:form action="save" method="post" >
-                <div class="dialog">
-                    <table>
-                        <tbody>
+                <div class="form panel">
+                    <p class="set ${hasErrors(bean:publicationcollectionInstance,field:'name','errors')}">
+                        <label for="name">* Namn:</label>
+                        <input aria-required="true" type="text" maxlength="200" id="name" name="name" value="${fieldValue(bean:publicationcollectionInstance,field:'name')}"/>
+                        <span class="example">Exempel: Boverkets författningssamling</span>
+                    </p>
                         
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="name">Name:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:publicationcollectionInstance,field:'name','errors')}">
-                                    <textarea rows="5" cols="40" name="name">${fieldValue(bean:publicationcollectionInstance, field:'name')}</textarea>
-                                </td>
-                            </tr> 
+                    <p class="set ${hasErrors(bean:publicationcollectionInstance,field:'shortname','errors')}">
+                        <label for="shortname">* Kortnamn:</label>
+                        <input aria-required="true" type="text" maxlength="200" id="shortname" name="shortname" value="${fieldValue(bean:publicationcollectionInstance,field:'shortname')}"/>
+                        <span class="example">Exempel: BOFS</span>
+                    </p>
+
+                    <p class="set ${hasErrors(bean:publicationcollectionInstance,field:'organization','errors')}">
+                        <label for="organization.id">* Organisation:</label>
+                        <g:if test="${Organization.get(params.organization?.id) == null}">
+                        <g:select id="organization.id" optionKey="id" from="${Organization.list()}" name="organization.id" value="${publicationcollectionInstance?.organization?.id}" ></g:select>
+                        </g:if>
+                        <g:else>
+                        <input type="hidden" name="organization.id" id="organization.id" value="${params.organization.id}"/>
+                        <span class="value">${Organization.get(params.organization.id)?.name}</span></g:else>
+                    </p>
+
+
+                    <p class="set ${hasErrors(bean:publicationcollectionInstance,field:'homepage','errors')}">
+                        <label for="homepage">* Länk till webbsida:</label>
+                        <input aria-required="true" type="text" maxlength="200" id="homepage" name="homepage" value="${fieldValue(bean:publicationcollectionInstance,field:'homepage')}"/>
+                        <span class="example">Exempel: http://www.boverket.se/lag-och-ratt/bofs</span>
+                    </p>
                         
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="shortname">Shortname:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:publicationcollectionInstance,field:'shortname','errors')}">
-                                    <textarea rows="5" cols="40" name="shortname">${fieldValue(bean:publicationcollectionInstance, field:'shortname')}</textarea>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="organization">Organization:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:publicationcollectionInstance,field:'organization','errors')}">
-                                    <g:select optionKey="id" from="${Organization.list()}" name="organization.id" value="${publicationcollectionInstance?.organization?.id}" ></g:select>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="homepage">Homepage:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:publicationcollectionInstance,field:'homepage','errors')}">
-                                    <textarea rows="5" cols="40" name="homepage">${fieldValue(bean:publicationcollectionInstance, field:'homepage')}</textarea>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="lastUpdated">Last Updated:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:publicationcollectionInstance,field:'lastUpdated','errors')}">
-                                    <g:datePicker name="lastUpdated" value="${publicationcollectionInstance?.lastUpdated}" noSelection="['':'']"></g:datePicker>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="dateCreated">Date Created:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:publicationcollectionInstance,field:'dateCreated','errors')}">
-                                    <g:datePicker name="dateCreated" value="${publicationcollectionInstance?.dateCreated}" ></g:datePicker>
-                                </td>
-                            </tr> 
-                        
-                        </tbody>
-                    </table>
+                    <div class="actions">
+                        <input type="submit" value="Spara" />
+                    </div>
                 </div>
-                <div class="buttons">
-                    <span class="button"><input class="save" type="submit" value="Create" /></span>
-                </div>
+
             </g:form>
         </div>
     </body>

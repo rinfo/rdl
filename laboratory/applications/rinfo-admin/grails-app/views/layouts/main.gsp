@@ -14,9 +14,6 @@
             <div class="colmask">
                 <div class="colleft">
                     <div class="col1" role="main">
-                        <div id="spinner" class="spinner" style="display:none;">
-                            <img src="${createLinkTo(dir:'images',file:'spinner.gif')}" alt="Spinner" />
-                        </div>	
                         <g:layoutBody />		
                     </div>
                     <div class="col2 menu" role="navigation">

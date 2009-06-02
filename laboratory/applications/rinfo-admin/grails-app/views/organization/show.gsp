@@ -16,18 +16,13 @@
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
-            <div class="dialog">
-                <table class="grid">
+            <div class="panel">
+                <table class="item">
                     <tbody>
-
-                    
                         <tr class="prop">
                             <th class="name">Id:</th>
-                            
                             <td class="value">${fieldValue(bean:organizationInstance, field:'id')}</td>
-                            
                         </tr>
-                    
                         <tr class="prop">
                             <th class="name">Namn:</th>
                             
@@ -38,7 +33,7 @@
                         <tr class="prop">
                             <th class="name">Webbplats:</th>
                             
-                            <td class="value"><a href="${fieldValue(bean:organizationInstance, field:'homepage')}">${fieldValue(bean:organizationInstance, field:'homepage')}</a></td>
+                            <td class="value"><a target="_new" href="${fieldValue(bean:organizationInstance, field:'homepage')}">${fieldValue(bean:organizationInstance, field:'homepage')}</a></td>
                             
                         </tr>
                     
@@ -63,7 +58,7 @@
                                 <g:if test="${organizationInstance.publicationcollections}">
                                 <ul>
                                 <g:each var="p" in="${organizationInstance.publicationcollections}">
-                                    <li><g:link controller="publicationcollection" action="show" id="${p.id}">${p?.encodeAsHTML()}</g:link></li>
+                                    <li>${p.name}</li>
                                 </g:each>
                                 </ul>
                                 </g:if>
@@ -103,13 +98,13 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
-            <div class="buttons">
-                <g:form>
-                    <input type="hidden" name="id" value="${organizationInstance?.id}" />
-                    <span class="button"><g:link action="edit" id="${organizationInstance?.id}" class="edit">Redigera</g:link></span>
-                    <span class="button"><g:actionSubmit class="delete" onclick="return confirm('Är du säker på att du vill radera denna organisation? Relaterade inhämtningskällor raderas också.');" value="Radera" action="Delete" /></span>
-                </g:form>
+                <div class="buttons">
+                    <g:form>
+                        <input type="hidden" name="id" value="${organizationInstance?.id}" />
+                        <span class="button"><g:link action="edit" id="${organizationInstance?.id}" class="edit">Redigera</g:link></span>
+                        <span class="button"><g:actionSubmit class="delete" onclick="return confirm('Är du säker på att du vill radera denna organisation? Relaterade inhämtningskällor raderas också.');" value="Radera" action="Delete" /></span>
+                    </g:form>
+                </div>
             </div>
         </div>
     </body>

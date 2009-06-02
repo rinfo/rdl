@@ -11,6 +11,9 @@ body {
    text-align:center;
 }
 
+div.body {
+    margin: 0 20px 0 0;
+}
 
 h1, h2, h3, h4, h5, h6 {
    font-family: Verdana, sans-serif;
@@ -93,7 +96,7 @@ a img {
    background: #ffffff
 }
 .col1{
-   padding: 1em 0px 1em 2px;
+   padding: 1em 0 1em 2px;
    overflow: hidden;
    float: left;
    position: relative;
@@ -199,10 +202,6 @@ p.set input[type='text'] {
     width:25em;
 }
 
-p.set ul {
-    margin:0;
-    padding:0;
-}
 
 p.errors {
     background-color: #f99;
@@ -213,6 +212,7 @@ div.objactions {
     font-size: 0.9em;
     background-color: #ffb;
     padding: 0.4em 0.6em;
+    margin: 0 20px 1em 0;
 }
 
 div.objactions p {
@@ -243,6 +243,17 @@ td.value ul li {
 }
 
 td.value a.add {
-    margin: 0.8em 0 0 1em;
+    margin: 0.5em 0 0 0;
     display:block;
+}
+
+table.item {
+    margin: 0 1em 0 1em;
+}
+table.item tr td, table.item tr th {
+    padding: 0.4em 10px 0.4em 0;
+}
+
+div.buttons {
+    margin: 1em 0 0 1em;
 }

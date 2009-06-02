@@ -50,8 +50,8 @@
                     <p class="set ${hasErrors(bean:organizationInstance,field:'publicationcollections','errors')}">
                         <label for="publicationcollections">Författningssamlingar:</label>
                         <g:if test="${organizationInstance.publicationcollections}">
-                        <ul><g:each var="p" in="${organizationInstance?.publicationcollections?}">
-                            <li><g:link controller="publicationcollection" action="show" id="${p.id}">${p?.encodeAsHTML()}</g:link></li>
+                        <ul class="relatedobjs"><g:each var="p" in="${organizationInstance?.publicationcollections?}">
+                            <li>${p?.name}</li>
                         </g:each>
                         </ul>
                         </g:if>
@@ -60,11 +60,11 @@
                         </g:else>
                     </p>
                         
-                    <p class="set ${hasErrors(bean:organizationInstance,field:'feeds','errors')}">
+                    <p class="set${hasErrors(bean:organizationInstance,field:'feeds',' errors')}">
                         <label for="feeds">Inhämtningskällor:</label>
                         <g:if test="${organizationInstance.feeds}">
-                        <ul><g:each var="f" in="${organizationInstance?.feeds?}">
-                        <li><g:link controller="feed" action="show" id="${f.id}">${f?.encodeAsHTML()}</g:link></li>
+                        <ul class="relatedobjs"><g:each var="f" in="${organizationInstance?.feeds?}">
+                        <li>${f}</li>
                         </g:each>
                         </ul>
                         </g:if>
@@ -72,10 +72,9 @@
                         (Inga inhämtningskällor tillagda än)
                         </g:else>
                     </p>
-                </div>
-                <div class="buttons">
-                    <span class="button"><g:actionSubmit class="save" value="Spara" action="Update" /></span>
-                    <span class="button"><g:actionSubmit class="delete" onclick="return confirm('Är du säker?');" action="Delete" value="Radera" /></span>
+                    <div class="buttons">
+                        <span class="button"><g:actionSubmit class="save" value="Spara" action="Update" /></span>
+                    </div>
                 </div>
             </g:form>
         </div>
