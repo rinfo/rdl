@@ -3,20 +3,32 @@ Om exempelapplikationen
 
 Syftet med denna exempelapplikation är att illustrera i programkod hur man kan
 implementera de format som rekommenderas av Rättsinformationsprojektet för den
-mest grundläggande nivån. Tanken är inte att tillhandahålla ett färdigt system
-för rättsinformationshantering.
+mest grundläggande nivån av publicering av myndighetsföreskrifter. Tanken är
+inte att tillhandahålla ett färdigt system för rättsinformationshantering.
+
+Applikationen har två delar; 1) en administrationdel i vilken man hanterar
+ämnesord, föreskrifter och grunddata och 2) en exempelwebbplats som visar
+informationen för potentiella besökare. 
 
 Applikationem är byggd på webbramverket Django som ges ut under BSD-licensen.
-Se BSD-licensen för mer information om möjligheter att använda dig av
-programkoden. Domstolsverket ger inga garantier för dess funktion eller
-lämplighet och frånsäger sig ansvar för eventuella fel och brister.
+Det betyder att du får använda och vidareutveckla koden om du vill, även i
+kommersiella sammanhang, men att den inte kommer med några garantier för
+funktion eller lämplighet. Se BSD-licensen för mer information om möjligheter
+att använda dig av programkoden. 
 
-Vi är dock tacksamma för feedback och rapporter om eventuella fel.
+Vi är dock tacksamma för feedback och rapporter om eventuella fel. FÖr mer
+information om rättsinformationsprojektet kontakta Peter Krantz, telefon 08-561
+66 921 på Domstolsverket eller besök projektbloggen: 
+
+http://rinfoprojektet.wordpress.com/
 
 
 
 Installationsansvisningar
 -------------------------
+
+Applikationen är baserad på webbramverket Django
+(http://www.djangoproject.com/) och är skirven i programspråket Python.
 
 Rader som börjar med "$" avser kommandon som skall utföras från ett
 terminalfönster).
@@ -52,6 +64,9 @@ http://127.0.0.1:8000/admin/ och logga in som den användare du skapade i steg 7.
 automatiska testerna med:
     $ python manage.py test
 
+Får du problem med isntallationen se följande källor:
+
+http://docs.djangoproject.com/en/dev/intro/install/
 
 
 Nästa steg
@@ -73,7 +88,8 @@ Varje länkformat är kopplat till en metod i rinfo/views.py.
 Klassen Myndighetsforeskrift visar några olika typer av metadata och relationer
 till andra objekt. 
 
-3. Mallen templates/foreskrift_rdf.xml visar hur en grundläggande post är uppbyggd.
+3. Mallen templates/foreskrift_rdf.xml visar hur en grundläggande metadatapost
+är uppbyggd.
 
 4. Atomfeeden berättar om förändringar som skett med poster i samlingen. Feeden
 finns på adressen http://127.0.0.1:8000/feed/. Nya poster, uppdateringar av
