@@ -16,7 +16,7 @@ class FeedController {
         def feedInstance = Feed.get( params.id )
 
         if(!feedInstance) {
-            flash.message = "Feed not found with id ${params.id}"
+            flash.message = "Inhämtningskällan kunde inte hittas"
             redirect(action:list)
         }
         else { return [ feedInstance : feedInstance ] }
@@ -27,16 +27,16 @@ class FeedController {
         if(feedInstance) {
             try {
                 feedInstance.delete()
-                flash.message = "Feed ${params.id} deleted"
+                flash.message = "Inhämtningskällan raderad"
                 redirect(action:list)
             }
             catch(org.springframework.dao.DataIntegrityViolationException e) {
-                flash.message = "Feed ${params.id} could not be deleted"
+                flash.message = "Inhämtningskällan kunde inte raderas"
                 redirect(action:show,id:params.id)
             }
         }
         else {
-            flash.message = "Feed not found with id ${params.id}"
+            flash.message = "Inhämtningskällan kunde inte hittas"
             redirect(action:list)
         }
     }
@@ -45,7 +45,7 @@ class FeedController {
         def feedInstance = Feed.get( params.id )
 
         if(!feedInstance) {
-            flash.message = "Feed not found with id ${params.id}"
+            flash.message = "Inhämtningskällan kunde inte hittas"
             redirect(action:list)
         }
         else {
@@ -67,7 +67,7 @@ class FeedController {
             }
             feedInstance.properties = params
             if(!feedInstance.hasErrors() && feedInstance.save()) {
-                flash.message = "Feed ${params.id} updated"
+                flash.message = "Inhämtningskällan uppdaterad"
                 redirect(action:show,id:feedInstance.id)
             }
             else {
@@ -75,7 +75,7 @@ class FeedController {
             }
         }
         else {
-            flash.message = "Feed not found with id ${params.id}"
+            flash.message = "Inhämtningskällan kunde inte hittas"
             redirect(action:edit,id:params.id)
         }
     }
@@ -89,7 +89,7 @@ class FeedController {
     def save = {
         def feedInstance = new Feed(params)
         if(!feedInstance.hasErrors() && feedInstance.save()) {
-            flash.message = "Feed ${feedInstance.id} created"
+            flash.message = "Inhämtningskällan skapades"
             redirect(action:show,id:feedInstance.id)
         }
         else {

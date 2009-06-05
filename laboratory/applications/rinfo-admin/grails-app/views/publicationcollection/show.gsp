@@ -48,7 +48,6 @@
                             <td class="value">
                                 <g:formatDate format="yyyy-MM-dd HH:mm:ss" date="${publicationcollectionInstance.lastUpdated}"/>
                             </td>
-                            
                         </tr>
                     
                         <tr class="prop">
@@ -57,14 +56,13 @@
                                 <g:formatDate format="yyyy-MM-dd HH:mm:ss" date="${publicationcollectionInstance.dateCreated}"/>
                             </td>
                         </tr>
-                    
                     </tbody>
                 </table>
                 <div class="buttons">
                     <g:form>
                         <input type="hidden" name="id" value="${publicationcollectionInstance?.id}" />
                         <span class="button"><g:link action="edit" id="${publicationcollectionInstance?.id}">Redigera</g:link></span>
-                        <span class="button"><g:actionSubmit class="delete" onclick="return confirm('Are you sure?');" value="Delete" /></span>
+                        <span class="button"><g:actionSubmit action="delete" onclick="return confirm('Är du säker?');" value="Radera" /></span>
                     </g:form>
                 </div>
             </div>

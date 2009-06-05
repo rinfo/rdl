@@ -10,7 +10,7 @@
         <div class="body">
             <h1>Organisationer</h1>
             <div class="objactions">
-                <p><g:link class="create" action="create">Skapa ny organisation</g:link></p>
+                <p><g:link class="create" action="create">Skapa ny</g:link></p>
             </div>
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
