@@ -1,7 +1,10 @@
 class Organization {
-
+    
+    static auditable = true //[handlersOnly:true]
+    
     static constraints = {
         name(blank:false, maxSize:200)
+        shortname(blank:true, nullable: true, maxSize:200)
         homepage(url:true, blank: false, maxSize:200)
         contact_name(blank:false, maxSize:200)
         contact_email(email:true, blank:false, maxSize:200)
@@ -11,6 +14,7 @@ class Organization {
     }
 
     String name
+    String shortname
     String homepage
     String contact_name
     String contact_email
@@ -18,10 +22,89 @@ class Organization {
     static hasMany = [ feeds : Feed, publicationcollections : Publicationcollection ]
 
     String toString() {
-        return name
+        if(shortname) {
+            return name + ", " + shortname
+        } else {
+            return name
+        }
     }
+
+    String toRDF() {
+        return "<rdf/>"
+    }
+
+    String rinfoURI() {
+        return "http://rinfo.lagrummet.se/org/" + name.toLowerCase().replaceAll(" ", "_")
+    }   
 
     // Uppdateras automatiskt av Grails
     Date dateCreated
     Date lastUpdated
+    
+
+    def onDelete = {
+        //Läs in första entry
+        def entries = Entry.findAllByItemClassAndItemId("Organization", this.id, [sort: "dateCreated", order:"asc"])
+        //Välj den första posten
+        def first_entry
+        if(entries) {
+            first_entry = entries[0]
+        }
+
+        //Skapa det nya entryt
+        def entry_date = new Date()
+        def entry = new Entry()
+        entry.relateTo(this)
+        entry.lastUpdated = entry_date
+        entry.dateDeleted = entry_date
+        entry.dateCreated = first_entry.dateCreated
+        entry.title = this.name + " raderades"
+        entry.uri = first_entry.uri
+        entry.content = this.toRDF()
+        entry.content_md5 = ""
+        entry.save()
+    }
+
+
+
+    // Skapa ett nytt atom entry när posten skapas
+    def onSave = {
+
+        def entry_date = new Date()
+        def entry = new Entry()
+        entry.relateTo(this)
+        entry.lastUpdated = entry_date
+        entry.title = this.name + " skapades"
+        entry.uri = this.rinfoURI()
+        entry.content = this.toRDF()
+        entry.content_md5 = ""
+        entry.dateCreated = entry_date
+        entry.save()
+
+    }
+
+
+    // Skapa ett nytt atom entry när posten uppdateras
+    def onChange = { oldMap,newMap ->
+
+        //Läs in tidigare entry
+        def entries = Entry.findAllByItemClassAndItemId("Organization", this.id, [sort: "dateCreated", order:"asc"])
+        //Välj den första posten
+        def first_entry
+        if(entries) {
+            first_entry = entries[0]
+        }
+
+        //Skapa det nya entryt
+        def entry_date = new Date()
+        def entry = new Entry()
+        entry.relateTo(this)
+        entry.lastUpdated = entry_date
+        entry.dateCreated = first_entry.dateCreated
+        entry.title = this.name + " ändrades"
+        entry.uri = first_entry.uri
+        entry.content = this.toRDF()
+        entry.content_md5 = ""
+        entry.save()
+    }
 }

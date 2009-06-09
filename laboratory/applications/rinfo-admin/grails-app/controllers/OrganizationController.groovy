@@ -28,6 +28,20 @@ class OrganizationController {
             try {
                 organizationInstance.delete()
                 flash.message = "Organisation med id ${params.id} raderades"
+
+                //Skapa atomentry om denna radering
+                def entry = new Entry()
+                entry.title = organizationInstance.name + " raderades"
+                entry.uri = organizationInstance.rinfoURI()
+                entry.content = ""
+                entry.content_md5 = ""
+                entry.dateDeleted = new Date()
+                entry.lastUpdated = new Date()
+                entry.save()
+                entry.errors.allErrors.each {
+                    println it
+                }
+
                 redirect(action:list)
             }
             catch(org.springframework.dao.DataIntegrityViolationException e) {
@@ -67,6 +81,29 @@ class OrganizationController {
             }
             organizationInstance.properties = params
             if(!organizationInstance.hasErrors() && organizationInstance.save()) {
+
+                //Skapa atomentry om denna uppdatering
+                def entry = new Entry()
+                def entry_time = new Date()
+
+                //Hitta tidigare entry om denna post
+                def first_entry = Entry.findByitem_classANditem_id(organizationInstance.class, organizationInstance.id)
+                println(first_entry)
+
+                entry.relateTo(organizationInstance)
+
+                entry.title = organizationInstance.name + " uppdaterades"
+                entry.uri = organizationInstance.rinfoURI()
+                entry.content = organizationInstance.toRDF()
+                entry.content_md5 = ""
+                entry.dateCreated = entry_time
+                entry.last_updated = entry_time
+                entry.save()
+                entry.errors.allErrors.each {
+                    println it
+                }
+                                
+                //Move along
                 flash.message = "Organisation med id ${params.id} uppdaterad"
                 redirect(action:show,id:organizationInstance.id)
             }
@@ -89,6 +126,8 @@ class OrganizationController {
     def save = {
         def organizationInstance = new Organization(params)
         if(!organizationInstance.hasErrors() && organizationInstance.save()) {
+
+            //Skapa atomentry om denna post
             flash.message = "Organisation ${organizationInstance.id} skapades"
             redirect(action:show,id:organizationInstance.id)
         }

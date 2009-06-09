@@ -8,6 +8,9 @@ class SecurityFilters {
                 // Exclude the "public" controller.
                 if (controllerName == "public") return true
 
+                // Exclude the "entry/feed" controller.
+                if (controllerName == "entry" && actionName == "feed") return true
+
                 // Rest requires Admin privs
                 accessControl { role("Administrator") } 
             } 

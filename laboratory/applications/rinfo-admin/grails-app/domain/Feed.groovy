@@ -18,6 +18,10 @@ class Feed {
         return "Källa: " + url
     }
 
+    String rinfoURI() {
+        return "http://rinfo.lagrummet.se/source/" + id
+   }   
+
     // Uppdateras automatiskt av Grails
     Date dateCreated
     Date lastUpdated

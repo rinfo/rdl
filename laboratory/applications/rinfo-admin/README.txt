@@ -16,6 +16,7 @@ För att sätta upp en utvecklingsmiljö behövs följande:
  * Programspråket Groovy 1.6 http://groovy.codehaus.org/Download 
  * Ramverket Grails http://grails.org
  * Java 1.6
+ * Grails Audit logging http://docs.codehaus.org/display/GRAILS/Grails+Audit+Logging+Plugin
 
 För en introdukion till utveckling i ramverket Grails se
 http://grails.org/Quick+Start 
