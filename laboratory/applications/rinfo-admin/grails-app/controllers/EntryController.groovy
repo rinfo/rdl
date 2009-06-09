@@ -15,7 +15,7 @@ class EntryController {
         def df = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+01:00'")
         def dateUpdated = df.format(new Date())
 
-        def feedHeader = """<feed xmlns="http://www.w3.org/2005/Atom" xmlns:at="http://purl.org/atompub/tombstones/1.0" xmlns:le="http://purl.org/atompub/link-extensions/1.0">
+        def feedHeader = """<feed xmlns="http://www.w3.org/2005/Atom" \n\txmlns:at="http://purl.org/atompub/tombstones/1.0" \n\txmlns:le="http://purl.org/atompub/link-extensions/1.0" \n\txmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
         <title type="text">Rinfo admin data feed</title>
         <link rel="self" href="${feedUrl}" />
         <updated>${dateUpdated}</updated>
@@ -31,7 +31,7 @@ class EntryController {
                 def x = new groovy.xml.MarkupBuilder(sw)
 
                 if(!item.dateDeleted) {
-                    x.entry(xmlns:"http://www.w3.org/2005/Atom") {
+                    x.entry {
                         title(type:"text", item.title)
                         published(df.format(item.dateCreated))
                         updated(df.format(item.lastUpdated))

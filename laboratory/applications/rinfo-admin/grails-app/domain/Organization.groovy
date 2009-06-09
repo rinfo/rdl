@@ -29,9 +29,21 @@ class Organization {
         }
     }
 
+
+    // Skapa RDF-post för denna organisation
     String toRDF() {
-        return "<rdf/>"
+
+        Writer sw = new StringWriter()
+        def mb = new groovy.xml.MarkupBuilder(sw)
+        mb.'rdf:RDF'(xmlns:"http://www.w3.org/1999/02/22-rdf-syntax-ns#", 'xmlns:foaf':"http://xmlns.com/foaf/0.1/") {
+            'foaf:Organization'('rdf:about': this.rinfoURI()) {
+                'foaf:name'('xml:lang': "sv", this.name)
+            }
+        }
+
+        return sw.toString()
     }
+
 
     String rinfoURI() {
         return "http://rinfo.lagrummet.se/org/" + name.toLowerCase().replaceAll(" ", "_")
