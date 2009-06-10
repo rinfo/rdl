@@ -13,119 +13,41 @@ class BootStrap {
                 def adminUser = new JsecUser(username: "admin", passwordHash: new Sha1Hash("admin").toHex()).save()
                 new JsecUserRoleRel(user: adminUser, role: adminRole).save()
 
-                def first_date = new Date()
-
-                def e1 = new Entry(title: "Ny organisation Boverket",
-                        content: "<rdf/>",
-                        content_md5: "themd5",
-                        uri: "http://rinfo.lagrummet.se/org/boverket",
-                        entry_id: "theentryid",
-                        dateDeleted: null,
-                        dateCreated: first_date,
-                        lastUpdated: first_date).save()
-
-                def e2 = new Entry(title: "Uppdaterad organisation Boverket",
-                        content: "<rdf/>",
-                        content_md5: "themd52",
-                        uri: "http://rinfo.lagrummet.se/org/boverket",
-                        entry_id: "theentryid",
-                        dateDeleted: null,
-                        dateCreated: first_date,
-                        lastUpdated: first_date.next()).save()
-
-                def e3 = new Entry(title: "Raderad organisation Boverket",
-                        content: "<rdf/>",
-                        content_md5: "themd52",
-                        uri: "http://rinfo.lagrummet.se/org/boverket",
-                        entry_id: "theentryid",
-                        dateDeleted: first_date.next(),
-                        dateCreated: first_date,
-                        lastUpdated: first_date.next()).save()
 
                 //Lite exempeldata
                 def org1 = new Organization(name: "Boverket", 
                         homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
+                        contact_name: "Bengt Bengtsson",
                         contact_email: "karl@example.com").save()
 
-                def org2 = new Organization(name: "Boverket", 
-                        homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
-                def org3 = new Organization(name: "Boverket", 
-                        homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
-                def org4 = new Organization(name: "Boverket", 
-                        homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
-                def org5 = new Organization(name: "Boverket", 
-                        homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
-                def org6 = new Organization(name: "Boverket", 
-                        homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
-                def org7 = new Organization(name: "Boverket", 
-                        homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
-                def org16 = new Organization(name: "Boverket", 
-                        homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
-                def org8 = new Organization(name: "Boverket", 
-                        homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
-                def org9 = new Organization(name: "Boverket", 
-                        homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
-                def org10 = new Organization(name: "Boverket", 
-                        homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
-                def org11 = new Organization(name: "Boverket", 
-                        homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
-                def org12 = new Organization(name: "Boverket", 
-                        homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
-                def org13 = new Organization(name: "Boverket", 
-                        homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
-                def org14 = new Organization(name: "Boverket", 
-                        homepage: "http://www.boverket.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
-                def feed1 = new Feed(organization: org1, url: "http://example.com/feed1", identifier: "2009,bofeed").save()
+                
+                def ffs1 = new Publicationcollection(name: "Boverkets författningssamling",
+                        shortname: "BFS",
+                        homepage:"http://www.boverket.se/Lag--ratt/Boverkets-forfattningssamling1/",
+                        organization: org1).save()
 
-                def org15 = new Organization(name: "Domstolsverket", 
-                        homepage: "http://www.domstol.se", 
-                        contact_name: "Karl Karlsson",
-                        contact_email: "karl@example.com").save()
+                def feed1 = new Feed(organization: org1, url: "http://www.example.com/feed1", identifier: "tag:boverket.se,2009:data").save()
 
-                def feed2 = new Feed(organization: org2, url: "http://example.com/feed2", identifier: "2009,dvfeed").save()
+                def org2 = new Organization(name: "Arbetsförmedlingen", 
+                        homepage: "http://www.ams.se", 
+                        contact_name: "Anna Andersson",
+                        contact_email: "anna@example.com").save()
 
-                break
-                case "test":
+            break
+
+
+            case "test":
                 log.info( 'BootStrap test' )
 
                 // Skapa en exempeladministratör
                 def adminRole = new JsecRole(name: "Administrator").save()
                 def adminUser = new JsecUser(username: "admin", passwordHash: new Sha1Hash("admin").toHex()).save()
                 new JsecUserRoleRel(user: adminUser, role: adminRole).save()
-                break
+            break
 
-                case "production":
+            case "production":
                 log.info( 'BootStrap production' )
-                break
+            break
         }
     }
 

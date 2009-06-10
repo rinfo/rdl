@@ -1,6 +1,6 @@
 class Organization {
     
-    static auditable = true //[handlersOnly:true]
+    static auditable = [handlersOnly:true]
     
     static constraints = {
         name(blank:false, maxSize:200)
@@ -46,7 +46,7 @@ class Organization {
 
 
     String rinfoURI() {
-        return "http://rinfo.lagrummet.se/org/" + name.toLowerCase().replaceAll(" ", "_")
+        return "http://rinfo.lagrummet.se/org/" + name.toLowerCase().replaceAll(" ", "_").replaceAll("ö","o").replaceAll("ä","a").replaceAll("å","a")
     }   
 
     // Uppdateras automatiskt av Grails
@@ -56,7 +56,7 @@ class Organization {
 
     def onDelete = {
         //Läs in första entry
-        def entries = Entry.findAllByItemClassAndItemId("Organization", this.id, [sort: "dateCreated", order:"asc"])
+        def entries = Entry.findAllByItemClassAndItemId(this.class.name, this.id, [sort: "dateCreated", order:"asc"])
         //Välj den första posten
         def first_entry
         if(entries) {
@@ -81,7 +81,6 @@ class Organization {
 
     // Skapa ett nytt atom entry när posten skapas
     def onSave = {
-
         def entry_date = new Date()
         def entry = new Entry()
         entry.relateTo(this)
@@ -92,7 +91,6 @@ class Organization {
         entry.content_md5 = ""
         entry.dateCreated = entry_date
         entry.save()
-
     }
 
 
@@ -100,7 +98,7 @@ class Organization {
     def onChange = { oldMap,newMap ->
 
         //Läs in tidigare entry
-        def entries = Entry.findAllByItemClassAndItemId("Organization", this.id, [sort: "dateCreated", order:"asc"])
+        def entries = Entry.findAllByItemClassAndItemId(this.class.name, this.id, [sort: "dateCreated", order:"asc"])
         //Välj den första posten
         def first_entry
         if(entries) {

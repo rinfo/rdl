@@ -4,7 +4,7 @@ class Entry {
         title(blank:false)
         content(blank:true)
         content_md5(blank:true)
-        uri(url:true, blank: false)
+        uri(blank: false)
         dateDeleted(blank:true, nullable:true)
         dateCreated(blank:false, nullable:true)
         lastUpdated(blank:false)

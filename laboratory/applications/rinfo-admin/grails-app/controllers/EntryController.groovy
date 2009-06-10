@@ -9,8 +9,7 @@ class EntryController {
 
         def feedUrl = request.scheme + "://" + request.serverName + ":" + request.serverPort + "/" + grailsApplication.metadata.'app.name' + "/" + controllerName + "/feed" 
        
-        //def entryList = Entry.list( params )	
-        def entryList = Entry.findAll()	
+        def entryList = Entry.list( params )	
 
         def df = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+01:00'")
         def dateUpdated = df.format(new Date())
