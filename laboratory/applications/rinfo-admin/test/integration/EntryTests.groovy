@@ -9,6 +9,68 @@ class EntryTests extends GrailsUnitTestCase {
         super.tearDown()
     }
 
+
+    /**
+    * Make sure an entry is created when a Publicationcollection is created.
+    */
+    void testEntryAddedOnCreatePublicationcollection() {
+
+        // First, create an organization to use as a parent for the
+        // Publicationcollection.
+        def org = new Organization(name: "Testorg", 
+                                    homepage: "http://www.example.com", 
+                                    contact_name: "Karl Karlsson",
+                                    contact_email: "karl@example.com").save(flush:true)
+
+        // Create and connect a Publicationcollection.
+        def pc = new Publicationcollection(name: "Testorg författningssamling",
+                shortname: "TFS",
+                homepage:"http://www.example.com/Lag--ratt/forfattningssamling1/",
+                organization: org).save(flush:true)
+
+        def entries = Entry.findAllByItemClassAndItemId("Publicationcollection", pc.id, [sort: "dateCreated", order:"asc", flush:true])
+
+        assertEquals 1, entries.size()
+        assertEquals pc.rinfoURI(), entries[0].uri
+    }
+
+
+
+
+
+    void testEntryAddedOnUpdatePublicationcollection() {
+
+        def org = new Organization(name: "Testorg3", 
+                                    homepage: "http://www.example.com", 
+                                    contact_name: "Karl Karlsson",
+                                    contact_email: "karl@example.com").save(flush:true)
+
+        // Create and connect a Publicationcollection.
+        def pc = new Publicationcollection(name: "Testorg författningssamling",
+                shortname: "TFS",
+                homepage:"http://www.example.com/Lag--ratt/forfattningssamling1/",
+                organization: org).save(flush:true)
+
+        // Store the URI generated for this publicationcollection.
+        def original_uri = pc.rinfoURI()
+
+        // Update the publicationcollection.
+        def pc2 = Publicationcollection.get(pc.id)
+        pc2.name = "Testorg2 författningssamling"
+        pc2.save(flush:true)
+
+        def entries = Entry.findAllByItemClassAndItemId("Publicationcollection", pc.id, [sort: "dateCreated", order:"asc", flush:true])
+
+        assertEquals 2, entries.size()
+
+        assertEquals original_uri, entries[0].uri
+        assertEquals original_uri, entries[1].uri
+
+        assertEquals entries[0].dateCreated, entries[1].dateCreated
+    }
+
+
+
     void testEntryAddedOnCreateOrganization() {
 
         def org = new Organization(name: "Testorg", 
@@ -16,13 +78,11 @@ class EntryTests extends GrailsUnitTestCase {
                                     contact_name: "Karl Karlsson",
                                     contact_email: "karl@example.com").save(flush:true)
 
-        //Verifiera att ett entry med samma URI som organisationen skapades
         def entries = Entry.findAllByItemClassAndItemId("Organization", org.id, [sort: "dateCreated", order:"asc", flush:true])
 
         assertEquals 1, entries.size()
         assertEquals org.rinfoURI(), entries[0].uri
     }
-
 
 
 
@@ -33,23 +93,21 @@ class EntryTests extends GrailsUnitTestCase {
                                     contact_name: "Karl Karlsson",
                                     contact_email: "karl@example.com").save(flush:true)
 
+        // Store the URI generated for this organization.
         def original_uri = org.rinfoURI()
 
-        //Läs in och spara om organisationen för att trigga en uppdatering
+        // Update the organization.
         def org2 = Organization.get(org.id)
         org2.name = "Testorg4"
         org2.save(flush:true)
 
         def orgentries = Entry.list(flush:true)
 
-        //Verifiera att det finns två entries (för create och update)
         assertEquals 2, orgentries.size()
 
-        //Båda skall ha samma URI
         assertEquals original_uri, orgentries[0].uri
         assertEquals original_uri, orgentries[1].uri
 
-        //Båda skall ha samma dateCreated
         assertEquals orgentries[0].dateCreated, orgentries[1].dateCreated
     }
 

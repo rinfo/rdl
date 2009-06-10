@@ -1,3 +1,6 @@
+/**
+* Represents an atom feed where legal information from an organization can be picked up.
+*/
 class Feed {
 
     static auditable = [handlersOnly:true]
@@ -13,13 +16,26 @@ class Feed {
     static belongsTo = Organization
     Organization organization    
 
+    /**
+    * The current location of the feed. 
+    * @see identifier
+    */
     String url
+
+    /**
+    * The long term URI identifier for a feed. Is not necessarily the same as
+    * the URL where it resides. This identifier will likely be a <a
+    * href="http://www.faqs.org/rfcs/rfc4151.html">Tag URI</a> to enable
+    * different locations for the feed.
+    */
     String identifier
+
+    Date dateCreated
+    Date lastUpdated
 
     String toString() { 
         return "Källa: " + url
     }
-
 
     String toRDF() {
 
@@ -45,23 +61,20 @@ class Feed {
         return identifier
    }   
 
-    // Uppdateras automatiskt av Grails
-    Date dateCreated
-    Date lastUpdated
 
 
 
     def onDelete = {
-        //Läs in första entry
+        // Pick up first entry for this item        
         def entries = Entry.findAllByItemClassAndItemId(this.class.name, this.id, [sort: "dateCreated", order:"asc"])
-        //Välj den första posten
         def first_entry
         if(entries) {
             first_entry = entries[0]
         }
 
-        //Skapa det nya entryt
         def entry_date = new Date()
+
+        // Create the new entry
         def entry = new Entry()
         entry.relateTo(this)
         entry.lastUpdated = entry_date
@@ -70,12 +83,9 @@ class Feed {
         entry.title = this.identifier + " raderades"
         entry.uri = first_entry.uri
         entry.content = this.toRDF()
-        entry.content_md5 = ""
         entry.save()
     }
 
-
-    // Skapa ett nytt atom entry när posten skapas
     def onSave = {
 
         def entry_date = new Date()
@@ -85,7 +95,6 @@ class Feed {
         entry.title = this.identifier + " skapades"
         entry.uri = this.rinfoURI()
         entry.content = this.toRDF()
-        entry.content_md5 = ""
         entry.dateCreated = entry_date
         entry.save()
 
@@ -93,17 +102,13 @@ class Feed {
 
 
 
-    // Skapa ett nytt atom entry när posten uppdateras
-    def onChange = { oldMap,newMap ->
-        //Läs in tidigare entry
+    def onChange = {
         def entries = Entry.findAllByItemClassAndItemId(this.class.name, this.id, [sort: "dateCreated", order:"asc"])
-        //Välj den första posten
         def first_entry
         if(entries) {
             first_entry = entries[0]
         }
 
-        //Skapa det nya entryt
         def entry_date = new Date()
         def entry = new Entry()
         entry.relateTo(this)
@@ -112,7 +117,6 @@ class Feed {
         entry.title = this.identifier + " ändrades"
         entry.uri = first_entry.uri
         entry.content = this.toRDF()
-        entry.content_md5 = ""
         entry.save()
     }
 

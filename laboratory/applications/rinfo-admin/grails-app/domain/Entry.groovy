@@ -1,9 +1,12 @@
+/**
+* Represents an Atom entry and is used to provide data about Organizations,
+* Publication collections and Feeds to the main application.
+*/
 class Entry {
 
     static constraints = {
         title(blank:false)
         content(blank:true)
-        content_md5(blank:true)
         uri(blank: false)
         dateDeleted(blank:true, nullable:true)
         dateCreated(blank:false, nullable:true)
@@ -16,30 +19,39 @@ class Entry {
         autoTimestamp false
     }
 
-
     String title
     String content
-    String content_md5
     String uri
 
+    /**
+    * This maps the current entry instance to an instance of some other type
+    * when used together with itemClass.
+    */
     Integer itemId
+
+    /**
+    * This maps the current entry instance to an instance of some other type
+    * when used together with itemId.
+    */
     String itemClass
 
-    def relateTo(item) {
-        this.itemClass = item.class.name
-        this.itemId = item.id
-    }
 
     Date dateDeleted
     Date dateCreated
     Date lastUpdated
 
+    /**
+    * Loosely relates this entry to an instance of some other type instead of using belongsTo.
+    */
+    def relateTo(item) {
+        this.itemClass = item.class.name
+        this.itemId = item.id
+    }
 
     String toString() {
         StringWriter sw = new StringWriter()
         sw.append("\n\ttitle: " + title)
         sw.append("\n\tcontent: " + content)
-        sw.append("\n\tcontent_md5: " + content_md5)
         sw.append("\n\turi: " + uri)
         sw.append("\n\titemId: " + itemId)
         sw.append("\n\titemClass: " + itemClass)

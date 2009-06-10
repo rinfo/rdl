@@ -8,10 +8,10 @@ class BootStrap {
         switch(GrailsUtil.environment) {  
             case "development":
 
-                // Skapa en exempeladministratör
                 def adminRole = new JsecRole(name: "Administrator").save()
                 def adminUser = new JsecUser(username: "admin", passwordHash: new Sha1Hash("admin").toHex()).save()
                 new JsecUserRoleRel(user: adminUser, role: adminRole).save()
+
 
 
                 //Lite exempeldata

@@ -1,3 +1,8 @@
+/**
+* Represents an organization, typically a government agency. The main task is
+* to provide the legal information system with basic information about
+* participating organizations.
+*/
 class Organization {
     
     static auditable = [handlersOnly:true]
@@ -13,11 +18,21 @@ class Organization {
         dateCreated()
     }
 
+    /**
+    * The formal name (e.g. "Verket för förvaltningsutveckling").
+    */
     String name
+
+    /**
+    * The formal short name if available (e.g. "VERVA").
+    */
     String shortname
     String homepage
     String contact_name
     String contact_email
+
+    Date dateCreated
+    Date lastUpdated
 
     static hasMany = [ feeds : Feed, publicationcollections : Publicationcollection ]
 
@@ -29,10 +44,7 @@ class Organization {
         }
     }
 
-
-    // Skapa RDF-post för denna organisation
     String toRDF() {
-
         Writer sw = new StringWriter()
         def mb = new groovy.xml.MarkupBuilder(sw)
         mb.'rdf:RDF'(xmlns:"http://www.w3.org/1999/02/22-rdf-syntax-ns#", 'xmlns:foaf':"http://xmlns.com/foaf/0.1/") {
@@ -40,7 +52,6 @@ class Organization {
                 'foaf:name'('xml:lang': "sv", this.name)
             }
         }
-
         return sw.toString()
     }
 
@@ -49,21 +60,14 @@ class Organization {
         return "http://rinfo.lagrummet.se/org/" + name.toLowerCase().replaceAll(" ", "_").replaceAll("ö","o").replaceAll("ä","a").replaceAll("å","a")
     }   
 
-    // Uppdateras automatiskt av Grails
-    Date dateCreated
-    Date lastUpdated
     
-
     def onDelete = {
-        //Läs in första entry
         def entries = Entry.findAllByItemClassAndItemId(this.class.name, this.id, [sort: "dateCreated", order:"asc"])
-        //Välj den första posten
         def first_entry
         if(entries) {
             first_entry = entries[0]
         }
 
-        //Skapa det nya entryt
         def entry_date = new Date()
         def entry = new Entry()
         entry.relateTo(this)
@@ -73,13 +77,10 @@ class Organization {
         entry.title = this.name + " raderades"
         entry.uri = first_entry.uri
         entry.content = this.toRDF()
-        entry.content_md5 = ""
         entry.save()
     }
 
 
-
-    // Skapa ett nytt atom entry när posten skapas
     def onSave = {
         def entry_date = new Date()
         def entry = new Entry()
@@ -88,24 +89,19 @@ class Organization {
         entry.title = this.name + " skapades"
         entry.uri = this.rinfoURI()
         entry.content = this.toRDF()
-        entry.content_md5 = ""
         entry.dateCreated = entry_date
         entry.save()
     }
 
 
-    // Skapa ett nytt atom entry när posten uppdateras
-    def onChange = { oldMap,newMap ->
+    def onChange = { 
 
-        //Läs in tidigare entry
         def entries = Entry.findAllByItemClassAndItemId(this.class.name, this.id, [sort: "dateCreated", order:"asc"])
-        //Välj den första posten
         def first_entry
         if(entries) {
             first_entry = entries[0]
         }
 
-        //Skapa det nya entryt
         def entry_date = new Date()
         def entry = new Entry()
         entry.relateTo(this)
@@ -114,7 +110,6 @@ class Organization {
         entry.title = this.name + " ändrades"
         entry.uri = first_entry.uri
         entry.content = this.toRDF()
-        entry.content_md5 = ""
         entry.save()
     }
 }

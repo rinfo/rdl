@@ -37,7 +37,13 @@ grails.work.dir då du kör grails-kommandon för snabbare exekvering:
 
 För att köra igenom testscenarion kör
 
- $ grails test
+ $ grails test-app -integration
+
+
+För att generera dokumentation
+
+ $ grails doc
+
 
 
 Viktiga delar
