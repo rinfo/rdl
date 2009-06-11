@@ -27,6 +27,7 @@ class Organization {
     * The formal short name if available (e.g. "VERVA").
     */
     String shortname
+
     String homepage
     String contact_name
     String contact_email
@@ -44,6 +45,11 @@ class Organization {
         }
     }
 
+    /**
+    * The RDF representation of this instance. This information is used by
+    * agencies to relate laws and other legal information to specific
+    * organizations.
+    */
     String toRDF() {
         Writer sw = new StringWriter()
         def mb = new groovy.xml.MarkupBuilder(sw)
@@ -61,6 +67,12 @@ class Organization {
     }   
 
     
+    /**
+    * Create a new Atom entry to notify the main application that an
+    * organization has been deleted. Since the dateCreated information should
+    * represent the original organization instance, the first entry is loaded
+    * and the dateCreated and URI is used from that entry.
+    */
     def onDelete = {
         def entries = Entry.findAllByItemClassAndItemId(this.class.name, this.id, [sort: "dateCreated", order:"asc"])
         def first_entry
@@ -81,7 +93,12 @@ class Organization {
     }
 
 
+    /**
+    * Create a new Atom entry as a notification to the main application that a
+    * new organization has been created.
+    */
     def onSave = {
+
         def entry_date = new Date()
         def entry = new Entry()
         entry.relateTo(this)
@@ -94,6 +111,12 @@ class Organization {
     }
 
 
+    /**
+    * Create a new Atom entry to notify the main application that an update has
+    * occurred. Since the dateCreated information should represent the original
+    * organization instance, the first entry is loaded and the dateCreated and
+    * URI is used from that entry.
+    */
     def onChange = { 
 
         def entries = Entry.findAllByItemClassAndItemId(this.class.name, this.id, [sort: "dateCreated", order:"asc"])

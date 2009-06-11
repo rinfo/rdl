@@ -1,5 +1,5 @@
 /**
-* Represents an Atom entry and is used to provide data about Organizations,
+* Represents an <a href="http://tools.ietf.org/html/rfc4287#section-4.1.2">Atom entry</a> and is used to provide data about Organizations,
 * Publication collections and Feeds to the main application.
 */
 class Entry {

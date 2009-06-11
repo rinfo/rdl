@@ -1,5 +1,7 @@
 /**
-* Represents a collection of legal information (eg laws).
+* Represents a collection of legal information (eg laws). All instances belong
+* to an Organization. For information about the formal name and formal short
+* name see <a href="https://lagen.nu/1976:725">SFS 1976:725</a>.
 */
 class Publicationcollection {
 
