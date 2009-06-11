@@ -26,7 +26,7 @@ public abstract class AbstractCollectScheduler {
 
     private int initialDelay = DEFAULT_INITIAL_DELAY;
     private int scheduleInterval = DEFAULT_SCHEDULE_INTERVAL;
-    private TimeUnit timeUnit;
+    private TimeUnit timeUnit = TimeUnit.valueOf(DEFAULT_TIME_UNIT_NAME);
 
     private ScheduledExecutorService scheduleService;
 
