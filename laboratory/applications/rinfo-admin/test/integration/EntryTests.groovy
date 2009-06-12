@@ -70,6 +70,38 @@ class EntryTests extends GrailsUnitTestCase {
     }
 
 
+    void testEntryAddedOnDeletePublicationcollection() {
+
+        def org = new Organization(name: "Testorg3", 
+                                    homepage: "http://www.example.com", 
+                                    contact_name: "Karl Karlsson",
+                                    contact_email: "karl@example.com").save(flush:true)
+
+        // Create and connect a Publicationcollection.
+        def pc = new Publicationcollection(name: "Testorg författningssamling",
+                shortname: "TFS",
+                homepage:"http://www.example.com/Lag--ratt/forfattningssamling1/",
+                organization: org).save(flush:true)
+
+        // Store the URI generated for this publicationcollection.
+        def original_uri = pc.rinfoURI()
+
+        // Make sure an entry was created
+        def entries = Entry.findAllByItemClassAndItemId("Publicationcollection", pc.id, [flush:true])
+        assertEquals 1, entries.size()
+
+        // Delete the publicationcollection.
+        pc.delete(flush:true)
+
+
+        // Make sure a new enrey was created for the delete event
+        def entries2 = Entry.findAllByItemClassAndItemId("Publicationcollection", pc.id, [sort: "lastUpdated", order:"desc", flush:true])
+
+        assertEquals 2, entries2.size()
+        assertEquals original_uri, entries2[0].uri
+        assert entries2[0].dateDeleted != null
+
+    }
 
     void testEntryAddedOnCreateOrganization() {
 
@@ -131,12 +163,11 @@ class EntryTests extends GrailsUnitTestCase {
         //Radera och verifiera att entry med deleteinformation skapas
         org.delete(flush:true)
 
-        entries = Entry.findAllByItemClassAndItemId("Organization", org.id, [sort: "lastUpdated", order:"desc", flush:true])
+        def entries2 = Entry.findAllByItemClassAndItemId("Organization", org.id, [sort: "id", order:"desc", flush:true])
         
-        println(entries[0])
-        println(entries[1])
-        assert entries[0].dateDeleted != null
-        assertEquals original_uri, entries[0].uri
-
+        assertEquals 2, entries2.size()
+        println(entries2)
+        assert entries2[0].dateDeleted != null
+        assertEquals original_uri, entries2[0].uri
     }
 }

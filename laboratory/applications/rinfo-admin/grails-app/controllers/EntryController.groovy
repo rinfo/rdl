@@ -7,7 +7,7 @@ class EntryController {
     static allowedMethods = [feed:'GET']
 
     def feed = {
-        params.sort = 'dateCreated'
+        params.sort = 'lastUpdated'
         params.order = 'desc'
 
         def feedUrl = request.scheme + "://" + request.serverName + ":" + request.serverPort + "/" + grailsApplication.metadata.'app.name' + "/" + controllerName + "/feed" 
