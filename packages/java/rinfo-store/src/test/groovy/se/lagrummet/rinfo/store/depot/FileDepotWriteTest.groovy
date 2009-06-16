@@ -8,6 +8,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
 
     static final NEW_ID_1 = new URI("http://example.org/publ/NEW/added_1")
     static final NEW_ID_2 = new URI("http://example.org/publ/NEW/added_2")
+    static final NEW_ID_3 = new URI("http://example.org/publ/NEW/added_3")
     static final UPD_ID_1 = new URI("http://example.org/publ/UPD/updated_1")
     static final UPD_ID_2 = new URI("http://example.org/publ/UPD/updated_2")
     static final UPD_ID_3 = new URI("http://example.org/publ/UPD/updated_3")
@@ -79,6 +80,23 @@ class FileDepotWriteTest extends FileDepotTempBase {
         expect "/publ/NEW/added_2/icon.png"
         expect "/publ/NEW/added_2/icon2.png"
         expect "/publ/NEW/added_2/images/icon.png"
+    }
+
+    @Test
+    void shouldCreateLockedEntry() {
+        assertNull fileDepot.getEntry(NEW_ID_3)
+        def createTime = new Date()
+        def entry = fileDepot.createEntry(NEW_ID_3, createTime,
+                [ new SourceContent(exampleEntryFile("content.rdf"),
+                            "application/rdf+xml") ],
+                false
+            )
+        assertTrue entry.isLocked()
+        entry.unlock()
+        assertFalse entry.isLocked()
+        entry = fileDepot.getEntry(NEW_ID_3)
+        assertNotNull entry
+        assertFalse entry.isLocked()
     }
 
 

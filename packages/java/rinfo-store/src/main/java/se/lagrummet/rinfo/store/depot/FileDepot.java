@@ -16,7 +16,7 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 
 
-public class FileDepot {
+public class FileDepot implements Depot {
 
     public static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-depot.properties";
     public static final String CONF_BASE_KEY = "rinfo.depot.";
@@ -285,7 +285,24 @@ public class FileDepot {
 
     public DepotEntry createEntry(URI entryUri, Date created,
             List<SourceContent> contents,
+            boolean releaseLock)
+            throws DepotReadException, DepotWriteException,
+                   IOException {
+        return createEntry(entryUri, created, contents, null, releaseLock);
+    }
+
+    public DepotEntry createEntry(URI entryUri, Date created,
+            List<SourceContent> contents,
             List<SourceContent> enclosures)
+            throws DepotReadException, DepotWriteException,
+                   IOException {
+        return createEntry(entryUri, created, contents, enclosures, true);
+    }
+
+    public DepotEntry createEntry(URI entryUri, Date created,
+            List<SourceContent> contents,
+            List<SourceContent> enclosures,
+            boolean releaseLock)
             throws DepotReadException, DepotWriteException,
                    IOException {
         assertWithinBaseUri(entryUri);
@@ -293,7 +310,7 @@ public class FileDepot {
         File entryDir = getEntryDir(uriPath);
         FileUtils.forceMkdir(entryDir);
         DepotEntry depotEntry = new DepotEntry(this, entryDir, uriPath);
-        depotEntry.create(created, contents, enclosures);
+        depotEntry.create(created, contents, enclosures, releaseLock);
         return depotEntry;
     }
 
