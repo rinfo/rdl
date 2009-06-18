@@ -6,6 +6,7 @@
 
     <id>http://rinfo.lagrummet.se/system/uri_algorithm/tests/publ</id>
 
+    <!-- SFS -->
     <entry>
         <id>http://rinfo.lagrummet.se/publ/sfs/1999:175</id>
         <content type="application/rdf+xml">
@@ -26,6 +27,11 @@
         </content>
     </entry>
 
+
+
+
+
+    <!-- Myndighetsföreskrifter -->
     <entry>
         <id>http://rinfo.lagrummet.se/publ/ra-fs/2006:6</id>
         <content type="application/rdf+xml">
@@ -35,6 +41,33 @@
             </rpubl:Myndighetsforeskrift>
         </content>
     </entry>
+
+
+    <!-- Se exempel från http://www.arbetsgivarverket.se/t/PublicationList____271.aspx -->
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/agvfs/2002:3_B_3</id>
+        <content type="application/rdf+xml">
+            <rpubl:Myndighetsforeskrift>
+                <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/agvfs"/>
+                <rpubl:fsNummer>2002:3 B 3</rpubl:fsNummer>
+            </rpubl:Myndighetsforeskrift>
+        </content>
+    </entry>
+
+
+
+    <!-- Se exempel från http://www5.f.lst.se/publikationer/forfattningar/ovrigaforeskrifter/ar/ovrigaforeskrifter1971.4.e689910bace3401a800031.html -->
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/06fs/1971:96_b</id>
+        <content type="application/rdf+xml">
+            <rpubl:Myndighetsforeskrift>
+                <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/06fs"/>
+                <rpubl:fsNummer>1971:96 b</rpubl:fsNummer>
+            </rpubl:Myndighetsforeskrift>
+        </content>
+    </entry>
+
+
 
     <!-- FIXME: must not be described with the properties of the doc it
          "konsoliderar"? -->
