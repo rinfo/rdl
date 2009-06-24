@@ -18,7 +18,6 @@ import org.apache.commons.io.FileUtils;
 
 public class FileDepot implements Depot {
 
-    public static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-depot.properties";
     public static final String CONF_BASE_KEY = "rinfo.depot.";
 
     private final Logger logger = LoggerFactory.getLogger(FileDepot.class);
@@ -41,16 +40,10 @@ public class FileDepot implements Depot {
         this.feedPath = feedPath;
     }
 
-    public static FileDepot newAutoConfigured()
-        throws ConfigurationException,
-               URISyntaxException, IOException {
-        return newConfigured(CONFIG_PROPERTIES_FILE_NAME);
-    }
-
     public static FileDepot newConfigured(String fileName)
         throws ConfigurationException,
                URISyntaxException, IOException {
-        PropertiesConfiguration config = new PropertiesConfiguration(fileName);
+        Configuration config = new PropertiesConfiguration(fileName);
         return newConfigured(config);
     }
 

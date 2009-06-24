@@ -12,22 +12,21 @@ import se.lagrummet.rinfo.store.depot.FileDepot;
 public class SupplyApplication extends Application {
 
     private String fileDepotConfig;
+    public static final String DEPOT_CONFIG_PROPERTIES_FILENAME = "rinfo-depot.properties";
 
     public SupplyApplication(Context context, String fileDepotConfig) {
-        this(context);
+        super(context);
         this.fileDepotConfig = fileDepotConfig;
     }
 
     public SupplyApplication(Context context) {
-        super(context);
+        this(context, DEPOT_CONFIG_PROPERTIES_FILENAME);
     }
 
     @Override
     public synchronized Restlet createRoot() {
         try {
-            FileDepot depot = (fileDepotConfig!=null)?
-                    FileDepot.newConfigured(fileDepotConfig) :
-                    FileDepot.newAutoConfigured();
+            FileDepot depot = FileDepot.newConfigured(fileDepotConfig);
             return new DepotFinder(getContext(), depot);
         } catch (Exception e) {
             throw new RuntimeException(e);
