@@ -14,9 +14,7 @@ import javax.xml.namespace.QName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationUtils;
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
 
@@ -33,8 +31,6 @@ import org.apache.abdera.ext.sharing.SharingHelper;
 
 
 public class Atomizer {
-
-    public static final String CONF_BASE_KEY = "rinfo.depot.atom.";
 
     // TODO:? Get from (or use in?) depot(.pathHandler)?
     public static final String ATOM_ENTRY_MEDIA_TYPE = "application/atom+xml;type=entry";
@@ -78,17 +74,20 @@ public class Atomizer {
     */
     private FileDepot depot;
 
-    private int feedBatchSize;
-    private boolean includeDeleted;
-    private boolean includeHistorical;
-    private boolean useEntrySelfLink;
-    private boolean useLinkExtensionsMd5;
-    private boolean useTombstones;
-    private boolean useFeedSync;
-    private boolean useGdataDeleted;
-    private boolean prettyXml;
+    private int feedBatchSize = DEFAULT_FEED_BATCH_SIZE;
+    private boolean includeDeleted = true;
+    private boolean includeHistorical = false;
+    private boolean useEntrySelfLink = true;
+    private boolean useLinkExtensionsMd5 = true;
+    private boolean useTombstones = true;
+    private boolean useFeedSync = true;
+    private boolean useGdataDeleted = true;
+    // TODO:IMPROVE: remove support for prettyXml? In 0.4, it's still too
+    // brittle (accumulates whitespace over time).
+    private boolean prettyXml = false;
 
-    private Feed skeletonFeed;
+    private String feedSkeletonPath;
+    private Feed feedSkeleton;
 
 
     public Atomizer() {
@@ -98,39 +97,13 @@ public class Atomizer {
         setDepot(depot);
     }
 
-    public void configure(Configuration config)
-            throws ConfigurationException, IOException {
-        setFeedSkeleton(
-                config.getString(CONF_BASE_KEY+"feedSkeleton"));
-        setFeedBatchSize(
-                config.getInt(CONF_BASE_KEY+"feedBatchSize", 0));
-        setIncludeDeleted(
-                config.getBoolean(CONF_BASE_KEY+"includeDeleted", true));
-        setIncludeHistorical( // TODO: true
-                config.getBoolean(CONF_BASE_KEY+"includeHistorical", false));
-        setUseEntrySelfLink(
-                config.getBoolean(CONF_BASE_KEY+"useEntrySelfLink", true));
-        setUseLinkExtensionsMd5(
-                config.getBoolean(CONF_BASE_KEY+"useLinkExtensionsMd5", true));
-        setUseTombstones(
-                config.getBoolean(CONF_BASE_KEY+"useTombstones", true));
-        setUseFeedSync(
-                config.getBoolean(CONF_BASE_KEY+"useFeedSync", true));
-        setUseGdataDeleted(
-                config.getBoolean(CONF_BASE_KEY+"useGdataDeleted", true));
-        // TODO:IMPROVE: remove support for prettyXml? In 0.4, it's still too
-        // brittle (accumulates whitespace over time).
-        setPrettyXml(
-                config.getBoolean(CONF_BASE_KEY+"prettyXml", false));
-    }
-
     public FileDepot getDepot() { return depot; }
     public void setDepot(FileDepot depot) {
         this.depot = depot;
     }
 
     public int getFeedBatchSize() {
-        return feedBatchSize!=0 ? feedBatchSize : DEFAULT_FEED_BATCH_SIZE;
+        return feedBatchSize;
     }
     public void setFeedBatchSize(int feedBatchSize) {
         this.feedBatchSize = feedBatchSize;
@@ -180,16 +153,20 @@ public class Atomizer {
         return getUseFeedSync() || getUseGdataDeleted();
     }
 
-    void setFeedSkeleton(String feedSkeleton) throws IOException {
-        if (feedSkeleton!=null && !feedSkeleton.equals("")) {
-            skeletonFeed = (Feed) Abdera.getInstance().getParser().parse(
-                    ConfigurationUtils.locate(feedSkeleton).openStream()
+    public String getFeedSkeletonPath() { return feedSkeletonPath; }
+    void setFeedSkeletonPath(String feedSkeletonPath) throws IOException {
+        this.feedSkeletonPath = feedSkeletonPath;
+        if (feedSkeletonPath != null && !feedSkeletonPath.equals("")) {
+            feedSkeleton = (Feed) Abdera.getInstance().getParser().parse(
+                    ConfigurationUtils.locate(feedSkeletonPath).openStream()
                 ).getRoot();
         }
     }
 
-    public Feed getSkeletonFeed() {
-        return skeletonFeed;
+    public Feed getFeedSkeleton() { return feedSkeleton; }
+    public void setFeedSkeleton(Feed feedSkeleton) {
+        this.feedSkeletonPath = null;
+        this.feedSkeleton = feedSkeleton;
     }
 
 
@@ -287,8 +264,8 @@ public class Atomizer {
 
     protected Feed newFeed(String uriPath) {
         Feed feed;
-        if (skeletonFeed != null) {
-            feed = (Feed) skeletonFeed.clone();
+        if (feedSkeleton != null) {
+            feed = (Feed) feedSkeleton.clone();
         } else {
             feed = Abdera.getInstance().newFeed();
         }
@@ -396,8 +373,8 @@ public class Atomizer {
             atomEntry.setPublished(publDate);
         }
 
-        if (skeletonFeed != null) {
-            atomEntry.setSource(skeletonFeed);
+        if (feedSkeleton != null) {
+            atomEntry.setSource(feedSkeleton);
         }
 
         if (useFeedSync) {

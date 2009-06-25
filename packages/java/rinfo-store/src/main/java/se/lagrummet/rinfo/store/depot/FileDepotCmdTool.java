@@ -1,22 +1,36 @@
 package se.lagrummet.rinfo.store.depot;
 
+import org.apache.commons.lang.StringUtils;
+
+
 public class FileDepotCmdTool {
 
-    public static final String COMMANDS = "index";
-    // TODO:IMPROVE: more commands; e.g. check, ...
+    public static enum Command {
+        INDEX {
+            void run(Depot depot) throws Exception { depot.generateIndex(); }
+        };
+        abstract void run(Depot depot) throws Exception;
+    }
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 2) {
+        if (args.length != 3) {
             System.out.println(String.format(
-                    "Expected arguments: <config-file> <%s>", COMMANDS));
+                    "Expected arguments: <config-properties> <properties-subset> <%s>",
+                    StringUtils.join(Command.values(), "|").toLowerCase()));
             System.exit(0);
         }
-        FileDepot depot = FileDepot.newConfigured(args[0]);
-        String command = args[1];
-        if (command.equals("index")) {
-            depot.generateIndex();
-        } else {
-            System.out.println("Unknown command: " + command);
+
+        String propertiesPath = args[0];
+        String subsetPrefix = args[1];
+        Depot depot = DepotUtil.depotFromConfig(propertiesPath, subsetPrefix);
+
+        String cmdName = args[2];
+
+        try {
+            Command command = Command.valueOf(cmdName.toUpperCase());
+            command.run(depot);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Unknown command: " + cmdName);
             System.exit(1);
         }
     }

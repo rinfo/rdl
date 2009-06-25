@@ -12,8 +12,9 @@ class FileDepotBatchTest {
 
     @BeforeClass
     static void setupClass() {
-        fileDepot = FileDepot.newConfigured(
-                "src/test/resources/rinfo-depot.properties")
+
+        fileDepot = (FileDepot) DepotUtil.depotFromConfig(
+                "src/test/resources/rinfo-depot.properties");
     }
 
     @Test

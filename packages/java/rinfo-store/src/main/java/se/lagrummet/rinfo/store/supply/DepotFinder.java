@@ -17,17 +17,17 @@ import org.restlet.resource.Resource;
 import se.lagrummet.rinfo.store.depot.DeletedDepotEntryException;
 import se.lagrummet.rinfo.store.depot.DepotContent;
 import se.lagrummet.rinfo.store.depot.DepotReadException;
-import se.lagrummet.rinfo.store.depot.FileDepot;
+import se.lagrummet.rinfo.store.depot.Depot;
 import se.lagrummet.rinfo.store.depot.LockedDepotEntryException;
 
 
 public class DepotFinder extends Finder {
 
-    private FileDepot depot;
+    private Depot depot;
 
     public DepotFinder() { super(); }
     public DepotFinder(Context context) { super(context); }
-    public DepotFinder(Context context, FileDepot depot) {
+    public DepotFinder(Context context, Depot depot) {
         this(context);
         this.depot = depot;
     }

@@ -3,8 +3,12 @@ package se.lagrummet.rinfo.store.depot;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.net.URI;
+
 import java.io.IOException;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+
 
 public interface Depot {
 
@@ -17,6 +21,8 @@ public interface Depot {
     Atomizer getAtomizer();
 
     PathHandler getPathHandler();
+
+    //void initialize();
 
     List find(String uriPath) throws DepotReadException;
 

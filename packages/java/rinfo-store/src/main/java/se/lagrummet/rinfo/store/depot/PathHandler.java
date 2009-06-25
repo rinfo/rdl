@@ -10,8 +10,6 @@ import org.apache.commons.configuration.ConfigurationException;
 
 public class PathHandler {
 
-    public static final String CONF_BASE_KEY = "rinfo.depot.uris.";
-
     static final Pattern URI_PATTERN = Pattern.compile(
             "(/([^/]+)\\S*?)(?:/([^/,]+)(?:,([a-z]{2}))?)?");
 
@@ -37,19 +35,6 @@ public class PathHandler {
 
     public PathHandler() {
         setNamedMediaTypes(DEFAULT_NAMED_MEDIA_TYPES);
-    }
-
-    public void configure(Configuration config)
-            throws ConfigurationException {
-        Configuration namedMediaConf = config.subset(CONF_BASE_KEY+"namedMediaType");
-        if (!namedMediaConf.isEmpty()) {
-            Map<String, String> configNamedMediaTypes = new HashMap<String, String>();
-            for (Iterator iter = namedMediaConf.getKeys(); iter.hasNext();) {
-                String key = (String) iter.next();
-                configNamedMediaTypes.put(key, config.getString(key));
-            }
-            setNamedMediaTypes(configNamedMediaTypes);
-        }
     }
 
     public void setNamedMediaTypes(Map<String, String> namedMediaTypes) {

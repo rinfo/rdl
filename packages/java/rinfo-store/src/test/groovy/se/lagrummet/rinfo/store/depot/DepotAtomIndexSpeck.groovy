@@ -31,7 +31,7 @@ class DepotAtomIndexSpeck extends FileDepotTempBase {
         def entryIds = []
         def storeIds = { entryIds += it.entries.collect { it.id as String } }
 
-        current.entries.size() == 1
+        current.entries.size() == 2
         FPH.isArchive(current) == false
         def currentLink = current.selfLink.href
         storeIds current
@@ -54,6 +54,7 @@ class DepotAtomIndexSpeck extends FileDepotTempBase {
         and: "all items should have been indexed"
         entryIds == [
             "http://example.org/publ/1901/locked",
+            "http://example.org/publ/1901/0",
             "http://example.org/dataset",
             "http://example.org/publ/1901/100/revisions/1902/200",
             "http://example.org/publ/1901:101",
@@ -76,9 +77,9 @@ class DepotAtomIndexSpeck extends FileDepotTempBase {
                 ])
         depot.indexEntries(batch)
 
-        then: "entries should have been inserted in subscription feed"
+        then: "entry should have been inserted in new subscription feed"
         def current = depot.atomizer.getFeed(depot.subscriptionPath)
-        current.entries.size() == 2
+        current.entries.size() == 1
 
         and: "archives should be identified by exclusive youngest entry date"
         def datePath = DatePathUtil.toFeedArchivePath(current.entries[-1].updated)

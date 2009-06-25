@@ -18,8 +18,6 @@ import org.apache.commons.io.FileUtils;
 
 public class FileDepot implements Depot {
 
-    public static final String CONF_BASE_KEY = "rinfo.depot.";
-
     private final Logger logger = LoggerFactory.getLogger(FileDepot.class);
 
     private URI baseUri;
@@ -40,42 +38,22 @@ public class FileDepot implements Depot {
         this.feedPath = feedPath;
     }
 
-    public static FileDepot newConfigured(String fileName)
-        throws ConfigurationException,
-               URISyntaxException, IOException {
-        Configuration config = new PropertiesConfiguration(fileName);
-        return newConfigured(config);
-    }
-
-    public static FileDepot newConfigured(Configuration config)
-        throws ConfigurationException,
-               URISyntaxException, IOException {
-        FileDepot depot = new FileDepot();
-        depot.configure(config);
-        return depot;
-    }
-
-    public void configure(Configuration config)
-        throws ConfigurationException,
-               URISyntaxException, IOException {
-        setBaseUri(new URI(config.getString(CONF_BASE_KEY+"baseUri")));
-        setBaseDir(new File(config.getString(CONF_BASE_KEY+"fileDir")));
-        setFeedPath(config.getString(CONF_BASE_KEY+"feedPath"));
-        atomizer.configure(config);
-        pathHandler.configure(config);
-    }
-
-
     public URI getBaseUri() { return baseUri; }
 
     public void setBaseUri(URI baseUri) {
         this.baseUri = baseUri;
     }
 
-    public File getBaseDir() { return baseDir; }
+    public File getBaseDir() {
+        if (baseDir == null) {
+            throw new IllegalStateException("FileDepot.baseDir is null.");
+        }
+        return baseDir;
+    }
 
     public void setBaseDir(File baseDir) throws FileNotFoundException {
         this.baseDir = baseDir;
+        // TODO:? move to initialize and require depot to be initialized before use?
         if (!baseDir.exists()) {
             baseDir.mkdir();
         }
@@ -165,7 +143,7 @@ public class FileDepot implements Depot {
 
 
     public DepotContent getContent(String uriPath) {
-        File file = new File(baseDir, toFilePath(uriPath));
+        File file = new File(getBaseDir(), toFilePath(uriPath));
         if (!file.isFile()) {
             return null;
         }
@@ -188,7 +166,7 @@ public class FileDepot implements Depot {
     }
 
     protected File getFeedFile(String uriPath) {
-        return new File(baseDir, toFilePath(uriPath) + ".atom");
+        return new File(getBaseDir(), toFilePath(uriPath) + ".atom");
     }
 
     protected String getSubscriptionPath() {
@@ -205,6 +183,8 @@ public class FileDepot implements Depot {
     //== Path and File Related ==
 
     public boolean withinBaseUri(URI uri) {
+        if (uri == null || baseUri == null)
+            return false;
         return uri.getHost().equals(baseUri.getHost()) &&
                 uri.getScheme().equals(baseUri.getScheme()) &&
                 uri.getPort() == baseUri.getPort();
@@ -213,7 +193,7 @@ public class FileDepot implements Depot {
     void assertWithinBaseUri(URI uri) {
         if (!withinBaseUri(uri)) {
             throw new DepotUriException(
-                    "The URI <"+uri+"> is not within <"+baseUri+">.");
+                    "The URI <"+uri+"> is not within base URI <"+baseUri+">.");
         }
     }
 
@@ -235,7 +215,7 @@ public class FileDepot implements Depot {
     }
 
     protected File getEntryDir(String uriPath) {
-        return new File(baseDir, toFilePath(uriPath));
+        return new File(getBaseDir(), toFilePath(uriPath));
     }
 
     protected String toFilePath(String uriPath) {
