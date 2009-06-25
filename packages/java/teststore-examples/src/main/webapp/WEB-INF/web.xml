@@ -12,12 +12,12 @@
         <param-value>se.lagrummet.rinfo.store.supply.SupplyApplication</param-value>
     </context-param>
     <servlet>
-        <servlet-name>RestServlet</servlet-name> 
+        <servlet-name>RestServlet</servlet-name>
         <servlet-class>com.noelios.restlet.ext.servlet.ServerServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>RestServlet</servlet-name> 
-        <url-pattern>/*</url-pattern> 
+        <servlet-name>RestServlet</servlet-name>
+        <url-pattern>/*</url-pattern>
     </servlet-mapping>
 
 </web-app>
