@@ -172,8 +172,7 @@ public abstract class FeedArchiveReader {
 
     public static String unescapeColon(String uriPath)
         throws UnsupportedEncodingException {
-        // FIXME: we have ":" url-escaped here (via Abdera resolved hrefs).
-        // Is this a symptom of a brittle URI strategy in general?
+        // FIXME: fixed in Abdera; remove!
         return uriPath.replace(URLEncoder.encode(":", "utf-8"), ":");
     }
 
