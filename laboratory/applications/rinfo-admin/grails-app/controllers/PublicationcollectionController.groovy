@@ -2,6 +2,7 @@
 
 class PublicationcollectionController {
     
+    def entryService
     def index = { redirect(action:list,params:params) }
 
     // the delete, save and update actions only accept POST requests
@@ -26,7 +27,7 @@ class PublicationcollectionController {
         def publicationcollectionInstance = Publicationcollection.get( params.id )
         if(publicationcollectionInstance) {
             try {
-                publicationcollectionInstance.delete()
+                entryService.deleteItem(publicationcollectionInstance)
                 flash.message = "Författningssamlingen raderades"
                 redirect(action:list)
             }
@@ -67,6 +68,7 @@ class PublicationcollectionController {
             }
             publicationcollectionInstance.properties = params
             if(!publicationcollectionInstance.hasErrors() && publicationcollectionInstance.save()) {
+                entryService.createEntry(publicationcollectionInstance)
                 flash.message = "Författningssamlingen uppdaterades"
                 redirect(action:show,id:publicationcollectionInstance.id)
             }
@@ -89,6 +91,7 @@ class PublicationcollectionController {
     def save = {
         def publicationcollectionInstance = new Publicationcollection(params)
         if(!publicationcollectionInstance.hasErrors() && publicationcollectionInstance.save()) {
+            entryService.createEntry(publicationcollectionInstance)
             flash.message = "Författningssamlingen skapades"
             redirect(action:show,id:publicationcollectionInstance.id)
         }

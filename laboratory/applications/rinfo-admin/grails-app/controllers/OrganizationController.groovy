@@ -1,7 +1,6 @@
-
-
 class OrganizationController {
     
+    def entryService
     def index = { redirect(action:list,params:params) }
 
     // the delete, save and update actions only accept POST requests
@@ -26,7 +25,7 @@ class OrganizationController {
         def organizationInstance = Organization.get( params.id )
         if(organizationInstance) {
             try {
-                organizationInstance.delete()
+                entryService.deleteItem(organizationInstance)
                 flash.message = "Organisation med id ${params.id} raderades"
                 redirect(action:list)
             }
@@ -67,7 +66,7 @@ class OrganizationController {
             }
             organizationInstance.properties = params
             if(!organizationInstance.hasErrors() && organizationInstance.save()) {
-
+                entryService.createEntry(organizationInstance)
                 flash.message = "Organisation med id ${params.id} uppdaterad"
                 redirect(action:show,id:organizationInstance.id)
             }
@@ -90,6 +89,7 @@ class OrganizationController {
     def save = {
         def organizationInstance = new Organization(params)
         if(!organizationInstance.hasErrors() && organizationInstance.save()) {
+            entryService.createEntry(organizationInstance)
             flash.message = "Organisation ${organizationInstance.id} skapades"
             redirect(action:show,id:organizationInstance.id)
         }

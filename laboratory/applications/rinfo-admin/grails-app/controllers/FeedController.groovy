@@ -3,6 +3,7 @@
 class FeedController {
     
     def index = { redirect(action:list,params:params) }
+    def entryService
 
     // the delete, save and update actions only accept POST requests
     static allowedMethods = [delete:'POST', save:'POST', update:'POST']
@@ -26,7 +27,7 @@ class FeedController {
         def feedInstance = Feed.get( params.id )
         if(feedInstance) {
             try {
-                feedInstance.delete()
+                entryService.deleteItem(feedInstance)
                 flash.message = "Inhämtningskällan raderad"
                 redirect(action:list)
             }
@@ -66,7 +67,8 @@ class FeedController {
                 }
             }
             feedInstance.properties = params
-            if(!feedInstance.hasErrors() && feedInstance.save()) {
+            if(!feedInstance.hasErrors() && feedInstance.save(flush:true)) {
+                entryService.createEntry(feedInstance)
                 flash.message = "Inhämtningskällan uppdaterad"
                 redirect(action:show,id:feedInstance.id)
             }
@@ -89,6 +91,7 @@ class FeedController {
     def save = {
         def feedInstance = new Feed(params)
         if(!feedInstance.hasErrors() && feedInstance.save()) {
+            entryService.createEntry(feedInstance)
             flash.message = "Inhämtningskällan skapades"
             redirect(action:show,id:feedInstance.id)
         }

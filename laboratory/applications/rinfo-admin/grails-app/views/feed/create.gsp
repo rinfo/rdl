@@ -21,7 +21,7 @@
                 <div class="form panel">
                     <g:render template="form" collection="${feedInstance}" />
                     <div class="actions">
-                        <p><input class="save" type="submit" value="Spara" /></p>
+                        <p><input class="save" type="submit" value="Spara" action="Save" /></p>
                     </div>
                 </div>
             </g:form>
