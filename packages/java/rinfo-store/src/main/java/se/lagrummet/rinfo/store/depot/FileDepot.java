@@ -122,10 +122,10 @@ public class FileDepot implements Depot {
 
     protected DepotEntry getUncheckedDepotEntry(String uriPath) {
         File entryDir = getEntryDir(uriPath);
-        if (!DepotEntry.isEntryDir(entryDir)) {
+        if (!FileDepotEntry.isEntryDir(entryDir)) {
             return null;
         }
-        return DepotEntry.newUncheckedDepotEntry(this, entryDir, uriPath);
+        return FileDepotEntry.newUncheckedDepotEntry(this, entryDir, uriPath);
     }
 
     public Iterator<DepotEntry> iterateEntries() {
@@ -138,7 +138,7 @@ public class FileDepot implements Depot {
 
     public Iterator<DepotEntry> iterateEntries(
             boolean includeHistorical, boolean includeDeleted) {
-        return DepotEntry.iterateEntries(this, includeHistorical, includeDeleted);
+        return FileDepotEntry.iterateEntries(this, includeHistorical, includeDeleted);
     }
 
 
@@ -282,13 +282,13 @@ public class FileDepot implements Depot {
         String uriPath = entryUri.getPath();
         File entryDir = getEntryDir(uriPath);
         FileUtils.forceMkdir(entryDir);
-        DepotEntry depotEntry = new DepotEntry(this, entryDir, uriPath);
+        DepotEntry depotEntry = new FileDepotEntry(this, entryDir, uriPath);
         depotEntry.create(created, contents, enclosures, releaseLock);
         return depotEntry;
     }
 
     public void onEntryModified(DepotEntry depotEntry) throws IOException {
-        atomizer.generateAtomEntryContent(depotEntry);
+        atomizer.generateAtomEntryContent((FileDepotEntry) depotEntry);
         // TODO:? update latest feed index file (may create new file and modify
         // next-to-last (add next-archive)?)! Since any modifying means
         // a new updated depotEntry in the feeds..

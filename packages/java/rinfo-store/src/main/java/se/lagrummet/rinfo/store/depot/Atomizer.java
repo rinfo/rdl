@@ -229,7 +229,7 @@ public class Atomizer {
 
             logger.info("Indexing entry: <"+depotEntry.getId()+"> ["+depotEntry.getUpdated()+"]");
 
-            indexEntry(currFeed, depotEntry);
+            indexEntry(currFeed, (FileDepotEntry) depotEntry);
 
         }
         writeFeed(currFeed); // as subscription feed
@@ -300,7 +300,7 @@ public class Atomizer {
         outStream.close();
     }
 
-    protected void indexEntry(Feed feed, DepotEntry depotEntry)
+    protected void indexEntry(Feed feed, FileDepotEntry depotEntry)
             throws IOException, FileNotFoundException {
         if (depotEntry.isDeleted()) {
             if (useTombstones) {
@@ -329,12 +329,12 @@ public class Atomizer {
 
     //== Entry Specifics ==
 
-    public Entry generateAtomEntryContent(DepotEntry depotEntry)
+    public Entry generateAtomEntryContent(FileDepotEntry depotEntry)
             throws IOException, FileNotFoundException {
         return generateAtomEntryContent(depotEntry, true);
     }
 
-    public Entry generateAtomEntryContent(DepotEntry depotEntry, boolean force)
+    public Entry generateAtomEntryContent(FileDepotEntry depotEntry, boolean force)
             throws IOException, FileNotFoundException {
         File entryFile = depotEntry.newContentFile(ATOM_ENTRY_MEDIA_TYPE);
         if (!force &&
