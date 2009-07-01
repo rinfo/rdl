@@ -36,6 +36,10 @@ Testing::
     # By pattern matching:
     $ mvn test -Dtest=FileDepot*Test
 
+Code coverage from tests::
+
+    $ mvn cobertura:cobertura
+
 Running classes::
 
     # .. in rinfo-base/
