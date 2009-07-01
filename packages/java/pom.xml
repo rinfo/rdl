@@ -31,7 +31,7 @@
     <module>rinfo-collector</module>
     <module>rinfo-base</module>
     <module>rinfo-rdf-repo</module>
-    <!-- TODO:? Only used as "end components", not libs.
+    <!-- TODO:? These are apps, not components/libs.
     <module>rinfo-main</module>
     <module>rinfo-service</module>
     -->
