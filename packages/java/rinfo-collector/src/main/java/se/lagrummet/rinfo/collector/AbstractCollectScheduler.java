@@ -28,10 +28,11 @@ public abstract class AbstractCollectScheduler {
     private int scheduleInterval = DEFAULT_SCHEDULE_INTERVAL;
     private TimeUnit timeUnit = TimeUnit.valueOf(DEFAULT_TIME_UNIT_NAME);
 
+    private boolean started = false;
+
     private ScheduledExecutorService scheduleService;
 
-    private ExecutorService defaultExecutorService =
-        Executors.newSingleThreadExecutor();
+    private ExecutorService executorService;
 
     private ConcurrentLinkedQueue<URL> feedQueue =
         new ConcurrentLinkedQueue<URL>();
@@ -60,13 +61,24 @@ public abstract class AbstractCollectScheduler {
         this.timeUnit = TimeUnit.valueOf(timeUnitName);
     }
 
-    /**
-     * Get default single threaded executor. Override to implement other thread
-     * executor strategy.
-     * @return
-     */
+    public boolean isStarted() {
+        return started;
+    }
+
+    public ScheduledExecutorService getScheduleService() {
+        return scheduleService;
+    }
+
     public ExecutorService getExecutorService() {
-        return defaultExecutorService;
+        return executorService;
+    }
+
+    /**
+     *  Creates a single threaded executor by default. Override to implement
+     *  other thread executor strategy.
+     */
+    public ExecutorService newExecutorService() {
+        return Executors.newSingleThreadExecutor();
     }
 
     /**
@@ -86,6 +98,7 @@ public abstract class AbstractCollectScheduler {
      * of <code>scheduleInterval</code>, unless it is set to -1.
      */
     public void startup() {
+        executorService = newExecutorService();
         if (scheduleInterval == -1) {
             logger.info("Disabled scheduled collects.");
         } else {
@@ -99,6 +112,7 @@ public abstract class AbstractCollectScheduler {
             logger.info("Scheduled collect every "+scheduleInterval +
                     " "+unitName+" (starting in "+initialDelay+" "+unitName+").");
         }
+        started = true;
     }
 
     /**
@@ -110,8 +124,7 @@ public abstract class AbstractCollectScheduler {
         if (scheduleService != null) {
             scheduleService.shutdown();
         }
-
-        getExecutorService().shutdown();
+        executorService.shutdown();
 
         if (feedQueue != null) {
             if (feedQueue.size() > 0) {
@@ -125,6 +138,7 @@ public abstract class AbstractCollectScheduler {
                         + "be collected: " + feeds);
             }
         }
+        started = false;
     }
 
     /**
@@ -170,22 +184,13 @@ public abstract class AbstractCollectScheduler {
         } else {
             feedQueue.add(feedUrl);
             logger.info("Scheduling collect of <"+feedUrl+">.");
-            getExecutorService().execute(
+            executorService.execute(
                     new Runnable() {
                         public void run() { executeCollect(); }
                     }
             );
             return true;
         }
-    }
-
-    private synchronized URL getNextFeed() {
-        URL feedUrl = feedQueue.peek();
-        if (feedUrl != null) {
-            feedInProcess.add(feedUrl);
-            feedQueue.remove(feedUrl);
-        }
-        return feedUrl;
     }
 
     private void executeCollect() {
@@ -199,4 +204,14 @@ public abstract class AbstractCollectScheduler {
             logger.info("Completed collect of <"+feedUrl+">.");
         }
     }
+
+    private synchronized URL getNextFeed() {
+        URL feedUrl = feedQueue.peek();
+        if (feedUrl != null) {
+            feedInProcess.add(feedUrl);
+            feedQueue.remove(feedUrl);
+        }
+        return feedUrl;
+    }
+
 }

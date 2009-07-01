@@ -85,6 +85,23 @@ class AbstractCollectSchedulerTest {
         collectScheduler.triggerFeedCollect(new URL("http://bad.example.org/"))
     }
 
+    @Test
+    void shouldBeRestartable() {
+        collectScheduler.scheduleInterval = 20
+
+        collectScheduler.startup()
+        assertTrue collectScheduler.isStarted()
+
+        collectScheduler.shutdown()
+        assertTrue collectScheduler.getScheduleService().isShutdown()
+        assertTrue collectScheduler.getExecutorService().isShutdown()
+        assertFalse collectScheduler.isStarted()
+
+        collectScheduler.startup()
+        assertTrue collectScheduler.isStarted()
+        assertFalse collectScheduler.getScheduleService().isShutdown()
+        assertFalse collectScheduler.getExecutorService().isShutdown()
+    }
 }
 
 class ManagedDummyScheduler extends AbstractCollectScheduler {
