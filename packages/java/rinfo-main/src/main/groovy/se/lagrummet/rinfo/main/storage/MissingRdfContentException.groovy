@@ -1,4 +1,4 @@
-package se.lagrummet.rinfo.main
+package se.lagrummet.rinfo.main.storage
 
 class MissingRdfContentException extends RuntimeException {
 

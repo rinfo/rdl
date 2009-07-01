@@ -1,0 +1,21 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX sioc: <http://rdfs.org/sioc/ns#>
+
+SELECT * WHERE {
+
+    # TODO: this is enough:
+    #<tag:lagrummet.se,2009:rinfo> dct:source ?source .
+    #?source sioc:feed ?feed .
+
+    FILTER(?rinfospace = <tag:lagrummet.se,2009:rinfo>) .
+    ?rinfospace a sioc:Space;
+        #sioc:has_host <http://rinfo.lagrummet.se>;
+        #sioc:feed ?rinfospace__1_feed;
+        dct:source ?rinfospace__source .
+
+    ?rinfospace__source a sioc:Space;
+        #dct:publisher ?rinfospace__source__1_publisher;
+        sioc:feed ?rinfospace__source__1_feed .
+
+}

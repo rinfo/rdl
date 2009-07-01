@@ -1,4 +1,4 @@
-package se.lagrummet.rinfo.main
+package se.lagrummet.rinfo.main.storage
 
 //import org.junit.After
 import org.junit.AfterClass

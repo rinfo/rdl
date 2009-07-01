@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-    <id>http://rinfo.lagrummet.se/feed</id>
+    <id>tag:lagrummet.se,2009:rinfo</id>
     <title xml:lang="sv">Rättsinformationssystemets källdata</title>
 
     <author>

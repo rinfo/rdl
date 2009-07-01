@@ -15,8 +15,6 @@ import org.restlet./*routing.*/Router
 
 import se.lagrummet.rinfo.store.supply.DepotFinder
 
-import se.lagrummet.rinfo.collector.NotAllowedSourceFeedException
-
 
 class MainApplication extends Application {
 
@@ -24,8 +22,7 @@ class MainApplication extends Application {
     public static final String COLLECTOR_RUNNER_CONTEXT_KEY =
             "rinfo.main.collector.restlet.context"
 
-    private FeedCollectScheduler collectScheduler
-    private Storage storage
+    Components components
 
     MainApplication(Context context) {
         this(context, new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME))
@@ -33,49 +30,31 @@ class MainApplication extends Application {
 
     MainApplication(Context context, Configuration config) {
         super(context)
-        storage = new Storage(config)
-
-        URL publicSubscriptionFeed = null
-        List<URL> onCompletePingTargets = []
-        try {
-            publicSubscriptionFeed = new URL(
-                    config.getString("rinfo.main.publicSubscriptionFeed"))
-            onCompletePingTargets = config.getList(
-                    "rinfo.main.collector.onCompletePingTargets").collect { new URL(it) }
-        } catch (MalformedURLException e) {
-            // TODO: handle or fail on bad url:s for collectScheduler
-            logger.error("Malformed URL:s in configuration", e)
-        }
-
-        collectScheduler = new FeedCollectScheduler(storage, config)
-        collectScheduler.batchCompletedCallback = new FeedUpdatePingNotifyer(
-                publicSubscriptionFeed, onCompletePingTargets)
+        components = new Components(config)
         getContext().getAttributes().putIfAbsent(
-                COLLECTOR_RUNNER_CONTEXT_KEY, collectScheduler)
+                COLLECTOR_RUNNER_CONTEXT_KEY, components.getCollectScheduler())
     }
 
     @Override
     synchronized Restlet createRoot() {
         def router = new Router(getContext())
-        router.attach("/collector", new Finder(getContext(), CollectorHandler))
-        router.attachDefault(new DepotFinder(getContext(), storage.getDepot()))
+        router.attach("/collector",
+                new Finder(getContext(), CollectorHandler))
+        router.attachDefault(
+                new DepotFinder(getContext(), components.getStorage().getDepot()))
         return router
     }
 
     @Override
     public void start() {
         super.start()
-        collectScheduler.startup()
+        components.startup()
     }
 
     @Override
     public void stop() {
         super.stop()
-        try {
-            collectScheduler.shutdown()
-        } finally {
-            storage.shutdown()
-        }
+        components.shutdown()
     }
 
 }

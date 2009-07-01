@@ -44,6 +44,12 @@
       <artifactId>junit</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -67,10 +73,23 @@
         <executions>
           <execution>
             <goals>
+              <!--
               <goal>generateStubs</goal>
+              -->
               <goal>compile</goal>
-              <goal>generateTestStubs</goal>
               <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.spockframework</groupId>
+        <artifactId>spock-maven</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>find-specks</goal>
             </goals>
           </execution>
         </executions>

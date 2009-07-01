@@ -4,6 +4,10 @@ import org.restlet.data.MediaType
 import org.restlet.data.Status
 import org.restlet./*resource.*/Handler
 
+import se.lagrummet.rinfo.collector.NotAllowedSourceFeedException
+
+import se.lagrummet.rinfo.main.storage.FeedCollectScheduler
+
 
 class CollectorHandler extends Handler {
 
@@ -33,7 +37,11 @@ class CollectorHandler extends Handler {
         }
 
         def msg = "Scheduled collect of <${feedUrl}>."
-        def status = null // FIXME: Status.CLIENT_ACCEPTED (202)
+        def status = Status.CLIENT_ACCEPTED // 202
+        //  TODO:? The entity returned with this response SHOULD include an
+        //  indication of the request's current status and either a pointer to
+        //  a status monitor or some estimate of when the user can expect the
+        //  request to be fulfilled.
 
         try {
             boolean wasScheduled = collectScheduler.triggerFeedCollect(new URL(feedUrl))
@@ -44,10 +52,7 @@ class CollectorHandler extends Handler {
                 msg = "The url <${feedUrl}> is not an allowed source feed."
                 status = Status.CLIENT_ERROR_FORBIDDEN
         }
-
-        if (status != null) {
-            getResponse().setStatus(status)
-        }
+        getResponse().setStatus(status)
         getResponse().setEntity(msg, MediaType.TEXT_PLAIN)
     }
 
