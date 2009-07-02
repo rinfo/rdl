@@ -108,7 +108,7 @@ class FeedCollector extends FeedArchivePastToPresentReader {
 
     @Override
     boolean hasVisitedArchivePage(URL pageUrl) {
-        // TODO: never visit pageUrl being an already visited archive page?
+        // TODO:? never visit pageUrl being an already visited archive page?
         return false
     }
 
@@ -120,16 +120,14 @@ class FeedCollector extends FeedArchivePastToPresentReader {
         storageSession.beginPage(pageUrl, feed)
         try {
             for (entry in effectiveEntries) {
-                // TODO: isn't this a strange exceptional state now?
-                // FeedArchivePastToPresentReader should never encounter known stuff..
                 try {
                     List<SourceContent> contents = new ArrayList<SourceContent>()
                     List<SourceContent> enclosures = new ArrayList<SourceContent>()
                     fillContentsAndEnclosures(sourceEntry, contents, enclosures)
                     storageSession.storeEntry(feed, entry, contents, enclosures)
                 } catch (Exception e) {
-                    // TODO: report explicit error. storageSession should catch most though?
-                    logger.error("Error storing entry!", e)
+                    // TODO:? storageSession should handle (log and report) errors..
+                    logger.error("Critical error when storing entry: "+entry, e)
                     throw e
                 }
             }

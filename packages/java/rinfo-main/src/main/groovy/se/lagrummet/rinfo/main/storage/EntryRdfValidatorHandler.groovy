@@ -20,14 +20,14 @@ class EntryRdfValidatorHandler extends AbstractStorageHandler {
     }
 
     void onStartup(StorageSession storageSession) throws Exception {
-        DepotEntry depotEntry = storageSession.getDepot().getEntry(entryId)
+        DepotEntry depotEntry = storageSession.getDepot().getEntry(containerEntryId)
         if (depotEntry != null) {
-            onEntry(this, depotEntry, data)
+            onEntry(storageSession, depotEntry, false)
         }
     }
 
-    void onEntry(StorageSession storageSession, DepotEntry depotEntry)
-            throws Exception {
+    void onEntry(StorageSession storageSession, DepotEntry depotEntry,
+            boolean created) throws Exception {
         if (depotEntry.getId().equals(containerEntryId)) {
             loadContainerData(depotEntry)
         } else {

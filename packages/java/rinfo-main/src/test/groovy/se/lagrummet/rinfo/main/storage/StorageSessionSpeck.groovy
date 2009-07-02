@@ -18,10 +18,38 @@ import se.lagrummet.rinfo.store.depot.DepotEntryBatch
 @Speck @RunWith(Sputnik)
 class StorageSessionSpeck {
 
+    StorageSession session
+
     Repository repo
 
+    Feed sourceFeed
+    Entry sourceEntry
+    def sourceUrl = new URL("http://example.org/feed/current")
+    def entryId = new URI("http://example.org/entry/1")
+
+    List<File> tempfiles
+
     def setup() {
+        setup: "required components"
         repo = new SailRepository(new MemoryStore())
+
+        and: "create dummy atom source"
+        sourceFeed = Abdera.instance.newFeed()
+        sourceFeed.setId("tag:example.org,2009:publ")
+        sourceFeed.setUpdated(new Date())
+        def entryUpdated = new Date()
+        sourceEntry = Abdera.instance.newEntry()
+        sourceEntry.setId(entryId.toString())
+        sourceEntry.setUpdated(entryUpdated)
+        sourceEntry.setPublished(entryUpdated)
+
+        and:
+        tempfiles = []
+    }
+
+    def cleanup() {
+        session.close()
+        tempfiles.each { it.delete() }
     }
 
     def makeStorageSession(depot, handlers) {
@@ -32,52 +60,97 @@ class StorageSessionSpeck {
         return storage.newStorageSession()
     }
 
+    def "entry does not exist"() {
+        when:
+        session = makeStorageSession(Mock(Depot), [])
+        then:
+        session.hasCollected(sourceEntry) == false
+    }
+
     def "an entry is created"() {
-        setup: "create mock depot and handler, create session"
+        setup:
         Depot depot = Mock()
         StorageHandler handler = Mock()
-        StorageSession session = makeStorageSession(depot, [handler])
+        session = makeStorageSession(depot, [handler])
 
-        and: "create dummy atom source"
-        def sourceUrl = new URL("http://example.org/feed/current")
-        Feed sourceFeed = Abdera.instance.newFeed()
-        sourceFeed.id = new IRI("tag:example.org,2009:publ")
-        sourceFeed.updated = new Date()
-        def entryId = new URI("http://example.org/entry/1")
-        def entryUpdated = new Date()
-        Entry sourceEntry = Abdera.instance.newEntry()
-        sourceEntry.id = new IRI(entryId)
-        sourceEntry.updated = entryUpdated
-
-        and: "mock created depotEntry"
+        and: "mock depot creation and subsequent retrieval"
         DepotEntry depotEntry = Mock()
         depotEntry.getId() >> entryId
-        File metaFile = File.createTempFile("rinfomain", "metafile")
-        depotEntry.getMetaFile(_) >> metaFile
-        1 * depot.getEntry(entryId) >> null
-        1 * depot.createEntry(entryId, _, _, _, _) >> depotEntry
+        depotEntry.getMetaFile(_) >> tempFile("metafile")
+        def entries = [:]
+        2 * depot.getEntry(entryId) >> { entries[entryId] }
+        1 * depot.createEntry(entryId, _, _, _, _) >> {
+            entries[entryId] = depotEntry
+        }
 
-        when: "an entry is written"
+        when: "a new entry is written"
         session.beginPage(sourceUrl, sourceFeed)
         session.storeEntry(sourceFeed, sourceEntry, [], [])
         session.endPage()
 
-        then: "handlers are invoked"
+        then:
         1 * handler.onCreate(session, depotEntry)
 
         and: "the write is logged"
         session.hasCollected(sourceEntry) == true
-        // TODO: should log in .. feed?
-
-        cleanup:
-        session.close()
-        metaFile.delete()
+        // TODO: log in .. eventRegistry?
     }
 
     def "an entry is updated"() {
+        setup:
+        Depot depot = Mock()
+        StorageHandler handler = Mock()
+        session = makeStorageSession(depot, [handler])
+
+        and: "mock depot retrieval and update"
+        DepotEntry depotEntry = Mock()
+        depotEntry.getId() >> entryId
+        depotEntry.getMetaFile(_) >> tempFile("metafile")
+        1 * depot.getEntry(entryId) >> depotEntry
+        1 * depotEntry.update(_, _, _)
+
+        and: "create existing meta-info for entry"
+        session.saveSourceMetaInfo(sourceFeed, sourceEntry, depotEntry)
+
+        and: "create updated source"
+        Entry updSourceEntry = sourceEntry.clone()
+        updSourceEntry.setUpdated(new Date(sourceEntry.updated.time + 1))
+
+        when: "an existing entry is written"
+        session.beginPage(sourceUrl, sourceFeed)
+        session.storeEntry(sourceFeed, updSourceEntry, [], [])
+        session.endPage()
+
+        then:
+        1 * handler.onUpdate(session, depotEntry)
+
+        and: "the write is logged"
+        // TODO: log in .. eventRegistry?
     }
 
     def "an entry is deleted"() {
+        setup:
+        Depot depot = Mock()
+        StorageHandler handler = Mock()
+        session = makeStorageSession(depot, [handler])
+
+        and: "mock depot retrieval and deletion"
+        DepotEntry depotEntry = Mock()
+        depotEntry.getId() >> entryId
+        1 * depot.getEntry(entryId) >> depotEntry
+        def deletedDate = new Date()
+        1 * depotEntry.delete(deletedDate)
+
+        when: "an existing entry is written"
+        session.beginPage(sourceUrl, sourceFeed)
+        session.deleteEntry(sourceFeed, sourceEntry.id.toURI(), deletedDate)
+        session.endPage()
+
+        then:
+        1 * handler.onDelete(session, depotEntry)
+
+        and: "the delete is logged"
+        // TODO: log in .. eventRegistry?
     }
 
     def "a malformed entry is written"() {
@@ -89,6 +162,12 @@ class StorageSessionSpeck {
     def "sessions are logged"() {
         def feed = null
         //session.logCollect(feed)
+    }
+
+    private tempFile(suffix) {
+        def f = File.createTempFile("rinfomain", suffix)
+        tempfiles << f
+        return f
     }
 
 }

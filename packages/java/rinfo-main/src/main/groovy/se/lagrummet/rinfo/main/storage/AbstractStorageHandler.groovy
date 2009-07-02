@@ -10,15 +10,15 @@ abstract class AbstractStorageHandler implements StorageHandler {
 
     void onCreate(StorageSession storageSession, DepotEntry depotEntry)
             throws Exception {
-        onEntry(storageSession, depotEntry);
+        onEntry(storageSession, depotEntry, true);
     }
 
     void onUpdate(StorageSession storageSession, DepotEntry depotEntry)
             throws Exception {
-        onEntry(storageSession, depotEntry);
+        onEntry(storageSession, depotEntry, false);
     }
 
-    abstract void onEntry(StorageSession storageSession, DepotEntry depotEntry)
-            throws Exception;
+    abstract void onEntry(StorageSession storageSession, DepotEntry depotEntry,
+            boolean created) throws Exception;
 
 }

@@ -50,10 +50,14 @@ class StorageSession {
         collectedBatch = null
     }
 
-    boolean hasCollected(Entry entry) {
-        // FIXME: remove registry(?) and always use:
-        //return (depotEntry != null && sourceIsNotAnUpdate(sourceEntry, depotEntry))
-        return registry.hasCollected(entry)
+    boolean hasCollected(Entry sourceEntry) {
+        // TODO:? remove registry(?) or reuse eventRegistry with:
+        //return registry.hasCollected(sourceEntry)
+        return hasCollected(sourceEntry, depot.getEntry(sourceEntry.getId().toURI()))
+    }
+
+    boolean hasCollected(Entry sourceEntry, DepotEntry depotEntry) {
+        return (depotEntry != null && sourceIsNotAnUpdate(sourceEntry, depotEntry))
     }
 
     void close() {
@@ -64,29 +68,26 @@ class StorageSession {
             List<SourceContent> contents, List<SourceContent> enclosures) {
 
         URI entryId = sourceEntry.getId().toURI()
-        if (hasCollected(sourceEntry)) {
-            if (logger.isDebugEnabled())
-                logger.debug("skipping collected entry <${entryId}> [${entry.updated}]")
-            return
-        }
         logger.info("Collecting entry <${entryId}>..")
         DepotEntry depotEntry = depot.getEntry(entryId)
-        Date timestamp = new Date()
 
+        // TODO: Not needed? storeEntry should not be called if hasCollected is false
+        // (via stopOnEntry)?
+        if (hasCollected(sourceEntry, depotEntry)) {
+            logger.info("Encountered collected entry with id=<" +
+                    sourceEntry.getId()+">, updated=[" +
+                    sourceEntry.getUpdated()+"]. Skipping.")
+            return
+        }
+
+        boolean createEntry = (depotEntry == null)
+        Date timestamp = new Date()
         try {
-            boolean entryIsNew = true
-            if (depotEntry == null) {
+            if (createEntry) {
                 logger.info("New entry <${entryId}>.")
                 depotEntry = depot.createEntry(
                         entryId, timestamp, contents, enclosures, false)
             } else {
-                entryIsNew = false
-                if (sourceIsNotAnUpdate(sourceEntry, depotEntry)) {
-                    logger.info("Encountered collected entry <" +
-                            sourceEntry.getId()+"> at [" +
-                            sourceEntry.getUpdated()+"].")
-                    return
-                }
                 // NOTE: If source has been collected but appears as newly published:
                 if (!(sourceEntry.getUpdated() > sourceEntry.getPublished())) {
                     logger.error("Collected entry <"+sourceEntry.getId() +
@@ -102,7 +103,7 @@ class StorageSession {
             saveSourceMetaInfo(sourceFeed, sourceEntry, depotEntry)
 
             for (StorageHandler handler : storageHandlers) {
-                if (entryIsNew)
+                if (createEntry)
                     handler.onCreate(this, depotEntry)
                 else
                     handler.onUpdate(this, depotEntry)
@@ -126,25 +127,27 @@ class StorageSession {
 
                Index the ok ones, *rollback* last depotEntry and *report error*!
             */
-            logger.error("Error storing entry!", e)
+            logger.error("Error storing entry:", e)
             depotEntry.rollback()
+            registry.logError(e, timestamp, sourceFeed, sourceEntry)
             return
         }
     }
 
-    void deleteEntry(Feed sourceFeed, URI sourceEntryId, Date deletedDate) {
-        // FIXME: saveSourceMetaInfo (which may be present)
-        def entryId = registry.getDepotIdBySourceId(sourceEntryId)
-        // TODO: this being null means we have lost collector metadata!
+    void deleteEntry(Feed sourceFeed, URI entryId, Date deletedDate) {
         DepotEntry depotEntry = depot.getEntry(entryId)
+        if (depot == null) {
+            // TODO: means we have lost collector metadata?
+        }
         logger.info("Deleting entry <${entryId}>.")
+        // TODO:? saveDeletionMetaInfo? (smart deletion detect; e.g. feed + tombstone)
+        // .. or is tombstone in feed enough (for e.g. event index)?
         depotEntry.delete(deletedDate)
         for (StorageHandler handler : storageHandlers) {
             handler.onDelete(this, depotEntry)
         }
-        registry.logUpdatedEntry(sourceFeed, sourceEntryId, deletedDate, depotEntry)
+        registry.logDeletedEntry(sourceFeed, entryId, deletedDate, depotEntry)
         collectedBatch.add(depotEntry)
-        //TODO:..registry.logDeletedEntry
     }
 
     protected static boolean sourceIsNotAnUpdate(Entry sourceEntry,

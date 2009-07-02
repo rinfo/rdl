@@ -77,17 +77,20 @@ class FeedCollectorRegistry {
         //conn.add(sourceUri, FROM_FEED, vf.createURI(sourceFeed.getId().toString()))
     }
 
-    /* TODO: as logUpdatedEntry but add deleted marker? At all?
-    void logDeletedEntry(Feed sourceFeed, URI sourceEntryId,
+    void logDeletedEntry(Feed sourceFeed,
+            java.net.URI sourceEntryId,
             Date sourceEntryDeleted,
             DepotEntry depotEntry) {
-        def sourceUri = vf.createURI(sourceEntryId.toString())
-        conn.add(sourceUri, STORED_AS, depotEntry.getId())
-        conn.add(sourceUri, DELETED, RDFUtil.createDateTime(vf,
-                sourceEntryDeleted))
+        logUpdatedEntry(sourceFeed, sourceEntryId, sourceEntryDeleted, depotEntry)
+        // TODO: as logUpdatedEntry but add deleted marker? At all?
+        //conn.add(sourceUri, DELETED, RDFUtil.createDateTime(vf, sourceEntryDeleted))
         // TODO: see FROM_FEED in logUpdatedEntry
     }
-    */
+
+    void logError(Exception error, Date timestamp,
+            Feed sourceFeed, Entry sourceEntry) {
+        // TODO: spec and implement..
+    }
 
     boolean hasCollected(Entry sourceEntry) {
         def sourceUri = vf.createURI(sourceEntry.getId().toString())
@@ -97,11 +100,14 @@ class FeedCollectorRegistry {
         return stmt != null
     }
 
+    /* FIXME: not necessary now when sources use official URI for entry-id:s,
+     * remove entire STORED_AS usage.
     java.net.URI getDepotIdBySourceId(java.net.URI sourceEntryId) {
         def sourceUri = vf.createURI(sourceEntryId.toString())
         def stmt = RDFUtil.one(conn, sourceUri, STORED_AS, null)
         if (stmt == null) return null
         return new java.net.URI(stmt.getObject().toString())
     }
+    */
 
 }

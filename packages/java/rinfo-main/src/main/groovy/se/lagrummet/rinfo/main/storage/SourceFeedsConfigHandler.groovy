@@ -30,12 +30,12 @@ class SourceFeedsConfigHandler extends AbstractStorageHandler {
         DepotEntry depotEntry = storageSession.getDepot().getEntry(
                 configurationEntryId)
         if (depotEntry != null) {
-            onEntry(storageSession, depotEntry)
+            onEntry(storageSession, depotEntry, false)
         }
     }
 
-    void onEntry(StorageSession storageSession, DepotEntry depotEntry)
-            throws Exception {
+    void onEntry(StorageSession storageSession, DepotEntry depotEntry,
+            boolean created) throws Exception {
         if (!isConfigurationEntry(depotEntry)) {
             return
         }
