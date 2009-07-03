@@ -32,13 +32,13 @@ class FileDepotReadTest {
         def i = 0
         then:
         contents.each {
-            "application/pdf" == it.mediaType
+            assert it.mediaType == "application/pdf"
             if (it.lang == "en") {
                 i++
-               it.depotUriPath == "/publ/1901/100/pdf,en"
+               assert it.depotUriPath == "/publ/1901/100/pdf,en"
             } else if (it.lang == "sv") {
                 i++
-                it.depotUriPath == "/publ/1901/100/pdf,sv"
+                assert it.depotUriPath == "/publ/1901/100/pdf,sv"
             }
         }
         i == 2
@@ -143,10 +143,6 @@ class FileDepotReadTest {
     def "should find rdf in top entry"() {
         when:
         def entry = depot.getEntry("/dataset")
-        then:
-        entry != null
-
-        when:
         def contents = entry.findContents("application/rdf+xml", null)
         then:
         contents.size() == 1
