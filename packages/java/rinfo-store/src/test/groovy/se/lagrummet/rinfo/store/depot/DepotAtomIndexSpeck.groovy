@@ -8,15 +8,12 @@ import org.apache.abdera.ext.history.FeedPagingHelper as FPH
 @Speck @RunWith(Sputnik)
 class DepotAtomIndexSpeck extends FileDepotTempBase {
 
-    @Shared depot
-
     def setupSpeck() {
-        setupClass()
-        depot = fileDepot
+        createTempDepot()
         depot.atomizer.feedBatchSize = 2
     }
 
-    def cleanupSpeck() { tearDownClass() }
+    def cleanupSpeck() { deleteTempDepot() }
 
     def "a pre-filled depot is indexed"() {
 

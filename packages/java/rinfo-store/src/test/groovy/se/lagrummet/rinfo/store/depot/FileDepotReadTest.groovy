@@ -1,123 +1,158 @@
 package se.lagrummet.rinfo.store.depot
 
 
-class FileDepotReadTest extends GroovyTestCase {
+import org.junit.runner.RunWith
+import spock.lang.*
 
-    FileDepot fileDepot
 
-    void setUp() {
-        fileDepot = FileDepot.newConfigured(
+@Speck @RunWith(Sputnik)
+class FileDepotReadTest {
+
+    Depot depot
+
+    def setup() {
+        depot = DepotUtil.depotFromConfig(
                 "src/test/resources/rinfo-depot.properties")
     }
 
 
-    void testShouldContainEntry() {
-        def entry = fileDepot.getEntry("/publ/1901/100")
-        assertNotNull entry
-        assertEquals entry.id, new URI("http://example.org/publ/1901/100")
-        assertEquals entry.published, entry.updated
+    def "should contain entry"() {
+        when:
+        def entry = depot.getEntry("/publ/1901/100")
+        then:
+        entry != null
+        entry.id == new URI("http://example.org/publ/1901/100")
+        entry.updated == entry.published
     }
 
-    void testShouldFindEntryContent() {
-        def entry = fileDepot.getEntry("/publ/1901/100")
+    def "should find entry content"() {
+        when:
+        def entry = depot.getEntry("/publ/1901/100")
         def contents = entry.findContents("application/pdf")
         def i = 0
+        then:
         contents.each {
-            assertEquals it.mediaType, "application/pdf"
+            "application/pdf" == it.mediaType
             if (it.lang == "en") {
                 i++
-                assertEquals "/publ/1901/100/pdf,en", it.depotUriPath
+               it.depotUriPath == "/publ/1901/100/pdf,en"
             } else if (it.lang == "sv") {
                 i++
-                assertEquals "/publ/1901/100/pdf,sv", it.depotUriPath
+                it.depotUriPath == "/publ/1901/100/pdf,sv"
             }
         }
-        assertEquals 2, i
+        i == 2
+
+        when:
         contents = entry.findContents("application/rdf+xml")
-        def c = contents[0]
-        assertEquals 1, contents.size()
-        assertEquals "application/rdf+xml", c.mediaType
-        assertEquals "/publ/1901/100/rdf", c.depotUriPath
-        assertNull c.lang
+        def content = contents[0]
+        then:
+        contents.size() == 1
+        content.mediaType == "application/rdf+xml"
+        content.depotUriPath == "/publ/1901/100/rdf"
+        content.lang == null
     }
 
-    void testShouldFindEnclosure() {
-        def enclosures = fileDepot.getEntry("/publ/1901/100").findEnclosures()
-        assertEquals 1, enclosures.size()
+    def "should find enclosure"() {
+        when:
+        def enclosures = depot.getEntry("/publ/1901/100").findEnclosures()
+        then:
+        enclosures.size() == 1
+        when:
         def encl = enclosures[0]
-        assertEquals "/publ/1901/100/icon.png", encl.depotUriPath
-        assertEquals "image/png", encl.mediaType
+        then:
+        encl.depotUriPath == "/publ/1901/100/icon.png"
+        encl.mediaType == "image/png"
     }
 
-    void testShouldFindNestedEnclosure() {
+    def "should find nested enclosure"() {
+        when:
         def entryPath = "/publ/1901/100/revisions/1902/200"
-        def enclosures = fileDepot.getEntry(entryPath).findEnclosures()
+        def enclosures = depot.getEntry(entryPath).findEnclosures()
         def encl = enclosures[0]
-        assertEquals "${entryPath}/styles/screen.css", encl.depotUriPath
+        then:
+        encl.depotUriPath == "${entryPath}/styles/screen.css"
         // TODO: needs to configure FileDepot computeMediaType
         //assertEquals "text/css", encl.mediaType
     }
 
-    void testShouldNotGetDeleted() {
-        def deletedId = "/publ/1901/0"
-        shouldFail(DeletedDepotEntryException) {
-            def entry = fileDepot.getEntry(deletedId)
-        }
+    def "should not get deleted"() {
+        when:
+        def entry = depot.getEntry("/publ/1901/0")
+        then:
+        thrown(DeletedDepotEntryException)
     }
 
-    void testShouldFindAllEntryContentAsList() {
-        def results = fileDepot.find("/publ/1901/100")
-        assertEquals 3, results.size()
+    def "should find all entry content as list"() {
+        when:
+        def results = depot.find("/publ/1901/100")
+        then:
+        results.size() == 3
     }
 
-    void testShouldFindDirectContent() {
-        def results = fileDepot.find("/publ/1901/100/icon.png")
-        assertEquals 1, results.size()
+    def "should find direct content"() {
+        when:
+        def results = depot.find("/publ/1901/100/icon.png")
+        then:
+        results.size() == 1
     }
 
     // TODO: getHistoricalEntries..
 
-    void testShouldIterateEntries() {
+    def "should iterate entries"() {
+        when:
+        def entries = depot.iterateEntries().toList()
+        then:
+        entries.size() == 5
 
-        def entries = fileDepot.iterateEntries().toList()
-        assertEquals 5, entries.size()
+        when: "include deleted"
+        entries = depot.iterateEntries(false, true)
+        then:
+        entries.size() == 6
 
-         // include deleted
-         entries = fileDepot.iterateEntries(false, true)
-        assertEquals 6, entries.size()
-
-        // TODO: historical: fileDepot.iterateEntries(true, false)
+        // TODO: historical: depot.iterateEntries(true, false)
     }
 
 
     // negative tests
 
-    void testShouldDisallowUrisNotWithinBaseUri() {
-        shouldFail(DepotUriException) {
-            def entry = fileDepot.getEntry(
-                    new URI("http://example.com/some/path"))
-        }
+    def "should disallow uris not within base uri"() {
+        when:
+        def entry = depot.getEntry(
+                new URI("http://example.com/some/path"))
+        then:
+        thrown(DepotUriException)
     }
 
-    void testShouldDisallowNonAbsoluteOrFullUriPaths() {
-        shouldFail(DepotUriException) {
-            def entry = fileDepot.getEntry("http://example.com/some/path")
-        }
-        shouldFail(DepotUriException) {
-            def entry = fileDepot.getEntry("http://example.org/some/path")
-        }
+    @Unroll("should fail on <#path>")
+    def "should disallow non absolute or full uri paths"() {
+        when:
+        def entry = depot.getEntry(path)
+        then:
+        thrown(DepotUriException)
+        where:
+        path << [
+            "http://example.org/some/path",
+            "../some/path",
+            "some/path"
+        ]
     }
 
     // edge cases / regressions
 
-    void testShouldFindRdfInTopEntry() {
-        def entry = fileDepot.getEntry("/dataset")
-        assertNotNull entry
+    def "should find rdf in top entry"() {
+        when:
+        def entry = depot.getEntry("/dataset")
+        then:
+        entry != null
+
+        when:
         def contents = entry.findContents("application/rdf+xml", null)
-        assertEquals 1, contents.size()
-        def c = contents[0]
-        assertEquals "application/rdf+xml", c.mediaType
-        assertEquals "/dataset/rdf", c.depotUriPath
+        then:
+        contents.size() == 1
+        def content = contents[0]
+        content.mediaType == "application/rdf+xml"
+        content.depotUriPath == "/dataset/rdf"
     }
 
 }

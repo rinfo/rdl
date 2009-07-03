@@ -1,6 +1,8 @@
 package se.lagrummet.rinfo.store.depot
 
 import org.junit.Test
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import static org.junit.Assert.*
 
 
@@ -18,12 +20,16 @@ class FileDepotWriteTest extends FileDepotTempBase {
     static final FAILED_ID_2 = new URI("http://example.org/publ/CHECK/failed_2")
 
 
+    @BeforeClass static void setupClass() { createTempDepot() }
+    @AfterClass static void tearDownClass() { deleteTempDepot() }
+
+
     @Test
     void shouldCreateEntry() {
-        assertNull fileDepot.getEntry(NEW_ID_1)
+        assertNull depot.getEntry(NEW_ID_1)
 
         def createTime = new Date()
-        fileDepot.createEntry(NEW_ID_1, createTime,
+        depot.createEntry(NEW_ID_1, createTime,
                 [
                     new SourceContent(exampleEntryFile("content-en.pdf"),
                             "application/pdf", "en"),
@@ -32,7 +38,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
                 ],
             )
 
-        def entry = fileDepot.getEntry(NEW_ID_1)
+        def entry = depot.getEntry(NEW_ID_1)
         assertFalse entry.isLocked()
 
         assertEquals entry.id, NEW_ID_1
@@ -47,8 +53,8 @@ class FileDepotWriteTest extends FileDepotTempBase {
 
     @Test
     void shouldCreateEntryWithEnclosures() {
-        assertNull fileDepot.getEntry(NEW_ID_2)
-        fileDepot.createEntry(NEW_ID_2, new Date(),
+        assertNull depot.getEntry(NEW_ID_2)
+        depot.createEntry(NEW_ID_2, new Date(),
                 [],
                 [
                     // full path
@@ -67,7 +73,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
                             "images/icon.png"),
                 ]
             )
-        def entry = fileDepot.getEntry(NEW_ID_2)
+        def entry = depot.getEntry(NEW_ID_2)
         def enclosures = entry.findEnclosures()
         assertEquals 3, enclosures.size()
 
@@ -84,9 +90,9 @@ class FileDepotWriteTest extends FileDepotTempBase {
 
     @Test
     void shouldCreateLockedEntry() {
-        assertNull fileDepot.getEntry(NEW_ID_3)
+        assertNull depot.getEntry(NEW_ID_3)
         def createTime = new Date()
-        def entry = fileDepot.createEntry(NEW_ID_3, createTime,
+        def entry = depot.createEntry(NEW_ID_3, createTime,
                 [ new SourceContent(exampleEntryFile("content.rdf"),
                             "application/rdf+xml") ],
                 false
@@ -94,7 +100,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
         assertTrue entry.isLocked()
         entry.unlock()
         assertFalse entry.isLocked()
-        entry = fileDepot.getEntry(NEW_ID_3)
+        entry = depot.getEntry(NEW_ID_3)
         assertNotNull entry
         assertFalse entry.isLocked()
     }
@@ -104,7 +110,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
     void shouldFailOnEnclosureOutOfPath() {
         def BAD_ENCL_1 = new URI("http://example.org/publ/ERROR/encl_1")
         def invalidEnclPath = "/publ/OTHER/path/icon.png"
-        fileDepot.createEntry(BAD_ENCL_1, new Date(),
+        depot.createEntry(BAD_ENCL_1, new Date(),
                 [],
                 [ new SourceContent(exampleFile("icon.png"),
                             null, null, invalidEnclPath), ]
@@ -114,14 +120,14 @@ class FileDepotWriteTest extends FileDepotTempBase {
 
     @Test
     void shouldUpdateEntry() {
-        assertNull fileDepot.getEntry(UPD_ID_1)
+        assertNull depot.getEntry(UPD_ID_1)
 
         def createTime = new Date()
-        fileDepot.createEntry(UPD_ID_1, createTime, [
+        depot.createEntry(UPD_ID_1, createTime, [
                 new SourceContent(exampleEntryFile("content-en.pdf"),
                         "application/pdf", "en"),
             ])
-        def entry = fileDepot.getEntry(UPD_ID_1)
+        def entry = depot.getEntry(UPD_ID_1)
         assertNotNull entry
         assertEquals 1, entry.findContents("application/pdf").size()
         assertEquals entry.published, entry.updated
@@ -147,13 +153,13 @@ class FileDepotWriteTest extends FileDepotTempBase {
 
     @Test
     void shouldUpdateEntryWithLessContents() {
-        fileDepot.createEntry(UPD_ID_2, new Date(), [
+        depot.createEntry(UPD_ID_2, new Date(), [
                 new SourceContent(exampleEntryFile("content-en.pdf"),
                         "application/pdf", "en"),
                 new SourceContent(exampleEntryFile("content-sv.pdf"),
                             "application/pdf", "sv")
             ])
-        def entry = fileDepot.getEntry(UPD_ID_2)
+        def entry = depot.getEntry(UPD_ID_2)
         entry.update(new Date(), [
                 new SourceContent(exampleEntryFile("content-sv.pdf"),
                             "application/pdf", "sv"),
@@ -167,7 +173,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
 
     @Test
     void shouldMoveEnclosuresWhenUpdatingEntry() {
-        def entry = fileDepot.createEntry(UPD_ID_3, new Date(),
+        def entry = depot.createEntry(UPD_ID_3, new Date(),
                 [new SourceContent(exampleEntryFile("content-en.pdf"),
                             "application/pdf", "en")],
                 [
@@ -190,18 +196,18 @@ class FileDepotWriteTest extends FileDepotTempBase {
 
     @Test
     void shouldDeleteEntry() {
-        assertNull fileDepot.getEntry(DEL_ID_1)
+        assertNull depot.getEntry(DEL_ID_1)
         def createTime = new Date()
-        fileDepot.createEntry(DEL_ID_1, createTime, [
+        depot.createEntry(DEL_ID_1, createTime, [
                 new SourceContent(exampleEntryFile("content-en.pdf"),
                         "application/pdf", "en"),
             ])
 
         def deleteTime = new Date()
-        def entry = fileDepot.getEntry(DEL_ID_1)
+        def entry = depot.getEntry(DEL_ID_1)
         entry.delete(deleteTime)
 
-        entry = fileDepot.getUncheckedDepotEntry(DEL_ID_1.path)
+        entry = depot.getUncheckedDepotEntry(DEL_ID_1.path)
         assertFalse entry.isLocked()
         assertEquals 0, entry.findContents("application/pdf").size()
         assertEquals entry.updated, deleteTime
@@ -215,7 +221,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
         srcContent.datachecks[SourceContent.Check.LENGTH] = new Long(24014)
         srcContent.datachecks[SourceContent.Check.MD5] =
                 "eff60b86aaaac3a1fde5affc07a27006"
-        fileDepot.createEntry(CHECKED_ID_1, new Date(), [srcContent])
+        depot.createEntry(CHECKED_ID_1, new Date(), [srcContent])
     }
 
 
@@ -224,7 +230,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
         def srcContent = new SourceContent(
                 exampleEntryFile("content-en.pdf"), "application/pdf", "en")
         srcContent.datachecks[SourceContent.Check.MD5] = "BAD_CHECKSUM"
-        fileDepot.createEntry(FAILED_ID_1, new Date(), [srcContent])
+        depot.createEntry(FAILED_ID_1, new Date(), [srcContent])
     }
 
 
@@ -233,7 +239,7 @@ class FileDepotWriteTest extends FileDepotTempBase {
         def srcContent = new SourceContent(
                 exampleEntryFile("content-en.pdf"), "application/pdf", "en")
         srcContent.datachecks[SourceContent.Check.LENGTH] = new Long(0)
-        fileDepot.createEntry(FAILED_ID_2, new Date(), [srcContent])
+        depot.createEntry(FAILED_ID_2, new Date(), [srcContent])
     }
 
 

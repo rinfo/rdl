@@ -1,26 +1,22 @@
 package se.lagrummet.rinfo.store.depot
 
-import org.junit.AfterClass
-import org.junit.BeforeClass
-
 
 class FileDepotTempBase {
 
-    static FileDepot fileDepot
+    static FileDepot depot
     static File tempDepotDir
     static File depotSrc
 
-    @BeforeClass
-    static void setupClass() {
+    static void createTempDepot() {
         depotSrc = new File("src/test/resources/exampledepot/storage")
         tempDepotDir = TempDirUtil.createTempDir(depotSrc)
-        fileDepot = new FileDepot(new URI("http://example.org"),
+        depot = new FileDepot(new URI("http://example.org"),
                 new File(tempDepotDir, depotSrc.name), "/feed")
     }
 
-    @AfterClass
-    static void tearDownClass() {
+    static void deleteTempDepot() {
         TempDirUtil.removeTempDir(tempDepotDir)
+        depot = null
     }
 
     static exampleEntryFile(path) {

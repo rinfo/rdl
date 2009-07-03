@@ -1,76 +1,96 @@
 package se.lagrummet.rinfo.store.depot
 
-import org.junit.Test
-import org.junit.AfterClass
-import org.junit.BeforeClass
-import static org.junit.Assert.*
+
+import org.junit.runner.RunWith
+import spock.lang.*
+
+import static se.lagrummet.rinfo.store.depot.FileDepotTempBase.exampleFile
+import static se.lagrummet.rinfo.store.depot.FileDepotTempBase.exampleEntryFile
 
 
-class FileDepotTransactionTest extends FileDepotTempBase {
+@Speck @RunWith(Sputnik)
+class FileDepotTransactionTest {
 
-    static final EX_ID_1 = "/publ/1901/100"
-    static final BROKEN_ID_1 = new URI("http://example.org/publ/NEW/broken_1")
-    static final NEW_ID_1 = new URI("http://example.org/publ/NEW/rollback_1")
-    static final UPD_ID_1 = new URI("http://example.org/publ/UPD/rollback_1")
+    @Shared Depot depot
 
+    def setupSpeck() {
+        FileDepotTempBase.createTempDepot()
+        depot = FileDepotTempBase.depot
+    }
 
-    @Test
-    void shouldLockEntry() {
-        def entry = fileDepot.getEntry(EX_ID_1)
+    def cleanupSpeck() { FileDepotTempBase.deleteTempDepot() }
+
+    def "should lock entry"() {
+        setup:
+        def id = "/publ/1901/100"
+        def entry = depot.getEntry(id)
+        when:
         entry.lock()
-        assertTrue entry.isLocked()
-        try {
-            fileDepot.getEntry(EX_ID_1)
-            fail("Expected entry to be locked!")
-        } catch (LockedDepotEntryException e) {
-        }
+
+        then:
+        assert entry.isLocked()
+
+        when:
+        depot.getEntry(id)
+        then:
+        thrown(LockedDepotEntryException)
+
+        when:
         entry.unlock()
-        assertFalse entry.isLocked()
-        entry = fileDepot.getEntry(EX_ID_1)
-        assertFalse entry.isLocked()
+        then:
+        !entry.isLocked()
+        entry = depot.getEntry(id)
+        !entry.isLocked()
+    }
+
+    def "should leave locked on bad content"() {
+        setup:
+        def id = new URI("http://example.org/publ/NEW/broken_1")
+
+        when:
+        depot.createEntry(id, new Date(),
+                [ new SourceContent(((InputStream)null), null, null) ])
+        then:
+        thrown(NullPointerException)
+
+        when:
+        depot.getEntry(id)
+
+        then:
+        thrown(LockedDepotEntryException)
+
+        when:
+        def brokenEntry = depot.getUncheckedDepotEntry(id.path)
+        then:
+        assert brokenEntry.isLocked()
     }
 
 
-    @Test
-    void shouldLeaveLockedOnBadContent() {
-        try {
-            fileDepot.createEntry(BROKEN_ID_1, new Date(),
-                    [ new SourceContent(((InputStream)null), null, null) ]
-                )
-            fail("Should fail with nullpointer.")
-        } catch (NullPointerException e) {
-        }
-        try {
-            fileDepot.getEntry(BROKEN_ID_1)
-            fail("Should fail on locked.")
-        } catch (LockedDepotEntryException e) {
-        }
-        def brokenEntry = fileDepot.getUncheckedDepotEntry(
-                BROKEN_ID_1.getPath())
-        assertTrue brokenEntry.isLocked()
-    }
+    def "should wipe on rollback new"() {
+        setup:
+        def id = new URI("http://example.org/publ/NEW/rollback_1")
 
+        when:
+        def entry = depot.createEntry(id, new Date(),
+                [ new SourceContent(exampleEntryFile("content-en.pdf"), "application/pdf", "en"),
+                  new SourceContent(exampleEntryFile("content.rdf"), "application/rdf+xml") ])
+        then:
+        depot.getEntry(id) != null
 
-    @Test
-    void shouldWipeOnRollbackNew() {
-        def entry = fileDepot.createEntry(NEW_ID_1, new Date(),
-                [
-                    new SourceContent(exampleEntryFile("content-en.pdf"),
-                            "application/pdf", "en"),
-                    new SourceContent(exampleEntryFile("content.rdf"),
-                            "application/rdf+xml")
-                ],
-            )
-        assertNotNull fileDepot.getEntry(NEW_ID_1)
+        when:
         entry.rollback()
-        assertNull fileDepot.getEntry(NEW_ID_1)
+        then:
+        depot.getEntry(id) == null
         // TODO: IllegalStateException on any futher entry ops..
     }
 
 
-    @Test
-    void shouldUnupdateOnRollbackUpdated() {
-        def entry = fileDepot.createEntry(UPD_ID_1, new Date(), [
+    def "should unupdate on rollback updated"() {
+        setup:
+        def id = new URI("http://example.org/publ/UPD/rollback_1")
+        def createTime = new Date()
+        when:
+        def entry = depot.createEntry(id, createTime, [
                     new SourceContent(exampleEntryFile("content-en.pdf"),
                             "application/pdf", "en")
                 ], [
@@ -78,33 +98,34 @@ class FileDepotTransactionTest extends FileDepotTempBase {
                             null, null, "images/icon.png"),
                 ]
             )
-        assertFalse entry.hasHistory()
+        then:
+        !entry.hasHistory()
 
-        Thread.sleep(1000)
+        when:
+        Thread.sleep(1000) // wait 1 sec to get file lastModified stamps correct..
         def updateTime = new Date()
-        entry = fileDepot.getEntry(UPD_ID_1)
-        entry.update(updateTime, [
-                    new SourceContent(exampleEntryFile("content-en.pdf"),
-                                "application/pdf", "en"),
-                    new SourceContent(exampleEntryFile("content.rdf"),
-                            "application/rdf+xml")
-                ], [
-                    new SourceContent(exampleFile("icon.png"),
-                            null, null, "icon.png"),
-                    new SourceContent(exampleFile("icon.png"),
-                            null, null, "images/icon.png"),
-                ]
+        entry = depot.getEntry(id)
+        entry.update(updateTime,
+                [ new SourceContent(exampleEntryFile("content-en.pdf"), "application/pdf", "en"),
+                  new SourceContent(exampleEntryFile("content.rdf"), "application/rdf+xml") ],
+                [ new SourceContent(exampleFile("icon.png"), null, null, "icon.png"),
+                  new SourceContent(exampleFile("icon.png"), null, null, "images/icon.png") ]
             )
-        assertTrue entry.hasHistory()
-        assertEquals updateTime, entry.updated
-        assertEquals 3, entry.findContents().size()
-        assertEquals 2, entry.findEnclosures().size()
+        then:
+        assert entry.hasHistory()
+        entry.updated == updateTime
+        entry.findContents().size() == 3
+        entry.findEnclosures().size() == 2
+
+        when:
         def storedModified = entry.lastModified()
         entry.getMetaFile("TEST_META_FILE").setText("TEST")
-        assertTrue entry.getMetaFile("TEST_META_FILE").exists()
+        then:
+        assert entry.getMetaFile("TEST_META_FILE").exists()
 
+        when:
         Thread.sleep(1000)
-        entry = fileDepot.getEntry(UPD_ID_1)
+        entry = depot.getEntry(id)
         entry.update(new Date(), [
                     new SourceContent(exampleEntryFile("content-en.pdf"),
                             "application/pdf", "en")
@@ -113,22 +134,24 @@ class FileDepotTransactionTest extends FileDepotTempBase {
                             null, null, "images/icon.png"),
                 ]
             )
-        assertEquals 2, entry.findContents().size()
-        assertEquals 1, entry.findEnclosures().size()
-        assertTrue updateTime < entry.updated
-        assertTrue storedModified < entry.lastModified()
-        assertFalse entry.getMetaFile("TEST_META_FILE").exists()
+        then:
+        entry.findContents().size() == 2
+        entry.findEnclosures().size() == 1
+        updateTime < entry.updated
+        storedModified < entry.lastModified()
+        !entry.getMetaFile("TEST_META_FILE").exists()
+        assert entry.hasHistory()
 
+        when:
         Thread.sleep(1000)
-        assertTrue entry.hasHistory()
         entry.rollback()
-
-        entry = fileDepot.getEntry(UPD_ID_1)
-        assertEquals updateTime, entry.updated
-        assertEquals 3, entry.findContents().size()
-        assertEquals storedModified, entry.lastModified()
-        assertEquals 2, entry.findEnclosures().size()
-        assertTrue entry.getMetaFile("TEST_META_FILE").exists()
+        entry = depot.getEntry(id)
+        then:
+        entry.updated == updateTime
+        entry.findContents().size() == 3
+        entry.lastModified() == storedModified
+        entry.findEnclosures().size() == 2
+        assert entry.getMetaFile("TEST_META_FILE").exists()
         // TODO:IMPROVE: verify path of enclosures..
     }
 

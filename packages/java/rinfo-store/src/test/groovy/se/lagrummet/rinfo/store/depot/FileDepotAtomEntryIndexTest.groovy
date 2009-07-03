@@ -2,6 +2,8 @@ package se.lagrummet.rinfo.store.depot
 
 import org.junit.Test
 import org.junit.Before
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import static org.junit.Assert.*
 
 import org.apache.abdera.Abdera
@@ -10,12 +12,15 @@ import org.apache.abdera.model.AtomDate
 
 class FileDepotAtomIndexTest extends FileDepotTempBase {
 
+    @BeforeClass static void setupClass() { createTempDepot() }
+    @AfterClass static void tearDownClass() { deleteTempDepot() }
+
     @Test
     void shouldGenerateAtomEntry() {
-        def entry = fileDepot.getEntry("/publ/1901/100")
-        assertEquals 0, entry.findContents(fileDepot.pathHandler.
+        def entry = depot.getEntry("/publ/1901/100")
+        assertEquals 0, entry.findContents(depot.pathHandler.
                 hintForMediaType("application/atom+xml;type=entry")).size()
-        fileDepot.onEntryModified(entry)
+        depot.onEntryModified(entry)
         def atomContent = entry.findContents("application/atom+xml;type=entry")[0]
         assert atomContent.file.isFile()
         // TODO: specify content, alternatives, enclosures, size, md5(?)
@@ -31,7 +36,7 @@ class FileDepotAtomIndexTest extends FileDepotTempBase {
     }
 
     private getDeletedEntry() {
-        return fileDepot.getUncheckedDepotEntry("/publ/1901/0")
+        return depot.getUncheckedDepotEntry("/publ/1901/0")
     }
 
     @Test
