@@ -293,7 +293,7 @@ Modellinformation (2:a-ordningens data, "metadata")
 
     - TODO: ur "Modell - rättsinformation" fr. dec 2006:
       "För referenser till dokument i EUR-LEX skall följande format användas:":
-        <http://rinfo.lagrummet.se/external/eur-lex/31993D0619>
+        <http://rinfo.lagrummet.se/ext/eur-lex/31993D0619>
 
     - Obs! Det är *väldigt* bra om URI:er som skapas men som beskrivs i en
       "överliggande URI" leder till 303:or till denna!
