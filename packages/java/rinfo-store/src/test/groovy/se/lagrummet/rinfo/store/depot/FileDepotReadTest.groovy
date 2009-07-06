@@ -1,6 +1,5 @@
 package se.lagrummet.rinfo.store.depot
 
-
 import org.junit.runner.RunWith
 import spock.lang.*
 
@@ -25,32 +24,28 @@ class FileDepotReadTest {
         entry.updated == entry.published
     }
 
-    def "should find entry content"() {
-        when:
+    def "entry content by mediaType"() {
+        setup:
         def entry = depot.getEntry("/publ/1901/100")
-        def contents = entry.findContents("application/pdf")
-        def i = 0
-        then:
-        contents.each {
-            assert it.mediaType == "application/pdf"
-            if (it.lang == "en") {
-                i++
-               assert it.depotUriPath == "/publ/1901/100/pdf,en"
-            } else if (it.lang == "sv") {
-                i++
-                assert it.depotUriPath == "/publ/1901/100/pdf,sv"
-            }
-        }
-        i == 2
-
         when:
-        contents = entry.findContents("application/rdf+xml")
+        def contents = entry.findContents("application/rdf+xml")
         def content = contents[0]
         then:
         contents.size() == 1
         content.mediaType == "application/rdf+xml"
         content.depotUriPath == "/publ/1901/100/rdf"
         content.lang == null
+    }
+
+    def "entry content by mediaType with language"() {
+        setup:
+        def langs = ['en', 'sv']
+        expect:
+        assert langs.remove(content.lang)
+        content.mediaType == "application/pdf"
+        content.depotUriPath == "/publ/1901/100/pdf,${content.lang}"
+        where:
+        content << depot.getEntry("/publ/1901/100").findContents("application/pdf")
     }
 
     def "should find enclosure"() {

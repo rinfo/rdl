@@ -7,30 +7,34 @@ import org.apache.abdera.i18n.iri.IRI
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.Feed
 
-import org.junit.Test
-import org.junit.Before
-import static org.junit.Assert.*
+import org.junit.runner.RunWith
+import spock.lang.*
 
 
+@Speck @RunWith(Sputnik)
 class AtomizerTest {
 
     def atomizer = new Atomizer()
 
-    @Test
-    void shouldUseFeedSkeletonResource() {
-        // using file location
+    def "should use feed skeleton resource"() {
+        when: "using file location"
         String path = "src/test/resources/test_feed_skeleton.atom"
         atomizer.setFeedSkeletonPath(path)
-        assertEquals path, atomizer.feedSkeletonPath
-        assertEquals "Test Feed", atomizer.feedSkeleton.title
-        // using (class) resource location
+        then:
+        atomizer.feedSkeletonPath == path
+        atomizer.feedSkeleton.title == "Test Feed"
+
+        when: "using (class) resource location"
         atomizer.setFeedSkeletonPath("test_feed_skeleton.atom")
-        assertEquals "Test Feed", atomizer.feedSkeleton.title
-        // set Feed directly
+        then:
+        atomizer.feedSkeleton.title == "Test Feed"
+
+        when: "set Feed directly"
         def feed = Abdera.getInstance().newFeed()
         atomizer.setFeedSkeleton(feed)
-        assertNull atomizer.feedSkeletonPath
-        assertEquals feed, atomizer.feedSkeleton
+        then:
+        atomizer.feedSkeletonPath == null
+        atomizer.feedSkeleton == feed
     }
 
 }

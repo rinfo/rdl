@@ -1,24 +1,14 @@
 package se.lagrummet.rinfo.store.depot
 
-
 import org.junit.runner.RunWith
 import spock.lang.*
 
-import static se.lagrummet.rinfo.store.depot.FileDepotTempBase.exampleFile
-import static se.lagrummet.rinfo.store.depot.FileDepotTempBase.exampleEntryFile
-
 
 @Speck @RunWith(Sputnik)
-class FileDepotTransactionTest {
+class FileDepotTransactionTest extends FileDepotTempBase {
 
-    @Shared Depot depot
-
-    def setupSpeck() {
-        FileDepotTempBase.createTempDepot()
-        depot = FileDepotTempBase.depot
-    }
-
-    def cleanupSpeck() { FileDepotTempBase.deleteTempDepot() }
+    def setupSpeck() { createTempDepot() }
+    def cleanupSpeck() { deleteTempDepot() }
 
     def "should lock entry"() {
         setup:

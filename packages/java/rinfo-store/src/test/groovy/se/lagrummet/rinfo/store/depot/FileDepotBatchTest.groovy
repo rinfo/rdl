@@ -1,58 +1,62 @@
 package se.lagrummet.rinfo.store.depot
 
-import org.junit.Test
-import org.junit.AfterClass
-import org.junit.BeforeClass
-import static org.junit.Assert.*
+import org.junit.runner.RunWith
+import spock.lang.*
 
 
+@Speck @RunWith(Sputnik)
 class FileDepotBatchTest {
 
-    static FileDepot fileDepot
+    @Shared FileDepot depot
 
-    @BeforeClass
-    static void setupClass() {
-
-        fileDepot = (FileDepot) DepotUtil.depotFromConfig(
+    def setup() {
+        depot = (FileDepot) DepotUtil.depotFromConfig(
                 "src/test/resources/rinfo-depot.properties");
     }
 
-    @Test
-    void shouldAddAndRetrieve() {
-        def entryId = "/publ/1901/100"
-        def entry = fileDepot.getEntry(entryId)
-        def batch = fileDepot.makeEntryBatch()
-        assertEquals batch.size(), 0
-        batch << entry
-        assertEquals batch.size(), 1
-        batch << entry
-        assertEquals batch.size(), 1
-        batch << fileDepot.getEntry("/publ/1901/100/revisions/1902/200")
-        assertEquals batch.size(), 2
+    def "should add and retrieve"() {
+        when:
+        def id = "/publ/1901/100"
+        def entry = depot.getEntry(id)
+        def batch = depot.makeEntryBatch()
+        then:
+        batch.size() == 0
+        batch.add(entry)
+        batch.size() == 1
+        batch.add(entry)
+        batch.size() == 1
+        batch.add(depot.getEntry("/publ/1901/100/revisions/1902/200"))
+        batch.size() == 2
     }
 
-    @Test(expected=NullPointerException)
-    void shouldFailOnNull() {
-        def batch = fileDepot.makeEntryBatch()
-        batch << null
+    def "should fail on null"() {
+        when:
+        def batch = depot.makeEntryBatch()
+        batch.add(null)
+        then:
+        thrown(NullPointerException)
     }
 
-    @Test
-    void shouldContainAddedEntry() {
-        def entryId = "/publ/1901/100"
-        def entry = fileDepot.getEntry(entryId)
-        assertNotNull entry
-        def batch = fileDepot.makeEntryBatch()
-        batch << entry
-        assertTrue batch.contains(fileDepot.getEntry(entryId))
+    def "should contain added entry"() {
+        setup:
+        def id = "/publ/1901/100"
+        def entry = depot.getEntry(id)
+        assert entry != null
+        when:
+        def batch = depot.makeEntryBatch()
+        batch.add(entry)
+        then:
+        assert batch.contains(depot.getEntry(id))
     }
 
-    @Test
-    void shouldNotContainNotAddedEntry() {
-        def entryId = "/publ/1901/100"
-        def entry = fileDepot.getEntry(entryId)
-        def batch = fileDepot.makeEntryBatch()
-        assertFalse batch.contains(fileDepot.getEntry(entryId))
+    def "should not contain not added entry"() {
+        setup:
+        def id = "/publ/1901/100"
+        when:
+        def entry = depot.getEntry(id)
+        def batch = depot.makeEntryBatch()
+        then:
+        !batch.contains(depot.getEntry(id))
     }
 
 }

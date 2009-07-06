@@ -9,30 +9,35 @@ import org.apache.commons.lang.time.FastDateFormat;
 
 public class DatePathUtil {
 
-    public static final FastDateFormat YEAR_DAY_SEC_FORMAT = FastDateFormat.getInstance(
-            "yyyy/MM-dd/'T'HH_mm_ss'Z'", TimeZone.getTimeZone("UTC"));
+    public static final FastDateFormat YEAR_DAY_SEC_FORMAT =
+        FastDateFormat.getInstance("yyyy/MM-dd/'T'HH_mm_ss'Z'",
+                TimeZone.getTimeZone("UTC"));
 
-    public static final FastDateFormat YEAR_DAY_MIN_MSEC_FORMAT = FastDateFormat.getInstance(
-            "yyyy/MM-dd/'T'HH_mm/ss.SSS'Z'", TimeZone.getTimeZone("UTC"));
+    public static final FastDateFormat YEAR_DAY_MIN_MSEC_FORMAT =
+        FastDateFormat.getInstance("yyyy/MM-dd/'T'HH_mm/ss.SSS'Z'",
+                TimeZone.getTimeZone("UTC"));
+
+    public static final String YEAR_NAME_REGEX = "^\\d+$";
+    public static final String DAY_NAME_REGEX =
+        "^(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$";
+    public static final String SEC_NAME_REGEX = "^T\\d{2}_\\d{2}_\\d{2}Z$";
 
 
     public static FileFilter YEAR_DIR_FILTER = new FileFilter() {
         public boolean accept(File it) {
-            return it.isDirectory() && it.getName().matches("^\\d+$");
+            return it.isDirectory() && it.getName().matches(YEAR_NAME_REGEX);
         }
     };
 
     public static FileFilter DAY_DIR_FILTER = new FileFilter() {
         public boolean accept(File it) {
-            return it.isDirectory() && it.getName().matches(
-                    "^(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$");
+            return it.isDirectory() && it.getName().matches(DAY_NAME_REGEX);
         }
     };
 
     public static FileFilter SEC_DIR_FILTER = new FileFilter() {
         public boolean accept(File it) {
-            return it.isDirectory() && it.getName().matches(
-                    "^T\\d{2}_\\d{2}_\\d{2}Z$");
+            return it.isDirectory() && it.getName().matches(SEC_NAME_REGEX);
         }
     };
 

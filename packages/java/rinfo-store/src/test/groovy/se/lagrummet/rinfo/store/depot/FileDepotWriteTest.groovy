@@ -1,139 +1,157 @@
 package se.lagrummet.rinfo.store.depot
 
-import org.junit.Test
-import org.junit.AfterClass
-import org.junit.BeforeClass
-import static org.junit.Assert.*
+import org.junit.runner.RunWith
+import spock.lang.*
 
 
+@Speck @RunWith(Sputnik)
 class FileDepotWriteTest extends FileDepotTempBase {
 
-    static final NEW_ID_1 = new URI("http://example.org/publ/NEW/added_1")
-    static final NEW_ID_2 = new URI("http://example.org/publ/NEW/added_2")
-    static final NEW_ID_3 = new URI("http://example.org/publ/NEW/added_3")
-    static final UPD_ID_1 = new URI("http://example.org/publ/UPD/updated_1")
-    static final UPD_ID_2 = new URI("http://example.org/publ/UPD/updated_2")
-    static final UPD_ID_3 = new URI("http://example.org/publ/UPD/updated_3")
-    static final DEL_ID_1 = new URI("http://example.org/publ/DEL/deleted_1")
-    static final CHECKED_ID_1 = new URI("http://example.org/publ/CHECK/added_1")
-    static final FAILED_ID_1 = new URI("http://example.org/publ/CHECK/failed_1")
-    static final FAILED_ID_2 = new URI("http://example.org/publ/CHECK/failed_2")
+    def setupSpeck() { createTempDepot() }
+    def cleanupSpeck() { deleteTempDepot() }
 
-
-    @BeforeClass static void setupClass() { createTempDepot() }
-    @AfterClass static void tearDownClass() { deleteTempDepot() }
-
-
-    @Test
-    void shouldCreateEntry() {
-        assertNull depot.getEntry(NEW_ID_1)
-
+    def "should create entry"() {
+        setup:
+        def id = new URI("http://example.org/publ/NEW/added_1")
+        assert depot.getEntry(id) == null
+        when:
         def createTime = new Date()
-        depot.createEntry(NEW_ID_1, createTime,
-                [
-                    new SourceContent(exampleEntryFile("content-en.pdf"),
+        depot.createEntry(id, createTime,
+                [ new SourceContent(exampleEntryFile("content-en.pdf"),
                             "application/pdf", "en"),
-                    new SourceContent(exampleEntryFile("content.rdf"),
-                            "application/rdf+xml")
-                ],
-            )
-
-        def entry = depot.getEntry(NEW_ID_1)
-        assertFalse entry.isLocked()
-
-        assertEquals entry.id, NEW_ID_1
-        assertEquals entry.published, entry.updated
-        assertEquals entry.updated, createTime
-        assertEquals entry.deleted, false
-
-        assertNotNull entry.findContents("application/pdf", "en")[0]
-        assertNotNull entry.findContents("application/rdf+xml")[0]
+                  new SourceContent(exampleEntryFile("content.rdf"),
+                            "application/rdf+xml") ])
+        def entry = depot.getEntry(id)
+        then:
+        !entry.isLocked()
+        and:
+        entry.id == id
+        entry.published == entry.updated
+        entry.updated == createTime
+        !entry.isDeleted()
+        and:
+        entry.findContents("application/pdf", "en")[0] != null
+        entry.findContents("application/rdf+xml")[0] != null
     }
 
 
-    @Test
-    void shouldCreateEntryWithEnclosures() {
-        assertNull depot.getEntry(NEW_ID_2)
-        depot.createEntry(NEW_ID_2, new Date(),
-                [],
+    def "should create entry with enclosures"() {
+        setup:
+        def id = new URI("http://example.org/publ/NEW/added_2")
+        assert depot.getEntry(id) == null
+        when:
+        depot.createEntry(id, new Date(), [],
                 [
                     // full path
                     new SourceContent(exampleFile("icon.png"),
                             null, null,
                             "/publ/NEW/added_2/icon.png"),
-
                     // relative to entry path
                     new SourceContent(exampleFile("icon.png"),
                             null, null,
                             "icon2.png"),
-
                     // nested path
                     new SourceContent(exampleFile("icon.png"),
                             null, null,
                             "images/icon.png"),
-                ]
-            )
-        def entry = depot.getEntry(NEW_ID_2)
+                ])
+        def entry = depot.getEntry(id)
         def enclosures = entry.findEnclosures()
-        assertEquals 3, enclosures.size()
-
-        def expect = { path ->
+        then:
+        enclosures.size() == 3
+        and:
+        ["/publ/NEW/added_2/icon.png",
+         "/publ/NEW/added_2/icon2.png",
+         "/publ/NEW/added_2/images/icon.png"
+        ].each { path ->
             def encl = enclosures.find { it.depotUriPath == path }
-            assertNotNull encl
-            assertEquals "image/png", encl.mediaType
+            assert encl != null
+            assert encl.mediaType == "image/png"
         }
-
-        expect "/publ/NEW/added_2/icon.png"
-        expect "/publ/NEW/added_2/icon2.png"
-        expect "/publ/NEW/added_2/images/icon.png"
     }
 
-    @Test
-    void shouldCreateLockedEntry() {
-        assertNull depot.getEntry(NEW_ID_3)
+    def "should create locked entry"() {
+        setup:
+        def id = new URI("http://example.org/publ/NEW/added_3")
+        assert depot.getEntry(id) == null
+        when:
         def createTime = new Date()
-        def entry = depot.createEntry(NEW_ID_3, createTime,
+        def entry = depot.createEntry(id, createTime,
                 [ new SourceContent(exampleEntryFile("content.rdf"),
                             "application/rdf+xml") ],
-                false
-            )
-        assertTrue entry.isLocked()
+                false)
+        then:
+        assert entry.isLocked()
         entry.unlock()
-        assertFalse entry.isLocked()
-        entry = depot.getEntry(NEW_ID_3)
-        assertNotNull entry
-        assertFalse entry.isLocked()
+        !entry.isLocked()
+
+        when:
+        entry = depot.getEntry(id)
+        then:
+        entry != null
+        !entry.isLocked()
+    }
+
+    def "should fail on creating existing entry"() {
+        setup:
+        def id = new URI("http://example.org/publ/1901/100")
+        when:
+        depot.createEntry(id, new Date(),
+                [new SourceContent(exampleEntryFile("content-en.pdf"),
+                        "application/pdf", "en")])
+        then:
+        thrown(DuplicateDepotEntryException)
+        // TODO: should auto-rollback?
+    }
+
+    def "should fail on duplicate content"() {
+        setup:
+        def id = new URI("http://example.org/publ/NEW/added_4")
+        def content = new SourceContent(exampleEntryFile("content-en.pdf"),
+                "application/pdf", "en")
+        when:
+        depot.createEntry(id, new Date(), [content, content])
+        then:
+        thrown(DuplicateDepotContentException)
+        // TODO: should auto-rollback?
     }
 
 
-    @Test(expected=DepotUriException)
-    void shouldFailOnEnclosureOutOfPath() {
-        def BAD_ENCL_1 = new URI("http://example.org/publ/ERROR/encl_1")
+    def "should fail on enclosure out of path"() {
+        setup:
+        def id = new URI("http://example.org/publ/ERROR/encl_1")
         def invalidEnclPath = "/publ/OTHER/path/icon.png"
-        depot.createEntry(BAD_ENCL_1, new Date(),
+        when:
+        depot.createEntry(id, new Date(),
                 [],
                 [ new SourceContent(exampleFile("icon.png"),
                             null, null, invalidEnclPath), ]
             )
+        then:
+        thrown(DepotUriException)
     }
 
 
-    @Test
-    void shouldUpdateEntry() {
-        assertNull depot.getEntry(UPD_ID_1)
+    def "should update entry"() {
+        setup:
+        def id = new URI("http://example.org/publ/UPD/updated_1")
+        assert depot.getEntry(id) == null
 
+        when:
         def createTime = new Date()
-        depot.createEntry(UPD_ID_1, createTime, [
+        depot.createEntry(id, createTime, [
                 new SourceContent(exampleEntryFile("content-en.pdf"),
                         "application/pdf", "en"),
             ])
-        def entry = depot.getEntry(UPD_ID_1)
-        assertNotNull entry
-        assertEquals 1, entry.findContents("application/pdf").size()
-        assertEquals entry.published, entry.updated
-        assertEquals entry.updated, createTime
+        def entry = depot.getEntry(id)
+        then:
+        entry != null
+        entry.findContents("application/pdf").size() == 1
+        entry.published == entry.updated
+        entry.updated == createTime
 
-	Thread.sleep(100)
+        when:
+        Thread.sleep(100)
         def updateTime = new Date()
         entry.update(updateTime, [
                 new SourceContent(exampleEntryFile("content-en.pdf"),
@@ -141,39 +159,43 @@ class FileDepotWriteTest extends FileDepotTempBase {
                 new SourceContent(exampleEntryFile("content-sv.pdf"),
                             "application/pdf", "sv")
             ])
-        assertEquals 2, entry.findContents("application/pdf").size()
-        assertTrue entry.updated > entry.published
-        assertEquals entry.published, createTime
-        assertEquals entry.updated, updateTime
-        assertEquals entry.deleted, false
+        then:
+        entry.findContents("application/pdf").size() == 2
+        entry.updated > entry.published
+        entry.published == createTime
+        entry.updated == updateTime
+        !entry.isDeleted()
         // TODO: getHistoricalEntries..
-        assertFalse entry.isLocked()
+        !entry.isLocked()
     }
 
 
-    @Test
-    void shouldUpdateEntryWithLessContents() {
-        depot.createEntry(UPD_ID_2, new Date(), [
+    def "should update entry with less contents"() {
+        setup:
+        def id = new URI("http://example.org/publ/UPD/updated_2")
+        depot.createEntry(id, new Date(), [
                 new SourceContent(exampleEntryFile("content-en.pdf"),
                         "application/pdf", "en"),
                 new SourceContent(exampleEntryFile("content-sv.pdf"),
                             "application/pdf", "sv")
             ])
-        def entry = depot.getEntry(UPD_ID_2)
+        when:
+        def entry = depot.getEntry(id)
         entry.update(new Date(), [
                 new SourceContent(exampleEntryFile("content-sv.pdf"),
                             "application/pdf", "sv"),
             ])
-        assertEquals "sv", entry.contentLanguage
+        then:
+        entry.contentLanguage == "sv"
         def contents = entry.findContents("application/pdf")
-        assertEquals 1, contents.size()
-        assertEquals "sv", contents[0].lang
-
+        contents.size() == 1
+        contents[0].lang == "sv"
     }
 
-    @Test
-    void shouldMoveEnclosuresWhenUpdatingEntry() {
-        def entry = depot.createEntry(UPD_ID_3, new Date(),
+    def "should move enclosures when updating entry"() {
+        setup:
+        def id = new URI("http://example.org/publ/UPD/updated_3")
+        def entry = depot.createEntry(id, new Date(),
                 [new SourceContent(exampleEntryFile("content-en.pdf"),
                             "application/pdf", "en")],
                 [
@@ -185,62 +207,75 @@ class FileDepotWriteTest extends FileDepotTempBase {
                             "images/icon.png"),
                 ]
             )
+        when:
         entry.update(new Date(), [
                 new SourceContent(exampleEntryFile("content-en.pdf"),
                             "application/pdf", "en"),
             ])
         def enclosures = entry.findEnclosures()
-        assertEquals 0, enclosures.size()
+        then:
+        enclosures.size() == 0
         // TODO: verify *not* moving encls in nested entries!
     }
 
-    @Test
-    void shouldDeleteEntry() {
-        assertNull depot.getEntry(DEL_ID_1)
+    def "should delete entry"() {
+        setup:
+        def id = new URI("http://example.org/publ/DEL/deleted_1")
+        assert depot.getEntry(id) == null
         def createTime = new Date()
-        depot.createEntry(DEL_ID_1, createTime, [
+        depot.createEntry(id, createTime, [
                 new SourceContent(exampleEntryFile("content-en.pdf"),
                         "application/pdf", "en"),
             ])
 
+        when:
         def deleteTime = new Date()
-        def entry = depot.getEntry(DEL_ID_1)
+        def entry = depot.getEntry(id)
         entry.delete(deleteTime)
-
-        entry = depot.getUncheckedDepotEntry(DEL_ID_1.path)
-        assertFalse entry.isLocked()
-        assertEquals 0, entry.findContents("application/pdf").size()
-        assertEquals entry.updated, deleteTime
-        assertEquals entry.deleted, true
+        entry = depot.getUncheckedDepotEntry(id.path)
+        then:
+        !entry.isLocked()
+        entry.findContents("application/pdf").size() == 0
+        entry.updated == deleteTime
+        assert entry.isDeleted()
     }
 
-    @Test
-    void shouldCreateEntryAndCheckMD5AndLength() {
+    def "should create entry and check md5 and length"() {
+        setup:
+        def id = new URI("http://example.org/publ/CHECK/added_1")
+        when:
         def srcContent = new SourceContent(
                 exampleEntryFile("content-en.pdf"), "application/pdf", "en")
         srcContent.datachecks[SourceContent.Check.LENGTH] = new Long(24014)
         srcContent.datachecks[SourceContent.Check.MD5] =
                 "eff60b86aaaac3a1fde5affc07a27006"
-        depot.createEntry(CHECKED_ID_1, new Date(), [srcContent])
+        depot.createEntry(id, new Date(), [srcContent])
+        then:
+        notThrown(SourceCheckException)
     }
 
-
-    @Test(expected=SourceCheckException)
-    void shouldFailCreateEntryOnBadMD5() {
+    def "should fail create entry on bad md5"() {
+        setup:
+        def id = new URI("http://example.org/publ/CHECK/failed_1")
+        when:
         def srcContent = new SourceContent(
                 exampleEntryFile("content-en.pdf"), "application/pdf", "en")
         srcContent.datachecks[SourceContent.Check.MD5] = "BAD_CHECKSUM"
-        depot.createEntry(FAILED_ID_1, new Date(), [srcContent])
+        depot.createEntry(id, new Date(), [srcContent])
+        then:
+        thrown(SourceCheckException)
     }
 
-
-    @Test(expected=SourceCheckException)
-    void shouldFailCreateEntryOnBadLength() {
+    def "should fail create entry on bad length"() {
+        setup:
+        def id = new URI("http://example.org/publ/CHECK/failed_2")
+        when:
         def srcContent = new SourceContent(
                 exampleEntryFile("content-en.pdf"), "application/pdf", "en")
         srcContent.datachecks[SourceContent.Check.LENGTH] = new Long(0)
-        depot.createEntry(FAILED_ID_2, new Date(), [srcContent])
+        depot.createEntry(id, new Date(), [srcContent])
+        then:
+        thrown(SourceCheckException)
     }
-
 
 }
