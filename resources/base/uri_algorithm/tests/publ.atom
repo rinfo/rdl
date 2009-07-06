@@ -102,6 +102,11 @@
         </content>
     </entry>
 
+    <!--
+        FIXME: eventuellt även arsutgava, sidnummer?
+        *men* ibland publiceras de inte som referat; då referera som
+        domstol+målnummer+datum.. (se modellens kommentarer)
+    -->
     <entry>
         <id>http://rinfo.lagrummet.se/publ/rattsfall/nja/2005:57</id>
         <content type="application/rdf+xml">

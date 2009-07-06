@@ -955,26 +955,6 @@
 
 #---------------------------------------
 
-# TODO: URI:n till denna kan rimligen *inte* baseras på publikationsegenskaper
-#       här; då referatet är fullständigt och "användbart" långt innan det trycks.
-#   - då är den "sammansatta nyckeln" är publikationsbeteckning (rattsfallspublikation + publikationsordinal alt. publikationsplatsangivelse)
-#   - dvs. om referaten publiceras på någon form går det att referera till denna
-#       - publikationsID = rättsfallsförteckning eller myndighetens/domstolens "egennamn"
-#   - *men* ibland publiceras de inte som referat; då referera som domstol+målnummer+datum..
-#
-#   - Vi behöver tillåta att URI:er kan skapas ur arsutgava + sidnummer
-#       <http://rinfo.lagrummet.se/data/nja/1996-s-696> ?
-#
-#   - beteckningarna är (dock) enhetliga sedan 1980-talet
-#        - Obs! det gamla är något annat än .. avgöranden?
-#            - obs! annat, t.ex. Notis, publiceras inte; men refereras till
-#        - kan behövas "platsangivelse" för?
-#
-# TODO: Så länge ett avgörande inte har fler än ett referat kan vi få uri:n som:
-#           - "det här avgörandets referat"; dvs.:
-#               <[domstolsavgörande A]/referat>
-#               .. och ibland: owl:sameAs <[domstolsavgörande B]/referat>
-#
 :Rattsfallsreferat a owl:Class;
     rdfs:isDefinedBy : ;
     rdfs:label "Rättsfallsreferat"@sv;
