@@ -42,6 +42,7 @@ class HandbookMaker {
         } else {
             def out = outFile.name == "-" ? System.out : new FileOutputStream(outFile)
             DOMUtil.serialize(doc.documentElement, out)
+            out.close()
         }
     }
 

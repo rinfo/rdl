@@ -223,8 +223,9 @@ def createAtomCollection(feedUri, feedTitle, baseUri, items) {
 
         for (encl in item.enclosures) {
 
-            // FIXME: when abdera *parses* this (in collector), it seems to
+            // TODO: when abdera *parses* this (in collector), it seems to
             // *remove* "mismatch" of fileext and mediaType!
+            // .. cannot reproduce.. Trace..
             def href = encl.href.replace(".owl", ".rdf").replace(".rdfs", ".rdf")
 
             collection[href] = encl
