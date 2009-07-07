@@ -3,7 +3,7 @@
 
 import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.nativerdf.NativeStore
-import org.openrdf.sail.rdbms.mysql.MySqlStore
+//import org.openrdf.sail.rdbms.mysql.MySqlStore
 import org.openrdf.query.QueryLanguage
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import groovy.text.SimpleTemplateEngine
@@ -20,12 +20,14 @@ switch (storeref) {
     case "mem":
         repo = RDFUtil.createMemoryRepository()
         break
+    /*
     case "mysql":
         def store = new MySqlStore("sesame_test")
         store.user = "root"
         repo = new SailRepository(store)
         repo.initialize()
         break
+    */
     case ~/\/.+/:
         repo = new SailRepository(new NativeStore(new File(storeref), "spoc,posc,ospc,opsc"))
         repo.initialize()

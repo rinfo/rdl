@@ -30,6 +30,7 @@ public static enum ConfigKey {
     CONTAINER_DESCRIPTION_ENTRY_ID("rinfo.main.uriMinter.containerDescriptionEntryId"),
     SOURCE_FEEDS_ENTRY_ID("rinfo.main.storage.sourceFeedsEntryId"),
     ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets"),
+    PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
     REGISTRY_DATA_DIR("rinfo.main.collector.registryDataDir");
 
     private final String value;
@@ -97,7 +98,7 @@ public class Components {
         collectScheduler = new FeedCollectScheduler(storage)
         configure(collectScheduler, "rinfo.main.collector")
         def publicSubscriptionFeed = new URL(
-                config.getString("rinfo.main.publicSubscriptionFeed"))
+                config.getString(ConfigKey.PUBLIC_SUBSCRIPTION_FEED.toString()))
         def onCompletePingTargets = config.getList(
                 ConfigKey.ON_COMPLETE_PING_TARGETS.toString()).collect { new URL(it) }
         collectScheduler.setBatchCompletedCallback(

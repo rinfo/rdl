@@ -41,11 +41,8 @@ def bak_trac():
         # making paranoid asserts to ensure a safe recursive rm!
         assert trac_hotcopy_dir.startswith(env.project_bak)
         assert rmcmd.endswith(trac_hotcopy_dir)
-        # and *also* interactively confirm the remove:
-        if confirm("Ok to sudo-recursive-remove with: %r?" % rmcmd, default=False):
-            sudo(rmcmd, user=env.bakuser)
-        else:
-            abort(v("${trac_hotcopy_dir} must be removed"))
+        # then run it:
+        sudo(rmcmd, user=env.bakuser)
     sudo(v("trac-admin ${source_trac} hotcopy ${trac_hotcopy_dir}"))
     sudo(v("chown -R ${bakuser} ${trac_hotcopy_dir}"))
 

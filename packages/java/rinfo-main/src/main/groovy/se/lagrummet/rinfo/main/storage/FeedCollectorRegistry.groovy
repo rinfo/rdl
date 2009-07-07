@@ -9,6 +9,7 @@ import org.openrdf.model.ValueFactory
 import org.openrdf.model.URI
 import org.openrdf.model.impl.ValueFactoryImpl
 import org.openrdf.repository.Repository
+import org.openrdf.repository.RepositoryConnection
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.store.depot.DepotEntry
@@ -17,12 +18,12 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 class FeedCollectorRegistry {
 
     static final COLLECTOR_NS = "http://rinfo.lagrummet.se/ns/2008/10/collector#"
-    static final DELETED
-    static final FROM_FEED
-    static final LAST_COLLECTED
-    static final LAST_FEED_ARCHIVE_PAGE
-    static final STORED_AS
-    static final UPDATED
+    static final URI DELETED
+    static final URI FROM_FEED
+    static final URI LAST_COLLECTED
+    static final URI LAST_FEED_ARCHIVE_PAGE
+    static final URI STORED_AS
+    static final URI UPDATED
     static {
         ValueFactory vf = ValueFactoryImpl.getInstance()
         DELETED = vf.createURI(COLLECTOR_NS, "deleted")
@@ -34,8 +35,8 @@ class FeedCollectorRegistry {
     }
 
     Repository repo
-    private def conn
-    private def vf
+    private RepositoryConnection conn
+    private ValueFactory vf
 
     FeedCollectorRegistry(Repository repo) {
         this.repo = repo
