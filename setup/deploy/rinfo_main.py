@@ -9,7 +9,7 @@ from envs import _deploy_war
 def package_main(deps="1"):
     if int(deps): install_rinfo_pkg()
     require('deployenv', provided_by=deployenvs)
-    local(v("cd ${java_packages}/rinfo-main/; mvn -P${deployenv} clean package"))
+    local(v("cd ${java_packages}/rinfo-main/; mvn -P${deployenv} clean package"), capture=False)
 
 ##
 # Server deploy
