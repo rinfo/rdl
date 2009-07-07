@@ -302,6 +302,8 @@ Modellinformation (2:a-ordningens data, "metadata")
 "Content Negotiation"
 ========================================================================
 
+- <http://www.w3.org/TR/swbp-vocab-pub/>
+
 .. Skäl för att låta representationer ligga URL-hierarkiskt "under" canonical:
     - för att alla "lokal"-relativa enclosure-sökvägar ska funka utan rewrite
       av hyperlänkar i content. T.ex.:

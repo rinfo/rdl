@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xml" href="../handbok/templates/dv-handbok.xslt"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv">
+  <head>
+    <title>Insamling via Atom-arkiv</title>
+  </head>
+  <body>
+    <h1>Insamling via Atom-arkiv</h1>
+
+    <div class="section">
+      <h2>1. Inledning</h2>
+      <p>Datakällor till rättsinformationssystemet ska utgöras av 
+        Atom-flöden.</p>
+      <ul>
+        <li><a href="http://tools.ietf.org/html/rfc4287">The Atom Syndication 
+            Format</a></li>
+      </ul>
+      <div>
+        <h3>Termer</h3>
+        <h4>Generella</h4>
+        <dl>
+          <dt>Atom</dt>
+          <dd>...</dd>
+          <dt>Flöden</dt>
+          <dd>...</dd>
+          <dt>Poster</dt>
+          <dd>...</dd>
+          <dt>ID:n</dt>
+          <dd>...</dd>
+          <dt>Arkiv</dt>
+          <dd>...</dd>
+          <dt>Raderingar</dt>
+          <dd>...</dd>
+        </dl>
+        <h4>Specifikt för rättsinformationsdomänen</h4>
+        <dl>
+          <dt>Systemet</dt>
+          <dd>...</dd>
+          <dt>Rättskällor</dt>
+          <dd>...</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>2. Atom-flöden</h2>
+      <!--
+TAG-URI:er för källornas ID:n?
+
+E.x.: <code>tag:lagrummet.se,2009:rinfo</code>
+
+Atom-id:n är ofta tag-uri:er.
+
+För att se till att de myndigheterna har beständiga identifierare för rättskällorna.
+
+Identifierar flödet utan att hårdkoppla det med url:ar.
+      -->
+    </div>
+
+    <div class="section">
+      <h2>3. Poster över tid</h2>
+      <p>Atom-flöden representerar tillkommande poster över tid. Det är <em>av 
+          yttersta vikt</em> att tidstämplar respekteras med avseende på:</p>
+      <ul>
+        <li>Att förändringar <em>måste</em> tidstämplas kronologiskt.</li>
+        <li>Att inga tidsstämplar för exponerat material modifieras i 
+          efterhand.</li>
+      </ul>
+      <p>Eftersom systemet inhämtar resurser från rättskällorna måste det lita 
+        på att kommunicerade tidsstämplar gäller, så att allting före en 
+        påträffad tidpunkt kan garanteras gälla information som redan 
+        beaktats.</p>
+
+      <div>
+        <h3>Poster</h3>
+        <p>Alla poster hämtas in då och då över tid. Dessa sparas i systemet 
+          och får där nya datumstämplar som motsvarar 
+          inhämntningstillfället.</p>
+        <p>Varje post representeras av ett Atom Entry vilket talar om URI:n (i 
+          atom:id), primär representation (atom:content) samt referenser till 
+          representationer. En av representationerna ''måste'' innehålla RDF. 
+          Enligt principen för Atom-arkiv är de ordnade på updated-datum.</p>
+        <ul>
+          <li>Entryns ID:n ska motsvara URI:n för resursen som entryt beskriver 
+            (om det är ett rättsinformationsdokument) - se 
+            [wiki:RInfoURIDesign]</li>
+          <li>RDF-data som beskriver postens dokument levereras i content eller 
+            alternate-link.</li>
+        </ul>
+        <p>Vidare är respektive länkad resurs annoterad med storlek, mediatyp 
+          och <a 
+            href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02#section-3.1">MD5-checksumma</a>.</p>
+      </div>
+      <div>
+        <h3>Tillkommande poster</h3>
+        <p>... TODO: detaljer i exempel-feed-kod.</p>
+      </div>
+      <div>
+        <h3>Tidsstämplar i rättskällor respektive det centrala systemet</h3>
+        <p>Eftersom systemet exponerar all inhämtad (och egen) information på 
+          samma vis som källorna &mdash; d.v.s. som Atom-flöden &mdash; kommer 
+          poster som lästs in att få <em>nya</em> tidsstämplar.</p>
+        <p>Orginaltid (och URL:er) sparas ner för respektive post för att kunna 
+          återge detaljer kring den inlästa posten.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>4. Atom-arkiv</h2>
+      <p>Större samlingar (eventuellt med många uppdateringar och/eller 
+        raderingar) kan och bör delas upp i Atom-arkiv.</p>
+      <ul>
+        <li><a href="http://tools.ietf.org/html/rfc5005#section-4">Feed Paging 
+            and Archiving: 4. Archived Feeds</a></li>
+      </ul>
+      <p>...</p>
+    </div>
+
+    <div class="section">
+      <h2>5. Uppdateringar</h2>
+      <p>Uppdateringar är tillåtet för ''viss form'' av nytillkommen post-data 
+        och -representationer.</p>
+      <p>En uppdaterad post ''ska'' ha ett senare datum än 
+        publiceringsdatumet. Detta för att undvika att en ny post av misstag 
+        fått en redan befintlig identifierare.</p>
+    </div>
+
+    <div class="section">
+      <h2>6. Raderade poster</h2>
+      <p>För att hantera ''felaktigt inkomna'' poster exponeras även 
+        <em>raderade'</em> resurser.</p>
+      <p>Raderingar representeras av: <a 
+          href="http://tools.ietf.org/html/draft-snell-atompub-tombstones-06">The 
+          Atom "deleted-entry" Element</a>. Dessa element innehåller ID:t för 
+        posten som raderats samt raderingsdatum.</p>
+      <p><strong>Obs!</strong> Detta stödjs enbart för att ta bort 
+        <em>felaktiga</em> poster.</p>
+    </div>
+
+  </body>
+</html>
