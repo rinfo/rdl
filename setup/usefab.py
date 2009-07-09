@@ -1,7 +1,5 @@
-from fabric.api import (abort, env,
-        local, run, sudo,
-        require, runs_once, prompt,
-        get, put)
+from fabric.api import (env, local, run, sudo, get, put,
+        abort, require, runs_once, prompt)
 from fabric.contrib.files import exists
 
 import string as _string, sys as _sys
