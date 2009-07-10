@@ -326,9 +326,20 @@
 
       <dependency>
         <groupId>org.openrdf.elmo</groupId>
-        <artifactId>elmo</artifactId>
+        <artifactId>elmo-sesame</artifactId>
         <version>1.5</version>
       </dependency>
+      <dependency>
+        <groupId>org.openrdf.elmo</groupId>
+        <artifactId>elmo-core</artifactId>
+        <version>1.5</version>
+      </dependency>
+      <dependency>
+        <groupId>org.openrdf.elmo</groupId>
+        <artifactId>elmo-repository</artifactId>
+        <version>1.5</version>
+      </dependency>
+
 
       <!-- NOTE: sesame-repository-http won't work without dep to jcl104-over-slf4j -->
       <dependency>

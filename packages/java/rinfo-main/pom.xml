@@ -36,7 +36,15 @@
 
     <dependency>
       <groupId>org.openrdf.elmo</groupId>
-      <artifactId>elmo</artifactId>
+      <artifactId>elmo-sesame</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openrdf.elmo</groupId>
+      <artifactId>elmo-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openrdf.elmo</groupId>
+      <artifactId>elmo-repository</artifactId>
     </dependency>
 
     <dependency>
