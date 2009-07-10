@@ -23,7 +23,7 @@ class RDFUtilTest {
         def time = new Date(0)
         def dtLiteral = RDFUtil.createDateTime(vf, time)
         assertEquals '"1970-01-01T00:00:00.000Z"' +
-                '^^http://www.w3.org/2001/XMLSchema#dateTime',
+                '^^<http://www.w3.org/2001/XMLSchema#dateTime>',
                 dtLiteral.toString()
     }
 
