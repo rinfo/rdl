@@ -15,18 +15,19 @@ class FileDepotBatchTest {
     }
 
     def "should add and retrieve"() {
-        when:
+        setup:
         def id = "/publ/1901/100"
         def entry = depot.getEntry(id)
         def batch = depot.makeEntryBatch()
-        then:
-        batch.size() == 0
-        batch.add(entry)
-        batch.size() == 1
-        batch.add(entry)
-        batch.size() == 1
-        batch.add(depot.getEntry("/publ/1901/100/revisions/1902/200"))
-        batch.size() == 2
+        assert batch.size() == 0
+
+        when: batch.add(entry)
+        then: batch.size() == 1
+        when: batch.add(entry)
+        then: batch.size() == 1
+
+        when: batch.add(depot.getEntry("/publ/1901/100/revisions/1902/200"))
+        then: batch.size() == 2
     }
 
     def "should fail on null"() {
