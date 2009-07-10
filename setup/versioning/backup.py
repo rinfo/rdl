@@ -51,7 +51,7 @@ def bak_trac():
 
 def bak_svn():
     _bakprep()
-    if not exists(source_svn):
+    if not exists(env.source_svn):
         abort("%(source_svn)s must exist and be a directory"%env)
     sudo("svnadmin dump %(source_svn)s > %(dump_file)s"%env, user=env.bakuser)
 
