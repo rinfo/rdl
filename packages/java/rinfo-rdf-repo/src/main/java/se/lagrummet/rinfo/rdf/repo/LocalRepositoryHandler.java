@@ -7,7 +7,7 @@ import org.apache.commons.lang.NotImplementedException;
 
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.sail.SailRepository;
-import org.openrdf.sail.Sail;
+import org.openrdf.sail.NotifyingSail;
 import org.openrdf.sail.inferencer.fc.DirectTypeHierarchyInferencer;
 import org.openrdf.sail.inferencer.fc.ForwardChainingRDFSInferencer;
 import org.openrdf.sail.memory.MemoryStore;
@@ -42,7 +42,7 @@ public class LocalRepositoryHandler extends RepositoryHandler {
     }
 
     public void initialize() throws Exception {
-        Sail sail = null;
+        NotifyingSail sail = null;
 
         if (storeType.equals("memory")) {
             sail = new MemoryStore();
