@@ -52,10 +52,16 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
 
     @Override
     protected void collectFeed(URL feedUrl, boolean lastInBatch) {
-        FeedCollector.readFeed(storage.newStorageSession(), feedUrl)
+        def credentials = newStorageCredentials()
+        def session = storage.newStorageSession(credentials)
+        FeedCollector.readFeed(session, feedUrl)
         if (batchCompletedCallback != null) {
             batchCompletedCallback.run()
         }
+    }
+
+    protected StorageCredentials newStorageCredentials(URL feedUrl) {
+        return new StorageCredentials(feedUrl.equals(adminFeedUrl))
     }
 
     private void newSourceFeedUrls() {

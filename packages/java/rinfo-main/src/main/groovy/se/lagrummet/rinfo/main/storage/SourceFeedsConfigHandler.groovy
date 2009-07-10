@@ -39,6 +39,12 @@ class SourceFeedsConfigHandler extends AbstractStorageHandler {
         if (!isConfigurationEntry(depotEntry)) {
             return
         }
+        def credentials = storageSession.getCredentials()
+        if (!credentials.isAdmin()) {
+            throw new Exception(
+                    "Not allowed to configure sources: not an admin session!")
+            // TODO: throw new NotAllowedException(credentials)
+        }
         def feedUrls = new ArrayList<URL>()
         Repository repo = EntryRdfReader.readRdf(depotEntry)
         // TODO:IMPROVE: configure, use raw sparql, and/or make this more failsafe.

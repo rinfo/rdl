@@ -17,38 +17,42 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 
 class FeedCollectorRegistry {
 
-    static final COLLECTOR_NS = "http://rinfo.lagrummet.se/ns/2008/10/collector#"
-    static final URI DELETED
-    static final URI FROM_FEED
-    static final URI LAST_COLLECTED
-    static final URI LAST_FEED_ARCHIVE_PAGE
-    static final URI STORED_AS
-    static final URI UPDATED
+    static final String COLLECTOR_NS = "http://rinfo.lagrummet.se/ns/2008/10/collector#";
+    static final URI DELETED;
+    static final URI LAST_COLLECTED;
+    static final URI LAST_FEED_ARCHIVE_PAGE;
+    static final URI STORED_AS;
+    static final URI UPDATED;
     static {
-        ValueFactory vf = ValueFactoryImpl.getInstance()
-        DELETED = vf.createURI(COLLECTOR_NS, "deleted")
-        FROM_FEED = vf.createURI(COLLECTOR_NS, "fromFeed")
-        LAST_COLLECTED = vf.createURI(COLLECTOR_NS, "lastCollected")
-        LAST_FEED_ARCHIVE_PAGE = vf.createURI(COLLECTOR_NS, "lastFeedArchivePage")
-        STORED_AS = vf.createURI(COLLECTOR_NS, "storedAs")
-        UPDATED = vf.createURI(COLLECTOR_NS, "updated")
+        ValueFactory vf = ValueFactoryImpl.getInstance();
+        DELETED = vf.createURI(COLLECTOR_NS, "deleted");
+        LAST_COLLECTED = vf.createURI(COLLECTOR_NS, "lastCollected");
+        LAST_FEED_ARCHIVE_PAGE = vf.createURI(COLLECTOR_NS, "lastFeedArchivePage");
+        STORED_AS = vf.createURI(COLLECTOR_NS, "storedAs");
+        UPDATED = vf.createURI(COLLECTOR_NS, "updated");
     }
 
-    Repository repo
-    private RepositoryConnection conn
-    private ValueFactory vf
+    private Repository repo;
+    private RepositoryConnection conn;
+    private ValueFactory vf;
 
     FeedCollectorRegistry(Repository repo) {
-        this.repo = repo
-        this.conn = repo.getConnection()
-        this.vf = repo.getValueFactory()
+        this.repo = repo;
+        this.conn = repo.getConnection();
+        this.vf = repo.getValueFactory();
     }
+
+    public Repository getRepo() { return repo; }
+
+    public RepositoryConnection getConn() { return conn; }
 
     void shutdown() {
         conn.close()
     }
 
-    void logVisitedFeedPage(URL pageUrl, Feed feed) {
+    // TODO:? use Elmo to objectify log objects?
+
+    void logFeedPageVisit(URL pageUrl, Feed feed) {
         // TODO: log what?
         def url = feed.getSelfLinkResolvedHref() ?: pageUrl
         def selfUri = vf.createURI(url.toString())
@@ -66,7 +70,7 @@ class FeedCollectorRegistry {
                 depotEntry)
     }
 
-    void logUpdatedEntry(Feed sourceFeed,
+    private void logUpdatedEntry(Feed sourceFeed,
             java.net.URI sourceEntryId,
             Date updated,
             DepotEntry depotEntry) {
@@ -74,7 +78,6 @@ class FeedCollectorRegistry {
         conn.add(sourceUri, STORED_AS, vf.createURI(
                 depotEntry.getId().toString()))
         conn.add(sourceUri, UPDATED, RDFUtil.createDateTime(vf, updated))
-        // TODO: how to fail on missing id for source feed?
         //conn.add(sourceUri, FROM_FEED, vf.createURI(sourceFeed.getId().toString()))
     }
 
@@ -101,7 +104,7 @@ class FeedCollectorRegistry {
         return stmt != null
     }
 
-    /* FIXME: not necessary now when sources use official URI for entry-id:s,
+    /* TODO: not necessary now when sources use official URI for entry-id:s,
      * remove entire STORED_AS usage.
     java.net.URI getDepotIdBySourceId(java.net.URI sourceEntryId) {
         def sourceUri = vf.createURI(sourceEntryId.toString())

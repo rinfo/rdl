@@ -23,8 +23,9 @@ class StorageSession {
 
     private final Logger logger = LoggerFactory.getLogger(StorageSession)
 
-    public static final String SOURCE_META_FILE_NAME = "collector-source-info.entry"
+    public static final String VIA_META_FILE_NAME = "collector-via.entry"
 
+    StorageCredentials credentials
     Depot depot
     Collection<StorageHandler> storageHandlers =
             new ArrayList<StorageHandler>()
@@ -32,16 +33,18 @@ class StorageSession {
 
     private DepotEntryBatch collectedBatch
 
-    StorageSession(Depot depot,
+    StorageSession(StorageCredentials credentials,
+            Depot depot,
             Collection<StorageHandler> storageHandlers,
             FeedCollectorRegistry registry) {
+        this.credentials = credentials
         this.depot = depot
         this.storageHandlers = storageHandlers
         this.registry = registry
     }
 
     void beginPage(URL pageUrl, Feed feed) {
-        registry.logVisitedFeedPage(pageUrl, feed)
+        registry.logFeedPageVisit(pageUrl, feed)
         collectedBatch = depot.makeEntryBatch()
     }
 
@@ -100,7 +103,7 @@ class StorageSession {
                 depotEntry.lock()
                 depotEntry.update(timestamp, contents, enclosures)
             }
-            saveSourceMetaInfo(sourceFeed, sourceEntry, depotEntry)
+            setViaEntry(depotEntry, sourceFeed, sourceEntry)
 
             for (StorageHandler handler : storageHandlers) {
                 if (createEntry)
@@ -150,35 +153,42 @@ class StorageSession {
         collectedBatch.add(depotEntry)
     }
 
-    protected static boolean sourceIsNotAnUpdate(Entry sourceEntry,
-            DepotEntry depotEntry) {
-        File savedSourceEntryFile = depotEntry.getMetaFile(SOURCE_META_FILE_NAME)
-        Entry savedSourceEntry = null
+    static Entry getViaEntry(DepotEntry depotEntry) {
+        File viaEntryFile = depotEntry.getMetaFile(VIA_META_FILE_NAME)
+        Entry viaEntry = null
         try {
-            savedSourceEntry = (Entry) Abdera.getInstance().getParser().parse(
-                    new FileInputStream(savedSourceEntryFile)).getRoot();
+            viaEntry = (Entry) Abdera.getInstance().getParser().parse(
+                    new FileInputStream(viaEntryFile)).getRoot();
         } catch (FileNotFoundException e) {
             throw new IllegalStateException("Entry <"+depotEntry.getId() +
-                    "> is missing expected meta file <"+savedSourceEntryFile+">.")
+                    "> is missing expected meta file <"+viaEntryFile+">.")
         }
+        return viaEntry
+    }
+
+    static void setViaEntry(DepotEntry depotEntry,
+            Feed sourceFeed, Entry sourceEntry) {
+        File viaEntryFile = depotEntry.getMetaFile(VIA_META_FILE_NAME)
+        Entry viaEntry = sourceEntry.clone()
+        // TODO:IMPROVE: remove tombstones; except del.id == depotEntry.id if deleted..
+        // TODO: fail on missing sourceFeed.id..
+        viaEntry.setSource(sourceFeed)
+        // TODO:IMPROVE: is this way of setting base URI enough?
+        viaEntry.setBaseUri(viaEntry.getSource().getResolvedBaseUri())
+        viaEntry.getSource().setBaseUri(null)
+        viaEntry.writeTo(new FileOutputStream(viaEntryFile))
+    }
+
+
+    protected static boolean sourceIsNotAnUpdate(Entry sourceEntry,
+            DepotEntry depotEntry) {
+        Entry viaEntry = getViaEntry(depotEntry)
         // TODO:IMPROVE:?
         // If depotEntry; check stored source and allow update if *both*
         //     sourceEntry.updated>.created (above) *and* > depotEntry.updated..
         //     .. and "source feed" is "same as last"? (indirected via rdf facts)?
         // TODO:? Assert id == id (& feed.id == ..)?
-        return !(sourceEntry.getUpdated() > savedSourceEntry.getUpdated())
-    }
-
-    protected static void saveSourceMetaInfo(Feed sourceFeed, Entry sourceEntry,
-            DepotEntry depotEntry) {
-        File savedSourceEntryFile = depotEntry.getMetaFile(SOURCE_META_FILE_NAME)
-        Entry sourceEntryClone = sourceEntry.clone()
-        // TODO:IMPROVE: remove tombstones..
-        sourceEntryClone.setSource(sourceFeed)
-        // TODO:IMPROVE: is this way of setting base URI enough?
-        sourceEntryClone.setBaseUri(sourceEntryClone.getSource().getResolvedBaseUri())
-        sourceEntryClone.getSource().setBaseUri(null)
-        sourceEntryClone.writeTo(new FileOutputStream(savedSourceEntryFile))
+        return !(sourceEntry.getUpdated() > viaEntry.getUpdated())
     }
 
 }

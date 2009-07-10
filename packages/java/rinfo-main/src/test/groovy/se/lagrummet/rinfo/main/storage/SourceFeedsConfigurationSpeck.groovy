@@ -15,17 +15,32 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
     ]
 
     def "Collect scheduler gets source feeds from rdf in configured entry"() {
-
         setup: "configure handler with entry id"
         def collectScheduler = testScheduler()
         def sourceFeedsConfigHandler = new SourceFeedsConfigHandler(
                 collectScheduler, sourceFeedsEntryId)
+        def session = new StorageSession(new StorageCredentials(true),
+                null, null, null)
 
         when: "an entry with expected id is created"
-        sourceFeedsConfigHandler.onCreate(null, mockSourcesEntry())
+        sourceFeedsConfigHandler.onCreate(session, mockSourcesEntry())
 
         then: "the collect scheduler gets source feeds from the entry data"
         collectScheduler.sourceFeedUrls == sourceFeedUrls
+    }
+
+    def "Source feed entry must come from admin session"() {
+        setup: "non-admin credentials"
+        def sourceFeedsConfigHandler = new SourceFeedsConfigHandler(
+                null, sourceFeedsEntryId)
+        def session = new StorageSession(new StorageCredentials(false),
+                null, null, null)
+
+        when: "an entry with expected id is created"
+        sourceFeedsConfigHandler.onCreate(session, mockSourcesEntry())
+
+        then: "config handler fails on non-admin credentials"
+        thrown(Exception) // TODO: NotAllowedException..
     }
 
     def testScheduler() {

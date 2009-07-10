@@ -52,12 +52,21 @@ class StorageSessionSpeck {
         tempfiles.each { it.delete() }
     }
 
-    def makeStorageSession(depot, handlers) {
+    def makeStorageSession(depot, handlers, admin=false) {
         depot.makeEntryBatch() >> { new DepotEntryBatch() }
         def storage = new Storage(depot, repo)
         storage.storageHandlers = handlers
         storage.startup()
-        return storage.newStorageSession()
+        return storage.newStorageSession(new StorageCredentials(admin))
+    }
+
+    def "session credentials indicate admin rights"() {
+        when:
+        session = makeStorageSession(Mock(Depot), [], isAdmin)
+        then:
+        session.credentials.isAdmin() == isAdmin
+        where:
+        isAdmin << [true, false]
     }
 
     def "entry does not exist"() {
@@ -110,7 +119,7 @@ class StorageSessionSpeck {
         1 * depotEntry.update(_, _, _)
 
         and: "create existing meta-info for entry"
-        session.saveSourceMetaInfo(sourceFeed, sourceEntry, depotEntry)
+        session.setViaEntry(depotEntry, sourceFeed, sourceEntry)
 
         and: "create updated source"
         Entry updSourceEntry = sourceEntry.clone()

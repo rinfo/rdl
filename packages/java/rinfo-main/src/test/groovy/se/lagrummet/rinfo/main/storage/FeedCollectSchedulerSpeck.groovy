@@ -29,6 +29,17 @@ import org.junit.runner.RunWith; import spock.lang.*
         ]
     }
 
+    def "collect scheduler should authen adminFeedUrl in credentials"() {
+        setup:
+        def collectScheduler = new FeedCollectScheduler(null)
+        def adminUrl = new URL("http://localhost/admin")
+        collectScheduler.adminFeedUrl = adminUrl
+        expect:
+        collectScheduler.newStorageCredentials(adminUrl).isAdmin() == true
+        collectScheduler.newStorageCredentials(
+                new URL("http://localhost/pub/1")).isAdmin() == false
+    }
+
     def "collect scheduler should restart and use new sourceFeedUrls"() {
         setup:
         def collectScheduler = new TestScheduler()
