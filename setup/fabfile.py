@@ -1,5 +1,5 @@
-from usefab import *
-from datetime import datetime
+from fabric.api import env
+import datetime
 
 from deploy.envs import *
 from deploy.rinfo_main import *
@@ -8,7 +8,7 @@ from deploy.rinfo_service import *
 
 env.project = 'rinfo'
 env.projectroot = '..'
-env.base_data = v("$projectroot/resources/base")
-env.java_packages = v("$projectroot/packages/java")
-env.timestamp = datetime.utcnow().strftime('%Y_%m_%d_%H-%M-%S')
+env.base_data = "%(projectroot)s/resources/base"%env
+env.java_packages = "%(projectroot)s/packages/java"%env
+env.timestamp = datetime.datetime.utcnow().strftime('%Y_%m_%d_%H-%M-%S')
 

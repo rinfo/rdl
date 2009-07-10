@@ -1,6 +1,6 @@
-from usefab import *
-from envs import *
-from envs import _deploy_war
+from fabric.api import *
+from fabric.contrib.files import exists
+from deploy.envs import *
 
 ##
 # Local build
@@ -9,57 +9,32 @@ from envs import _deploy_war
 def package_main(deps="1"):
     if int(deps): install_rinfo_pkg()
     require('deployenv', provided_by=deployenvs)
-    local(v("cd ${java_packages}/rinfo-main/; mvn -P${deployenv} clean package"), capture=False)
+    local("cd %(java_packages)s/rinfo-main/ && "
+            "mvn -P%(deployenv)s clean package"%env, capture=False)
 
 ##
 # Server deploy
 
 @runs_once
+@roles('main')
 def setup_main():
-    main()
-    if not exists(env.dist_dir): run(v("mkdir $dist_dir"))
-    if not exists(env.rinfo_dir): sudo(v("mkdir $rinfo_dir"))
+    if not exists(env.dist_dir):
+        run("mkdir %(dist_dir)s"%env)
+    if not exists(env.rinfo_dir):
+        sudo("mkdir %(rinfo_dir)s"%env)
     if not exists(env.rinfo_main_store):
-        sudo(v("mkdir $rinfo_main_store"))
-        sudo(v("chown -R ${tomcat_user} ${rinfo_main_store}"))
+        sudo("mkdir %(rinfo_main_store)s"%env)
+        sudo("chown -R %(tomcat_user)s %(rinfo_main_store)s"%env)
 
 @runs_once
-def deploy_main_resources():
-    setup_main()
-    # TODO: bundle necessary files (via pom, and adapt the paths in properties)
-    tarname = v("${project}-${timestamp}.tar.gz")
-    tmp_tar = v("/tmp/$tarname")
-    dest_tar = v("${dist_dir}/rinfo-base.tar.gz")
-    local(v("tar -czf ${tmp_tar} ${base_data}"))
-    try:
-        put(tmp_tar, dest_tar)
-        sudo(v("rm -rf ${rinfo_dir}/resources")) # TODO: +/base
-        sudo(v("tar -C ${rinfo_dir} -xzf ${dest_tar}"))
-    finally:
-        local("rm %s" % tmp_tar)
-
-@runs_once
+@roles('main')
 def deploy_main():
-    deploy_main_resources()
-    _deploy_war(v("${java_packages}/rinfo-main/target/rinfo-main-${deployenv}.war"),
+    setup_main()
+    deploy_war("%(java_packages)s/rinfo-main/target/rinfo-main-%(deployenv)s.war"%env,
             "rinfo-main")
 
+@roles('main')
 def main_all(deps="1"):
     package_main(deps)
     deploy_main()
-
-##
-# Diagnostics
-
-def ping_main_collector():
-    require('host_map', provided_by=deployenvs)
-    collector_url = "http://%s/collector/" % env.host_map['main'][0]
-    feed_url = "http://%s:8182/feed/current" % env.host_map['testsources'][0]
-    local(v("curl --data 'feed=${feed_url}' ${collector_url}"))
-
-def ping_service_collector():
-    require('host_map', provided_by=deployenvs)
-    collector_url = "http://%s/collector/" % env.host_map['service'][0]
-    feed_url = "http://%s/feed/current" % env.host_map['main'][0]
-    local(v("curl --data 'feed=${feed_url}' ${collector_url}"))
 

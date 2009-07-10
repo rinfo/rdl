@@ -1,18 +1,17 @@
-import sys; sys.path.append('.')
-from usefab import *
-
+from fabric.api import *
 
 env.repo_base = "https://dev.lagrummet.se/svn/rinfo"
-env.repo_tags = v("${repo_base}/tags")
+env.repo_tags = "%(repo_base)s/tags"%env
 
 TAG_PATTERN = r"^\w[a-z-_0-9\.]+-\d+(?:\.\d+)?(?:-\w+)$"
 
 def tag_release(tag=None):
     env.tag = tag
-    prompt('tag', "Tag", validate=TAG_PATTERN)
-    msg = v("Tagging ${tag}")
-    local(v("svn copy ${repo_base}/trunk ${repo_tags}/${tag} -m '${msg}'"), capture=False)
+    if not env.tag:
+        prompt('Tag:', "tag", validate=TAG_PATTERN)
+    env.msg = "Tagging %(tag)s"%env
+    local("svn copy %(repo_base)s/trunk %(repo_tags)s/%(tag)s -m '%(msg)s'"%env, capture=False)
 
 def list_tags():
-    local(v("svn ls ${repo_tags}"), capture=False)
+    local("svn ls %(repo_tags)s"%env, capture=False)
 
