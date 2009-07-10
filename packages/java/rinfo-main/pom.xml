@@ -35,6 +35,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.openrdf.elmo</groupId>
+      <artifactId>elmo</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.codehaus.groovy.maven.runtime</groupId>
       <artifactId>gmaven-runtime-1.6</artifactId>
     </dependency>
