@@ -372,19 +372,25 @@
     rdfs:comment "Referens till en bemyndigande rättsgrund som rättsregeldokumentet grundar sig på."@sv;
     owl:inverseOf [ rdfs:label "Bemyndigar"@sv ]; .
 
-
 :genomforDirektiv a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Genomför direktiv"@sv;
     rdfs:comment "Referens till EG-direktiv som helt eller delvis genomförs med denna författning."@sv;
     owl:inverseOf [ rdfs:label "Genomförs av"@sv ]; .
 
-
 :andrar a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Ändrar"@sv;
     rdfs:comment "Referens till något som ändras, t.ex. en förordning eller en del därav (såsom rubrik, kapitel, lagparagraf)."@sv;
     owl:inverseOf [ rdfs:label "Ändras av"@sv ]; .
+
+:omtryckAv a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:domain :Rattsinformationsdokument;
+    rdfs:range :Rattsinformationsdokument;
+    rdfs:label "Omtryck av"@sv;
+    rdfs:comment "Referens till vad omtrycket avser, t.ex. en förordning."@sv;
+    owl:inverseOf [ rdfs:label "Har omtryck"@sv ]; .
 
 :ersatter a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
