@@ -21,8 +21,12 @@ public class Storage {
     public void startup() {
         StorageSession storageSession = newStorageSession(
                 new StorageCredentials(true));
-        for (StorageHandler handler : storageHandlers) {
-            handler.onStartup(storageSession);
+        try {
+            for (StorageHandler handler : storageHandlers) {
+                handler.onStartup(storageSession);
+            }
+        } finally {
+            storageSession.close()
         }
     }
 
@@ -35,8 +39,8 @@ public class Storage {
     }
 
     public StorageSession newStorageSession(StorageCredentials credentials) {
-        def feedCollectorRegistry = new FeedCollectorRegistry(registryRepo);
         // TODO:? depotSession and registrySession?
+        def feedCollectorRegistry = new FeedCollectorRegistry(registryRepo);
         return new StorageSession(credentials,
                 depot, storageHandlers, feedCollectorRegistry);
     }

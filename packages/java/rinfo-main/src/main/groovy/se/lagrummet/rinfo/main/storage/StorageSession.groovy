@@ -54,7 +54,7 @@ class StorageSession {
     }
 
     boolean hasCollected(Entry sourceEntry) {
-        // TODO:? remove registry(?) or reuse eventRegistry with:
+        // TODO:IMPROVE? optimize by using eventRegistry with:
         //return registry.hasCollected(sourceEntry)
         return hasCollected(sourceEntry, depot.getEntry(sourceEntry.getId().toURI()))
     }
@@ -64,7 +64,7 @@ class StorageSession {
     }
 
     void close() {
-        registry.shutdown()
+        registry.close()
     }
 
     void storeEntry(Feed sourceFeed, Entry sourceEntry,
@@ -137,19 +137,23 @@ class StorageSession {
         }
     }
 
-    void deleteEntry(Feed sourceFeed, URI entryId, Date deletedDate) {
+    void deleteEntry(Feed sourceFeed, URI entryId, Date sourceDeletedDate) {
         DepotEntry depotEntry = depot.getEntry(entryId)
-        if (depot == null) {
+        if (depotEntry == null) {
             // TODO: means we have lost collector metadata?
+            logger.warn("Could not delete entry, missing <${entryId}>.")
         }
         logger.info("Deleting entry <${entryId}>.")
         // TODO:? saveDeletionMetaInfo? (smart deletion detect; e.g. feed + tombstone)
         // .. or is tombstone in feed enough (for e.g. event index)?
+        // TODO: previously used sourceDeletedDate; must surely have been wrong?
+        Date deletedDate = new Date()
         depotEntry.delete(deletedDate)
         for (StorageHandler handler : storageHandlers) {
             handler.onDelete(this, depotEntry)
         }
-        registry.logDeletedEntry(sourceFeed, entryId, deletedDate, depotEntry)
+        registry.logDeletedEntry(
+                sourceFeed, entryId, sourceDeletedDate, depotEntry)
         collectedBatch.add(depotEntry)
     }
 

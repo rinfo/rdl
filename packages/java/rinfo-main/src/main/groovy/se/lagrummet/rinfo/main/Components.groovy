@@ -25,29 +25,38 @@ import se.lagrummet.rinfo.main.storage.StorageSession
 import se.lagrummet.rinfo.main.storage.SourceFeedsConfigHandler
 
 
-public static enum ConfigKey {
+    // TODO: put as inner of Components (not possible in groovy 1.6).
+    public static enum ConfigKey {
+        CONTAINER_DESCRIPTION_ENTRY_ID("rinfo.main.uriMinter.containerDescriptionEntryId"),
+        SOURCE_FEEDS_ENTRY_ID("rinfo.main.storage.sourceFeedsEntryId"),
+        ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets"),
+        PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
+        REGISTRY_DATA_DIR("rinfo.main.collector.registryDataDir");
 
-    CONTAINER_DESCRIPTION_ENTRY_ID("rinfo.main.uriMinter.containerDescriptionEntryId"),
-    SOURCE_FEEDS_ENTRY_ID("rinfo.main.storage.sourceFeedsEntryId"),
-    ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets"),
-    PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
-    REGISTRY_DATA_DIR("rinfo.main.collector.registryDataDir");
+        private final String value;
+        private ConfigKey(String value) { this.value = value; }
+        public String toString() { return value; }
+    }
 
-    private final String value;
-    private ConfigKey(String value) { this.value = value; }
-    public String toString() { return value; }
-}
-
+/**
+ * This is the Dependency Injection "hub" which is responsible for building the
+ * components that constitute the application together. It will be the sole
+ * entry point for all low-level configuration. The only exceptions are:
+ * <ul>
+ * <li>If a library uses hard-wired config locartions (e.g. logging).</li>
+ * <li>If behaviour is configured from the domain (such as
+ *     user/supplier-controlled data sources).</li>
+ * </ul>
+ */
 public class Components {
 
-    Storage storage
-    FeedCollectScheduler collectScheduler
+    private Configuration config
+    private Storage storage
+    private FeedCollectScheduler collectScheduler
 
     static {
         BeanUtilsURIConverter.registerIfNoURIConverterIsRegistered()
     }
-
-    private Configuration config
 
     public Components(Configuration config) {
         this.config = config
@@ -58,19 +67,8 @@ public class Components {
     }
 
     public Configuration getConfig() { return config }
-
-    public void startup() {
-        storage.startup()
-        collectScheduler.startup()
-    }
-
-    public void shutdown() {
-        try {
-            collectScheduler.shutdown()
-        } finally {
-            storage.shutdown()
-        }
-    }
+    public Storage getStorage() { return storage }
+    public FeedCollectScheduler getCollectScheduler() { return collectScheduler }
 
     protected void configure(Object bean, String subsetPrefix) {
         BeanUtils.populate(bean,

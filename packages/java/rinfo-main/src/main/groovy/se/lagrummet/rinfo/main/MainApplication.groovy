@@ -48,13 +48,18 @@ class MainApplication extends Application {
     @Override
     public void start() {
         super.start()
-        components.startup()
+        components.storage.startup()
+        components.collectScheduler.startup()
     }
 
     @Override
     public void stop() {
         super.stop()
-        components.shutdown()
+        try {
+            collectScheduler.shutdown()
+        } finally {
+            storage.shutdown()
+        }
     }
 
 }

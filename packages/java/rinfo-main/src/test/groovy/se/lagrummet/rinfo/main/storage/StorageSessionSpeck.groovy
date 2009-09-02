@@ -85,6 +85,8 @@ class StorageSessionSpeck {
         and: "mock depot creation and subsequent retrieval"
         DepotEntry depotEntry = Mock()
         depotEntry.getId() >> entryId
+        depotEntry.getPublished() >> new Date()
+        depotEntry.getUpdated() >> new Date()
         depotEntry.getMetaFile(_) >> tempFile("metafile")
         def entries = [:]
         2 * depot.getEntry(entryId) >> { entries[entryId] }
@@ -114,6 +116,8 @@ class StorageSessionSpeck {
         and: "mock depot retrieval and update"
         DepotEntry depotEntry = Mock()
         depotEntry.getId() >> entryId
+        depotEntry.getUpdated() >> new Date()
+        depotEntry.getPublished() >> new Date()
         depotEntry.getMetaFile(_) >> tempFile("metafile")
         1 * depot.getEntry(entryId) >> depotEntry
         1 * depotEntry.update(_, _, _)
@@ -145,10 +149,11 @@ class StorageSessionSpeck {
 
         and: "mock depot retrieval and deletion"
         DepotEntry depotEntry = Mock()
-        depotEntry.getId() >> entryId
-        1 * depot.getEntry(entryId) >> depotEntry
         def deletedDate = new Date()
-        1 * depotEntry.delete(deletedDate)
+        depotEntry.getId() >> entryId
+        depotEntry.getUpdated() >> deletedDate
+        1 * depot.getEntry(entryId) >> depotEntry
+        1 * depotEntry.delete(_)
 
         when: "an existing entry is written"
         session.beginPage(sourceUrl, sourceFeed)
