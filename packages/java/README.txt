@@ -2,6 +2,30 @@
 README - Java Packages
 ########################################################################
 
+Overview
+========================================================================
+
+These packages implement the rinfo content collection, supply and basic
+services.
+
+Core libraries:
+
+* rinfo-store/README.txt
+* rinfo-collector/README.txt
+* rinfo-base/README.txt
+* rinfo-rdf-repo/
+* rinfo-sesame-http/
+
+RInfo applications:
+
+* rinfo-main/README.txt
+* rinfo-service/README.txt
+
+Test application:
+
+* teststore-examples/README.txt
+
+
 Setup
 ========================================================================
 

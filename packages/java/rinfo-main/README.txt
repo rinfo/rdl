@@ -2,6 +2,12 @@
 README - RInfo Main
 ########################################################################
 
+Overview
+========================================================================
+
+The main web application exposes all collected resources, along with an
+Atom archive timeline.
+
 Maven Usage
 ========================================================================
 
