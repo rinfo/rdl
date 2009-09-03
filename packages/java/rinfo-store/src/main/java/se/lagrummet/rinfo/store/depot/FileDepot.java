@@ -14,6 +14,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 
 
 public class FileDepot implements Depot {
@@ -73,8 +74,6 @@ public class FileDepot implements Depot {
     //== Entry and Content Lookups ==
 
     public List<DepotContent> find(String uriPath) throws DepotReadException {
-        List<DepotContent> results = new ArrayList<DepotContent>();
-
         if (uriPath.startsWith(feedPath)) {
             DepotContent feed = getFeedContent(uriPath);
             if (feed==null) {
@@ -82,22 +81,31 @@ public class FileDepot implements Depot {
             }
             return Arrays.asList(feed);
         }
+        return findEntryContents(uriPath);
+    }
 
-        ParsedPath parsed = pathHandler.parseUriPath(uriPath);
-        if (parsed==null || parsed.equals("")) {
+    public List<DepotContent> findEntryContents(String uriPath)
+            throws DepotReadException {
+        ParsedPath parsedPath = pathHandler.parseUriPath(uriPath);
+        if (parsedPath==null || parsedPath.equals("")) {
             return null;
         }
+        return findEntryContents(parsedPath);
+    }
 
-        DepotEntry depotEntry = getEntry(parsed.getDepotUriPath());
+    public List<DepotContent> findEntryContents(ParsedPath path)
+            throws DepotReadException {
+        List<DepotContent> results = new ArrayList<DepotContent>();
+        DepotEntry depotEntry = getEntry(path.getDepotUriPath());
         if (depotEntry!=null) {
             String mediaType = null;
-            String mediaHint = parsed.getMediaHint();
+            String mediaHint = path.getMediaHint();
             if (mediaHint != null) {
                 mediaType = pathHandler.mediaTypeForHint(mediaHint);
             }
-            results = depotEntry.findContents(mediaType, parsed.getLang());
+            results = depotEntry.findContents(mediaType, path.getLang());
         } else { // enclosure..
-            DepotContent content = getContent(parsed.getDepotUriPath());
+            DepotContent content = getContent(path.getDepotUriPath());
             if (content!=null) {
                 results.add(content);
             }
@@ -223,10 +231,10 @@ public class FileDepot implements Depot {
             throw new DepotUriException(
                     "URI path must be absolute and not full. Was: " + uriPath);
         }
-
-        String localUriPath = uriPath.replaceFirst("/", "");
+        String localUriPath = StringUtils.removeStart(uriPath, "/");
 
         // FIXME: do a smarter (probably reversable) algorithm!
+        // Or at least use configured PathHandler, FilePathUtil or complement thereof.
         String path = localUriPath.replace(":", "/_3A_");
 
         String[] segments = path.split("/");

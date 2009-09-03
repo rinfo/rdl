@@ -21,8 +21,9 @@ public class FilePathUtil {
             throw new DepotUriException(
                     "Enclosed file <"+fileUriPath +
                     "> is not within directory <"+baseDirUriPath+">.");
+        } else {
+            return fileUriPath.substring(baseDirUriPath.length());
         }
-        return fileUriPath.replaceFirst(baseDirUriPath, "");
     }
 
     public static void plowParentDirPath(File file) throws IOException {

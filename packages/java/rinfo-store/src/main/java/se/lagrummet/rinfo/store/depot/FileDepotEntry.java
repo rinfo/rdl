@@ -12,6 +12,7 @@ import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Content;
@@ -521,7 +522,7 @@ public class FileDepotEntry implements DepotEntry {
             String sep = entryUriPath.endsWith("/") ? "" : "/";
             enclUriPath = entryUriPath + sep + enclUriPath;
         }
-        String enclPath = enclUriPath.replaceFirst(entryUriPath, "");
+        String enclPath = StringUtils.removeStart(enclUriPath, entryUriPath);
         File file = new File(entryDir, enclPath);
         if (!replace) {
             if (file.exists()) {
