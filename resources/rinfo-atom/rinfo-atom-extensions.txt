@@ -1,0 +1,20 @@
+
+Rättsinformationsprojektets utökningar till Atom Syndication Format 
+===================================================================
+
+Attributet 'filename'
+
+Attributet 'filename' anger ett föreslaget filnamn för en bilaga i ett
+atom:link element. Attributet är frivilligt och kan användas för att mottagaren
+skall kunna namnge inhämtade filer lokalt.
+
+    filename = attribute rinfo:filename { text }
+
+I följande exempel är attributet använt för att föreslå ett filnamn för en
+resurs:
+
+    <atom:link rel="enclosure"
+        href="http://example.org/docs/19287838/getdocument"
+        type="application/pdf"
+        rinfo:filename="exfs-2008-01.pdf" />
+
