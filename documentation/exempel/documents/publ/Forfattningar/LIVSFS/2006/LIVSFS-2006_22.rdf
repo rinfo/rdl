@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dct="http://purl.org/dc/terms/"
+         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+
+  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/livsfs/2006:22">
+
+    <!-- identifiering -->
+    <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/livsfs"/>
+	<fsNummer>2006:22</fsNummer>
+        <dct:title xml:lang="sv">Livsmedelsverkets föreskrifter (LIVSFS 2006:22) om bekämpningsmedelsrester i livsmedel</dct:title>
+
+    <!-- tidsaspekter -->
+    <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2006-02-12</beslutsdatum>
+
+    <!-- Detta dokument har komplicerade ikraftträdanderegler och därmed anger
+    egenskapen nedan att man får studera författningstexten för att få reda på
+    detaljer om ikraftträdandet -->
+    <ikrafftradandeanvisning rdf:resource="http://rinfo.lagrummet.se/publ/livsfs/2006:22" />
+    
+    <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2006-02-15</utkomFranTryck>
+
+    <!-- ursprung -->
+    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/livsmedelsverket"/>
+
+    <!-- dokumentkopplingar -->
+    <bemyndigande rdf:parseType="Resource">
+        <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:813"/>
+        <paragrafnummer>5</paragrafnummer>
+    </bemyndigande>
+
+    <! -- Identifierare för bilaga -->
+    <bilaga rdf:resource="http://rinfo.lagrummet.se/publ/livsfs/2006:22/bilaga/LIVSFS-2006_22bil1.pdf" />
+
+    <!-- referens till webbsida för detta dokument (om sådan finns) -->
+    <foaf:homepage rdf:resource="http://www.slv.se/sv/grupp2/Lagstiftning/Gallande-lagstiftning/Bekampningsmedelsrester-i-livsmedel-SE-OVERGANGSBESTAMMELSER/" />
+
+  </Myndighetsforeskrift>
+
+</rdf:RDF>
