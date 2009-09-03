@@ -16,6 +16,6 @@ public interface CollectEvent {
     void setEnd(XMLGregorianCalendar end);
 
     @rdf("http://www.iana.org/assignments/relation/via")
-    Set<Feed> getViaFeeds();
-    void setViaFeeds(Set<Feed> viaFeed);
+    Set<FeedEvent> getViaFeeds();
+    void setViaFeeds(Set<FeedEvent> viaFeed);
 }

@@ -57,7 +57,7 @@ class StorageSessionSpeck {
         def storage = new Storage(depot, repo)
         storage.storageHandlers = handlers
         storage.startup()
-        return storage.newStorageSession(new StorageCredentials(admin))
+        return storage.openSession(new StorageCredentials(admin))
     }
 
     def "session credentials indicate admin rights"() {

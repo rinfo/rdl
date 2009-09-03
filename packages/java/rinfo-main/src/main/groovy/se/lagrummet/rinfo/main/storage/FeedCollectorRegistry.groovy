@@ -34,11 +34,10 @@ import se.lagrummet.rinfo.main.storage.log.ErrorEvent
 
 
 // TODO: this is a "Session" thingy (stateful and should be closed); rename
-// to.. FeedCollectorLogSession?
+// to.. CollectorLogSession?
 class FeedCollectorRegistry {
 
     private Repository repo;
-    private RepositoryConnection conn;
     private ElmoManager manager;
 
     private CollectEvent collectEvent
@@ -58,12 +57,15 @@ class FeedCollectorRegistry {
         // FIXME: don't re-init for every session?
         def factory = new SesameManagerFactory(module, repo)
         factory.setQueryLanguage(QueryLanguage.SPARQL)
-        this.conn = repo.getConnection();
         manager = factory.createElmoManager()
         def collectStartTime = new Date()
         collectEvent = manager.create(createCollectUri(), CollectEvent)
         collectEvent.setStart(createXmlGrCal(collectStartTime))
     }
+
+    // TODO: configuration properties
+    String sysUriBase = "http://rinfo.lagrummet.se/system/"
+    URI entrySpaceUri = new URIImpl("tag:lagrummet.se,2009:rinfo")
 
     public Repository getRepo() { return repo; }
     public ElmoManager getManager() { return manager; }
@@ -71,10 +73,6 @@ class FeedCollectorRegistry {
     void close() {
         manager.close()
     }
-
-    // TODO: configuration properties
-    String sysUriBase = "http://rinfo.lagrummet.se/system/"
-    URI entrySpaceUri = new URIImpl("tag:lagrummet.se,2009:rinfo")
 
     void logFeedPageVisit(URL pageUrl, Feed sourceFeed) {
         def feedUrl = sourceFeed.getSelfLinkResolvedHref() ?: pageUrl

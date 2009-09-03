@@ -19,7 +19,7 @@ public class Storage {
     public Depot getDepot() { return depot; }
 
     public void startup() {
-        StorageSession storageSession = newStorageSession(
+        StorageSession storageSession = openSession(
                 new StorageCredentials(true));
         try {
             for (StorageHandler handler : storageHandlers) {
@@ -38,7 +38,7 @@ public class Storage {
         this.storageHandlers = storageHandlers;
     }
 
-    public StorageSession newStorageSession(StorageCredentials credentials) {
+    public StorageSession openSession(StorageCredentials credentials) {
         // TODO:? depotSession and registrySession?
         def feedCollectorRegistry = new FeedCollectorRegistry(registryRepo);
         return new StorageSession(credentials,
