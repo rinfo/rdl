@@ -26,8 +26,8 @@
     <link rel="alternate" href="https://www.slv.se/rattsinformation/getdata/id=2006-22"
           type="application/rdf+xml"
           length="1465" le:md5="143aa16eb05095675651b5e8380aff8d"/>
-    <link rel="alternate" href="http://www.slv.se/upload/dokument/lagstiftning/2005-2006/2006_22bil1.pdf" 
-          type="application/pdf" 
+    <link rel="enclosure" href="http://www.slv.se/upload/dokument/lagstiftning/2005-2006/2006_22bil1.pdf"
+          type="application/pdf"
           rae:filename="bilaga/LIVSFS-2006_22bil1.pdf"
           length="1168037" le:md5="1115651b5e8380aff8d"/>
   </entry>

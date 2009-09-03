@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:dct="http://purl.org/dc/terms/"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
          xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
 
   <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/livsfs/2006:22">
@@ -29,7 +30,7 @@
         <paragrafnummer>5</paragrafnummer>
     </bemyndigande>
 
-    <! -- Identifierare för bilaga -->
+    <!-- Identifierare för bilaga -->
     <bilaga rdf:resource="http://rinfo.lagrummet.se/publ/livsfs/2006:22/bilaga/LIVSFS-2006_22bil1.pdf" />
 
     <!-- referens till webbsida för detta dokument (om sådan finns) -->
