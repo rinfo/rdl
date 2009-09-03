@@ -15,10 +15,10 @@ import java.net.URLConnection;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.apache.commons.io.FileUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.commons.io.FileUtils;
 
 import org.openrdf.model.Literal;
 import org.openrdf.model.Namespace;
@@ -312,10 +312,12 @@ public class RDFUtil {
 
     public static URI changeURI(ValueFactory vf, URI uri, URI oldUri, URI newUri) {
         String uriStr = uri.toString();
-        if (!uriStr.startsWith(oldUri.toString())) {
+        String oldUriStr = oldUri.toString();
+        if (!uriStr.startsWith(oldUriStr)) {
             return uri;
+        } else {
+            uriStr = newUri.toString() + uriStr.substring(oldUriStr.length());
         }
-        uriStr = uriStr.replaceFirst(oldUri.toString(), newUri.toString());
         return vf.createURI(uriStr);
     }
 
