@@ -393,7 +393,7 @@
       <dependency>
         <groupId>org.spockframework</groupId>
         <artifactId>spock-core</artifactId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.2</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -440,7 +440,7 @@
         <plugin>
           <groupId>org.spockframework</groupId>
           <artifactId>spock-maven</artifactId>
-          <version>0.2-SNAPSHOT</version>
+          <version>0.2</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
