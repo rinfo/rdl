@@ -15,13 +15,10 @@ import org.apache.abdera.model.Feed
 import org.openrdf.model.ValueFactory
 import org.openrdf.model.URI
 import org.openrdf.model.impl.URIImpl
-import org.openrdf.query.QueryLanguage
 import org.openrdf.repository.Repository
 import org.openrdf.repository.RepositoryConnection
 
 import org.openrdf.elmo.ElmoManager
-import org.openrdf.elmo.ElmoModule
-import org.openrdf.elmo.sesame.SesameManagerFactory
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.store.depot.DepotEntry
@@ -33,41 +30,29 @@ import se.lagrummet.rinfo.main.storage.log.DeletedEntryEvent
 import se.lagrummet.rinfo.main.storage.log.ErrorEvent
 
 
-// TODO: this is a "Session" thingy (stateful and should be closed); rename
-// to.. CollectorLogSession?
-class FeedCollectorRegistry {
+/**
+ * This is a stateful object that is not thread-safe and must be closed.
+ */
+class CollectorLogSession {
 
-    private Repository repo;
-    private ElmoManager manager;
+    private ElmoManager manager
+
+    private String systemBaseUri
+    private URI entrySpaceRdfUri
 
     private CollectEvent collectEvent
     private FeedEvent currentFeedEvent // TODO: don't keep; use it's uri..
 
-    private static ElmoModule module = new ElmoModule()
-    static {
-        module.addConcept(CollectEvent)
-        module.addConcept(FeedEvent)
-        module.addConcept(EntryEvent)
-        module.addConcept(DeletedEntryEvent)
-        module.addConcept(ErrorEvent)
-    }
 
-    FeedCollectorRegistry(Repository repo) {
-        this.repo = repo;
-        // FIXME: don't re-init for every session?
-        def factory = new SesameManagerFactory(module, repo)
-        factory.setQueryLanguage(QueryLanguage.SPARQL)
-        manager = factory.createElmoManager()
+    CollectorLogSession(CollectorLog collectorLog, ElmoManager manager) {
+        this.systemBaseUri = collectorLog.getSystemBaseUri()
+        this.entrySpaceRdfUri = new URIImpl(collectorLog.getEntrySpaceUri())
+        this.manager = manager
         def collectStartTime = new Date()
         collectEvent = manager.create(createCollectUri(), CollectEvent)
         collectEvent.setStart(createXmlGrCal(collectStartTime))
     }
 
-    // TODO: configuration properties
-    String sysUriBase = "http://rinfo.lagrummet.se/system/"
-    URI entrySpaceUri = new URIImpl("tag:lagrummet.se,2009:rinfo")
-
-    public Repository getRepo() { return repo; }
     public ElmoManager getManager() { return manager; }
 
     void close() {
@@ -98,7 +83,7 @@ class FeedCollectorRegistry {
         entryEvent.setPublished(createXmlGrCal(depotEntry.getPublished()))
         entryEvent.setUpdated(createXmlGrCal(depotEntry.getUpdated()))
         entryEvent.setAbout(new URIImpl(sourceEntry.getId().toString()))
-        entryEvent.setSpace(entrySpaceUri)
+        entryEvent.setSpace(entrySpaceRdfUri)
         entryEvent.setViaEntry(sourceEntryEvent)
         completeLogEvent()
     }
@@ -111,7 +96,7 @@ class FeedCollectorRegistry {
         deleted.setAbout(new URIImpl(sourceEntryId.toString()))
         // TODO: record sourceEntryDeleted in viaDeletedEntryEvent?
         deleted.setAt(createXmlGrCal(depotEntry.getUpdated()))
-        deleted.setSpace(entrySpaceUri)
+        deleted.setSpace(entrySpaceRdfUri)
         deleted.setViaFeed(currentFeedEvent)
         completeLogEvent()
     }
@@ -144,12 +129,12 @@ class FeedCollectorRegistry {
     }
 
     QName createCollectUri(date) {
-        return new QName(sysUriBase, "event/collect/${date}")
+        return new QName(systemBaseUri, "event/collect/${date}")
     }
 
     QName createCollectedFeedUri(id, updated, url) {
         def token = md5Hex(id.toString()+'@'+updated.toString()+'/'+url.toString())
-        return new QName(sysUriBase, "collect/${token}")
+        return new QName(systemBaseUri, "collect/${token}")
     }
 
     URI qnameToURI(QName qname) {
@@ -160,6 +145,7 @@ class FeedCollectorRegistry {
     // - requires init to make a dir for current collect
     void completeLogEvent() {
         /*
+        def repo = manager.repository
         def conn = repo.connection
         def ns = conn.&setNamespace
         ns("xsd", "http://www.w3.org/2001/XMLSchema#")

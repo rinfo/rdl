@@ -29,24 +29,32 @@ import se.lagrummet.rinfo.main.storage.log.ErrorEvent
 
 
 @Speck @RunWith(Sputnik)
-class FeedCollectorRegistrySpeck {
+class CollectorLogSpeck {
 
-    FeedCollectorRegistry reg
+    @Shared CollectorLog collectorLog
+    CollectorLogSession logSession
+
+    def setupSpeck() {
+        def repo = new SailRepository(new MemoryStore())
+        collectorLog = new CollectorLog(repo)
+    }
 
     def setup() {
-        def repo = new SailRepository(new MemoryStore())
-        repo.initialize()
-        reg = new FeedCollectorRegistry(repo)
+        logSession = collectorLog.openSession()
     }
 
     def cleanup() {
-        reg.close()
+        logSession.close()
+    }
+
+    def cleanupSpeck() {
+        collectorLog.shutdown()
     }
 
     /*
     def "feed page visits are logged"() {
         when:
-        reg.logFeedPageVisit(pageUrl, feed)
+        logSession.logFeedPageVisit(pageUrl, feed)
         then:
         ...
     }
@@ -70,11 +78,11 @@ class FeedCollectorRegistrySpeck {
         depotEntry.getUpdated() >> time
 
         when:
-        reg.logUpdatedEntry(sourceFeed, sourceEntry, depotEntry)
+        logSession.logUpdatedEntry(sourceFeed, sourceEntry, depotEntry)
 
         then:
-        //reg.findEntryEvent(about, updated, space)
-        def query = reg.manager.createQuery("""
+        //logSession.findEntryEvent(about, updated, space)
+        def query = logSession.manager.createQuery("""
         PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
         PREFIX sioc: <http://rdfs.org/sioc/ns#>
         PREFIX awol: <http://bblfish.net/work/atom-owl/2006-06-06/#>
@@ -85,10 +93,10 @@ class FeedCollectorRegistrySpeck {
                 awol:updated ?updated .
         """ + "}")
         query.setParameter("about",
-                reg.manager.find(new QName(entryId, "")))
+                logSession.manager.find(new QName(entryId, "")))
         query.setParameter("space",
-                reg.manager.find(new QName(reg.entrySpaceUri.toString(), "")))
-        query.setParameter("updated", reg.createXmlGrCal(time))
+                logSession.manager.find(new QName(collectorLog.entrySpaceUri.toString(), "")))
+        query.setParameter("updated", logSession.createXmlGrCal(time))
 
         EntryEvent entryEvent = query.evaluate().collect { it }[0]
         entryEvent != null
@@ -96,7 +104,7 @@ class FeedCollectorRegistrySpeck {
         def toTime = { it.toGregorianCalendar().time }
         toTime(entryEvent.getPublished()) == time
         toTime(entryEvent.getUpdated()) == time
-        entryEvent.getSpaceObject().toString() == reg.entrySpaceUri.toString()
+        entryEvent.getSpaceObject().toString() == collectorLog.entrySpaceUri.toString()
 
         //and:
         //// TODO: seems good to bundle get-/setViaEntry and EntryRdfReader as
@@ -117,7 +125,7 @@ class FeedCollectorRegistrySpeck {
         def sourceEntryId = null
         def sourceEntryDeleted = null
         def depotEntry = null
-        reg.logDeletedEntry(sourceFeed, sourceEntryId, sourceEntryDeleted,
+        logSession.logDeletedEntry(sourceFeed, sourceEntryId, sourceEntryDeleted,
             depotEntry)
         then:
         ...
@@ -125,7 +133,7 @@ class FeedCollectorRegistrySpeck {
     */
 
     def "errors are logged"() {
-        reg.logError(exception, timestamp, sourceFeed, sourceEntry)
+        logSession.logError(exception, timestamp, sourceFeed, sourceEntry)
     }
 
 }

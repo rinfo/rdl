@@ -7,16 +7,16 @@ import org.openrdf.repository.Repository;
 public class Storage {
 
     private Depot depot;
-    private Repository registryRepo;
+    private CollectorLog collectorLog;
     private Collection<StorageHandler> storageHandlers;
 
-    public Storage(Depot depot, Repository registryRepo) {
+    public Storage(Depot depot, CollectorLog collectorLog) {
         this.depot = depot;
-        this.registryRepo = registryRepo;
-        registryRepo.initialize();
+        this.collectorLog = collectorLog;
     }
 
     public Depot getDepot() { return depot; }
+    public Depot getCollectorLog() { return collectorLog; }
 
     public void startup() {
         StorageSession storageSession = openSession(
@@ -39,14 +39,13 @@ public class Storage {
     }
 
     public StorageSession openSession(StorageCredentials credentials) {
-        // TODO:? depotSession and registrySession?
-        def feedCollectorRegistry = new FeedCollectorRegistry(registryRepo);
+        // TODO:? depotSession
         return new StorageSession(credentials,
-                depot, storageHandlers, feedCollectorRegistry);
+                depot, storageHandlers, collectorLog.openSession());
     }
 
     public void shutdown() {
-        registryRepo.shutDown();
+        collectorLog.shutdown();
     }
 
 }

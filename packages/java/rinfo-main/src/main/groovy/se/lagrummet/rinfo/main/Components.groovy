@@ -16,9 +16,9 @@ import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.base.URIMinter
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 
+import se.lagrummet.rinfo.main.storage.CollectorLog
 import se.lagrummet.rinfo.main.storage.EntryRdfValidatorHandler
 import se.lagrummet.rinfo.main.storage.FeedCollectScheduler
-import se.lagrummet.rinfo.main.storage.FeedCollectorRegistry
 import se.lagrummet.rinfo.main.storage.Storage
 import se.lagrummet.rinfo.main.storage.StorageHandler
 import se.lagrummet.rinfo.main.storage.StorageSession
@@ -31,7 +31,7 @@ import se.lagrummet.rinfo.main.storage.SourceFeedsConfigHandler
         SOURCE_FEEDS_ENTRY_ID("rinfo.main.storage.sourceFeedsEntryId"),
         ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets"),
         PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
-        REGISTRY_DATA_DIR("rinfo.main.collector.registryDataDir");
+        COLLECTOR_LOG_DATA_DIR("rinfo.main.collector.logDataDir");
 
         private final String value;
         private ConfigKey(String value) { this.value = value; }
@@ -89,7 +89,7 @@ public class Components {
     }
 
     protected void setupStorage() {
-        storage = new Storage(createDepot(), createRegistryRepo())
+        storage = new Storage(createDepot(), createCollectorLog())
     }
 
     protected void setupCollectScheduler() {
@@ -121,8 +121,12 @@ public class Components {
         return depot
     }
 
+    private createCollectorLog() {
+        return new CollectorLog(createRegistryRepo())
+    }
+
     private Repository createRegistryRepo() {
-        def dataDirPath = config.getString(ConfigKey.REGISTRY_DATA_DIR.toString())
+        def dataDirPath = config.getString(ConfigKey.COLLECTOR_LOG_DATA_DIR.toString())
         def dataDir = new File(dataDirPath)
         if (!dataDir.exists()) {
             dataDir.mkdir()

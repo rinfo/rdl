@@ -54,7 +54,7 @@ class StorageSessionSpeck {
 
     def makeStorageSession(depot, handlers, admin=false) {
         depot.makeEntryBatch() >> { new DepotEntryBatch() }
-        def storage = new Storage(depot, repo)
+        def storage = new Storage(depot, new CollectorLog(repo))
         storage.storageHandlers = handlers
         storage.startup()
         return storage.openSession(new StorageCredentials(admin))

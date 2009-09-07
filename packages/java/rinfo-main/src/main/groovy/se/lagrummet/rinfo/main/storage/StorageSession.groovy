@@ -29,22 +29,26 @@ class StorageSession {
     Depot depot
     Collection<StorageHandler> storageHandlers =
             new ArrayList<StorageHandler>()
-    FeedCollectorRegistry registry
+    CollectorLogSession logSession
 
     private DepotEntryBatch collectedBatch
 
     StorageSession(StorageCredentials credentials,
             Depot depot,
             Collection<StorageHandler> storageHandlers,
-            FeedCollectorRegistry registry) {
+            CollectorLogSession logSession) {
         this.credentials = credentials
         this.depot = depot
         this.storageHandlers = storageHandlers
-        this.registry = registry
+        this.logSession = logSession
+    }
+
+    void close() {
+        logSession.close()
     }
 
     void beginPage(URL pageUrl, Feed feed) {
-        registry.logFeedPageVisit(pageUrl, feed)
+        logSession.logFeedPageVisit(pageUrl, feed)
         collectedBatch = depot.makeEntryBatch()
     }
 
@@ -55,16 +59,12 @@ class StorageSession {
 
     boolean hasCollected(Entry sourceEntry) {
         // TODO:IMPROVE? optimize by using eventRegistry with:
-        //return registry.hasCollected(sourceEntry)
+        //return logSession.hasCollected(sourceEntry)
         return hasCollected(sourceEntry, depot.getEntry(sourceEntry.getId().toURI()))
     }
 
     boolean hasCollected(Entry sourceEntry, DepotEntry depotEntry) {
         return (depotEntry != null && sourceIsNotAnUpdate(sourceEntry, depotEntry))
-    }
-
-    void close() {
-        registry.close()
     }
 
     void storeEntry(Feed sourceFeed, Entry sourceEntry,
@@ -114,7 +114,7 @@ class StorageSession {
 
             collectedBatch.add(depotEntry)
             depotEntry.unlock()
-            registry.logUpdatedEntry(sourceFeed, sourceEntry, depotEntry)
+            logSession.logUpdatedEntry(sourceFeed, sourceEntry, depotEntry)
 
         } catch (Exception e) {
             /* FIXME: handle errors:
@@ -132,7 +132,7 @@ class StorageSession {
             */
             logger.error("Error storing entry:", e)
             depotEntry.rollback()
-            registry.logError(e, timestamp, sourceFeed, sourceEntry)
+            logSession.logError(e, timestamp, sourceFeed, sourceEntry)
             return
         }
     }
@@ -152,7 +152,7 @@ class StorageSession {
         for (StorageHandler handler : storageHandlers) {
             handler.onDelete(this, depotEntry)
         }
-        registry.logDeletedEntry(
+        logSession.logDeletedEntry(
                 sourceFeed, entryId, sourceDeletedDate, depotEntry)
         collectedBatch.add(depotEntry)
     }
