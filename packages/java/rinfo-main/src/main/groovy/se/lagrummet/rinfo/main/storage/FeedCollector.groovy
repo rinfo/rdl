@@ -49,7 +49,7 @@ import se.lagrummet.rinfo.collector.atom.FeedArchivePastToPresentReader
       sources have no interdependent ordering).
 
 */
-class FeedCollector extends FeedArchivePastToPresentReader {
+public class FeedCollector extends FeedArchivePastToPresentReader {
 
     public static final QName LINK_EXT_FILENAME = new QName(
             "http://rinfo.lagrummet.se/ns/2009/09/atom-extensions#",
@@ -218,7 +218,7 @@ class FeedCollector extends FeedArchivePastToPresentReader {
         String slug = atomLink.getAttributeValue(LINK_EXT_FILENAME)
         if (slug != null) {
             // TODO: what forms do we support?
-            return new URI(entryId.toString()+"/"+slug).getPath()
+            return new URI(entryId.toString()+"/").resolve(slug).getPath()
         } else {
             return computeEnclosureSlug(entryId.toURI(),
                     atomLink.resolvedHref.toURI())

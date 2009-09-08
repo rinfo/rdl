@@ -27,11 +27,23 @@ import static se.lagrummet.rinfo.main.storage.FeedCollector.computeEnclosureSlug
                     "http://localhost/item/one/file.txt"),
             makeLink("http://example.org/item/one",
                     "http://localhost/files.cgi?id=123",
-                    "file.txt")
+                    "file.txt"),
+            makeLink("http://example.org/item/one",
+                    "http://localhost/files.cgi?id=123",
+                    "/item/one/file.txt"),
+            makeLink("http://example.org/item/one",
+                    "http://localhost/files.cgi?id=123",
+                    "css/style.css"),
+            makeLink("http://example.org/item/one",
+                    "http://localhost/files.cgi?id=123",
+                    "/item/one/css/style.css"),
         ]
         expectedSlug << [
             "/item/one/file.txt",
-            "/item/one/file.txt"
+            "/item/one/file.txt",
+            "/item/one/file.txt",
+            "/item/one/css/style.css",
+            "/item/one/css/style.css",
         ]
     }
 
