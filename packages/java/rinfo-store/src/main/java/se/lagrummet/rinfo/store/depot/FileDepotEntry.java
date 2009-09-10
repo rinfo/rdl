@@ -452,6 +452,9 @@ public class FileDepotEntry implements DepotEntry {
     }
 
 
+    // TODO: these (rollback/restorePrevious/wipeout) modify *in place*
+    // and must not have been indexed!
+
     public void rollback() throws DepotWriteException, IOException {
         if (hasHistory()) {
             restorePrevious();
