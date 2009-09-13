@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xml" href="templates/dv-handbok.xslt"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="sv" lang="sv">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Kommittédirektiv</title>
+	</head>
+	<body>
+        <div class="alert">
+			<p>Observera att detta dokument inte är fastställt i alla delar
+			ännu. För publicering av denna dokumenttyp bedömer vi dock att inga
+			större ändringar kommer att ske.</p>
+        </div>
+
+		<h1>Startpaket för publicering av kommittédirektiv i rättsinformationssystemet</h1>
+		<p>Detta dokument är en introduktion till elektronisk publicering av
+		rättsinformation enligt de principer som utarbetats i
+		rättsinformationsprojektet. Dokumentet är indelat i två delar; en
+		översikt  av krav på grundläggande information i ett kommittédirektiv
+		och elektronisk publicering av desamma samt en del med exempel avsedd
+		för den som avser implementera systemstöd för publiceringen.</p>
+
+		<p>För mer information om rättsinformationssystemet se
+		Rättsinformationsförordningen (1999:175) eller kontakta projektledare
+		Peter Krantz, Domstolsverket på peter.b.krantz@dom.se.</p>
+
+	<h2>Översikt av principer och standarder</h2>
+	<p>En central funktion för rättsinformationssystemet är att möjliggöra
+	elektroniska referenser mellan informationsposter. Exempel på sådana
+	referenser är de mellan ett betänkande och en kommitté, mellan en
+	författning och ett förarbete, mellan en föreskrift och de dokument som
+	utgör dess rättsliga grund samt mellan föreskrifter från olika myndigheter.
+	För att dessa referenser skall fungera måste informationsposter ha entydiga
+	unika elektroniska referenser. Därför har projektet utarbetat ett sätt att
+	skapa sådana.</p>
+
+	<p>För att möjliggöra olika typer av sammanställningar och sökningar i
+	materialet behöver rättsinformationssystemet känna till alla
+	informationsposter. Detta sker genom att rättsinformationssystemet speglar
+	det som informationsansvariga organisationer publicerar på sina egna
+	webbplatser genom att läsa av en förteckning i ett standardiserat format.
+	Denna förteckning ger även möjlighet för andra, t.ex. företag som förädlar
+	rättsinformation, att på ett standardiserat sätt läsa av förändringar av
+	informationsposterna över tid. Därmed möjliggörs en förkortad tid från
+	tillgängliggörandet till dess att rättsinformationen har nått olika
+	mottagare, något som är särskilt viktigt i händelse av att felaktigt
+	material publicerats av den informationsansvariga organisationen.</p>
+
+	<p>Respektive informationsansvarig organisation ansvarar för sin egen
+	informations korrekthet och att den följer de framtagna standarderna.</p>
+
+	<p>En annan viktig funktion är att så många som möjligt skall kunna ta del
+	av innehållet. Därför har vi valt format som fungerar för användare med
+	särskilda behov.</p>
+
+	<p>För respektive dokumenttyp har projektet tagit fram exempel och en
+	referensimplementation. Referensimplementationen är i första hand ämnad för
+	systemimplementatörer som vill studera hur man i programkod kan skapa
+	elektronisk rättsinformation enligt de standarder projektet utarbetat.</p>
+
+	<h2>Elektronisk publicering av rättsinformation</h2>
+	<p>För en deltagande organisation sker det elektroniska tillgängliggörandet
+	av rättsinformation på följande sätt:</p>
+	<ol>
+		<li>
+		Informationsansvarig organisation utarbetar dokument A. Sättet som
+		rättsinformation framställs på omfattas inte av
+		rättsinformationssystemet.</li>
+
+		<li>Informationsansvarig organisation publicerar dokument A på den egna
+		webbplatsen på en bestämd adress.</li>
+
+		<li>
+		Informationsansvarig organisation uppdaterar postförteckning på den
+		egna webbplatsen. Detta möjliggör för andra att elektroniskt få
+		information om uppdateringar.
+		</li>
+
+		<li>
+		Rättsinformationssystemet (och andra) läser av postförteckningen och
+		får information om var dokumentrepresentationer och information om
+		dokument A kan hämtas.
+		</li>
+
+		<li>
+		Rättsinformationssystemet (och andra) läser in dokument A.</li>
+	</ol>
+
+	<p>För att stödja denna process har rättsinformationsprojektet valt ett
+	antal standarder för märkning, strukturering och möjliggörande av sökning.
+	I arbetet med dessa har stor vikt lagts vid att välja standarder som är
+	lätta att implementera till en låg kostnad.</p>
+
+	<p>Sammantaget ger information i dessa format det stöd som behövs för
+	sökning och sammanställning för presentation på ett enhetligt sätt.</p>
+
+    <div class="appendix">
+		<h1>Bilaga 1: Grundläggande information om ett kommittédirektiv</h1>
+		<p>Dessa egenskaper utgör en mininivå av information om ett
+		kommittédirektiv. Utöver dessa kan informationsansvarig organisation välja
+		att påföra mer information i de fall man finner det lämpligt. </p>
+		<xi:include href="data/model.xhtml" xpointer="Kommittedirektiv"/>
+    </div>
+
+    <div class="appendix">
+	<h1>Bilaga 2: Postförteckning av kommittédirektiv</h1>
+      	<div class="syntax">
+        	<code class="xml"><xi:include href="../../documentation/exempel/feeds/sources/regeringskansliet/regeringskansliet_komdir_feed.atom" parse="text"/></code>
+      	</div>
+	</div>
+
+	<div class="appendix">
+		<h1>
+			Bilaga 3: Exempel på metadata i RDF (Dir. nnnn:nn)
+		</h1>
+		<p>...</p>
+	</div>
+
+	<div class="appendix">
+		<h1>Bilaga 4: Exempel på metadata i RDF för tilläggsdirektiv (Dir. nnnn:nn)</h1>
+		<p>...</p>
+	</div>
+
+</body>
+</html>
