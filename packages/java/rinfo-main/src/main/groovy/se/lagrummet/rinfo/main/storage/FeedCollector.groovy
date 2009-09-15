@@ -126,19 +126,23 @@ public class FeedCollector extends FeedArchivePastToPresentReader {
 
         storageSession.beginPage(pageUrl, feed)
         try {
+            deleteFromMarkers(feed, deletedMap)
             for (entry in effectiveEntries) {
                 try {
                     List<SourceContent> contents = new ArrayList<SourceContent>()
                     List<SourceContent> enclosures = new ArrayList<SourceContent>()
                     fillContentsAndEnclosures(sourceEntry, contents, enclosures)
-                    storageSession.storeEntry(feed, entry, contents, enclosures)
+                    def ok = storageSession.storeEntry(
+                            feed, entry, contents, enclosures)
+                    if (!ok) {
+                        break
+                    }
                 } catch (Exception e) {
                     // TODO:? storageSession should handle (log and report) errors..
                     logger.error("Critical error when storing entry: "+entry, e)
                     throw e
                 }
             }
-            deleteFromMarkers(feed, deletedMap)
         } finally {
             storageSession.endPage()
         }

@@ -67,7 +67,7 @@ class StorageSession {
         return (depotEntry != null && sourceIsNotAnUpdate(sourceEntry, depotEntry))
     }
 
-    void storeEntry(Feed sourceFeed, Entry sourceEntry,
+    boolean storeEntry(Feed sourceFeed, Entry sourceEntry,
             List<SourceContent> contents, List<SourceContent> enclosures) {
 
         URI entryId = sourceEntry.getId().toURI()
@@ -115,6 +115,7 @@ class StorageSession {
             collectedBatch.add(depotEntry)
             depotEntry.unlock()
             logSession.logUpdatedEntry(sourceFeed, sourceEntry, depotEntry)
+            return true
 
         } catch (Exception e) {
             /* FIXME: handle errors:
@@ -133,7 +134,7 @@ class StorageSession {
             logger.error("Error storing entry:", e)
             depotEntry.rollback()
             logSession.logError(e, timestamp, sourceFeed, sourceEntry)
-            return
+            return false
         }
     }
 
