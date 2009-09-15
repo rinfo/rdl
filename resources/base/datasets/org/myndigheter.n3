@@ -3,14 +3,9 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
-# TODO:
-#   - should be a rinfo-admin editable resource.
-
 <http://rinfo.lagrummet.se/org/regeringskansliet>
     a foaf:Organization;
     foaf:name "Regeringskansliet"@sv .
-
-## all below are extracted from <https://lagen.nu/1976:725>
 
 <http://rinfo.lagrummet.se/org/aff%C3%A4rsverket_svenska_kraftn%C3%A4t>
     a foaf:Organization;
@@ -267,4 +262,3 @@
 <http://rinfo.lagrummet.se/org/%C3%A5klagarmyndigheten>
     a foaf:Organization;
     foaf:name "Åklagarmyndigheten"@sv .
-
