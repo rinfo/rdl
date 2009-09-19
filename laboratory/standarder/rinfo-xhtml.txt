@@ -1,0 +1,53 @@
+
+XML-baserat dokumentformat
+==========================
+
+XML-representationen av dokument utgår från standarden XHTML 1.0 Strict och
+använder fördefinierade värden för attributen class och id. Detta gör det
+möjligt att transformera dokument till både PDF-format för tryck, men även till
+metadatarepresentationen i RDF och till vanliga webbsidor för publicering på
+myndighetens webbplats.
+
+
+Grundläggande dokumentstruktur
+------------------------------
+
+Dokument utformas i XHTML 1.0 Strict. Då denna standard inte innehåller
+rättsinformationsspecifika uppmärkningsmöjligheter anges nedan en uppsättning
+fragment, klassnamn och principer för namngivning vilkas användning möjliggör
+transformation till olika format och representationer.
+
+Utöver dessa är tanken att informationsansvarig organisation skall använda de
+element och attribut som är inkluderade i XHTML 1. Det innebär t.ex. korrekt
+uppmärkning av rubriker, begreppsdefinitioner, punktlistor mm. 
+
+Rättsliga informationsposter anges i meta-element (för övergripande saker som
+t.ex. beslutsdatum, nummer, mm) och med klassnamn och id-atribut (för t.ex.
+utsträckningen av texten i en paragraf och dess unika identifierare i
+dokumentet).
+
+För referenser till andra poster (t.ex. författningar i löptext) används
+länkelement, <a>, och eden gemensamma standarden för elektroniska referenser.
+
+
+Identifiering av dokumenttyp
+----------------------------
+
+I dokumentet avgränsas innehållet av ett div-element. För div-elementet anges
+ett av följande klassnamn:
+
+rpubl-myndighetsforeskrift
+	Anger typen Myndighetsföreskrift
+
+rpubl-kommittedirektiv
+	Anger dokumenttypen kommittédirektiv.
+
+
+
+Kommittédirektiv
+----------------
+
+Utöver grundläggande strukturella element i XHTML skall kommittédirektiv ange
+referenser till andra rättsinformationsposter (t.ex. lagar och betänkanden).
+
+	
