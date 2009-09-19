@@ -876,14 +876,6 @@
     rdfs:comment """Direktivnummer på formen "2004:128". Brukar i klartext anges som "Dir. 2004:128"."""@sv;
     rdfs:range rdfs:Literal; .
 
-# TODO: frågor:
-#   - är detta en egenskap direkt i direktivet?
-#   - är det noll eller flera?
-#   - kan det tillkomma fler? Hur ska vi isf. ange det (t.ex. i dok. som
-#     innehåller tilläggande påstående -- ett påstående som isf. blir
-#     åtminstone svårt att spåra ursprungsdokument och tid för)?
-#   - Mitt delsvar: som jag tolkar det kommer sådana saker i tilläggsdirektiv
-#     (tillägg till kommittén! ej till tidigare direktiv).
 :avkravtAvrapporteringsdatum a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Avkrävt avrapporteringsdatum"@sv;
@@ -897,6 +889,12 @@
     rdfs:comment "Den författning som aktuellt dokument föreslår utredning av ändring i."@sv;
     rdfs:range :Forfattning;
     owl:inverseOf [ rdfs:label "Föreslås att ändringsutredas av"@sv ]; .
+
+:tillaggTill a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf dct:references;
+    rdfs:label "Tillägg till"@sv;
+    rdfs:comment "Den kommtté som tilläget riktar sig till."@sv; .
 
 
 ##
