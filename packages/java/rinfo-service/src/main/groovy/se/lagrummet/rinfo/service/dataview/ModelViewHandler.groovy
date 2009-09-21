@@ -46,6 +46,7 @@ class ModelViewHandler extends BasicViewHandler {
             } != null
         def aggr = [:]
         mergeRestrictionsProperties(cls, aggr)
+        removeSuperProperties(aggr)
         cls['merged_restrictions_properties'] = aggr.values().sort(lsort)
         return cls
     }
@@ -74,6 +75,17 @@ class ModelViewHandler extends BasicViewHandler {
         if (getSuper && cls.subClassOf) {
             for (superClass in cls.subClassOf) {
                 mergeRestrictionsProperties(superClass, aggr, false)
+            }
+        }
+    }
+
+    void removeSuperProperties(aggr) {
+        def superProps = aggr.values().inject([], {
+                l, it -> l + it.subPropertyOf.collect { it.resource_uri }
+            })
+        superProps.each {
+            if (aggr.containsKey(it)) {
+                aggr.remove(it)
             }
         }
     }
