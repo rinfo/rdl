@@ -2,6 +2,10 @@
 CHANGELOG
 ########################################################################
 
+2009-09-03
+--------------------
+
+* Ändrade ikrafttradandeanvisning och lade till ikrafttradandetext.
 
 2009-08-17
 --------------------

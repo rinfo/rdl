@@ -1,4 +1,4 @@
-#=======================================================================
+=======================================================================
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
@@ -433,13 +433,18 @@
     rdfs:comment "Datum då författningen träder ikraft."@sv;
     rdfs:range xsd:date; .
 
-:ikrafttradandeanvisning a rdf:Property;
+:ikrafttradandeanvisning a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
     rdfs:subPropertyOf :ikrafttradanderegel;
     rdfs:label "Ikraftträdandeanvisning"@sv;
+    rdfs:comment """Referens till anvisning som anger hur författningen träder ikraft."""@sv .
+
+:ikrafttradandetext a rdf:Property;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf :ikrafttradanderegel;
+    rdfs:label "Ikraftträdandetext"@sv;
     rdfs:comment """Anvisning som anger hur författningen träder ikraft - exempelvis "Träder ikraft den dagen regeringen bestämmer."."""@sv;
     rdfs:range rdfs:Literal .
-    # TODO: eller referens till fragment? (se övriga sådana text/referens-egenskaper!)
 
 :ikrafttradandelagrum a owl:ObjectProperty;
     rdfs:subPropertyOf :ikrafttradanderegel, :lagrum;
@@ -484,7 +489,7 @@
 :utfardandedatum a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Utfärdandedatum"@sv;
-    rdfs:comment "Datum då författningen utfärdades."@sv;
+    rdfs:comment "Datum då författningen utfärdades. Motsvarar beslutsdatum."@sv;
     rdfs:range xsd:date; .
 
 
