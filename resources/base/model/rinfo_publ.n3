@@ -1012,7 +1012,7 @@
     rdfs:subPropertyOf dct:title;
     rdfs:label "Referatrubrik"@sv;
     rdfs:comment "Beskrivande rubrik för ett rättsfallsreferat."@sv;
-    rdfs:range :Rattsfallsreferat .
+    rdfs:domain :Rattsfallsreferat .
 
 :rattsfallspublikation a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
