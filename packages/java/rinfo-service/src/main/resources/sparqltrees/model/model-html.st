@@ -63,6 +63,7 @@
                         $endif$
 
                         $if (it.abstract)$
+                        $!if (it.direct)$ $if (it.subproperties)!$
                           <p class="kindof">
                             $labels.more_specific_properties$:
                           </p>
@@ -77,6 +78,7 @@
                               </dd>
                             }$
                           </dl>
+                        $!endif$ $endif!$
                         $endif$
                         $it.restriction.computed_range:{
                           <p>

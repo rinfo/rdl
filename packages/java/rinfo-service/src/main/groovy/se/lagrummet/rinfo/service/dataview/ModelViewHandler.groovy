@@ -8,11 +8,17 @@ import se.lagrummet.rinfo.base.rdf.sparqltree.SmartLens
 class ModelViewHandler extends BasicViewHandler {
 
     protected Map labels
+    protected Map options
     protected List allProperties
 
     ModelViewHandler(String locale, Map queryData, Map labelTree) {
+        this(locale, queryData, labelTree, [:])
+    }
+
+    ModelViewHandler(String locale, Map queryData, Map labelTree, Map options) {
         super(locale, queryData)
         this.labels = GraphBuilder.buildGraph(lens, labelTree)
+        this.options = options
     }
 
     Map handleTree(Map tree) {
@@ -24,8 +30,9 @@ class ModelViewHandler extends BasicViewHandler {
         this.allProperties = graph.ontology.collectAll { it.property }.flatten()
         def ontologies = graph.ontology.collect { prepOntology(it) }
         return [encoding: "utf-8",
+                locale: locale,
                 labels: labels,
-                ontologies: ontologies]
+                ontologies: ontologies] + options
     }
 
     def prepOntology(onto) {

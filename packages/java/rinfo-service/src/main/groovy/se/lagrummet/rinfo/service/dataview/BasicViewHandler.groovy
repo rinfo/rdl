@@ -7,10 +7,12 @@ import se.lagrummet.rinfo.base.rdf.sparqltree.SmartLens
 class BasicViewHandler implements ViewHandler {
 
     Lens lens
+    String locale
     Map extraData
 
     BasicViewHandler(String locale, Map extraData=null) {
         this.lens = new SmartLens(locale)
+        this.locale = locale
         this.extraData = extraData
     }
 

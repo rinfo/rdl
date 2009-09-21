@@ -23,13 +23,18 @@ def rqViewer = new SparqlTreeViewer(repo, templates,
 def labelTree = new JsonSlurper().parse(ConfigurationUtils.locate(
                 "sparqltrees/model/model-labels.json"))
 
-def locale = 'sv'
-def out = { rqViewer.execute(new ModelViewHandler(locale, null, labelTree)) }
+def (fname, locale, mediabase) = args as List
+locale = locale ?: 'sv'
+options = [
+    mediabase: mediabase ?: '.'
+]
 
-if (args.length == 1) {
-    def fname = args[0]
+def out = {
+    rqViewer.execute(new ModelViewHandler(locale, null, labelTree, options))
+}
+if (fname) {
     println "Writing to: $fname"
-    new File(fname) << out()
+    new File(fname).text = out()
 } else {
     println out()
 }
