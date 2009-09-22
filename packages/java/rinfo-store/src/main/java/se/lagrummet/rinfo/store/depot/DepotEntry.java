@@ -1,7 +1,6 @@
 package se.lagrummet.rinfo.store.depot;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
@@ -31,27 +30,27 @@ public interface DepotEntry {
     File getMetaFile(String fileName);
 
     void create(Date createTime, List<SourceContent> sourceContents)
-        throws DepotWriteException, IOException;
+        throws DepotWriteException;
     void create(Date createTime, List<SourceContent> sourceContents,
             List<SourceContent> sourceEnclosures)
-        throws DepotWriteException, IOException;
+        throws DepotWriteException;
     void create(Date createTime, List<SourceContent> sourceContents,
             List<SourceContent> sourceEnclosures, boolean releaseLock)
-        throws DepotWriteException, IOException;
+        throws DepotWriteException;
 
     void update(Date updateTime, List<SourceContent> sourceContents)
-        throws DepotWriteException, IOException;
+        throws DepotWriteException;
     void update(Date updateTime, List<SourceContent> sourceContents,
             List<SourceContent> sourceEnclosures)
-        throws DepotWriteException, IOException;
+        throws DepotWriteException;
 
     void delete(Date deleteTime)
-        throws DeletedDepotEntryException, DepotIndexException, IOException;
+        throws DeletedDepotEntryException, DepotIndexException, DepotWriteException;
 
-    void lock() throws IOException;
-    void unlock() throws IOException;
-    void rollback() throws DepotWriteException, IOException;
+    void lock() throws DepotWriteException;
+    void unlock();
+    void rollback() throws DepotWriteException;
     boolean hasHistory();
-    void wipeout() throws DepotIndexException, IOException;
+    void wipeout() throws DepotWriteException, DepotIndexException;
 
 }

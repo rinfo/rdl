@@ -7,7 +7,11 @@ public class FileDepotCmdTool {
 
     public static enum Command {
         INDEX {
-            void run(Depot depot) throws Exception { depot.generateIndex(); }
+            void run(Depot depot) throws Exception {
+                DepotSession session = depot.openSession();
+                session.generateIndex();
+                session.close();
+            }
         };
         abstract void run(Depot depot) throws Exception;
     }

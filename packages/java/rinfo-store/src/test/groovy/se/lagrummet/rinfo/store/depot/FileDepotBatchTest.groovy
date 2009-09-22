@@ -8,17 +8,18 @@ import spock.lang.*
 class FileDepotBatchTest {
 
     @Shared FileDepot depot
+    @Shared DepotEntryBatch batch
 
     def setup() {
         depot = (FileDepot) DepotUtil.depotFromConfig(
                 "src/test/resources/rinfo-depot.properties");
+        batch = new DepotEntryBatch()
     }
 
     def "should add and retrieve"() {
         setup:
         def id = "/publ/1901/100"
         def entry = depot.getEntry(id)
-        def batch = depot.makeEntryBatch()
         assert batch.size() == 0
 
         when: batch.add(entry)
@@ -32,7 +33,6 @@ class FileDepotBatchTest {
 
     def "should fail on null"() {
         when:
-        def batch = depot.makeEntryBatch()
         batch.add(null)
         then:
         thrown(NullPointerException)
@@ -44,18 +44,16 @@ class FileDepotBatchTest {
         def entry = depot.getEntry(id)
         assert entry != null
         when:
-        def batch = depot.makeEntryBatch()
         batch.add(entry)
         then:
         assert batch.contains(depot.getEntry(id))
     }
 
-    def "should not contain not added entry"() {
+    def "should not contain un-added entry"() {
         setup:
         def id = "/publ/1901/100"
         when:
         def entry = depot.getEntry(id)
-        def batch = depot.makeEntryBatch()
         then:
         !batch.contains(depot.getEntry(id))
     }

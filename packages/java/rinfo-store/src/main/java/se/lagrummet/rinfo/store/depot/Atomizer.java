@@ -54,13 +54,11 @@ public class Atomizer {
     private final Logger logger = LoggerFactory.getLogger(Atomizer.class);
 
     /* TODO: factor out dep to depot?
-       As a Depot (super-)interface, with minimal path- and write operations?
+       .. minimal path- and write operations
 
         depot.getPathHandler().makeNegotiatedUriPath(...)
-        depot.getSubscriptionPath()
-        depot.pathToArchiveFeed(date)
 
-        depot.getFeedFile(uriPath)
+        depot.backend.getFeedFile(uriPath)
 
        .. Better:
         - have depot contain:
@@ -70,9 +68,10 @@ public class Atomizer {
             - Indexer interface: the "pure algorithm" (lazy if backend is db?)
                 .. DepotWriter to do all create+update (state with currentFeed etc)?
             - Atomizer: left to do syntax only
-            - pluggable ContentValidator:s (is it enough to wrap streams)?
     */
     private FileDepot depot;
+
+    private String feedPath;
 
     private int feedBatchSize = DEFAULT_FEED_BATCH_SIZE;
     private boolean includeDeleted = true;
@@ -82,8 +81,8 @@ public class Atomizer {
     private boolean useTombstones = true;
     private boolean useFeedSync = true;
     private boolean useGdataDeleted = true;
-    // TODO:IMPROVE: remove support for prettyXml? In 0.4, it's still too
-    // brittle (accumulates whitespace over time).
+    // TODO:IMPROVE: remove support for prettyXml? In Abdera 0.4, it's still
+    // too brittle (accumulates whitespace over time).
     private boolean prettyXml = false;
 
     private String feedSkeletonPath;
@@ -101,6 +100,22 @@ public class Atomizer {
     public void setDepot(FileDepot depot) {
         this.depot = depot;
     }
+
+    public String getFeedPath() { return feedPath; }
+    public void setFeedPath(String feedPath) {
+        this.feedPath = feedPath;
+    }
+
+    public String getSubscriptionPath() {
+        // TODO: configurable? Settable "feedSubscriptionSegment"?
+        return feedPath+"/current";
+    }
+
+    public String pathToArchiveFeed(Date youngestDate) {
+        String archPath = DatePathUtil.toFeedArchivePath(youngestDate);
+        return feedPath+"/"+archPath;
+    }
+
 
     public int getFeedBatchSize() {
         return feedBatchSize;
@@ -178,7 +193,7 @@ public class Atomizer {
             throws DepotWriteException, IOException {
         // TODO:? create a LOCKED file in the feed dir
 
-        String subscriptionPath = depot.getSubscriptionPath();
+        String subscriptionPath = getSubscriptionPath();
 
         Feed currFeed = getFeed(subscriptionPath);
         if (currFeed == null) {
@@ -208,7 +223,7 @@ public class Atomizer {
 
             if (batchCount > getFeedBatchSize()) { // save as archive
                 FeedPagingHelper.setArchive(currFeed, true);
-                String archPath = depot.pathToArchiveFeed(depotEntry.getUpdated()); // youngest entry..
+                String archPath = pathToArchiveFeed(depotEntry.getUpdated()); // youngest entry..
                 currFeed.getSelfLink().setHref(archPath);
                 FeedPagingHelper.setCurrent(currFeed, subscriptionPath);
                 if (youngestArchFeed!=null) {
@@ -238,7 +253,7 @@ public class Atomizer {
     }
 
     public Feed getFeed(String uriPath) throws IOException {
-        File feedFile = depot.getFeedFile(uriPath);
+        File feedFile = depot.backend.getFeedFile(uriPath);
         try {
             InputStream inStream = new FileInputStream(feedFile);
             Feed feed = (Feed) Abdera.getInstance().getParser().parse(
@@ -278,7 +293,7 @@ public class Atomizer {
         Search in feed folder by date, time; opt. offset (if many of same in
         same instant?).
     protected Feed findFeedForDateTime(Date date) {
-        .. findFeedForDateTime(depot.pathToArchiveFeed(date))
+        .. findFeedForDateTime(pathToArchiveFeed(date))
         return null;
     }
     */
@@ -286,7 +301,7 @@ public class Atomizer {
     protected void writeFeed(Feed feed) throws IOException, FileNotFoundException {
         String uriPath = uriPathFromFeed(feed);
         logger.info("Writing feed: <"+uriPath+">");
-        File feedFile = depot.getFeedFile(uriPath);
+        File feedFile = depot.backend.getFeedFile(uriPath);
         File feedDir = feedFile.getParentFile();
         if (!feedDir.exists()) {
             FileUtils.forceMkdir(feedDir);
@@ -329,13 +344,13 @@ public class Atomizer {
 
     //== Entry Specifics ==
 
-    public Entry generateAtomEntryContent(FileDepotEntry depotEntry)
-            throws IOException, FileNotFoundException {
-        return generateAtomEntryContent(depotEntry, true);
+    public Entry generateAtomEntryContent(DepotEntry depotEntry)
+            throws IOException {
+        return generateAtomEntryContent((FileDepotEntry) depotEntry, true);
     }
 
     public Entry generateAtomEntryContent(FileDepotEntry depotEntry, boolean force)
-            throws IOException, FileNotFoundException {
+            throws IOException {
         File entryFile = depotEntry.newContentFile(ATOM_ENTRY_MEDIA_TYPE);
         if (!force &&
             entryFile.isFile() &&

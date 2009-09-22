@@ -98,8 +98,7 @@ public class SourceContent {
     /**
      * @see {@link #writeTo(OutputStream)}.
      */
-    public void writeTo(File file)
-            throws IOException, IllegalStateException {
+    public void writeTo(File file) throws IOException {
         FileOutputStream outStream = new FileOutputStream(file);
         writeTo(outStream);
     }
@@ -141,8 +140,7 @@ public class SourceContent {
         return outStream;
     }
 
-    private void checkExpected(Check check, Object real)
-            throws IOException {
+    private void checkExpected(Check check, Object real) {
         Object expected = datachecks.get(check);
         if (expected == null) {
             return;

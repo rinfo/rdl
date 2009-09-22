@@ -7,11 +7,11 @@ import spock.lang.*
 @Speck @RunWith(Sputnik)
 class PathHandlerSpeck {
 
-    @Shared pather = new PathHandler()
+    @Shared pathHandler = new DefaultPathHandler()
 
     def "should parse URIs"() {
         expect:
-        pather.parseUriPath(path) == parsedPath
+        pathHandler.parseUriPath(path) == parsedPath
 
         where:
         [path, parsedPath] << [
@@ -51,7 +51,7 @@ class PathHandlerSpeck {
 
     def "should make URLs by content negotiation"() {
         expect:
-        pather.makeNegotiatedUriPath(path, mtype, lang) == resultPath
+        pathHandler.makeNegotiatedUriPath(path, mtype, lang) == resultPath
         where:
         [path, mtype, lang, resultPath] << [
             ["/things/item/one", "application/xhtml+xml", null,
@@ -63,17 +63,29 @@ class PathHandlerSpeck {
 
     def "should fail when making path from unknown media type"() {
         when:
-        pather.makeNegotiatedUriPath("/things/item/one", "UNKNOWN", "sv")
+        pathHandler.makeNegotiatedUriPath("/things/item/one", "UNKNOWN", "sv")
         then:
         thrown(UnknownMediaTypeException)
     }
 
     def "should return media type for hint"() {
-        pather.mediaTypeForHint("pdf") == "application/pdf"
+        pathHandler.mediaTypeForHint("pdf") == "application/pdf"
     }
 
     def "should return hint for media type"() {
-        pather.hintForMediaType("application/pdf") == "pdf"
+        pathHandler.hintForMediaType("application/pdf") == "pdf"
+    }
+
+    def "should get media type for file name"() {
+        expect:
+        computed == mediaType
+        where:
+        [computed, mediaType] << [
+            [pathHandler.computeMediaType("some.pdf"), "application/pdf"],
+            [pathHandler.computeMediaType("some.png"), "image/png"],
+            //[pathHandler.computeMediaType("some.css"), "text/css"],
+            //[pathHandler.computeMediaType("some.js"), "text/javascript"],
+        ]
     }
 
 }

@@ -1,9 +1,7 @@
 package se.lagrummet.rinfo.store.depot;
 
-import java.io.IOException;
 
-
-public class SourceCheckException extends IOException {
+public class SourceCheckException extends RuntimeException {
 
     SourceContent.Check failedCheck;
     Object expectedValue;

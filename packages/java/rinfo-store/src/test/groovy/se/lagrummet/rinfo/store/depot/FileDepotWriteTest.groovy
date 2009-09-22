@@ -5,23 +5,41 @@ import spock.lang.*
 
 
 @Speck @RunWith(Sputnik)
-class FileDepotWriteTest extends FileDepotTempBase {
+class FileDepotWriteTest {
 
-    def setupSpeck() { createTempDepot() }
-    def cleanupSpeck() { deleteTempDepot() }
+    @Shared Depot depot
+    @Shared def tdu = new TempDepotUtil()
+    def setupSpeck() {
+        depot = tdu.createTempDepot()
+    }
+    def cleanupSpeck() { tdu.deleteTempDepot() }
+
+    def setup() {
+        // TODO: mock cleaner interface, assert incoming!
+        depot.atomizer = Mock(Atomizer)
+    }
+
+    @Shared currentDate =  new Date()
+    private nextDate() {
+        currentDate = new Date(currentDate.time+1000)
+        return currentDate
+    }
 
     def "should create entry"() {
         setup:
         def id = new URI("http://example.org/publ/NEW/added_1")
-        assert depot.getEntry(id) == null
+        assert !depot.hasEntry(id)
         when:
-        def createTime = new Date()
-        depot.createEntry(id, createTime,
-                [ new SourceContent(exampleEntryFile("content-en.pdf"),
+        def createTime = nextDate()
+        def session = depot.openSession()
+        def entry = session.createEntry(id, createTime,
+                [ new SourceContent(tdu.exampleEntryFile("content-en.pdf"),
                             "application/pdf", "en"),
-                  new SourceContent(exampleEntryFile("content.rdf"),
+                  new SourceContent(tdu.exampleEntryFile("content.rdf"),
                             "application/rdf+xml") ])
-        def entry = depot.getEntry(id)
+        //entry.commit()
+        session.close()
+        entry = depot.getEntry(id)
         then:
         !entry.isLocked()
         and:
@@ -40,21 +58,23 @@ class FileDepotWriteTest extends FileDepotTempBase {
         def id = new URI("http://example.org/publ/NEW/added_2")
         assert depot.getEntry(id) == null
         when:
-        depot.createEntry(id, new Date(), [],
+        def session = depot.openSession()
+        session.createEntry(id, nextDate(), [],
                 [
                     // full path
-                    new SourceContent(exampleFile("icon.png"),
+                    new SourceContent(tdu.exampleFile("icon.png"),
                             null, null,
                             "/publ/NEW/added_2/icon.png"),
                     // relative to entry path
-                    new SourceContent(exampleFile("icon.png"),
+                    new SourceContent(tdu.exampleFile("icon.png"),
                             null, null,
                             "icon2.png"),
                     // nested path
-                    new SourceContent(exampleFile("icon.png"),
+                    new SourceContent(tdu.exampleFile("icon.png"),
                             null, null,
                             "images/icon.png"),
                 ])
+        session.close()
         def entry = depot.getEntry(id)
         def enclosures = entry.findEnclosures()
         then:
@@ -75,17 +95,18 @@ class FileDepotWriteTest extends FileDepotTempBase {
         def id = new URI("http://example.org/publ/NEW/added_3")
         assert depot.getEntry(id) == null
         when:
-        def createTime = new Date()
-        def entry = depot.createEntry(id, createTime,
-                [ new SourceContent(exampleEntryFile("content.rdf"),
-                            "application/rdf+xml") ],
-                false)
+        def createTime = nextDate()
+        def session = depot.openSession()
+        def entry = session.createEntry(id, createTime,
+                [ new SourceContent(tdu.exampleEntryFile("content.rdf"),
+                            "application/rdf+xml") ])
         then:
         assert entry.isLocked()
-        entry.unlock()
-        !entry.isLocked()
+        //entry.unlock()
+        //!entry.isLocked()
 
         when:
+        session.close()
         entry = depot.getEntry(id)
         then:
         entry != null
@@ -96,8 +117,9 @@ class FileDepotWriteTest extends FileDepotTempBase {
         setup:
         def id = new URI("http://example.org/publ/1901/100")
         when:
-        depot.createEntry(id, new Date(),
-                [new SourceContent(exampleEntryFile("content-en.pdf"),
+        def session = depot.openSession()
+        session.createEntry(id, nextDate(),
+                [new SourceContent(tdu.exampleEntryFile("content-en.pdf"),
                         "application/pdf", "en")])
         then:
         thrown(DuplicateDepotEntryException)
@@ -107,10 +129,11 @@ class FileDepotWriteTest extends FileDepotTempBase {
     def "should fail on duplicate content"() {
         setup:
         def id = new URI("http://example.org/publ/NEW/added_4")
-        def content = new SourceContent(exampleEntryFile("content-en.pdf"),
+        def content = new SourceContent(tdu.exampleEntryFile("content-en.pdf"),
                 "application/pdf", "en")
         when:
-        depot.createEntry(id, new Date(), [content, content])
+        def session = depot.openSession()
+        session.createEntry(id, nextDate(), [content, content])
         then:
         thrown(DuplicateDepotContentException)
         // TODO: should auto-rollback?
@@ -122,9 +145,10 @@ class FileDepotWriteTest extends FileDepotTempBase {
         def id = new URI("http://example.org/publ/ERROR/encl_1")
         def invalidEnclPath = "/publ/OTHER/path/icon.png"
         when:
-        depot.createEntry(id, new Date(),
+        def session = depot.openSession()
+        session.createEntry(id, nextDate(),
                 [],
-                [ new SourceContent(exampleFile("icon.png"),
+                [ new SourceContent(tdu.exampleFile("icon.png"),
                             null, null, invalidEnclPath), ]
             )
         then:
@@ -138,11 +162,13 @@ class FileDepotWriteTest extends FileDepotTempBase {
         assert depot.getEntry(id) == null
 
         when:
-        def createTime = new Date()
-        depot.createEntry(id, createTime, [
-                new SourceContent(exampleEntryFile("content-en.pdf"),
+        def createTime = nextDate()
+        def session = depot.openSession()
+        session.createEntry(id, createTime, [
+                new SourceContent(tdu.exampleEntryFile("content-en.pdf"),
                         "application/pdf", "en"),
             ])
+        session.close()
         def entry = depot.getEntry(id)
         then:
         entry != null
@@ -151,15 +177,16 @@ class FileDepotWriteTest extends FileDepotTempBase {
         entry.updated == createTime
 
         when:
-        Thread.sleep(100)
-        def updateTime = new Date()
-        entry.update(updateTime, [
-                new SourceContent(exampleEntryFile("content-en.pdf"),
+        def updateTime = nextDate()
+        session = depot.openSession()
+        session.update(entry, updateTime, [
+                new SourceContent(tdu.exampleEntryFile("content-en.pdf"),
                             "application/pdf", "en"),
-                new SourceContent(exampleEntryFile("content-sv.pdf"),
+                new SourceContent(tdu.exampleEntryFile("content-sv.pdf"),
                             "application/pdf", "sv")
             ])
         then:
+        session.close()
         entry.findContents("application/pdf").size() == 2
         entry.updated > entry.published
         entry.published == createTime
@@ -173,18 +200,22 @@ class FileDepotWriteTest extends FileDepotTempBase {
     def "should update entry with less contents"() {
         setup:
         def id = new URI("http://example.org/publ/UPD/updated_2")
-        depot.createEntry(id, new Date(), [
-                new SourceContent(exampleEntryFile("content-en.pdf"),
+        def session = depot.openSession()
+        session.createEntry(id, nextDate(), [
+                new SourceContent(tdu.exampleEntryFile("content-en.pdf"),
                         "application/pdf", "en"),
-                new SourceContent(exampleEntryFile("content-sv.pdf"),
+                new SourceContent(tdu.exampleEntryFile("content-sv.pdf"),
                             "application/pdf", "sv")
             ])
+        session.close()
         when:
         def entry = depot.getEntry(id)
-        entry.update(new Date(), [
-                new SourceContent(exampleEntryFile("content-sv.pdf"),
+        session = depot.openSession()
+        session.update(entry, nextDate(), [
+                new SourceContent(tdu.exampleEntryFile("content-sv.pdf"),
                             "application/pdf", "sv"),
             ])
+        session.close()
         then:
         entry.contentLanguage == "sv"
         def contents = entry.findContents("application/pdf")
@@ -195,23 +226,28 @@ class FileDepotWriteTest extends FileDepotTempBase {
     def "should move enclosures when updating entry"() {
         setup:
         def id = new URI("http://example.org/publ/UPD/updated_3")
-        def entry = depot.createEntry(id, new Date(),
-                [new SourceContent(exampleEntryFile("content-en.pdf"),
+        def session = depot.openSession()
+        session.createEntry(id, nextDate(),
+                [new SourceContent(tdu.exampleEntryFile("content-en.pdf"),
                             "application/pdf", "en")],
                 [
-                    new SourceContent(exampleFile("icon.png"),
+                    new SourceContent(tdu.exampleFile("icon.png"),
                             null, null,
                             "icon2.png"),
-                    new SourceContent(exampleFile("icon.png"),
+                    new SourceContent(tdu.exampleFile("icon.png"),
                             null, null,
                             "images/icon.png"),
                 ]
             )
+        session.close()
         when:
-        entry.update(new Date(), [
-                new SourceContent(exampleEntryFile("content-en.pdf"),
+        def entry = depot.getEntry(id)
+        session = depot.openSession()
+        session.update(entry, nextDate(), [
+                new SourceContent(tdu.exampleEntryFile("content-en.pdf"),
                             "application/pdf", "en"),
             ])
+        session.close()
         def enclosures = entry.findEnclosures()
         then:
         enclosures.size() == 0
@@ -222,17 +258,20 @@ class FileDepotWriteTest extends FileDepotTempBase {
         setup:
         def id = new URI("http://example.org/publ/DEL/deleted_1")
         assert depot.getEntry(id) == null
-        def createTime = new Date()
-        depot.createEntry(id, createTime, [
-                new SourceContent(exampleEntryFile("content-en.pdf"),
+        def session = depot.openSession()
+        session.createEntry(id, nextDate(), [
+                new SourceContent(tdu.exampleEntryFile("content-en.pdf"),
                         "application/pdf", "en"),
             ])
+        session.close()
 
         when:
-        def deleteTime = new Date()
+        session = depot.openSession()
+        def deleteTime = nextDate()
         def entry = depot.getEntry(id)
-        entry.delete(deleteTime)
-        entry = depot.getUncheckedDepotEntry(id.path)
+        session.delete(entry, deleteTime)
+        session.close()
+        entry = depot.backend.getUncheckedDepotEntry(id.path)
         then:
         !entry.isLocked()
         entry.findContents("application/pdf").size() == 0
@@ -245,11 +284,13 @@ class FileDepotWriteTest extends FileDepotTempBase {
         def id = new URI("http://example.org/publ/CHECK/added_1")
         when:
         def srcContent = new SourceContent(
-                exampleEntryFile("content-en.pdf"), "application/pdf", "en")
+                tdu.exampleEntryFile("content-en.pdf"), "application/pdf", "en")
         srcContent.datachecks[SourceContent.Check.LENGTH] = new Long(24014)
         srcContent.datachecks[SourceContent.Check.MD5] =
                 "eff60b86aaaac3a1fde5affc07a27006"
-        depot.createEntry(id, new Date(), [srcContent])
+        def session = depot.openSession()
+        session.createEntry(id, nextDate(), [srcContent])
+        session.close()
         then:
         notThrown(SourceCheckException)
     }
@@ -259,9 +300,10 @@ class FileDepotWriteTest extends FileDepotTempBase {
         def id = new URI("http://example.org/publ/CHECK/failed_1")
         when:
         def srcContent = new SourceContent(
-                exampleEntryFile("content-en.pdf"), "application/pdf", "en")
+                tdu.exampleEntryFile("content-en.pdf"), "application/pdf", "en")
         srcContent.datachecks[SourceContent.Check.MD5] = "BAD_CHECKSUM"
-        depot.createEntry(id, new Date(), [srcContent])
+        def session = depot.openSession()
+        session.createEntry(id, nextDate(), [srcContent])
         then:
         thrown(SourceCheckException)
     }
@@ -271,9 +313,10 @@ class FileDepotWriteTest extends FileDepotTempBase {
         def id = new URI("http://example.org/publ/CHECK/failed_2")
         when:
         def srcContent = new SourceContent(
-                exampleEntryFile("content-en.pdf"), "application/pdf", "en")
+                tdu.exampleEntryFile("content-en.pdf"), "application/pdf", "en")
         srcContent.datachecks[SourceContent.Check.LENGTH] = new Long(0)
-        depot.createEntry(id, new Date(), [srcContent])
+        def session = depot.openSession()
+        session.createEntry(id, nextDate(), [srcContent])
         then:
         thrown(SourceCheckException)
     }

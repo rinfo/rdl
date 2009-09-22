@@ -6,22 +6,27 @@ import org.apache.abdera.ext.history.FeedPagingHelper as FPH
 
 
 @Speck @RunWith(Sputnik)
-class DepotAtomIndexSpeck extends FileDepotTempBase {
+class DepotAtomIndexSpeck {
 
+    @Shared Depot depot
+    @Shared Atomizer atomizer
+    @Shared def tdu = new TempDepotUtil()
     def setupSpeck() {
-        createTempDepot()
-        depot.atomizer.feedBatchSize = 2
+        depot = tdu.createTempDepot()
+        atomizer = depot.atomizer
+        atomizer.feedBatchSize = 2
     }
-
-    def cleanupSpeck() { deleteTempDepot() }
+    def cleanupSpeck() { tdu.deleteTempDepot() }
 
     def "a pre-filled depot is indexed"() {
 
         when: "an index has been built"
-        depot.generateIndex()
+        def session = depot.openSession()
+        session.generateIndex()
+        session.close()
 
         then: "a subscription feed should be available"
-        def current = depot.atomizer.getFeed(depot.subscriptionPath)
+        def current = atomizer.getFeed(atomizer.subscriptionPath)
         current != null
 
         and: "archives should be chained and cut by batch size"
@@ -33,17 +38,17 @@ class DepotAtomIndexSpeck extends FileDepotTempBase {
         def currentLink = current.selfLink.href
         storeIds current
 
-        def prev1 = depot.atomizer.getPrevArchiveAsFeed(current)
+        def prev1 = atomizer.getPrevArchiveAsFeed(current)
         FPH.isArchive(prev1) == true
         FPH.getCurrent(prev1) == currentLink
         FPH.getNextArchive(prev1) == null
         prev1.entries.size() == 2
         storeIds prev1
 
-        def prev2 = depot.atomizer.getPrevArchiveAsFeed(prev1)
+        def prev2 = atomizer.getPrevArchiveAsFeed(prev1)
         FPH.isArchive(prev2) == true
         FPH.getCurrent(prev2) == currentLink
-        FPH.getNextArchive(prev2) as String == depot.atomizer.uriPathFromFeed(prev1)
+        FPH.getNextArchive(prev2) as String == atomizer.uriPathFromFeed(prev1)
         FPH.getPreviousArchive(prev2) == null
         prev2.entries.size() == 2
         storeIds prev2
@@ -62,26 +67,29 @@ class DepotAtomIndexSpeck extends FileDepotTempBase {
     def "an existing depot is filled with additional entries"() {
 
         when: "a batch is indexed"
-        def batch = depot.makeEntryBatch()
+        def session = depot.openSession()
 
         def newEntryUri = new URI("http://example.org/publ/NEW/1")
         def createTime = new Date()
-        batch << depot.createEntry(newEntryUri, createTime, [
-                    new SourceContent(exampleEntryFile(
+        session.createEntry(newEntryUri, createTime, [
+                    new SourceContent(tdu.exampleEntryFile(
                             "content-en.pdf"), "application/pdf", "en"),
-                    new SourceContent(exampleEntryFile(
+                    new SourceContent(tdu.exampleEntryFile(
                             "content.rdf"), "application/rdf+xml")
                 ])
-        depot.indexEntries(batch)
+        session.close()
 
         then: "entry should have been inserted in new subscription feed"
-        def current = depot.atomizer.getFeed(depot.subscriptionPath)
+        def current = depot.atomizer.getFeed(atomizer.subscriptionPath)
         current.entries.size() == 1
+        def atomEntry = current.entries[0]
+        atomEntry.id.toURI() == newEntryUri
+        atomEntry.updated == createTime
 
         and: "archives should be identified by exclusive youngest entry date"
         def datePath = DatePathUtil.toFeedArchivePath(current.entries[-1].updated)
         def prev = depot.atomizer.getPrevArchiveAsFeed(current)
-        prev.selfLink.href =~ "${depot.feedPath}/${datePath}\$"
+        prev.selfLink.href =~ "${depot.atomizer.feedPath}/${datePath}\$"
 
     }
 

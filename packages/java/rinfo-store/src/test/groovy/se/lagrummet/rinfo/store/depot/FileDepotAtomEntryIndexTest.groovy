@@ -8,11 +8,14 @@ import spock.lang.*
 
 
 @Speck @RunWith(Sputnik)
-class FileDepotAtomEntryIndexTest extends FileDepotTempBase {
+class FileDepotAtomEntryIndexTest {
 
-    def setup() { createTempDepot() }
-    def cleanup() { deleteTempDepot() }
+    @Shared Depot depot
+    @Shared def tdu = new TempDepotUtil()
+    def setupSpeck() { depot = tdu.createTempDepot() }
+    def cleanupSpeck() { tdu.deleteTempDepot() }
 
+    // TODO: split into "should trigger indexer" and actual atom fmt inspection?
     def "should generate atom entry"() {
         when:
         def entry = depot.getEntry("/publ/1901/100")
@@ -21,7 +24,7 @@ class FileDepotAtomEntryIndexTest extends FileDepotTempBase {
                 hintForMediaType("application/atom+xml;type=entry")).size() == 0
 
         when:
-        depot.onEntryModified(entry)
+        depot.atomizer.generateAtomEntryContent(entry)
         def atomContent = entry.findContents("application/atom+xml;type=entry")[0]
         then:
         assert atomContent.file.isFile()
@@ -96,7 +99,7 @@ class FileDepotAtomEntryIndexTest extends FileDepotTempBase {
     }
 
     private getDeletedEntry() {
-        return depot.getUncheckedDepotEntry("/publ/1901/0")
+        return depot.backend.getUncheckedDepotEntry("/publ/1901/0")
     }
 
 }

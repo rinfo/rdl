@@ -1,29 +1,31 @@
 package se.lagrummet.rinfo.store.depot
 
 
-class FileDepotTempBase {
+class TempDepotUtil {
 
-    static FileDepot depot
-    static File tempDepotDir
-    static File depotSrc
+    FileDepot depot
+    File tempDepotDir
+    File depotSrc
 
-    static void createTempDepot() {
+    FileDepot createTempDepot() {
         depotSrc = new File("src/test/resources/exampledepot/storage")
         tempDepotDir = TempDirUtil.createTempDir(depotSrc)
         depot = new FileDepot(new URI("http://example.org"),
-                new File(tempDepotDir, depotSrc.name), "/feed")
+                new File(tempDepotDir, depotSrc.name))
+        depot.atomizer.feedPath = "/feed"
+        return depot
     }
 
-    static void deleteTempDepot() {
-        TempDirUtil.removeTempDir(tempDepotDir)
+    void deleteTempDepot() {
         depot = null
+        TempDirUtil.removeTempDir(tempDepotDir)
     }
 
-    static exampleEntryFile(path) {
+    def exampleEntryFile(path) {
         new File(depotSrc, "publ/1901/100/ENTRY-INFO/${path}")
     }
 
-    static exampleFile(path) {
+    def exampleFile(path) {
         new File(depotSrc, "publ/1901/100/${path}")
     }
 

@@ -231,8 +231,7 @@ public class FileDepotEntry implements DepotEntry {
             // TODO:IMPROVE: we now decouple suffix and hint logic:
             //  .. although this reintroduces map->remap->back-to-map..!
             //  .. and mediaHint *is* very concise.
-            //  - receiving forMediaType in findContents
-            //  - calling depot.mediaTypeForSuffix that forwards to mediaTypeForHint..
+            //  - calling computeMediaType that forwards to mediaTypeForHint..
             //  .. could allow mediaHint to be collection-dependent in pathHandler..
             String uriPath = depot.getPathHandler().makeNegotiatedUriPath(
                     getEntryUriPath(), mediaType, lang);
@@ -268,7 +267,7 @@ public class FileDepotEntry implements DepotEntry {
 
     protected String computeEntryUriPath() throws URISyntaxException {
         URI uri = getId();
-        depot.assertWithinBaseUri(uri);
+        //depot.assertWithinBaseUri(uri); // this is already stored..
         return uri.getPath();
     }
 
@@ -290,16 +289,20 @@ public class FileDepotEntry implements DepotEntry {
         return new File(entryContentDir, MANIFEST_FILE_NAME);
     }
 
-    protected void saveManifest(Entry manifest) throws IOException {
-        OutputStream outStream = new FileOutputStream(getManifestFile());
-        manifest.writeTo(outStream);
-        outStream.close();
+    protected void saveManifest(Entry manifest) throws DepotWriteException {
+        try {
+            OutputStream outStream = new FileOutputStream(getManifestFile());
+            manifest.writeTo(outStream);
+            outStream.close();
+        } catch (IOException e) {
+            throw new DepotWriteException(e);
+        }
     }
 
 
     protected DepotContent enclosedDepotContent(File file) {
         String uriPath = toEnclosedUriPath(file);
-        String mediaType = depot.computeMediaType(file);
+        String mediaType = depot.getPathHandler().computeMediaType(file.getName());
         return new DepotContent(file, uriPath, mediaType);
     }
 
@@ -333,121 +336,132 @@ public class FileDepotEntry implements DepotEntry {
     //==== TODO: above in DepotEntryView base class? ====
 
     public void create(Date createTime, List<SourceContent> sourceContents)
-            throws DepotWriteException, IOException {
+            throws DepotWriteException {
         create(createTime, sourceContents, null);
     }
 
     public void create(Date createTime, List<SourceContent> sourceContents,
-            List<SourceContent> sourceEnclosures)
-            throws DepotWriteException, IOException {
+            List<SourceContent> sourceEnclosures) throws DepotWriteException {
         create(createTime, sourceContents, sourceEnclosures, true);
     }
 
     public void create(Date createTime, List<SourceContent> sourceContents,
             List<SourceContent> sourceEnclosures, boolean releaseLock)
-            throws DepotWriteException, IOException {
-        if(entryContentDir.exists()) {
-            // TODO:? if entry is deleted, spec. that it can be recreated.
-            throw new DuplicateDepotEntryException(this);
-        }
-        entryContentDir.mkdir();
-        lock();
-
-        Entry manifest = Abdera.getInstance().newEntry();
-        // TODO: unify with rest of getId/entryPath stuff!
-        manifest.setId(depot.getBaseUri().resolve(getEntryUriPath()).toString());
-        manifest.setPublished(createTime);
-        manifest.setUpdated(createTime);
-
-        setPrimaryContent(manifest, sourceContents);
-        saveManifest(manifest);
-
-        for (SourceContent content : sourceContents) {
-            addContent(content);
-        }
-        if (sourceEnclosures!=null) {
-            for (SourceContent encl : sourceEnclosures) {
-                addEnclosure(encl);
+            throws DepotWriteException {
+        try {
+            if(entryContentDir.exists()) {
+                // TODO:? if entry is deleted, spec. that it can be recreated.
+                throw new DuplicateDepotEntryException(this);
             }
+            entryContentDir.mkdir();
+            lock();
+
+            Entry manifest = Abdera.getInstance().newEntry();
+            // TODO: unify with rest of getId/entryPath stuff!
+            manifest.setId(depot.getBaseUri().resolve(getEntryUriPath()).toString());
+            manifest.setPublished(createTime);
+            manifest.setUpdated(createTime);
+
+            setPrimaryContent(manifest, sourceContents);
+            saveManifest(manifest);
+
+            for (SourceContent content : sourceContents) {
+                addContent(content);
+            }
+            if (sourceEnclosures!=null) {
+                for (SourceContent encl : sourceEnclosures) {
+                    addEnclosure(encl);
+                }
+            }
+            if (releaseLock) {
+                unlock();
+            }
+        } catch (IOException e) {
+            throw new DepotWriteException(e);
         }
-        depot.onEntryModified(this);
-        if (releaseLock) {
-            unlock();
-        }
+
     }
 
     public void update(Date updateTime,
-            List<SourceContent> sourceContents)
-            throws DepotWriteException, IOException {
+            List<SourceContent> sourceContents) throws DepotWriteException {
         update(updateTime, sourceContents, null);
     }
 
     public void update(Date updateTime,
             List<SourceContent> sourceContents,
-            List<SourceContent> sourceEnclosures)
-            throws DepotWriteException, IOException {
-        boolean selfLocked = !isLocked();
-        if (selfLocked) {
-            lock();
-        }
-        rollOffToHistory();
-
-        if (sourceContents!=null) {
-            for (SourceContent content : sourceContents) {
-                addContent(content, true);
+            List<SourceContent> sourceEnclosures) throws DepotWriteException {
+        try {
+            boolean selfLocked = !isLocked();
+            if (selfLocked) {
+                lock();
             }
-        }
-        if (sourceEnclosures!=null) {
-            for (SourceContent encl : sourceEnclosures) {
-                addEnclosure(encl, true);
+            rollOffToHistory();
+
+            if (sourceContents!=null) {
+                for (SourceContent content : sourceContents) {
+                    addContent(content, true);
+                }
             }
-        }
+            if (sourceEnclosures!=null) {
+                for (SourceContent encl : sourceEnclosures) {
+                    addEnclosure(encl, true);
+                }
+            }
 
-        Entry manifest = getEntryManifest();
-        manifest.setUpdated(updateTime);
-        setPrimaryContent(manifest, sourceContents);
-        saveManifest(manifest);
+            Entry manifest = getEntryManifest();
+            manifest.setUpdated(updateTime);
+            setPrimaryContent(manifest, sourceContents);
+            saveManifest(manifest);
 
-        depot.onEntryModified(this);
-        if (selfLocked) {
-            unlock();
+            if (selfLocked) {
+                unlock();
+            }
+        } catch (IOException e) {
+            throw new DepotWriteException(e);
         }
     }
 
     public void delete(Date deleteTime)
-            throws DeletedDepotEntryException, DepotIndexException,
-                   IOException {
+            throws DeletedDepotEntryException,
+                   DepotIndexException, DepotWriteException {
         boolean selfLocked = !isLocked();
-        if (selfLocked) {
-            lock();
-        }
-        if (isDeleted()) {
-            throw new DeletedDepotEntryException(this);
-        }
-        getDeletedMarkerFile().createNewFile();
-        Entry manifest = getEntryManifest();
-        manifest.setUpdated(deleteTime);
+        try {
+            if (selfLocked) {
+                lock();
+            }
+            if (isDeleted()) {
+                throw new DeletedDepotEntryException(this);
+            }
+            getDeletedMarkerFile().createNewFile();
+            Entry manifest = getEntryManifest();
+            manifest.setUpdated(deleteTime);
 
-        // TODO: wipe content and enclosures
-        // - but keep generated content.entry? (as meta-file?)
-        // .. (opt. move away..? zip?)
-        rollOffToHistory();
+            // TODO: wipe content and enclosures
+            // - but keep generated content.entry? (as meta-file?)
+            // .. (opt. move away..? zip?)
+            rollOffToHistory();
 
-        saveManifest(manifest);
-        depot.onEntryModified(this);
-        if (selfLocked) {
-            unlock();
+            saveManifest(manifest);
+            if (selfLocked) {
+                unlock();
+            }
+        } catch (IOException e) {
+            throw new DepotWriteException(e);
         }
     }
 
     // TODO:IMPROVE: resurrect()? (clears deleted state + (partial) create)
 
 
-    public void lock() throws IOException {
-        getLockedMarkerFile().createNewFile();
+    public void lock() throws DepotWriteException {
+        try {
+            getLockedMarkerFile().createNewFile();
+        } catch (IOException e) {
+            throw new DepotWriteException(e);
+        }
     }
 
-    public void unlock() throws IOException {
+    public void unlock() {
         getLockedMarkerFile().delete();
     }
 
@@ -455,7 +469,12 @@ public class FileDepotEntry implements DepotEntry {
     // TODO: these (rollback/restorePrevious/wipeout) modify *in place*
     // and must not have been indexed!
 
-    public void rollback() throws DepotWriteException, IOException {
+    public boolean hasHistory() {
+        return getUpdated().compareTo(getPublished()) > 0 &&
+            DatePathUtil.youngestEntryHistoryDir(entryContentDir) != null;
+    }
+
+    public void rollback() throws DepotWriteException {
         if (hasHistory()) {
             restorePrevious();
         } else {
@@ -463,40 +482,45 @@ public class FileDepotEntry implements DepotEntry {
         }
     }
 
-    public boolean hasHistory() {
-        return getUpdated().compareTo(getPublished()) > 0 &&
-            DatePathUtil.youngestEntryHistoryDir(entryContentDir) != null;
+    public void wipeout() throws DepotWriteException, DepotIndexException {
+        try {
+            lock();
+            rollOffToHistory();
+            FileUtils.deleteDirectory(entryContentDir);
+            FilePathUtil.removeEmptyTrail(
+                    entryContentDir.getParentFile(), depot.getBaseDir());
+        } catch (IOException e) {
+            throw new DepotWriteException(e);
+        }
     }
 
-    public void wipeout() throws DepotIndexException, IOException {
-        lock();
-        rollOffToHistory();
-        FileUtils.deleteDirectory(entryContentDir);
-        FilePathUtil.removeEmptyTrail(
-                entryContentDir.getParentFile(), depot.getBaseDir());
+    protected void restorePrevious()
+            throws DepotWriteException, DepotIndexException {
+        try {
+            lock();
+            File rollOffDir = newRollOffDir();
+            rollOffToDir(rollOffDir);
+            // TODO:IMPROVE: use a "HistoryEntry" and "update" from that?
+            File historyDir = DatePathUtil.youngestEntryHistoryDir(
+                    entryContentDir);
+            restoreFromRollOff(historyDir);
+            FileUtils.deleteDirectory(historyDir);
+            FilePathUtil.removeEmptyTrail(
+                    historyDir.getParentFile(), entryContentDir);
+            FileUtils.deleteDirectory(rollOffDir);
+            unlock();
+        } catch (IOException e) {
+            throw new DepotWriteException(e);
+        }
     }
-
-    protected void restorePrevious() throws DepotIndexException, IOException {
-        lock();
-        File rollOffDir = newRollOffDir();
-        rollOffToDir(rollOffDir);
-        // TODO:IMPROVE: use a "HistoryEntry" and "update" from that?
-        File historyDir = DatePathUtil.youngestEntryHistoryDir(entryContentDir);
-        restoreFromRollOff(historyDir);
-        FileUtils.deleteDirectory(historyDir);
-        FilePathUtil.removeEmptyTrail(historyDir.getParentFile(), entryContentDir);
-        FileUtils.deleteDirectory(rollOffDir);
-        unlock();
-    }
-
 
     protected void addContent(SourceContent srcContent)
-            throws DepotWriteException, IOException {
+            throws DepotWriteException, SourceCheckException, IOException {
         addContent(srcContent, false);
     }
 
     protected void addContent(SourceContent srcContent, boolean replace)
-            throws DepotWriteException, IOException {
+            throws DepotWriteException, SourceCheckException, IOException {
         File file = newContentFile(srcContent.getMediaType(), srcContent.getLang());
         if (!replace) {
             if (file.exists()) {
