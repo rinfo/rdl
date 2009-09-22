@@ -111,13 +111,12 @@ public class Components {
     private Depot createDepot() {
         Depot depot = new FileDepot()
         configure(depot, "rinfo.depot")
-        /* TODO: rework - undepend pathHandler and atomizer, then use:
-        depot = new FileDepot()
-        depot.setPathHandler(new MainPathHandler())
-        depot.setIndexer(new AtomDepotIndexer())
-        configure(depot, "rinfo.main.depot")
-        depot.initialize()
+        /* TODO: the depot API should have atomizer less central; then:
+        def atomizer = new AtomIndexer()
+        configure(atomizer, "rinfo.main.atomizer")
+        depot.setIndexer(atomizer)
         */
+        //depot.initialize()
         return depot
     }
 

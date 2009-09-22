@@ -13,9 +13,9 @@ import org.apache.abdera.model.Link
 import org.apache.abdera.i18n.iri.IRI
 
 import se.lagrummet.rinfo.store.depot.Depot
+import se.lagrummet.rinfo.store.depot.DepotSession
 import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.SourceContent
-import se.lagrummet.rinfo.store.depot.DepotEntryBatch
 import se.lagrummet.rinfo.store.depot.DuplicateDepotEntryException
 
 
@@ -27,39 +27,41 @@ class StorageSession {
 
     StorageCredentials credentials
     Depot depot
+    DepotSession depotSession
+    CollectorLogSession logSession
     Collection<StorageHandler> storageHandlers =
             new ArrayList<StorageHandler>()
-    CollectorLogSession logSession
-
-    private DepotEntryBatch collectedBatch
 
     StorageSession(StorageCredentials credentials,
             Depot depot,
             Collection<StorageHandler> storageHandlers,
-            CollectorLogSession logSession) {
+            CollectorLog collectorLog) {
         this.credentials = credentials
         this.depot = depot
         this.storageHandlers = storageHandlers
-        this.logSession = logSession
+        logSession = collectorLog.openSession()
     }
 
     void close() {
+        if (depotSession != null) {
+            depotSession.close()
+        }
         logSession.close()
     }
 
     void beginPage(URL pageUrl, Feed feed) {
         logSession.logFeedPageVisit(pageUrl, feed)
-        collectedBatch = depot.makeEntryBatch()
+        depotSession = depot.openSession()
     }
 
     void endPage() {
-        depot.indexEntries(collectedBatch)
-        collectedBatch = null
+        if (depotSession != null) {
+            depotSession.close()
+            depotSession = null
+        }
     }
 
     boolean hasCollected(Entry sourceEntry) {
-        // TODO:IMPROVE? optimize by using eventRegistry with:
-        //return logSession.hasCollected(sourceEntry)
         return hasCollected(sourceEntry, depot.getEntry(sourceEntry.getId().toURI()))
     }
 
@@ -83,13 +85,13 @@ class StorageSession {
             return
         }
 
-        boolean createEntry = (depotEntry == null)
+        boolean doCreate = (depotEntry == null)
         Date timestamp = new Date()
         try {
-            if (createEntry) {
+            if (doCreate) {
                 logger.info("New entry <${entryId}>.")
-                depotEntry = depot.createEntry(
-                        entryId, timestamp, contents, enclosures, false)
+                depotEntry = depotSession.createEntry(
+                        entryId, timestamp, contents, enclosures)
             } else {
                 // NOTE: If source has been collected but appears as newly published:
                 if (!(sourceEntry.getUpdated() > sourceEntry.getPublished())) {
@@ -100,20 +102,17 @@ class StorageSession {
                     throw new DuplicateDepotEntryException(depotEntry);
                 }
                 logger.info("Updating entry <${entryId}>.")
-                depotEntry.lock()
-                depotEntry.update(timestamp, contents, enclosures)
+                depotSession.update(depotEntry, timestamp, contents, enclosures)
             }
             setViaEntry(depotEntry, sourceFeed, sourceEntry)
 
             for (StorageHandler handler : storageHandlers) {
-                if (createEntry)
+                if (doCreate)
                     handler.onCreate(this, depotEntry)
                 else
                     handler.onUpdate(this, depotEntry)
             }
 
-            collectedBatch.add(depotEntry)
-            depotEntry.unlock()
             logSession.logUpdatedEntry(sourceFeed, sourceEntry, depotEntry)
             return true
 
@@ -132,7 +131,7 @@ class StorageSession {
                Index the ok ones, *rollback* last depotEntry and *report error*!
             */
             logger.error("Error storing entry:", e)
-            depotEntry.rollback()
+            depotSession.rollbackPending()
             logSession.logError(e, timestamp, sourceFeed, sourceEntry)
             return false
         }
@@ -149,13 +148,12 @@ class StorageSession {
         // .. or is tombstone in feed enough (for e.g. event index)?
         // TODO: previously used sourceDeletedDate; must surely have been wrong?
         Date deletedDate = new Date()
-        depotEntry.delete(deletedDate)
+        depotSession.delete(depotEntry, deletedDate)
         for (StorageHandler handler : storageHandlers) {
             handler.onDelete(this, depotEntry)
         }
         logSession.logDeletedEntry(
                 sourceFeed, entryId, sourceDeletedDate, depotEntry)
-        collectedBatch.add(depotEntry)
     }
 
     static Entry getViaEntry(DepotEntry depotEntry) {

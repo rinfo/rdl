@@ -2,6 +2,7 @@ package se.lagrummet.rinfo.main.storage
 
 import org.junit.runner.RunWith; import spock.lang.*
 
+import se.lagrummet.rinfo.store.depot.Depot
 import se.lagrummet.rinfo.store.depot.DepotContent
 import se.lagrummet.rinfo.store.depot.DepotEntry
 
@@ -16,11 +17,11 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 
     def "Collect scheduler gets source feeds from rdf in configured entry"() {
         setup: "configure handler with entry id"
-        def collectScheduler = testScheduler()
+        def collectScheduler = new FeedCollectScheduler(null)
         def sourceFeedsConfigHandler = new SourceFeedsConfigHandler(
                 collectScheduler, sourceFeedsEntryId)
         def session = new StorageSession(new StorageCredentials(true),
-                null, null, null)
+                Mock(Depot), [], Mock(CollectorLog))
 
         when: "an entry with expected id is created"
         sourceFeedsConfigHandler.onCreate(session, mockSourcesEntry())
@@ -34,7 +35,7 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
         def sourceFeedsConfigHandler = new SourceFeedsConfigHandler(
                 null, sourceFeedsEntryId)
         def session = new StorageSession(new StorageCredentials(false),
-                null, null, null)
+                Mock(Depot), [], Mock(CollectorLog))
 
         when: "an entry with expected id is created"
         sourceFeedsConfigHandler.onCreate(session, mockSourcesEntry())
@@ -43,21 +44,15 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
         thrown(Exception) // TODO: NotAllowedException..
     }
 
-    def testScheduler() {
-        new FeedCollectScheduler(null)
-    }
-
-    def mockSourcesEntry() {
-        [
-            getId: {sourceFeedsEntryId},
-            getMimeType: {"application/rdf+xml"},
-            findContents: {
-                [
-                    new DepotContent(new File("src/test/resources/source_feeds.rdf"),
-                        "${sourceFeedsEntryId}/rdf", "application/rdf+xml"),
-                ]
-            }
-        ] as DepotEntry
+    private mockSourcesEntry() {
+        DepotEntry entry = Mock()
+        entry.getId() >> sourceFeedsEntryId
+        entry.getMimeType() >> "application/rdf+xml"
+        entry.findContents() >> [
+                new DepotContent(new File("src/test/resources/source_feeds.rdf"),
+                    "${sourceFeedsEntryId}/rdf", "application/rdf+xml"),
+            ]
+        return entry
     }
 
 }

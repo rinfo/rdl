@@ -22,10 +22,6 @@ class SourceFeedsConfigHandler extends AbstractStorageHandler {
         this.configurationEntryId = configurationEntryId
     }
 
-    boolean isConfigurationEntry(DepotEntry depotEntry) {
-        return depotEntry.getId().equals(configurationEntryId)
-    }
-
     void onStartup(StorageSession storageSession) throws Exception {
         DepotEntry depotEntry = storageSession.getDepot().getEntry(
                 configurationEntryId)
@@ -61,6 +57,10 @@ class SourceFeedsConfigHandler extends AbstractStorageHandler {
             return
         }
         collectScheduler.setSourceFeedUrls(null)
+    }
+
+    boolean isConfigurationEntry(DepotEntry depotEntry) {
+        return depotEntry.getId().equals(configurationEntryId)
     }
 
 }

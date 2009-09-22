@@ -39,9 +39,8 @@ public class Storage {
     }
 
     public StorageSession openSession(StorageCredentials credentials) {
-        // TODO:? depotSession
         return new StorageSession(credentials,
-                depot, storageHandlers, collectorLog.openSession());
+                depot, storageHandlers, collectorLog);
     }
 
     public void shutdown() {

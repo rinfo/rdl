@@ -11,6 +11,7 @@ import org.apache.abdera.model.*
 import org.apache.abdera.i18n.iri.IRI
 
 import se.lagrummet.rinfo.store.depot.Depot
+import se.lagrummet.rinfo.store.depot.DepotSession
 import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.DepotEntryBatch
 
@@ -52,17 +53,24 @@ class StorageSessionSpeck {
         tempfiles.each { it.delete() }
     }
 
-    def makeStorageSession(depot, handlers, admin=false) {
-        depot.makeEntryBatch() >> { new DepotEntryBatch() }
+    private makeStorageSession(depot, depotSession, handlers, admin=false) {
+        depot.openSession() >> depotSession
         def storage = new Storage(depot, new CollectorLog(repo))
         storage.storageHandlers = handlers
         storage.startup()
         return storage.openSession(new StorageCredentials(admin))
     }
 
+    private tempFile(suffix) {
+        def f = File.createTempFile("rinfomain", suffix)
+        tempfiles << f
+        return f
+    }
+
     def "session credentials indicate admin rights"() {
         when:
-        session = makeStorageSession(Mock(Depot), [], isAdmin)
+        session = makeStorageSession(
+                Mock(Depot), Mock(DepotSession), [], isAdmin)
         then:
         session.credentials.isAdmin() == isAdmin
         where:
@@ -71,7 +79,7 @@ class StorageSessionSpeck {
 
     def "entry does not exist"() {
         when:
-        session = makeStorageSession(Mock(Depot), [])
+        session = makeStorageSession(Mock(Depot), Mock(DepotSession), [])
         then:
         session.hasCollected(sourceEntry) == false
     }
@@ -79,8 +87,9 @@ class StorageSessionSpeck {
     def "an entry is created"() {
         setup:
         Depot depot = Mock()
+        DepotSession depotSession = Mock()
         StorageHandler handler = Mock()
-        session = makeStorageSession(depot, [handler])
+        session = makeStorageSession(depot, depotSession, [handler])
 
         and: "mock depot creation and subsequent retrieval"
         DepotEntry depotEntry = Mock()
@@ -90,8 +99,9 @@ class StorageSessionSpeck {
         depotEntry.getMetaFile(_) >> tempFile("metafile")
         def entries = [:]
         2 * depot.getEntry(entryId) >> { entries[entryId] }
-        1 * depot.createEntry(entryId, _, _, _, _) >> {
+        1 * depotSession.createEntry(entryId, _, _, _) >> {
             entries[entryId] = depotEntry
+            return depotEntry
         }
 
         when: "a new entry is written"
@@ -110,8 +120,9 @@ class StorageSessionSpeck {
     def "an entry is updated"() {
         setup:
         Depot depot = Mock()
+        DepotSession depotSession = Mock()
         StorageHandler handler = Mock()
-        session = makeStorageSession(depot, [handler])
+        session = makeStorageSession(depot, depotSession, [handler])
 
         and: "mock depot retrieval and update"
         DepotEntry depotEntry = Mock()
@@ -120,7 +131,7 @@ class StorageSessionSpeck {
         depotEntry.getPublished() >> new Date()
         depotEntry.getMetaFile(_) >> tempFile("metafile")
         1 * depot.getEntry(entryId) >> depotEntry
-        1 * depotEntry.update(_, _, _)
+        1 * depotSession.update(depotEntry, _, _, _)
 
         and: "create existing meta-info for entry"
         session.setViaEntry(depotEntry, sourceFeed, sourceEntry)
@@ -144,8 +155,9 @@ class StorageSessionSpeck {
     def "an entry is deleted"() {
         setup:
         Depot depot = Mock()
+        DepotSession depotSession = Mock()
         StorageHandler handler = Mock()
-        session = makeStorageSession(depot, [handler])
+        session = makeStorageSession(depot, depotSession, [handler])
 
         and: "mock depot retrieval and deletion"
         DepotEntry depotEntry = Mock()
@@ -153,7 +165,7 @@ class StorageSessionSpeck {
         depotEntry.getId() >> entryId
         depotEntry.getUpdated() >> deletedDate
         1 * depot.getEntry(entryId) >> depotEntry
-        1 * depotEntry.delete(_)
+        1 * depotSession.delete(depotEntry, _)
 
         when: "an existing entry is written"
         session.beginPage(sourceUrl, sourceFeed)
@@ -176,12 +188,6 @@ class StorageSessionSpeck {
     def "sessions are logged"() {
         def feed = null
         //session.logCollect(feed)
-    }
-
-    private tempFile(suffix) {
-        def f = File.createTempFile("rinfomain", suffix)
-        tempfiles << f
-        return f
     }
 
 }
