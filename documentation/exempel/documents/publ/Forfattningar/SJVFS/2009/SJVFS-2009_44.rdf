@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:dct="http://purl.org/dc/terms/"
+	xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+
+	<!-- Identifierare för dokumentet vi snackar om -->
+	<Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/sjvfs/2009:44">
+
+		<!-- lite grunddata -->
+		<forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sjvfs"/>
+		<fsNummer>2009:44</fsNummer>
+		<dct:title xml:lang="sv">Föreskrifter om ändring i Statens jordbruksverks
+			föreskrifter (SJVFS 2009:26) om hästdjur som används till avel och om
+			identifiering av hästdjur;</dct:title>
+
+		<!-- tidsaspekter -->
+		<beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-06-11</beslutsdatum>
+		<ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-07-01</ikrafttradandedatum>
+		<utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-06-15</utkomFranTryck>
+
+		<!-- den organisation som publicerade den -->
+		<dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/statens_jordbruksverk"/>
+
+		<!-- bemyndiganden som föreskriften lutar sig på (dvs ändringsföreskriften i detta fall)-->
+		<bemyndigande rdf:parseType="Resource">
+			<dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:816"/>
+			<paragrafnummer>3</paragrafnummer>
+		</bemyndigande>
+		<bemyndigande rdf:parseType="Resource">
+			<dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:816"/>
+			<paragrafnummer>12</paragrafnummer>
+		</bemyndigande>
+		<bemyndigande rdf:parseType="Resource">
+			<dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:815"/>
+			<paragrafnummer>9</paragrafnummer>
+		</bemyndigande>
+		<bemyndigande rdf:parseType="Resource">
+			<dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:815"/>
+			<paragrafnummer>17</paragrafnummer>
+		</bemyndigande>
+
+		<!-- Information om vilken grundförfattning som ändras -->
+		<andrar rdf:resource="http://rinfo.lagrummet.se/publ/sjvfs/2009:26"/>
+
+		<!-- Information om att detta även är ett omtryck av grundförfattningen -->
+		<omtryckAv rdf:resource="http://rinfo.lagrummet.se/publ/sjvfs/2009:26"/>
+
+	</Myndighetsforeskrift>
+
+</rdf:RDF>

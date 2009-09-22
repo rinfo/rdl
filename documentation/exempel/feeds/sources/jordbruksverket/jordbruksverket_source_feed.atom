@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+	xmlns:le="http://purl.org/atompub/link-extensions/1.0"
+	xmlns:rae="http://rinfo.lagrummet.se/ns/2009/09/atom-extensions#"
+	xml:lang="sv">
+
+	<id>tag:jordbruksverket.se,2009:rinfo:feed</id>
+	<title>Statens jordbruksverks författningssamling</title>
+	<updated>2009-01-23T12:42:32Z</updated>
+	<author>
+		<name>Statens jordbruksverk</name>
+		<uri>http://www.jordbruksverket.se/</uri>
+		<email>juridik@jordbruksverket.se</email>
+	</author>
+	<!-- länken där denna feed kan läsas av -->
+	<link href="https://www.jordbruksverket.se/lagar/feed/index.atom" rel="self"/>
+
+	<entry>
+		<!-- ändringsförfattningen -->
+		<id>http://rinfo.lagrummet.se/publ/sjvfs/2009:44</id>
+		<updated>2009-06-15T03:01:00.000Z</updated>
+		<published>2009-06-15T03:01:00.000Z</published>
+		<title>Föreskrifter om ändring i Statens jordbruksverks
+			föreskrifter (SJVFS 2009:26) om hästdjur som används till avel och om
+			identifiering av hästdjur;</title>
+		<summary></summary>
+		<!-- länk till PDF-versionen (med korrekt md5-summa för PDF-filen) -->
+		<content src="https://www.jordbruksverket.se/download/18.424d259d1214272440980003829/2009-044.pdf"
+			type="application/pdf"
+			le:md5="09b1bd77110d42a001a536850ca8c66d"/>
+		<!-- länk till metadataposten (påhittad i detta exempel) -->
+		<link rel="alternate" href="https://www.jordbruksverket.se/dokument/juridik/2009/SJVFS-2009_44.rdf"
+			type="application/rdf+xml"
+			length="1465" le:md5="143aa16eb05095675651b5e8380aff8d"/>
+	</entry>
+
+	<entry>
+		<!-- Grundförfattningen -->
+		<id>http://rinfo.lagrummet.se/publ/sjvfs/2009:26</id>
+		<updated>2009-01-01T00:00:00.000Z</updated>
+		<published>2009-01-01T00:00:00.000Z</published>
+		<title>Statens jordbruksverks föreskrifter om hästdjur som används till avel och om identifiering av hästdjur;</title>
+		<summary></summary>
+		<!-- länk till PDF-versionen av grundförfattningen (kunde vi inte hitta på webbplatsen)-->
+		<content src="http://www.jordbruksverket.se/download/18.424d259d1214272440980003829/2009-026.pdf"
+			type="application/pdf"
+			le:md5="baaa492e5a26b4610958b0568b4961550"/>
+		<!-- länken till var man kan hämta metadataposten (påhittad)-->
+		<link rel="alternate" href="https://www.jordbruksverket.se/dokument/juridik/2009/SJVFS-2009_26.rdf"
+			type="application/rdf+xml"
+			length="1465" le:md5="143aa16eb05095675651b5e8380aff8d"/>
+	</entry>
+</feed>
