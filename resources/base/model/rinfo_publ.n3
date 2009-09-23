@@ -11,32 +11,6 @@
 @prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
 #=======================================================================
 
-# .. Status "god form:"
-
-# TODO: Låt informerad part översätta begreppen till iaf. engelska?
-#   - Vi tillåter termerna i URI:erna att vara på svenska.
-
-# TODO: dokumentera - saknas en del comments (och ev. skosifiera mer; prefLabel, scopeNote..)
-# - skos:prefLabel? eller iaf skos:altLabel? skos:note? m.fl...
-# .. fler owl:inverseOf labels för (åtmistone Object)Properties?
-# .. En *god* idé är att för vissa typer/egenskaper hänvisa till "Gröna boken" <Ds. 1998:66>!
-# - Definiera plural-egenskaper med (förslagsvis): <http://purl.org/net/vocab/2004/03/label#>
-# - ange labels utan "Title"-case (går deterministiskt att uppercase:a, men inte tvärtom)
-
-# TODO: fsNummer och liknande är rimligen owl:FunctionalProperty (kombineras med DatatypeProperty eller ObjectProperty!)
-
-
-# .. Status "mindre viktigt:"
-
-# TODO: finns det fler egenskaper som borde vara subPropertyOf :publikationssamling?
-
-# TODO: tänka på vad ev. merit med:
-#       <.../xfs/1234:56> publikationsreferens [ a Publikationsreferens; publikation <.../xfs>; pubOrdinal "1234:56" ] .
-#   skulle kunna vara.
-
-# TODO: Anv. av t.ex. protege:abstract.. Tillräckligt standard? "Korrekt"?
-
-
 # Ontology
 #-----------------------------------------------------------------------
 
@@ -50,7 +24,6 @@
     owl:imports dct:, skos:, foaf:, protege: .
 
 
-##
 # Grund
 #-----------------------------------------------------------------------
 
@@ -74,8 +47,6 @@
         [ a owl:Restriction;
             owl:onProperty dct:issued;
             owl:cardinality 1;
-            # TODO: strukturerad kommentar?
-            #rdfs:comment "Är i regel alltid publicerad, men datumet kan vara okänt."@sv
         ],
         [ a owl:Restriction;
             owl:onProperty dct:references;
@@ -106,7 +77,6 @@
     rdfs:label "Swedish Legal Document Number"@en;
     rdfs:comment "Abstrakt numrering av ett dokument i det svenska offentliga rättsinformationssystemet."@sv;
     protege:abstract "true";
-    # TODO: är det värdefullt att ange ett strikt format här?
     rdfs:isDefinedBy : .
 
 
@@ -116,15 +86,6 @@
     rdfs:comment """Anger medlemsskap i någon form av (rättsinformationsspecifik) publikationssamling, såsom en författningssamling eller utredningsserie."""@sv;
     protege:abstract "true";
     rdfs:isDefinedBy : .
-
-
-# TODO: använd denna eller bara någon DC-term?
-#:Bilaga a owl:Class;
-#    rdfs:isDefinedBy : ;
-#    rdfs:label "Bilaga"@sv;
-#    rdfs:comment "En bilaga till ett svenskt rättsinformationsdokument."@sv; .
-#   TODO: kan tänkas utgöra :nyRevisionAv av bilaga i dokument som
-#   ägardokumentet till denna bilaga också ändrar..
 
 
 ##
@@ -156,13 +117,11 @@
 :Forfattningssamling a owl:Class;
     rdfs:subClassOf :Publikationssamling;
     rdfs:label "Författningssamling"@sv;
-    # TODO: rdfs:comment ""@sv;
     rdfs:isDefinedBy : .
 
 :Rattsfallspublikation a owl:Class;
     rdfs:subClassOf :Publikationssamling;
     rdfs:label "Rättsfallspublikation"@sv;
-    # TODO: rdfs:comment ""@sv;
     rdfs:isDefinedBy : .
 
 
@@ -189,8 +148,6 @@
             owl:onProperty :utkomFranTryck;
             owl:minCardinality 0;
             owl:maxCardinality 1
-            # TODO: vad gäller med framtida, ej på papper tryckta ting? Och forntida pergament?
-            # Ändring [090202]: Inte alltid tryckt: ändrade cardinality ändrad till 0.
         ],
         [ a owl:Restriction;
             owl:onProperty :kapitel;
@@ -240,15 +197,10 @@
     owl:inverseOf [ rdfs:label "Paragraf i"@sv ]; .
 
 
-# TODO: subClassOf some.. Chapter type?
 :Kapitel a owl:Class;
     rdfs:isDefinedBy : ;
     rdfs:label "Kapitel"@sv;
     rdfs:comment "Ett kapitel i en svensk författning."@sv;
-    # TODO: instrumental data for minting fragment identifiers? 
-    # Put in separate dataset (along with containers)?
-    #rinstrument:fragmentIdStart "paragraf-";
-    #rinstrument:fragmentIdLeafFrom :paragrafnummer;
     rdfs:subClassOf
         [ a owl:Restriction;
             owl:onProperty :paragraf;
@@ -266,25 +218,8 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Paragrafnummer"@sv;
     rdfs:domain :Paragraf;
-    rdfs:range rdfs:Literal; # TODO: duger? rdfs:range xsd:positiveInteger; ?
+    rdfs:range rdfs:Literal; 
     rdfs:comment "Det symboliska numret för en paragraf i en svensk lag."@sv; .
-
-
-# TODO: :nyRevisionAv kanske ska finnas som egenskap på även t.ex. Paragraf?
-# Visar vilken ändrad paragraf som denna är en uppdaterad nyskriven version
-# av..
-# Observera att detta kan innebära att :andrar skulle kunna härledas om ett
-# dokument innehåller (dct:hasPart) något som är en :nyRevisionAv. :)
-
-# TODO: 2. andrar (o.dyl.) som implicerar (den ännu virtuella typen)
-# ":Andringsforfattning".. Dessa dokument har *inte egna paragrafer* osv, de
-# innehåller statements *om den resurs de ändrar*.
-#
-# Observera att enligt bilaga 1 punkt 1 i 1976:725: "I sina förteckningar skall
-# myndigheterna skilja mellan grundförfattningar och ändringsförfattningar."
-# och "En ny författning som innehåller övergångsbestämmelser enligt vilka en
-# äldre författning upphävs skall förtecknas både som en grundförfattning och
-# en ändringsförfattning."
 
 
 #---------------------------------------
@@ -310,7 +245,7 @@
         ],
         [ a owl:Restriction;
             owl:onProperty :bemyndigande;
-            owl:minCardinality 0 # TODO: "egentligen" 1?
+            owl:minCardinality 0
         ],
         [ a owl:Restriction;
             owl:onProperty :andrar;
@@ -331,13 +266,6 @@
         [ a owl:Restriction;
             owl:onProperty :ikrafttradanderegel;
             owl:minCardinality 0
-            # TODO: i det mer speciella fallet "ändring i ändring" "finns"
-            # visserligen en ikrafttradanderegel, men den anges inte explicit.
-            # Är detta skäl nog att ändra förväntad kardinalitet?
-            # Också (enligt gröna boken): en ändringsförfattning (dvs
-            # uteslutande ändrande annan författning) behöver inte heller någon
-            # ikrafttradanderegel anges!
-            # Slutsats [071206]: minCardinality ej 1, ändrad till 0.
         ],
         [ a owl:Restriction;
             owl:onProperty :overgangsbestammelse;
@@ -350,8 +278,6 @@
     rdfs:label "Beslutad av"@sv;
     rdfs:comment "Referens till officiell beslutstagare."@sv;
     rdfs:range foaf:Organization; .
-# TODO: skos:scopeNote? Har funderat på att vidga till foaf:Agent, men den är tänkt som:
-#       "å en myndighets vägnar", så rimligen inte.
 
 :beslutande a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
@@ -367,7 +293,6 @@
 
 :bemyndigande a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
-    # rdfs:subPropertyOf :lagrum; # TODO: bara till 95%
     rdfs:label "Bemyndigande"@sv;
     rdfs:comment "Referens till en bemyndigande rättsgrund som rättsregeldokumentet grundar sig på."@sv;
     owl:inverseOf [ rdfs:label "Bemyndigar"@sv ]; .
@@ -453,9 +378,6 @@
     owl:inverseOf [ rdfs:label "Bestämmer ikraftträdande för"@sv ];
     rdfs:isDefinedBy : .
 
-# TODO: tidsbegransning? Brukar anges som slutdatum. (E.x. "Lag om vapenamnesti (2007:11)")
-#   - förslag: :upphavanderegel (-datum, -anvisning, -lagrum)
-#   - obs! korrelera med :andrar och dess subproperties.
 
 :overgangsbestammelse a rdf:Property;
     rdfs:label "Övergångsbestämmelse"@sv;
@@ -482,8 +404,7 @@
     rdfs:comment "Datum då innehållet i dokumentet beslutades."@sv;
     rdfs:range xsd:date; .
 
-# NOTE: vad är skillnaden mellan utfardandedatum och beslutsdatum? owl:equivalentProperty?
-#   - svar (RK 070906): ja; equivalentProperty
+# Enligt JuDep 070906 är dessa ekvivalenta.
 :beslutsdatum owl:equivalentProperty :utfardandedatum .
 
 :utfardandedatum a owl:DatatypeProperty;
@@ -575,9 +496,6 @@
         ] .
 
 
-# TODO: "scopeNote" för Tillkannagivande och Cirkular
-#       [dessa] upphävs inte för att det inte är fråga om normgivning.
-
 
 #---------------------------------------
 # TODO: fler gamla begrepp (som är rdfs:subClassOf :FSDokument); t.ex.:
@@ -586,6 +504,7 @@
 #       - kan vara rdfs:subClassOf :Forfattning? eller bara :FSDokument (om alls?)
 #    rdfs:comment "Övriga typer av dokument utgivna i någon författningssamling."@sv;
 #   - har dessa :utfardandedatum? några/vilka/alla?
+#
 
 :Brev a owl:DeprecatedClass;
     rdfs:isDefinedBy : ;
@@ -633,8 +552,6 @@
             owl:onProperty :konsolideringsunderlag;
             owl:minCardinality 2
         ],
-        # TODO: rimligt med kapitel+paragraf? Bra för att delarna finns där,
-        # men har ingen laga kraft (är s.a.s. "återgivningar"..)
         [ a owl:Restriction;
             owl:onProperty :kapitel;
             owl:minCardinality 0
@@ -664,8 +581,6 @@
 
 #---------------------------------------
 
-# TODO: är undertyp av :FSDokument? Se dock rattningAv nedan (kan även ändra t.ex. proppar)
-# FIXME: hur identifiera? :rattningAv + vad? :beslutsdatum?
 :Rattelseblad a owl:Class;
     rdfs:isDefinedBy : ;
     rdfs:label "Rättelseblad"@sv;
@@ -690,9 +605,6 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Rättning av"@sv;
     rdfs:comment "Rättning av den författning som ett rättelseblad hänför sig till."@sv;
-    # NOTE: även t.ex. proppar - alltså ändrad till :Rattsinformationsdokument
-    #rdfs:range :Forfattning; # <- den gamla rangen innan ändring
-    # TODO: berätta med skos:scopeNote? history..?
     rdfs:range :Rattsinformationsdokument;
     owl:inverseOf [ rdfs:label "Rättas av"@sv ]; .
 
@@ -725,7 +637,6 @@
     rdfs:label "Förordningsmotiv till"@sv;
     rdfs:comment ""@sv; .
 
-# FIXME: fmNummer saknade definition! fixa comment..
 :fmNummer a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
     rdfs:subPropertyOf :rattsdokumentnummer;
@@ -771,24 +682,6 @@
 
 #---------------------------------------
 
-# TODO: red ut detta med RK; vi vill inte ha subtyper för Ds och SOU;
-#   - de är i lagstiftningskedjan juridiskt ekvivalenta
-#   - "SOU-nummer" - vad består det egentligen av? Är det faktiskt inte, under ytan och det dagliga talet:
-#       - just "angiven utredningsserie plus (utrednings-)nummer"?
-#:Utredningsdokument a owl:Class;
-#    rdfs:isDefinedBy : ;
-#    protege:abstract "true"; .
-#:Utredningsbetankande a owl:Class;
-#    rdfs:isDefinedBy : ;
-#    rdfs:label "Utredningsbetänkande"@sv;
-#    rdfs:comment "Ett utredningsbetänkande i serien Statens offentliga utredningar (SOU)."@sv;
-#    rdfs:subClassOf :Utredningsdokument; .
-#:DsDokument a owl:Class;
-#    rdfs:isDefinedBy : ;
-#    rdfs:label "Departementsseriedokument"@sv;
-#    rdfs:comment "Utredningsdokument utgivet i Departementsserien (Ds).";
-#    rdfs:subClassOf :Utredningsdokument; .
-
 :Utredningsbetankande a owl:Class;
     rdfs:isDefinedBy : ;
     rdfs:label "Utredningsbetänkande"@sv;
@@ -817,10 +710,7 @@
     rdfs:subPropertyOf dct:references;
     rdfs:label "Utgår från"@sv;
     rdfs:comment """Utgår från ett dokument tidigare i lagstiftningskedjan."""@sv;
-    owl:inverseOf [ rdfs:label "Är utgångspunkt för"@sv ]; # TODO: bättre etikett..
-    # TODO: kan vara andra dokument än svenska rättsinfodokument!
-    #rdfs:range :Rattsinformationsdokument
-    .
+    owl:inverseOf [ rdfs:label "Är utgångspunkt för"@sv ]; .
 
 :foreslarAndringAv a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
@@ -932,7 +822,6 @@
     rdfs:comment "Det målnummer som domstolen tilldelar målet vid anhängiggörandet."@sv; .
 
 # TODO: förutom malnummer behövs troligen domsnummer och diarienummer.
-#       - men hur kan de kombineras?
 #
 #:domsnummer a owl:DatatypeProperty;
 #    rdfs:isDefinedBy : ;
@@ -948,9 +837,6 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Domstolsavdelning"@sv;
     rdfs:comment "Domstolsavdelning som den är angiven i det ursprungliga domslutet."@sv;
-    # NOTE:
-    # - ska vara fritext
-    # - är kanske lite överkurs (bör iaf vara valfri - en del har inte ens avdelning)
     rdfs:domain :VagledandeDomstolsavgorande;
     .
 
@@ -958,7 +844,6 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Rättsfallshänvisning"@sv;
     rdfs:comment "Hänvisning i aktuellt avgörande till något rättsfall som har beaktats."@sv;
-    # TODO: ev. sammansatt referens
     .
 
 
@@ -978,7 +863,6 @@
 
 
 
-# TODO: detta är kompletterande information; ska vi ha det som en egen post?
 :Rattsfallsreferat
     rdfs:subClassOf
         [ a owl:Restriction;
@@ -1064,7 +948,7 @@
     rdfs:subClassOf
         [ a owl:Restriction;
             owl:onProperty :giltigaSprak;
-            owl:minCardinality 1 # TODO: ofta minst 2, ju fler desto internationellare
+            owl:minCardinality 1
         ],
         [ a owl:Restriction;
             owl:onProperty :ratificieringsdatum;
@@ -1081,7 +965,7 @@
         ] .
 
 
-:giltigaSprak a owl:DatatypeProperty; # TODO: range xsd .. language?
+:giltigaSprak a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Giltiga språk"@sv;
     rdfs:label "Authoritative languages"@en;
@@ -1119,7 +1003,6 @@
             owl:onProperty :lagrum;
             owl:minCardinality 0
         ]
-        # TODO:? sökord: dc:subject; konceptreferenser: dct:subject
     .
 
 
@@ -1134,14 +1017,10 @@
     rdfs:label "Lagrum"@sv;
     rdfs:comment "Hänvisning till något lagrum i SFS eller annan författningssamling."@sv;
     owl:inverseOf [ rdfs:label "Är lagrum för"@sv ];
-    # TODO: fragmentid:n i dokument
     .
 
 
 #---------------------------------------
-
-# TODO: *eventuellt* döpaOmTill VagledandeForvaltningsavgorande..?
-#   - bör höra med JK eller JO..
 
 :VagledandeMyndighetsavgorande a owl:Class;
     rdfs:subClassOf :VagledandeAvgorande;
@@ -1159,5 +1038,3 @@
     rdfs:label "Diarienummer"@sv;
     rdfs:comment "Diarienummer för ett ärende."@sv;
     rdfs:isDefinedBy : .
-
-

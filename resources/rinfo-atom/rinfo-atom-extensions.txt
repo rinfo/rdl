@@ -2,6 +2,12 @@
 Rättsinformationsprojektets utökningar till Atom Syndication Format 
 ===================================================================
 
+Namnrymd för dessa tillägg är:
+
+    http://rinfo.lagrummet.se/ns/2009/09/atom-extensions#
+
+
+
 Attributet 'filename'
 
 Attributet 'filename' anger ett föreslaget filnamn för en bilaga i ett
@@ -16,5 +22,5 @@ resurs:
     <atom:link rel="enclosure"
         href="http://example.org/docs/19287838/getdocument"
         type="application/pdf"
-        rinfo:filename="exfs-2008-01.pdf" />
+        rae:filename="exfs-2008-01.pdf" />
 
