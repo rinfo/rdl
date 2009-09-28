@@ -20,9 +20,9 @@
 		<id>http://rinfo.lagrummet.se/publ/sjvfs/2009:44</id>
 		<updated>2009-06-15T03:01:00.000Z</updated>
 		<published>2009-06-15T03:01:00.000Z</published>
-		<title>Föreskrifter om ändring i Statens jordbruksverks
-			föreskrifter (SJVFS 2009:26) om hästdjur som används till avel och om
-			identifiering av hästdjur;</title>
+		<title>Föreskrifter om ändring i Statens jordbruksverks
+			färeskrifter (SJVFS 2009:26) om hästdjur som används till avel och om
+			identifiering av hästdjur;</title>
 		<summary></summary>
 		<!-- länk till PDF-versionen (med korrekt md5-summa för PDF-filen) -->
 		<content src="https://www.jordbruksverket.se/download/18.424d259d1214272440980003829/2009-044.pdf"
@@ -39,7 +39,7 @@
 		<id>http://rinfo.lagrummet.se/publ/sjvfs/2009:26</id>
 		<updated>2009-01-01T00:00:00.000Z</updated>
 		<published>2009-01-01T00:00:00.000Z</published>
-		<title>Statens jordbruksverks föreskrifter om hästdjur som används till avel och om identifiering av hästdjur;</title>
+		<title>Statens jordbruksverks föreskrifter om hästdjur som används till avel och om identifiering av hästdjur;</title>
 		<summary></summary>
 		<!-- länk till PDF-versionen av grundförfattningen (kunde vi inte hitta på webbplatsen)-->
 		<content src="http://www.jordbruksverket.se/download/18.424d259d1214272440980003829/2009-026.pdf"
