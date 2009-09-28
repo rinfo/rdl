@@ -166,6 +166,7 @@
     rdfs:comment """Nummer i en författningssamling på formen "1999:175". Brukar i klartext anges som t.ex. "SFS 1999:175" (om dokumentet ingår i SFS)."""@sv;
     rdfs:range rdfs:Literal; .
 
+
 :forfattningssamling a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
     rdfs:subPropertyOf :publikationssamling;
@@ -744,7 +745,6 @@
     rdfs:label "Kommittédirektiv"@sv;
     rdfs:comment "Ett kommittédirektiv."@sv;
     rdfs:subClassOf :Rattsinformationsdokument;
-    # TODO: Lägg till information om departementstillhörighet
     rdfs:subClassOf
         [ a owl:Restriction;
             owl:onProperty :direktivnummer;
@@ -759,10 +759,13 @@
             owl:minCardinality 0
         ],
         [ a owl:Restriction;
+            owl:onProperty :departement;
+            owl:cardinality 1
+        ],
+        [ a owl:Restriction;
             owl:onProperty :foreslarUtredningAvAndringI;
             owl:minCardinality 0
         ]; .
-
 
 :direktivnummer a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
@@ -791,6 +794,11 @@
     rdfs:label "Tillägg till"@sv;
     rdfs:comment "Den kommtté som tilläget riktar sig till."@sv; .
 
+:departement a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Departement"@sv;
+    rdfs:comment """Anger relation till departement."""@sv;
+    rdfs:range foaf:Organization; .
 
 ##
 # Domstolsdokument
