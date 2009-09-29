@@ -11,5 +11,10 @@
         <avkravtAvrapporteringsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2010-01-29</ikrafttradandedatum>
 
         <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
+        <departement rdf:parseType="Resource">
+            <foaf:name>Utbildningsdepartementet</foaf:name>
+        </departement>
+
+        <dct:references rdf:resource=""/> 
     </Kommittedirektiv>
 </rdf:RDF>
