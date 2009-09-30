@@ -7,7 +7,7 @@ import groovy.xml.dom.DOMUtil
 @Grab(group='com.uwyn', module='jhighlight', version='1.0')
 @Grab(group='com.lowagie', module='itext', version='2.0.8')
 @Grab(group='org.xhtmlrenderer', module='core-renderer', version='R8pre2')
-class HandbookMaker {
+class Builder {
 
     static void main(String[] args) {
         def (flags, paths) = args.split { it =~ /^--/ }
