@@ -17,7 +17,7 @@
       </head>
       <body>
         <div id="header">
-          <img src="../logotyp.png" class="logo" alt=""/>
+          <img src="../img/logotyp.png" class="logo" alt=""/>
         </div>
         <div id="pagemeta">
           <p><span id="pagenumber"/></p>
