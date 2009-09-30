@@ -1,18 +1,28 @@
+package docgen
+
 import org.w3c.dom.Document
 import org.xhtmlrenderer.pdf.ITextRenderer
 
 
-@Grab(group='com.lowagie', module='itext', version='2.0.8')
-@Grab(group='org.xhtmlrenderer', module='core-renderer', version='R8pre2')
 class PdfMaker {
 
     static DEFAULT_FONTS = [
             "gara.ttf", "garait.ttf", "garabd.ttf",
             "trebuc.ttf", "trebucit.ttf", "trebucbi.ttf", "trebucbd.ttf"
         ]
+    List fonts
+    PdfMaker() { fonts = DEFAULT_FONTS }
+    PdfMaker(List fonts) { this.fonts = fonts }
 
-    static void renderAsPdf(Document doc, String docUrl, outStream) {
-        def renderer = createRenderer(DEFAULT_FONTS)
+    void renderAsPdf(Document doc, File outFile) {
+        def outStream = new FileOutputStream(outFile)
+        outFile.withOutputStream {
+            renderAsPdf(doc, outFile.toURL().toString(), it)
+        }
+    }
+
+    void renderAsPdf(Document doc, String docUrl, OutputStream outStream) {
+        def renderer = createRenderer(fonts)
         renderer.setDocument(doc, docUrl)
         renderer.layout()
         renderer.createPDF(outStream)

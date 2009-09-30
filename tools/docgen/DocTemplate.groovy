@@ -1,3 +1,5 @@
+package docgen
+
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.TransformerFactory
@@ -6,8 +8,11 @@ import javax.xml.transform.dom.DOMSource
 
 import org.w3c.dom.Document
 import org.xml.sax.EntityResolver
-
 import org.xml.sax.InputSource
+
+import groovy.xml.dom.DOMCategory
+
+import com.uwyn.jhighlight.renderer.XhtmlRendererFactory
 
 
 class DocTemplate {
@@ -17,10 +22,12 @@ class DocTemplate {
 
     Map systemIdMap
     Map params
+    Map customProtocols
 
-    DocTemplate(systemIdMap, params) {
-        this.systemIdMap = systemIdMap
+    DocTemplate(params, systemIdMap, customProtocols) {
         this.params = params
+        this.systemIdMap = systemIdMap
+        this.customProtocols = customProtocols
         def dbf = DocumentBuilderFactory.newInstance()
         dbf.setNamespaceAware(true)
         dbf.setXIncludeAware(true)
@@ -31,10 +38,9 @@ class DocTemplate {
 
     /**
      * Parses the document at the given url, expanding any xinclude directives
-     * and optionally transforming it if an xslt stylsheet instruction is
-     * present.
+     * and transforming it if an xslt stylsheet instruction is present.
      */
-    Document parse(URL docUrl) {
+    Document render(URL docUrl) {
         def doc = getDocument(docUrl)
         def domSource = new DOMSource(doc, docUrl.toString())
         def stylesheet = tFactory.getAssociatedStylesheet(domSource, null, null, null)
@@ -48,6 +54,40 @@ class DocTemplate {
             return (Document) domResult.getNode()
         } else {
             return doc
+        }
+    }
+
+    /**
+     * Uses {@link render} and invokes {@highlightSourceBlocks} on the results.
+     */
+    Document renderAndHighlightCode(URL docUrl) {
+        def doc = render(docUrl)
+        highlightSourceBlocks(doc)
+        return doc
+    }
+
+    /**
+    * Replaces plain source code text with highlighted markup.
+    */
+    void highlightSourceBlocks(doc) {
+        use (DOMCategory) {
+            doc.documentElement.'**'.'code'.each { code ->
+                def hlRenderer = XhtmlRendererFactory.getRenderer(code.'@class')
+                if (hlRenderer) {
+                    def hlDoc = docBuilder.parse(new ByteArrayInputStream(
+                            (
+                            '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                            "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">''' +
+                            '<code>' +
+                            hlRenderer.highlight("", code.text(), "iso-8859-1", true) +
+                            '</code>').bytes)
+                        )
+                    code.setTextContent("")
+                    hlDoc.documentElement.'*'.each {
+                        code.appendChild(doc.importNode(it, true))
+                    }
+                }
+            }
         }
     }
 
@@ -71,6 +111,13 @@ class DocTemplate {
             if (systemId.startsWith(base)) {
                 resolved = systemId.replace(base,
                         new File(dir).toURL().toString())
+            }
+        }
+        customProtocols.each { base, dir ->
+            def proto = base+':'
+            if (systemId.startsWith(proto)) {
+                def path = systemId.substring(proto.size())
+                resolved = new File(dir, path).canonicalPath
             }
         }
         return resolved? new InputSource(resolved) : null
