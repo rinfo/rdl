@@ -224,6 +224,38 @@
 
 
 #---------------------------------------
+# Lösa författningsreferenser
+#
+
+:Forfattningsreferens a owl:Class;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Författningsreferens"@sv;
+    rdfs:comment """En referens till en del författning. Referensen är inprecis
+    i det att den som skapar referensen kan avse ett annat
+    paragrafinnehåll än det som existerar i grundförfattningen (t.ex. den
+    version som senare påförts i en ändringsförfattning)."""@sv; .
+
+:angerGrundforfattning a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Anger grundförfattning"@sv;
+    rdfs:domain :Forfattningsreferens;
+    rdfs:range :Forfattning; .
+
+:angerKapitelnummer a rdf:DatatypeProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Anger kapitelnummer"@sv;
+    rdfs:seeAlso :kapitelnummer;
+    rdfs:domain :Forfattningsreferens;
+    rdfs:range rdfs:Literal; .
+
+:angerParagrafnummer a owl:DatatypeProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Anger grundförfattning"@sv;
+    rdfs:seeAlso :paragrafnummer;
+    rdfs:domain :Forfattningsreferens;
+    rdfs:range rdfs:Literal; .
+
+
 
 :Forfattning a owl:Class;
     rdfs:isDefinedBy : ;
