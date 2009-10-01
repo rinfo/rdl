@@ -9,12 +9,10 @@ if (args.length < 2) {
     System.exit 1
 }
 
-def xhtmlfile = new FileReader(args[0])
+def xhtmlfile = new FileInputStream(args[0])
 def xsltfile = new FileInputStream(args[1])
 
-xhtml = ""
-print groovy.xml.DOMBuilder.parse(xhtmlfile, false, false)
-
+xhtml = xhtmlfile.text.replaceFirst(/<!DOCTYPE[^>]*>/,"")
 xslt = xsltfile.text
 
 def factory = TransformerFactory.newInstance()
