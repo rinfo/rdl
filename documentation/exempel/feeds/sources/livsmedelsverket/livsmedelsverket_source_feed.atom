@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
       xmlns:le="http://purl.org/atompub/link-extensions/1.0"
-      xmlns:rae="http://rinfo.lagrummet.se/ns/2009/09/atom-extensions#"
+      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
       xml:lang="sv">
 
   <id>tag:slv.se,2009:rinfo:feed</id>
@@ -28,7 +28,7 @@
           length="1465" le:md5="143aa16eb05095675651b5e8380aff8d"/>
     <link rel="enclosure" href="http://www.slv.se/upload/dokument/lagstiftning/2005-2006/2006_22bil1.pdf"
           type="application/pdf"
-          rae:filename="bilaga/LIVSFS-2006_22bil1.pdf"
+          rdf:resource="http://rinfo.lagrummet.se/publ/livsfs/2006:22/bilaga/1"
           length="1168037" le:md5="1115651b5e8380aff8d"/>
   </entry>
 </feed>

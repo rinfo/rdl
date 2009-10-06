@@ -210,6 +210,28 @@
         I dagsläget omfattas inte allmänna råd av rättsinformationssystemet, men det kan komma att ändras framgent. För de föreskrifter där allmänna råd är varvade med författningstext behöver ingen justering ske i existerande dokument. Om rättsinformationsförordningen utökas till att även omfatta allmänna råd kommer en ny dokumenttyp och egenskaper för denna att skapas av projektet.
         </p>
 
+
+        <h3>Hur hanteras bilagor?</h3>
+        <p>För bilagor behöver man endast ange information om titel och
+        koppling till föreskrift. En identifierare för en bilaga
+        skapas genom att utgå från den identifierare som gäller för
+        föreskriften och lägger till "/bilaga/" och ett löpnummer:</p>
+
+        <p><code>http://rinfo.lagrummet.se/publ/dvfs/2008:1/bilaga/1</code></p>
+        
+        <p>För exempel på metadatapost för en föreskrift där en bilaga ingår se
+        Bilaga 9: Exempel på metadata i RDF med information om bilaga
+        (Livsmedelsverket LIVSFS 2006:22).</p>
+
+        <p>Själva bilagan kan vara en del av föreskriftens PDF-dokument eller
+        hanteras som ett separat dokument. Information om var bilagan kan
+        laddas ner lämnas i postförteckningen (Atom Entry posten för
+        föreskriften). För exempel se bilaga 10.</p>
+        
+        <div class="syntax">
+            <code class="xml"><xi:include href="../../documentation/exempel/feeds/sources/livsmedelsverket/livsmedelsverket_source_feed.atom" parse="text" xpointer="element(/1/1/8)" /></code>
+        </div>
+
         <h3>Hur hanterars ämnesord?</h3>
         <p>
         Flera myndigheter klassificerar rättsinformation med hjälp av ämnesord.
@@ -238,7 +260,7 @@
             System (SKOS). Om din ämnesordsförteckning uttrycks i detta format
             och publiceras på webben kan andra ta del av och återanvända dessa
             ämnesord på ett enhetligt sätt. För ett exempel på en
-            ämnesordsförteckning i SKOS se bilaga 9: Ämnesordsförteckning i
+            ämnesordsförteckning i SKOS se bilaga 11: Ämnesordsförteckning i
             SKOS. Även i detta fall anges referenser till ämnesord som del av
             metadata för en myndighetsföreskrift.</p>
             </li>
@@ -318,7 +340,21 @@
     </div>
 
     <div class="appendix">
-        <h1>Bilaga 9: Ämnesordsförteckning i SKOS</h1>
+      <h1>Bilaga 9: Exempel på metadata i RDF med information om bilaga (Livsmedelsverket LIVSFS 2006:22)</h1>
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Forfattningar/LIVSFS/2006/LIVSFS-2006_22.rdf" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 10: Postförteckning med information om bilaga</h1>
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/feeds/sources/livsmedelsverket/livsmedelsverket_source_feed.atom" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+        <h1>Bilaga 11: Ämnesordsförteckning i SKOS</h1>
         <p>Detta är ett grundläggande exempel. SKOS innehåller ett stort antal möjligheter att beskriva samband, alternativa skrivningar och etiketter på andra språk. För mer information se <a href="http://www.w3.org/2004/02/skos/intro" lang="en">Introduction to SKOS</a>.</p>
       <div class="syntax">
         <code class="xml"><xi:include href="../../documentation/exempel/vokabular/exempel.rdf" parse="text"/></code>
