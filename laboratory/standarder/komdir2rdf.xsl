@@ -33,18 +33,31 @@
                     <xsl:choose>
                         <xsl:when test="contains(., '#K')">
                             <dct:references>
+                                <xsl:comment><xsl:text> </xsl:text><xsl:value-of select="."/><xsl:text> </xsl:text></xsl:comment>
                                 <Forfattningsreferens>
                                     <angerGrundforfattning rdf:resource="{substring-before(., '#')}" />
-                                    <angerKapitelnummer><xsl:value-of select="substring-before(substring-after(., '#K'), '-')"/></angerKapitelnummer>
-                                    <angerParagrafnummer><xsl:value-of select="substring-after(., '-P')"/></angerParagrafnummer>
+                                        <xsl:variable name="fragment" select="substring-after(., '#K')"/>
+                                        <xsl:choose>
+                                            <xsl:when test="contains($fragment, '-P')">
+                                                <angerKapitelnummer>
+                                                    <xsl:value-of select="substring-before($fragment, '-P')"/>
+                                                </angerKapitelnummer>
+                                                <angerParagrafnummer><xsl:value-of select="substring-after($fragment, '-P')"/></angerParagrafnummer>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <angerKapitelnummer>
+                                                    <xsl:value-of select="$fragment"/>
+                                                </angerKapitelnummer>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
                                 </Forfattningsreferens>
                             </dct:references>
                         </xsl:when>
                         <xsl:when test="contains(., '#P')">
                             <dct:references>
                                 <Forfattningsreferens>
-                                    <angerGrundforfattning rdf:resource="...2008:1" />
-                                    <angerParagrafnummer>1 b</angerParagrafnummer>
+                                    <angerGrundforfattning rdf:resource="{substring-before(., '#P')}" />
+                                    <angerParagrafnummer><xsl:value-of select="substring-after(., '#P')"/></angerParagrafnummer>
                                 </Forfattningsreferens>
                             </dct:references>
                         </xsl:when>
