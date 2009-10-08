@@ -137,6 +137,11 @@
         <version>2.4</version>
       </dependency>
       <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.2.1</version>
+      </dependency>
+      <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>1.4</version>
@@ -282,6 +287,12 @@
 
       <dependency>
         <groupId>org.openrdf.sesame</groupId>
+        <artifactId>sesame-repository-api</artifactId>
+        <version>2.2.4</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.openrdf.sesame</groupId>
         <artifactId>sesame-repository-event</artifactId>
         <version>2.2.4</version>
       </dependency>
@@ -316,6 +327,18 @@
         <groupId>org.openrdf.sesame</groupId>
         <artifactId>sesame-repository-http</artifactId>
         <version>2.2.4</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.openrdf.sesame</groupId>
+        <artifactId>sesame-sail-rdbms</artifactId>
+        <version>2.1.2</version>
+      </dependency>
+
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>5.1.5</version>
       </dependency>
 
       <dependency>
@@ -371,15 +394,17 @@
         <version>2.7.1</version>
       </dependency>
 
+      <!-- NOTE: only needed to build maven plugins in groovy.
       <dependency>
           <groupId>org.codehaus.groovy.maven</groupId>
           <artifactId>gmaven-mojo</artifactId>
-          <version>1.0-rc-5</version>
+          <version>1.0</version>
       </dependency>
+      -->
       <dependency>
           <groupId>org.codehaus.groovy.maven.runtime</groupId>
           <artifactId>gmaven-runtime-1.6</artifactId>
-          <version>1.0-rc-5</version>
+          <version>1.0</version>
       </dependency>
       <!-- }}} -->
 
@@ -435,7 +460,7 @@
         <plugin>
           <groupId>org.codehaus.groovy.maven</groupId>
           <artifactId>gmaven-plugin</artifactId>
-          <version>1.0-rc-5</version>
+          <version>1.0</version>
         </plugin>
         <plugin>
           <groupId>org.spockframework</groupId>

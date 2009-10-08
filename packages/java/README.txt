@@ -33,6 +33,13 @@ In the directory of this README, run::
 
     $ mvn install
 
+If the tests fail for some reason, fix that! Still it *is* possible to do::
+
+    $ mvn install -Dmaven.test.skip=true
+
+if you *need* to (for some specific development/debug purpose).
+
+
 Environments
 ========================================================================
 

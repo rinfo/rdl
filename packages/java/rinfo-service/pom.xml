@@ -9,7 +9,7 @@
   <version>1.0-SNAPSHOT</version>
   <name>RInfo Service</name>
   <url>http://dev.lagrummet.se/rinfo/</url>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
 
   <parent>
     <groupId>se.lagrummet</groupId>
@@ -70,6 +70,10 @@
     </dependency>
     <dependency>
       <groupId>org.openrdf.sesame</groupId>
+      <artifactId>sesame-repository-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openrdf.sesame</groupId>
       <artifactId>sesame-repository-event</artifactId>
     </dependency>
     <dependency>
@@ -77,18 +81,17 @@
       <artifactId>sesame-repository-http</artifactId>
     </dependency>
 
-    <!-- TODO: use? move to rinf-rdf-repo and add versions in parent pom..
+    <!-- TODO: Use? Move to rinf-rdf-repo?
     <dependency>
       <groupId>org.openrdf.sesame</groupId>
       <artifactId>sesame-sail-rdbms</artifactId>
-      <version>2.1.2</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>5.1.5</version>
     </dependency>
     -->
+
     <dependency>
       <groupId>org.antlr</groupId>
       <artifactId>stringtemplate</artifactId>
