@@ -1,24 +1,21 @@
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix sioc: <http://rdfs.org/sioc/ns#> .
 
-
 <tag:lagrummet.se,2009:rinfo> a sioc:Space;
-    sioc:has_host <http://rinfo.lagrummet.se>;
-    sioc:feed <http://rinfo.lagrummet.se/feed/current> .
-
-<tag:regeringen.se,2009:rinfo> a sioc:Space;
-    is dct:source of <tag:lagrummet.se,2009:rinfo>;
-    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
-    sioc:feed <http://regeringen.se/sfs/feed/current> .
+    dct:source <tag:dom.se,2009:rinfo>,
+        <tag:regeringen.se,2009:rinfo>,
+        <tag:verva.se,2007:rinfo>;
+    sioc:feed <http://rinfo.lagrummet.se/feed/current>;
+    sioc:has_host <http://rinfo.lagrummet.se> .
 
 <tag:dom.se,2009:rinfo> a sioc:Space;
-    is dct:source of <tag:lagrummet.se,2009:rinfo>;
     dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
     sioc:feed <http://dom.se/dvfs/feed/current> .
 
+<tag:regeringen.se,2009:rinfo> a sioc:Space;
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
+    sioc:feed <http://regeringen.se/sfs/feed/current> .
+
 <tag:verva.se,2007:rinfo> a sioc:Space;
-    is dct:source of <tag:lagrummet.se,2009:rinfo>;
     dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
     sioc:feed <http://regeringen.se/vervafs/feed/current> .
-
