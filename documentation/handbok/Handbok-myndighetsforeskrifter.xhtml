@@ -226,10 +226,15 @@
         <p>Själva bilagan kan vara en del av föreskriftens PDF-dokument eller
         hanteras som ett separat dokument. Information om var bilagan kan
         laddas ner lämnas i postförteckningen (Atom Entry posten för
-        föreskriften). För exempel se bilaga 10.</p>
+        föreskriften) på detta sätt:</p>
         
         <div class="syntax">
-            <code class="xml"><xi:include href="../../documentation/exempel/feeds/sources/livsmedelsverket/livsmedelsverket_source_feed.atom" parse="text" xpointer="element(/1/1/8)" /></code>
+            <code class="xml"><![CDATA[
+        <link rel="enclosure" href="http://www.slv.se/upload/dokument/lagstiftning/2005-2006/2006_22bil1.pdf"
+          type="application/pdf"
+          rdf:resource="http://rinfo.lagrummet.se/publ/livsfs/2006:22/bilaga/1"
+          length="1168037" le:md5="1115651b5e8380aff8d"/>        
+            ]]></code>
         </div>
 
         <h3>Hur hanterars ämnesord?</h3>
