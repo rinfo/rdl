@@ -4,9 +4,6 @@ import java.text.SimpleDateFormat
 import groovy.xml.dom.DOMUtil
 
 
-@Grab(group='com.uwyn', module='jhighlight', version='1.0')
-@Grab(group='com.lowagie', module='itext', version='2.0.8')
-@Grab(group='org.xhtmlrenderer', module='core-renderer', version='R8pre2')
 class Builder {
 
     static void main(String[] args) {
@@ -19,10 +16,19 @@ class Builder {
         def srcDir = paths[1]
         def buildDir = paths[2]
         def clean = "--clean" in flags
-        build(srcDir, buildDir, resourceDir, clean)
+        def statics = [
+            "css/*.*", "img/*.*"
+        ]
+        def includes = [
+            "index.xhtml",
+            "handbok/**.xhtml",
+            "system/**.xhtml"
+        ]
+        build(resourceDir, srcDir, statics, includes, buildDir, clean)
     }
 
-    static build(srcDir, buildDir, resourceDir, clean=false) {
+    static build(resourceDir, srcDir, statics, includes, buildDir,
+            clean=false) {
         def ant = new AntBuilder()
 
         if (clean) {
@@ -32,10 +38,18 @@ class Builder {
 
         ant.copy(todir:buildDir) {
             fileset(dir:srcDir) {
-                include(name:"css/*.*")
-                include(name:"img/*.*")
+                statics.each {
+                    include(name: it)
+                }
             }
         }
+
+        def dataView = new DataViewer(
+                ["${resourceDir}/base/model",
+                "${resourceDir}/base/extended/rdf",
+                "${resourceDir}/external/rdf"] as String[]
+        )
+        dataView.renderModel(buildDir+"/model.xhtml")
 
         def srcPath = normUrlPath(srcDir)
         def buildPath = normUrlPath(buildDir)
@@ -48,20 +62,13 @@ class Builder {
         ]
         def svnVersionNumber = getSvnVersionNumber()
 
-        def dataView = new DataViewer(
-                ["${resourceDir}/base/model",
-                "${resourceDir}/base/extended/rdf",
-                "${resourceDir}/external/rdf"] as String[]
-        )
-        dataView.renderModel(buildDir+"/model.xhtml")
-
         ant.fileScanner {
             fileset(dir:srcDir) {
-                include(name: "handbok/**.xhtml")
-                include(name: "system/**.xhtml")
+                includes.each {
+                    include(name: it)
+                }
             }
         }.each {
-
             def inUrl = it.toURL()
             def outUrl = new URL(inUrl.toString().replace(srcPath, buildPath))
             ant.echo "<${inUrl}> => <${outUrl}>"
@@ -69,7 +76,8 @@ class Builder {
             def params = [
                 docdate: new SimpleDateFormat("yyyy-MM-dd").format(
                         new Date(it.lastModified() )),
-                svnversion: svnVersionNumber
+                svnversion: svnVersionNumber,
+                root: relRoot(srcPath, it)
             ]
             def tplt = new DocTemplate(params, systemIdMap, customProtocols)
             def doc = tplt.renderAndHighlightCode(inUrl)
@@ -85,7 +93,14 @@ class Builder {
 
     }
 
-    static normUrlPath(filePath) {
+    static String relRoot(String base, File file) {
+        def path = file.parentFile.toURL() as String
+        if (path.startsWith(base)) {
+            return '../' * path.replace(base, "").count('/')
+        }
+    }
+
+    static String normUrlPath(filePath) {
         return new File(filePath).canonicalFile.toURL().toString()
     }
 

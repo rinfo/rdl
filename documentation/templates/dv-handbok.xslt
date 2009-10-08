@@ -6,18 +6,20 @@
 
   <xsl:param name="docdate"/>
   <xsl:param name="svnversion"/>
+  <xsl:param name="root" select="'./'"/>
+  <xsl:param name="show-formats" select="false()"/>
 
   <xsl:template match="/h:html">
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv">
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <title>Handbok : <xsl:value-of select="h:head/h:title"/></title>
-        <link rel="stylesheet" type="text/css" media="screen,print" href="../css/dv.css"/>
-        <link rel="stylesheet" type="text/css" media="screen,print" href="../css/syntax.css"/>
+        <link rel="stylesheet" type="text/css" media="screen,print" href="{$root}css/dv.css"/>
+        <link rel="stylesheet" type="text/css" media="screen,print" href="{$root}css/syntax.css"/>
       </head>
       <body>
         <div id="header">
-          <img src="../img/logotyp.png" class="logo" alt=""/>
+            <img src="{$root}img/logotyp.png" class="logo" alt=""/>
         </div>
         <div id="pagemeta">
           <p><span id="pagenumber"/></p>
