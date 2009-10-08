@@ -91,11 +91,13 @@
       <scope>test</scope>
     </dependency>
 
+    <!--
     <dependency>
       <groupId>org.codehaus.groovy.maven.runtime</groupId>
       <artifactId>gmaven-runtime-1.6</artifactId>
       <scope>test</scope>
     </dependency>
+    -->
 
     <dependency>
       <groupId>org.spockframework</groupId>
@@ -129,8 +131,10 @@
         <executions>
           <execution>
             <goals>
+              <!-- NOTE: only needed when main has groovy in it.
               <goal>generateStubs</goal>
               <goal>compile</goal>
+              -->
               <!-- NOTE: conflicts with the "string methods" of Spock.
               <goal>generateTestStubs</goal>
               -->
