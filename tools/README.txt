@@ -7,8 +7,30 @@ Introduction
 
 These tools are for instrumental (development) use of the rinfo packages.
 
+
 Running Groovy outside of Maven
 ========================================================================
+
+Option A: Use Groovy's Grape With Local Maven Repo
+------------------------------------------------------------------------
+
+Groovy's dependency mechanism (using ``@Grab``) annotations can be used with your local Maven repository. To do this, locate the file:
+
+    <$HOME/.groovy/grapeConfig.xml>
+
+If it doesn't exist, see:
+
+        <http://groovy.codehaus.org/Grape>
+
+for how to create a default version. Then add the following directive::
+
+      <ibiblio name="local" root="file:${user.home}/.m2/repository/" m2compatible="true"/>
+
+That should make all Maven dependencies locatable (provided that you have ``mvn install``:ed your packages. See <packages/java/README.txt> for more info).
+
+
+Option B: Use A Pathing Jar
+------------------------------------------------------------------------
 
 (This makes for a speedier roundtrip when using groovy for testing and
 prototyping.)
