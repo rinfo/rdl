@@ -14,7 +14,8 @@ Running Groovy outside of Maven
 Option A: Use Groovy's Grape With Local Maven Repo
 ------------------------------------------------------------------------
 
-Groovy's dependency mechanism (using ``@Grab``) annotations can be used with your local Maven repository. To do this, locate the file:
+Groovy's dependency mechanism (using ``@Grab``) annotations can be used with
+your local Maven repository. To do this, locate the file:
 
     <$HOME/.groovy/grapeConfig.xml>
 
@@ -26,7 +27,10 @@ for how to create a default version. Then add the following directive::
 
       <ibiblio name="local" root="file:${user.home}/.m2/repository/" m2compatible="true"/>
 
-That should make all Maven dependencies locatable (provided that you have ``mvn install``:ed your packages. See <packages/java/README.txt> for more info).
+The path in the root property above should match the location for your loval
+maven repository. You may have changed that from the default home directory.
+That should make all Maven dependencies locatable (provided that you have ``mvn
+install``:ed your packages. See <packages/java/README.txt> for more info).
 
 
 Option B: Use A Pathing Jar
