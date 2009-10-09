@@ -26,35 +26,73 @@
 	        <div id="navigation">							        
 		    <p class="menuintro">Innehåll</p>
                     <ul id="mainmenu">
-                        <li class="open"><a href="handbok/" class="open">Handböcker</a>
-                            <ul class="submenu"><li><a href="handbok/Handbok-myndighetsforeskrifter.xhtml">Myndighetsföreskrifter</a></li></ul></li>
-                        <li class="open"><a href="/lar-dig-mer/" class="open">Övrigt</a><ul class="submenu"><li><a href="/lar-dig-mer/faq/">Vanliga frågor </a></li></ul></li>
+                        <li class="open"><a href="#doktyp" class="open">Dokumenttyper</a>
+                        <ul class="submenu">
+                            <li><a href="#myndighetsforeskrifter">Myndighetsföreskrifter</a></li>
+                            <li><a href="#sfs">SFS</a></li>
+                            <li><a href="#komdir">Kommittédirektiv</a></li>
+                        </ul></li>
+                        <li class="open"><a href="#generella" class="open">Generella riktlinjer</a></li>
+                        <li class="open"><a href="#verktyg" class="open">Verktyg</a></li>
                     </ul>				        	        
 	        </div>
 	                
 	        <div id="content" class="tpl-page">
 	                  
                     <h1>Rättsinformationssystemets projektdokumentation</h1>
+
                     <p>Dessa sidor vänder sig främst till myndigheter som
                     producerar rättsinformation som omfattas av <a
                         href="http://62.95.69.15/cgi-bin/thw?%24{HTML}=sfst_lst&amp;%24{OOHTML}=sfst_dok&amp;%24{SNHTML}=sfst_err&amp;%24{BASE}=SFST&amp;%24{TRIPSHOW}=format%3DTHW&amp;BET=1999%3A175%24">Rättsinformationsförordningen (1999:175)</a>.
                     Letar du efter information om lagar och regler bör du
                     istället besöka <a href="http://www.lagrummet.se/">portalen lagrummet.se</a>.</p> 
 
-                    <h2>Riktlinjer per dokumenttyp</h2>
+                    <h2 id="doktyp">Riktlinjer per dokumenttyp</h2>
+
+                    <h3 id="myndighetsforeskrifter">Myndighetsföreskrifter</h3>
                     <ul>
-                        <li><a href="handbok/Handbok-myndighetsforeskrifter.pdf">Handbok för myndighetsföreskrifter (PDF)</a></li>
+                        <li><a href="handbok/Handbok-myndighetsforeskrifter.pdf">Handbok för myndighetsföreskrifter inklusive exempel (PDF)</a></li>
+                        <li><a href="http://code.google.com/p/rinfo-foreskriftshantering/">Referensimplementation av nivå 1 (PDF + metadata)</a></li>
                     </ul>
 
-                    <h2>Generella riktlinjer</h2>
+                    <h3 id="sfs">SFS</h3>
+                    <p>Riktlinjerna för SFS är snarlika de som gäller för
+                    myndighetsföreskrifter. Dock finns det fler exempel som
+                    visar specifika egenskaper för SFS.</p>
+
+                    <h3 id="komdir">Kommittédirektiv</h3>
                     <ul>
+                        <li><a href="handbok/Handbok-kommittedirektiv.pdf">Handbok för kommittédirektiv (PDF)</a></li>
+                    </ul>
+
+                    <h2 id="generella">Generella riktlinjer</h2>
+                    <p>Detta material visar bl.a. designprinciper projektet
+                    utgått från i rekommendationerna för elektroniska
+                    identifierare, XML-format mm.</p>
+                    <ul>
+                        <li><a href="model.xhtml">Begreppsmodellen för svenska rättsinformationspublikationer</a></li>
                         <li><a href="handbok/uri...">Principer för elektroniska identifierare</a></li>
                         <li><a href="handbok/xhtml..">XML-baserat dokumentformat</a></li>
                     </ul>
 
-                    <h2>Verktyg</h2>
+                    <h2 id="standarder">Rekommendationer/standarder som använts</h2>
+                    <p>Projektet har i så stor utsträckning som möjligt försökt
+                    använda existerande standarder. Dokumentation för dessa
+                    hittar du här:</p>
                     <ul>
-                        <li><a href="http://validator.w3.org/feed/">Valideringsverktyg för Atom-formatet</a> (Observera att detta verktyg enbart testar syntax och inte att innehållet är korrekt).</li>
+                        <li><a href="http://www.w3.org/RDF/" xml:lang="en">Resource Description Framework (RDF)</a></li>
+                        <li><a href="http://tools.ietf.org/html/rfc4287" xml:lang="en">The Atom Syndication Format</a></li>
+                        <li><a href="http://dublincore.org/" xml:lang="en">The Dublin Core Metadata Initiative</a></li>
+                    </ul>
+
+                    <h2 id="verktyg">Verktyg</h2>
+                    <p>Verktyg för att förenkla arbetet för utvecklare.
+                    Observera att flera av dessa verktyg enbart testar syntax
+                    och inte att innehållet är korrekt.</p>
+                    <ul>
+                        <li><a href="http://validator.w3.org/feed/">W3C:s valideringsverktyg för Atom-formatet</a></li>
+                        <li><a href="http://www.w3.org/RDF/Validator/">W3C:s valideringsverktyg för RDF</a></li>
+                        <li><a href="http://validator.w3.org/">W3C:s valideringsverktyg för XHTML</a></li>
                     </ul>
 
 	        </div>
@@ -62,7 +100,7 @@
                 <div id="related">
                     <h2>Senaste nyheter från projektet</h2>
 
-                    <script type="text/javascript" src="http://p3k.org/rss/proxy.r?textColor=black&amp;align=&amp;width=200&amp;fontFace=&amp;url=http%3A%2F%2Frinfoprojektet.wordpress.com%2Ffeed%2F&amp;compact=true&amp;frameColor=black&amp;showXmlButton=&amp;boxFillColor=white&amp;_=1255012508966&amp;titleBarColor=%23ccc&amp;maxItems=5&amp;titleBarTextColor=black&amp;"></script>
+                    <script type="text/javascript" src="http://p3k.org/rss/proxy.r?textColor=black&amp;align=&amp;width=200&amp;fontFace=&amp;url=http%3A%2F%2Frinfoprojektet.wordpress.com%2Ffeed%2F&amp;compact=true&amp;frameColor=white&amp;showXmlButton=&amp;boxFillColor=white&amp;_=1255012508966&amp;titleBarColor=%23ccc&amp;maxItems=5&amp;titleBarTextColor=black&amp;"></script>
 
 	        </div>
 	        <div class="clearer"></div>
