@@ -63,11 +63,11 @@
         nyttig i andra sammanhang.
         -->
         <name>Regeringskansliet</name>
-        <uri>http://regeringen.se/</uri>
+        <uri>http://www.regeringen.se/</uri>
         <email>rinfo@regeringen.se</email>
     </author>
 
-    <link href="https://sfs.regeringen.se/feed/komdir/index.atom" rel="self"/>
+    <link href="https://komdir.regeringen.se/feed/index.atom" rel="self"/>
     <!--
     Anger den adress där detta feed-dokument ligger. Är inte strikt tekniskt
     nödvändig, men underlättar för någon som t.ex. sparar ner dokumentet lokalt

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dct="http://purl.org/dc/terms/"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+
+    <Kommittedirektiv rdf:about="http://rinfo.lagrummet.se/publ/dir/2009:71">
+        <direktivnummer>2009:46</direktivnummer>
+        <dct:title xml:lang="sv">Dir. 2009:71 Rätt till skolgång m.m. för barn som vistas i landet utan tillstånd</dct:title>
+
+        <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-08-13</beslutsdatum>
+        <avkravtAvrapporteringsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2010-01-29</avkravtAvrapporteringsdatum>
+
+        <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
+        <departement rdf:parseType="Resource">
+            <foaf:name>Utbildningsdepartementet</foaf:name>
+        </departement>
+
+        <!-- Utöver grundinformationen ovan bör även referenser till andra
+        typer av rättsinformationsmaterial anges. Nedan visas exempel på sådana
+        referenser utifrån texten i direktivet. Observera att direktivtexten
+        innehåller ytterligare referenser. -->
+
+        <!-- Referens till europeisk rättsinformation via CELEX-nummer -->
+        <dct:references rdf:resource="http://rinfo.lagrummet.se/ext/eur-lex/31968R1612"/>
+        
+        <!-- Referenser till andra direktiv omnämna i texten -->
+        <dct:references rdf:resource="http://rinfo.lagrummet.se/publ/dir/2006:122"/>
+        <dct:references rdf:resource="http://rinfo.lagrummet.se/publ/dir/2006:28"/>
+
+        <!-- Referens till en SFS i sin helhet -->
+        <dct:references rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1984:387"/>
+
+        <!-- Mer specifik referens till en plats i en författning "5 kap. 5 §
+        skollagen" -->
+        <Forfattningsreferens>
+            <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1985:1100"/>
+            <angerKapitelnummer>5</angerKapitelnummer>
+            <angerParagrafnummer>5</angerParagrafnummer>
+        </Forfattningsreferens>
+
+    </Kommittedirektiv>
+</rdf:RDF>
