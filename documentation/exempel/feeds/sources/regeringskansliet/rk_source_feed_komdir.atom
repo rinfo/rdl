@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+    xmlns:le="http://purl.org/atompub/link-extensions/1.0"
+    xml:lang="sv">
+
+    <!--
+    * http://tools.ietf.org/html/rfc4287
+    -->
+
+    <id>tag:komdir.regeringen.se,2009:rinfo:feed</id>
+    <!-- Viktig!
+
+    Elementet `id` anger en *persistent* identifierare (URI) för denna
+    datakälla.
+
+    Rent tekniskt spelar det ingen roll vad för slags URI som används så länge 
+    denna inte ändras. Men i detta exempel används en <a 
+        href="http://tools.ietf.org/html/rfc4151">TAG URI</a>. Sådana är praktiska
+    i feed-sammanhang, eftersom de inte är bundna till http-platsen för
+    dokument. Eftersom identifieraren ska vara persistent över tid kan en
+    HTTP-uri som inte längre leder någonstans vara vilseledande.
+
+    -->
+
+    <title>Kommittédirektiv</title>
+    <!--
+    Anger någon slags titel på detta feed. Används inte till någonting av 
+    Rättsinformationssystemet. Men den kan var användbar för någon som tar del 
+    av denna källa via andra verktyg eller i andra sammanhang.
+    -->
+
+    <updated>2009-01-23T12:42:32Z</updated>
+    <!--
+    Ska ange tidssstämpel då något i detta feed-dokument ändrats. Anges som <a 
+        href="http://tools.ietf.org/html/rfc4287#section-3.3">W3C Date Time
+        Format</a>.
+
+    Observera att i exempet används "Zulu Time". Det är inte samma sak som 
+    svensk tid. En del programmeringsspråk har inbyggt stöd för att generera 
+    dessa, i andra fall finns det i regel tredjepartsbibliotek för W3C DTF.
+
+    (Anledningen till att vi väljer Zulu Time här är för att dessa är oberoende 
+    av tidszoner, *inklusive* sommartidsavvikelser. Tekniskt är det okej 
+    att istället för "Z" ange t.ex. "+01:00", för svensk vintertid, "+02:00" 
+    för sommartid osv. Korrekt parsning av DTF ska resultera i samma tidpunkt 
+    oavsett.)
+    -->
+
+    <author>
+        <!-- Viktig!
+
+        Anger kontaktinformation till ansvarig för publiceringen av denna 
+        datakälla.
+
+        Planen är att Rättsinformationssystemet ska använda denna information för 
+        att rapportera om eventuella felaktigheter har uppstått vid inhämtning av 
+        informationen.
+
+        Därför är det lämpligt att e-postadressen går till en funktionsbrevlåda 
+        istället för en enskild handläggare.
+
+        Namn och URL användsdäremot inte av Rättsinformationssystemet, men kan vara 
+        nyttig i andra sammanhang.
+        -->
+        <name>Regeringskansliet</name>
+        <uri>http://regeringen.se/</uri>
+        <email>rinfo@regeringen.se</email>
+    </author>
+
+    <link href="https://sfs.regeringen.se/feed/komdir/index.atom" rel="self"/>
+    <!--
+    Anger den adress där detta feed-dokument ligger. Är inte strikt tekniskt
+    nödvändig, men underlättar för någon som t.ex. sparar ner dokumentet lokalt
+    utan att notera ursprungsplats.
+    -->
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/dir/2009:71</id>
+        <!-- Viktig!
+
+        Rättsinformationssystemet betraktar id:t i entry för ett 
+        rättsinformationsdokument som angivande den officiella URI:n (den 
+        elektroniska identifieraren) för detta dokument. Den kommer att användas 
+        av alla system som hanterar poster i rättsinformationssystemet.
+
+        För att rättsinformationsdokument-URI:er ska bli korrekta har
+        rättsinformationssystemet en algoritm för att konstruera dessa.
+
+        Principen utgår från en bas-URI som är organisationsoberoende:
+
+        http://rinfo.lagrummet.se/publ/
+
+        Under denna följer ett segment för (i detta fall) kommittédirektiv "/dir/".
+
+        Dessa är centralt administrerade i rättsinformationssystemets datalager.
+        För kommittédirektiv följer sedan numret.
+        -->
+
+        <updated>2000-03-07T00:00:00.000Z</updated>
+        <!-- Viktig!
+
+        Detta är den tidsstämpel som Rättsinformationssystemet använder för att 
+        avgöra om posten för ett rättsinformationsdokument har uppdaterats. Det 
+        är kritiskt att denna är korrekt angiven.
+        -->
+
+        <published>2000-03-07T00:00:00.000Z</published>
+        <!-- Viktig!
+
+        Denna tidsstämpel anger när posten officiellt publiceras i källan.
+
+        För merparten av dokument kommer denna att vara densamma som updated (se 
+        ovan), då förändringar av rättsinformationsdokument i huvudsak görs i 
+        form av nya rättsinformationsdokument (såsom rättelseblad och 
+        ändringsförfattningar). Enbart i undantagsfall ska poster uppdateras 
+        (eller tas bort) elektroniskt.
+        -->
+
+        <title>Dir. 2009:71 Rätt till skolgång m.m. för barn som vistas i landet utan tillstånd</title>
+        <!-- Måste finnas enligt Atom-standarden.
+
+        Detta element används inte av Rättsinformationssystemet.
+        Vi rekommenderar ändå att något läsbart värde används för att andra 
+        verktyg ska kunna presentera läsbar information av detta feed. Utan värde 
+        kommer t.ex. många vanliga feed-läsare inte att kunna skapa en användbar 
+        presentation av feed:et.
+        -->
+
+        <summary></summary>
+        <!--
+        Måste enligt Atom-standarden finnas om elementet `content` refererar
+        innehåll med attributet `src`.
+
+        Detta element används inte av Rättsinformationssystemet.
+        Vi rekommenderar ändå att något läsbart värde används för att andra 
+        verktyg ska kunna presentera läsbar information av detta feed. Många 
+        feed-läsare visar innehållet i detta element.
+
+        -->
+
+        <content src="http://www.sou.gov.se/kommittedirektiv/2009/dir2009_71.xhtml"
+            type="application/xhtml+xml"
+            le:md5="0000d96cf7f74debecf98d66c4b91"/>
+        <!-- Viktig!
+
+        En primär representation ska representera det faktiska 
+        rättsinformationsdokumentet på ett av Rättsinformationssystemet godkänt 
+        format. I detta exempel används ett XHTML-baserat format.
+
+        -->
+
+        <link rel="alternate"
+            href="http://www.sou.gov.se/kommittedirektiv/2009/dir2009-71.rdf"
+            type="application/rdf+xml"
+            length="1150" le:md5="cfe75fc5cc5180e346543cbea51717cd"/>
+        <!-- Viktig!
+
+        Exakt en representation som innehåller serialiserad RDF måste finnas för 
+        att Rättsinformationssystemet ska acceptera inhämtning av ett 
+        rättsinformationsdokument. Det är denna RDF som utgör substansen i 
+        beskrivningen och sammanlänkningen av rättsinformationen.
+        -->
+
+        <link rel="alternate"
+            href="http://www.sou.gov.se/kommittedirektiv/2009/dir2009_71.pdf"
+            type="application/pdf"
+            length="126785" le:md5="fc1c519d96cf7f74debecf98d66c4b91"/>
+        <!-- 
+        Referens till ytterligare dokumentrepresentation, i detta fall i PDF/A-format.
+        -->
+    </entry>
+</feed>
