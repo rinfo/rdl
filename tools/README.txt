@@ -27,7 +27,7 @@ for how to create a default version. Then add the following directive::
 
       <ibiblio name="local" root="file:${user.home}/.m2/repository/" m2compatible="true"/>
 
-The path in the root property above should match the location for your loval
+The path in the root property above should match the location for your local
 maven repository. You may have changed that from the default home directory.
 That should make all Maven dependencies locatable (provided that you have ``mvn
 install``:ed your packages. See <packages/java/README.txt> for more info).
