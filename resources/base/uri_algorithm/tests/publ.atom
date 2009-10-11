@@ -82,6 +82,8 @@
         </content>
     </entry>
 
+
+	<!-- Betänkanden -->
     <entry>
         <id>http://rinfo.lagrummet.se/publ/utr/ds/2005:26</id>
         <content type="application/rdf+xml">
@@ -100,7 +102,9 @@
                 <rpubl:utrSerienummer>2000:114</rpubl:utrSerienummer>
             </rpubl:Utredningsbetankande>
         </content>
-    </entry>
+	</entry>
+
+
 
     <!--
         FIXME: eventuellt även arsutgava, sidnummer?
@@ -209,13 +213,4 @@
             </rpubl:InternationellOverenskommelse>
         </content>
     </entry>
-
-    <!--
-    <entry>
-        <id></id>
-        <content type="application/rdf+xml">
-        </content>
-    </entry>
-    -->
-
 </feed>

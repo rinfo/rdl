@@ -61,12 +61,12 @@
             owl:minCardinality 1
         ],
         [ a owl:Restriction;
-            owl:onProperty :kommittenummer;
+            owl:onProperty :kommittebeteckning;
             owl:cardinality 1
         ],
         [ a owl:Restriction;
             owl:onProperty :kommittenamn;
-            owl:cardinality 1
+            owl:minCardinality 0
         ];
     rdfs:isDefinedBy : .
 
@@ -84,16 +84,17 @@
     rdfs:label "Departement"@sv;
     rdfs:comment "Departement att rapportera till."@sv; .
 
-:kommittenummer a owl:DatatypeProperty;
+:kommittebeteckning a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
     rdfs:subPropertyOf :rattsdokumentnummer;
-    rdfs:label "Kommitténummer"@sv;
-    rdfs:comment """Nummer för en kommitté på formen "1998:04". Ibland med bokstavsordinal, t.ex. "1998:A"."""@sv; .
+    rdfs:label "Kommittébeteckning"@sv;
+    rdfs:comment """Beteckning för en kommitté, t.ex. "U 2008:06". Ibland med bokstavsordinal, t.ex. "U 2008:B"."""@sv; .
 
 :kommittenamn a rdf:Property;
     rdfs:isDefinedBy : ;
     rdfs:subPropertyOf foaf:name;
     rdfs:label "Kommitténs namn"@sv;
+    rdfs:comment """Namnet på en kommitté, t.ex. "Straffnivåutredningen"."""@sv; .
     rdfs:range rdfs:Literal .
 
 :kommittedirektiv a owl:ObjectProperty;
