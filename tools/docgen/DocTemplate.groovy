@@ -21,13 +21,13 @@ class DocTemplate {
     TransformerFactory tFactory
 
     Map systemIdMap
-    Map params
     Map customProtocols
+    Map params
 
-    DocTemplate(params, systemIdMap, customProtocols) {
-        this.params = params
+    DocTemplate(systemIdMap=null, customProtocols=null, params=null) {
         this.systemIdMap = systemIdMap
         this.customProtocols = customProtocols
+        this.params = params
         def dbf = DocumentBuilderFactory.newInstance()
         dbf.setNamespaceAware(true)
         dbf.setXIncludeAware(true)
@@ -47,7 +47,7 @@ class DocTemplate {
         if (stylesheet) {
             def transformer = tFactory.newTransformer(stylesheet)
             def domResult = new DOMResult()
-            params.each { key, value ->
+            params?.each { key, value ->
                 transformer.setParameter(key, value)
             }
             transformer.transform(domSource, domResult)
@@ -107,13 +107,13 @@ class DocTemplate {
 
     protected def entityResolver = { publicId, systemId ->
         def resolved = null
-        systemIdMap.each { base, dir ->
+        systemIdMap?.each { base, dir ->
             if (systemId.startsWith(base)) {
                 resolved = systemId.replace(base,
                         new File(dir).toURL().toString())
             }
         }
-        customProtocols.each { base, dir ->
+        customProtocols?.each { base, dir ->
             def proto = base+':'
             if (systemId.startsWith(proto)) {
                 def path = systemId.substring(proto.size())

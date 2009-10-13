@@ -44,19 +44,6 @@ class Builder {
             }
         }
 
-        def dataView = new DataViewer(
-                ["${resourceDir}/base/model",
-                "${resourceDir}/base/extended/rdf",
-                "${resourceDir}/external/rdf"] as String[]
-        )
-        def modelPath = buildDir+"/model"
-        dataView.renderModel(modelPath+'.xhtml', "sv")
-        new PdfMaker().renderAsPdf(doc,
-                new File(modelPath+'.pdf'))
-
-        def srcPath = normUrlPath(srcDir)
-        def buildPath = normUrlPath(buildDir)
-
         def systemIdMap = [
             "http://www.w3.org/TR/xhtml1/DTD/": "${getResource("dtd").path}/"
         ]
@@ -64,6 +51,22 @@ class Builder {
             "build": buildDir
         ]
         def svnVersionNumber = getSvnVersionNumber()
+
+        def dataView = new DataViewer(
+                ["${resourceDir}/base/model",
+                "${resourceDir}/base/extended/rdf",
+                "${resourceDir}/external/rdf"] as String[]
+        )
+        def modelPath = buildDir+"/model"
+        def modelHtmlPath = modelPath+'.xhtml'
+        dataView.renderModel(modelHtmlPath, "sv")
+        new PdfMaker().renderAsPdf(
+                new DocTemplate(systemIdMap).render(
+                        new File(modelHtmlPath).toURL()),
+                new File(modelPath+'.pdf'))
+
+        def srcPath = normUrlPath(srcDir)
+        def buildPath = normUrlPath(buildDir)
 
         ant.fileScanner {
             fileset(dir:srcDir) {
@@ -82,7 +85,7 @@ class Builder {
                 svnversion: svnVersionNumber,
                 root: relRoot(srcPath, it)
             ]
-            def tplt = new DocTemplate(params, systemIdMap, customProtocols)
+            def tplt = new DocTemplate(systemIdMap, customProtocols, params)
             def doc = tplt.renderAndHighlightCode(inUrl)
 
             def outFile = new File(outUrl.toURI())
