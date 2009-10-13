@@ -10,5 +10,9 @@ def resourceDir = "../resources/"
 def sourceDir = "../documentation/"
 def buildDir = "_build/documentation"
 
-Builder.main(resourceDir, sourceDir, buildDir)
+def (flags, paths) = args.split { it =~ /^--/ }
+def clean = "--clean" in flags
+def patterns = paths ?: Builder.DEFAULT_RENDER_PATTERNS
+def build = new Builder(resourceDir, sourceDir, buildDir).build(
+        clean, patterns)
 

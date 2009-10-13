@@ -13,22 +13,36 @@ class Builder {
             System.exit 1
         }
         def resourceDir = paths[0]
-        def srcDir = paths[1]
+        def sourceDir = paths[1]
         def buildDir = paths[2]
         def clean = "--clean" in flags
-        def statics = [
+        new Builder(resourceDir, sourceDir, buildDir).
+                build(clean, DEFAULT_RENDER_PATTERNS, DEFAULT_COPY_PATTERNS)
+    }
+
+    static DEFAULT_COPY_PATTERNS = [
             "css/*.*", "img/*.*"
         ]
-        def includes = [
+    static DEFAULT_RENDER_PATTERNS = [
             "index.xhtml",
             "handbok/**.xhtml",
             "system/**.xhtml"
         ]
-        build(resourceDir, srcDir, statics, includes, buildDir, clean)
+
+    String resourceDir
+    String sourceDir
+    String buildDir
+
+    Builder(resourceDir, sourceDir, buildDir) {
+        this.resourceDir = resourceDir
+        this.sourceDir = sourceDir
+        this.buildDir = buildDir
     }
 
-    static build(resourceDir, srcDir, statics, includes, buildDir,
-            clean=false) {
+    void build(boolean clean=false,
+            renderPatterns=DEFAULT_RENDER_PATTERNS,
+            copyPatterns=DEFAULT_COPY_PATTERNS)
+    {
         def ant = new AntBuilder()
 
         if (clean) {
@@ -37,15 +51,15 @@ class Builder {
         ant.mkdir(dir:buildDir)
 
         ant.copy(todir:buildDir) {
-            fileset(dir:srcDir) {
-                statics.each {
+            fileset(dir:sourceDir) {
+                copyPatterns.each {
                     include(name: it)
                 }
             }
         }
 
         def systemIdMap = [
-            "http://www.w3.org/TR/xhtml1/DTD/": "${getResource("dtd").path}/"
+            "http://www.w3.org/TR/xhtml1/DTD/": "${getClass().getResource("dtd").path}/"
         ]
         def customProtocols = [
             "build": buildDir
@@ -65,12 +79,12 @@ class Builder {
                         new File(modelHtmlPath).toURL()),
                 new File(modelPath+'.pdf'))
 
-        def srcPath = normUrlPath(srcDir)
+        def srcPath = normUrlPath(sourceDir)
         def buildPath = normUrlPath(buildDir)
 
         ant.fileScanner {
-            fileset(dir:srcDir) {
-                includes.each {
+            fileset(dir:sourceDir) {
+                renderPatterns.each {
                     include(name: it)
                 }
             }
