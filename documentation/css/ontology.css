@@ -1,0 +1,172 @@
+
+/* neutralize browser differences {{{ */
+html, body, div, img,
+form, fieldset, input, select, textarea {
+    margin: 0; padding: 0;
+}
+body {
+    font-size: 76%;
+}
+input, select, textarea {
+    font-size: 100%;
+}
+h1, h2, h3, h4, h5, h6, p, pre,
+blockquote, ul, ol, dl, address {
+    margin: 1em 0;
+    padding: 0;
+}
+li, dd, blockquote {
+    margin-left: 2em;
+}
+/* }}} */
+
+/* global style {{{ */
+
+body, th, td, pre,
+input, select, textarea {
+    font-family: verdana, helvetica, arial, sans-serif;
+}
+
+body {
+    background-color: #fff;
+    color: #111;
+}
+h1, h2, h3 {
+    color: #000;
+}
+
+a, a:visited {
+    color: #49b;
+    font-weight: bold;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+code {
+    font-family: courier;
+    font-size: 1em;
+}
+
+/* }}} */
+
+.clear {
+    clear: both;
+}
+
+h1 {
+    margin: 0.5em 0 0.6em;
+}
+
+h2 {
+    margin: 0.4em 0 0.5em;
+    /*color: #333;*/
+}
+
+h3, h4 {
+    margin: 0.3em 0 0.4em;
+    /*color: #333;*/
+}
+
+
+dt  {
+    font-weight: bold;
+}
+
+#main {
+    padding: 0 1em 1em;
+}
+
+.ontologyInfo {
+    max-width: 62em;
+    /**/
+    position: relative;
+    left: 49%;
+    margin-left: -32em;
+}
+
+.ontologyInfo .classInfo {
+    margin-bottom: 2em;
+}
+
+.ontologyInfo .classInfo h2 {
+    margin-bottom: 0.3em;
+}
+
+.ontologyInfo p {
+    margin: 0.2em 0 0.5em;
+}
+
+.ontologyInfo .classInfo p.comment {
+    margin: 0.2em 0 1em;
+    font-style: italic;
+}
+
+.ontologyInfo table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ontologyInfo th {
+    text-align: left;
+    width: 20%
+}
+.ontologyInfo th,
+.ontologyInfo td {
+    border: 1px solid #aaa;
+    padding: 0.1em 0.3em;
+    vertical-align: top;
+}
+
+.cardinalityValue {
+    font-style: italic;
+}
+
+.notes {
+    height: 40em;
+    margin-top: 1em;
+    border: 2px dashed #aaa;
+    border-bottom: none;
+}
+
+.notes h3 {
+    margin: 0.2em 0 0.2em 0.5em;
+    color: #aaa;
+}
+
+.warning {
+    color: #f33;
+}
+
+
+@media print {
+
+    .ontologyInfo {
+        width: auto;
+        /*
+        max-width: 62em;
+        */
+        position: static;
+        margin-left: 0;
+    }
+
+    .classInfo {
+        page-break-before: always;
+    }
+    /*
+    .classInfo {
+        page-break-inside: avoid;
+        orphans: 4;
+        widows: 4;
+    }
+    */
+    .classInfo:first-child {
+        page-break-before: avoid;
+    }
+    .noRestrictions {
+        display: none;
+    }
+
+}
+
