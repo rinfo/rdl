@@ -94,7 +94,7 @@
     rdfs:isDefinedBy : ;
     rdfs:subPropertyOf foaf:name;
     rdfs:label "Kommitténs namn"@sv;
-    rdfs:comment """Namnet på en kommitté, t.ex. "Straffnivåutredningen"."""@sv; .
+    rdfs:comment """Namnet på en kommitté, t.ex. "Straffnivåutredningen"."""@sv;
     rdfs:range rdfs:Literal .
 
 :kommittedirektiv a owl:ObjectProperty;
