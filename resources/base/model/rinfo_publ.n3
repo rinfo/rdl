@@ -230,10 +230,15 @@
 :Forfattningsreferens a owl:Class;
     rdfs:isDefinedBy : ;
     rdfs:label "Författningsreferens"@sv;
-    rdfs:comment """En referens till en del författning. Referensen är inprecis
-    i det att den som skapar referensen kan avse ett annat
+    rdfs:comment """En referens till en del av en författning. Referensen är
+    inprecis i det att den som skapar referensen kan avse ett annat
     paragrafinnehåll än det som existerar i grundförfattningen (t.ex. den
-    version som senare påförts i en ändringsförfattning)."""@sv; .
+    version som senare påförts i en ändringsförfattning)."""@sv;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :angerGrundforfattning;
+            owl:cardinality 1
+        ] .
 
 :angerGrundforfattning a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
@@ -241,7 +246,7 @@
     rdfs:domain :Forfattningsreferens;
     rdfs:range :Forfattning; .
 
-:angerKapitelnummer a rdf:DatatypeProperty;
+:angerKapitelnummer a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Anger kapitelnummer"@sv;
     rdfs:seeAlso :kapitelnummer;
@@ -250,7 +255,7 @@
 
 :angerParagrafnummer a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
-    rdfs:label "Anger grundförfattning"@sv;
+    rdfs:label "Anger paragrafnummer"@sv;
     rdfs:seeAlso :paragrafnummer;
     rdfs:domain :Forfattningsreferens;
     rdfs:range rdfs:Literal; .
