@@ -18,7 +18,7 @@ class DataViewer {
 
     }
 
-    def renderModel(fname=null, locale=".", mediabase=".") {
+    def renderModel(fname=null, locale="en", mediabase=".") {
         def templates = new StringTemplateGroup("sparqltrees")
         def rqViewer = new SparqlTreeViewer(repo, templates,
                 "sparqltrees/model/model-tree-rq", "sparqltrees/model/model-html")

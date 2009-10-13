@@ -49,7 +49,10 @@ class Builder {
                 "${resourceDir}/base/extended/rdf",
                 "${resourceDir}/external/rdf"] as String[]
         )
-        dataView.renderModel(buildDir+"/model.xhtml")
+        def modelPath = buildDir+"/model"
+        dataView.renderModel(modelPath+'.xhtml', "sv")
+        new PdfMaker().renderAsPdf(doc,
+                new File(modelPath+'.pdf'))
 
         def srcPath = normUrlPath(srcDir)
         def buildPath = normUrlPath(buildDir)
