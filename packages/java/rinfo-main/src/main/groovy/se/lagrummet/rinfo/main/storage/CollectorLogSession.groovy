@@ -31,6 +31,8 @@ import se.lagrummet.rinfo.main.storage.log.ErrorEvent
 
 
 /**
+ * A Session for the CollectorLog gives access to the creation of logged events
+ * for collector activity.
  * This is a stateful object that is not thread-safe and must be closed.
  */
 class CollectorLogSession {
