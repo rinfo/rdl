@@ -4,12 +4,43 @@
          xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
 
     <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:14">
+        <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/bfs"/>
+        <fsNummer>2007:14</fsNummer>        
+        <dct:title xml:lang="sv">Boverkets föreskrifter om ändring i
+            föreskrifterna och de allmänna råden (BFS 2007:4) om
+            energideklaration för byggnader;
+        </dct:title>
+
+        <!-- tidsaspekter -->
+        <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-08-16</beslutsdatum>
+        <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-09-01</ikrafttradandedatum>
+        <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-08-27</utkomFranTryck>
+        
+        <!-- ursprung -->
+        <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/boverket"/>
+
+        <!-- Information om vilken grundförfattning som ändras -->
         <andrar rdf:resource="http://rinfo.lagrummet.se/publ/bfs/2007:4"/>
-        <bilaga rdf:parseType="Resource">
-            <dct:title>Bilaga 1</dct:title>
-            <ersatter rdf:parseType="Resource">
+
+        <!-- Beskrivning av att denna bilaga innehåller fragment av någonting
+        som ändrar någonting i grundförfattningen som har rubriken "Bilaga 1".
+        -->
+        <dct:hasPart rdf:parseType="Resource">
+            <rdfs:comment>Tabell 8, 9 och 10 i Bilaga 1</rdfs:comment>
+            <andrar rdf:parseType="Resource">
                 <bilagaTill rdf:resource="http://rinfo.lagrummet.se/publ/bfs/2007:4"/>
                 <dct:title>Bilaga 1</dct:title>
+            </andrar>
+        </dct:hasPart>
+
+        <!-- Mer detaljerad information om att en bilaga ingår i denna
+        ändringsförfattning och att den ersätter en bilaga som ingår i
+        grundförfattningen -->
+        <bilaga rdf:parseType="Resource">
+            <dct:title>Bilaga 2</dct:title>
+            <ersatter rdf:parseType="Resource">
+                <bilagaTill rdf:resource="http://rinfo.lagrummet.se/publ/bfs/2007:4"/>
+                <dct:title>Bilaga 2</dct:title>
             </ersatter>
         </bilaga>
     </Myndighetsforeskrift>

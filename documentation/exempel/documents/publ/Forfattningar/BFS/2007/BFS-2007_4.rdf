@@ -4,9 +4,62 @@
          xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
 
     <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:4">
+        
+        <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/bfs"/>
+        <fsNummer>2007:4</fsNummer>        
+        <dct:title xml:lang="sv">Boverkets föreskrifter och allmänna råd om
+            energideklaration för byggnader</dct:title>
+
+        <!-- tidsaspekter -->
+        <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-02-16</beslutsdatum>
+        <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-03-01</ikrafttradandedatum>
+        <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-02-20</utkomFranTryck>
+        
+        <!-- ursprung -->
+        <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/boverket"/>
+
+        <!-- dokumentkopplingar -->
+        <bemyndigande rdf:parseType="Resource">
+            <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:1592"/>
+            <paragrafnummer>5</paragrafnummer>
+        </bemyndigande>
+        <bemyndigande rdf:parseType="Resource">
+            <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:1592"/>
+            <paragrafnummer>6</paragrafnummer>
+        </bemyndigande>
+        <bemyndigande rdf:parseType="Resource">
+            <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:1592"/>
+            <paragrafnummer>7</paragrafnummer>
+        </bemyndigande>
+        <bemyndigande rdf:parseType="Resource">
+            <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:1592"/>
+            <paragrafnummer>8</paragrafnummer>
+        </bemyndigande>
+        <bemyndigande rdf:parseType="Resource">
+            <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:1592"/>
+            <paragrafnummer>9</paragrafnummer>
+        </bemyndigande>
+        <bemyndigande rdf:parseType="Resource">
+            <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:1592"/>
+            <paragrafnummer>11</paragrafnummer>
+        </bemyndigande>
+        <bemyndigande rdf:parseType="Resource">
+            <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:1592"/>
+            <paragrafnummer>12</paragrafnummer>
+        </bemyndigande>
+        <bemyndigande rdf:parseType="Resource">
+            <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:1592"/>
+            <paragrafnummer>13</paragrafnummer>
+        </bemyndigande>
+
+        <!-- Information om bilagor som i detta fall är en del av dokumentet -->
         <bilaga rdf:parseType="Resource">
-            <dct:title>Bilaga 1</dct:title>
+            <dct:title xml:lang="sv">Bilaga 1</dct:title>
         </bilaga>
+        <bilaga rdf:parseType="Resource">
+            <dct:title xml:lang="sv">Bilaga 2</dct:title>
+        </bilaga>
+
     </Myndighetsforeskrift>
 
 </rdf:RDF>
