@@ -172,7 +172,7 @@ public abstract class FeedArchiveReader {
 
     public static String unescapeColon(String uriPath)
         throws UnsupportedEncodingException {
-        // FIXME: fixed in Abdera; remove!
+        // FIXME: remove; fixed in Abdera trunk (see the AtomDetailsSpec test)
         return uriPath.replace(URLEncoder.encode(":", "utf-8"), ":");
     }
 

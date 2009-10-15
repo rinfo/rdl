@@ -5,10 +5,11 @@
     <link href="/2.atom" rel="prev-archive"/>
 
     <entry>
-        <id>http://example.org/entry/2</id>
+        <id>http://example.org/entry:2</id>
         <updated>2008-09-16T09:16:00.000Z</updated>
         <title type="text">Entry 2</title>
-        <content type="text/plain">Entry 2 content.</content>
+        <content type="application/rdf+xml" src="/entry:2/rdf"/>
+        <link rel="alternate" type="application/pdf" href="/entry:2/pdf"/>
     </entry>
 
 </feed>

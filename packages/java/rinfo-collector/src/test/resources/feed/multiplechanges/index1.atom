@@ -8,7 +8,7 @@
     <link href="/arch1.atom" rel="prev-archive"/>
 
     <entry>
-        <id>http://example.org/entry/2</id>
+        <id>http://example.org/entry:2</id>
         <updated>2000-01-01T00:01:00.000Z</updated>
         <published>2000-01-01T00:00:00.000Z</published>
         <title type="text">Entry 2</title>
@@ -16,7 +16,7 @@
     </entry>
 
     <entry>
-        <id>http://example.org/entry/3</id>
+        <id>http://example.org/entry:3</id>
         <updated>2000-01-01T00:00:03.000Z</updated>
         <published>2000-01-01T00:00:03.000Z</published>
         <title type="text">Entry 3</title>

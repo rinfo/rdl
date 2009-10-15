@@ -1,9 +1,7 @@
 package se.lagrummet.rinfo.collector.atom
 
-import org.junit.AfterClass
-import org.junit.BeforeClass
-import org.junit.Test
-import static org.junit.Assert.*
+import org.junit.runner.RunWith
+import spock.lang.*
 
 import org.apache.abdera.model.Feed
 import org.apache.abdera.model.Entry
@@ -16,13 +14,17 @@ import org.restlet.data.Protocol
 import org.restlet./*resource.*/Directory
 
 
+@Speck @RunWith(Sputnik)
 class FeedArchiveReaderTest {
 
-    private static component
-    private static testHttpPort = 9991
+    @Shared Component component
+    @Shared def testHttpPort = 9991
+    @Shared def baseUrl = "http://localhost:${testHttpPort}"
 
-    @BeforeClass
-    static void setupClass() {
+    URL feedUrl
+    FeedArchiveReader reader
+
+    def setupSpeck() {
         component = new Component()
         component.servers.add(Protocol.HTTP, testHttpPort)
         component.clients.add(Protocol.FILE)
@@ -30,20 +32,22 @@ class FeedArchiveReaderTest {
         component.start()
     }
 
-    @AfterClass
-    static void tearDownClass() {
+    def cleanupSpeck() {
         component.stop()
     }
 
-    @Test
-    void shouldReadFeed() {
-        def baseUrl = "http://localhost:${testHttpPort}"
-        def feedUrl =  new URL("${baseUrl}/index.atom")
-        def reader = new DummyFeeder()
+    def setup() {
+        feedUrl =  new URL("${baseUrl}/index.atom")
+        reader = new DummyFeeder()
+    }
+
+    def "should read feed"() {
+        when:
         reader.readFeed(feedUrl)
-        assertEquals([feedUrl, new URL("${baseUrl}/2.atom")], reader.visitedPages)
-        assertTrue reader.wasInitialized
-        assertTrue reader.wasShutdown
+        then:
+        reader.visitedPages == [feedUrl, new URL("${baseUrl}/2.atom")]
+        assert reader.wasInitialized
+        assert reader.wasShutdown
     }
 
 }
@@ -52,6 +56,7 @@ class DummyFeeder extends FeedArchiveReader {
     def visitedPages = []
     def wasInitialized = false
     def wasShutdown
+
     boolean processFeedPage(URL pageUrl, Feed feed) {
         visitedPages << pageUrl
         return true

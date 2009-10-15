@@ -17,8 +17,6 @@ class AbstractCollectSchedulerTest {
 
     AbstractCollectScheduler collectScheduler
 
-    static int SAFE_STARTUP_MILLIS = 100
-
     @Before
     void startUp() {
         collectScheduler = new ManagedDummyScheduler(
@@ -45,37 +43,30 @@ class AbstractCollectSchedulerTest {
 
     @Test
     void shouldCollectAllFeeds() {
+        collectScheduler.feedsToWaitFor = SOURCE_FEEDS.size()
         collectScheduler.startup()
-        def fakeSource = SOURCE_FEEDS[0]
         collectScheduler.collectAllFeeds()
         collectScheduler.waitForCompletedCollect()
         assertEquals SOURCE_FEEDS.collect { it.items }.flatten(),
                 collectScheduler.collectedItems
     }
 
-    /*
     @Test
     void shouldNotTriggerWhenRunningScheduled() {
         collectScheduler.scheduleInterval = 20
         collectScheduler.pause()
         collectScheduler.startup()
-        Thread.sleep(SAFE_STARTUP_MILLIS)
+        Thread.sleep(collectScheduler.initialDelay + 100)
         assertFalse "Expected stalled collector to block trigger.",
                 collectScheduler.triggerFeedCollect(SOURCE_FEEDS[1].url)
         collectScheduler.unpause()
     }
-    */
 
     /*
     @Test
     void shouldNeverCollectConcurrently() {
-        collectScheduler.scheduleInterval = 20
-        collectScheduler.pause()
-        collectScheduler.startup()
-        Thread.sleep(SAFE_STARTUP_MILLIS)
-        assertFalse "Expected stalled collector to block new collectAll.",
-                collectScheduler.collectAllFeeds()
-        collectScheduler.unpause()
+        ...
+        assertFalse "Expected stalled collector to block new collectAll.", ...
     }
     */
 
@@ -104,30 +95,17 @@ class AbstractCollectSchedulerTest {
     }
 }
 
+
 class ManagedDummyScheduler extends AbstractCollectScheduler {
 
     Collection sourceFeedUrls
 
     def collectedItems = []
 
+    int feedVisitCount
+    int feedsToWaitFor
     private reachedLastSemaphore = new Semaphore(1)
-
-    protected waitForCompletedCollect() {
-        reachedLastSemaphore.acquire()
-        reachedLastSemaphore.release()
-    }
-
     private blockCollectSemaphore
-
-    protected pause() {
-        blockCollectSemaphore = new Semaphore(1)
-        blockCollectSemaphore.acquire()
-    }
-
-    protected unpause() {
-        blockCollectSemaphore.release()
-        blockCollectSemaphore = null
-    }
 
     void collectFeed(URL feedUrl, boolean lastInBatch) {
         if (blockCollectSemaphore) {
@@ -139,7 +117,9 @@ class ManagedDummyScheduler extends AbstractCollectScheduler {
         }.items.each {
             collectedItems << it
         }
-        if (lastInBatch) {
+        feedVisitCount += 1
+        if (!feedsToWaitFor && lastInBatch
+            || feedVisitCount == feedsToWaitFor) {
             reachedLastSemaphore.release()
         }
     }
@@ -151,8 +131,22 @@ class ManagedDummyScheduler extends AbstractCollectScheduler {
 
     public boolean triggerFeedCollect(final URL feedUrl)
             throws NotAllowedSourceFeedException {
-        reachedLastSemaphore.tryAcquire()
         return super.triggerFeedCollect(feedUrl)
+    }
+
+    protected waitForCompletedCollect() {
+        reachedLastSemaphore.acquire()
+        reachedLastSemaphore.release()
+    }
+
+    protected pause() {
+        blockCollectSemaphore = new Semaphore(1)
+        blockCollectSemaphore.acquire()
+    }
+
+    protected unpause() {
+        blockCollectSemaphore.release()
+        blockCollectSemaphore = null
     }
 
 }

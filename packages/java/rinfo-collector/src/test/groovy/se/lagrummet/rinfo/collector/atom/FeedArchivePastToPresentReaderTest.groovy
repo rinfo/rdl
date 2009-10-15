@@ -45,10 +45,10 @@ class FeedArchivePastToPresentReaderTest {
                 [new URL("${baseUrl}/arch1.atom"), feedUrl],
                 reader.visitedPages )
         assertEquals( [
-                    "http://example.org/entry/1 2000-01-01T00:00:01.000Z",
-                    //"http://example.org/entry/2 2000-01-01T00:00:02.000Z",
-                    "http://example.org/entry/3 2000-01-01T00:00:03.000Z",
-                    "http://example.org/entry/2 2000-01-01T00:01:00.000Z",
+                    "http://example.org/entry:1 2000-01-01T00:00:01.000Z",
+                    // not: "http://example.org/entry:2 2000-01-01T00:00:02.000Z",
+                    "http://example.org/entry:3 2000-01-01T00:00:03.000Z",
+                    "http://example.org/entry:2 2000-01-01T00:01:00.000Z",
                 ],
                 reader.visitedEntries.collect {
                     "${it.id} ${it.updatedElement.getString()}" as String
@@ -59,7 +59,7 @@ class FeedArchivePastToPresentReaderTest {
     @Test
     void shouldStopOnProcessedEntry() {
         def reader = new CollectReader(
-                knownEntry:[id: "http://example.org/entry/3",
+                knownEntry:[id: "http://example.org/entry:3",
                              updated:"2000-01-01T00:00:03.000Z"]
             )
         reader.readFeed(feedUrl)

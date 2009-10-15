@@ -7,10 +7,10 @@
     <link href="/index.atom" rel="current"/>
 
     <entry>
-        <id>http://example.org/entry/1</id>
+        <id>http://example.org/entry:1</id>
         <updated>2007-09-16T09:16:00.000Z</updated>
         <title type="text">Entry 1</title>
-        <content type="text/plain">Entry 1 content.</content>
+        <content type="application/rdf+xml" src="http://example.org/entry:1/rdf"/>
     </entry>
 
 </feed>
