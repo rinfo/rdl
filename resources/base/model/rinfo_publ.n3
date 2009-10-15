@@ -69,7 +69,13 @@
     rdfs:subPropertyOf dct:hasPart;
     rdfs:label "Bilaga"@sv;
     rdfs:comment "En generell bilaga till något rättsinformationsdokument."@sv;
-    owl:inverseOf [ rdfs:label "Bilaga till"@sv ];
+    owl:inverseOf :bilagaTill;
+    rdfs:isDefinedBy : .
+
+:bilagaTill a owl:ObjectProperty;
+    rdfs:subPropertyOf dct:isPartOf;
+    rdfs:label "Bilaga till"@sv;
+    owl:inverseOf :bilaga;
     rdfs:isDefinedBy : .
 
 :rattsdokumentnummer a owl:DatatypeProperty;
@@ -358,6 +364,7 @@
 :ersatter a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
     rdfs:subPropertyOf :andrar;
+    #owl:equivalentProperty dct:replaces;
     rdfs:label "Ersätter"@sv;
     rdfs:comment "Anger något som ersätts av denna resurs, t.ex. en förordning eller en del därav (såsom rubrik, kapitel, lagparagraf)."@sv;
     owl:inverseOf [ rdfs:label "Ersätts av"@sv ]; .
