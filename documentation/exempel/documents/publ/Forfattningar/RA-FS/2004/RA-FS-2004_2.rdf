@@ -19,6 +19,29 @@
     <!-- ursprung -->
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/riksarkivet"/>
 
+    <!-- paragrafer -->
+    <paragraf rdf:parseType="Resource">
+        <paragrafnummer>1</paragrafnummer>
+    </paragraf>
+    <paragraf rdf:parseType="Resource">
+        <paragrafnummer>2</paragrafnummer>
+    </paragraf>
+    <paragraf rdf:parseType="Resource">
+        <paragrafnummer>3</paragrafnummer>
+    </paragraf>
+    <paragraf rdf:parseType="Resource">
+        <paragrafnummer>4</paragrafnummer>
+    </paragraf>
+    <paragraf rdf:parseType="Resource">
+        <paragrafnummer>5</paragrafnummer>
+    </paragraf>
+    <paragraf rdf:parseType="Resource">
+        <paragrafnummer>6</paragrafnummer>
+    </paragraf>
+    <paragraf rdf:parseType="Resource">
+        <paragrafnummer>7</paragrafnummer>
+    </paragraf>
+
     <!-- dokumentkopplingar -->
     <bemyndigande rdf:parseType="Resource">
         <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1991:446"/>

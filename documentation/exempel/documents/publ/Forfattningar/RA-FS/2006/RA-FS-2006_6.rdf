@@ -22,7 +22,18 @@
     
     <!-- dokumentkopplingar -->
     <andrar rdf:resource="http://rinfo.lagrummet.se/publ/ra-fs/2004:2"/>
-    
+
+    <!-- paragrafer -->
+    <paragraf rdf:parseType="Resource">
+        <paragrafnummer>1</paragrafnummer>
+        <ersatter>
+            <Forfattningsreferens>
+                <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/ra-fs/2004:2"/>
+                <angerParagrafnummer>1</angerParagrafnummer>
+            </Forfattningsreferens>
+        </ersatter>
+    </paragraf>
+
     <!-- dokumentkopplingar -->
     <bemyndigande rdf:parseType="Resource">
         <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1991:446"/>
