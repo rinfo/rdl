@@ -213,27 +213,60 @@
 
         <h3>Hur hanteras bilagor?</h3>
         <p>För bilagor behöver man endast ange information om titel och
-        koppling till föreskrift. En identifierare för en bilaga
-        skapas genom att utgå från den identifierare som gäller för
-        föreskriften och lägger till "/bilaga/" och ett löpnummer:</p>
-
-        <p><code>http://rinfo.lagrummet.se/publ/dvfs/2008:1/bilaga/1</code></p>
+        koppling till föreskrift. Bilagor kan publiceras som en del av av
+        föreskriftsdokumentet eller i en separat fil. Beroende på
+        publiceringsmodell behöver information anges på olika sätt.</p>
         
-        <p>För exempel på metadatapost för en föreskrift där en bilaga ingår se
-        Bilaga 9: Exempel på metadata i RDF med information om bilaga
-        (Livsmedelsverket LIVSFS 2006:22).</p>
+        <h4>Bilaga publicerad i separat fil</h4>
+        <p>I detta fall upprättas en identifierare för bilagan genom att utgå
+        från den identifierare som gäller för föreskriften och lägger till
+        "/bilaga/" och ett löpnummer:</p>
 
-        <p>Själva bilagan kan vara en del av föreskriftens PDF-dokument eller
-        hanteras som ett separat dokument. Information om var bilagan kan
-        laddas ner lämnas i postförteckningen (Atom Entry posten för
-        föreskriften) på detta sätt:</p>
+        <p><code>http://rinfo.lagrummet.se/publ/livsfs/2006:22/bilaga/1</code></p>
+
+        <p>Med denna indetifierare kan man sedan tillhandahålla information om titeln i anslutning till metadataposten för föreskriften:</p>
+
+        <div class="syntax">
+            <code class="xml"><![CDATA[
+<bilaga rdf:parseType="Resource">
+    <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/livsfs/2006:22/bilaga/1">
+        <dct:title>Bilaga 1</dct:title>
+    </rdf:Description>
+</bilaga>
+            ]]></code>
+        </div>
+
+        <p>För ett komplett exempel se Bilaga 9: Exempel på metadata i RDF med
+        information om bilaga (Livsmedelsverket LIVSFS 2006:22).</p>
+
+        <p>För att själva bilagefilen skall kunna kopplas samman med
+        metadataposten behöver postförteckningen (Atom entry-posten) innehålla
+        ett link-element i vilken URL till bilagefilen anges på följande
+        sätt:</p>
         
         <div class="syntax">
             <code class="xml"><![CDATA[
-        <link rel="enclosure" href="http://www.slv.se/upload/dokument/lagstiftning/2005-2006/2006_22bil1.pdf"
-          type="application/pdf"
-          rdf:resource="http://rinfo.lagrummet.se/publ/livsfs/2006:22/bilaga/1"
-          length="1168037" le:md5="1115651b5e8380aff8d"/>        
+<link rel="enclosure" 
+    href="http://www.slv.se/upload/lagstiftning/2005-2006/2006_22bil1.pdf"
+    type="application/pdf"
+    dct:isFormatOf="http://rinfo.lagrummet.se/publ/livsfs/2006:22/bilaga/1"
+    length="1168037" le:md5="1115651b5e8380aff8d"/>        
+            ]]></code>
+        </div>
+
+        <p>dct:isFormatOf kopplar identifieraren för bilagan till filen.</p>
+
+        <h4>Bilaga som del av föreskriftsdokument</h4>
+
+        <p>Om bilagan är den del av föreskriftsdokumentet anges ingen
+        information i Atom Entry-posten. Information om bilagan anges enbarti
+        metadataposten för föreskriften på följande sätt:</p>
+
+        <div class="syntax">
+            <code class="xml"><![CDATA[
+<bilaga rdf:parseType="Resource">
+    <dct:title xml:lang="sv">Bilaga 1</dct:title>
+</bilaga>
             ]]></code>
         </div>
 
