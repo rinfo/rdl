@@ -44,11 +44,14 @@ manifest references to a maven2 package and its dependencies. Put this on the
 classpath (e.g. $CLASSPATH, using the ``-cp`` param to the groovy exe, or put
 it in ``~/.groovy/lib/``).
 
+Before running the classpathjar.groovy script make sure you run ``mvn install``
+in the packages/java folder.
+
 Example:
 
 1. Create a jar referencing dependencies in rinfo-service::
 
-    $ groovy classpathjar.groovy ../ packages/java/rinfo-service/ ~/.groovy/lib/rinfoclasspath.jar
+    $ groovy classpathjar.groovy ../packages/java/rinfo-service/ ~/.groovy/lib/rinfoclasspath.jar
 
 2. Run groovy as usual with::
 
