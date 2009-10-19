@@ -22,6 +22,10 @@
         <!-- Information om vilken grundförfattning som ändras -->
         <andrar rdf:resource="http://rinfo.lagrummet.se/publ/bfs/2007:4"/>
 
+        <!-- Resterande information visar ett mer utförligt exempel om hur man
+        beskriver detaljer om ändringen. I detta fall ändras en del av bilaga 1
+        och hela bilaga 2 byts ut. -->
+
         <!-- Beskrivning av att denna bilaga innehåller fragment av någonting
         som ändrar någonting i grundförfattningen som har rubriken "Bilaga 1".
         -->
@@ -33,8 +37,8 @@
             </andrar>
         </dct:hasPart>
 
-        <!-- Mer detaljerad information om att en bilaga ingår i denna
-        ändringsförfattning och att den ersätter en bilaga som ingår i
+        <!-- Mer detaljerad information om att det dessutom ingår en bilaga i
+        denna ändringsförfattning och att den ersätter en bilaga som ingår i
         grundförfattningen -->
         <bilaga rdf:parseType="Resource">
             <dct:title>Bilaga 2</dct:title>
