@@ -25,14 +25,16 @@
         <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/livsmedelsverket"/>
 
         <!-- dokumentkopplingar -->
-        <bemyndigande rdf:parseType="Resource">
-            <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:813"/>
-            <paragrafnummer>5</paragrafnummer>
+        <bemyndigande>
+            <Forfattningsreferens>
+                <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:813"/>
+                <angerParagrafnummer>5</angerParagrafnummer>
+            </Forfattningsreferens>
         </bemyndigande>
 
         <!-- Information om bilaga -->
         <bilaga rdf:parseType="Resource">
-            <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/livsfs/2006:22/bilaga/1">
+            <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga-1">
                 <dct:title>Bilaga 1</dct:title>
             </rdf:Description>
         </bilaga>

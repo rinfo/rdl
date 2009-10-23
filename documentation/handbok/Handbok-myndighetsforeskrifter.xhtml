@@ -33,7 +33,12 @@
             författning och ett förarbete, mellan en föreskrift och de dokument som utgör
             dess rättsliga grund samt mellan föreskrifter från olika källor.
             För att dessa referenser skall fungera måste informationsposter ha entydiga unika
-            elektroniska referenser. Därför har projektet utarbetat ett sätt att skapa sådana.
+            elektroniska referenser. Därför har projektet utarbetat ett sätt
+            att skapa sådana. I exemplen nedan kommer du att hitta referenser
+            som börjar med http://rinfo.lagrummet.se. Dessa referenser
+            tillhandahålls antingen i sinhelhet av rättsinformationsprojektet (t.ex. för
+            identifierare för myndigheter) eller så finns det en algoritm
+            beskriven för hur de skapas (t.ex. för föreskrifter).
         </p>
         <p>
             För att möjliggöra olika typer av sammanställningar och sökningar i
@@ -214,34 +219,32 @@
         <h3>Hur hanteras bilagor?</h3>
         <p>För bilagor behöver man endast ange information om titel och
         koppling till föreskrift. Bilagor kan publiceras som en del av av
-        föreskriftsdokumentet eller i en separat fil. Beroende på
-        publiceringsmodell behöver information anges på olika sätt.</p>
+        föreskriftsdokumentet eller i en separat fil.</p>
+
+        <p>I metadataposten beskrivs en bilaga på följande sätt:</p>
         
-        <h4>Bilaga publicerad i separat fil</h4>
-        <p>I detta fall upprättas en identifierare för bilagan genom att utgå
-        från den identifierare som gäller för föreskriften och lägger till
-        "/bilaga/" och ett löpnummer:</p>
-
-        <p><code>http://rinfo.lagrummet.se/publ/livsfs/2006:22/bilaga/1</code></p>
-
-        <p>Med denna indetifierare kan man sedan tillhandahålla information om titeln i anslutning till metadataposten för föreskriften:</p>
-
         <div class="syntax">
             <code class="xml"><![CDATA[
 <bilaga rdf:parseType="Resource">
-    <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/livsfs/2006:22/bilaga/1">
+    <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga-1">
         <dct:title>Bilaga 1</dct:title>
     </rdf:Description>
 </bilaga>
             ]]></code>
         </div>
 
+        <p>I detta fall upprättas en identifierare för bilagan genom att utgå
+        från den identifierare som gäller för föreskriften och lägger till
+        "#bilaga-" och ett löpnummer:</p>
+
+        <p><code>http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga-1</code></p>
+
         <p>För ett komplett exempel se Bilaga 9: Exempel på metadata i RDF med
         information om bilaga (Livsmedelsverket LIVSFS 2006:22).</p>
 
-        <p>För att själva bilagefilen skall kunna kopplas samman med
-        metadataposten behöver postförteckningen (Atom entry-posten) innehålla
-        ett link-element i vilken URL till bilagefilen anges på följande
+        <p>Om bilagan publiceras i en extern fil istället för som del av
+        föreskriftsdokumentet behöver även information anges postförteckningen
+        om var bilagan kan hämtas. Det anges med ett link-element på följande
         sätt:</p>
         
         <div class="syntax">
@@ -249,28 +252,35 @@
 <link rel="enclosure" 
     href="http://www.slv.se/upload/lagstiftning/2005-2006/2006_22bil1.pdf"
     type="application/pdf"
-    dct:isFormatOf="http://rinfo.lagrummet.se/publ/livsfs/2006:22/bilaga/1"
+    dct:isFormatOf="http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga-1"
     length="1168037" le:md5="1115651b5e8380aff8d"/>        
             ]]></code>
         </div>
 
         <p>dct:isFormatOf kopplar identifieraren för bilagan till filen.</p>
 
-        <h4>Bilaga som del av föreskriftsdokument</h4>
-
         <p>Om bilagan är den del av föreskriftsdokumentet anges ingen
-        information i Atom Entry-posten. Information om bilagan anges enbarti
-        metadataposten för föreskriften på följande sätt:</p>
+        information i Atom Entry-posten.</p>
+
+        <h3>Hur hanteras författningsreferenser?</h3>
+        <p>Utöver grundläggande information om en föreskrift är det möjligt att påföra ytterligare information i metadataposten. Ett exempel kan vara mer generella författningsreferenser som förekommer i löptext. Sådan information bidrar till att tydliggöra vilka författningar som påverkas vid eventuella ändringar.</p>
+        <p>För denna typ av referenser används begreppet 'Forfattningsreferens'. Om föreskriften innehåller texten "5 kap. 5 § skollagen (1985:1100)" skulle referensen se ut på följande sätt:</p>
 
         <div class="syntax">
             <code class="xml"><![CDATA[
-<bilaga rdf:parseType="Resource">
-    <dct:title xml:lang="sv">Bilaga 1</dct:title>
-</bilaga>
+<Forfattningsreferens>
+    <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1985:1100"/>
+    <angerKapitelnummer>5</angerKapitelnummer>
+    <angerParagrafnummer>5</angerParagrafnummer>
+</Forfattningsreferens>
             ]]></code>
         </div>
 
-        <h3>Hur hanterars ämnesord?</h3>
+        <p>I referensen pekas grundförfattningen ut med rätt identifierare och
+        begreppen angerKapitelnummer, angerParagrafnummer och angerStyckenummer
+        används för att mer precist peka ut vad som avses.</p>
+
+        <h3>Hur hanteras ämnesord?</h3>
         <p>
         Flera myndigheter klassificerar rättsinformation med hjälp av ämnesord.
         Detta möjliggör olika styper av sammanställningar och bidrar till

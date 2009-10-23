@@ -26,9 +26,11 @@
     <dces:subject xml:lang="sv">Arbetsmiljöarbete</dces:subject>
 
     <!-- dokumentkopplingar -->
-    <bemyndigande rdf:parseType="Resource">
-        <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/afs/2001:1"/>
-        <paragrafnummer>6</paragrafnummer>
+    <bemyndigande>
+        <Forfattningsreferens>
+            <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2001:1"/>
+            <angerParagrafnummer>6</angerParagrafnummer>
+        </Forfattningsreferens>
     </bemyndigande>
 
     <!-- referens till webbsida för detta dokument (om sådan finns) -->

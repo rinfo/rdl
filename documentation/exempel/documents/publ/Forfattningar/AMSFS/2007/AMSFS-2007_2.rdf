@@ -19,11 +19,14 @@
     <!-- ursprung -->
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/arbetsmarknadsstyrelsen"/>
 
-	<!-- dokumentkopplingar -->
-    <bemyndigande rdf:parseType="Resource">
-        <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2001:623"/>
-        <paragrafnummer>4</paragrafnummer>
+    <!-- dokumentkopplingar -->
+    <bemyndigande>
+        <Forfattningsreferens>
+            <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2001:623"/>
+            <angerParagrafnummer>4</angerParagrafnummer>
+        </Forfattningsreferens>
     </bemyndigande>
+
 
     <!-- referens till webbsida för detta dokument (om sådan finns) -->
     <foaf:homepage rdf:resource="http://www2.ams.se/regelbok/dokument/a072.htm" />

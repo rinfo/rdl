@@ -20,12 +20,14 @@
     <!-- ursprung -->
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/arbetsmarknadsstyrelsen"/>
 
-	<!-- dokumentkopplingar -->
+    <!-- dokumentkopplingar -->
     <andrar rdf:resource="http://rinfo.lagrummet.se/publ/amsfs/2007:2"/>
 	
-    <bemyndigande rdf:parseType="Resource">
-        <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2001:623"/>
-        <paragrafnummer>4</paragrafnummer>
+    <bemyndigande>
+        <Forfattningsreferens>
+            <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2001:623"/>
+            <angerParagrafnummer>4</angerParagrafnummer>
+        </Forfattningsreferens>
     </bemyndigande>
 
   </Myndighetsforeskrift>
