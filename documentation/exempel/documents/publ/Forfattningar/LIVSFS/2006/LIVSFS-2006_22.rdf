@@ -33,7 +33,7 @@
         </bemyndigande>
 
         <!-- Information om bilaga -->
-        <bilaga rdf:parseType="Resource">
+        <bilaga>
             <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga-1">
                 <dct:title>Bilaga 1</dct:title>
             </rdf:Description>

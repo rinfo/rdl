@@ -21,21 +21,29 @@
 		<dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/statens_jordbruksverk"/>
 
 		<!-- bemyndiganden -->
-		<bemyndigande rdf:parseType="Resource">
-			<dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:816"/>
-			<paragrafnummer>3</paragrafnummer>
+		<bemyndigande>
+                    <Forfattningsreferens>
+                            <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:816"/>
+                            <angerParagrafnummer>3</angerParagrafnummer>
+                    </Forfattningsreferens>
 		</bemyndigande>
-		<bemyndigande rdf:parseType="Resource">
-			<dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:816"/>
-			<paragrafnummer>12</paragrafnummer>
+		<bemyndigande>
+                    <Forfattningsreferens>
+                            <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:816"/>
+                            <angerParagrafnummer>12</angerParagrafnummer>
+                    </Forfattningsreferens>
 		</bemyndigande>
-		<bemyndigande rdf:parseType="Resource">
-			<dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:815"/>
-			<paragrafnummer>9</paragrafnummer>
+		<bemyndigande>
+                    <Forfattningsreferens>
+                            <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:815"/>
+                            <angerParagrafnummer>9</angerParagrafnummer>
+                    </Forfattningsreferens>
 		</bemyndigande>
-		<bemyndigande rdf:parseType="Resource">
-			<dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:815"/>
-			<paragrafnummer>17</paragrafnummer>
+		<bemyndigande>
+                    <Forfattningsreferens>
+                            <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:815"/>
+                            <angerParagrafnummer>17</angerParagrafnummer>
+                    </Forfattningsreferens>
 		</bemyndigande>
 
 		<!-- bilageinformation. Eftersom bilagorna i detta fall ingår i samma

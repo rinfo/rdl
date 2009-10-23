@@ -69,7 +69,7 @@
         </bemyndigande>
 
         <!-- Information om bilagor som i detta fall är en del av dokumentet -->
-        <bilaga rdf:parseType="Resource">
+        <bilaga>
             <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga-1">
                 <dct:title>Bilaga 1</dct:title>
             </rdf:Description>

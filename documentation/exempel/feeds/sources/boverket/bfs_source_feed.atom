@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:le="http://purl.org/atompub/link-extensions/1.0"
+      xmlns:rae="http://rinfo.lagrummet.se/ns/2009/09/atom-extensions#"
+      xmlns:dct="http://purl.org/dc/terms/"
+      xml:lang="sv">
+
+    <id>tag:boverket.se,2009:rinfo:feed</id>
+    <title>Boverkets författningssamling</title>
+    <updated>2009-10-12T15:37:10Z</updated>
+    <author>
+        <name>Boverket</name>
+        <uri>http://www.boverket.se</uri>
+        <email>registraturen@boverket.se</email>
+    </author>
+
+    <link href="https://rinfo.boverket.se/index.atom" rel="self"/>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/bfs/2007:14</id>
+        <updated>2009-10-12T15:37:10Z</updated>
+        <published>2009-10-12T15:37:10Z</published>
+        <title></title>
+        <summary/>
+        <content src="https://rinfo.boverket.se/TOB/WEBRDF/2007-14TOB5.xml" type="application/rdf+xml"/>
+    </entry>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/bfs/2007:4</id>
+        <updated>2009-10-12T15:37:10Z</updated>
+        <published>2009-10-12T15:37:10Z</published>
+        <title></title>
+        <summary/>
+        <content src="https://rinfo.boverket.se/TOB/WEBRDF/2007-4TOB5.xml" type="application/rdf+xml"/>
+    </entry>
+
+</feed>

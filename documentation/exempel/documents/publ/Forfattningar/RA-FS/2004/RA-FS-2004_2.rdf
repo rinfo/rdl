@@ -43,13 +43,17 @@
     </paragraf>
 
     <!-- dokumentkopplingar -->
-    <bemyndigande rdf:parseType="Resource">
-        <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1991:446"/>
-        <paragrafnummer>11</paragrafnummer>
+    <bemyndigande>
+        <Forfattningsreferens>
+            <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1991:446"/>
+            <angerParagrafnummer>11</angerParagrafnummer>
+        </Forfattningsreferens>
     </bemyndigande>
-    <bemyndigande rdf:parseType="Resource">
-        <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1991:446"/>
-        <paragrafnummer>12</paragrafnummer>
+    <bemyndigande>
+        <Forfattningsreferens>
+            <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1991:446"/>
+            <angerParagrafnummer>12</angerParagrafnummer>
+        </Forfattningsreferens>
     </bemyndigande>
 
   </Myndighetsforeskrift>

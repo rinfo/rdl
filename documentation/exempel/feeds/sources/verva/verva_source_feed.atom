@@ -2,6 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom"
       xmlns:fh="http://purl.org/syndication/history/1.0"
       xmlns:le="http://purl.org/atompub/link-extensions/1.0"
+      xmlns:dct="http://purl.org/dc/terms/"
       xml:base="https://rinfo.regeringen.se/"
       xml:lang="sv">
 
@@ -42,8 +43,14 @@
              le:md5="234039401d3a90b55640f75decc6c274"/>
     <link rel="alternate" href="/publ/vervafs/2007/2/data.rdf" type="application/rdf+xml"
           length="4321" le:md5="564131d0dbf344bac82a52ad7d2acf1a"/>
+    <!--
     <link rel="alternate" href="/publ/vervafs/2007/2/data.xhtml" hreflang="sv" type="application/xhtml+xml"
           length="12345" le:md5="7b7fc831c784e78926aec193ff8d399b"/>
+    -->
+    <link rel="enclosure" href="/publ/vervafs/2007/2/AR_1.pdf"
+          type="application/pdf"
+          dct:isFormatOf="http://rinfo.lagrummet.se/publ/publ/vervafs/2007:2/ar_1"
+          length="1168037" le:md5="c40ce477f6ad95ad818d148852b0a5e1"/>
   </entry>
 
   <entry>
@@ -57,8 +64,14 @@
              le:md5="bf16399b5df53bc2431cc7b49c2db470"/>
     <link rel="alternate" href="/publ/vervafs/2007/1/data.rdf" type="application/rdf+xml"
           length="4321" le:md5="8d4a228b03891c8f3774470a86e97c4a"/>
+    <!--
     <link rel="alternate" href="/publ/vervafs/2007/1/data.xhtml" hreflang="sv" type="application/xhtml+xml"
           length="12345" le:md5="db2ab4bb25c4bd825604023f019ec033"/>
+    -->
+    <link rel="enclosure" href="/publ/vervafs/2007/1/AR_1.pdf"
+          type="application/pdf"
+          dct:isFormatOf="http://rinfo.lagrummet.se/publ/publ/vervafs/2007:1/ar_1"
+          length="1168037" le:md5="f141eadbb30b47838ca888e26bc7fa4b"/>
   </entry>
 
 </feed>

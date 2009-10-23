@@ -33,11 +33,13 @@
 
         <!-- Mer specifik referens till en plats i en författning "5 kap. 5 §
         skollagen" -->
-        <Forfattningsreferens>
-            <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1985:1100"/>
-            <angerKapitelnummer>5</angerKapitelnummer>
-            <angerParagrafnummer>5</angerParagrafnummer>
-        </Forfattningsreferens>
+        <dct:references>
+            <Forfattningsreferens>
+                <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1985:1100"/>
+                <angerKapitelnummer>5</angerKapitelnummer>
+                <angerParagrafnummer>5</angerParagrafnummer>
+            </Forfattningsreferens>
+        </dct:references>
 
     </Kommittedirektiv>
 </rdf:RDF>
