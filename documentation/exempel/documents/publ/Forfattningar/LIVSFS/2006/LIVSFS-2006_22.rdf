@@ -34,7 +34,7 @@
 
         <!-- Information om bilaga -->
         <bilaga>
-            <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga-1">
+            <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga_1">
                 <dct:title>Bilaga 1</dct:title>
             </rdf:Description>
         </bilaga>
