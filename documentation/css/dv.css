@@ -39,18 +39,25 @@ div#header img.logo {
 }
 
 div.changes {
-    margin-top: 1cm;
-    margin-bottom: 1cm;
+	margin-top: 1cm;
+	margin-bottom: 1cm;
 }
 
-div.changes table {
-    border-style: solid;
-    border-color: #e6e6e6;
-    border-collapse: collapse;
+table.changes, table.changes td, table.changes th {
+    border: solid 0.5pt #999999;
+	border-collapse: collapse;
+    font-family: "Trebuchet MS", Arial, sans-serif;
+    font-size: 9pt;
 }
 
-table caption {
+table.changes td, table.changes th {
+	vertical-align: top;
+	padding: 0.1cm;
+}
+
+table.changes caption {
     font-weight:bold;
+	text-align:left;
 }
 
 div#pagemeta {
