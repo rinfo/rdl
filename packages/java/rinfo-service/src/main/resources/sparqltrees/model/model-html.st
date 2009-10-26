@@ -1,7 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
-          "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd"-->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="$locale$">
   <head profile="http://www.w3.org/ns/rdfa/">
     <title>$labels.title$</title>
@@ -15,6 +13,12 @@
           <h1>$it.title $$ it.label$</h1>
           $if (it.comment)$ <p>$it.comment$</p> $endif$
           $if (it.description)$ <p>$it.description$</p> $endif$
+          <dl class="tech">
+            <dt>$labels.has_uri$:</dt>
+            <dd>
+              <code>$it.resource_uri$</code>
+            </dd>
+          </dl>
           $it.sorted_classes: {
             <div class="classInfo" id="$it.uri_term$" about="$it.resource_uri$">
             <h2>$it.label$</h2>
@@ -36,6 +40,16 @@
             $if (it.deprecated)$
               <h4 class="warning">[$labels.obsolete_type$]</h4>
             $endif$
+            <dl class="tech">
+              <dt>$labels.has_uri$:</dt>
+              <dd>
+                <code>$it.resource_uri$</code>
+              </dd>
+              <dt>$labels.as_markup$:</dt>
+              <dd>
+                <code>$it.example_markup$</code>
+              </dd>
+            </dl>
             <p class="comment">$it.comment$</p>
             $if (it.merged_restrictions_properties)$
               <table>
@@ -92,6 +106,20 @@
                             </em>
                           </p>
                         }$
+                        $if (it.abstract)$ $else$
+                          <dl class="tech">
+                            <dt>$labels.has_uri$:</dt>
+                            <dd>
+                              <code>$it.resource_uri$</code>
+                            </dd>
+                            $if (it.example_markup)$
+                              <dt>$labels.as_markup$:</dt>
+                              <dd>
+                                <code>$it.example_markup$</code>
+                              </dd>
+                            $endif$
+                          </dl>
+                        $endif$
                       </td>
                       <td>
                         $if (it.restriction)$

@@ -17,7 +17,7 @@ def templates = new StringTemplateGroup("sparqltrees")
 def rqViewer = new SparqlTreeViewer(repo, templates,
         "sparqltrees/model/model-tree-rq", "sparqltrees/model/model-html")
 
-def labelTree = new JsonSlurper().parse(ConfigurationUtils.locate(
+def settingsTree = new JsonSlurper().parse(ConfigurationUtils.locate(
                 "sparqltrees/model/model-labels.json"))
 
 def (fname, locale, mediabase) = args as List
@@ -27,7 +27,7 @@ options = [
 ]
 
 def out = {
-    rqViewer.execute(new ModelViewHandler(locale, null, labelTree, options))
+    rqViewer.execute(new ModelViewHandler(locale, null, settingsTree, options))
 }
 if (fname) {
     println "Writing to: $fname"

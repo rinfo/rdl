@@ -139,6 +139,12 @@ dt  {
     color: #f33;
 }
 
+dl.tech {
+    color: #666;
+    background-color: #e7e7e7;
+    padding: 0.2em;
+}
+
 
 @media print {
 

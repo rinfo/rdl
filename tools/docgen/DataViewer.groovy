@@ -23,7 +23,7 @@ class DataViewer {
         def rqViewer = new SparqlTreeViewer(repo, templates,
                 "sparqltrees/model/model-tree-rq", "sparqltrees/model/model-html")
         def labelTree = new JsonSlurper().parse(ConfigurationUtils.locate(
-                        "sparqltrees/model/model-labels.json"))
+                        "sparqltrees/model/model-settings.json"))
         def options = [
             mediabase: mediabase
         ]

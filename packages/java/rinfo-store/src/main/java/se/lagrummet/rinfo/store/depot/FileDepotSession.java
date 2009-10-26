@@ -103,7 +103,7 @@ public class FileDepotSession implements DepotSession {
         indexEntries(entryBatch);
     }
 
-    /*public*/ void indexEntries(DepotEntryBatch entryBatch)
+    void indexEntries(DepotEntryBatch entryBatch)
             throws DepotWriteException {
         try {
             depot.atomizer.indexEntries(entryBatch);
@@ -112,7 +112,7 @@ public class FileDepotSession implements DepotSession {
         }
     }
 
-    /*public*/ DepotEntryBatch makeEntryBatch() {
+    DepotEntryBatch makeEntryBatch() {
         return new DepotEntryBatch(depot);
     }
 
@@ -127,6 +127,18 @@ public class FileDepotSession implements DepotSession {
         }
     }
 
+    protected void commitPending() {
+        if (pending != null) {
+            if (batch == null) {
+                batch = makeEntryBatch();
+            }
+            // TODO: use a stable indexing, e.g. addOrdered which incrementally
+            // writes to text index (instead of last-call indexEntries above.)
+            batch.add(pending);
+            pending.unlock();
+        }
+    }
+
     public void rollbackPending() throws DepotWriteException {
         if (pending == null) {
             throw new IllegalStateException(
@@ -134,17 +146,6 @@ public class FileDepotSession implements DepotSession {
         }
         pending.rollback();
         pending = null;
-    }
-
-    protected void commitPending() {
-        if (pending != null) {
-            // TODO: lazy make here, or preferably a more stable indexing!
-            if (batch == null) {
-                batch = makeEntryBatch();
-            }
-            batch.add(pending);
-            pending.unlock();
-        }
     }
 
     protected void onEntryModified(DepotEntry depotEntry)

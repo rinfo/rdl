@@ -1,3 +1,6 @@
+@Grab(group='se.lagrummet.rinfo', module='rinfo-service', version='1.0-SNAPSHOT')
+def _(){}
+
 import org.openrdf.repository.http.HTTPRepository
 import net.sf.json.JSONSerializer
 

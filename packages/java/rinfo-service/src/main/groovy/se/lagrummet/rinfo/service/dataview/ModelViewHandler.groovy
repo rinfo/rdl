@@ -7,18 +7,25 @@ import se.lagrummet.rinfo.base.rdf.sparqltree.SmartLens
 
 class ModelViewHandler extends BasicViewHandler {
 
-    protected Map labels
+    protected Map settings
     protected Map options
     protected List allProperties
 
-    ModelViewHandler(String locale, Map queryData, Map labelTree) {
-        this(locale, queryData, labelTree, [:])
+    private Map nsPfxMap = [:]
+
+    ModelViewHandler(String locale, Map queryData, Map settingsTree) {
+        this(locale, queryData, settingsTree, [:])
     }
 
-    ModelViewHandler(String locale, Map queryData, Map labelTree, Map options) {
+    ModelViewHandler(String locale, Map queryData, Map settingsTree, Map options) {
         super(locale, queryData)
-        this.labels = GraphBuilder.buildGraph(lens, labelTree)
+        this.settings = GraphBuilder.buildGraph(lens, settingsTree)
         this.options = options
+        settings.prefixes.each { k, v ->
+            if (v instanceof String) {
+                nsPfxMap[v] = k
+            }
+        }
     }
 
     Map handleTree(Map tree) {
@@ -31,11 +38,11 @@ class ModelViewHandler extends BasicViewHandler {
         def ontologies = graph.ontology.collect { prepOntology(it) }
         return [encoding: "utf-8",
                 locale: locale,
-                labels: labels,
-                ontologies: ontologies] + options
+                ontologies: ontologies] + settings + options
     }
 
     def prepOntology(onto) {
+        addNsInfo(onto)
         onto['sorted_classes'] = onto['class'].findAll {
                 isDefinedBy(it, onto)
             }. collect {
@@ -45,6 +52,8 @@ class ModelViewHandler extends BasicViewHandler {
     }
 
     def prepClass(cls) {
+        addNsInfo(cls)
+        addMarkupExample(cls)
         if (cls.ref_via.subClassOf) {
             cls['subclasses'] = cls.ref_via.subClassOf.sort(lsort)
         }
@@ -59,6 +68,8 @@ class ModelViewHandler extends BasicViewHandler {
     }
 
     def prepProperty(prop) {
+        addNsInfo(prop)
+        addMarkupExample(prop)
         if (prop.ref_via.subPropertyOf) {
             prop['subproperties'] = prop.ref_via.subPropertyOf.sort(lsort)
         }
@@ -99,7 +110,7 @@ class ModelViewHandler extends BasicViewHandler {
 
     def propertyWithRestriction(restr) {
         restr['cardinality_label'] = cardinalityLabel(
-                labels.cardinalities, restr)
+                settings.labels.cardinalities, restr)
         restr['computed_range'] = computedRange(restr)
         def obj = new HashMap(restr.onProperty)
         obj.restriction=restr
@@ -114,6 +125,7 @@ class ModelViewHandler extends BasicViewHandler {
     boolean isDefinedBy(o, onto) {
         return (o.isDefinedBy?.resource_uri == onto.resource_uri)
     }
+
 
     String cardinalityLabel(labels, restr) {
         if (restr.cardinality == 0)
@@ -149,5 +161,47 @@ class ModelViewHandler extends BasicViewHandler {
         }
         return ranges
     }
+
+
+    void addNsInfo(item) {
+        if (!item.resource_uri) {
+            return
+        }
+        def uri = item.resource_uri
+        def ns = uri[0..-(item.uri_term.size()+1)]
+        item['uri_ns'] = ns
+        item['uri_pfx'] = nsPfxMap[ns]
+    }
+
+    void addMarkupExample(item) {
+        if (!item.type || item.example_markup)
+            return
+        def markup = ""
+        def name = item.uri_pfx?
+                "${item.uri_pfx}:${item.uri_term}" : item.uri_term
+
+        switch (item.type[0]?.uri_term) {
+
+            case ~/.*Class$/:
+                markup = "<$name rdf:about=\"...\">"
+            break
+
+            case ~/ObjectProperty$/:
+                markup = "<$name rdf:resource=\"...\"/>"
+            break
+
+            case ~/DatatypeProperty$/:
+                if (item.range && !item.range =~ /#Literal/) {
+                    markup = "<$name rdf:datatype=\"${item.range.resource_uri}\">...</$name>"
+                    break
+                }
+
+            case ~/.*Property$/:
+                markup = "<$name>...</$name>"
+            break
+        }
+        item['example_markup'] = markup.replace('<', '&lt;')
+    }
+
 
 }
