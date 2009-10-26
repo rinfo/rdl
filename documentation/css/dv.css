@@ -38,6 +38,21 @@ div#header img.logo {
     margin-left: 1cm;
 }
 
+div.changes {
+    margin-top: 1cm;
+    margin-bottom: 1cm;
+}
+
+div.changes table {
+    border-style: solid;
+    border-color: #e6e6e6;
+    border-collapse: collapse;
+}
+
+table caption {
+    font-weight:bold;
+}
+
 div#pagemeta {
     position: running(pagemeta);
     font-family: "Trebuchet MS", Arial, sans-serif;
