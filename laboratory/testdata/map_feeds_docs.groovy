@@ -3,7 +3,9 @@ import se.lagrummet.rinfo.store.depot.DefaultPathHandler
 
 pathHandler = new DefaultPathHandler()
 rinfoPublBase = "http://rinfo.lagrummet.se/publ/"
-exampleBase = "documents/publ"
+
+docsBase = "../../documentation/exempel/documents/publ"
+feedBase = "../../documentation/exempel/feeds"
 
 @Grab(group='se.lagrummet.rinfo', module='rinfo-store', version='1.0-SNAPSHOT')
 def contentFilePath(id, href, mediaType) {
@@ -13,7 +15,7 @@ def contentFilePath(id, href, mediaType) {
     def year = docLeafParts[0]
     def docName = collection+'-'+docLeafParts.join('_')
     def suffix = pathHandler.hintForMediaType(mediaType)
-    return exampleBase + "/${collectionPath}/${year}/${docName}.${suffix}"
+    return docsBase + "/${collectionPath}/${year}/${docName}.${suffix}"
 }
 
 def collectionAndPathFor(coll) {
@@ -45,11 +47,11 @@ def ant = new AntBuilder()
 def slurper = new XmlSlurper()
 
 def examplePaths = ant.fileScanner {
-        fileset(dir:".", includes:"${exampleBase}/**/*.*")
+        fileset(dir:"${docsBase}", includes:"**/*.*")
     }.findAll{ !it.hidden }.collect { it.canonicalPath }
 
 ant.fileScanner {
-    fileset(dir:".", includes:"feeds/**/*.atom")
+    fileset(dir:"${feedBase}", includes:"**/*.atom")
 }.each {
     println "Feed <${it.name}>:"
     def feed = slurper.parse(it)
