@@ -32,6 +32,7 @@ Then add, directly after ``ivysettings/settings``, the following directive::
 And, in ``/ivysettings/resolvers/chain``, after the first ``filesystem``, add::
 
     <filesystem name="local-maven2" m2compatible="true">
+        <ivy pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision].pom"/>
         <artifact pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
     </filesystem>
 
