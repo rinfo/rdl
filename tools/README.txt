@@ -21,16 +21,25 @@ your local Maven repository. To do this, locate the file:
 
 If it doesn't exist, see:
 
-        <http://groovy.codehaus.org/Grape>
+    <http://groovy.codehaus.org/Grape>
 
-for how to create a default version. Then add the following directive::
+for how to create a default version.
 
-      <ibiblio name="local" root="file:${user.home}/.m2/repository/" m2compatible="true"/>
+Then add, directly after ``ivysettings/settings``, the following directive::
+
+    <caches useOrigin="true"/>
+
+And, in ``/ivysettings/resolvers/chain``, after the first ``filesystem``, add::
+
+    <filesystem name="local-maven2" m2compatible="true">
+        <artifact pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
+    </filesystem>
 
 The path in the root property above should match the location for your local
 maven repository. You may have changed that from the default home directory.
+
 That should make all Maven dependencies locatable (provided that you have ``mvn
-install``:ed your packages. See <packages/java/README.txt> for more info).
+install``:ed your packages; see <packages/java/README.txt>).
 
 
 Option B: Use A Pathing Jar
