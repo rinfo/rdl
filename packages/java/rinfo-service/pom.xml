@@ -120,6 +120,7 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
+    <!-- TODO; only for war -->
     <finalName>${artifactId}-${environment}</finalName>
 
     <plugins>
