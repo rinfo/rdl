@@ -35,9 +35,10 @@ def collectionAndPathFor(coll) {
 def enclosureFilePath(id, href, mediaType, ord) {
     def path = contentFilePath(id, href, mediaType)
     def matcher = (path =~ /(\.\w+)$/)
-    path = matcher.replaceFirst("bil${ord}${matcher[0][1]}")
-    if (!new File(path).exists()) {
+    if (href =~ /AR/) {
         path = matcher.replaceFirst("AR${matcher[0][1]}")
+    } else {
+        path = matcher.replaceFirst("bil${ord}${matcher[0][1]}")
     }
     return path
 }
@@ -71,7 +72,7 @@ ant.fileScanner {
         it.'a:content'.each {
             def logicalPath = contentFilePath("${id}", "${it.@src}", "${it.@type}")
             def fpath = new File(docsBase + logicalPath).canonicalPath
-            if (!examplePaths.remove(new File(fpath).canonicalPath)) {
+            if (!examplePaths.remove(fpath)) {
                 println "[NotFound]:"
                 println "<${fpath}> = <${it.@src}>"
             }
@@ -85,7 +86,7 @@ ant.fileScanner {
                     contentFilePath("${id}", "${it.@href}", "${it.@type}") :
                     enclosureFilePath("${id}", "${it.@href}", "${it.@type}", enclCount++)
             def fpath = new File(docsBase + logicalPath).canonicalPath
-            if (!examplePaths.remove(new File(fpath).canonicalPath)) {
+            if (!examplePaths.remove(fpath)) {
                 println "[NotFound]:"
                 println "<${fpath}> = <${it.@href}>"
             }
