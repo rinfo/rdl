@@ -1,6 +1,70 @@
-
 import se.lagrummet.rinfo.store.depot.DefaultPathHandler
 import groovy.xml.StreamingMarkupBuilder
+
+
+def createServableSources(buildDir, docsBase, feedBase) {
+
+    def ant = new AntBuilder()
+
+    exampleFilePaths = ant.fileScanner {
+            fileset(dir:"${docsBase}", includes:"**/*.*")
+        }.findAll{ !it.hidden }.collect { it.canonicalPath }
+
+    processEntryPath = { feedDirName, examplePath, logicalPath ->
+        def fpath = new File(docsBase + logicalPath).canonicalPath
+        if (!exampleFilePaths.remove(fpath)) {
+            println "[NotFound]:"
+            println "<${fpath}> = <${examplePath}>"
+        }
+        def newPath = feedDirName + logicalPath
+        //println "Copy file to ${newPath} (was ${examplePath})"
+        ant.copy(file:fpath, tofile:buildDir+'/'+newPath)
+        return "/"+newPath
+    }
+
+    ant.mkdir(dir:buildDir)
+
+    ant.fileScanner { fileset(dir:"${feedBase}", includes:"**/*.atom") }.each {
+
+        def slurper = new XmlSlurper()
+        def feed = slurper.parse(it)
+        feed.declareNamespace('a':"http://www.w3.org/2005/Atom")
+
+        //println "Feed <${it.name}>:"
+        def feedDirName = (feed.id =~ /tag:([^,]+),/)[0][1]
+        def feedPath = feedDirName+"/current.atom"
+        feed.'a:link'.each {
+            if (it.@rel == "self")
+                it.@href = "/"+feedPath
+        }
+        feed.'a:entry'.each {
+            def id = it.'a:id' as String
+            //println "Entry <${it.'a:id'}>:"
+            it.'a:content'.each {
+                def logicalPath = contentFilePath(id, "${it.@src}", "${it.@type}")
+                it.@src = processEntryPath(feedDirName, it.@src, logicalPath)
+            }
+            def enclCount = 1
+            it.'a:link'.each {
+                def logicalPath = (it.@rel == "alternate")?
+                        contentFilePath(id, "${it.@href}", "${it.@type}") :
+                        enclosureFilePath(id, "${it.@href}", "${it.@type}", enclCount++)
+                it.@href = processEntryPath(feedDirName, it.@href, logicalPath)
+            }
+            //println()
+        }
+        def markupBuilder = new StreamingMarkupBuilder()
+        def result = markupBuilder.bind{ mkp.yield feed }
+        def newFeedFile = new File(buildDir+'/'+feedPath)
+        ant.mkdir(dir:newFeedFile.parentFile)
+        newFeedFile.write(result.toString())
+    }
+
+    if (exampleFilePaths) {
+        println "Example files not present in feeds:"
+        exampleFilePaths.each { println it }
+    }
+}
 
 
 rinfoPublBase = "http://rinfo.lagrummet.se/publ/"
@@ -46,68 +110,8 @@ def enclosureFilePath(id, href, mediaType, ord) {
 
 //========================================
 
-def ant = new AntBuilder()
-
-docsBase = "../../documentation/exempel/documents/publ"
-feedBase = "../../documentation/exempel/feeds"
-buildDir = "_build/www"
-
-exampleFilePaths = ant.fileScanner {
-        fileset(dir:"${docsBase}", includes:"**/*.*")
-    }.findAll{ !it.hidden }.collect { it.canonicalPath }
-
-processEntryPath = { feedDirName, examplePath, logicalPath ->
-    def fpath = new File(docsBase + logicalPath).canonicalPath
-    if (!exampleFilePaths.remove(fpath)) {
-        println "[NotFound]:"
-        println "<${fpath}> = <${examplePath}>"
-    }
-    def newPath = feedDirName + logicalPath
-    //println "Copy file to ${newPath} (was ${examplePath})"
-    ant.copy(file:fpath, tofile:buildDir+'/'+newPath)
-    return "/"+newPath
-}
-
-ant.mkdir(dir:buildDir)
-
-ant.fileScanner { fileset(dir:"${feedBase}", includes:"**/*.atom") }.each {
-
-    def slurper = new XmlSlurper()
-    def feed = slurper.parse(it)
-    feed.declareNamespace('a':"http://www.w3.org/2005/Atom")
-
-    //println "Feed <${it.name}>:"
-    def feedDirName = (feed.id =~ /tag:([^,]+),/)[0][1]
-    def feedPath = feedDirName+"/current.atom"
-    feed.'a:link'.each {
-        if (it.@rel == "self")
-            it.@href = "/"+feedPath
-    }
-    feed.'a:entry'.each {
-        def id = it.'a:id' as String
-        //println "Entry <${it.'a:id'}>:"
-        it.'a:content'.each {
-            def logicalPath = contentFilePath(id, "${it.@src}", "${it.@type}")
-            it.@src = processEntryPath(feedDirName, it.@src, logicalPath)
-        }
-        def enclCount = 1
-        it.'a:link'.each {
-            def logicalPath = (it.@rel == "alternate")?
-                    contentFilePath(id, "${it.@href}", "${it.@type}") :
-                    enclosureFilePath(id, "${it.@href}", "${it.@type}", enclCount++)
-            it.@href = processEntryPath(feedDirName, it.@href, logicalPath)
-        }
-        //println()
-    }
-    def markupBuilder = new StreamingMarkupBuilder()
-    def result = markupBuilder.bind{ mkp.yield feed }
-    def newFeedFile = new File(buildDir+'/'+feedPath)
-    ant.mkdir(dir:newFeedFile.parentFile)
-    newFeedFile.write(result.toString())
-}
-
-if (exampleFilePaths) {
-    println "Example files not present in feeds:"
-    exampleFilePaths.each { println it }
-}
+createServableSources(
+        "_build/www",
+        "../../documentation/exempel/documents/publ",
+        "../../documentation/exempel/feeds")
 
