@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dct="http://purl.org/dc/terms/"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+    <!--
+    Exempeldata från DV:s webbplats.
+
+    Domstol:  	Högsta domstolen  	
+    Målnummer: 	Ö3904-08 	Avdelning: 	1 	
+    Referat: 	NJA 2009 s. 437 (alt. NJA 2009:42) 	
+    Avgörandedatum: 	2009-06-25 	
+    Rubrik: 	Vid prövning av frågan om förordnande av bodelningsförrättare har make 
+                som påkallat bodelning tio år efter äktenskapsskillnad inte ansetts ha 
+                förlorat rätten att påkalla sådan. 	
+    Lagrum: 	9 kap 1 §, 4 § och 5 § samt 17 kap. 1 § äktenskapsbalken (1987:230) 	
+    Rättsfall: 	• NJA 1935 s. 613 	
+		• NJA 1937 s. 180 	
+		• NJA 1993 s. 302, I och II 	
+		• NJA 1993 s. 570 	
+		• NJA 1997 s. 166 	
+    Sökord:     Bodelning, Bodelningsförrättare 	
+    -->
+
+    <!-- Form för identifierare inte klar än -->
+    <VagledandeAvgorande rdf:about="http://rinfo.lagrummet.se/publ/avgorande/hd/Ö3904-08">
+
+        <!-- Domstol -->
+        <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/h%C3%B6gsta_domstolen" />
+
+        <!-- Målnummer -->
+        <malnummer>Ö3904-08</malnummer>
+
+        <!-- Datum för avgörande -->
+        <avgorandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-06-25</avgorandedatum>
+
+        <!-- Avgörandets rubrik -->
+        <dct:title xml:lang="sv">Vid prövning av frågan om förordnande av bodelningsförrättare har make som påkallat bodelning tio år efter äktenskapsskillnad inte ansetts ha förlorat rätten att påkalla sådan.</dct:title>
+
+        <!-- Lagrumshänvisningar -->
+        <lagrum>
+            <Forfattningsreferens>
+                <angerGrundforfattning red:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
+                <angerKapitelnummer>9</angerKapitelnummer>
+                <angerParagrafnummer>1</angerParagrafnummer>
+            </Forfattningsreferens>
+        </lagrum>
+        <lagrum>
+            <Forfattningsreferens>
+                <angerGrundforfattning red:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
+                <angerKapitelnummer>9</angerKapitelnummer>
+                <angerParagrafnummer>4</angerParagrafnummer>
+            </Forfattningsreferens>
+        </lagrum>
+        <lagrum>
+            <Forfattningsreferens>
+                <angerGrundforfattning red:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
+                <angerKapitelnummer>9</angerKapitelnummer>
+                <angerParagrafnummer>5</angerParagrafnummer>
+            </Forfattningsreferens>
+        </lagrum>
+        <lagrum>
+            <Forfattningsreferens>
+                <angerGrundforfattning red:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
+                <angerKapitelnummer>17</angerKapitelnummer>
+                <angerParagrafnummer>1</angerParagrafnummer>
+            </Forfattningsreferens>
+        </lagrum>
+
+        <!-- Referenser till andra rättsfall -->
+
+
+        <!-- Ämnesord -->
+        <dct:subject>Bodelning</dct:subject>
+        <dct:subject>Bodelningsförrättare</dct:subject>
+
+    </VagledandeAvgorande>
+</rdf:RDF>
