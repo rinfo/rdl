@@ -1,8 +1,6 @@
 package se.lagrummet.rinfo.main.storage
 
 
-import javax.xml.namespace.QName
-
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -24,7 +22,6 @@ import org.apache.http.params.HttpProtocolParams
 import org.apache.abdera.model.AtomDate
 import org.apache.abdera.model.Entry
 import org.apache.abdera.model.Feed
-import org.apache.abdera.model.Link
 import org.apache.abdera.i18n.iri.IRI
 
 import se.lagrummet.rinfo.store.depot.Atomizer
@@ -51,10 +48,6 @@ import se.lagrummet.rinfo.collector.atom.FeedArchivePastToPresentReader
 */
 public class FeedCollector extends FeedArchivePastToPresentReader {
 
-    public static final QName LINK_EXT_FILENAME = new QName(
-            "http://rinfo.lagrummet.se/ns/2009/09/atom-extensions#",
-            "filename", "rae");
-
     private final Logger logger = LoggerFactory.getLogger(FeedCollector)
 
     StorageSession storageSession
@@ -65,6 +58,8 @@ public class FeedCollector extends FeedArchivePastToPresentReader {
      */
     private FeedCollector(StorageSession storageSession) {
         this.storageSession = storageSession
+        this.entryPathMapper = new EntryPathMapper(
+                storageSession.getDepot().getPathHandler())
     }
 
     public static void readFeed(StorageSession storageSession, URL url) {
@@ -175,7 +170,7 @@ public class FeedCollector extends FeedArchivePastToPresentReader {
                 contents.add(createSourceContent(
                         urlPath, mediaType, lang, null, md5hex, len))
             } else if (link.rel == "enclosure") {
-                def slug = getEnclosureSlug(link, sourceEntry)
+                def slug = entryPathMapper.getEnclosureSlug(link, sourceEntry)
                 enclosures.add(createSourceContent(
                         urlPath, mediaType, null, slug, md5hex, len))
             }
@@ -206,38 +201,6 @@ public class FeedCollector extends FeedArchivePastToPresentReader {
             srcContent.datachecks[SourceContent.Check.LENGTH] = length
         }
         return srcContent
-    }
-
-    // TODO:? put these in a separate util class?
-
-    protected static String getEnclosureSlug(Link atomLink) {
-        return getEnclosureSlug(atomLink, (Entry)atomLink.getParentElement())
-    }
-
-    protected static String getEnclosureSlug(Link atomLink, Entry atomEntry) {
-        return getEnclosureSlug(atomLink, atomEntry.getId())
-    }
-
-    protected static String getEnclosureSlug(Link atomLink, IRI entryId) {
-        String slug = atomLink.getAttributeValue(LINK_EXT_FILENAME)
-        if (slug != null) {
-            // TODO: what forms do we support?
-            return new URI(entryId.toString()+"/").resolve(slug).getPath()
-        } else {
-            return computeEnclosureSlug(entryId.toURI(),
-                    atomLink.resolvedHref.toURI())
-        }
-    }
-
-    protected static String computeEnclosureSlug(URI entryUri, URI enclosureUri) {
-        String entryIdBase = entryUri.getPath()
-        String enclPath = enclosureUri.getPath()
-        if (!enclPath.startsWith(entryIdBase)) {
-            // TODO: fail with what?
-            throw new RuntimeException("Entry <"+entryUri +
-                    "> references <${enclosureUri}> out of its domain.")
-        }
-        return enclPath
     }
 
 }
