@@ -19,7 +19,7 @@ def serveSources(port, www) {
     component.start()
 }
 
-def port = 7070
+def port = 8281
 def www = "_build/www"
 serveSources(port, new File(www).toURI().toString())
 

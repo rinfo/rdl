@@ -24,8 +24,10 @@ FEED_TITLE = "RInfo Base Data"
 
 BASE_URI = "http://rinfo.lagrummet.se"
 
+@Grab(group='se.lagrummet.rinfo', module='rinfo-base', version='1.0-SNAPSHOT')
+@Grab(group='se.lagrummet.rinfo', module='rinfo-store', version='1.0-SNAPSHOT')
 def main() {
-    def base = args ? args[0] : "../../../resources/base/"
+    def base = args ? args[0] : "../../resources/base/"
     def port = 8280
     startServer(port,
         { createAtomCollection(FEED_URI, FEED_TITLE, BASE_URI,

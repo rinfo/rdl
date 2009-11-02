@@ -2,6 +2,7 @@ import se.lagrummet.rinfo.store.depot.DefaultPathHandler
 import groovy.xml.StreamingMarkupBuilder
 
 
+@Grab(group='se.lagrummet.rinfo', module='rinfo-store', version='1.0-SNAPSHOT')
 def createServableSources(buildDir, docsBase, feedBase) {
 
     def ant = new AntBuilder()
@@ -71,7 +72,6 @@ rinfoPublBase = "http://rinfo.lagrummet.se/publ/"
 
 pathHandler = new DefaultPathHandler()
 
-@Grab(group='se.lagrummet.rinfo', module='rinfo-store', version='1.0-SNAPSHOT')
 def contentFilePath(id, href, mediaType) {
     def docPath = id.replace(rinfoPublBase, '').split('/')
     def docLeafParts = docPath[-1].split(':')
