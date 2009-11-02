@@ -51,6 +51,7 @@ public class FeedCollector extends FeedArchivePastToPresentReader {
     private final Logger logger = LoggerFactory.getLogger(FeedCollector)
 
     StorageSession storageSession
+    EntryPathMapper entryPathMapper
 
     /**
      * Important: this class is not thread safe. Create a new instance for each
@@ -126,7 +127,7 @@ public class FeedCollector extends FeedArchivePastToPresentReader {
                 try {
                     List<SourceContent> contents = new ArrayList<SourceContent>()
                     List<SourceContent> enclosures = new ArrayList<SourceContent>()
-                    fillContentsAndEnclosures(sourceEntry, contents, enclosures)
+                    fillContentsAndEnclosures(entry, contents, enclosures)
                     def ok = storageSession.storeEntry(
                             feed, entry, contents, enclosures)
                     if (!ok) {
