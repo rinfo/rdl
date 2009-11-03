@@ -128,10 +128,11 @@ public abstract class AbstractCollectScheduler {
 
         if (feedQueue != null) {
             if (feedQueue.size() > 0) {
-                String feeds = "";
+                StringBuffer buf = new StringBuffer();
                 for (URL u : feedQueue) {
-                    feeds += "<"+u+">, ";
+                    buf.append("<"+u+">, ");
                 }
+                String feeds = buf.toString();
                 feedQueue.clear();
                 StringUtils.removeEnd(feeds, ", ");
                 logger.info("Shutdown prevented the following scheduled feeds to "
