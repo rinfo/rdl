@@ -1,7 +1,7 @@
-import se.lagrummet.rinfo.store.depot.FileDepot
 import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.memory.MemoryStore
 import se.lagrummet.rinfo.base.rdf.RDFUtil
+import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.main.storage.FeedCollector
 import se.lagrummet.rinfo.main.storage.StorageSession
 import se.lagrummet.rinfo.main.storage.StorageCredentials
@@ -21,6 +21,13 @@ def collectFeed(baseDir, feedUrl) {
     //RDFUtil.serialize(repo, mtype, System.out)
 }
 
+def reindexDepot(baseDir) {
+    def depot = createDepot(baseDir)
+    def session = depot.openSession()
+    session.generateIndex()
+    session.close()
+}
+
 def createDepot(baseDir) {
     def depot = new FileDepot()
     depot.baseDir = baseDir
@@ -28,13 +35,6 @@ def createDepot(baseDir) {
     depot.atomizer.feedPath = "/feed"
     depot.atomizer.feedSkeletonPath = "feed_skeleton.atom"
     return depot
-}
-
-def reindexDepot(baseDir) {
-    def depot = createDepot(baseDir)
-    def session = depot.openSession()
-    session.generateIndex()
-    session.close()
 }
 
 
