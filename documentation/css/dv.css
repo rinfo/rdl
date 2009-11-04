@@ -323,3 +323,15 @@ div.alert {
     margin-left: -1.5cm;
     margin-right: -1.5cm;
 }
+
+dl.tech {
+    font-size: 0.9em;
+}
+
+dl.tech dd code {
+    font-size: 0.7em;
+}
+dl.tech dd {
+    margin:0;
+    padding:0;
+}

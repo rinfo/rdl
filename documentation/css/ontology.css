@@ -106,6 +106,7 @@ dt  {
 .ontologyInfo table {
     width: 100%;
     border-collapse: collapse;
+    border-width: 0.5pt;
 }
 
 .ontologyInfo th {
@@ -114,7 +115,7 @@ dt  {
 }
 .ontologyInfo th,
 .ontologyInfo td {
-    border: 1px solid #aaa;
+    border: 0.5pt solid #999;
     padding: 0.1em 0.3em;
     vertical-align: top;
 }
@@ -140,8 +141,8 @@ dt  {
 }
 
 dl.tech {
-    color: #666;
-    background-color: #e7e7e7;
+    color: #000;
+    background-color: #e6e6e6;
     padding: 0.2em;
 }
 
