@@ -13,7 +13,7 @@
         återlämnande av handlingar vid upphandling;</dct:title>
 
     <!-- tidsaspekter -->
-    <utfardandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-02-09</utfardandedatum>
+    <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-02-09</beslutsdatum>
     <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-03-01</ikrafttradandedatum>
     <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-02-09</utkomFranTryck>
     
