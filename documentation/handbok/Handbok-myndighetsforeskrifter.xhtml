@@ -10,7 +10,10 @@
     </head>
     <body>
         <div class="alert">
-            <p>Observera att detta dokument inte är fastställt i alla delar ännu. För publicering av myndighetsföreskrifter enligt modell 1 (PDF-dokument + metadata) bedömer vi dock att inga större ändringar kommer att ske.</p>
+            <p>Observera att detta dokument inte är fastställt i alla delar
+            ännu. För publicering av myndighetsföreskrifter enligt modell 1
+            (PDF-dokument + metadata) bedömer vi dock att inga större ändringar
+            kommer att ske.</p>
         </div>
 
 		<div class="changes">
@@ -21,8 +24,18 @@
 					<th>Ändring</th>
 				</tr>
 				<tr>
+					<td>2009-11-01</td>
+                                        <td>Kompletterade exempel med
+                                            egenskapen beslutadAv (som för de
+                                            flesta är samma som
+                                            dct:publisher).</td>
+				</tr>
+				<tr>
 					<td>2009-10-22</td>
-					<td>Modifiering av information om bilagor och struktur för författningsreferenser (inkl. bemyndiganden)</td>
+                                        <td>Modifiering av information om
+                                            bilagor och struktur för
+                                            författningsreferenser (inkl.
+                                            bemyndiganden)</td>
 				</tr>
 			</table>
 		</div>
@@ -292,7 +305,19 @@
 
         <p>I referensen pekas grundförfattningen ut med rätt identifierare och
         begreppen angerKapitelnummer, angerParagrafnummer och angerStyckenummer
-        används för att mer precist peka ut vad som avses.</p>
+        används för att mer precist peka ut vad som avses. Observera att det är
+        möjligt att utesluta informationen utöver grundförfattningsreferensen
+        om man anser att det av olika orsaker är komplicerat att läsa ut data
+        ur det egna materialet. I sin enklaste form ser referensen ut så här:</p>
+
+        <div class="syntax">
+            <code class="xml"><![CDATA[
+<Forfattningsreferens>
+    <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1985:1100"/>
+</Forfattningsreferens>
+            ]]></code>
+        </div>
+
 
         <h3>Hur hanteras ämnesord?</h3>
         <p>
