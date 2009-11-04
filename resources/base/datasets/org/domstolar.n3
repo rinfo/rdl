@@ -7,15 +7,15 @@
 
 <http://rinfo.lagrummet.se/org/h%C3%B6gsta_domstolen>
     a foaf:Organization;
-	foaf:name "Högsta domstolen"@sv .
+    foaf:name "Högsta domstolen"@sv .
 
 <http://rinfo.lagrummet.se/org/svea_hovr%C3%A4tt>
     a foaf:Organization;
-	foaf:name "Svea hovrätt"@sv .
+    foaf:name "Svea hovrätt"@sv .
 
 <http://rinfo.lagrummet.se/org/g%C3%B6ta_hovr%C3%A4tt>
     a foaf:Organization;
-	foaf:name "Göta hovrätt"@sv .
+    foaf:name "Göta hovrätt"@sv .
 
 <http://rinfo.lagrummet.se/org/hovr%C3%A4tten_%C3%B6ver_sk%C3%A5ne_och_blekinge>
     a foaf:Organization;
@@ -24,7 +24,7 @@
 <http://rinfo.lagrummet.se/org/hovr%C3%A4tten_f%C3%B6r_v%C3%A4stra_sverige>
     a foaf:Organization;
         foaf:name "Hovrätten för Västra Sverige"@sv .
-        
+
 <http://rinfo.lagrummet.se/org/hovr%C3%A4tten_f%C3%B6r_nedre_norrland>
     a foaf:Organization;
         foaf:name "Hovrätten för Nedre Norrland"@sv .
