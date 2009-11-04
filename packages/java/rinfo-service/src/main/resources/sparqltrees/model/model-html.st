@@ -125,6 +125,9 @@
                         $if (it.restriction)$
                           <span class="cardinalityValue"
                             >$it.restriction.cardinality_label$</span>
+                        $else$
+                          <span class="cardinalityValue"
+                            >$labels.cardinalities.optional$</span>
                         $endif$
                       </td>
                     </tr>
