@@ -6,6 +6,7 @@ CHANGELOG
 --------------------
 
 * Ändrade beslutadAv: range till foaf:Agent, typade om till enbart ObjectProperty (FunctionalProperty är inte nödvändigen sann för alla möjliga former)
+* Ändrade egenskapdetaljer för Rattelseblad: lade till domain; tog bort restriktion för rattelsebeskrivning.
 
 2009-09-28
 --------------------

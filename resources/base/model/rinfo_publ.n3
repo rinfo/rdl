@@ -633,9 +633,6 @@
     rdfs:subClassOf :Rattsinformationsdokument;
     rdfs:subClassOf
         [ a owl:Restriction;
-            owl:onProperty :rattelsebeskrivning;
-        ],
-        [ a owl:Restriction;
             owl:onProperty :rattningAv;
             owl:cardinality 1
         ] .
@@ -644,12 +641,14 @@
 :rattelsebeskrivning a rdf:Property;
     rdfs:isDefinedBy : ;
     rdfs:label "Rättelsebeskrivning"@sv;
-    rdfs:comment "En beskrivning av innehållet i ett rättelseblad."@sv; .
+    rdfs:comment "En beskrivning av innehållet i ett rättelseblad."@sv;
+    rdfs:domain :Rattelseblad; .
 
 :rattningAv a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Rättning av"@sv;
     rdfs:comment "Rättning av den författning som ett rättelseblad hänför sig till."@sv;
+    rdfs:domain :Rattelseblad;
     rdfs:range :Rattsinformationsdokument;
     owl:inverseOf [ rdfs:label "Rättas av"@sv ]; .
 
