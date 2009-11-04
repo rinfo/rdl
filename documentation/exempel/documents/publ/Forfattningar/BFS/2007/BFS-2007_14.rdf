@@ -24,6 +24,16 @@
         <!-- Information om vilken grundförfattning som ändras -->
         <andrar rdf:resource="http://rinfo.lagrummet.se/publ/bfs/2007:4"/>
 
+        <!-- Bemyndigande (i detta exempel har den grövsta nivån för en
+        författningsreferens angivits, dvs till hela SFS:en även om man avser
+        vissa paragrafer). Jämför med bemyndigandet i BFS 2007:4 där en mer
+        finkorning referensform angetts.. -->
+        <bemyndigande>
+            <Forfattningsreferens>
+                <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:1592"/>
+            </Forfattningsreferens>
+        </bemyndigande>
+
         <!-- Resterande information visar ett mer utförligt exempel om hur man
         beskriver detaljer om ändringen. I detta fall ändras en del av bilaga 1
         och hela bilaga 2 byts ut. -->
