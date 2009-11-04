@@ -33,12 +33,12 @@ class ServiceApplicationTest {
 
     static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service-test.properties"
 
-    static serviceAppUrl
-    static serviceAppPort
-    static feedAppUrl
-    static feedAppPort
+    static def serviceAppUrl
+    static def serviceAppPort
+    static def feedAppUrl
+    static def feedAppPort
     //static sesameRepoPath
-    static component
+    static def component
 
     static RepositoryHandler repositoryHandler
 
@@ -97,7 +97,7 @@ class ServiceApplicationTest {
         request.setEntity(param, MediaType.MULTIPART_FORM_DATA)
         def client = new Client(Protocol.HTTP)
         def response = client.handle(request)
-        assertEquals Status.SUCCESS_OK , response.status
+        assertEquals Status.SUCCESS_OK, response.status
 
         Thread.sleep(2000)
 

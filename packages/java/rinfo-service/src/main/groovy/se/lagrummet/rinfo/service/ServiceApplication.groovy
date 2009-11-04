@@ -72,6 +72,12 @@ class ServiceApplication extends Application {
     }
 
     @Override
+    public void start() {
+        super.start()
+        loadScheduler.startup()
+    }
+
+    @Override
     public void stop() {
         super.stop()
         loadScheduler.shutdown()
