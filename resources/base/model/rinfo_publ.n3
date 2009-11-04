@@ -317,11 +317,11 @@
         ] .
 
 
-:beslutadAv a owl:FunctionalProperty;
+:beslutadAv a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Beslutad av"@sv;
     rdfs:comment "Referens till officiell beslutstagare."@sv;
-    rdfs:range foaf:Organization; .
+    rdfs:range foaf:Agent .
 
 :beslutande a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
