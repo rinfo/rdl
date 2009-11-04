@@ -19,6 +19,7 @@
         
         <!-- ursprung -->
         <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/boverket"/>
+        <beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/boverket"/>
 
         <!-- Information om vilken grundförfattning som ändras -->
         <andrar rdf:resource="http://rinfo.lagrummet.se/publ/bfs/2007:4"/>

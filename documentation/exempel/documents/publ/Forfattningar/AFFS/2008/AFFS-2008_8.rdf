@@ -21,6 +21,7 @@
 
     <!-- ursprung -->
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/arbetsf%C3%B6rmedlingen"/>
+    <beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/arbetsf%C3%B6rmedlingen"/>
 
     <!-- Egna ämnesord (ett element per ämnesord) -->
     <dces:subject xml:lang="sv">Arbetsmiljöarbete</dces:subject>

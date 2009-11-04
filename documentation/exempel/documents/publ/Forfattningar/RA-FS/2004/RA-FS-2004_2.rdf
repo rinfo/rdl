@@ -18,6 +18,7 @@
 
     <!-- ursprung -->
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/riksarkivet"/>
+    <beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/riksarkivet"/>
 
     <!-- paragrafer -->
     <paragraf rdf:parseType="Resource">

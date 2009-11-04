@@ -13,6 +13,7 @@
     <utfardandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1899-05-19</utfardandedatum>
     <!-- ursprung -->
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
+    <beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
     <!-- TODO: Ska "Justitiedepartementet L2" anses som en annan organisation än
          Justitiedepartementet? Om ja, hur bör det påverka användingen av rättsinfo? -->
     <!-- dokumentkopplingar: inga angivna -->

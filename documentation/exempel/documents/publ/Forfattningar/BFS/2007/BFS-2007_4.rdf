@@ -17,6 +17,7 @@
 
         <!-- ursprung -->
         <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/boverket"/>
+        <beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/boverket"/>
 
         <!-- dokumentkopplingar -->
         <bemyndigande>

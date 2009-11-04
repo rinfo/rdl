@@ -20,6 +20,7 @@
 
 		<!-- den organisation som publicerade den -->
 		<dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/statens_jordbruksverk"/>
+		<beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/statens_jordbruksverk"/>
 
 		<!-- bemyndiganden som föreskriften lutar sig på (dvs ändringsföreskriften i detta fall)-->
 		<bemyndigande>

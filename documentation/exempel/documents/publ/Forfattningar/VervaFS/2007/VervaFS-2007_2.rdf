@@ -1,70 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:dct="http://purl.org/dc/terms/"
-         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+    xmlns:dct="http://purl.org/dc/terms/"
+    xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
 
-  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:2">
+    <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:2">
 
-    <!-- identifiering -->
-    <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/vervafs"/>
-    <fsNummer>2007:2</fsNummer>
-    <dct:title xml:lang="sv">Vervas föreskrift om statliga myndigheters arbete med säkert elektroniskt informationsutbyte;</dct:title>
+        <!-- identifiering -->
+        <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/vervafs"/>
+        <fsNummer>2007:2</fsNummer>
+        <dct:title xml:lang="sv">Vervas föreskrift om statliga myndigheters arbete med säkert elektroniskt informationsutbyte;</dct:title>
 
-    <!-- tidsaspekter -->
-    <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-11-14</beslutsdatum>
-    <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2008-01-01</ikrafttradandedatum>
-    <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date"> 2007-11-19</utkomFranTryck>
+        <!-- tidsaspekter -->
+        <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-11-14</beslutsdatum>
+        <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2008-01-01</ikrafttradandedatum>
+        <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date"> 2007-11-19</utkomFranTryck>
 
-    <!-- ursprung -->
-    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/verva"/>
-    <!-- dokumentkopplingar -->
-    <!-- TODO: koppla till paragraf och/eller dokument? -->
-    <bemyndigande>
-        <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/sfs/2003:770#paragraf-3">
-            <dct:isPartOf rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770"/>
-        </rdf:Description>
-    </bemyndigande>
-    <!-- TODO: hänvisning om "undantag":
-      rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770#paragraf-4"
-    -->
+        <!-- ursprung -->
+        <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/verva"/>
+        <beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/verva"/>
 
-    <!-- dokumentsammansätting -->
-    <paragraf>
-        <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-1">
-            <paragrafnummer>1</paragrafnummer>
-        </Paragraf>
-    </paragraf>
-    <paragraf>
-        <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-2">
-            <paragrafnummer>2</paragrafnummer>
-        </Paragraf>
-    </paragraf>
-    <paragraf>
-        <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-3">
-            <paragrafnummer>3</paragrafnummer>
-        </Paragraf>
-    </paragraf>
-    <paragraf>
-        <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-4">
-            <paragrafnummer>4</paragrafnummer>
-        </Paragraf>
-    </paragraf>
-    <paragraf>
-        <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-5">
-            <paragrafnummer>5</paragrafnummer>
-        </Paragraf>
-    </paragraf>
-    <paragraf>
-        <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-6">
-            <paragrafnummer>6</paragrafnummer>
-        </Paragraf>
-    </paragraf>
-    <paragraf>
-        <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-7">
-            <paragrafnummer>7</paragrafnummer>
-        </Paragraf>
-    </paragraf>
+        <!-- dokumentkopplingar -->
+        <bemyndigande>
+            <Forfattningsreferens>
+                <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770"/>
+                <angerParagrafnummer>3</angerParagrafnummer>
+            </Forfattningsreferens>
+        </bemyndigande>
 
-  </Myndighetsforeskrift>
+        <!-- TODO: hänvisning om "undantag":
+        rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770#paragraf-4"
+        -->
+
+        <!-- dokumentsammansätting -->
+        <paragraf>
+            <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-1">
+                <paragrafnummer>1</paragrafnummer>
+            </Paragraf>
+        </paragraf>
+        <paragraf>
+            <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-2">
+                <paragrafnummer>2</paragrafnummer>
+            </Paragraf>
+        </paragraf>
+        <paragraf>
+            <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-3">
+                <paragrafnummer>3</paragrafnummer>
+            </Paragraf>
+        </paragraf>
+        <paragraf>
+            <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-4">
+                <paragrafnummer>4</paragrafnummer>
+            </Paragraf>
+        </paragraf>
+        <paragraf>
+            <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-5">
+                <paragrafnummer>5</paragrafnummer>
+            </Paragraf>
+        </paragraf>
+        <paragraf>
+            <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-6">
+                <paragrafnummer>6</paragrafnummer>
+            </Paragraf>
+        </paragraf>
+        <paragraf>
+            <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-7">
+                <paragrafnummer>7</paragrafnummer>
+            </Paragraf>
+        </paragraf>
+
+    </Myndighetsforeskrift>
 
 </rdf:RDF>

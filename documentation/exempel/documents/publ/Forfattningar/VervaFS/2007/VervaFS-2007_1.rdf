@@ -17,13 +17,14 @@
 
     <!-- ursprung -->
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/verva"/>
+    <beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/verva"/>
 
     <!-- dokumentkopplingar -->
     <!-- TODO: koppla till paragraf och/eller dokument? -->
     <bemyndigande>
         <Forfattningsreferens>
-        <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770"/>
-        <angerParagrafnummer>1</angerParagrafnummer>
+            <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770"/>
+            <angerParagrafnummer>1</angerParagrafnummer>
         </Forfattningsreferens>
     </bemyndigande>
     <!-- TODO: hänvisning om "undantag i det enskilda fallet":

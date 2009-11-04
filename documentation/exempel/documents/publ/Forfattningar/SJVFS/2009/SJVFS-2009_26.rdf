@@ -19,6 +19,7 @@
 
 		<!-- ursprung -->
 		<dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/statens_jordbruksverk"/>
+		<beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/statens_jordbruksverk"/>
 
 		<!-- bemyndiganden -->
 		<bemyndigande>

@@ -19,6 +19,7 @@
     
     <!-- ursprung -->
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/riksarkivet"/>
+    <beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/riksarkivet"/>
     
     <!-- dokumentkopplingar -->
     <andrar rdf:resource="http://rinfo.lagrummet.se/publ/ra-fs/2004:2"/>
