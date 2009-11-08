@@ -53,7 +53,7 @@ class SparqlTreeRouter extends Router {
                     MediaType.TEXT_HTML))
 
         def labelTree = new JsonSlurper().parse(
-                ConfigurationUtils.locate("sparqltrees/model/model-labels.json"))
+                ConfigurationUtils.locate("sparqltrees/model/model-settings.json"))
         attach("/model", new SparqlTreeFinder(context,
                     new SparqlTreeViewer(repository, templates,
                             "sparqltrees/model/model-tree-rq",
