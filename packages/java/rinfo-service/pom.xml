@@ -120,8 +120,6 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
-    <!-- TODO; only for war -->
-    <finalName>${artifactId}-${environment}</finalName>
 
     <plugins>
 
@@ -150,9 +148,26 @@
       </plugin>
 
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <warName>${artifactId}-${environment}</warName>
+          <webResources>
+            <resource>
+              <filtering>false</filtering>
+              <directory>src/environments/${environment}</directory>
+              <targetPath>WEB-INF/classes</targetPath>
+              <includes>
+                <include>**/*</include>
+              </includes>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.7</version>
         <configuration>
           <scanIntervalSeconds>10</scanIntervalSeconds>
           <contextPath>/</contextPath>
