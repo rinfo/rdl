@@ -63,16 +63,16 @@ public class RDFUtil {
         loadDataFromURL(repo, url, null);
     }
 
-    public static void loadDataFromURL(Repository repo, URL url, String mimeType)
+    public static void loadDataFromURL(Repository repo, URL url, String mediaType)
             throws IOException, RDFParseException, RepositoryException {
         URLConnection conn = url.openConnection();
-        if (mimeType != null) {
-            conn.setRequestProperty("Accept", mimeType);
+        if (mediaType != null) {
+            conn.setRequestProperty("Accept", mediaType);
         }
         conn.connect();
         InputStream stream = conn.getInputStream();
         try {
-            loadDataFromStream(repo, stream, url.toString(), mimeType);
+            loadDataFromStream(repo, stream, url.toString(), mediaType);
         } finally {
             stream.close();
         }
@@ -90,20 +90,28 @@ public class RDFUtil {
             throws IOException, FileNotFoundException,
                    RDFParseException, RepositoryException
     {
+        loadDataFromFile(repo, file, file.toURI().toString(), mediaType);
+    }
+
+    public static void loadDataFromFile(
+            Repository repo, File file, String baseUri, String mediaType)
+            throws IOException, FileNotFoundException,
+                   RDFParseException, RepositoryException
+    {
         if (mediaType == null) {
             mediaType = RDFFormat.forFileName(
                     file.getName()).getDefaultMIMEType();
         }
         loadDataFromStream(repo,
-                new FileInputStream(file), file.toURI().toString(),
+                new FileInputStream(file), baseUri,
                 mediaType);
     }
 
     public static void loadDataFromStream(Repository repo,
-            InputStream stream, String baseUri, String mimeType)
+            InputStream stream, String baseUri, String mediaType)
             throws IOException, RDFParseException, RepositoryException {
         // TODO: more formats, e.g. RDFa (opt. guess from url?)
-        RDFFormat format = RDFFormat.forMIMEType(mimeType);
+        RDFFormat format = RDFFormat.forMIMEType(mediaType);
         RepositoryConnection conn = repo.getConnection();
         try {
             conn.setAutoCommit(false);
@@ -142,10 +150,10 @@ public class RDFUtil {
     }
 
     public static void serialize(
-            Repository repo, String mimeType, OutputStream outStream)
+            Repository repo, String mediaType, OutputStream outStream)
         throws RDFHandlerException, RepositoryException
     {
-        RDFFormat format = RDFFormat.forMIMEType(mimeType);
+        RDFFormat format = RDFFormat.forMIMEType(mediaType);
         RDFWriter writer = null;
         // TODO: doesn't work with bnodes.
         //if (format.equals(RDFFormat.RDFXML)) {
@@ -165,11 +173,11 @@ public class RDFUtil {
     }
 
     public static InputStream serializeAsInputStream(
-            Repository repo, String mimeType)
+            Repository repo, String mediaType)
             throws IOException, RepositoryException, RDFHandlerException
     {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        serialize(repo, mimeType, outStream);
+        serialize(repo, mediaType, outStream);
         outStream.close();
         return new ByteArrayInputStream(outStream.toByteArray());
     }
