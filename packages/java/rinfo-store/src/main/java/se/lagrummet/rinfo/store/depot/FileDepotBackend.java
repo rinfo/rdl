@@ -35,10 +35,7 @@ public class FileDepotBackend {
         return FileDepotEntry.newUncheckedDepotEntry(depot, entryDir, uriPath);
     }
 
-    public DepotEntry createEntry(String uriPath, Date created,
-            List<SourceContent> contents,
-            List<SourceContent> enclosures,
-            boolean releaseLock)
+    public DepotEntry newBlankEntry(String uriPath)
             throws DepotReadException, DepotWriteException {
         File entryDir = getEntryDir(uriPath);
         try {
@@ -46,9 +43,7 @@ public class FileDepotBackend {
         } catch (IOException e) {
             throw new DepotWriteException(e);
         }
-        DepotEntry depotEntry = new FileDepotEntry(depot, entryDir, uriPath);
-        depotEntry.create(created, contents, enclosures, releaseLock);
-        return depotEntry;
+        return new FileDepotEntry(depot, entryDir, uriPath);
     }
 
     public DepotContent getContent(String uriPath) {

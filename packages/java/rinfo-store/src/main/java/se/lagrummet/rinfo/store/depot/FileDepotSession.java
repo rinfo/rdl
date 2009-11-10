@@ -45,10 +45,10 @@ public class FileDepotSession implements DepotSession {
         commitPending();
         depot.assertWithinBaseUri(entryUri);
         String uriPath = entryUri.getPath();
-        DepotEntry entry = depot.backend.createEntry(
-                uriPath, created, contents, enclosures, false);
-        onEntryModified(entry);
+        DepotEntry entry = depot.backend.newBlankEntry(uriPath);
         pending = entry;
+        entry.create(created, contents, enclosures, false);
+        onEntryModified(entry);
         return entry;
     }
 
@@ -63,20 +63,20 @@ public class FileDepotSession implements DepotSession {
             List<SourceContent> enclosures)
             throws DepotReadException, DepotWriteException {
         commitPending();
+        pending = entry;
         entry.lock();
         entry.update(updated, contents, enclosures);
         onEntryModified(entry);
-        pending = entry;
     }
 
     public void delete(DepotEntry entry, Date deleted)
             throws DeletedDepotEntryException,
                    DepotReadException, DepotWriteException {
         commitPending();
+        pending = entry;
         entry.lock();
         entry.delete(deleted);
         onEntryModified(entry);
-        pending = entry;
     }
 
 
@@ -148,10 +148,10 @@ public class FileDepotSession implements DepotSession {
         pending = null;
     }
 
-    protected void onEntryModified(DepotEntry depotEntry)
+    protected void onEntryModified(DepotEntry entry)
             throws DepotWriteException {
         try {
-            depot.atomizer.generateAtomEntryContent(depotEntry);
+            depot.atomizer.generateAtomEntryContent(entry);
         } catch (IOException e) {
             throw new DepotWriteException(e);
         }

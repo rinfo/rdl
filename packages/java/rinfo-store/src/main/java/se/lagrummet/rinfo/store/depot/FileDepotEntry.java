@@ -277,6 +277,7 @@ public class FileDepotEntry implements DepotEntry {
                 InputStream inStream = new FileInputStream(getManifestFile());
                 manifest = (Entry) Abdera.getInstance().getParser().parse(
                         inStream).getRoot();
+                manifest.complete();
                 inStream.close();
             } catch (Exception e) {
                 throw new RuntimeException("Error reading manifest file.", e);
@@ -591,6 +592,10 @@ public class FileDepotEntry implements DepotEntry {
         rollOffToDir(newHistoryDir());
     }
 
+    /**
+     * Moves the current content (including manifest and enclosures) to the
+     * given directory.
+     */
     protected void rollOffToDir(File destDir) throws IOException {
         // NOTE: this means existing content not in the update is removed.
         //      - *including enclosures*
@@ -600,7 +605,13 @@ public class FileDepotEntry implements DepotEntry {
         HistoryEntry)? But see iterateEntries (it scans for
         entryContentDir name..)! */
 
-        FileUtils.moveFileToDirectory(getManifestFile(), destDir, false);
+        File manifestFile = getManifestFile();
+        // NOTE: not required to exist, since this may be invoked as part of a
+        // rollback. If there is an ongoing update, the manifest file may have
+        // moved to a historyDir.
+        if (manifestFile.exists()) {
+            FileUtils.moveFileToDirectory(manifestFile, destDir, false);
+        }
 
         for (DepotContent content : findContents()) {
             FileUtils.moveToDirectory(content.getFile(), destDir, false);

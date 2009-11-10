@@ -47,7 +47,7 @@ class FileDepotTransactionTest {
         thrown(NullPointerException)
 
         when:
-        session.close()
+        //session.close() // NOTE: cannot commit broken pending
         depot.getEntry(id)
 
         then:

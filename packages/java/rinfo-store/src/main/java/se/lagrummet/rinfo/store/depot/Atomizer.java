@@ -258,6 +258,7 @@ public class Atomizer {
             InputStream inStream = new FileInputStream(feedFile);
             Feed feed = (Feed) Abdera.getInstance().getParser().parse(
                     inStream).getRoot();
+            feed.complete();
             inStream.close();
             return feed;
         } catch (FileNotFoundException e) {
@@ -358,6 +359,7 @@ public class Atomizer {
             InputStream inStream = new FileInputStream(entryFile);
             Entry entry = (Entry) Abdera.getInstance().getParser().parse(
                     inStream).getRoot();
+            entry.complete();
             inStream.close();
             return entry;
         }

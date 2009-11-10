@@ -63,6 +63,7 @@ public class FileDepot implements Depot {
         if (!getBaseDir().exists()) {
             baseDir.mkdir();
         }
+        // TODO: checkConsistency();
         this.initialized = true;
     }
 
