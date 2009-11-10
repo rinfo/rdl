@@ -117,7 +117,7 @@ class StorageSession {
             return true
 
         } catch (Exception e) {
-            /* FIXME: handle errors:
+            /* TODO: explicit handling (and logging) of different errors:
                 - retriable:
                     java.net.SocketException
 

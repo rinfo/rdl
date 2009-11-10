@@ -22,7 +22,11 @@ Running as war::
 
     $ mvn -Djetty.port=8180 jetty:run
 
+, or::
+
+    $ mvn clean compile war:war jetty:run-war -Djetty.port=8180 -Dmaven.test.skip=true
+
 Manually pinging rinfo-main to collect from a test source::
 
-    $ curl --data "feed=http://localhost:8182/feed/current" http://localhost:8180/collector
+    $ curl --data "feed=http://localhost:8280/admin/feed/current" http://localhost:8180/collector
 

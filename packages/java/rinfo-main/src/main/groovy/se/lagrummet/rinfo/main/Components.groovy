@@ -25,8 +25,10 @@ import se.lagrummet.rinfo.main.storage.StorageSession
 import se.lagrummet.rinfo.main.storage.SourceFeedsConfigHandler
 
 
-    // TODO: put as inner of Components (not possible in groovy 1.6).
+    // TODO: put inside Components (not possible in groovy 1.6).
     public static enum ConfigKey {
+        DEPOT_BASE_URI("rinfo.depot.baseUri"),
+        DEPOT_BASE_DIR("rinfo.depot.baseDir"),
         CONTAINER_DESCRIPTION_ENTRY_ID("rinfo.main.uriMinter.containerDescriptionEntryId"),
         SOURCE_FEEDS_ENTRY_ID("rinfo.main.storage.sourceFeedsEntryId"),
         ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets"),
@@ -136,7 +138,7 @@ public class Components {
     private Collection<StorageHandler> createStorageHandlers() {
         def storageHandlers = new ArrayList<StorageHandler>()
         storageHandlers.add(createSourceFeedsConfigHandler())
-        storageHandlers.add(createEntryRdfValidatorHandler())
+        //TODO: storageHandlers.add(createEntryRdfValidatorHandler())
         return storageHandlers
     }
 

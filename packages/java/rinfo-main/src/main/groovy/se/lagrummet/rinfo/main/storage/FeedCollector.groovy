@@ -223,7 +223,7 @@ class RemoteSourceContent extends SourceContent {
     public void writeTo(OutputStream outStream) throws IOException {
         // TODO:IMPROVE: retrying http; and also handle failed gets in writeTo(File)
         if (getSourceStream() == null) {
-            setSourceStream(collector.getResponseAsInputStream(urlPath));
+            setSourceStream(collector.getResponseAsInputStream(urlPath), false);
         }
         super.writeTo(outStream);
     }

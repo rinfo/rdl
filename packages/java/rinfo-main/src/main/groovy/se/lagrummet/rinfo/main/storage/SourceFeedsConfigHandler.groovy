@@ -1,5 +1,8 @@
 package se.lagrummet.rinfo.main.storage
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 import org.apache.commons.configuration.ConfigurationUtils
 
 import org.openrdf.repository.Repository
@@ -9,6 +12,8 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 
 
 class SourceFeedsConfigHandler extends AbstractStorageHandler {
+
+    private final Logger logger = LoggerFactory.getLogger(SourceFeedsConfigHandler)
 
     FeedCollectScheduler collectScheduler
 
@@ -48,6 +53,8 @@ class SourceFeedsConfigHandler extends AbstractStorageHandler {
         tree.rinfospace[0].source.each {
             feedUrls << new URL(it.feed['$uri'])
         }
+        logger.debug("Setting public source feed urls, from " +
+                configurationEntryId+", to: ${feedUrls}")
         collectScheduler.setPublicSourceFeedUrls(feedUrls)
     }
 

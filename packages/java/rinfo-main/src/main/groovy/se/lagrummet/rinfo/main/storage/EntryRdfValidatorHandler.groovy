@@ -4,7 +4,6 @@ import org.openrdf.repository.Repository
 
 import se.lagrummet.rinfo.store.depot.DepotEntry
 
-import se.lagrummet.rinfo.base.URIComputationException
 import se.lagrummet.rinfo.base.URIMinter
 import se.lagrummet.rinfo.base.URIComputationException
 
