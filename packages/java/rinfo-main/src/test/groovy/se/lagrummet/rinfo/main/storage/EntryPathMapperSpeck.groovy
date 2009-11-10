@@ -34,6 +34,9 @@ import static se.lagrummet.rinfo.main.storage.EntryPathMapper.DCT_IS_FORMAT_OF
             makeLink("http://example.org/item/one",
                     "http://localhost/files.cgi?id=123",
                     "/item/one/file", "application/pdf"),
+            makeLink("http://example.org/item/one",
+                    "http://localhost/files.cgi?id=123",
+                    "/item/one#file", "application/pdf"),
             //makeLink("http://example.org/item/one",
             //        "http://localhost/files.cgi?id=123",
             //        "css/style.css"),
@@ -44,6 +47,7 @@ import static se.lagrummet.rinfo.main.storage.EntryPathMapper.DCT_IS_FORMAT_OF
         expectedSlug << [
             "/item/one/file.txt",
             //"/item/one/file.txt",
+            "/item/one/file.pdf",
             "/item/one/file.pdf",
             //"/item/one/css/style.css",
             //"/item/one/css/style.css",

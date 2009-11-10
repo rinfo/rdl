@@ -21,8 +21,6 @@ public class EntryPathMapper {
         this.pathHandler = pathHandler
     }
 
-    // TODO:? put these in a separate util class?
-
     public String getEnclosureSlug(Link atomLink) {
         return getEnclosureSlug(atomLink, (Entry)atomLink.getParentElement())
     }
@@ -35,10 +33,11 @@ public class EntryPathMapper {
         String formatOfResource = atomLink.getAttributeValue(DCT_IS_FORMAT_OF)
         if (formatOfResource != null) {
             // TODO: is this hash-part=>segment acceptable?
+            def entryContainerUri = new URI(entryId.toString()+"/")
             String resourcePath = formatOfResource.replace("#", "/")
-            String suffix = "." + pathHandler.
-                    hintForMediaType(atomLink.getMimeType().toString())
-            return new URI(entryId.toString()+"/").resolve(formatOfResource).getPath() + suffix
+            String suffix = "." + pathHandler.hintForMediaType(
+                    atomLink.getMimeType().toString())
+            return entryContainerUri.resolve(resourcePath).getPath() + suffix
         } else {
             return computeEnclosureSlug(entryId.toURI(),
                     atomLink.resolvedHref.toURI())
