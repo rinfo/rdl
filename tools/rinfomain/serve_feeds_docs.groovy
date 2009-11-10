@@ -5,21 +5,21 @@ import org.restlet.data.Protocol
 @Grab(group='org.restlet', module='org.restlet', version='1.1.4')
 @Grab(group='com.noelios.restlet', module='com.noelios.restlet', version='1.1.4')
 class SourceApp extends Application {
-    String www
+    String wwwDir
     Restlet createRoot() {
-        return new Directory(context, www as String)
+        return new Directory(context, wwwDir as String)
     }
 }
 
-def serveSources(port, www) {
+def serveSources(port, wwwDir) {
     def component = new Component()
     component.servers.add(Protocol.HTTP, port)
     component.clients.add(Protocol.FILE)
-    component.defaultHost.attach("", new SourceApp(www:www))
+    component.defaultHost.attach("", new SourceApp(wwwDir:wwwDir))
     component.start()
 }
 
 def port = 8281
-def www = "_build/www"
-serveSources(port, new File(www).toURI().toString())
+def wwwDir = args[0]
+serveSources(port, new File(wwwDir).toURI().toString())
 

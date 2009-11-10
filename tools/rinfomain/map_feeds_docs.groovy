@@ -1,3 +1,5 @@
+import org.apache.abdera.Abdera
+import org.apache.abdera.model.Feed
 import se.lagrummet.rinfo.store.depot.DefaultPathHandler
 import groovy.xml.StreamingMarkupBuilder
 
@@ -25,41 +27,49 @@ def createServableSources(buildDir, docsBase, feedBase) {
 
     ant.mkdir(dir:buildDir)
 
+    def feedPaths = []
+
     ant.fileScanner { fileset(dir:"${feedBase}", includes:"**/*.atom") }.each {
 
-        def slurper = new XmlSlurper()
-        def feed = slurper.parse(it)
-        feed.declareNamespace('a':"http://www.w3.org/2005/Atom")
+        def feed = (Feed) Abdera.instance.parser.parse(new FileReader(it)).root
 
         //println "Feed <${it.name}>:"
         def feedDirName = (feed.id =~ /tag:([^,]+),/)[0][1]
         def feedPath = feedDirName+"/current.atom"
-        feed.'a:link'.each {
-            if (it.@rel == "self")
-                it.@href = "/"+feedPath
+        feedPaths << feedPath
+
+        feed.links.each {
+            if (it.rel == "self")
+                it.href = "/"+feedPath
+            if (it.rel =~ /.+-archive/)
+                it.discard()
         }
-        feed.'a:entry'.each {
-            def id = it.'a:id' as String
+        feed.entries.each {
+            def id = it.id as String
             //println "Entry <${it.'a:id'}>:"
-            it.'a:content'.each {
-                def logicalPath = contentFilePath(id, "${it.@src}", "${it.@type}")
-                it.@src = processEntryPath(feedDirName, it.@src, logicalPath)
+            it.contentElement.with {
+                def logicalPath = contentFilePath(id, "${it.src}", "${it.mimeType}")
+                it.src = processEntryPath(feedDirName, it.src, logicalPath)
             }
             def enclCount = 1
-            it.'a:link'.each {
-                def logicalPath = (it.@rel == "alternate")?
-                        contentFilePath(id, "${it.@href}", "${it.@type}") :
-                        enclosureFilePath(id, "${it.@href}", "${it.@type}", enclCount++)
-                it.@href = processEntryPath(feedDirName, it.@href, logicalPath)
+            it.links.each {
+                def logicalPath = (it.rel == "alternate")?
+                        contentFilePath(id, "${it.href}", "${it.mimeType}") :
+                        enclosureFilePath(id, "${it.href}", "${it.mimeType}", enclCount++)
+                it.href = processEntryPath(feedDirName, it.href, logicalPath)
             }
             //println()
         }
-        def markupBuilder = new StreamingMarkupBuilder()
-        def result = markupBuilder.bind{ mkp.yield feed }
         def newFeedFile = new File(buildDir+'/'+feedPath)
         ant.mkdir(dir:newFeedFile.parentFile)
-        newFeedFile.write(result.toString())
+        newFeedFile.withWriter feed.&writeTo
     }
+
+    def f = new File(buildDir+"/system/sources.rdf")
+    ant.mkdir(dir:f.parentFile)
+    def writer = new FileWriter(f)
+    makeSourcesRdf(writer, buildDir, feedPaths)
+    writer.close()
 
     if (exampleFilePaths) {
         println "Example files not present in feeds:"
@@ -107,6 +117,25 @@ def enclosureFilePath(id, href, mediaType, ord) {
     }
     return path
 }
+
+def makeSourcesRdf(writer, buildDir, feedPaths) {
+    new groovy.xml.MarkupBuilder(writer).
+        'rdf:RDF'('xmlns:rdf':"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                'xmlns:dct':"http://purl.org/dc/terms/",
+                'xmlns:sioc':"http://rdfs.org/sioc/ns#") {
+            'sioc:Space'('rdf:about':"tag:lagrummet.se,2009:rinfo") {
+                feedPaths.each { feedPath ->
+                    'dct:source' {
+                        def feedBase = (feedPath =~ /(.+)\/.*/)[0][1]
+                        'sioc:Space'('rdf:about':"tag:${feedBase},2009:rinfo") {
+                            'sioc:feed'('rdf:resource':"/${feedPath}")
+                        }
+                    }
+                }
+            }
+        }
+}
+
 
 //========================================
 
