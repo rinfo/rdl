@@ -53,17 +53,26 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                     List<Entry> effectiveEntries = new ArrayList<Entry>();
 
                     for (Entry entry: feed.getEntries()) {
-                        if (deletedMap.containsKey(entry.getId())) {
+                        IRI entryId = entry.getId();
+                        if (deletedMap.containsKey(entryId)) {
                             continue;
                         }
                         Date entryUpdated = entry.getUpdated();
                         AtomDate youngestAtomDate = entryModificationMap.get(
-                                entry.getId());
-                        if (youngestAtomDate == null ||
-                                youngestAtomDate.getDate().equals(entryUpdated)) {
-                            if (knownStoppingEntry != null &&
-                                    !isYoungerThan(entryUpdated,
-                                        knownStoppingEntry.getUpdated())) {
+                                entryId);
+                        boolean notSeenOrYoungestOfSeen =
+                                youngestAtomDate == null ||
+                                youngestAtomDate.getDate().equals(entryUpdated);
+                        if (notSeenOrYoungestOfSeen) {
+                            // FIXME: if there are more entries with same
+                            // timestamp as knownStoppingEntry, "!isYoungerThan"
+                            // will skip some (some of) those! Also see
+                            // stopOnEntry below. FIXED? Does this work(?):
+                            if (knownStoppingEntry != null && (
+                                    entryId.equals(
+                                        knownStoppingEntry.getId()) ||
+                                    isOlderThan(entryUpdated,
+                                        knownStoppingEntry.getUpdated()))) {
                                 continue;
                             }
                             effectiveEntries.add(entry);
@@ -113,6 +122,12 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
             putUriDateIfNewOrYoungest(entryModificationMap, item.getKey(), item.getValue());
         }
 
+        // FIXME:? needs to scan the rest with the same updated stamp before
+        // stopping (even if this means following more pages back in time.. Or?
+        // Why?)..
+        // - thus it would be wise to mark/remove entries in feedTrail which
+        // have been visited (so the subclass don't have to check this
+        // twice)...
         for (Entry entry : feed.getEntries()) {
             if (stopOnEntry(entry)) {
                 logger.info("Stopping on known entry: <" +entry.getId() +

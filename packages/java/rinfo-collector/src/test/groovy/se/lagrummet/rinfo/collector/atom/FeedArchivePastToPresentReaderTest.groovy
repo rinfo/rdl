@@ -1,9 +1,7 @@
 package se.lagrummet.rinfo.collector.atom
 
-import org.junit.AfterClass
-import org.junit.BeforeClass
-import org.junit.Test
-import static org.junit.Assert.*
+import org.junit.runner.RunWith
+import spock.lang.*
 
 import org.apache.abdera.model.AtomDate
 import org.apache.abdera.model.Feed
@@ -15,16 +13,16 @@ import org.restlet.data.Protocol
 import org.restlet./*resource.*/Directory
 
 
+@Speck @RunWith(Sputnik)
 class FeedArchivePastToPresentReaderTest {
 
-    private static component
-    private static testHttpPort = 9991
+    @Shared component
+    @Shared testHttpPort = 9991
 
     def baseUrl = "http://localhost:${testHttpPort}"
     def feedUrl =  new URL("${baseUrl}/index1.atom")
 
-    @BeforeClass
-    static void setupClass() {
+    def setupSpeck() {
         component = new Component()
         component.servers.add(Protocol.HTTP, testHttpPort)
         component.clients.add(Protocol.FILE)
@@ -32,46 +30,54 @@ class FeedArchivePastToPresentReaderTest {
         component.start()
     }
 
-    @AfterClass
-    static void tearDownClass() {
+    def cleanupSpeck() {
         component.stop()
     }
 
-    @Test
-    void shouldReadFeedInOrder() {
+    def "should read feed in order"() {
+        when:
         def reader = new CollectReader()
         reader.readFeed(feedUrl)
-        assertEquals(
-                [new URL("${baseUrl}/arch1.atom"), feedUrl],
-                reader.visitedPages )
-        assertEquals( [
-                    "http://example.org/entry:1 2000-01-01T00:00:01.000Z",
-                    // not: "http://example.org/entry:2 2000-01-01T00:00:02.000Z",
-                    "http://example.org/entry:3 2000-01-01T00:00:03.000Z",
-                    "http://example.org/entry:2 2000-01-01T00:01:00.000Z",
-                ],
-                reader.visitedEntries.collect {
-                    "${it.id} ${it.updatedElement.getString()}" as String
-                }
-            )
+        then:
+        reader.visitedPages == [new URL("${baseUrl}/arch1.atom"), feedUrl]
+        and:
+        reader.visitedEntries.collect {
+            "${it.id} ${it.updatedElement.getString()}" as String
+        } == [
+            "http://example.org/entry:1 2000-01-01T00:00:01.000Z",
+            // not: "http://example.org/entry:2 2000-01-01T00:00:02.000Z",
+            "http://example.org/entry:3 2000-01-01T00:00:03.000Z",
+            "http://example.org/entry:2 2000-01-01T00:01:00.000Z",
+        ]
     }
 
-    @Test
-    void shouldStopOnProcessedEntry() {
+    def "should stop on processed entry"() {
+        when:
         def reader = new CollectReader(
                 knownEntry:[id: "http://example.org/entry:3",
-                             updated:"2000-01-01T00:00:03.000Z"]
-            )
+                             updated:"2000-01-01T00:00:03.000Z"])
         reader.readFeed(feedUrl)
-        assertEquals 1, reader.visitedPages.size()
-        assertEquals 1, reader.visitedEntries.size()
+        then:
+        reader.visitedPages.size() == 1
+        reader.visitedEntries.size() == 1
     }
 
-    @Test
-    void shouldStopOnVisitedArchive() {
+    def "should stop on visited archive"() {
+        when:
         def reader = new CollectReader(knownArchive:"${baseUrl}/arch1.atom")
         reader.readFeed(feedUrl)
-        assertEquals 1, reader.visitedPages.size()
+        then:
+        reader.visitedPages.size() == 1
+    }
+
+    def "should collect entries with same timestamp as processed entry"() {
+        when:
+        def reader = new CollectReader(
+                knownEntry:[id: "http://example.org/entry:1",
+                             updated:"2000-01-01T00:00:00.000Z"])
+        reader.readFeed(new URL("${baseUrl}/entries_with_updated_dups.atom"))
+        then:
+        reader.visitedEntries.size() == 2
     }
 
     /* TODO: high-level meaningful specs(s) related to "putUriDateIfNewOrYoungest":
@@ -90,29 +96,38 @@ class FeedArchivePastToPresentReaderTest {
             - robotframework or BDD unit-tests?
     */
 
-    @Test
-    void shouldPutUriDateIfNewOrYoungest() {
+    def "should put uri if new or date is youngest"() {
+        setup:
         def map = [:]
         def iri = new IRI("http://example.org/1")
 
+        when:
         FeedArchivePastToPresentReader.putUriDateIfNewOrYoungest(map,
                 iri, new AtomDate("2000-01-01T00:01:00.000Z"))
-        assertEquals new AtomDate("2000-01-01T00:01:00.000Z"), map[iri]
+        then:
+        map[iri] == new AtomDate("2000-01-01T00:01:00.000Z")
 
+        when:
         FeedArchivePastToPresentReader.putUriDateIfNewOrYoungest(map,
                 iri, new AtomDate("2002-01-01T00:01:00.000Z"))
-        assertEquals new AtomDate("2002-01-01T00:01:00.000Z"), map[iri]
+        then:
+        map[iri] == new AtomDate("2002-01-01T00:01:00.000Z")
 
+        when:
         FeedArchivePastToPresentReader.putUriDateIfNewOrYoungest(map,
                 iri, new AtomDate("2001-01-01T00:01:00.000Z"))
-        assertEquals new AtomDate("2002-01-01T00:01:00.000Z"), map[iri]
+        then:
+        map[iri] == new AtomDate("2002-01-01T00:01:00.000Z")
 
-        assertEquals 1, map.size()
+        and:
+        1 == map.size()
 
+        when:
         FeedArchivePastToPresentReader.putUriDateIfNewOrYoungest(map,
                 new IRI("http://example.org/2"),
                 new AtomDate("2000-01-01T00:01:00.000Z"))
-        assertEquals 2, map.size()
+        then:
+        map.size() == 2
     }
 
 }

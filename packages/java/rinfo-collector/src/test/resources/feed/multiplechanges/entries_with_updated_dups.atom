@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+    <id>http://example.org/feed</id>
+    <updated>2000-01-01T00:01:00.000Z</updated>
+    <link href="/index.atom" rel="self"/>
+
+    <entry>
+        <id>http://example.org/entry:3</id>
+        <updated>2000-01-01T00:00:00.000Z</updated>
+        <title type="text">Entry 3</title>
+        <content type="text/plain">Entry 3 content.</content>
+    </entry>
+
+    <entry>
+        <id>http://example.org/entry:2</id>
+        <updated>2000-01-01T00:00:00.000Z</updated>
+        <title type="text">Entry 2</title>
+        <content type="text/plain">Entry 2 content.</content>
+    </entry>
+
+    <entry>
+        <id>http://example.org/entry:1</id>
+        <updated>2000-01-01T00:00:00.000Z</updated>
+        <title type="text">Entry 1</title>
+        <content type="text/plain">Entry 1 content.</content>
+    </entry>
+
+</feed>
