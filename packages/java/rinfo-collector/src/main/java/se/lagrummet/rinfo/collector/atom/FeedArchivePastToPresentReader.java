@@ -64,15 +64,13 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                                 youngestAtomDate == null ||
                                 youngestAtomDate.getDate().equals(entryUpdated);
                         if (notSeenOrYoungestOfSeen) {
-                            // FIXME: if there are more entries with same
-                            // timestamp as knownStoppingEntry, "!isYoungerThan"
-                            // will skip some (some of) those! Also see
-                            // stopOnEntry below. FIXED? Does this work(?):
-                            if (knownStoppingEntry != null && (
+                            boolean knownOrOlderThanKnown =
+                                knownStoppingEntry != null && (
                                     entryId.equals(
                                         knownStoppingEntry.getId()) ||
                                     isOlderThan(entryUpdated,
-                                        knownStoppingEntry.getUpdated()))) {
+                                        knownStoppingEntry.getUpdated()));
+                            if (knownOrOlderThanKnown) {
                                 continue;
                             }
                             effectiveEntries.add(entry);
@@ -123,11 +121,10 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
         }
 
         // FIXME:? needs to scan the rest with the same updated stamp before
-        // stopping (even if this means following more pages back in time.. Or?
-        // Why?)..
-        // - thus it would be wise to mark/remove entries in feedTrail which
-        // have been visited (so the subclass don't have to check this
-        // twice)...
+        // stopping (even if this means following more pages back in time?)?
+        // TODO: It would thus also be wise to mark/remove entries in feedTrail
+        // which have been visited (so the subclass don't have to check this
+        // twice).
         for (Entry entry : feed.getEntries()) {
             if (stopOnEntry(entry)) {
                 logger.info("Stopping on known entry: <" +entry.getId() +

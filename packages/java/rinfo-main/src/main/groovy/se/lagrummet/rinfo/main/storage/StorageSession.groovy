@@ -76,13 +76,14 @@ class StorageSession {
         logger.info("Collecting entry <${entryId}>..")
         DepotEntry depotEntry = depot.getEntry(entryId)
 
-        // TODO: Not needed? storeEntry should not be called if hasCollected is false
-        // (via stopOnEntry)?
+        // NOTE: Needed since even if hasCollected is true (via stopOnEntry),
+        // there may be several entries with the same timestamp.
+        // TODO:IMPROVE? Will this "thrash" on many true:s?
         if (hasCollected(sourceEntry, depotEntry)) {
             logger.info("Encountered collected entry with id=<" +
                     sourceEntry.getId()+">, updated=[" +
                     sourceEntry.getUpdated()+"]. Skipping.")
-            return
+            return true
         }
 
         boolean doCreate = (depotEntry == null)
