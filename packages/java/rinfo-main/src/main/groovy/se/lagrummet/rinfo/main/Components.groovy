@@ -99,8 +99,12 @@ public class Components {
         configure(collectScheduler, "rinfo.main.collector")
         def publicSubscriptionFeed = new URL(
                 config.getString(ConfigKey.PUBLIC_SUBSCRIPTION_FEED.toString()))
-        def onCompletePingTargets = config.getList(
-                ConfigKey.ON_COMPLETE_PING_TARGETS.toString()).collect { new URL(it) }
+        def onCompletePingTargets = new ArrayList<URL>()
+        for (String s : config.getList(
+                    ConfigKey.ON_COMPLETE_PING_TARGETS.toString())) {
+            if (s == null || s.equals("")) continue
+            onCompletePingTargets << new URL(s)
+        }
         collectScheduler.setBatchCompletedCallback(
                 new FeedUpdatePingNotifyer(publicSubscriptionFeed, onCompletePingTargets)
             )
