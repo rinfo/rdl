@@ -21,17 +21,21 @@ def checkFeed(String feedUrl, verbose=true) {
         def entryId = it.id as String
         def someMismatch = false
         def results = []
+        Closure checkMd5 = { url, expectedMD5 ->
+            def realMD5 = computeMD5(feedUrl, url)
+            def equalMD5s = expectedMD5 == realMD5
+            if (!equalMD5s) {
+                totalMismatches++
+                someMismatch = true
+            }
+            results << [url:url, expected:expectedMD5, real:realMD5, ok:equalMD5s]
+        }
+        it.content.with {
+            checkMd5(it.@src as String, it.@'le:md5' as String)
+        }
         it.link.each {
-            if (it.@rel == 'alternate') {
-                def url = it.@href as String
-                def expectedMD5 = it.@'le:md5' as String
-                def realMD5 = computeMD5(url)
-                def equalMD5s = expectedMD5 == realMD5
-                if (!equalMD5s) {
-                    totalMismatches++
-                    someMismatch = true
-                }
-                results << [url:url, expected:expectedMD5, real:realMD5, ok:equalMD5s]
+            if (it.@rel == 'alternate' || it.@rel == 'enclosure') {
+                checkMd5(it.@href as String, it.@'le:md5' as String)
             }
         }
         if (verbose || someMismatch)
@@ -50,8 +54,8 @@ def checkFeed(String feedUrl, verbose=true) {
         println "Total mismatches: ${totalMismatches}"
 }
 
-def computeMD5(String url) {
-    def ins = new URL(url).openStream()
+def computeMD5(String baseUrl, String url) {
+    def ins = new URL(new URL(baseUrl), url).openStream()
     def realMD5 = getMD5HexDigest(ins)
     ins.close()
     return realMD5
