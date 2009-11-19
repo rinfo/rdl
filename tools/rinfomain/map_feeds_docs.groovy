@@ -32,6 +32,9 @@ def createServableSources(buildDir, docsBase, feedBase) {
     ant.fileScanner { fileset(dir:"${feedBase}", includes:"**/*.atom") }.each {
 
         def feed = (Feed) Abdera.instance.parser.parse(new FileReader(it)).root
+        if (feed.baseUri) {
+            feed.baseUri = ""
+        }
 
         //println "Feed <${it.name}>:"
         def feedDirName = (feed.id =~ /tag:([^,]+),/)[0][1]
@@ -139,8 +142,8 @@ def makeSourcesRdf(writer, buildDir, feedPaths) {
 
 //========================================
 
-createServableSources(
-        "_build/www",
-        "../../documentation/exempel/documents/publ",
-        "../../documentation/exempel/feeds")
+def buildDir = args[0]
+def docsDir = args[1]
+createServableSources(buildDir,
+        "${docsDir}/exempel/documents/publ", "${docsDir}/exempel/feeds")
 
