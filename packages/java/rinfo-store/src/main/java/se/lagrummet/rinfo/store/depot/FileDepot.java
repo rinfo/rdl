@@ -32,9 +32,8 @@ public class FileDepot implements Depot {
     public FileDepot(URI baseUri, File baseDir)
             throws FileNotFoundException {
         this();
-        this.baseDir = baseDir;
         this.baseUri = baseUri;
-        // TODO:? .. or require manual call, or run at first openSession()?
+        this.baseDir = baseDir;
         initialize();
     }
 
@@ -58,7 +57,7 @@ public class FileDepot implements Depot {
 
     public void initialize() throws FileNotFoundException {
         if (baseDir == null) {
-            throw new IllegalStateException("The depot baseDir has not been set.");
+            throw new IllegalStateException("baseDir has not been set.");
         }
         if (!getBaseDir().exists()) {
             baseDir.mkdir();
@@ -68,7 +67,9 @@ public class FileDepot implements Depot {
     }
 
     public DepotSession openSession() {
-        //if (!initialized) { initialize(); }
+        if (!initialized) {
+            throw new IllegalStateException("initialize() has not run.");
+        }
         return new FileDepotSession(this);
     }
 
