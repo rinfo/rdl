@@ -25,7 +25,6 @@ import org.apache.abdera.model.Feed
 import org.apache.abdera.i18n.iri.IRI
 
 import se.lagrummet.rinfo.store.depot.Atomizer
-import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.SourceContent
 
 import se.lagrummet.rinfo.collector.atom.FeedArchivePastToPresentReader
@@ -134,13 +133,13 @@ public class FeedCollector extends FeedArchivePastToPresentReader {
                         break
                     }
                 } catch (Exception e) {
-                    // TODO:? storageSession should handle (log and report) errors..
+                    // NOTE: storageSession should handle (log and report) errors.
                     logger.error("Critical error when storing entry: "+entry, e)
                     throw e
                 }
             }
         } finally {
-            storageSession.endPage()
+            storageSession.endPage(pageUrl)
         }
     }
 
@@ -151,7 +150,7 @@ public class FeedCollector extends FeedArchivePastToPresentReader {
                         delItem.getKey().toURI(),
                         delItem.getValue().getDate())
             } catch (Exception e) {
-                // TODO: report explicit error. storageSession should catch most though?
+                // NOTE: storageSession should handle (log and report) errors.
                 logger.error("Error deleting entry!", e)
                 throw e
             }

@@ -54,7 +54,7 @@ class StorageSession {
         depotSession = depot.openSession()
     }
 
-    void endPage() {
+    void endPage(URL pageUrl) {
         if (depotSession != null) {
             depotSession.close()
             depotSession = null
