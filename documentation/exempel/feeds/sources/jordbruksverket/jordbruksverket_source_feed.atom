@@ -31,7 +31,7 @@
 		<!-- länk till metadataposten (påhittad i detta exempel) -->
 		<link rel="alternate" href="https://www.jordbruksverket.se/dokument/juridik/2009/SJVFS-2009_44.rdf"
 			type="application/rdf+xml"
-			length="1465" le:md5="2ea69a3e26c3c544a0104d823dc301d6"/>
+			length="2880" le:md5="c7d50f4ca1931b20a329e847b3978562"/>
 	</entry>
 
 	<entry>
@@ -44,10 +44,10 @@
 		<!-- länk till PDF-versionen av grundförfattningen (kunde vi inte hitta på webbplatsen)-->
 		<content src="http://www.jordbruksverket.se/download/18.26424bf71212ecc74b08000993/2009-026.pdf"
 			type="application/pdf"
-			le:md5="baaa492e5a26b4610958b0568b4961550"/>
+			le:md5="9d83a5d63599283f1b5dab35a9482e4a"/>
 		<!-- länken till var man kan hämta metadataposten (påhittad)-->
 		<link rel="alternate" href="https://www.jordbruksverket.se/dokument/juridik/2009/SJVFS-2009_26.rdf"
 			type="application/rdf+xml"
-			length="1465" le:md5="ad52a80b3ff8924cda419202f4ce17ff"/>
+			length="3060" le:md5="3a63e0a9638242088017cd3fe369bd04"/>
 	</entry>
 </feed>

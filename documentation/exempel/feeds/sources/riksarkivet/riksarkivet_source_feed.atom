@@ -173,7 +173,7 @@
 
     <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2006-06.pdf"
              type="application/pdf"
-             le:md5="bcb492e5a26b4610958b0568b4961550"/>
+             le:md5="3c5fc4bdc3306ae6541e97b89dbf4d16"/>
     <!-- Viktig!
 
       En primär representation ska representera det faktiska 
@@ -190,7 +190,7 @@
 
     <link rel="alternate" href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2006-6"
           type="application/rdf+xml"
-          length="1465" le:md5="143aa16eb05095675651b5e8380aff8d"/>
+          length="1465" le:md5="e4e242a358b72405fdbf5ba8bc044b1a"/>
     <!-- Viktig!
 
       Exakt en representation som innehåller serialiserad RDF måste finnas för 
@@ -216,11 +216,11 @@
     <summary></summary>
     <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
              type="application/pdf"
-             le:md5="3d0e39ad852d6e29ca3087ffae39d3ab"/>
+             le:md5="ca68b77f41ad2231586cf3e4d7970629"/>
     <link rel="alternate"
           href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
           type="application/rdf+xml"
-          length="1150" le:md5="cfe75fc5cc5180e346543cbea51717cd"/>
+          length="1150" le:md5="8051c695ef087fcc1183e51694c9c8c1"/>
   </entry>
 
 </feed>
