@@ -8,7 +8,7 @@ from deploy.envs import *
 def package_examples(deps="1"):
     if int(deps): install_rinfo_pkg()
     require('deployenv', provided_by=deployenvs)
-    local("cd %(java_packages)s/teststore-examples/ && mvn -P%(env)s package")
+    local("cd %(java_packages)s/teststore-examples/ && mvn -P%(env)s war:war")
 
 ##
 # Server deploy

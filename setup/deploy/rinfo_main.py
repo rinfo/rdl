@@ -10,7 +10,7 @@ def package_main(deps="1"):
     if int(deps): install_rinfo_pkg()
     require('deployenv', provided_by=deployenvs)
     local("cd %(java_packages)s/rinfo-main/ && "
-            "mvn -P%(deployenv)s clean package"%env, capture=False)
+            "mvn -P%(deployenv)s clean war:war"%env, capture=False)
 
 ##
 # Server deploy
