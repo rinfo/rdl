@@ -12,19 +12,21 @@
   <body>
     <div id="container">
         <div id="header">
-    	    <div id="headercontent">    	       
+            <div id="headercontent">
+                <!--
                 <ul id="quicknav">
-		    <li><a href="http://www.lagrummet.se/">Till webbplatsen lagrummet.se</a></li>
-		</ul> 
-	
+                    <li><a href="http://www.lagrummet.se/">Till webbplatsen lagrummet.se</a></li>
+                </ul>
+
                 <a href="/" accesskey="1" class="logo"><img src="http://www.lagrummet.se/img/lr/logo_lagrummet.gif" alt="Till startsidan för projektdokumentationen" /></a>
-	    </div>
-	    <div class="clearer divider"></div>
+                -->
+            </div>
+            <div class="clearer divider"></div>
         </div>
         <div id="pageleft">
-	    <div id="pageright">
-	        <div id="navigation">							        
-		    <p class="menuintro">Innehåll</p>
+            <div id="pageright">
+                <div id="navigation">
+                    <p class="menuintro">Innehåll</p>
                     <ul id="mainmenu">
                         <li class="open"><a href="#doktyp" class="open">Dokumenttyper</a>
                         <ul class="submenu">
@@ -34,18 +36,18 @@
                         </ul></li>
                         <li class="open"><a href="#generella" class="open">Generella riktlinjer</a></li>
                         <li class="open"><a href="#verktyg" class="open">Verktyg</a></li>
-                    </ul>				        	        
-	        </div>
-	                
-	        <div id="content" class="tpl-page">
-	                  
+                    </ul>
+                </div>
+
+                <div id="content" class="tpl-page">
+
                     <h1>Rättsinformationssystemets projektdokumentation</h1>
 
                     <p>Dessa sidor vänder sig främst till myndigheter som
                     producerar rättsinformation som omfattas av <a
                         href="http://62.95.69.15/cgi-bin/thw?%24{HTML}=sfst_lst&amp;%24{OOHTML}=sfst_dok&amp;%24{SNHTML}=sfst_err&amp;%24{BASE}=SFST&amp;%24{TRIPSHOW}=format%3DTHW&amp;BET=1999%3A175%24">Rättsinformationsförordningen (1999:175)</a>.
                     Letar du efter information om lagar och regler bör du
-                    istället besöka <a href="http://www.lagrummet.se/">portalen lagrummet.se</a>.</p> 
+                    istället besöka <a href="http://www.lagrummet.se/">portalen lagrummet.se</a>.</p>
 
                     <h2 id="doktyp">Riktlinjer per dokumenttyp</h2>
 
@@ -68,11 +70,10 @@
                     <h2 id="generella">Generella riktlinjer</h2>
                     <p>Detta material visar bl.a. designprinciper projektet
                     utgått från i rekommendationerna för elektroniska
-                    identifierare, XML-format mm.</p>
+                    identifierare, XML-format m.m.</p>
                     <ul>
-                        <li><a href="model.xhtml">Begreppsmodellen för svenska rättsinformationspublikationer</a></li>
-                        <li><a href="handbok/uri...">Principer för elektroniska identifierare</a></li>
-                        <li><a href="handbok/xhtml..">XML-baserat dokumentformat</a></li>
+                        <li><a href="model.pdf">Begreppsmodellen för svenska rättsinformationspublikationer (PDF)</a></li>
+                        <li><a href="system/uri-principer.pdf">Principer för elektroniska identifierare (PDF)</a></li>
                     </ul>
 
                     <h2 id="standarder">Rekommendationer/standarder som använts</h2>
@@ -81,8 +82,10 @@
                     hittar du här:</p>
                     <ul>
                         <li><a href="http://www.w3.org/RDF/" xml:lang="en">Resource Description Framework (RDF)</a></li>
-                        <li><a href="http://tools.ietf.org/html/rfc4287" xml:lang="en">The Atom Syndication Format</a></li>
                         <li><a href="http://dublincore.org/" xml:lang="en">The Dublin Core Metadata Initiative</a></li>
+                        <li><a href="http://tools.ietf.org/html/rfc4287" xml:lang="en">The Atom Syndication Format</a></li>
+                        <li><a href="http://tools.ietf.org/html/rfc5005" xml:lang="en">Feed Paging and Archiving</a></li>
+                        <li><a href="http://tools.ietf.org/html/draft-snell-atompub-tombstones-06">The Atom "deleted-entry" Element</a></li>
                     </ul>
 
                     <h2 id="verktyg">Verktyg</h2>
@@ -95,25 +98,26 @@
                         <li><a href="http://validator.w3.org/">W3C:s valideringsverktyg för XHTML</a></li>
                     </ul>
 
-	        </div>
-            
+                </div>
+
                 <div id="related">
                     <h2>Senaste nyheter från projektet</h2>
 
                     <script type="text/javascript" src="http://p3k.org/rss/proxy.r?textColor=black&amp;align=&amp;width=200&amp;fontFace=&amp;url=http%3A%2F%2Frinfoprojektet.wordpress.com%2Ffeed%2F&amp;compact=true&amp;frameColor=white&amp;showXmlButton=&amp;boxFillColor=white&amp;_=1255012508966&amp;titleBarColor=%23ccc&amp;maxItems=5&amp;titleBarTextColor=black&amp;"></script>
 
-	        </div>
-	        <div class="clearer"></div>
-	    </div>
-	</div>
-	<div id="footer">
+                </div>
+                <div class="clearer"></div>
+            </div>
+        </div>
+        <div id="footer">
             <div id="footercontent">
                 <div class="contact">
-                    <p class="left">Kontakta projektledare peter.b.krantz@dom.se</p>
+                    <p class="left">Kontakta: niklas.lindstrom@valtech.se (utvecklare)</p>
+                    <!-- TODO: @dom.se (projektledare) -->
                     <p class="right"><a href="http://www.domstol.se">Domstolsverket</a></p>
                 </div>
-	    </div>
-	</div>	
+            </div>
+        </div>
     </div>
   </body>
 </html>

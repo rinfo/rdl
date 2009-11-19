@@ -2,6 +2,7 @@
 @Grab(group='com.uwyn', module='jhighlight', version='1.0')
 @Grab(group='com.lowagie', module='itext', version='2.0.8')
 @Grab(group='org.xhtmlrenderer', module='core-renderer', version='R8pre2')
+@Grab(group='xerces', module='xercesImpl', version='2.9.1')
 def _(){}
 
 import docgen.Builder

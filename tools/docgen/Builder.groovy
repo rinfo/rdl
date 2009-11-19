@@ -1,7 +1,8 @@
 package docgen
 
 import java.text.SimpleDateFormat
-import groovy.xml.dom.DOMUtil
+import org.apache.xml.serialize.XHTMLSerializer
+import org.apache.xml.serialize.OutputFormat
 
 
 class Builder {
@@ -32,16 +33,25 @@ class Builder {
     String resourceDir
     String sourceDir
     String buildDir
+    Map systemIdMap
+    Map customProtocols
 
     Builder(resourceDir, sourceDir, buildDir) {
         this.resourceDir = resourceDir
         this.sourceDir = sourceDir
         this.buildDir = buildDir
+        systemIdMap = [
+            "http://www.w3.org/TR/xhtml1/DTD/": "${getClass().getResource("dtd").path}/"
+        ]
+        customProtocols = [
+            "build": buildDir
+        ]
     }
 
     void build(boolean clean=false,
             renderPatterns=DEFAULT_RENDER_PATTERNS,
-            copyPatterns=DEFAULT_COPY_PATTERNS)
+            copyPatterns=DEFAULT_COPY_PATTERNS,
+            generate=true)
     {
         def ant = new AntBuilder()
 
@@ -58,26 +68,11 @@ class Builder {
             }
         }
 
-        def systemIdMap = [
-            "http://www.w3.org/TR/xhtml1/DTD/": "${getClass().getResource("dtd").path}/"
-        ]
-        def customProtocols = [
-            "build": buildDir
-        ]
         def svnVersionNumber = getSvnVersionNumber()
 
-        def dataView = new DataViewer(
-                ["${resourceDir}/base/model",
-                "${resourceDir}/base/extended/rdf",
-                "${resourceDir}/external/rdf"] as String[]
-        )
-        def modelPath = buildDir+"/model"
-        def modelHtmlPath = modelPath+'.xhtml'
-        dataView.renderModel(modelHtmlPath, "sv")
-        new PdfMaker().renderAsPdf(
-                new DocTemplate(systemIdMap).render(
-                        new File(modelHtmlPath).toURL()),
-                new File(modelPath+'.pdf'))
+        if (generate) {
+            generateModelXhtml()
+        }
 
         def srcPath = normUrlPath(sourceDir)
         def buildPath = normUrlPath(buildDir)
@@ -90,7 +85,9 @@ class Builder {
             }
         }.each {
             def inUrl = it.toURL()
-            def outUrl = new URL(inUrl.toString().replace(srcPath, buildPath))
+            def outUrl = new URL(inUrl.toString()
+                    .replace(srcPath, buildPath)
+                    .replace('.xhtml', '.html'))
             ant.echo "<${inUrl}> => <${outUrl}>"
 
             def params = [
@@ -105,26 +102,26 @@ class Builder {
             def outFile = new File(outUrl.toURI())
             ant.mkdir(dir:outFile.parentFile)
             outFile.withOutputStream {
-                DOMUtil.serialize(doc.documentElement, it)
+                new XHTMLSerializer(it, new OutputFormat(doc)).serialize(doc)
             }
             new PdfMaker().renderAsPdf(doc,
-                    new File(outFile.canonicalPath.replace('.xhtml', '.pdf')))
+                    new File(outFile.canonicalPath.replace('.html', '.pdf')))
         }
 
     }
 
-    static String relRoot(String base, File file) {
+    static relRoot(String base, File file) {
         def path = file.parentFile.toURL() as String
         if (path.startsWith(base)) {
             return '../' * path.replace(base, "").count('/')
         }
     }
 
-    static String normUrlPath(filePath) {
+    static normUrlPath(filePath) {
         return new File(filePath).canonicalFile.toURL().toString()
     }
 
-    static String getSvnVersionNumber() {
+    static getSvnVersionNumber() {
         def proc = "svn info --xml".execute()
         proc.waitFor()
         if (proc.exitValue() == 0) {
@@ -133,6 +130,20 @@ class Builder {
         } else {
             return "?"
         }
+    }
+
+    void generateModelXhtml() {
+        def dataView = new DataViewer(
+                ["${resourceDir}/base/model",
+                "${resourceDir}/base/extended/rdf",
+                "${resourceDir}/external/rdf"] as String[]
+        )
+        def modelPath = buildDir+"/model"
+        def modelHtmlPath = modelPath+'.xhtml'
+        dataView.renderModel(modelHtmlPath, "sv")
+        def modelDoc = new DocTemplate(systemIdMap).render(
+                new File(modelHtmlPath).toURL())
+        new PdfMaker().renderAsPdf(modelDoc, new File(modelPath+'.pdf'))
     }
 
 }
