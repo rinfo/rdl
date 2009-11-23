@@ -48,11 +48,9 @@ class Builder {
         ]
     }
 
-    void build(boolean clean=false,
-            renderPatterns=DEFAULT_RENDER_PATTERNS,
+    void build(renderPatterns=DEFAULT_RENDER_PATTERNS,
             copyPatterns=DEFAULT_COPY_PATTERNS,
-            generate=true)
-    {
+            clean=false, generate=true) {
         def ant = new AntBuilder()
 
         if (clean) {

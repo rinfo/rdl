@@ -3,6 +3,8 @@
 @Grab(group='com.lowagie', module='itext', version='2.0.8')
 @Grab(group='org.xhtmlrenderer', module='core-renderer', version='R8pre2')
 @Grab(group='xerces', module='xercesImpl', version='2.9.1')
+@Grab(group='xalan', module='xalan', version='2.7.1')
+@Grab(group='xalan', module='serializer', version='2.7.1')
 def _(){}
 
 import docgen.Builder
@@ -13,7 +15,9 @@ def buildDir = "_build/documentation"
 
 def (flags, paths) = args.split { it =~ /^--/ }
 def clean = "--clean" in flags
+def nogen = "--nogen" in flags
 def patterns = paths ?: Builder.DEFAULT_RENDER_PATTERNS
+def copies = Builder.DEFAULT_COPY_PATTERNS
 def build = new Builder(resourceDir, sourceDir, buildDir).build(
-        clean, patterns)
+        patterns, copies, clean, !nogen)
 
