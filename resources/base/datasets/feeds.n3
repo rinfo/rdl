@@ -1,6 +1,13 @@
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix sioc: <http://rdfs.org/sioc/ns#> .
 
+# iana-related defs collected at (e.g.) <http://tools.ietf.org/html/draft-nottingham-http-link-header-06>
+# TODO: consider changing to:
+#<...> a void:Dataset;
+#    dct:publisher <...>;
+#    iana:current <.../current.atom> .
+#<.../current.atom> dct:format "application/atom+xml" .
+
 <tag:lagrummet.se,2009:rinfo> a sioc:Space;
     dct:source <tag:dom.se,2009:rinfo>,
         <tag:regeringen.se,2009:rinfo>,
