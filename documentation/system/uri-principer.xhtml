@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xml" href="../templates/dv-handbok.xslt"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv">
+<?xml-stylesheet type="text/xml" href="../templates/system.xslt"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
   <head>
     <title>Elektroniska identifierare i Rättsinformationssystemet</title>
   </head>
@@ -47,7 +46,7 @@
         <p>Genom kontrollerad administration av bas-segment garanteras även att 
           URI-rymden undviker namnkollision, om t.ex. framtida termer dyker upp 
           som är snarlika historiska begrepp. Detta betyder att enbart de 
-          segment som ligger under förutsägbar kontrollerade bas-URI:er ska 
+          segment som ligger under förutsägbara, kontrollerade bas-URI:er ska 
           genereras ur resursens data.
         </p>
       </div>
@@ -77,6 +76,7 @@
           URI-form.
         </p>
       </div>
+
     </div>
 
     <div class="section">
@@ -94,7 +94,7 @@
           vilka beskrivs nedan.
         </p>
         <div>
-          <h4>Externt kontrollerade resurser</h4>
+          <h4>Resurser kontrollerade av producenter</h4>
           <dl>
             <dt><code>publ</code></dt>
             <dd>
@@ -124,7 +124,7 @@
           </dl>
         </div>
         <div>
-          <h4>Internt kontrollerade resurser</h4>
+          <h4>Resurser kontrollerade av systemet</h4>
           <dl>
             <dt><code>ns</code></dt>
             <dd>
@@ -141,15 +141,170 @@
             </dd>
             <dt><code>ext</code></dt>
             <dd>
-              <p>Plats för identifierare för resurser som inte ingår i den svenska
-                rättsinformationsdomänen. I de fall då "externa" resurser inte
-                har blivit tilldelade beständiga URI:er kan sådana tilldelas
-                under detta segment.
+              <p>Plats för identifierare för resurser som inte ingår i den
+                svenska rättsinformationsdomänen. Här kan information om
+                viktiga externa resurser placeras (dokument, vokabulär,
+                organisationer m.m.), eventuellt med kopior av den information
+                de utgör.
+              </p>
+              <p>Vidare kan URI:er tilldelas under detta segment i de fall då 
+                externa resurser inte har blivit tilldelade (pålitliga och 
+                beständiga) sådana.
               </p>
             </dd>
           </dl>
         </div>
       </div>
+
+    </div>
+
+    <div class="section">
+      <h2>5. Identifierare för publikationer, samlingar, organisationer och 
+        kommittéeinformation</h2>
+      <p>Detta kapitel beskriver regler för hur publicister ska konstruera 
+        URI:er för poster som ingår i rättsinformationssystemet.
+      </p>
+
+      <div>
+        <h3>5.1. Rättsinformationsdokument</h3>
+        <p>URI:er för rättsinformationsdokument faller under under segmentet 
+          "publ".
+        </p>
+        <p>Här hamnar alla primära rättsinformationsdokument. Deras URI:er 
+          baseras på en specifik gruppering samt ett lokalt unikt värde för 
+          respektive grupp.
+        </p>
+        <div>
+          <h4>Underliggande segment</h4>
+          <p>Direkt under <code>publ</code> finns ett flertal segment som 
+            representerar tillhörighet. Dessa är centralt definierade och 
+            kräver att förvaltningen av rättsinformationsdomänen skapar nya 
+            platser då nya tillhörighetstyper tillkommer (t.ex. när en ny 
+            författningsamling skapas, eller om en ny grundtyp av dokument 
+            definieras i rättsinformationsmodellen).
+          </p>
+          <p>Exempel på segment för publikationstillhörighet är:
+          </p>
+          <dl>
+            <dt><code>/publ/sfs/</code></dt>
+            <dd>
+              <p>Dokument publicerade i SFS (Svensk Författningsamling).</p>
+            </dd>
+            <dt><code>/publ/nja/</code></dt>
+            <dd>
+              <p>Dokument publicerade i NJA (Nytt Juridiskt Arkiv).</p>
+            </dd>
+            <dt><code>/publ/prop/</code></dt>
+            <dd>
+              <p>Propositioner (dokument av typen "proposition").</p>
+            </dd>
+            <dt><code>/publ/dom/domstolsverket/</code></dt>
+            <dd>
+              <p>Vägledande domstolsavgöranden utgivna av Domstolsverket.</p>
+            </dd>
+          </dl>
+        </div>
+        <div>
+          <!--TODO-->
+          <h4>Delar av dokument: fragmentidentifierare</h4>
+          <p></p>
+          <dl>
+            <dt>Paragraf</dt>
+            <dd><code>#P${ordinal}</code></dd>
+            <dt>Kapitel</dt>
+            <dd><code>#K${ordinal}-P${ordinal}</code></dd>
+            <dt>Bilaga</dt>
+            <dd><code>#B${ordinal}</code></dd>
+          </dl>
+        </div>
+        <div>
+          <h4>Konstruktionsregler</h4>
+          <!--TODO:skriv klart. -->
+          <ul>
+            <li>Lista på containrar: segment per "gruppering", vilken "symbol" 
+              (token) som används..</li>
+            <li>Hur en symbol encodas som identifierare..</li>
+            <li>Sammansättningsalgoritm..</li>
+            <!--
+            <xi:include href="data/containers.xhtml" xpointer="containers"/>
+            <code class="javascript"><xi:include href="../../resources/base/uri_algorithm/compose_results.js" parse="text"/></code>
+            -->
+          </ul>
+        </div>
+        <div>
+          <h4>Exempel på URI:er per dokument- och samlingstyp</h4>
+          <div class="atom-uri-examples">
+            <a href="../../resources/base/uri_algorithm/tests/publ.atom"
+              class="atom-source">exempel</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>5.2. Publikationsserier</h3>
+      </div>
+
+      <div class="section">
+        <h3>5.3. Organisationer</h3>
+      </div>
+
+      <div class="section">
+        <h3>5.4. Kommittéregisterposter</h3>
+        <p>URI:er för ting som inte är publikationer inom kommittéväsendet faller
+          under under segmentet "kom".
+        </p>
+        <p>Exempel på sådana ting är kommittéer och poster i kommittéregistret.
+        </p>
+        <dl>
+          <dt><code>/kom/kommitte/</code></dt>
+          <dd>
+            <p>Kommittéer</p>
+          </dd>
+        </dl>
+      </div>
+
+    </div>
+
+    <div class="section">
+      <h2>6. Identifierare för centrala poster i rättsinformationssystemet</h2>
+      <p>Detta kapiterl  beskriver regler för hur URI:er för centrala poster i 
+        rättsinformationssystemet ska konstrueras.
+      </p>
+      <div>
+        <h3>6.1. Namnrymden "ns"</h3>
+        <p>Under detta segment placeras tekniska modeller såsom 
+          scheman/ontologier (RDFS/OWL), centrala SKOS-vokabular, eventuella 
+          GRDDL-dokument, XML-scheman och liknande.
+        </p>
+        <div>
+          <h4>Definierade modell-URI:er</h4>
+          <dl>
+            <dt>Modellen för rättsinformationsdokument</dt>
+            <dd>
+              <code>http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#</code>
+            </dd>
+            <dt>Modellen för kommittéeregistret</dt>
+            <dd>
+              <code>http://rinfo.lagrummet.se/ns/2008/11/rinfo/kommitte#</code>
+            </dd>
+          </dl>
+        </div>
+        <p>Denna rymd partitioneras i regel med datum (år, månad, namn(delar)),
+          enligt:
+        </p>
+        <p>
+          <code>&lt;ns/{yyyy/mm[/dd]}/{namn[/...]}></code>
+        </p>
+      </div>
+
+      <div class="section">
+        <h3>6.2. System</h3>
+      </div>
+
+      <div class="section">
+        <h3>6.3. Ext</h3>
+      </div>
+
     </div>
 
     <div class="appendix">
@@ -160,7 +315,7 @@
           digitala dokument som finns på ett eller flera format.
         </p>
         <div>
-          <h3>Digitala representationer</h3>
+          <h4>Digitala representationer</h4>
           <p>Digitalt material utgör representationer av informationsresurser 
             såsom textdokument, bilder m.m. Dessa är direkt underordnade en 
             logisk identifierare, och är i systemet även strukturellt 
@@ -185,7 +340,7 @@
           </div>
         </div>
         <div>
-          <h3>Associerade filer</h3>
+          <h4>Associerade filer</h4>
           <p>Vissa representationer kan ha en eller flera associerade filer i form 
             av t.ex. bilagor eller stilinformation. Dessa underordnas en primär 
             URI på samma sätt som representationerna. Deras namngivning är löst 

@@ -9,6 +9,7 @@
     <!-- SFS -->
     <entry>
         <id>http://rinfo.lagrummet.se/publ/sfs/1999:175</id>
+        <summary>Förordning i svensk författningsamling (SFS)</summary>
         <content type="application/rdf+xml">
             <rpubl:Forordning>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
@@ -19,6 +20,7 @@
 
     <entry>
         <id>http://rinfo.lagrummet.se/publ/sfs/1899:bih._40_s._3</id>
+        <summary>Äldre förordning i svensk författningsamling (SFS), med identifierare konstuerad ur publikationshänvisning</summary>
         <content type="application/rdf+xml">
             <rpubl:Forordning>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
@@ -28,12 +30,10 @@
     </entry>
 
 
-
-
-
     <!-- Myndighetsföreskrifter -->
     <entry>
         <id>http://rinfo.lagrummet.se/publ/ra-fs/2006:6</id>
+        <summary>Vanlig myndighetsföreskrift (RA-FS)</summary>
         <content type="application/rdf+xml">
             <rpubl:Myndighetsforeskrift>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/ra-fs"/>
@@ -46,6 +46,7 @@
     <!-- Se exempel från http://www.arbetsgivarverket.se/t/PublicationList____271.aspx -->
     <entry>
         <id>http://rinfo.lagrummet.se/publ/agvfs/2002:3_B_3</id>
+        <summary>Myndighetsföreskrift vars författningssamlingsnummer innehåller siffror, mellanslag och bokstäver</summary>
         <content type="application/rdf+xml">
             <rpubl:Myndighetsforeskrift>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/agvfs"/>
@@ -59,6 +60,7 @@
     <!-- Se exempel från http://www5.f.lst.se/publikationer/forfattningar/ovrigaforeskrifter/ar/ovrigaforeskrifter1971.4.e689910bace3401a800031.html -->
     <entry>
         <id>http://rinfo.lagrummet.se/publ/06fs/1971:96_b</id>
+        <summary>Myndighetsföreskrift vars författningssamlingsnummer följs av mellanslag och bokstav</summary>
         <content type="application/rdf+xml">
             <rpubl:Myndighetsforeskrift>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/06fs"/>
@@ -68,11 +70,11 @@
     </entry>
 
 
-
     <!-- FIXME: must not be described with the properties of the doc it
          "konsoliderar"? -->
     <entry>
         <id>http://rinfo.lagrummet.se/publ/sfs/1999:175/konsolidering/1999-03-25</id>
+        <summary>Konsolidering av en grundförfattning, identifierad på grundförfattning och det datum då konsolideringen utfärdades.</summary>
         <content type="application/rdf+xml">
             <rpubl:KonsolideradGrundforfattning>
                 <rpubl:konsoliderar rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1999:175"/>
@@ -83,9 +85,10 @@
     </entry>
 
 
-	<!-- Betänkanden -->
+    <!-- Betänkanden -->
     <entry>
         <id>http://rinfo.lagrummet.se/publ/utr/ds/2005:26</id>
+        <summary>Utredningsbetänkande publicerad i Departementserien</summary>
         <content type="application/rdf+xml">
             <rpubl:Utredningsbetankande>
                 <rpubl:utrSerie rdf:resource="http://rinfo.lagrummet.se/serie/utr/ds"/>
@@ -96,14 +99,14 @@
 
     <entry>
         <id>http://rinfo.lagrummet.se/publ/utr/sou/2000:114</id>
+        <summary>Utredningsbetänkande publicerad i Statens offentliga utredningar</summary>
         <content type="application/rdf+xml">
             <rpubl:Utredningsbetankande>
                 <rpubl:utrSerie rdf:resource="http://rinfo.lagrummet.se/serie/utr/sou"/>
                 <rpubl:utrSerienummer>2000:114</rpubl:utrSerienummer>
             </rpubl:Utredningsbetankande>
         </content>
-	</entry>
-
+    </entry>
 
 
     <!--
@@ -113,6 +116,7 @@
     -->
     <entry>
         <id>http://rinfo.lagrummet.se/publ/rattsfall/nja/2005:57</id>
+        <summary>Rättsfallsreferat utgivet i Nytt Juridiskt Arkiv</summary>
         <content type="application/rdf+xml">
             <rpubl:Rattsfallsreferat>
                 <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/nja"/>
@@ -147,6 +151,7 @@
     <!-- TODO: rattningAv
     <entry>
         <id></id>
+        <summary></summary>
         <content type="application/rdf+xml">
             <rpubl:Rattelseblad>
                 <rpubl:rattningAv rdf:resource=""/>
@@ -159,6 +164,7 @@
     <!-- TODO: determine correct publisher uri:s
     <entry>
         <id>http://rinfo.lagrummet.se/publ/mynd/jk/874-05-30</id>
+        <summary></summary>
         <content type="application/rdf+xml">
             <rpubl:VagledandeMyndighetsavgorande>
                 <dct:publisher rdf:resource="http://rdf.kb.se/ap/20061205154112"/>
@@ -169,6 +175,7 @@
 
     <entry>
         <id>http://rinfo.lagrummet.se/publ/mynd/hd/B333-04</id>
+        <summary></summary>
         <content type="application/rdf+xml">
             <rpubl:VagledandeDomstolsavgorande>
                 <dct:publisher rdf:resource="http://rdf.kb.se/ap/20061205144122"/>
@@ -180,6 +187,7 @@
 
     <entry>
         <id>http://rinfo.lagrummet.se/publ/prop/2002/03:20</id>
+        <summary>Proposition</summary>
         <content type="application/rdf+xml">
             <rpubl:Proposition>
                 <rpubl:propositionsnummer>2002/03:20</rpubl:propositionsnummer>
@@ -189,6 +197,7 @@
 
     <entry>
         <id>http://rinfo.lagrummet.se/publ/fm/2005:2</id>
+        <summary>Förordningsmotiv</summary>
         <content type="application/rdf+xml">
             <rpubl:Forordningsmotiv>
                 <rpubl:fmNummer>2005:2</rpubl:fmNummer>
@@ -198,6 +207,7 @@
 
     <entry>
         <id>http://rinfo.lagrummet.se/publ/dir/1999:42</id>
+        <summary>Kommittédirektiv</summary>
         <content type="application/rdf+xml">
             <rpubl:Kommittedirektiv>
                 <rpubl:direktivnummer>1999:42</rpubl:direktivnummer>
@@ -207,10 +217,12 @@
 
     <entry>
         <id>http://rinfo.lagrummet.se/publ/so/2005:60</id>
+        <summary>Internationell överenskommelse utgiven i Sveriges Internationella Överenskommelser</summary>
         <content type="application/rdf+xml">
             <rpubl:InternationellOverenskommelse>
                 <rpubl:soNummer>2005:60</rpubl:soNummer>
             </rpubl:InternationellOverenskommelse>
         </content>
     </entry>
+
 </feed>
