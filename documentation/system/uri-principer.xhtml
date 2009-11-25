@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xml" href="../templates/system.xslt"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv"
       xmlns:xi="http://www.w3.org/2001/XInclude">
   <head>
@@ -12,7 +13,9 @@
       <h2>1. Inledning</h2>
       <p>
         Här beskrivs principer för och konstruktionen av de identifierare som 
-        rättsinformationssystemet använder för alla ingående reurser.
+        rättsinformationssystemet använder för alla ingående reurser. Syftet är 
+        att definiera en strikt form för att hålla identifikation (och således
+        hänvisningar) entydig, hållbar och förutsägbar.
       </p>
     </div>
 
@@ -20,22 +23,19 @@
       <h2>2. Vägledande principer för designen</h2>
       <div>
         <h3>Grunder</h3>
-        <p>Följande artiklar beskriver URI-teori och principer för god 
-          URI-design:</p>
-        <ul>
-          <li><a href="http://tools.ietf.org/rfc/rfc3986">Uniform Resource Identifier (URI): Generic Syntax</a></li>
-          <li><a href="http://www.w3.org/Provider/Style/URI.html">Cool URIs don't change</a></li>
-          <li><a href="http://www.w3.org/TR/cooluris/">Cool URIs for the Semantic Web</a></li>
-          <li><a href="http://www.w3.org/2001/tag/doc/alternatives-discovery.html">On Linking Alternative Representations To Enable Discovery And Publishing</a></li>
-          <li><a href="http://h3h.net/2007/01/designing-urls-for-multilingual-web-sites/">Designing URLs for Multilingual Web Sites</a></li>
-          <li><a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/pub/LinkedDataTutorial/">How to publish Linked Data on the Web</a></li>
-        </ul>
+        <p>Identifierare i systemet ska utgöras av URI:er (Uniform Resource 
+          Identifier) -- specifikt HTTP-URI:er. Dessa möjliggör upptäckbarhet 
+          genom att exponera över nätet hämtbar information. Alla URI:er ska 
+          designas så att de är beständiga över tid.</p>
+        <p>För mer teori och principer kring god URI-design, se <a 
+            href="#bilaga_a">Bilaga A</a>.
+        </p>
       </div>
       <div>
         <h3>Databeroenden</h3>
         <p>Identifierare ska konstrueras ur befintlig information om en resurs. 
           Detta gör dem förutsägbara, vilket medför att man kan beräkna en 
-          identiferare om man har tillgång till tillräcklig information.
+          identifierare om man har tillgång till tillräcklig information.
         </p>
         <p>En begränsad mängd centralt kontrollerad <em>data</em> kan vara 
           nödvändig för att kunna beräkna dessa, men algoritmen ska vara enkel 
@@ -73,7 +73,7 @@
           kvarstående arbete för att skapa en URI för ett 
           rättsinformationsdokument begränsas till att transformera dess 
           identifierade egenskap(er), t.ex. författningssamlingsnummer, till 
-          URI-form.
+          avslutande segment i URI:n.
         </p>
       </div>
 
@@ -167,8 +167,8 @@
 
       <div>
         <h3>5.1. Rättsinformationsdokument</h3>
-        <p>URI:er för rättsinformationsdokument faller under under segmentet 
-          "publ".
+        <p>URI:er för rättsinformationsdokument (publikationer) faller under 
+          under segmentet "publ".
         </p>
         <p>Här hamnar alla primära rättsinformationsdokument. Deras URI:er 
           baseras på en specifik gruppering samt ett lokalt unikt värde för 
@@ -205,26 +205,18 @@
           </dl>
         </div>
         <div>
-          <!--TODO-->
-          <h4>Delar av dokument: fragmentidentifierare</h4>
-          <p></p>
-          <dl>
-            <dt>Paragraf</dt>
-            <dd><code>#P${ordinal}</code></dd>
-            <dt>Kapitel</dt>
-            <dd><code>#K${ordinal}-P${ordinal}</code></dd>
-            <dt>Bilaga</dt>
-            <dd><code>#B${ordinal}</code></dd>
-          </dl>
-        </div>
-        <div>
-          <h4>Konstruktionsregler</h4>
-          <!--TODO:skriv klart. -->
+          <h4>Konstruktionsregler för publikationsindentifierare</h4>
+          <!-- TODO:skriv klart. -->
+          <p>
+          </p>
           <ul>
-            <li>Lista på containrar: segment per "gruppering", vilken "symbol" 
+            <li>Lista på regler: segment per "gruppering", vilken "symbol" 
               (token) som används..</li>
-            <li>Hur en symbol encodas som identifierare..</li>
+            <li>Hur en symbols tecken transformeras till ett/flera segment i en 
+              identifierare..</li>
             <li>Sammansättningsalgoritm..</li>
+            <li>Komplett lista på containrar som används som bas av (vissa) 
+              regler.. (i bilaga)</li>
             <!--
             <xi:include href="data/containers.xhtml" xpointer="containers"/>
             <code class="javascript"><xi:include href="../../resources/base/uri_algorithm/compose_results.js" parse="text"/></code>
@@ -237,6 +229,33 @@
             <a href="../../resources/base/uri_algorithm/tests/publ.atom"
               class="atom-source">exempel</a>
           </div>
+        </div>
+        <div>
+          <h4>Delar av dokument: fragmentidentifierare</h4>
+          <p>Delar av dokument identifieras med bestämda fragment. Dessa 
+            konstrueras baserat på:
+          </p>
+          <ul>
+            <li>relationen mellan dokument eller överliggande del och delen i 
+              sig,
+            </li>
+            <li>en ordinal (vanligen siffra eller nummer). Plats för denna 
+              representeras som <code>{ordinal}</code> i mallarna nedan.
+            </li>
+          </ul>
+          <p>De definierade fragmenttyperna och hur de ska konstrueras 
+            definieras av följande mallar:
+          </p>
+          <dl>
+            <dt>Paragraf på toppnivå</dt>
+            <dd><code>#p{ordinal}</code></dd>
+            <dt>Kapitel på toppnivå</dt>
+            <dd><code>#k{ordinal}</code></dd>
+            <dt>Paragraf i kapitelindelat dokument</dt>
+            <dd><code>#k{ordinal}-p{ordinal}</code></dd>
+            <dt>Bilaga</dt>
+            <dd><code>#bilaga_{ordinal}</code></dd>
+          </dl>
         </div>
       </div>
 
@@ -267,7 +286,7 @@
 
     <div class="section">
       <h2>6. Identifierare för centrala poster i rättsinformationssystemet</h2>
-      <p>Detta kapiterl  beskriver regler för hur URI:er för centrala poster i 
+      <p>Detta kapitel beskriver regler för hur URI:er för centrala poster i 
         rättsinformationssystemet ska konstrueras.
       </p>
       <div>
@@ -307,74 +326,106 @@
 
     </div>
 
-    <div class="appendix">
-      <div class="section">
-        <h2>A. Informationsresurser</h2>
-        <p>Den stora massan av resurser för vilka rättsinformationssystemet 
-          tilldelar URI:er är s.k. "informationsresurser". Dessa är hämtbara 
-          digitala dokument som finns på ett eller flera format.
+    <div class="section">
+      <h2>7. Informationsresurser</h2>
+      <p>Den stora massan av resurser för vilka rättsinformationssystemet 
+        tilldelar URI:er är s.k. "informationsresurser". Dessa är hämtbara 
+        digitala dokument som finns på ett eller flera format.
+      </p>
+      <div>
+        <h4>Digitala representationer</h4>
+        <p>Digitalt material utgör representationer av informationsresurser 
+          såsom textdokument, bilder m.m. Dessa är direkt underordnade en 
+          logisk identifierare, och är i systemet även strukturellt 
+          underordnade en given primär URI (likt filer i en katalog).
+        </p>
+        <p>Maximalt en given representation ska finnas per mediaformat och 
+          språk. Mediaformat och språk används för att namnge representationen 
+          under den givna primära URI:ns segment.
         </p>
         <div>
-          <h4>Digitala representationer</h4>
-          <p>Digitalt material utgör representationer av informationsresurser 
-            såsom textdokument, bilder m.m. Dessa är direkt underordnade en 
-            logisk identifierare, och är i systemet även strukturellt 
-            underordnade en given primär URI (likt filer i en katalog).
-          </p>
-          <p>Maximalt en given representation ska finnas per mediaformat och 
-            språk. Mediaformat och språk används för att namnge representationen 
-            under den givna primära URI:ns segment.
-          </p>
-          <div>
-            <h4>Exempel på URI:er för digitala representationer</h4>
-            <dl>
-              <dt>PDF (på svenska) för SFS 1999:175</dt>
-              <dd>
-                <code>http://rinfo.lagrummet.se/publ/sfs/1999:175/pdf,sv</code>
-              </dd>
-              <dt>RDF för SFS 1999:175</dt>
-              <dd>
-                <code>http://rinfo.lagrummet.se/publ/sfs/1999:175/rdf</code>
-              </dd>
-            </dl>
-          </div>
-        </div>
-        <div>
-          <h4>Associerade filer</h4>
-          <p>Vissa representationer kan ha en eller flera associerade filer i form 
-            av t.ex. bilagor eller stilinformation. Dessa underordnas en primär 
-            URI på samma sätt som representationerna. Deras namngivning är löst 
-            kontrollerad, med krav på:
-          </p>
-          <ol>
-            <li>Lokal unikhet</li>
-            <li>
-                Hänvisningar i en given representation ska utgå från en relativ 
-                placering i "samma katalog", med underkataloger separerade med 
-                <code>/</code> på sedvanligt vis.
-            </li>
-          </ol>
-          <div>
-            <h4>Exempel på URI:er för associerade filer</h4>
-            <dl>
-              <dt>Bilaga som PDF associerad med SFS 1999:175</dt>
-              <dd>
-                <code>http://rinfo.lagrummet.se/publ/sfs/1999:175/Bilaga_1.pdf</code>
-              </dd>
-              <dt>CSS associerad med (HTML-representation av) SFS 1999:175</dt>
-              <dd>
-                <code>http://rinfo.lagrummet.se/publ/sfs/1999:175/style/print.css</code>
-              </dd>
-            </dl>
-          </div>
+          <h4>Exempel på URI:er för digitala representationer</h4>
+          <dl>
+            <dt>PDF (på svenska) för SFS 1999:175</dt>
+            <dd>
+              <code>http://rinfo.lagrummet.se/publ/sfs/1999:175/pdf,sv</code>
+            </dd>
+            <dt>RDF för SFS 1999:175</dt>
+            <dd>
+              <code>http://rinfo.lagrummet.se/publ/sfs/1999:175/rdf</code>
+            </dd>
+          </dl>
         </div>
       </div>
+      <div>
+        <h4>Associerade filer</h4>
+        <p>Vissa representationer kan ha en eller flera associerade filer i form 
+          av t.ex. bilagor eller stilinformation. Dessa underordnas en primär 
+          URI på samma sätt som representationerna. Deras namngivning är löst 
+          kontrollerad, med krav på:
+        </p>
+        <ol>
+          <li>Lokal unikhet. Specifikt måste de anges på formen 
+            <code>{bas}.{filtypsändelse}</code>. Detta gör att namnen inte kan 
+            krocka med av systemet definierade representationsnamn (baserade på 
+            mediaformat) eller underordnade segment.</li>
+          <li>
+              Hänvisningar i en given representation ska utgå från en relativ 
+              placering i "samma katalog", med underkataloger separerade med 
+              <code>/</code> på sedvanligt vis.
+          </li>
+        </ol>
+        <div>
+          <h4>Exempel på URI:er för associerade filer</h4>
+          <dl>
+            <dt>Bilaga som PDF associerad med SFS 1999:175</dt>
+            <dd>
+              <code>http://rinfo.lagrummet.se/publ/sfs/1999:175/bilaga_1.pdf</code>
+            </dd>
+            <dt>CSS associerad med (HTML-representation av) SFS 1999:175</dt>
+            <dd>
+              <code>http://rinfo.lagrummet.se/publ/sfs/1999:175/style/print.css</code>
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div id="bilaga_a" class="appendix">
+      <h2>A. Teori och principer</h2>
+        <p>Artiklar om teori och principer kring god URI-design:</p>
+        <ul>
+          <li><a href="http://tools.ietf.org/rfc/rfc3986">Uniform Resource 
+              Identifier (URI): Generic Syntax</a>
+          </li>
+          <li><a href="http://www.w3.org/Provider/Style/URI.html">Cool URIs 
+              don't change</a>
+          </li>
+          <li><a href="http://www.w3.org/TR/cooluris/">Cool URIs for the 
+              Semantic Web</a>
+          </li>
+          <li><a 
+              href="http://www.w3.org/2001/tag/doc/alternatives-discovery.html">On 
+              Linking Alternative Representations To Enable Discovery And 
+              Publishing</a>
+          </li>
+          <!--
+          <li><a 
+              href="http://h3h.net/2007/01/designing-urls-for-multilingual-web-sites/">Designing 
+              URLs for Multilingual Web Sites</a>
+          </li>
+          <li><a 
+              href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/pub/LinkedDataTutorial/">How 
+              to publish Linked Data on the Web</a>
+          </li>
+          -->
+        </ul>
     </div>
 
     <!--
     <div class="appendix">
       <div class="section">
-        <h2>B. Teori</h2>
+        <h2>B. Designprinciper</h2>
 
     - alla "root-kataloger":
         - måste ha låst mening
@@ -393,6 +444,7 @@
           - modellen
           - termer?
           - "schema": container-och-selectors
+
           - listor med uri:er och egenskaper+värden:
               - för att kunna generera URI:er av sammansatta nycklar
               - kopplade till:
