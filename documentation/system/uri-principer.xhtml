@@ -4,10 +4,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv"
       xmlns:xi="http://www.w3.org/2001/XInclude">
   <head>
-    <title>Elektroniska identifierare i Rättsinformationssystemet</title>
+    <title>Digitala identifierare i Rättsinformationssystemet</title>
   </head>
   <body>
-    <h1>Elektroniska identifierare i Rättsinformationssystemet</h1>
+    <h1>Digitala identifierare i Rättsinformationssystemet</h1>
 
     <div class="section">
       <h2>1. Inledning</h2>
@@ -56,8 +56,8 @@
       <h2>3. Krav på utformningen</h2>
       <div>
         <h3>Format</h3>
-        <p>URI:erna anges som HTTP-URL:er. En hierarkisk struktur uppnås m.h.a 
-          <code>/</code>-separerade segment.
+        <p>URI:erna anges som HTTP-URL:er. En hierarkisk struktur uppnås m.h.a. 
+          snedstrecksseparerade segment (<code>"/"</code>).
         </p>
         <p>Respektive segment ska namnges med korta, enkla namn. Unikhet ska så 
           långt det är möjligt uppnås m.h.a. centralt kontrollerade namn. För 
@@ -133,7 +133,7 @@
                 ett enkelt namn.
               </p>
             </dd>
-            <dt><code>system</code></dt>
+            <dt><code>sys</code></dt>
             <dd>
               <p>Systemnära information såsom systemloggar och metadata för 
                 konfiguration.
@@ -161,7 +161,7 @@
     <div class="section">
       <h2>5. Identifierare för publikationer, samlingar, organisationer och 
         kommittéeinformation</h2>
-      <p>Detta kapitel beskriver regler för hur publicister ska konstruera 
+      <p>Detta kapitel beskriver regler för hur producenter ska konstruera 
         URI:er för poster som ingår i rättsinformationssystemet.
       </p>
 
@@ -248,11 +248,11 @@
           </p>
           <dl>
             <dt>Paragraf på toppnivå</dt>
-            <dd><code>#p{ordinal}</code></dd>
+            <dd><code>#p_{ordinal}</code></dd>
             <dt>Kapitel på toppnivå</dt>
-            <dd><code>#k{ordinal}</code></dd>
+            <dd><code>#k_{ordinal}</code></dd>
             <dt>Paragraf i kapitelindelat dokument</dt>
-            <dd><code>#k{ordinal}-p{ordinal}</code></dd>
+            <dd><code>#k_{ordinal}-p_{ordinal}</code></dd>
             <dt>Bilaga</dt>
             <dd><code>#bilaga_{ordinal}</code></dd>
           </dl>

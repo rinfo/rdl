@@ -28,22 +28,22 @@
         </Forfattningsreferens>
     </bemyndigande>
     <!-- TODO: hänvisning om "undantag i det enskilda fallet":
-      rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770#paragraf-4"
+      rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2003:770#p_4"
     -->
 
     <!-- dokumentsammansätting -->
     <paragraf>
-      <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-1">
+      <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#p_1">
         <paragrafnummer>1</paragrafnummer>
       </Paragraf>
     </paragraf>
     <paragraf>
-      <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-2">
+      <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#p_2">
         <paragrafnummer>2</paragrafnummer>
       </Paragraf>
     </paragraf>
     <paragraf>
-      <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#paragraf-3">
+      <Paragraf rdf:about="http://rinfo.lagrummet.se/publ/vervafs/2007:1#p_3">
         <paragrafnummer>3</paragrafnummer>
       </Paragraf>
     </paragraf>

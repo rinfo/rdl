@@ -2,9 +2,10 @@
 @prefix sioc: <http://rdfs.org/sioc/ns#> .
 
 # iana-related defs collected at (e.g.) <http://tools.ietf.org/html/draft-nottingham-http-link-header-06>
-# TODO: consider changing to:
+# TODO: consider changing to: (also see: <http://purl.org/NET/dady>)
 #<...> a void:Dataset;
 #    dct:publisher <...>;
+#    foaf:homepage <...>;
 #    iana:current <.../current.atom> .
 #<.../current.atom> dct:format "application/atom+xml" .
 

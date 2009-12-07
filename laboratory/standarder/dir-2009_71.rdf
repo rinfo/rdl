@@ -1,78 +1,87 @@
-<?xml version="1.0" encoding="utf-8"?>
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:dct="http://purl.org/dc/terms/"
-    xmlns:foaf="http://xmlns.com/foaf/0.1/"
-    xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
-    <!--
-    Exempeldata från DV:s webbplats.
-
-    Domstol:  	Högsta domstolen  	
-    Målnummer: 	Ö3904-08 	Avdelning: 	1 	
-    Referat: 	NJA 2009 s. 437 (alt. NJA 2009:42) 	
-    Avgörandedatum: 	2009-06-25 	
-    Rubrik: 	Vid prövning av frågan om förordnande av bodelningsförrättare har make 
-                som påkallat bodelning tio år efter äktenskapsskillnad inte ansetts ha 
-                förlorat rätten att påkalla sådan. 	
-    Lagrum: 	9 kap 1 §, 4 § och 5 § samt 17 kap. 1 § äktenskapsbalken (1987:230) 	
-    Rättsfall: 	• NJA 1935 s. 613 	
-		• NJA 1937 s. 180 	
-		• NJA 1993 s. 302, I och II 	
-		• NJA 1993 s. 570 	
-		• NJA 1997 s. 166 	
-    Sökord:     Bodelning, Bodelningsförrättare 	
-    -->
-
-    <!-- Form för identifierare inte klar än -->
-    <VagledandeAvgorande rdf:about="http://rinfo.lagrummet.se/publ/avgorande/hd/Ö3904-08">
-
-        <!-- Domstol -->
-        <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/h%C3%B6gsta_domstolen" />
-
-        <!-- Målnummer -->
-        <malnummer>Ö3904-08</malnummer>
-
-        <!-- Datum för avgörande -->
-        <avgorandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-06-25</avgorandedatum>
-
-        <!-- Avgörandets rubrik -->
-        <dct:title xml:lang="sv">Vid prövning av frågan om förordnande av bodelningsförrättare har make som påkallat bodelning tio år efter äktenskapsskillnad inte ansetts ha förlorat rätten att påkalla sådan.</dct:title>
-
-        <!-- Lagrumshänvisningar -->
-        <lagrum>
-            <Forfattningsreferens>
-                <angerGrundforfattning red:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
-                <angerKapitelnummer>9</angerKapitelnummer>
-                <angerParagrafnummer>1</angerParagrafnummer>
-            </Forfattningsreferens>
-        </lagrum>
-        <lagrum>
-            <Forfattningsreferens>
-                <angerGrundforfattning red:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
-                <angerKapitelnummer>9</angerKapitelnummer>
-                <angerParagrafnummer>4</angerParagrafnummer>
-            </Forfattningsreferens>
-        </lagrum>
-        <lagrum>
-            <Forfattningsreferens>
-                <angerGrundforfattning red:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
-                <angerKapitelnummer>9</angerKapitelnummer>
-                <angerParagrafnummer>5</angerParagrafnummer>
-            </Forfattningsreferens>
-        </lagrum>
-        <lagrum>
-            <Forfattningsreferens>
-                <angerGrundforfattning red:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
-                <angerKapitelnummer>17</angerKapitelnummer>
-                <angerParagrafnummer>1</angerParagrafnummer>
-            </Forfattningsreferens>
-        </lagrum>
-
-        <!-- Referenser till andra rättsfall -->
-
-
-        <!-- Ämnesord -->
-        <dct:subject>Bodelning</dct:subject>
-        <dct:subject>Bodelningsförrättare</dct:subject>
-
-    </VagledandeAvgorande>
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dct="http://purl.org/dc/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+  <Kommittedirektiv rdf:about="http://rinfo.lagrummet.se/publ/dir/2009:71">
+    <direktivnummer>2009:71</direktivnummer>
+    <dct:title xml:lang="sv">Dir. 2009:71 Rätt till skolgång m.m. för barn som vistas i landet utan tillstånd</dct:title>
+    <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-08-13</beslutsdatum>
+    <avkravtAvrapporteringsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2010-01-29</avkravtAvrapporteringsdatum>
+    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
+    <departement rdf:parseType="Resource">
+      <foaf:name>Utbildningsdepartementet</foaf:name>
+    </departement>
+    <dct:references rdf:resource="http://rinfo.lagrummet.se/ext/eur-lex/31968R1612"/>
+    <dct:references rdf:resource="http://rinfo.lagrummet.se/publ/dir/2006:122"/>
+    <dct:references rdf:resource="http://rinfo.lagrummet.se/publ/dir/2006:28"/>
+    <dct:references rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1984:387"/>
+    <dct:references>
+      <!-- http://rinfo.lagrummet.se/publ/sfs/1985:1100#K3 -->
+      <Forfattningsreferens>
+        <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1985:1100"/>
+        <angerKapitelnummer>3</angerKapitelnummer>
+      </Forfattningsreferens>
+    </dct:references>
+    <dct:references>
+      <!-- http://rinfo.lagrummet.se/publ/sfs/1985:1100#K5-P5 -->
+      <Forfattningsreferens>
+        <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1985:1100"/>
+        <angerKapitelnummer>5</angerKapitelnummer>
+        <angerParagrafnummer>5</angerParagrafnummer>
+      </Forfattningsreferens>
+    </dct:references>
+    <dct:references>
+      <!-- http://rinfo.lagrummet.se/publ/sfs/1992:394#K11-P7 -->
+      <Forfattningsreferens>
+        <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1992:394"/>
+        <angerKapitelnummer>11</angerKapitelnummer>
+        <angerParagrafnummer>7</angerParagrafnummer>
+      </Forfattningsreferens>
+    </dct:references>
+    <dct:references>
+      <!-- http://rinfo.lagrummet.se/publ/sfs/1994:1194#K6-P2 -->
+      <Forfattningsreferens>
+        <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1994:1194"/>
+        <angerKapitelnummer>6</angerKapitelnummer>
+        <angerParagrafnummer>2</angerParagrafnummer>
+      </Forfattningsreferens>
+    </dct:references>
+    <dct:references>
+      <!-- http://rinfo.lagrummet.se/publ/sfs/2001:453#K14-P1 -->
+      <Forfattningsreferens>
+        <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2001:453"/>
+        <angerKapitelnummer>14</angerKapitelnummer>
+        <angerParagrafnummer>1</angerParagrafnummer>
+      </Forfattningsreferens>
+    </dct:references>
+    <dct:references rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2001:976"/>
+    <dct:references rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2005:716"/>
+    <dct:references>
+      <!-- http://rinfo.lagrummet.se/publ/sfs/2005:716#K17-P1 -->
+      <Forfattningsreferens>
+        <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2005:716"/>
+        <angerKapitelnummer>17</angerKapitelnummer>
+        <angerParagrafnummer>1</angerParagrafnummer>
+      </Forfattningsreferens>
+    </dct:references>
+    <dct:references>
+      <!-- http://rinfo.lagrummet.se/publ/sfs/2006:97#K7-P1 -->
+      <Forfattningsreferens>
+        <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:97"/>
+        <angerKapitelnummer>7</angerKapitelnummer>
+        <angerParagrafnummer>1</angerParagrafnummer>
+      </Forfattningsreferens>
+    </dct:references>
+    <dct:references>
+      <!-- http://rinfo.lagrummet.se/publ/sfs/2007:34#K7-P1 -->
+      <Forfattningsreferens>
+        <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2007:34"/>
+        <angerKapitelnummer>7</angerKapitelnummer>
+        <angerParagrafnummer>1</angerParagrafnummer>
+      </Forfattningsreferens>
+    </dct:references>
+    <dct:references rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2007:81"/>
+    <dct:references rdf:resource="http://rinfo.lagrummet.se/publ/utr/ds/2007:34"/>
+    <dct:references rdf:resource="http://rinfo.lagrummet.se/publ/utr/ds/2009:25"/>
+    <dct:references rdf:resource="http://rinfo.lagrummet.se/publ/utr/sou/2007:34"/>
+    <dct:references rdf:resource="http://rinfo.lagrummet.se/publ/utr/sou/2009:19"/>
+  </Kommittedirektiv>
 </rdf:RDF>
