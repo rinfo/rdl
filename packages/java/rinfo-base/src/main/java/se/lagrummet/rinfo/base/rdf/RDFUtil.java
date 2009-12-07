@@ -182,14 +182,14 @@ public class RDFUtil {
         return new ByteArrayInputStream(outStream.toByteArray());
     }
 
-    static Repository slurpRdf(String... paths)
+    public static Repository slurpRdf(String... paths)
             throws IOException, RepositoryException, RDFParseException {
         Repository repo = createMemoryRepository();
         slurpRdf(repo, paths);
         return repo;
     }
 
-    static Repository slurpRdf(Repository repo, String... paths)
+    public static Repository slurpRdf(Repository repo, String... paths)
             throws IOException, RepositoryException, RDFParseException {
         String[] patterns = new String[] {"n3", "rdf", "rdfs", "owl"};
         for (String path : paths) {

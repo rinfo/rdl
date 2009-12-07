@@ -21,10 +21,9 @@ class URIMinterTest {
     @BeforeClass
     static void setupClass() {
         def baseDir = "../../../resources/base"
-        def repo = RDFUtil.slurpRdf("${baseDir}/datasets/containers.n3")
+        def repo = RDFUtil.slurpRdf("${baseDir}/sys/uri")
+        uriMinter = new URIMinter(repo)
         def minterDir = "${baseDir}/uri_algorithm"
-        uriMinter = new URIMinter(repo,
-                "${minterDir}/collect-uri-data.rq", "${minterDir}/create-uri.xslt")
         testFeedPath = "${minterDir}/tests/publ.atom"
     }
 
@@ -43,7 +42,7 @@ class URIMinterTest {
                 def conn = repo.getConnection()
                 try {
                     conn.add(new StringReader(data), "", format)
-                    def computedUri = uriMinter.computeOfficialUri(repo)
+                    def computedUri = uriMinter.computeUri(repo)
                     assertEquals "Error in entry:\n${it}\n",
                             expectedUri, computedUri
                 } finally {

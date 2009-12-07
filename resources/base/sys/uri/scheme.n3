@@ -1,0 +1,85 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix coin: <http://purl.org/court/def/2009/coin#> .
+@prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
+@prefix : <http://rinfo.lagrummet.se/sys/uri/scheme#> .
+@prefix tks_serie: <http://rinfo.lagrummet.se/sys/uri/symbol/serie#> .
+@prefix tks_org: <http://rinfo.lagrummet.se/sys/uri/symbol/org#> .
+
+
+: a coin:CoinScheme;
+    coin:root "http://rinfo.lagrummet.se/";
+    coin:separator "/";
+    coin:fragmentSeparator "-";
+    coin:tokenTranslation [
+            a coin:LowerCasedTranslation, coin:BaseCharTranslation;
+            coin:spaceReplacement "_";
+            #coin:stripRegexp "[^a-z0-9_().,:-]";
+            #coin:validRegexp "^[a-z0-9][a-z0-9_().,:-]*$"
+        ] .
+
+
+[] a coin:Base;
+    coin:segment "publ";
+
+    coin:contains [ coin:useTokenSet tks_serie:fs;
+            coin:component rpubl:forfattningssamling;
+            coin:contains [ coin:component rpubl:fsNummer ] ];
+    coin:contains [ coin:segment "utr";
+            coin:useTokenSet tks_serie:utr;
+            coin:component rpubl:utrSerie;
+            coin:contains [ coin:component rpubl:utrSerienummer ] ];
+    coin:contains [ coin:segment "rf";
+            coin:useTokenSet tks_serie:rff;
+            coin:component rpubl:rattsfallspublikation;
+            coin:contains [ coin:component rpubl:publikationsordinal ] ];
+
+    coin:contains [ coin:segment "prop";
+            coin:forType rpubl:Proposition;
+            coin:component rpubl:propositionsnummer ];
+    coin:contains [ coin:segment "fm";
+            coin:forType rpubl:Forordningsmotiv;
+            coin:component rpubl:fmNummer ];
+    coin:contains [ coin:segment "dir";
+            coin:forType rpubl:Kommittedirektiv;
+            coin:component rpubl:direktivnummer ];
+    coin:contains [ coin:segment "so";
+            coin:forType rpubl:InternationellOverenskommelse;
+            coin:component rpubl:soNummer ];
+
+    coin:contains [ coin:segment "avg";
+            coin:forType rpubl:VagledandeMyndighetsavgorande;
+            coin:contains [ coin:useTokenSet tks_org:;
+                    coin:component dct:publisher;
+                    coin:contains [ coin:component rpubl:diarienummer ] ] ];
+    coin:contains [ coin:segment "dom";
+            coin:forType rpubl:VagledandeDomstolsavgorande;
+            coin:contains [ coin:useTokenSet tks_org:;
+                    coin:component dct:publisher;
+                    coin:contains [ coin:component rpubl:malnummer ] ] ];
+
+    coin:scheme : .
+
+
+[] a coin:Containment;
+    coin:baseRel rpubl:konsoliderar;
+    coin:segment "konsolidering";
+    coin:component rpubl:utfardandedatum;
+    coin:scheme : .
+
+[] a coin:Containment;
+    coin:baseRev rpubl:paragraf;
+    coin:fragmentPrefix "p_";
+    coin:component rpubl:paragrafnummer;
+    coin:scheme : .
+[] a coin:Containment;
+    coin:baseRev rpubl:kapitel;
+    coin:fragmentPrefix "k_";
+    coin:component rpubl:kapitelnummer;
+    coin:scheme : .
+[] a coin:Containment;
+    coin:baseRev rpubl:bilaga;
+    coin:fragmentPrefix "bilaga_";
+    coin:component dct:title, rdfs:label; # TODO: externally provided ordinal..
+    coin:scheme : .
+

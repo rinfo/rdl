@@ -4,7 +4,7 @@
       xmlns:dct="http://purl.org/dc/terms/"
       xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
 
-    <id>http://rinfo.lagrummet.se/system/uri_algorithm/tests/publ</id>
+    <id>http://rinfo.lagrummet.se/sys/uri/tests/publ</id>
 
     <!-- SFS -->
     <entry>
@@ -43,9 +43,9 @@
     </entry>
 
 
-    <!-- Se exempel från http://www.arbetsgivarverket.se/t/PublicationList____271.aspx -->
+    <!-- Se exempel från <http://www.arbetsgivarverket.se/t/PublicationList____271.aspx> -->
     <entry>
-        <id>http://rinfo.lagrummet.se/publ/agvfs/2002:3_B_3</id>
+        <id>http://rinfo.lagrummet.se/publ/agvfs/2002:3_b_3</id>
         <summary>Myndighetsföreskrift vars författningssamlingsnummer innehåller siffror, mellanslag och bokstäver</summary>
         <content type="application/rdf+xml">
             <rpubl:Myndighetsforeskrift>
@@ -57,7 +57,7 @@
 
 
 
-    <!-- Se exempel från http://www5.f.lst.se/publikationer/forfattningar/ovrigaforeskrifter/ar/ovrigaforeskrifter1971.4.e689910bace3401a800031.html -->
+    <!-- Se exempel från <http://www5.f.lst.se/publikationer/forfattningar/ovrigaforeskrifter/ar/ovrigaforeskrifter1971.4.e689910bace3401a800031.html> -->
     <entry>
         <id>http://rinfo.lagrummet.se/publ/06fs/1971:96_b</id>
         <summary>Myndighetsföreskrift vars författningssamlingsnummer följs av mellanslag och bokstav</summary>
@@ -115,7 +115,7 @@
         domstol+målnummer+datum.. (se modellens kommentarer)
     -->
     <entry>
-        <id>http://rinfo.lagrummet.se/publ/rattsfall/nja/2005:57</id>
+        <id>http://rinfo.lagrummet.se/publ/rf/nja/2005:57</id>
         <summary>Rättsfallsreferat utgivet i Nytt Juridiskt Arkiv</summary>
         <content type="application/rdf+xml">
             <rpubl:Rattsfallsreferat>
@@ -161,29 +161,30 @@
     </entry>
     -->
 
-    <!-- TODO: determine correct publisher uri:s
+
     <entry>
-        <id>http://rinfo.lagrummet.se/publ/mynd/jk/874-05-30</id>
+        <id>http://rinfo.lagrummet.se/publ/dom/hd/b333-04</id>
+        <summary></summary>
+        <content type="application/rdf+xml">
+            <rpubl:VagledandeDomstolsavgorande>
+                <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/h%C3%B6gsta_domstolen"/>
+                <rpubl:malnummer>B333-04</rpubl:malnummer>
+            </rpubl:VagledandeDomstolsavgorande>
+        </content>
+    </entry>
+
+    <!-- Se exempel från <http://www.jk.se/beslut/XmlToHtml.asp?XML=Files/874-05-30.xml&XSL=../xsl/JK_Beslut.xsl> -->
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/avg/jk/874-05-30</id>
         <summary></summary>
         <content type="application/rdf+xml">
             <rpubl:VagledandeMyndighetsavgorande>
-                <dct:publisher rdf:resource="http://rdf.kb.se/ap/20061205154112"/>
+                <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/justitiekanslern"/>
                 <rpubl:diarienummer>874-05-30</rpubl:diarienummer>
             </rpubl:VagledandeMyndighetsavgorande>
         </content>
     </entry>
 
-    <entry>
-        <id>http://rinfo.lagrummet.se/publ/mynd/hd/B333-04</id>
-        <summary></summary>
-        <content type="application/rdf+xml">
-            <rpubl:VagledandeDomstolsavgorande>
-                <dct:publisher rdf:resource="http://rdf.kb.se/ap/20061205144122"/>
-                <rpubl:malnummer>B333-04</rpubl:malnummer>
-            </rpubl:VagledandeDomstolsavgorande>
-        </content>
-    </entry>
-    -->
 
     <entry>
         <id>http://rinfo.lagrummet.se/publ/prop/2002/03:20</id>

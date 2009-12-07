@@ -1,0 +1,30 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix coin: <http://purl.org/court/def/2009/coin#> .
+@prefix : <http://rinfo.lagrummet.se/sys/uri/scheme#> .
+@prefix tks_org: <http://rinfo.lagrummet.se/sys/uri/symbol/org#> .
+
+
+tks_org: a coin:TokenSet;
+    coin:scheme : .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/org/domstolsverket>;
+    rdf:value "domstolsverket";
+    coin:tokenSet tks_org: .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/org/h%C3%B6gsta_domstolen>;
+    rdf:value "hd";
+    coin:tokenSet tks_org: .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/org/justitiekanslern>;
+    rdf:value "jk";
+    coin:tokenSet tks_org: .
+
+# TODO: resterande myndigheter (som publicerar avgöranden, speciellt domstolar)
+#
+#    rdf:value "jo";
+#    rdf:value "helsingborgs-tingsratt";
+#    rdf:value "hovratten-skaneblekinge";
+

@@ -1,0 +1,512 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix coin: <http://purl.org/court/def/2009/coin#> .
+@prefix : <http://rinfo.lagrummet.se/sys/uri/scheme#> .
+@prefix tks_serie: <http://rinfo.lagrummet.se/sys/uri/symbol/serie#> .
+
+
+tks_serie:utr a coin:TokenSet;
+    coin:scheme : .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/utr/ds>;
+    rdf:value "ds";
+    coin:tokenSet tks_serie:utr .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/utr/sou>;
+    rdf:value "sou";
+    coin:tokenSet tks_serie:utr .
+
+
+tks_serie:fs a coin:TokenSet;
+    coin:scheme : .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/01fs>;
+    rdf:value "01fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/03fs>;
+    rdf:value "03fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/04fs>;
+    rdf:value "04fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/05fs>;
+    rdf:value "05fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/06fs>;
+    rdf:value "06fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/07fs>;
+    rdf:value "07fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/08fs>;
+    rdf:value "08fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/09fs>;
+    rdf:value "09fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/10fs>;
+    rdf:value "10fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/12fs>;
+    rdf:value "12fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/13fs>;
+    rdf:value "13fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/14fs>;
+    rdf:value "14fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/17fs>;
+    rdf:value "17fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/18fs>;
+    rdf:value "18fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/19fs>;
+    rdf:value "19fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/20fs>;
+    rdf:value "20fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/21fs>;
+    rdf:value "21fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/22fs>;
+    rdf:value "22fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/23fs>;
+    rdf:value "23fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/24fs>;
+    rdf:value "24fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/25fs>;
+    rdf:value "25fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/afs>;
+    rdf:value "afs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/afs>;
+    rdf:value "afs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/agvfs>;
+    rdf:value "agvfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/amsfs>;
+    rdf:value "amsfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/bfnar>;
+    rdf:value "bfnar";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/bfs>;
+    rdf:value "bfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/bolfs>;
+    rdf:value "bolfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/bv-fs>;
+    rdf:value "bv-fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/csnfs>;
+    rdf:value "csnfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/dfs>;
+    rdf:value "dfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/difs>;
+    rdf:value "difs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/dvfs>;
+    rdf:value "dvfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/elsak-fs>;
+    rdf:value "elsak-fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/fffs>;
+    rdf:value "fffs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/ffs>;
+    rdf:value "ffs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/fhifs>;
+    rdf:value "fhifs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/fifs>;
+    rdf:value "fifs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/fkfs>;
+    rdf:value "fkfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/hsvfs>;
+    rdf:value "hsvfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/iaffs>;
+    rdf:value "iaffs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/itpsfs>;
+    rdf:value "itpsfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/jvsfs>;
+    rdf:value "jvsfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/kamfs>;
+    rdf:value "kamfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/kbmfs>;
+    rdf:value "kbmfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/kfmfs>;
+    rdf:value "kfmfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/kfs>;
+    rdf:value "kfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/kifs>;
+    rdf:value "kifs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/kkvfs>;
+    rdf:value "kkvfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/kovfs>;
+    rdf:value "kovfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/krfs>;
+    rdf:value "krfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/kvfs>;
+    rdf:value "kvfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/lfnfs>;
+    rdf:value "lfnfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/lfs>;
+    rdf:value "lfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/lifs>;
+    rdf:value "lifs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/livsfs>;
+    rdf:value "livsfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/lmvfs>;
+    rdf:value "lmvfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/lvfs>;
+    rdf:value "lvfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/migrfs>;
+    rdf:value "migrfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/nfs>;
+    rdf:value "nfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/nutfs>;
+    rdf:value "nutfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/prvfs>;
+    rdf:value "prvfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/ptsfs>;
+    rdf:value "ptsfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/ra-fs>;
+    rdf:value "ra-fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/rgkfs>;
+    rdf:value "rgkfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/rnfs>;
+    rdf:value "rnfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/rpsfs>;
+    rdf:value "rpsfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/rtvfs>;
+    rdf:value "rtvfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/scb-fs>;
+    rdf:value "scb-fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/sfs>;
+    rdf:value "sfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/sgu-fs>;
+    rdf:value "sgu-fs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/sjofs>;
+    rdf:value "sjofs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/sjvfs>;
+    rdf:value "sjvfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/skifs>;
+    rdf:value "skifs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/skolfs>;
+    rdf:value "skolfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/sksfs>;
+    rdf:value "sksfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/skvfs>;
+    rdf:value "skvfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/sosfs>;
+    rdf:value "sosfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/srvfs>;
+    rdf:value "srvfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/ssifs>;
+    rdf:value "ssifs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/stafs>;
+    rdf:value "stafs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/stemfs>;
+    rdf:value "stemfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/svkfs>;
+    rdf:value "svkfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/tfs>;
+    rdf:value "tfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/tpvfs>;
+    rdf:value "tpvfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/valfs>;
+    rdf:value "valfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/vervafs>;
+    rdf:value "vervafs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/vrfs>;
+    rdf:value "vrfs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/vvfs>;
+    rdf:value "vvfs";
+    coin:tokenSet tks_serie:fs .
+
+
+tks_serie:rff a coin:TokenSet;
+    coin:scheme : .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/rff/nja>;
+    rdf:value "nja";
+    coin:tokenSet tks_serie:rff .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/rff/rh>;
+    rdf:value "rh";
+    coin:tokenSet tks_serie:rff .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/rff/mod>;
+    rdf:value "mod";
+    coin:tokenSet tks_serie:rff .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/rff/ra>;
+    rdf:value "ra";
+    coin:tokenSet tks_serie:rff .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/rff/mig>;
+    rdf:value "mig";
+    coin:tokenSet tks_serie:rff .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/rff/ad>;
+    rdf:value "ad";
+    coin:tokenSet tks_serie:rff .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/rff/md>;
+    rdf:value "md";
+    coin:tokenSet tks_serie:rff .
+
+[] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/rff/fod>;
+    rdf:value "fod";
+    coin:tokenSet tks_serie:rff .
+
