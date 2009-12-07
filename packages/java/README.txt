@@ -73,9 +73,6 @@ Code coverage from tests::
 
 Running classes::
 
-    # .. in rinfo-base/
-    $ mvn exec:java -Dexec.mainClass=se.lagrummet.rinfo.base.URIMinter -Dexec.args="../../../resources/base/ <path-to-rdf-file>"
-
     # .. in rinfo-store/
     $ mvn exec:java -Dexec.mainClass=se.lagrummet.rinfo.store.depot.FileDepotCmdTool -Dexec.args="<path-to-depot.properties> index"
 

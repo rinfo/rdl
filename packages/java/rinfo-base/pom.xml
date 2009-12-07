@@ -23,10 +23,13 @@
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
-
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
     </dependency>
 
     <dependency>
@@ -118,6 +121,13 @@
     </dependency>
 
     <dependency>
+      <groupId>net.sf.json-lib</groupId>
+      <artifactId>json-lib</artifactId>
+      <version>2.2.3</version>
+      <classifier>jdk15</classifier>
+    </dependency>
+
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
@@ -143,6 +153,24 @@
           <source>1.5</source>
           <target>1.5</target>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals><goal>run</goal></goals>
+            <configuration>
+              <tasks>
+                <copy todir="${project.build.outputDirectory}/uriminter">
+                    <fileset dir="${basedir}/../../../resources/base/uri_algorithm"
+                             includes="*.rq, *.json"/>
+                </copy>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>

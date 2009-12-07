@@ -1,10 +1,12 @@
-@Grab(group='se.lagrummet.rinfo', module='rinfo-service', version='1.0-SNAPSHOT')
-@Grab(group='com.uwyn', module='jhighlight', version='1.0')
-@Grab(group='com.lowagie', module='itext', version='2.0.8')
-@Grab(group='org.xhtmlrenderer', module='core-renderer', version='R8pre2')
-@Grab(group='xerces', module='xercesImpl', version='2.9.1')
-@Grab(group='xalan', module='xalan', version='2.7.1')
-@Grab(group='xalan', module='serializer', version='2.7.1')
+@Grapes([
+    @Grab(group='se.lagrummet.rinfo', module='rinfo-service', version='1.0-SNAPSHOT'),
+    @Grab(group='com.uwyn', module='jhighlight', version='1.0'),
+    @Grab(group='com.lowagie', module='itext', version='2.0.8'),
+    @Grab(group='org.xhtmlrenderer', module='core-renderer', version='R8pre2'),
+    @Grab(group='xerces', module='xercesImpl', version='2.9.1'),
+    @Grab(group='xalan', module='xalan', version='2.7.1'),
+    @Grab(group='xalan', module='serializer', version='2.7.1')
+])
 def _(){}
 
 import docgen.Builder
