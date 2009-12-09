@@ -23,7 +23,7 @@
     -->
 
     <!-- Form för identifierare inte klar än -->
-    <VagledandeAvgorande rdf:about="http://rinfo.lagrummet.se/publ/avgorande/hd/Ö3904-08">
+    <VagledandeDomstolsavgorande rdf:about="http://rinfo.lagrummet.se/publ/avgorande/hd/Ö3904-08">
 
         <!-- Domstol -->
         <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/h%C3%B6gsta_domstolen" />
@@ -40,28 +40,28 @@
         <!-- Lagrumshänvisningar -->
         <lagrum>
             <Forfattningsreferens>
-                <angerGrundforfattning red:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
+                <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
                 <angerKapitelnummer>9</angerKapitelnummer>
                 <angerParagrafnummer>1</angerParagrafnummer>
             </Forfattningsreferens>
         </lagrum>
         <lagrum>
             <Forfattningsreferens>
-                <angerGrundforfattning red:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
+                <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
                 <angerKapitelnummer>9</angerKapitelnummer>
                 <angerParagrafnummer>4</angerParagrafnummer>
             </Forfattningsreferens>
         </lagrum>
         <lagrum>
             <Forfattningsreferens>
-                <angerGrundforfattning red:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
+                <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
                 <angerKapitelnummer>9</angerKapitelnummer>
                 <angerParagrafnummer>5</angerParagrafnummer>
             </Forfattningsreferens>
         </lagrum>
         <lagrum>
             <Forfattningsreferens>
-                <angerGrundforfattning red:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
+                <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1987:230" />
                 <angerKapitelnummer>17</angerKapitelnummer>
                 <angerParagrafnummer>1</angerParagrafnummer>
             </Forfattningsreferens>
@@ -74,5 +74,5 @@
         <dct:subject>Bodelning</dct:subject>
         <dct:subject>Bodelningsförrättare</dct:subject>
 
-    </VagledandeAvgorande>
+    </VagledandeDomstolsavgorande>
 </rdf:RDF>

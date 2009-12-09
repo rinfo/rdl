@@ -9,6 +9,11 @@
   <body>
     <h1>Digitala identifierare i Rättsinformationssystemet</h1>
 
+    <div id="toc">
+      <h2>Innehåll</h2>
+      <ul/>
+    </div>
+
     <div class="section">
       <h2>1. Inledning</h2>
       <p>
@@ -28,7 +33,7 @@
           genom att exponera över nätet hämtbar information. Alla URI:er ska 
           designas så att de är beständiga över tid.</p>
         <p>För mer teori och principer kring god URI-design, se <a 
-            href="#bilaga_a">Bilaga A</a>.
+            href="#bilaga_d">Bilaga D</a>.
         </p>
       </div>
       <div>
@@ -76,99 +81,85 @@
           avslutande segment i URI:n.
         </p>
       </div>
-
     </div>
 
     <div class="section">
       <h2>4. Systemets URI-rymd</h2>
       <div>
-        <h3>Bas-URI:n för rättsinformationssystemet</h3>
-        <p>
+        <h3>Bas</h3>
+        <p>Bas-URI:n för rättsinformationssystemet är:</p>
+        <blockquote>
           <code>http://rinfo.lagrummet.se/</code>
-        </p>
+        </blockquote>
       </div>
       <div>
         <h3>Toppnivån</h3>
-        <p>
-          De direkt underliggande segmenten är uppdelade på roll och resurstyp, 
-          vilka beskrivs nedan.
+        <p>De direkt underliggande segmenten är uppdelade på roll och 
+          resurstyp, vilka beskrivs i de efterföljande avsnitten.
         </p>
         <div>
-          <h4>Resurser kontrollerade av producenter</h4>
-          <dl>
-            <dt><code>publ</code></dt>
-            <dd>
-              <p>Publicerade dokument. Den stora massan av rättsinformation faller 
-                under detta segment.
-              </p>
-              <p>Unikhet uppnås m.h.a. centralt kontrollerade segment baserade 
-                på någon slags tillhörighet (typ, publikationsserie eller 
-                utgivande organisation) samt ett för respektive segment unikt 
-                serienummer eller -namn (helt beroende på hur sådana tilldelas 
-                för respektive samlingstyp).
-              </p>
-            </dd>
-            <dt><code>serie</code></dt>
-            <dd>
-              <p>Publikationsserier som är centrala för 
-                rättsinformationsdomänen.
-              </p>
-            </dd>
-            <dt><code>org</code></dt>
-            <dd>
-              <p>Organisationer/grupper som är centrala för 
-                rättsinformationsdomänen (såsom myndigheter (inkl. domstolar), 
-                kommittéer).
-              </p>
-            </dd>
-          </dl>
+          <h4>Segment för resurser kontrollerade av producenter</h4>
+          <ul>
+            <li><code>publ</code></li>
+            <li><code>serie</code></li>
+            <li><code>org</code></li>
+            <li><code>kom</code></li>
+          </ul>
+          <p>Se <a href="#s_5">avsnitt 5</a>.
+          </p>
         </div>
         <div>
-          <h4>Resurser kontrollerade av systemet</h4>
-          <dl>
-            <dt><code>ns</code></dt>
-            <dd>
-              <p>Namnrymd för modeller, taxonomier och ämnestermer. Dessa är helt 
-                centralt kontrollerade. Unikhet uppnås m.h.a. datumsegment och 
-                ett enkelt namn.
-              </p>
-            </dd>
-            <dt><code>sys</code></dt>
-            <dd>
-              <p>Systemnära information såsom systemloggar och metadata för 
-                konfiguration.
-              </p>
-            </dd>
-            <dt><code>ext</code></dt>
-            <dd>
-              <p>Plats för identifierare för resurser som inte ingår i den
-                svenska rättsinformationsdomänen. Här kan information om
-                viktiga externa resurser placeras (dokument, vokabulär,
-                organisationer m.m.), eventuellt med kopior av den information
-                de utgör.
-              </p>
-              <p>Vidare kan URI:er tilldelas under detta segment i de fall då 
-                externa resurser inte har blivit tilldelade (pålitliga och 
-                beständiga) sådana.
-              </p>
-            </dd>
-          </dl>
+          <h4>Segment för resurser kontrollerade av systemet</h4>
+          <ul>
+            <li><code>ns</code></li>
+            <li><code>sys</code></li>
+            <li><code>ext</code></li>
+          </ul>
+          <p>Se <a href="#s_6">avsnitt 6</a>.
+          </p>
         </div>
       </div>
-
     </div>
 
-    <div class="section">
+    <div class="section" id="s_5">
       <h2>5. Identifierare för publikationer, samlingar, organisationer och 
         kommittéeinformation</h2>
       <p>Detta kapitel beskriver regler för hur producenter ska konstruera 
         URI:er för poster som ingår i rättsinformationssystemet.
       </p>
-
+      <dl>
+        <dt><code>publ</code></dt>
+        <dd>
+          <p>Publicerade dokument. Den stora massan av rättsinformation faller 
+            under detta segment.
+          </p>
+          <p>Unikhet uppnås m.h.a. centralt kontrollerade segment baserade 
+            på någon slags tillhörighet (typ, publikationsserie eller 
+            utgivande organisation) samt ett för respektive segment unikt 
+            serienummer eller -namn (helt beroende på hur sådana tilldelas 
+            för respektive samlingstyp).
+          </p>
+        </dd>
+        <dt><code>serie</code></dt>
+        <dd>
+          <p>Publikationsserier som är centrala för 
+            rättsinformationsdomänen.
+          </p>
+        </dd>
+        <dt><code>org</code></dt>
+        <dd>
+          <p>Organisationer/grupper som är centrala för 
+            rättsinformationsdomänen (såsom myndigheter (inkl. domstolar), 
+            kommittéer).
+          </p>
+        </dd>
+        <dt><code>kom</code></dt>
+        <dd> <p>Resurser i kommittéväsendet.</p> </dd>
+      </dl>
       <div>
         <h3>5.1. Rättsinformationsdokument</h3>
         <p>URI:er för rättsinformationsdokument (publikationer) faller under 
-          under segmentet "publ".
+          under segmentet <code>publ</code>.
         </p>
         <p>Här hamnar alla primära rättsinformationsdokument. Deras URI:er 
           baseras på en specifik gruppering samt ett lokalt unikt värde för 
@@ -206,7 +197,7 @@
         </div>
         <div>
           <h4>Konstruktionsregler för publikationsindentifierare</h4>
-          <!-- TODO:skriv klart. -->
+          <!-- TODO:skriv klart detta block (plus genererad data) -->
           <p>
           </p>
           <ul>
@@ -222,13 +213,9 @@
             <code class="javascript"><xi:include href="../../resources/base/uri_algorithm/compose_results.js" parse="text"/></code>
             -->
           </ul>
-        </div>
-        <div>
-          <h4>Exempel på URI:er per dokument- och samlingstyp</h4>
-          <div class="atom-uri-examples">
-            <a href="../../resources/base/uri_algorithm/tests/publ.atom"
-              class="atom-source">exempel</a>
-          </div>
+          <p>För exempel på URI:er per dokument- och samlingstyp se <a 
+              href="#bilaga_a">Bilaga A</a>.
+          </p>
         </div>
         <div>
           <h4>Delar av dokument: fragmentidentifierare</h4>
@@ -258,19 +245,16 @@
           </dl>
         </div>
       </div>
-
       <div class="section">
         <h3>5.2. Publikationsserier</h3>
       </div>
-
       <div class="section">
         <h3>5.3. Organisationer</h3>
       </div>
-
       <div class="section">
         <h3>5.4. Kommittéregisterposter</h3>
-        <p>URI:er för ting som inte är publikationer inom kommittéväsendet faller
-          under under segmentet "kom".
+        <p>URI:er för de ting inom kommittéväsendet som <em>inte</em> är 
+          publikationer  faller under under segmentet "kom".
         </p>
         <p>Exempel på sådana ting är kommittéer och poster i kommittéregistret.
         </p>
@@ -281,14 +265,41 @@
           </dd>
         </dl>
       </div>
-
     </div>
 
-    <div class="section">
+    <div class="section" id="s_6">
       <h2>6. Identifierare för centrala poster i rättsinformationssystemet</h2>
       <p>Detta kapitel beskriver regler för hur URI:er för centrala poster i 
         rättsinformationssystemet ska konstrueras.
       </p>
+      <dl>
+        <dt><code>ns</code></dt>
+        <dd>
+          <p>Namnrymd för modeller, taxonomier och ämnestermer. Dessa är helt 
+            centralt kontrollerade. Unikhet uppnås m.h.a. datumsegment och 
+            ett enkelt namn.
+          </p>
+        </dd>
+        <dt><code>sys</code></dt>
+        <dd>
+          <p>Systemnära information såsom systemloggar och metadata för 
+            konfiguration.
+          </p>
+        </dd>
+        <dt><code>ext</code></dt>
+        <dd>
+          <p>Plats för identifierare för resurser som inte ingår i den
+            svenska rättsinformationsdomänen. Här kan information om
+            viktiga externa resurser placeras (dokument, vokabulär,
+            organisationer m.m.), eventuellt med kopior av den information
+            de utgör.
+          </p>
+          <p>Vidare kan URI:er tilldelas under detta segment i de fall då 
+            externa resurser inte har blivit tilldelade (pålitliga och 
+            beständiga) sådana.
+          </p>
+        </dd>
+      </dl>
       <div>
         <h3>6.1. Namnrymden "ns"</h3>
         <p>Under detta segment placeras tekniska modeller såsom 
@@ -315,15 +326,13 @@
           <code>&lt;ns/{yyyy/mm[/dd]}/{namn[/...]}></code>
         </p>
       </div>
-
-      <div class="section">
-        <h3>6.2. System</h3>
+      <div>
+        <h3>6.2. Instrumentella segment</h3>
+        <p>Segmenten <code>sys</code> och <code>ext</code> kontrolleras internt 
+          och är primärt inte till för att länkas till av andra delar än 
+          systemet självt.
+        </p>
       </div>
-
-      <div class="section">
-        <h3>6.3. Ext</h3>
-      </div>
-
     </div>
 
     <div class="section">
@@ -392,40 +401,50 @@
     </div>
 
     <div id="bilaga_a" class="appendix">
-      <h2>A. Teori och principer</h2>
-        <p>Artiklar om teori och principer kring god URI-design:</p>
-        <ul>
-          <li><a href="http://tools.ietf.org/rfc/rfc3986">Uniform Resource 
-              Identifier (URI): Generic Syntax</a>
-          </li>
-          <li><a href="http://www.w3.org/Provider/Style/URI.html">Cool URIs 
-              don't change</a>
-          </li>
-          <li><a href="http://www.w3.org/TR/cooluris/">Cool URIs for the 
-              Semantic Web</a>
-          </li>
-          <li><a 
-              href="http://www.w3.org/2001/tag/doc/alternatives-discovery.html">On 
-              Linking Alternative Representations To Enable Discovery And 
-              Publishing</a>
-          </li>
-          <!--
-          <li><a 
-              href="http://h3h.net/2007/01/designing-urls-for-multilingual-web-sites/">Designing 
-              URLs for Multilingual Web Sites</a>
-          </li>
-          <li><a 
-              href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/pub/LinkedDataTutorial/">How 
-              to publish Linked Data on the Web</a>
-          </li>
-          -->
-        </ul>
+      <h2>A. Exempel på URI:er per dokument- och samlingstyp</h2>
+      <div class="atom-uri-examples">
+        <a href="../../resources/base/uri_algorithm/tests/publ.atom"
+          class="atom-source">exempel</a>
+      </div>
     </div>
 
+    <div id="bilaga_b" class="appendix">
+      <h2>B.</h2>
+    </div>
+
+    <div id="bilaga_c" class="appendix">
+      <h2>C.</h2>
+    </div>
+
+    <div id="bilaga_d" class="appendix">
+      <h2>D. Teori och principer</h2>
+      <p>Artiklar om teori och principer kring god URI-design:</p>
+      <ul>
+        <li><a href="http://tools.ietf.org/rfc/rfc3986">Uniform Resource 
+            Identifier (URI): Generic Syntax</a>
+        </li>
+        <li><a href="http://www.w3.org/Provider/Style/URI.html">Cool URIs 
+            don't change</a>
+        </li>
+        <li><a href="http://www.w3.org/TR/cooluris/">Cool URIs for the 
+            Semantic Web</a>
+        </li>
+        <li><a 
+            href="http://www.w3.org/2001/tag/doc/alternatives-discovery.html">On 
+            Linking Alternative Representations To Enable Discovery And 
+            Publishing</a>
+        </li>
+        <!-- TODO:
+        <a href="http://tools.ietf.org/html/draft-spinosa-urn-lex-00#section-1.5"></a>
+        <a href="http://www.cabinetoffice.gov.uk/media/308995/public_sector_uri.pdf"></a>
+        -->
+        <!--
+        <li><a href="http://sites.wiwiss.fu-berlin.de/suhl/bizer/pub/LinkedDataTutorial/"
+            >How to publish Linked Data on the Web</a>
+        </li>
+        -->
+      </ul>
     <!--
-    <div class="appendix">
-      <div class="section">
-        <h2>B. Designprinciper</h2>
 
     - alla "root-kataloger":
         - måste ha låst mening
@@ -451,26 +470,29 @@
                   - dokumenttyper
                   - samlingar
                       - författningssamlingar
-                      - TODO: enumerera övriga
-                      - TODO: ange vilka egenskaper som har dem som range
+                      - .. enumerera övriga
+                      - .. ange vilka egenskaper som har dem som range
                   - domstolar
 
-Språkhantering
-    - idag inte inbyggt att en lag finns på flera språk; dock:
+    = Språkhantering =
+
+    idag inte inbyggt att en lag finns på flera språk; dock:
+
         - en canonical URI för lagen i sig är språkoberoende
         - precis som för mediatyp kan representationer på olika språk få egna uri:er
           "under" canonical URI:n.
-        - se t.ex. <http://h3h.net/2007/01/designing-urls-for-multilingual-web-sites/>
-          för goda designråd kring hur dessa bör se ut. Vår nuvarande rekommendation är t.ex:
+        - se t.ex.:
+          <a href="http://h3h.net/2007/01/designing-urls-for-multilingual-web-sites/">Designing URLs for Multilingual Web Sites</a>
+          för goda designråd kring hur dessa bör se ut.
 
-            - TODO: se documentation/spec
+          Vår nuvarande rekommendation är (se ovan).
 
         - hur hantera samma dokument på olika språk?
             - är det en "representation" av document-resursen?
             - rimligen inte utan en ny document-resurs: går ej att säga 'dc:language "sv"' om de är "samma resurs"! (samma resonemang kan föras om dc:hasFormat..)
 
 
-Användbara URI:er är:
+    Användbara URI:er är:
 
     -   läsbara
 
@@ -515,6 +537,7 @@ Användbara URI:er är:
       </div>
     </div>
     -->
+    </div>
 
   </body>
 </html>

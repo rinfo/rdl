@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:h="http://www.w3.org/1999/xhtml"
                 xmlns:xi="http://www.w3.org/2001/XInclude"
+                xmlns="http://www.w3.org/1999/xhtml"
                 exclude-result-prefixes="xi">
 
   <xsl:param name="docdate"/>
@@ -11,7 +12,7 @@
 
   <xsl:template name="master">
     <xsl:param name="title-lead"></xsl:param>
-    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv">
+    <html xml:lang="sv">
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <title>
@@ -52,6 +53,31 @@
 
       </body>
     </html>
+  </xsl:template>
+
+  <xsl:template match="h:div[@id='toc']/h:ul[not(h:li)]">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:for-each select="/h:html/h:body/h:div[contains(@class, 'section')]">
+        <li>
+          <a href="#s_{position()}"><xsl:value-of select="h:h2"/></a>
+        </li>
+      </xsl:for-each>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="h:div[contains(concat(' ',@class, ' '), ' section ')]">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:if test="not(@id)">
+        <xsl:attribute name="id">
+          <xsl:text>s_</xsl:text>
+          <xsl:value-of select="1 + count(preceding-sibling::h:div[
+                        contains(concat(' ',@class, ' '), ' section ')])"/>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:apply-templates select="@*|node()"/>
+    </xsl:copy>
   </xsl:template>
 
   <xsl:template match="*|@*">

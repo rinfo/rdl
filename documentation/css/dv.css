@@ -22,6 +22,22 @@
     }
 }
 
+@media screen {
+    html {
+        background-color: #777;
+    }
+    body {
+        background-color: #fff;
+        width: 31em;
+        position: relative;
+        left: 50%;
+        margin: 0 0 0 -22em !important;
+        padding: 0 2.5cm 1cm 3cm;
+        border: 0 solid black;
+        border-width: 0 1px 0 1px;
+    }
+}
+
 body {
     font-family: Garamond, "Times New Roman", serif;
     font-size: 12pt;
