@@ -215,6 +215,14 @@
         ] .
 
 
+:kapitelnummer a owl:DatatypeProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Kapitelnummer"@sv;
+    rdfs:domain :Kapitel;
+    rdfs:range rdfs:Literal;
+    rdfs:comment "Det symboliska numret för ett kapitel i en svensk lag."@sv; .
+
+
 :Paragraf a owl:Class;
     rdfs:isDefinedBy : ;
     rdfs:label "Paragraf"@sv;
@@ -225,7 +233,7 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Paragrafnummer"@sv;
     rdfs:domain :Paragraf;
-    rdfs:range rdfs:Literal; 
+    rdfs:range rdfs:Literal;
     rdfs:comment "Det symboliska numret för en paragraf i en svensk lag."@sv; .
 
 
