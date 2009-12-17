@@ -16,7 +16,7 @@ On systems where python-setuptools is bundled (hence having the
 
 This is the case on OS X 10.5+. On ununtu, you may first need to::
 
-    $ sudo apt-get install python-dev python-setuptools
+    $ sudo apt-get install python-dev python-setuptools
 
 For other systems, see the Fabric website (above) for instructions.
 

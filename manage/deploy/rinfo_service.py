@@ -1,17 +1,18 @@
 from __future__ import with_statement
 from fabric.api import *
 from fabric.contrib.files import exists as _exists
-from deploy.envs import *
+from deploy import local_lib_rinfo_pkg, _deploy_war
+from targetenvs import *
 
 ##
 # Local build
 
 @runs_once
 def package_service(deps="1"):
-    if int(deps): install_rinfo_pkg()
-    require('deployenv', provided_by=deployenvs)
+    if int(deps): local_lib_rinfo_pkg()
+    require('target', provided_by=targetenvs)
     local("cd %(java_packages)s/rinfo-service/ && "
-            "mvn -P%(deployenv)s clean war:war"%env, capture=False)
+            "mvn -P%(target)s clean war:war"%env, capture=False)
 
 ##
 # Server deploy
@@ -29,8 +30,8 @@ def setup_service():
 @roles('service')
 def deploy_service():
     setup_service()
-    deploy_war(
-            "%(java_packages)s/rinfo-service/target/rinfo-service-%(deployenv)s.war"%env,
+    _deploy_war(
+            "%(java_packages)s/rinfo-service/target/rinfo-service-%(target)s.war"%env,
             "rinfo-service")
 
 @roles('service')
@@ -54,7 +55,7 @@ def deploy_sesame():
     setup_service()
     package_sesame()
     for warname in ['openrdf-sesame', 'sesame-workbench']:
-        deploy_war("%(local_sesame_dir)s/%(warname)s.war"%env, warname)
+        _deploy_war("%(local_sesame_dir)s/%(warname)s.war"%env, warname)
 
 ##
 # Manage repository
@@ -70,8 +71,8 @@ def service_repotool():
 def deploy_repotool():
     service_repotool()
     local("cd %(java_packages)s/rinfo-rdf-repo && "
-            "mvn -P %(deployenv)s assembly:assembly"%env)
-    put("%(java_packages)s/rinfo-service/src/environments/%(deployenv)s/%(rinfo_service_props)s"%env,
+            "mvn -P %(target)s assembly:assembly"%env)
+    put("%(java_packages)s/rinfo-service/src/environments/%(target)s/%(rinfo_service_props)s"%env,
             "%(dist_dir)s/"%env)
     put("%(java_packages)s/rinfo-rdf-repo/target/%(rinfo_repo_jar)s"%env, "%(dist_dir)s/"%env)
 

@@ -1,13 +1,14 @@
 from fabric.api import *
-from deploy.envs import *
+from deploy import local_lib_rinfo_pkg
+from targetenvs import *
 
 
 ##
 # Local build
 
 def package_examples(deps="1"):
-    if int(deps): install_rinfo_pkg()
-    require('deployenv', provided_by=deployenvs)
+    if int(deps): local_lib_rinfo_pkg()
+    require('target', provided_by=targetenvs)
     local("cd %(java_packages)s/teststore-examples/ && mvn -P%(env)s war:war")
 
 ##

@@ -1,16 +1,17 @@
 from fabric.api import *
 from fabric.contrib.files import exists
-from deploy.envs import *
+from deploy import local_lib_rinfo_pkg, _deploy_war
+from targetenvs import *
 
 ##
 # Local build
 
 @runs_once
 def package_main(deps="1"):
-    if int(deps): install_rinfo_pkg()
-    require('deployenv', provided_by=deployenvs)
+    if int(deps): local_lib_rinfo_pkg()
+    require('target', provided_by=targetenvs)
     local("cd %(java_packages)s/rinfo-main/ && "
-            "mvn -P%(deployenv)s clean war:war"%env, capture=False)
+            "mvn -P%(target)s clean war:war"%env, capture=False)
 
 ##
 # Server deploy
@@ -30,7 +31,7 @@ def setup_main():
 @roles('main')
 def deploy_main():
     setup_main()
-    deploy_war("%(java_packages)s/rinfo-main/target/rinfo-main-%(deployenv)s.war"%env,
+    _deploy_war("%(java_packages)s/rinfo-main/target/rinfo-main-%(target)s.war"%env,
             "rinfo-main")
 
 @roles('main')
