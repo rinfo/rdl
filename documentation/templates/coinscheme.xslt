@@ -26,7 +26,7 @@
         <div class="coinscheme">
             <p>
                 <xsl:text>Bas-URL: </xsl:text>
-                <strong><xsl:value-of select="coin:root"/></strong>
+                <xsl:apply-templates select="coin:root"/>
             </p>
             <dl>
                 <xsl:for-each select="$r[a/coin:Base and
@@ -60,7 +60,9 @@
             </xsl:if>
             <dl>
                 <xsl:for-each select="coin:contains">
-                    <xsl:sort select="coin:component/@ref | coin:segment"/>
+                    <xsl:sort select="coin:component[not(../coin:segment)]/@ref |
+                              coin:segment"/>
+                    <xsl:sort select="coin:component/@ref"/>
                     <xsl:apply-templates select="."/>
                 </xsl:for-each>
             </dl>
@@ -90,7 +92,7 @@
                     &#8594;
                 }</em>
                 <xsl:text>/</xsl:text>
-                <strong><xsl:value-of select="coin:segment"/></strong>
+                <xsl:apply-templates select="coin:segment"/>
                 <xsl:text>/</xsl:text>
                 <em>{ <xsl:apply-templates select="coin:component/@ref"/> }</em>
             </xsl:when>
@@ -103,10 +105,7 @@
                     <xsl:apply-templates select="coin:baseRev/@ref"/>
                     &#8594;
                 } </em>
-                <strong>
-                    <xsl:text>#</xsl:text>
-                    <xsl:value-of select="coin:fragmentPrefix"/>
-                </strong>
+                <xsl:apply-templates select="coin:fragmentPrefix"/>
                 <em>{ <xsl:apply-templates select="coin:component/@ref"/> }</em>
             </xsl:when>
         </xsl:choose>
@@ -120,7 +119,7 @@
             <select name="tokenSet">
                 <xsl:for-each select="$r[coin:tokenSet/@ref = $tokenSet/@uri]">
                     <xsl:sort select="rdf:value"/>
-                    <option><xsl:value-of select="rdf:value"/></option>
+                    <option><xsl:apply-templates select="rdf:value"/></option>
                 </xsl:for-each>
             </select>
         </xsl:if>
@@ -136,14 +135,20 @@
                     <xsl:apply-templates select="$label"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="."/>
+                    <xsl:apply-templates/>
                 </xsl:otherwise>
             </xsl:choose>
         </a>
     </xsl:template>
 
-    <xsl:template match="coin:segment">
-        <strong><xsl:value-of select="."/></strong>
+    <xsl:template match="coin:root | coin:segment">
+        <strong><code><xsl:apply-templates/></code></strong>
+    </xsl:template>
+
+    <xsl:template match="coin:fragmentPrefix">
+        <strong>
+            <code>#<xsl:apply-templates/></code>
+        </strong>
     </xsl:template>
 
 </xsl:stylesheet>
