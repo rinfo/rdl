@@ -13,13 +13,16 @@ import docgen.Builder
 
 def resourceDir = "../resources/"
 def sourceDir = "../documentation/"
-def buildDir = "_build/documentation"
 
 def (flags, paths) = args.split { it =~ /^--/ }
+
+def buildDir = paths[0]
+def patterns = paths[1]? paths[1..-1] : Builder.DEFAULT_RENDER_PATTERNS
+
+def copies = Builder.DEFAULT_COPY_PATTERNS
 def clean = "--clean" in flags
 def nogen = "--nogen" in flags
-def patterns = paths ?: Builder.DEFAULT_RENDER_PATTERNS
-def copies = Builder.DEFAULT_COPY_PATTERNS
+
 def build = new Builder(resourceDir, sourceDir, buildDir).build(
         patterns, copies, clean, !nogen)
 

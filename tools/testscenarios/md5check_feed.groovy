@@ -4,8 +4,10 @@ import org.apache.commons.io.IOUtils
 import org.apache.commons.codec.binary.Hex
 
 
-@Grab(group='commons-codec', module='commons-codec', version='1.3')
-@Grab(group='commons-io', module='commons-io', version='1.4')
+@Grapes([
+  @Grab(group='commons-codec', module='commons-codec', version='1.3'),
+  @Grab(group='commons-io', module='commons-io', version='1.4')
+])
 def getMD5HexDigest(InputStream ins) {
     def outs = new DigestOutputStream(new ByteArrayOutputStream(), MessageDigest.getInstance("MD5"))
     IOUtils.copy(ins, outs)

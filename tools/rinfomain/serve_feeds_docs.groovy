@@ -2,8 +2,10 @@ import org.restlet.*
 import org.restlet.data.Protocol
 
 
-@Grab(group='org.restlet', module='org.restlet', version='1.1.4')
-@Grab(group='com.noelios.restlet', module='com.noelios.restlet', version='1.1.4')
+@Grapes([
+  @Grab(group='org.restlet', module='org.restlet', version='1.1.4'),
+  @Grab(group='com.noelios.restlet', module='com.noelios.restlet', version='1.1.4')
+])
 class SourceApp extends Application {
     String wwwDir
     Restlet createRoot() {
