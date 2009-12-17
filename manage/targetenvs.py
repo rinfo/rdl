@@ -1,11 +1,19 @@
 from fabric.api import *
 from util import x
 
+
+targetenvs = []
+def _targetenv(f): targetenvs.append(f); return f
+def _fdoc_target(f): return f.__doc__.split(': ')[-1]
+
+def _needs_targetenv():
+    require('target', 'roledefs', 'dist_dir', 'tomcat',
+            provided_by=targetenvs)
+
 ##
 # Target environments
 
-_fdoc_target = lambda f: f.__doc__.split(': ')[-1]
-
+@_targetenv
 def tg_dev_unix():
     "Set target env to: dev-unix"
     # Name env:
@@ -29,6 +37,7 @@ def tg_dev_unix():
     env.rinfo_dir = '/opt/_workapps/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/_workapps/rinfo/aduna'
 
+@_targetenv
 def tg_integration():
     "Set target env to: integration"
     # Name env:
@@ -52,6 +61,7 @@ def tg_integration():
     env.rinfo_dir = '/opt/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
 
+@_targetenv
 def tg_stg():
     "Set target env to: stg"
     # Name env:
@@ -76,6 +86,7 @@ def tg_stg():
     env.rinfo_dir = '/opt/rinfo' # TODO: remove if base is packaged in
     env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
 
+@_targetenv
 def tg_prod():
     "Set target env to: prod"
     # Name env:
@@ -88,11 +99,4 @@ def tg_prod():
     env.mgr_workdir = "mgr_work"
     env.mgr_work_tomcat = "%(mgr_workdir)s/tomcat" % env
     env.tomcat_version = "6.0.20"
-
-
-targetenvs = [tg_dev_unix, tg_integration, tg_stg, tg_prod]
-
-def _needs_deployenv():
-    require('target', 'roledefs', 'dist_dir', 'tomcat',
-            provided_by=targetenvs)
 

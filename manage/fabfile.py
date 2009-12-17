@@ -2,15 +2,11 @@ import datetime
 from os import path as p
 from fabric.api import env
 
-from targetenvs import *
-from servertools import *
-from deploy.rinfo_main import *
-from deploy.rinfo_service import *
-#from deploy.rinfo_testsources import *
-from deploy.docs import *
-from sysconf import *
+##
+# Global settings
 
 env.project = 'rinfo'
+
 env.projectroot = p.normpath(p.join(p.dirname(__file__), '..'))
 
 env.toolsdir = "%(projectroot)s/tools" % env
@@ -20,6 +16,19 @@ env.docbuild = '%(builddir)s/documentation' % env
 env.base_data = "%(projectroot)s/resources/base" % env
 env.java_packages = "%(projectroot)s/packages/java" % env
 env.timestamp = datetime.datetime.utcnow().strftime('%Y_%m_%d_%H-%M-%S')
+
+env.roledefs = {'main': None, 'service': None}
+
+##
+# Import tasks
+
+from targetenvs import *
+from servertools import *
+from deploy.rinfo_main import *
+from deploy.rinfo_service import *
+#from deploy.rinfo_testsources import *
+from deploy.docs import *
+from sysconf import *
 
 ##
 # Runtime operations

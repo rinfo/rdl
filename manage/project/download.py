@@ -68,10 +68,10 @@ def _http_get(url, dest, usemodtime=True, headers=()):
         req.add_header('If-Modified-Since', modstamp)
     try:
         res = urllib2.urlopen(req)
-        print res.info()
     except Exception, e:
         print e
         return
+    print res.info()
     with file(dest, 'w') as out:
         shutil.copyfileobj(res, out)
 

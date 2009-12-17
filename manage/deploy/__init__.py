@@ -1,4 +1,5 @@
 from fabric.api import *
+from targetenvs import _needs_targetenv
 
 @runs_once
 def local_lib_rinfo_pkg():
@@ -6,7 +7,7 @@ def local_lib_rinfo_pkg():
     # TODO:? This also "installs" final war:s etc.. Use mvn-param for install dest.?
 
 def _deploy_war(localwar, warname):
-    _needs_deployenv()
+    _needs_targetenv()
     put(localwar, "%(dist_dir)s/%(warname)s.war"%x())
     sudo("%(tomcat_stop)s"%x())
     sudo("rm -rf %(tomcat_webapps)s/%(warname)s/"%x())
