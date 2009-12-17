@@ -1,5 +1,6 @@
-from fabric.api import env
 import datetime
+from os import path as p
+from fabric.api import env
 
 from targetenvs import *
 from servertools import *
@@ -10,9 +11,14 @@ from deploy.docs import *
 from sysconf import *
 
 env.project = 'rinfo'
-env.projectroot = '..'
-env.base_data = "%(projectroot)s/resources/base"%env
-env.java_packages = "%(projectroot)s/packages/java"%env
+env.projectroot = p.normpath(p.join(p.dirname(__file__), '..'))
+
+env.toolsdir = "%(projectroot)s/tools" % env
+env.builddir = "%(projectroot)s/_build" % env
+env.docbuild = '%(builddir)s/documentation' % env
+
+env.base_data = "%(projectroot)s/resources/base" % env
+env.java_packages = "%(projectroot)s/packages/java" % env
 env.timestamp = datetime.datetime.utcnow().strftime('%Y_%m_%d_%H-%M-%S')
 
 ##

@@ -34,6 +34,7 @@ def tomcat_to_target():
 def install_tomcat_at_target():
     require('target', provided_by=targetenvs)
     dirpath(env.mgr_work_tomcat)
+    #rsync_project(TODO, slashed(env.mgr_work_tomcat), exclude=".*", delete=True)
     #put("tomcat/init-d-tomcat", "/etc/init.d/tomcat")
     #put("", "/etc/apache2/workers.properties")
     #put("", "/etc/apache2/conf.d/jk.conf")

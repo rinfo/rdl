@@ -1,24 +1,18 @@
 from __future__ import with_statement
 from fabric.api import *
 from fabric.contrib.project import rsync_project
+from util import slashed
 
 
-def prod_doc_target():
-    env.toolsdir = "%(projectroot)s/tools" % env
-    env.builddir = '%(toolsdir)s/_build/documentation' % env
+def doc_server():
     env.hosts = ["dev.lagrummet.se"]
-    env.webroot = "/var/www/dokumentation/v0" # TODO: change to official when OK:d
-
+    env.webdocroot = "/var/www/dokumentation/v0" # TODO: change to official when OK:d
 
 def build_docs():
-    prod_doc_target()
-    local("cd %(toolsdir)s; groovy build_rinfo_docs.groovy --clean" % env)
+    local("cd %(toolsdir)s &&"
+            " groovy build_rinfo_docs.groovy --clean %(docbuild)s" % env)
 
 def upload_docs():
-    prod_doc_target()
-    rsync_project(env.webroot, _slashed(env.builddir), exclude=".*", delete=True)
-
-
-def _slashed(path):
-    return path if path.endswith('/') else path+'/'
+    doc_server()
+    rsync_project(env.webdocroot, slashed(env.docbuild), exclude=".*", delete=True)
 

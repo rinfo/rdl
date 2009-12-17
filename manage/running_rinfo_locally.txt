@@ -36,8 +36,9 @@ Then copy ``openrdf-sesame.war`` and ``sesame-workbench.war`` in
 Data directories
 ------------------------------------------------------------------------
 
+* /opt/_workapps/rinfo/ => EMPTY!
 * /opt/_workapps/rinfo/depots/rinfo/ => EMPTY!
-* /opt/_workapps/rinfo/depots/example.org/ => With data from e.g. laboratory..
+#* /opt/_workapps/rinfo/depots/example.org/ => With data from e.g. laboratory.. # obsolete; see below
 
 The RInfo Applications
 ------------------------------------------------------------------------
@@ -49,24 +50,34 @@ Install the shared rinfo packages to your local maven repo by::
 
 Now you are ready to start up:
 
-example-store
-    serving some example data.
+* Integration test data:
 
-base prototype feed
-    for base data (models, containers; organization, feeds).
+    example-store
+        serving some example data.
 
-rinfo-main
-    collects from the sources defined for development mode (a base/admin
-    prototype feed and example suppliers) and supplies the main data feed.
+    base prototype feed
+        for base data (models, containers; organization, feeds).
 
-rinfo-service
-    feeds from rinfo-main into the sesame RDF repo, making data abailable for
-    its data views.
+    these can be served by running e.g.::
+
+        $ WORK_DIR=/opt/_workapps/rinfo/ # or anything you desire
+        $ groovy tools/rinfomain/map_feeds_docs.groovy $WORK_DIR/rinfo/testsources/www
+        $ groovy tools/rinfomain/serve_feeds_docs.groovy $WORK_DIR/rinfo/testsources/www
+
+* Local instance of the RInfo system:
+
+    rinfo-main
+        collects from the sources defined for development mode (a base/admin
+        prototype feed and example suppliers) and supplies the main data feed.
+
+    rinfo-service
+        feeds from rinfo-main into the sesame RDF repo, making data abailable for
+        its data views.
 
 In Depth
 ========================================================================
 
 To get an *understanding* of how a staging or production environment is set up,
-you can study the deployment script in ``../fabfile.py`` and the scripts it
+you can study the deployment script in ``fabfile.py`` and the scripts it
 includes to provide setup and deployment commands.
 
