@@ -8,6 +8,12 @@ fetch-rdf() {
         curl -L -H "Accept: application/rdf+xml" -s $url > $file
     else
         echo "Skipping <$url> [Found file: $file]"
+        #curl -s -L -z $file -H "Accept: application/rdf+xml" $url > $file.new
+        #if [[ -s $file.new ]]; then
+        #    mv $file.new $file
+        #else
+        #    rm $file.new
+        #fi
     fi
 }
 
