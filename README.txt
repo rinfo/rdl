@@ -6,28 +6,24 @@ README - RInfo Project
 Getting Started
 ========================================================================
 
-See ``setup/development/running_rinfo_locally.txt``.
+See ``manage/running_rinfo_locally.txt``.
 
 
-Repository Contents
+Contents
 ========================================================================
 
-The top-level directories are divided by intrinsic purpose:
+The project consists of:
+
+README.txt
+    This file.
 
 documentation/
     All forms of documentation, including system descriptions, data examples
     (both core data and service responses), acceptance specifications/tests
     etc.
 
-laboratory/
-    Designs, data examples, tools, experiments etc. Things here should either
-    graduate into resources, code modules, become documentation or eventually
-    be removed.
-
-    applications/
-        Example (client and/or server) applications who interact with the RInfo
-        services in some way. *Each directory should represent a self-contained
-        application.*
+manage/
+    Management tools for config, build, integration and deployment.
 
 resources/
     Shared data (and platform-independent code) that other things depend on.
@@ -40,9 +36,6 @@ resources/
         Code maintained by other parties but put here for convenience. Keep
         this to a minimum.
 
-README.txt
-    This file.
-
 packages/
 
     All code modules/libraries/components live here, under directories named by
@@ -52,9 +45,16 @@ packages/
     architecture live here. (Each directory under the platform directory should
     represent a self-contained component.)
 
-setup/
-    Core development and deployment setup tools.
-
 tools/
     Instrumental tools for development and (non-setup related) management.
+
+laboratory/
+    Designs, data examples, tools, experiments etc. Things here should either
+    graduate into resources, code modules, become documentation or eventually
+    be removed.
+
+    applications/
+        Example (client and/or server) applications who interact with the RInfo
+        services in some way. *Each directory should represent a self-contained
+        application.*
 
