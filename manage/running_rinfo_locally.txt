@@ -9,6 +9,7 @@ It's recommended to run all components of the RInfo System on your local
 machine during development. To do this from scratch, you need:
 
 * Java JDK 1.6+
+* Maven 2.0.9+
 * Tomcat 6+
 
 To use the various instrumental tools used you also need:
@@ -19,7 +20,7 @@ To use the various instrumental tools used you also need:
 Setting up the environment
 ========================================================================
 
-Tomcat
+Sesame
 ------------------------------------------------------------------------
 
 You need a Java webapp container (e.g. Tomcat) to run the Sesame RDF Repository
@@ -38,7 +39,6 @@ Data directories
 
 * /opt/_workapps/rinfo/ => EMPTY!
 * /opt/_workapps/rinfo/depots/rinfo/ => EMPTY!
-#* /opt/_workapps/rinfo/depots/example.org/ => With data from e.g. laboratory.. # obsolete; see below
 
 The RInfo Applications
 ------------------------------------------------------------------------
@@ -50,7 +50,7 @@ Install the shared rinfo packages to your local maven repo by::
 
 Now you are ready to start up:
 
-* Integration test data:
+*   Integration test data:
 
     example-store
         serving some example data.
@@ -64,7 +64,7 @@ Now you are ready to start up:
         $ groovy tools/rinfomain/map_feeds_docs.groovy $WORK_DIR/rinfo/testsources/www
         $ groovy tools/rinfomain/serve_feeds_docs.groovy $WORK_DIR/rinfo/testsources/www
 
-* Local instance of the RInfo system:
+*   Local instance of the RInfo system:
 
     rinfo-main
         collects from the sources defined for development mode (a base/admin
