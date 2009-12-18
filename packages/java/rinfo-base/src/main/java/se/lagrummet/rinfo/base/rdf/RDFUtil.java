@@ -195,13 +195,14 @@ public class RDFUtil {
         for (String path : paths) {
             File fileOrDir = new File(path);
             if (fileOrDir.isFile()) {
+                logger.info("Loading: "+fileOrDir);
                 loadDataFromFile(repo, fileOrDir);
-                continue;
-            }
-            for (Object o : FileUtils.listFiles(fileOrDir, patterns, true)) {
-                File file = (File) o;
-                logger.info("Loading: "+file);
-                loadDataFromFile(repo, file);
+            } else {
+                for (Object o : FileUtils.listFiles(fileOrDir, patterns, true)) {
+                    File file = (File) o;
+                    logger.info("Loading: "+file);
+                    loadDataFromFile(repo, file);
+                }
             }
         }
         return repo;
