@@ -1,5 +1,4 @@
 from fabric.api import *
-from util import x
 
 
 targetenvs = []
@@ -20,9 +19,9 @@ def tg_dev_unix():
     env.target = _fdoc_target(tg_dev_unix)
     # Tomcat
     env.tomcat = "/opt/tomcat"
-    env.tomcat_webapps = "%(tomcat)s/webapps"%x()
-    env.tomcat_start = "%(tomcat)s/bin/catalina.sh start"%x()
-    env.tomcat_stop = "%(tomcat)s/bin/catalina.sh stop"%x()
+    env.tomcat_webapps = "%(tomcat)s/webapps"%env
+    env.tomcat_start = "%(tomcat)s/bin/catalina.sh start"%env
+    env.tomcat_stop = "%(tomcat)s/bin/catalina.sh stop"%env
     env.tomcat_user = "tomcat"
     # Machines:
     env.roledefs = {
@@ -44,7 +43,7 @@ def tg_integration():
     env.target = _fdoc_target(tg_integration)
     # Tomcat (Ubuntu)
     env.tomcat = "/var/lib/tomcat6"
-    env.tomcat_webapps = "%(tomcat)s/webapps"%x()
+    env.tomcat_webapps = "%(tomcat)s/webapps"%env
     env.tomcat_start = '/etc/init.d/tomcat6 start'
     env.tomcat_stop = '/etc/init.d/tomcat6 stop'
     env.tomcat_user = 'tomcat6'
@@ -52,7 +51,8 @@ def tg_integration():
     env.roledefs = {
         'main': ['rinfo-main'],
         'service': ['rinfo-service'],
-        'examples': ['rinfo-sources'],
+        #'examples': ['rinfo-sources'],
+        'doc': ['rinfo-main'],
     }
     # Filesystem paths
     env.rinfo_main_store = "/opt/rinfo/store"
@@ -60,6 +60,7 @@ def tg_integration():
     env.dist_dir = 'rinfo_dist'
     env.rinfo_dir = '/opt/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
+    env.webdocroot = "/var/www/dokumentation/"
 
 @_targetenv
 def tg_stg():
@@ -68,7 +69,7 @@ def tg_stg():
     env.target = _fdoc_target(tg_stg)
     # Tomcat (SuSE):
     env.tomcat = "/usr/share/tomcat6"
-    env.tomcat_webapps = "%(tomcat)s/webapps"%x()
+    env.tomcat_webapps = "%(tomcat)s/webapps"%env
     env.tomcat_start = 'dtomcat6 start'
     env.tomcat_stop = 'dtomcat6 stop'
     env.tomcat_user = 'tomcat6'
@@ -91,12 +92,17 @@ def tg_prod():
     "Set target env to: prod"
     # Name env:
     env.target = _fdoc_target(tg_prod)
+    # Machines:
     env.roledefs = {
         'main': ['94.247.169.66'],
         'service': ['94.247.169.67'],
+        'doc': ['dev.lagrummet.se'],
     }
-    # TODO: see above
+    # Manage
     env.mgr_workdir = "mgr_work"
-    env.mgr_work_tomcat = "%(mgr_workdir)s/tomcat" % env
+    # Tomcat
+    env.mgr_work_tomcat = "%(mgr_workdir)s/tomcat"%env
     env.tomcat_version = "6.0.20"
+    # TODO: missing vars; sync with above
+    env.webdocroot = "/var/www/dokumentation/v0" # TODO: change to official when OK:d
 

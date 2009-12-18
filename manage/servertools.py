@@ -1,5 +1,5 @@
 from fabric.api import *
-from util import x
+from util import venv
 from targetenvs import _needs_targetenv
 
 ##
@@ -7,20 +7,20 @@ from targetenvs import _needs_targetenv
 
 def list_dist():
     _needs_targetenv()
-    run("ls -latr %(dist_dir)s/"%x())
+    run("ls -latr %(dist_dir)s/"%env)
 
 def clean_dist():
     _needs_targetenv()
-    run("rm -rf %(dist_dir)s/*"%x())
+    run("rm -rf %(dist_dir)s/*"%env)
 
 def tail():
     _needs_targetenv()
-    sudo("ls -t %(tomcat)s/logs/catalina*.* | head -1 | xargs tail -f"%x())
+    sudo("ls -t %(tomcat)s/logs/catalina*.* | head -1 | xargs tail -f"%env)
 
 def restart_tomcat():
     _needs_targetenv()
-    sudo("%(tomcat_stop)s"%x())
-    sudo("%(tomcat_start)s"%x())
+    sudo("%(tomcat_stop)s"%env)
+    sudo("%(tomcat_start)s"%env)
 
 def restart_apache():
     _needs_targetenv()
@@ -30,5 +30,6 @@ def restart_apache():
 
 def war_props(warname="ROOT"):
     _needs_targetenv()
-    run("unzip -p %(tomcat_webapps)s/%(warname)s.war WEB-INF/classes/*.properties"%x())
+    run("unzip -p %(tomcat_webapps)s/%(warname)s.war"
+            " WEB-INF/classes/*.properties"%venv())
 

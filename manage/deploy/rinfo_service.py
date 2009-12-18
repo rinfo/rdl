@@ -1,8 +1,9 @@
 from __future__ import with_statement
 from fabric.api import *
-from fabric.contrib.files import exists as _exists
+from fabric.contrib.files import exists
+from util import venv
 from deploy import local_lib_rinfo_pkg, _deploy_war
-from targetenvs import *
+from targetenvs import _needs_targetenv
 
 ##
 # Local build
@@ -10,7 +11,7 @@ from targetenvs import *
 @runs_once
 def package_service(deps="1"):
     if int(deps): local_lib_rinfo_pkg()
-    require('target', provided_by=targetenvs)
+    _needs_targetenv()
     local("cd %(java_packages)s/rinfo-service/ && "
             "mvn -P%(target)s clean war:war"%env, capture=False)
 
@@ -20,13 +21,12 @@ def package_service(deps="1"):
 @runs_once
 @roles('service')
 def setup_service():
-    require('dist_dir', 'rinfo_dir', 'rinfo_rdf_repo_dir', provided_by=deployenvs)
-    if not _exists(env.dist_dir): run("mkdir %(dist_dir)s"%env)
-    if not _exists(env.rinfo_dir): sudo("mkdir %(rinfo_dir)s"%env)
-    if not _exists(env.rinfo_rdf_repo_dir):
+    _needs_targetenv()
+    if not exists(env.dist_dir): run("mkdir %(dist_dir)s"%env)
+    if not exists(env.rinfo_dir): sudo("mkdir %(rinfo_dir)s"%env)
+    if not exists(env.rinfo_rdf_repo_dir):
         sudo("mkdir %(rinfo_rdf_repo_dir)s"%env)
 
-@runs_once
 @roles('service')
 def deploy_service():
     setup_service()
@@ -63,7 +63,7 @@ def deploy_sesame():
 @roles('service')
 def service_repotool():
     setup_service()
-    env.rinfo_repo_jar = "rinfo-rdf-repo-1.0-SNAPSHOT-jar-with-dependencies.jar"
+    env.rinfo_repo_jar = "rinfo-rdf-repo-%s-jar-with-dependencies.jar" % env.java_pkg_version
     env.rinfo_service_props = "rinfo-service.properties"
 
 @runs_once
@@ -88,5 +88,5 @@ def _repotool(cmd):
     service_repotool()
     run("cd %(dist_dir)s && "
             "java -jar %(rinfo_repo_jar)s %(cmd)s "
-            "%(rinfo_service_props)s rinfo.service.repo"%x())
+            "%(rinfo_service_props)s rinfo.service.repo"%venv())
 

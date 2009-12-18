@@ -16,7 +16,8 @@
 from __future__ import with_statement
 from fabric.api import *
 from fabric.contrib.files import exists
-from targetenvs import *
+from targetenvs import _needs_targetenv
+from util import dirpath
 
 
 def pull_etckeeper_repos():
@@ -24,11 +25,11 @@ def pull_etckeeper_repos():
 
 @roles('main')
 def tomcat_to_target():
-    require('target', provided_by=targetenvs)
+    _needs_targetenv()
     dirpath(env.mgr_work_tomcat)
-    put("%(target)s/tomcat/get-tomcat.sh" % env, env.mgr_work_tomcat)
+    put("%(target)s/tomcat/get-tomcat.sh"%env, env.mgr_work_tomcat)
     with cd(env.mgr_work_tomcat):
-        run("bash get-tomcat.sh %(tomcat_version)s" % env)
+        run("bash get-tomcat.sh %(tomcat_version)s"%env)
 
 @roles('main')
 def install_tomcat_at_target():
@@ -38,15 +39,11 @@ def install_tomcat_at_target():
     #put("tomcat/init-d-tomcat", "/etc/init.d/tomcat")
     #put("", "/etc/apache2/workers.properties")
     #put("", "/etc/apache2/conf.d/jk.conf")
-    put("%(target)s/tomcat/install-tomcat.sh" % env, env.mgr_work_tomcat)
+    put("%(target)s/tomcat/install-tomcat.sh"%env, env.mgr_work_tomcat)
     with cd(env.mgr_work_tomcat):
-        sudo("bash install-tomcat.sh %(tomcat_version)s ." % env)
+        sudo("bash install-tomcat.sh %(tomcat_version)s ."%env)
     #sudo("chown root:root /etc/apache2/conf.d/jk.conf")
     #$ /etc/init.d/apache2 stop
     #$ /etc/init.d/tomcat restart
     #$ /etc/init.d/apache2 start
-
-
-def dirpath(path):
-    if not exists(path): run("mkdir -p %s" % path)
 
