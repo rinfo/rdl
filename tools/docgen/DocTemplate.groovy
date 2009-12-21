@@ -2,9 +2,13 @@ package docgen
 
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.transform.Source
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMResult
 import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.sax.SAXSource
+import javax.xml.transform.sax.SAXTransformerFactory
+import javax.xml.transform.stream.StreamSource
 
 import org.w3c.dom.Document
 import org.xml.sax.EntityResolver
@@ -55,6 +59,22 @@ class DocTemplate {
         } else {
             return doc
         }
+    }
+
+    Document transform(InputStream inputStream, String... xslts) {
+        def saxTransFctry = (SAXTransformerFactory) tFactory
+        def domResult = new DOMResult()
+        def filter = null
+        for (String xslt : xslts) {
+            def tplt = tFactory.newTemplates(new StreamSource(xslt))
+            def nextFilter = saxTransFctry.newXMLFilter(tplt)
+            if (filter) nextFilter.setParent(filter)
+            filter = nextFilter
+        }
+        def transformSource = new SAXSource(filter, new InputSource(inputStream))
+        def chainedTransformer = saxTransFctry.newTransformer()
+        chainedTransformer.transform(transformSource, domResult)
+        return (Document) domResult.getNode()
     }
 
     /**

@@ -1,5 +1,7 @@
 package docgen
 
+import org.w3c.dom.Document
+
 import org.apache.commons.configuration.ConfigurationUtils
 import net.sf.json.groovy.JsonSlurper
 import org.antlr.stringtemplate.StringTemplateGroup
@@ -15,7 +17,6 @@ class DataViewer {
 
     DataViewer(String... dirs) {
         repo = RDFUtil.slurpRdf(dirs)
-
     }
 
     def renderModel(fname=null, locale="en", mediabase=".") {

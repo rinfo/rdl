@@ -19,8 +19,6 @@ def download_models(usemodtime=True):
     get("http://www.w3.org/2000/01/rdf-schema#", destdir+"rdf-schema.rdfs")
     get("http://www.w3.org/2002/07/owl#", destdir+"owl.owl")
     #get("http://www.w3.org/2001/XMLSchema#", destdir+"xsd.rdfs") # 404:s..
-
-    # W3C Draft Standards Data
     get("http://www.w3.org/2004/02/skos/core#", destdir+"skos_core.rdfs")
 
     # Standard Community Data
@@ -42,7 +40,7 @@ def download_models(usemodtime=True):
 def download_xslt(usemodtime=True):
     destdir = projectroot+"resources/external/xslt/"
     get = f.partial(_http_get, usemodtime=_unrepr(usemodtime))
-    get("http://purl.org/oort/impl/xslt/tram/rdfxml-tram.xslt", destdir)
+    get("http://purl.org/oort/impl/xslt/grit/rdfxml-grit.xslt", destdir)
 
 def download_all(usemodtime=True):
     download_models(usemodtime)

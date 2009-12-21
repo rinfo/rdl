@@ -24,24 +24,33 @@
     <xsl:template match="resource[a/coin:CoinScheme]">
         <xsl:variable name="sep" select="coin:separator"/>
         <div class="coinscheme">
+            <h1>URI-myntningsschema</h1>
             <p>
-                <xsl:text>Bas-URL: </xsl:text>
-                <xsl:apply-templates select="coin:root"/>
+                <xsl:text>Bas-URI: </xsl:text>
+                <span id="baseuri">
+                    <xsl:apply-templates select="coin:root"/>
+                </span>
             </p>
-            <dl>
-                <xsl:for-each select="$r[a/coin:Base and
-                              coin:scheme/@ref = current()/@uri]">
-                    <xsl:sort select="coin:segment"/>
-                    <xsl:apply-templates select="."/>
-                </xsl:for-each>
-            </dl>
-            <dl>
-                <xsl:for-each select="$r[a/coin:Containment and
-                              coin:scheme/@ref = current()/@uri]">
-                    <xsl:sort select="coin:segment | coin:fragmentPrefix"/>
-                    <xsl:apply-templates select="."/>
-                </xsl:for-each>
-            </dl>
+            <div id="bases">
+                <!-- <h2>Regler förankrade i bas-segment</h2> -->
+                <dl>
+                    <xsl:for-each select="$r[a/coin:Base and
+                                coin:scheme/@ref = current()/@uri]">
+                        <xsl:sort select="coin:segment"/>
+                        <xsl:apply-templates select="."/>
+                    </xsl:for-each>
+                </dl>
+            </div>
+            <div id="containments">
+                <!-- <h2>Baserade på URI för relaterad resurs</h2> -->
+                <dl>
+                    <xsl:for-each select="$r[a/coin:Containment and
+                                coin:scheme/@ref = current()/@uri]">
+                        <xsl:sort select="coin:segment | coin:fragmentPrefix"/>
+                        <xsl:apply-templates select="."/>
+                    </xsl:for-each>
+                </dl>
+            </div>
         </div>
     </xsl:template>
 
@@ -58,14 +67,16 @@
             <xsl:if test="coin:forType">
                 <em>(Av typen: <xsl:apply-templates select="coin:forType/@ref"/>)</em>
             </xsl:if>
-            <dl>
-                <xsl:for-each select="coin:contains">
-                    <xsl:sort select="coin:component[not(../coin:segment)]/@ref |
-                              coin:segment"/>
-                    <xsl:sort select="coin:component/@ref"/>
-                    <xsl:apply-templates select="."/>
-                </xsl:for-each>
-            </dl>
+            <xsl:if test="coin:contains">
+                <dl>
+                    <xsl:for-each select="coin:contains">
+                        <xsl:sort select="coin:component[not(../coin:segment)]/@ref |
+                                coin:segment"/>
+                        <xsl:sort select="coin:component/@ref"/>
+                        <xsl:apply-templates select="."/>
+                    </xsl:for-each>
+                </dl>
+            </xsl:if>
         </dd>
     </xsl:template>
 

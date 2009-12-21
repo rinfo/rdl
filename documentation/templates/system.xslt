@@ -21,8 +21,9 @@
           <code><xsl:value-of select="a:id"/></code>
         </dt>
         <dd>
-          <p><em><xsl:value-of select="a:summary"/></em>
-          </p>
+          <xsl:if test="a:summary/node()">
+            <p> <em><xsl:value-of select="a:summary"/></em> </p>
+          </xsl:if>
           <dl>
             <xsl:apply-templates select="a:content[@type='application/rdf+xml']/*" mode="rdf-example"/>
           </dl>

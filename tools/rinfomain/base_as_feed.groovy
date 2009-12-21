@@ -264,7 +264,7 @@ Closure managedRdfInputStream(baseUri, file, final repo=null, parse=false) {
 }
 
 def repoToInStream(repo) {
-    return RDFUtil.serializeAsInputStream(repo, RDFFormat.RDFXML.defaultMIMEType)
+    return RDFUtil.toInputStream(repo, RDFFormat.RDFXML.defaultMIMEType)
 }
 
 //======================================================================

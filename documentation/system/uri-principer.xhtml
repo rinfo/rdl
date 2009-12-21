@@ -89,7 +89,8 @@
         <h3>Bas</h3>
         <p>Bas-URI:n för rättsinformationssystemet är:</p>
         <blockquote>
-          <code>http://rinfo.lagrummet.se/</code>
+          <!-- <code>http://rinfo.lagrummet.se/</code> -->
+          <xi:include href="build:urischeme.xhtml" xpointer="baseuri"/>
         </blockquote>
       </div>
       <div>
@@ -118,6 +119,19 @@
           <p>Se <a href="#s_6">avsnitt 6</a>.
           </p>
         </div>
+      </div>
+      <div>
+        <h3>Konstruktionsregler</h3>
+        <p>För teknisk specifikation av hur URI:er ska konstrueras baserat på
+          dokuments relationer och egenskaper, se <a href="#bilaga_a">Bilaga
+            A</a>.
+        </p>
+        <p>För exempel på URI:er per dokument- och samlingstyp se, <a 
+            href="#bilaga_b">Bilaga B</a>.
+        </p>
+        <p>För listor på symboler för de resurser olika relationer anger, se <a
+            href="#bilaga_c">Bilaga C</a>.
+        </p>
       </div>
     </div>
 
@@ -193,55 +207,6 @@
             <dd>
               <p>Vägledande domstolsavgöranden utgivna av Domstolsverket.</p>
             </dd>
-          </dl>
-        </div>
-        <div>
-          <h4>Konstruktionsregler för publikationsindentifierare</h4>
-          <!-- TODO:skriv klart detta block (plus genererad data) -->
-          <p>
-          </p>
-          <ul>
-            <li>Lista på regler: segment per "gruppering", vilken "symbol" 
-              (token) som används..</li>
-            <li>Hur en symbols tecken transformeras till ett/flera segment i en 
-              identifierare..</li>
-            <li>Sammansättningsalgoritm..</li>
-            <li>Komplett lista på containrar som används som bas av (vissa) 
-              regler.. (i bilaga)</li>
-            <!--
-            <xi:include href="data/containers.xhtml" xpointer="containers"/>
-            <code class="javascript"><xi:include href="../../resources/base/uri_algorithm/compose_results.js" parse="text"/></code>
-            -->
-          </ul>
-          <p>För exempel på URI:er per dokument- och samlingstyp se <a 
-              href="#bilaga_a">Bilaga A</a>.
-          </p>
-        </div>
-        <div>
-          <h4>Delar av dokument: fragmentidentifierare</h4>
-          <p>Delar av dokument identifieras med bestämda fragment. Dessa 
-            konstrueras baserat på:
-          </p>
-          <ul>
-            <li>relationen mellan dokument eller överliggande del och delen i 
-              sig,
-            </li>
-            <li>en ordinal (vanligen siffra eller nummer). Plats för denna 
-              representeras som <code>{ordinal}</code> i mallarna nedan.
-            </li>
-          </ul>
-          <p>De definierade fragmenttyperna och hur de ska konstrueras 
-            definieras av följande mallar:
-          </p>
-          <dl>
-            <dt>Paragraf på toppnivå</dt>
-            <dd><code>#p_{ordinal}</code></dd>
-            <dt>Kapitel på toppnivå</dt>
-            <dd><code>#k_{ordinal}</code></dd>
-            <dt>Paragraf i kapitelindelat dokument</dt>
-            <dd><code>#k_{ordinal}-p_{ordinal}</code></dd>
-            <dt>Bilaga</dt>
-            <dd><code>#bilaga_{ordinal}</code></dd>
           </dl>
         </div>
       </div>
@@ -344,7 +309,7 @@
         digitala dokument som finns på ett eller flera format.
       </p>
       <div>
-        <h4>Digitala representationer</h4>
+        <h3>Digitala representationer</h3>
         <p>Digitalt material utgör representationer av informationsresurser 
           såsom textdokument, bilder m.m. Dessa är direkt underordnade en 
           logisk identifierare, och är i systemet även strukturellt 
@@ -369,7 +334,7 @@
         </div>
       </div>
       <div>
-        <h4>Associerade filer</h4>
+        <h3>Associerade filer</h3>
         <p>Vissa representationer kan ha en eller flera associerade filer i form 
           av t.ex. bilagor eller stilinformation. Dessa underordnas en primär 
           URI på samma sätt som representationerna. Deras namngivning är löst 
@@ -403,19 +368,76 @@
     </div>
 
     <div id="bilaga_a" class="appendix">
-      <h2>A. Exempel på URI:er per dokument- och samlingstyp</h2>
+      <!-- TODO:skriv klart detta block (plus genererad data) -->
+      <h2>A. Konstruktionsregler för rättsinformationsindentifierare</h2>
+      <p>
+        Inledning.. publikationsindentifierare..
+      </p>
+      <div>
+        <h3>Lista på regler: segment per "gruppering", vilken "symbol" 
+          (token) som används..</h3>
+        <xi:include href="build:urischeme.xhtml" xpointer="bases"/>
+      </div>
+      <div>
+        <h3>Sammansättningsalgoritm</h3>
+        <div>
+          <p>Segment slås ihop, värden transformeras (nästa sektion)..</p>
+          <p>Komplett lista på containrar som används som bas av (vissa) 
+            regler.. i bilaga C..</p>
+        </div>
+        <div>
+          <h4>Hur en symbols tecken transformeras till ett/flera segment i en 
+            identifierare..</h4>
+          <div class="syntax">
+            <code class="javascript"><xi:include
+                  href="../../resources/base/uri_algorithm/unicodebasechars.json"
+                  parse="text"/></code>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>Delar av dokument: fragmentidentifierare</h3>
+        <p>Delar av dokument identifieras med bestämda fragment. Dessa 
+          konstrueras baserat på:
+        </p>
+        <ul>
+          <li>relationen mellan dokument eller överliggande del och delen i 
+            sig,
+          </li>
+          <li>en ordinal (vanligen siffra eller nummer). Plats för denna 
+            representeras som <code>{ordinal}</code> i mallarna nedan.
+          </li>
+        </ul>
+        <p>De definierade fragmenttyperna och hur de ska konstrueras 
+          definieras av följande mallar:
+        </p>
+        <xi:include href="build:urischeme.xhtml" xpointer="containments"/>
+        <!--
+        <dl>
+          <dt>Paragraf på toppnivå</dt>
+          <dd><code>#p_{ordinal}</code></dd>
+          <dt>Kapitel på toppnivå</dt>
+          <dd><code>#k_{ordinal}</code></dd>
+          <dt>Paragraf i kapitelindelat dokument</dt>
+          <dd><code>#k_{ordinal}-p_{ordinal}</code></dd>
+          <dt>Bilaga</dt>
+          <dd><code>#bilaga_{ordinal}</code></dd>
+        </dl>
+        -->
+      </div>
+    </div>
+
+    <div id="bilaga_b" class="appendix">
+      <h2>B. Exempel på URI:er per dokument- och samlingstyp</h2>
       <div class="atom-uri-examples">
         <a href="../../resources/base/uri_algorithm/tests/publ.atom"
           class="atom-source">exempel</a>
       </div>
     </div>
 
-    <div id="bilaga_b" class="appendix">
-      <h2>B.</h2>
-    </div>
-
     <div id="bilaga_c" class="appendix">
-      <h2>C.</h2>
+      <h2>C. Komplett lista på containrar som används som bas av (vissa) 
+        regler..</h2>
     </div>
 
     <div id="bilaga_d" class="appendix">

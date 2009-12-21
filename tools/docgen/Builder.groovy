@@ -1,8 +1,12 @@
 package docgen
 
 import java.text.SimpleDateFormat
-import org.apache.xml.serialize.XHTMLSerializer
+// TODO: deprecated; use: <http://xerces.apache.org/xerces2-j/faq-general.html#faq-6>
 import org.apache.xml.serialize.OutputFormat
+import org.apache.xml.serialize.XHTMLSerializer
+import org.apache.xml.serialize.XMLSerializer
+
+import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 
 class Builder {
@@ -69,7 +73,7 @@ class Builder {
         def svnVersionNumber = getSvnVersionNumber()
 
         if (generate) {
-            generateModelXhtml()
+            generateBaseViews()
         }
 
         def srcPath = normUrlPath(sourceDir)
@@ -99,13 +103,20 @@ class Builder {
 
             def outFile = new File(outUrl.toURI())
             ant.mkdir(dir:outFile.parentFile)
-            outFile.withOutputStream {
-                new XHTMLSerializer(it, new OutputFormat(doc)).serialize(doc)
-            }
-            new PdfMaker().renderAsPdf(doc,
-                    new File(outFile.canonicalPath.replace('.html', '.pdf')))
+            writeXhtml(doc, outFile)
+            writePdf(doc, new File(outFile.canonicalPath.replace('.html', '.pdf')))
         }
 
+    }
+
+    void writeXhtml(doc, outFile) {
+        outFile.withOutputStream {
+            new XHTMLSerializer(it, new OutputFormat(doc)).serialize(doc)
+        }
+    }
+
+    void writePdf(doc, outFile) {
+        new PdfMaker().renderAsPdf(doc, outFile)
     }
 
     static relRoot(String base, File file) {
@@ -130,6 +141,11 @@ class Builder {
         }
     }
 
+    void generateBaseViews() {
+            generateModelXhtml()
+            generateUriSchemeXhtml()
+    }
+
     void generateModelXhtml() {
         def dataView = new DataViewer(
                 ["${resourceDir}/base/model",
@@ -139,9 +155,29 @@ class Builder {
         def modelPath = buildDir+"/model"
         def modelHtmlPath = modelPath+'.xhtml'
         dataView.renderModel(modelHtmlPath, "sv")
-        def modelDoc = new DocTemplate(systemIdMap).render(
+        def doc = new DocTemplate(systemIdMap).render(
                 new File(modelHtmlPath).toURL())
-        new PdfMaker().renderAsPdf(modelDoc, new File(modelPath+'.pdf'))
+        new PdfMaker().renderAsPdf(doc, new File(modelPath+'.pdf'))
+    }
+
+    void generateUriSchemeXhtml() {
+        def repo = RDFUtil.slurpRdf("${resourceDir}/base/sys/uri/",
+                "${resourceDir}/base/model/rinfo_publ.n3",
+                "${resourceDir}/base/extended/rdf/"
+            )
+        //new File("/tmp/coin-sesame_ser.rdf").withOutputStream {
+        //    RDFUtil.serialize(repo, "application/rdf+xml", it)
+        //}
+        //return
+        def rdfXmlInput = RDFUtil.toInputStream(repo, "application/rdf+xml")
+
+        def doc = new DocTemplate(systemIdMap).transform(rdfXmlInput,
+                "${resourceDir}/external/xslt/rdfxml-grit.xslt",
+                "${sourceDir}/templates/coinscheme.xslt")
+        //new File("/tmp/urischeme.grit").withOutputStream {
+        //    new XMLSerializer(it, new OutputFormat(doc)).serialize(doc)
+        //}
+        writeXhtml(doc, new File(buildDir+"/urischeme.xhtml"))
     }
 
 }
