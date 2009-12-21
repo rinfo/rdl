@@ -172,10 +172,8 @@ public class RDFUtil {
         //writer.close()
     }
 
-    public static InputStream serializeAsInputStream(
-            Repository repo, String mediaType)
-            throws IOException, RepositoryException, RDFHandlerException
-    {
+    public static InputStream toInputStream(Repository repo, String mediaType)
+            throws IOException, RepositoryException, RDFHandlerException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         serialize(repo, mediaType, outStream);
         outStream.close();
