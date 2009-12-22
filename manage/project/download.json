@@ -1,0 +1,28 @@
+{
+    "rdf_models": {
+        "destination": "../../resources/external/rdf/",
+        "headers": {"Accept": "application/rdf+xml"},
+        "named": {
+            "rdf.rdfs": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+            "rdf-schema.rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+            "owl.owl": "http://www.w3.org/2002/07/owl#",
+            "xsd.rdfs": "http://www.w3.org/2001/XMLSchema#",
+            "skos_core.rdfs": "http://www.w3.org/2004/02/skos/core#",
+
+            "dcterms.rdfs": "http://purl.org/dc/terms/",
+            "dc_elements.rdfs": "http://purl.org/dc/elements/1.1/",
+
+            "foaf.owl": "http://xmlns.com/foaf/0.1/",
+            "sioc.owl": "http://rdfs.org/sioc/ns#",
+            "bibo.owl": "http://purl.org/ontology/bibo/",
+
+            "atomowl.owl": "http://bblfish.net/work/atom-owl/2006-06-06/#"
+        }
+    },
+    "xslt": {
+        "destination": "../../resources/external/xslt/",
+        "items": [
+            "http://purl.org/oort/impl/xslt/grit/rdfxml-grit.xslt"
+        ]
+    }
+}
