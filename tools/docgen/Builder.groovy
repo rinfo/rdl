@@ -1,12 +1,20 @@
 package docgen
 
 import java.text.SimpleDateFormat
-// TODO: deprecated; use: <http://xerces.apache.org/xerces2-j/faq-general.html#faq-6>
-import org.apache.xml.serialize.OutputFormat
-import org.apache.xml.serialize.XHTMLSerializer
-import org.apache.xml.serialize.XMLSerializer
+import javax.xml.transform.OutputKeys
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
+import javax.xml.transform.stream.StreamSource
+
+import org.apache.commons.configuration.ConfigurationUtils
+import net.sf.json.groovy.JsonSlurper
+import org.antlr.stringtemplate.StringTemplateGroup
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
+
+import se.lagrummet.rinfo.service.dataview.SparqlTreeViewer
+import se.lagrummet.rinfo.service.dataview.ModelViewHandler
 
 
 class Builder {
@@ -73,7 +81,7 @@ class Builder {
         def svnVersionNumber = getSvnVersionNumber()
 
         if (generate) {
-            generateBaseViews()
+            generateBaseDocs()
         }
 
         def srcPath = normUrlPath(sourceDir)
@@ -109,13 +117,63 @@ class Builder {
 
     }
 
-    void writeXhtml(doc, outFile) {
+    void generateBaseDocs() {
+        generateModelDocs(
+                ["${resourceDir}/base/model",
+                    "${resourceDir}/base/extended/rdf",
+                    "${resourceDir}/external/rdf"],
+                buildDir+"/model")
+        transformRdfToXhtml(
+                ["${resourceDir}/base/sys/uri/",
+                    "${resourceDir}/base/model/rinfo_publ.n3",
+                    "${resourceDir}/base/extended/rdf/"],
+                ["${resourceDir}/external/xslt/rdfxml-grit.xslt",
+                    "${sourceDir}/templates/coinscheme.xslt"],
+                buildDir+"/urischeme.xhtml")
+    }
+
+    void transformRdfToXhtml(rdfPaths, xslts, outPath) {
+        def repo = RDFUtil.slurpRdf(rdfPaths as String[])
+        def rdfXmlInput = RDFUtil.toInputStream(repo, "application/rdf+xml")
+        def doc = new DocTemplate(systemIdMap).transform(rdfXmlInput,
+                xslts as String[])
+        writeXhtml(doc, new File(outPath))
+    }
+
+    void generateModelDocs(rdfPaths, outBasePath) {
+        def repo = RDFUtil.slurpRdf(rdfPaths as String[])
+        def modelHtmlPath = outBasePath+'.xhtml'
+        renderModel(repo, modelHtmlPath, "sv")
+        def doc = new DocTemplate(systemIdMap).render(
+                new File(modelHtmlPath).toURL())
+        new PdfMaker().renderAsPdf(doc, new File(outBasePath+'.pdf'))
+    }
+
+    static renderModel(repo, fname, locale="en", mediabase=".") {
+        def templates = new StringTemplateGroup("sparqltrees")
+        def rqViewer = new SparqlTreeViewer(repo, templates,
+                "sparqltrees/model/model-tree-rq", "sparqltrees/model/model-html")
+        def labelTree = new JsonSlurper().parse(ConfigurationUtils.locate(
+                        "sparqltrees/model/model-settings.json"))
+        def options = [ mediabase: mediabase ]
+        def s = rqViewer.execute(new ModelViewHandler(locale, null, labelTree, options))
+        println "Writing to: $fname"
+        new File(fname).text = s
+    }
+
+    static writeXhtml(doc, outFile) {
+        def t = TransformerFactory.newInstance().newTransformer()
+        [   (OutputKeys.METHOD): "xml",
+            (OutputKeys.OMIT_XML_DECLARATION): "yes",
+            (OutputKeys.DOCTYPE_PUBLIC): "-//W3C//DTD XHTML 1.0 Strict//EN",
+            (OutputKeys.DOCTYPE_SYSTEM): "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+        ].each t.&setOutputProperty
         outFile.withOutputStream {
-            new XHTMLSerializer(it, new OutputFormat(doc)).serialize(doc)
+            t.transform(new DOMSource(doc), new StreamResult(it))
         }
     }
 
-    void writePdf(doc, outFile) {
+    static writePdf(doc, outFile) {
         new PdfMaker().renderAsPdf(doc, outFile)
     }
 
@@ -139,45 +197,6 @@ class Builder {
         } else {
             return "?"
         }
-    }
-
-    void generateBaseViews() {
-            generateModelXhtml()
-            generateUriSchemeXhtml()
-    }
-
-    void generateModelXhtml() {
-        def dataView = new DataViewer(
-                ["${resourceDir}/base/model",
-                "${resourceDir}/base/extended/rdf",
-                "${resourceDir}/external/rdf"] as String[]
-        )
-        def modelPath = buildDir+"/model"
-        def modelHtmlPath = modelPath+'.xhtml'
-        dataView.renderModel(modelHtmlPath, "sv")
-        def doc = new DocTemplate(systemIdMap).render(
-                new File(modelHtmlPath).toURL())
-        new PdfMaker().renderAsPdf(doc, new File(modelPath+'.pdf'))
-    }
-
-    void generateUriSchemeXhtml() {
-        def repo = RDFUtil.slurpRdf("${resourceDir}/base/sys/uri/",
-                "${resourceDir}/base/model/rinfo_publ.n3",
-                "${resourceDir}/base/extended/rdf/"
-            )
-        //new File("/tmp/coin-sesame_ser.rdf").withOutputStream {
-        //    RDFUtil.serialize(repo, "application/rdf+xml", it)
-        //}
-        //return
-        def rdfXmlInput = RDFUtil.toInputStream(repo, "application/rdf+xml")
-
-        def doc = new DocTemplate(systemIdMap).transform(rdfXmlInput,
-                "${resourceDir}/external/xslt/rdfxml-grit.xslt",
-                "${sourceDir}/templates/coinscheme.xslt")
-        //new File("/tmp/urischeme.grit").withOutputStream {
-        //    new XMLSerializer(it, new OutputFormat(doc)).serialize(doc)
-        //}
-        writeXhtml(doc, new File(buildDir+"/urischeme.xhtml"))
     }
 
 }

@@ -7,8 +7,6 @@
     @Grab(group='xalan', module='xalan', version='2.7.1'),
     @Grab(group='xalan', module='serializer', version='2.7.1')
 ])
-def _(){}
-
 import docgen.Builder
 
 def resourceDir = "../resources/"
