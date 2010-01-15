@@ -14,7 +14,7 @@ machine during development. To do this from scratch, you need:
 
 To use the various instrumental tools used you also need:
 
-* Groovy 1.6+
+* Groovy 1.7+
 * Python 2.5+ (for acceptance spec testing and deployment)
 
 Setting up the environment

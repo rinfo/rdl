@@ -3,8 +3,10 @@ import urllib2
 import time
 import shutil
 from os import stat, path as p
-try: import simplejson as json
-except ImportError: import json
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 
 scriptdir = p.dirname(__file__)
