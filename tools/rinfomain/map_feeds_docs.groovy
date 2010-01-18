@@ -122,21 +122,22 @@ def enclosureFilePath(id, href, mediaType, ord) {
 }
 
 def makeSourcesRdf(writer, buildDir, feedPaths) {
-    new groovy.xml.MarkupBuilder(writer).
-        'rdf:RDF'('xmlns:rdf':"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                'xmlns:dct':"http://purl.org/dc/terms/",
-                'xmlns:sioc':"http://rdfs.org/sioc/ns#") {
-            'sioc:Space'('rdf:about':"tag:lagrummet.se,2009:rinfo") {
-                feedPaths.each { feedPath ->
-                    'dct:source' {
-                        def feedBase = (feedPath =~ /(.+)\/.*/)[0][1]
-                        'sioc:Space'('rdf:about':"tag:${feedBase},2009:rinfo") {
-                            'sioc:feed'('rdf:resource':"/${feedPath}")
-                        }
+    def mb = new groovy.xml.MarkupBuilder(writer)
+    mb.'rdf:RDF'('xmlns:rdf':"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+            'xmlns:dct':"http://purl.org/dc/terms/",
+            'xmlns:void':"http://rdfs.org/ns/void#",
+            'xmlns:iana':"http://www.iana.org/assignments/relation/") {
+        'void:Dataset'('rdf:about':"tag:lagrummet.se,2009:rinfo") {
+            feedPaths.each { feedPath ->
+                'dct:source' {
+                    def feedBase = (feedPath =~ /(.+)\/.*/)[0][1]
+                    'void:Dataset'('rdf:about':"tag:${feedBase},2009:rinfo") {
+                        'sioc:feed'('rdf:resource':"/${feedPath}")
                     }
                 }
             }
         }
+    }
 }
 
 

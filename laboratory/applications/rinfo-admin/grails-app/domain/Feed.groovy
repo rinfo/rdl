@@ -6,16 +6,16 @@ class Feed {
     static constraints = {
         url(url:true, blank:false, maxSize:400)
         identifier(blank:false, maxSize:300)
-        organization(blank:false) 
+        organization(blank:false)
         lastUpdated(nullable: true)
         dateCreated()
     }
 
     static belongsTo = Organization
-    Organization organization    
+    Organization organization
 
     /**
-    * The current location of the feed. 
+    * The current location of the feed.
     * @see identifier
     */
     String url
@@ -31,7 +31,7 @@ class Feed {
     Date dateCreated
     Date lastUpdated
 
-    String toString() { 
+    String toString() {
         return "Källa: " + url
     }
 
@@ -39,9 +39,9 @@ class Feed {
         Writer sw = new StringWriter()
         def mb = new groovy.xml.MarkupBuilder(sw)
         mb.'dct:source' {
-            'sioc:Space'('rdf:about': this.rinfoURI()) {
+            'void:Dataset'('rdf:about': this.rinfoURI()) {
                 'dct:publisher'('rdf:resource': this.organization.rinfoURI())
-                'sioc:feed'('rdf:resource': this.url)
+                'iana:current'('rdf:resource': this.url)
             }
         }
         return sw.toString()
@@ -51,13 +51,14 @@ class Feed {
     static String toEntryContent() {
 
         def items = Feed.findAll() ?: []
-        
+
         Writer sw = new StringWriter()
         def mb = new groovy.xml.MarkupBuilder(sw)
-        mb.'rdf:RDF'('xmlns:rdf':"http://www.w3.org/1999/02/22-rdf-syntax-ns#", 
+        mb.'rdf:RDF'('xmlns:rdf':"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
                     'xmlns:dct':"http://purl.org/dc/terms/",
-                    'xmlns:sioc':"http://rdfs.org/sioc/ns#") {
-            'rdf:Description'('rdf:about':'tag:lagrummet.se,2009:rinfo') {
+                    'xmlns:void':"http://rdfs.org/ns/void#",
+                    'xmlns:iana':"http://www.iana.org/assignments/relation/") {
+            'void:Dataset'('rdf:about':'tag:lagrummet.se,2009:rinfo') {
                 items.each { item ->
                     mb.yieldUnescaped item.toXML()
                 }
@@ -70,5 +71,5 @@ class Feed {
 
     String rinfoURI() {
         return identifier
-    }   
+    }
 }

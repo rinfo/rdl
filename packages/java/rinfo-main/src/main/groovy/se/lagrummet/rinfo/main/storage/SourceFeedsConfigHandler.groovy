@@ -50,8 +50,10 @@ class SourceFeedsConfigHandler extends AbstractStorageHandler {
         Repository repo = EntryRdfReader.readRdf(depotEntry)
         // TODO:IMPROVE: configure, use raw sparql, and/or make this more failsafe.
         def tree = SparqlTree.runQuery(repo, sourceFeedsQuery)
-        tree.rinfospace[0].source.each {
-            feedUrls << new URL(it.feed['$uri'])
+        tree.rinfoset.each {
+            it.source.each {
+                feedUrls.add(new URL(it.feed['$uri']))
+            }
         }
         logger.debug("Setting public source feed urls, from " +
                 configurationEntryId+", to: ${feedUrls}")

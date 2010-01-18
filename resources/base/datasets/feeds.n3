@@ -1,29 +1,28 @@
 @prefix dct: <http://purl.org/dc/terms/> .
-@prefix sioc: <http://rdfs.org/sioc/ns#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix iana: <http://www.iana.org/assignments/relation/> .
 
-# iana-related defs collected at (e.g.) <http://tools.ietf.org/html/draft-nottingham-http-link-header-06>
-# TODO: consider changing to: (also see: <http://purl.org/NET/dady>)
-#<...> a void:Dataset;
-#    dct:publisher <...>;
-#    foaf:homepage <...>;
-#    iana:current <.../current.atom> .
-#<.../current.atom> dct:format "application/atom+xml" .
+# NOTE: iana-related defs collected at (e.g.):
+#   <http://tools.ietf.org/html/draft-nottingham-http-link-header-06>
+# NOTE: see also: <http://purl.org/NET/dady> - about dataset dynamics
 
-<tag:lagrummet.se,2009:rinfo> a sioc:Space;
+<tag:lagrummet.se,2009:rinfo> a void:Dataset;
     dct:source <tag:dom.se,2009:rinfo>,
         <tag:regeringen.se,2009:rinfo>,
         <tag:verva.se,2007:rinfo>;
-    sioc:feed <http://rinfo.lagrummet.se/feed/current>;
-    sioc:has_host <http://rinfo.lagrummet.se> .
-
-<tag:dom.se,2009:rinfo> a sioc:Space;
     dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
-    sioc:feed <http://dom.se/dvfs/feed/current> .
+    iana:current <http://rinfo.lagrummet.se/feed/current> .
+#<http://rinfo.lagrummet.se/feed/current> dct:format "application/atom+xml" .
 
-<tag:regeringen.se,2009:rinfo> a sioc:Space;
-    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
-    sioc:feed <http://regeringen.se/sfs/feed/current> .
+<tag:dom.se,2009:rinfo> a void:Dataset;
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    iana:current <http://dom.se/dvfs/feed/current> .
 
-<tag:verva.se,2007:rinfo> a sioc:Space;
+<tag:regeringen.se,2009:rinfo> a void:Dataset;
     dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
-    sioc:feed <http://regeringen.se/vervafs/feed/current> .
+    iana:current <http://regeringen.se/sfs/feed/current> .
+
+<tag:verva.se,2007:rinfo> a void:Dataset;
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
+    iana:current <http://regeringen.se/vervafs/feed/current> .
+

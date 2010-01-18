@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:sioc="http://rdfs.org/sioc/ns#"
-         xmlns:dct="http://purl.org/dc/terms/">
+         xmlns:dct="http://purl.org/dc/terms/"
+         xmlns:void="http://rdfs.org/ns/void#"
+         xmlns:iana="http://www.iana.org/assignments/relation/">
 
-    <sioc:Space rdf:about="tag:lagrummet.se,2009:rinfo">
-        <sioc:has_host rdf:resource="http://rinfo.lagrummet.se"/>
-        <sioc:feed rdf:resource="http://rinfo.lagrummet.se/feed/current"/>
+    <void:Dataset rdf:about="tag:lagrummet.se,2009:rinfo">
         <dct:source rdf:resource="tag:regeringen.se,2009:rinfo"/>
         <dct:source rdf:resource="tag:dom.se,2009:rinfo"/>
-    </sioc:Space>
+        <iana:current rdf:resource="http://rinfo.lagrummet.se/feed/current"/>
+    </void:Dataset>
 
-    <sioc:Space rdf:about="tag:regeringen.se,2009:rinfo">
+    <void:Dataset rdf:about="tag:regeringen.se,2009:rinfo">
         <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
-        <sioc:feed rdf:resource="http://regeringen.se/sfs/feed/current"/>
-    </sioc:Space>
+        <iana:current rdf:resource="http://regeringen.se/sfs/feed/current"/>
+    </void:Dataset>
 
-    <sioc:Space rdf:about="tag:dom.se,2009:rinfo">
+    <void:Dataset rdf:about="tag:dom.se,2009:rinfo">
         <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/domstolsverket"/>
-        <sioc:feed rdf:resource="http://dom.se/dvfs/feed/current"/>
-    </sioc:Space>
+        <iana:current rdf:resource="http://dom.se/dvfs/feed/current"/>
+    </void:Dataset>
 
 </rdf:RDF>
