@@ -88,7 +88,7 @@
     <!-- Betänkanden -->
     <entry>
         <id>http://rinfo.lagrummet.se/publ/utr/ds/2005:26</id>
-        <summary>Utredningsbetänkande publicerad i Departementserien</summary>
+        <summary>Utredningsbetänkande publicerat i Departementserien</summary>
         <content type="application/rdf+xml">
             <rpubl:Utredningsbetankande>
                 <rpubl:utrSerie rdf:resource="http://rinfo.lagrummet.se/serie/utr/ds"/>
@@ -99,7 +99,7 @@
 
     <entry>
         <id>http://rinfo.lagrummet.se/publ/utr/sou/2000:114</id>
-        <summary>Utredningsbetänkande publicerad i Statens offentliga utredningar</summary>
+        <summary>Utredningsbetänkande publicerat i Statens offentliga utredningar</summary>
         <content type="application/rdf+xml">
             <rpubl:Utredningsbetankande>
                 <rpubl:utrSerie rdf:resource="http://rinfo.lagrummet.se/serie/utr/sou"/>
