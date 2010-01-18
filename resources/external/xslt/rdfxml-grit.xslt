@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 
-    <!-- Last modified: 2009-12-20
+    <!-- Last modified: 2009-12-21
          Copyright: Niklas Lindström [lindstream@gmail.com]
          License: BSD-style -->
     <xsl:template name="_description">
@@ -12,11 +12,11 @@
                              xmlns:foaf="http://xmlns.com/foaf/0.1/"
                              xmlns:doas="http://purl.org/net/ns/doas#">
             <dct:title>Grit XSLT</dct:title>
-            <dct:description xml:lang="en">Transforms RDF/XML to Grokkable RDF In Trees.</dct:description>
+            <dct:description xml:lang="en">Transforms RDF/XML to Grit (Grokkable RDF Is Transformable).</dct:description>
             <dct:created rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
                          >2009-12-08</dct:created>
             <dct:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-                        >2009-12-20</dct:modified>
+                        >2009-12-21</dct:modified>
             <dct:license rdf:resource="http://usefulinc.com/doap/licenses/bsd"/>
             <foaf:primaryTopic rdf:resource="http://purl.org/oort/def/2009/grit"/>
             <dct:creator>
@@ -31,8 +31,8 @@
 
     <!--
     TODO:
+        - interpreted rdf:li, @rdf:_* (rdf:Seq, rdf:Bag, rdf:Alt)..
         - non-sugared rdf:List..
-        - interpreted rdf:li (rdf:Seq, rdf:Bag, rdf:Alt)..
 
         - @xml:base: to resolve about, resource and ID against
             - currently no or uniform use of relative uri:s is assumed
@@ -55,7 +55,7 @@
     <xsl:key name="bnode" match="//*[@rdf:nodeID]" use="@rdf:nodeID"/>
     <xsl:key name="about" match="//*[@rdf:about]" use="@rdf:about"/>
 
-    <xsl:template match="/">
+    <xsl:template match="/" name="grit">
         <graph>
             <xsl:copy-of select="$all-namespaces"/>
             <xsl:copy-of select="$base"/>
