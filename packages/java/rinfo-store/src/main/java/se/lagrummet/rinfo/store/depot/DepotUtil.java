@@ -37,6 +37,7 @@ public class DepotUtil {
         } catch (Exception e) {
             throw new ConfigurationException(e);
         }
+        depot.initialize();
         return depot;
     }
 

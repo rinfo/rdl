@@ -122,7 +122,7 @@ public class Components {
         configure(atomizer, "rinfo.main.atomizer")
         depot.setIndexer(atomizer)
         */
-        //depot.initialize()
+        depot.initialize()
         return depot
     }
 

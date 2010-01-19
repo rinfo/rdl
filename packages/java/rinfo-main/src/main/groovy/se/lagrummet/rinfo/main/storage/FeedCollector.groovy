@@ -164,7 +164,7 @@ public class FeedCollector extends FeedArchivePastToPresentReader {
             def urlPath = link.resolvedHref.toString()
             def mediaType = link.mimeType.toString()
             def lang = link.hrefLang
-            def len = link.getLength()
+            long len = link.getLength()
             def md5hex = link.getAttributeValue(Atomizer.LINK_EXT_MD5)
             if (link.rel == "alternate") {
                 contents.add(createSourceContent(
@@ -190,14 +190,14 @@ public class FeedCollector extends FeedArchivePastToPresentReader {
 
     protected SourceContent createSourceContent(urlPath,
             mediaType, lang, slug=null,
-            md5hex=null, length=null) {
+            md5hex=null, length=-1) {
         urlPath = unescapeColon(urlPath)
         def srcContent = new RemoteSourceContent(
                 this, urlPath, mediaType, lang, slug)
         if (md5hex != null) {
             srcContent.datachecks[SourceContent.Check.MD5] = md5hex
         }
-        if (length != null) {
+        if (length != -1) {
             srcContent.datachecks[SourceContent.Check.LENGTH] = length
         }
         return srcContent
