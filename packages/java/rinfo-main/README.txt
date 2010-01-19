@@ -20,11 +20,11 @@ Environments (see usage of "environment" in pom.xml)::
 
 Running as war::
 
-    $ mvn -Djetty.port=8180 jetty:run
+    $ mvn clean compile war:war jetty:run-war -Djetty.port=8180 -Dmaven.test.skip=true
 
 , or::
 
-    $ mvn clean compile war:war jetty:run-war -Djetty.port=8180 -Dmaven.test.skip=true
+    $ mvn -Djetty.port=8180 jetty:run
 
 Manually pinging rinfo-main to collect from a test source::
 

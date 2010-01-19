@@ -2,6 +2,7 @@
 Running the RInfo System Locally
 ########################################################################
 
+
 Getting Started
 ========================================================================
 
@@ -17,6 +18,7 @@ To use the various instrumental tools used you also need:
 * Groovy 1.7+
 * Python 2.5+ (for acceptance spec testing and deployment)
 
+
 Setting up the environment
 ========================================================================
 
@@ -28,8 +30,8 @@ server (expected to run at ``http://localhost:8080/openrdf-sesame/``).
 
 Package sesame::
 
-    $ cd packages/java/rinfo-sesame-http/
-    $ mvn package
+  $ cd packages/java/rinfo-sesame-http/
+  $ mvn package
 
 Then copy ``openrdf-sesame.war`` and ``sesame-workbench.war`` in
 ``target/dependency`` to the container (e.g. ``$TOMCAT_HOME/webapps``).
@@ -45,34 +47,35 @@ The RInfo Applications
 
 Install the shared rinfo packages to your local maven repo by::
 
-    $ cd packages/java
-    $ mvn install
+  $ cd packages/java
+  $ mvn install
 
 Now you are ready to start up:
 
-*   Integration test data:
+* Integration test data:
 
-    example-store
-        serving some example data.
+  example-store
+      serving some example data.
 
-    base prototype feed
-        for base data (models, containers; organization, feeds).
+  base prototype feed
+      for base data (models, containers; organization, feeds).
 
-    these can be served by running e.g.::
+  these can be served by running::
 
-        $ WORK_DIR=/opt/_workapps/rinfo/ # or anything you desire
-        $ groovy tools/rinfomain/map_feeds_docs.groovy $WORK_DIR/rinfo/testsources/www
-        $ groovy tools/rinfomain/serve_feeds_docs.groovy $WORK_DIR/rinfo/testsources/www
+    $ WORK_DIR=/opt/_workapps/rinfo/ # or anything you desire...
+    $ groovy tools/rinfomain/map_feeds_docs.groovy documentation/ $WORK_DIR/rinfo/testsources/www
+    $ groovy tools/rinfomain/base_as_feed.groovy -b resources/base/ -s $WORK_DIR/rinfo/testsources/www/
 
-*   Local instance of the RInfo system:
+* Local instance of the RInfo system:
 
-    rinfo-main
-        collects from the sources defined for development mode (a base/admin
-        prototype feed and example suppliers) and supplies the main data feed.
+  rinfo-main
+      collects from the sources defined for development mode (a base/admin
+      prototype feed and example suppliers) and supplies the main data feed.
 
-    rinfo-service
-        feeds from rinfo-main into the sesame RDF repo, making data abailable for
-        its data views.
+  rinfo-service
+      feeds from rinfo-main into the sesame RDF repo, making data available for
+      its data views.
+
 
 In Depth
 ========================================================================
