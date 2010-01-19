@@ -53,7 +53,7 @@ def main() {
         //coll.each { k, v -> println "${k}: ${v}" }
         println coll[BASE_PATH].data().text
     } else {
-        startServer port, makeCollection, new File(sources)
+        startServer port, makeCollection, sources
         // TODO: pingMainWithMe?
     }
 }
@@ -88,17 +88,19 @@ class SourceApp extends Application {
     }
 }
 
-def startServer(port, makeCollection, sourcesDir) {
+def startServer(port, makeCollection, sources) {
     //def restlet = new BaseRestlet(makeCollection)
     //new Server(Protocol.HTTP, port, restlet).start()
     def component = new Component()
     component.servers.add(Protocol.HTTP, port)
     component.clients.add(Protocol.FILE)
     component.defaultHost.attach(new BaseRestlet(makeCollection, BASE_PATH))
-    sourcesDir.listFiles({it.isDirectory()} as FileFilter).each {
-        if (it.name != "system") {
-            component.defaultHost.attach("/${it.name}",
-                    new SourceApp(wwwDir:it.toURI().toString()))
+    if (sources) {
+        new File(sources).listFiles({it.isDirectory()} as FileFilter).each {
+            if (it.name != "sys") {
+                component.defaultHost.attach("/${it.name}",
+                        new SourceApp(wwwDir:it.toURI().toString()))
+            }
         }
     }
     component.start()
@@ -129,6 +131,7 @@ def collectItems(base, sources, port) {
             FU.listFiles(new File(base, "../external/rdf"),
                 ["rdfs", "owl"] as String[], true))
 
+    // .. "ext/model_translations"?
     addItem datasetItem(baseUri, "ext/extended_modeldata",
             FU.listFiles(new File(base, "extended/rdf"),
                 ["n3"] as String[], true))
@@ -141,16 +144,15 @@ def collectItems(base, sources, port) {
             FU.listFiles(new File(base, "datasets/serie"),
                 ["n3"] as String[], true))
 
-    addItem datasetItem(baseUri, "system/containers",
-            [new File(base, "datasets/containers.n3")])
-    // NOTE: or all in dir:
-    //addItem datasetItem("system",
-    //        FU.listFiles(new File(base, "datasets"),
-    //            ["n3"] as String[], false))
-    // "datasets/sources.n3" // feeds, (opt.) via arg
+    addItem datasetItem(baseUri, "sys/uri", [
+            new File(base, "sys/uri/scheme.n3"),
+            new File(base, "sys/uri/symbol/org.n3"),
+            new File(base, "sys/uri/symbol/serie.n3")
+        ])
+
     if (sources) {
-        addItem simpleItem(baseUri, "system/sources",
-                new File(sources, "system/sources.rdf"))
+        addItem simpleItem(baseUri, "sys/sources",
+                new File(sources, "sys/sources.rdf"))
     }
 
     return items

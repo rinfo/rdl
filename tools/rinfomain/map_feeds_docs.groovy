@@ -1,7 +1,11 @@
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.Feed
+import org.apache.abdera.model.Link
+import se.lagrummet.rinfo.store.depot.Atomizer
 import se.lagrummet.rinfo.store.depot.DefaultPathHandler
 import groovy.xml.StreamingMarkupBuilder
+import org.apache.commons.io.FileUtils
+import org.apache.commons.codec.digest.DigestUtils
 
 
 @Grab(group='se.lagrummet.rinfo', module='rinfo-store', version='1.0-SNAPSHOT')
@@ -13,8 +17,21 @@ def createServableSources(buildDir, docsBase, feedBase) {
             fileset(dir:"${docsBase}", includes:"**/*.*")
         }.findAll{ !it.hidden }.collect { it.canonicalPath }
 
-    processEntryPath = { feedDirName, examplePath, logicalPath ->
-        def fpath = new File(docsBase + logicalPath).canonicalPath
+    checkedEntryPath = { atomElt, examplePath, feedDirName, logicalPath ->
+        def file = new File(docsBase + logicalPath)
+        def fpath = file.canonicalPath
+        if (atomElt instanceof Link && atomElt.length != -1) {
+            if (atomElt.length != file.length()) {
+                println "[Bad length for <${fpath}>] expected ${atomElt.length} != ${file.length()}"
+            }
+        }
+        def expectedMd5 = atomElt.getAttributeValue(Atomizer.LINK_EXT_MD5)
+        if (expectedMd5) {
+            def realMd5 = DigestUtils.md5Hex(FileUtils.readFileToByteArray(file))
+            if (expectedMd5 != realMd5) {
+                println "[Bad MD5 for <${fpath}>] expected ${expectedMd5} != ${realMd5}"
+            }
+        }
         if (!exampleFilePaths.remove(fpath)) {
             println "[NotFound]:"
             println "<${fpath}> = <${examplePath}>"
@@ -52,14 +69,14 @@ def createServableSources(buildDir, docsBase, feedBase) {
             //println "Entry <${it.'a:id'}>:"
             it.contentElement.with {
                 def logicalPath = contentFilePath(id, "${it.src}", "${it.mimeType}")
-                it.src = processEntryPath(feedDirName, it.src, logicalPath)
+                it.src = checkedEntryPath(it, it.src, feedDirName, logicalPath)
             }
             def enclCount = 1
             it.links.each {
                 def logicalPath = (it.rel == "alternate")?
                         contentFilePath(id, "${it.href}", "${it.mimeType}") :
                         enclosureFilePath(id, "${it.href}", "${it.mimeType}", enclCount++)
-                it.href = processEntryPath(feedDirName, it.href, logicalPath)
+                it.href = checkedEntryPath(it, it.href, feedDirName, logicalPath)
             }
             //println()
         }
@@ -68,7 +85,7 @@ def createServableSources(buildDir, docsBase, feedBase) {
         newFeedFile.withWriter feed.&writeTo
     }
 
-    def f = new File(buildDir+"/system/sources.rdf")
+    def f = new File(buildDir+"/sys/sources.rdf")
     ant.mkdir(dir:f.parentFile)
     def writer = new FileWriter(f)
     makeSourcesRdf(writer, buildDir, feedPaths)
@@ -132,7 +149,7 @@ def makeSourcesRdf(writer, buildDir, feedPaths) {
                 'dct:source' {
                     def feedBase = (feedPath =~ /(.+)\/.*/)[0][1]
                     'void:Dataset'('rdf:about':"tag:${feedBase},2009:rinfo") {
-                        'sioc:feed'('rdf:resource':"/${feedPath}")
+                        'iana:current'('rdf:resource':"/${feedPath}")
                     }
                 }
             }
@@ -143,8 +160,12 @@ def makeSourcesRdf(writer, buildDir, feedPaths) {
 
 //========================================
 
-def buildDir = args[0]
-def docsDir = args[1]
+if (args.length < 2) {
+    println "Usage: groovy <script> <documentation-dir> <build-dir>"
+    System.exit 0
+}
+def docsDir = args[0]
+def buildDir = args[1]
 createServableSources(buildDir,
         "${docsDir}/exempel/documents/publ", "${docsDir}/exempel/feeds")
 

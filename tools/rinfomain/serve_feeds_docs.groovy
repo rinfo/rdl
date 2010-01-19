@@ -21,7 +21,7 @@ def serveSources(port, wwwDir) {
     component.start()
 }
 
-def port = 8281
+def port = 8280
 def wwwDir = args[0]
 serveSources(port, new File(wwwDir).toURI().toString())
 

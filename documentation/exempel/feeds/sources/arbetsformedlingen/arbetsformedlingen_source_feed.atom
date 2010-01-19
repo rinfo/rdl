@@ -171,7 +171,7 @@
 
     <content src="https://www.arbetsformedlingen.se/regelbok/dokument/amsfs_pdf/a088.pdf"
              type="application/pdf"
-             le:md5="bcb492e5a26b4610958b0568b4961550"/>
+             le:md5="94e28a507cc513293ba87dc5cf487d56"/>
     <!-- Viktig!
 
       En primär representation ska representera det faktiska 
@@ -185,7 +185,7 @@
 
     <link rel="alternate" href="https://www.arbetsformedlingen.se/regelbok/showrdf?doc=2008-8"
           type="application/rdf+xml"
-          length="1465" le:md5="143aa16eb05095675651b5e8380aff8d"/>
+          length="1891" le:md5="fd2528f6086b334d5c08d1f31c71e30e"/>
     <!-- Viktig!
 
       Exakt en representation som innehåller serialiserad RDF måste finnas för 
@@ -211,11 +211,11 @@
     <summary></summary>
     <content src="https://www.arbetsformedlingen.se/regelbok/dokument/amsfs_pdf/a0728.pdf"
              type="application/pdf"
-             le:md5="3d0e39ad852d6e29ca3087ffae39d3ab"/>
+             le:md5="d6c3a0201d2ccaad26bba4e46cda6aae"/>
     <link rel="alternate"
           href="https://www.arbetsformedlingen.se/regelbok/showrdf?doc=2007-28"
           type="application/rdf+xml"
-          length="1150" le:md5="cfe75fc5cc5180e346543cbea51717cd"/>
+          length="1570" le:md5="192baab6cab4caa19673bee6e7daecda"/>
   </entry>
 
   <entry>
@@ -226,11 +226,11 @@
     <summary></summary>
     <content src="https://www.arbetsformedlingen.se/regelbok/dokument/amsfs_pdf/a072.pdf"
              type="application/pdf"
-             le:md5="3d0e39ad852d6e29ca3087ffae39d3ab"/>
+             le:md5="d3f124d52c511b229f519c82b69c8e1f"/>
     <link rel="alternate"
           href="https://www.arbetsformedlingen.se/regelbok/showrdf?doc=2007-2"
           type="application/rdf+xml"
-          length="1150" le:md5="cfe75fc5cc5180e346543cbea51717cd"/>
+          length="1648" le:md5="8d8a59953aec847a68796a8e5c513861"/>
   </entry>
 
 </feed>
