@@ -15,6 +15,7 @@
             "foaf.owl": "http://xmlns.com/foaf/0.1/",
             "sioc.owl": "http://rdfs.org/sioc/ns#",
             "bibo.owl": "http://purl.org/ontology/bibo/",
+            "void.rdf": "http://rdfs.org/ns/void",
 
             "atomowl.owl": "http://bblfish.net/work/atom-owl/2006-06-06/#"
         }

@@ -7,22 +7,19 @@
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
                 xmlns:skos="http://www.w3.org/2004/02/skos/core#"
                 xmlns:dct="http://purl.org/dc/terms/"
-                xmlns:sioc="http://rdfs.org/sioc/ns#"
                 xmlns:foaf="http://xmlns.com/foaf/0.1/"
                 xmlns:bibo="http://purl.org/ontology/bibo/"
                 xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
                 xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
                 xmlns="http://www.w3.org/1999/xhtml"
-
+                exclude-result-prefixes="exslt func dyn str self grit"
                 xmlns:exslt="http://exslt.org/common"
                 xmlns:func="http://exslt.org/functions"
                 xmlns:dyn="http://exslt.org/dynamic"
                 xmlns:str="http://exslt.org/strings"
                 xmlns:self="tag:localhost,2010:exslt:self"
                 xmlns:grit="http://purl.org/oort/impl/xslt/grit/grit-util#"
-                extension-element-prefixes="func"
-                exclude-result-prefixes="exslt func dyn str self grit"
-                >
+                extension-element-prefixes="func">
 
   <xsl:param name="ontologyUri"
              >http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#</xsl:param>
@@ -58,6 +55,12 @@
       <xsl:if test="dct:description">
         <p><xsl:value-of select="dct:description"/></p>
       </xsl:if>
+      <dl class="tech">
+        <dt>URI:</dt>
+        <dd>
+          <code><xsl:value-of select="@uri"/></code>
+        </dd>
+      </dl>
       <xsl:for-each select="$r[a[rdfs:Class|owl:Class|owl:DeprecatedClass]
                     and rdfs:isDefinedBy/@ref = current()/@uri]">
         <xsl:sort select="rdfs:label"/>
@@ -73,7 +76,7 @@
       <xsl:variable name="superClassLinks">
         <xsl:for-each select="rdfs:subClassOf">
           <xsl:variable name="label" select="grit:get(.)/rdfs:label"/>
-          <xsl:if test="$label != ''">
+          <xsl:if test="$label[@xml:lang=$lang]">
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
@@ -83,7 +86,7 @@
           </xsl:if>
         </xsl:for-each>
       </xsl:variable>
-      <xsl:if test="string($superClassLinks) != ''">
+      <xsl:if test="normalize-space(string($superClassLinks)) != ''">
         <h3>(en typ av <xsl:copy-of select="$superClassLinks"/>)</h3>
       </xsl:if>
       <xsl:if test="protege:abstract='true'">
@@ -105,6 +108,16 @@
         <h4 class="warning">[obsolet typ]</h4>
       </xsl:if>
       <p class="rdfs:comment"><xsl:value-of select="rdfs:comment"/></p>
+      <dl class="tech">
+        <dt>URI:</dt>
+        <dd>
+          <code><xsl:value-of select="@uri"/></code>
+        </dd>
+        <dt>Som XML:</dt>
+        <dd>
+          <code>&lt;.. TODO... /&gt;</code>
+        </dd>
+      </dl>
 
       <!-- TODO: join these two somehow (and sort by label) -->
       <xsl:variable name="all-restrictions" select="self:get-restrictions(.)"/>
@@ -146,8 +159,9 @@
     <xsl:param name="property"/>
     <xsl:param name="restr"/>
     <xsl:param name="direct" select="true()"/>
+    <xsl:variable name="abstract" select="$property/protege:abstract = 'true'"/>
     <tr>
-      <td about="{owl:onProperty/@ref}">
+      <td about="{$property/@uri}">
         <xsl:variable name="label" select="$property/rdfs:label"/>
           <!-- TODO: really: use css (propdef, direct), not strong/em! -->
         <strong>
@@ -160,7 +174,7 @@
             </xsl:otherwise>
           </xsl:choose>
         </strong>
-        <xsl:if test="$property/protege:abstract = 'true'">
+        <xsl:if test="$abstract">
           <div class="warning">[abstrakt egenskap]</div>
         </xsl:if>
       </td>
@@ -168,7 +182,7 @@
         <xsl:if test="$property/rdfs:comment">
           <p><xsl:value-of select="$property/rdfs:comment"/></p>
         </xsl:if>
-        <xsl:if test="$property/protege:abstract = 'true'">
+        <xsl:if test="$abstract">
           <p>
             Mer specifika egenskaper:
             <dl>
@@ -207,6 +221,18 @@
               </em>
             </p>
           </xsl:for-each>
+        </xsl:if>
+        <xsl:if test="not($abstract)">
+          <dl class="tech">
+            <dt>URI:</dt>
+            <dd>
+              <code><xsl:value-of select="$property/@uri"/></code>
+            </dd>
+            <dt>Som XML:</dt>
+            <dd>
+              <code>&lt;.. TODO... /&gt;</code>
+            </dd>
+          </dl>
         </xsl:if>
       </td>
       <td>
