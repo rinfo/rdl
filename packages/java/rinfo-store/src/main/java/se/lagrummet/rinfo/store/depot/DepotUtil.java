@@ -27,17 +27,17 @@ public class DepotUtil {
 
     public static Depot depotFromConfig(String propertiesPath, String subsetPrefix)
             throws ConfigurationException {
-        Depot depot = new FileDepot();
+        FileDepot depot = new FileDepot();
         Configuration config = new PropertiesConfiguration(propertiesPath);
         if (subsetPrefix != null) {
             config = config.subset(subsetPrefix);
         }
         try {
             BeanUtils.populate(depot, new ConfigurationMap(config));
+            depot.initialize();
         } catch (Exception e) {
             throw new ConfigurationException(e);
         }
-        depot.initialize();
         return depot;
     }
 
