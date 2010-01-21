@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils
 import org.apache.commons.codec.digest.DigestUtils
 
 
-@Grab(group='se.lagrummet.rinfo', module='rinfo-store', version='1.0-SNAPSHOT')
+@Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
 def createServableSources(buildDir, docsBase, feedBase) {
 
     def ant = new AntBuilder()

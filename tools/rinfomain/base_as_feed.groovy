@@ -27,8 +27,8 @@ FEED_TITLE = "RInfo Base Data"
 PUBLIC_BASE_URI = "http://rinfo.lagrummet.se"
 BASE_PATH = "/admin/feed/current"
 
-@Grab(group='se.lagrummet.rinfo', module='rinfo-base', version='1.0-SNAPSHOT')
-@Grab(group='se.lagrummet.rinfo', module='rinfo-store', version='1.0-SNAPSHOT')
+@Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT')
+@Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
 def main() {
     def cli = new CliBuilder(usage:"groovy <script> [opts]")
     cli.h 'help', args:0

@@ -3,8 +3,8 @@ import org.restlet.data.Protocol
 
 
 @Grapes([
-  @Grab(group='org.restlet', module='org.restlet', version='1.1.4'),
-  @Grab(group='com.noelios.restlet', module='com.noelios.restlet', version='1.1.4')
+  @Grab('org.restlet:org.restlet:1.1.4'),
+  @Grab('com.noelios.restlet:com.noelios.restlet:1.1.4')
 ])
 class SourceApp extends Application {
     String wwwDir

@@ -8,7 +8,7 @@ import se.lagrummet.rinfo.main.storage.StorageCredentials
 import se.lagrummet.rinfo.main.storage.CollectorLog
 
 
-@Grab(group='se.lagrummet.rinfo', module='rinfo-main', version='1.0-SNAPSHOT')
+@Grab('se.lagrummet.rinfo:rinfo-main:1.0-SNAPSHOT')
 def collectFeed(baseDir, feedUrl) {
     def depot = createDepot(baseDir)
     def handlers = []
