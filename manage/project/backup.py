@@ -33,7 +33,7 @@ def _bakprep():
     if not exists(env.project_bak):
         sudo("mkdir %(project_bak)s"%env)
         sudo("chown %(bakuser)s %(project_bak)s"%env)
-        sudo("mkdir %(project_bak)s/{data,svn,trac}"%env, user=env.bakuser)
+        _budo("mkdir %(project_bak)s/{data,svn,trac}"%env)
 
 def bak_trac():
     _bakprep()
@@ -45,7 +45,7 @@ def bak_trac():
         assert env.trac_hotcopy_dir.startswith(env.project_bak)
         assert rmcmd.endswith(env.trac_hotcopy_dir)
         # then run it:
-        sudo(rmcmd, user=env.bakuser)
+        _budo(rmcmd)
     sudo("trac-admin %(source_trac)s hotcopy %(trac_hotcopy_dir)s"%env)
     sudo("chown -R %(bakuser)s %(trac_hotcopy_dir)s"%env)
 
@@ -53,12 +53,16 @@ def bak_svn():
     _bakprep()
     if not exists(env.source_svn):
         abort("%(source_svn)s must exist and be a directory"%env)
-    sudo("svnadmin dump %(source_svn)s > %(dump_file)s"%env, user=env.bakuser)
+    _budo("svnadmin dump %(source_svn)s > %(dump_file)s"%env)
+
+def bak_admin_log():
+    _budo("cp /config.txt %(project_bak)s/"%env)
 
 def bak():
     "Create backups of all project data."
     bak_trac()
     bak_svn()
+    bak_admin_log()
 
 def download_bak(todir='/tmp'):
     "Download packed tgz of backup data."
@@ -69,4 +73,6 @@ def download_bak(todir='/tmp'):
         abort("Local directory %(todir)s does not exist."%env)
     run("tar czvf %(bakfile)s %(project_bak)s/"%env)
     get("rinfo-backups.tgz", "%(todir)s/%(bakfile)s"%env)
+
+def _budo(cmd): sudo(cmd, user=env.bakuser)
 

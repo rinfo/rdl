@@ -1,0 +1,7 @@
+NameVirtualHost *:80
+
+<VirtualHost *:80>
+    ServerName rinfo-main
+    ServerSignature On
+    ProxyPass / ajp://localhost:8009/rinfo-main/
+</VirtualHost>

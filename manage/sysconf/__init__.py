@@ -14,36 +14,56 @@
 # See: <http://httpd.apache.org/docs/2.0/mod/core.html#namevirtualhost>
 # See: <http://httpd.apache.org/docs/2.0/mod/mod_proxy.html#access>
 from __future__ import with_statement
+from os import path as p
 from fabric.api import *
 from fabric.contrib.files import exists
+from fabric.contrib.project import rsync_project
 from targetenvs import _needs_targetenv
-from util import dirpath
+from util import mkdirpath, slashed
+
+
+SCRIPT_DIR = p.dirname(__file__)
 
 
 def pull_etckeeper_repos():
     pass
 
 @roles('main')
-def tomcat_to_target():
-    _needs_targetenv()
-    dirpath(env.mgr_work_tomcat)
-    put("%(target)s/tomcat/get-tomcat.sh"%env, env.mgr_work_tomcat)
-    with cd(env.mgr_work_tomcat):
-        run("bash get-tomcat.sh %(tomcat_version)s"%env)
+@runs_once
+def sync_workdir():
+    mkdirpath(env.mgr_workdir)
+    rsync_project(slashed(env.mgr_workdir),
+            p.join(SCRIPT_DIR, env.target, "install"), exclude=".*", delete=True)
+    rsync_project(slashed(env.mgr_workdir),
+            p.join(SCRIPT_DIR, env.target, "etc"), exclude=".*", delete=False)
 
 @roles('main')
-def install_tomcat_at_target():
+def fetch_tomcat_dist():
+    _needs_targetenv()
+    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg"
+    mkdirpath(workdir_tomcat)
+    with cd(workdir_tomcat):
+        run("bash %(mgr_workdir)s/install/get-tomcat.sh %(tomcat_version)s"%env)
+
+@roles('main')
+def install_tomcat():
     require('target', provided_by=targetenvs)
-    dirpath(env.mgr_work_tomcat)
-    #rsync_project(TODO, slashed(env.mgr_work_tomcat), exclude=".*", delete=True)
-    #put("tomcat/init-d-tomcat", "/etc/init.d/tomcat")
-    #put("", "/etc/apache2/workers.properties")
-    #put("", "/etc/apache2/conf.d/jk.conf")
-    put("%(target)s/tomcat/install-tomcat.sh"%env, env.mgr_work_tomcat)
-    with cd(env.mgr_work_tomcat):
-        sudo("bash install-tomcat.sh %(tomcat_version)s ."%env)
-    #sudo("chown root:root /etc/apache2/conf.d/jk.conf")
+    with cd("%(mgr_workdir)s/install/"%env):
+        sudo("bash install-tomcat.sh %(tomcat_version)s"%env)
+
+    with cd("%(mgr_workdir)s/etc/"%env):
+        #$ cp -i init.d/tomcat /etc/init.d/
+        pass
+    #$ chmod 0755 /etc/init.d/tomcat
+    #$ update-rc.d tomcat defaults
+
+    with cd("%(mgr_workdir)s/etc/"%env):
+        #$ cp -i apache2/workers.properties /etc/apache2/
+        #$ cp -i apache2/conf.d/jk.conf /etc/apache2/conf.d/
+        pass
+    #$ chown root:root /etc/apache2/conf.d/jk.conf
     #$ /etc/init.d/apache2 stop
     #$ /etc/init.d/tomcat restart
     #$ /etc/init.d/apache2 start
+    ##$ /etc/init.d/apache2 restart
 
