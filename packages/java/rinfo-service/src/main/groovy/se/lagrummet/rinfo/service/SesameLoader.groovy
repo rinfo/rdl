@@ -123,7 +123,8 @@ class SesameLoader extends FeedArchivePastToPresentReader {
         for (link in entry.links) {
             def urlPath = unescapeColon( link.resolvedHref.toString() )
             def mediaType = link.getMimeType().toString()
-            if ("enclosure".equals(link.rel) && rdfMimeType.equals(mediaType)) {
+            if (rdfMimeType.equals(mediaType) &&
+                ("alternate".equals(link.rel) || "enclosure".equals(link.rel)) ) {
                 rdfReferences.add(new ReprRef(new URL(urlPath), mediaType))
             }
         }
