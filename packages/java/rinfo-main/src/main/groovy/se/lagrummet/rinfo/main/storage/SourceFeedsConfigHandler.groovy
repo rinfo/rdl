@@ -49,12 +49,19 @@ class SourceFeedsConfigHandler extends AbstractStorageHandler {
         def feedUrls = new ArrayList<URL>()
         Repository repo = EntryRdfReader.readRdf(depotEntry)
         // TODO:IMPROVE: configure, use raw sparql, and/or make this more failsafe.
+        /* or..: * /
+        walker.aboutURI("tag:lagrummet.se,2009:rinfo")
+        for (Object source : walker.pushRel(DCT_NS, "source")) {
+            feedUrls.add(walker.rel(IANA_NS, "current").asURI())
+        }
+        /* */
         def tree = SparqlTree.runQuery(repo, sourceFeedsQuery)
         tree.rinfoset.each {
             it.source.each {
                 feedUrls.add(new URL(it.feed['$uri']))
             }
         }
+        /**/
         logger.debug("Setting public source feed urls, from " +
                 configurationEntryId+", to: ${feedUrls}")
         collectScheduler.setPublicSourceFeedUrls(feedUrls)

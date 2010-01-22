@@ -134,8 +134,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.codehaus.groovy.maven.runtime</groupId>
-      <artifactId>gmaven-runtime-1.6</artifactId>
+      <groupId>org.codehaus.gmaven.runtime</groupId>
+      <artifactId>gmaven-runtime-1.7</artifactId>
       <!--
       <scope>test</scope>
       -->

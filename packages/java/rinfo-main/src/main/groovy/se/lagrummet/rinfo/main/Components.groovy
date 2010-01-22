@@ -25,21 +25,6 @@ import se.lagrummet.rinfo.main.storage.StorageSession
 import se.lagrummet.rinfo.main.storage.SourceFeedsConfigHandler
 
 
-    // TODO: put inside Components (not possible in groovy 1.6).
-    public static enum ConfigKey {
-        DEPOT_BASE_URI("rinfo.depot.baseUri"),
-        DEPOT_BASE_DIR("rinfo.depot.baseDir"),
-        CONTAINER_DESCRIPTION_ENTRY_ID("rinfo.main.uriMinter.containerDescriptionEntryId"),
-        SOURCE_FEEDS_ENTRY_ID("rinfo.main.storage.sourceFeedsEntryId"),
-        ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets"),
-        PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
-        COLLECTOR_LOG_DATA_DIR("rinfo.main.collector.logDataDir");
-
-        private final String value;
-        private ConfigKey(String value) { this.value = value; }
-        public String toString() { return value; }
-    }
-
 /**
  * This is the Dependency Injection "hub" which is responsible for building the
  * components that constitute the application together. It will be the sole
@@ -51,6 +36,20 @@ import se.lagrummet.rinfo.main.storage.SourceFeedsConfigHandler
  * </ul>
  */
 public class Components {
+
+    public static enum ConfigKey {
+        DEPOT_BASE_URI("rinfo.depot.baseUri"),
+        DEPOT_BASE_DIR("rinfo.depot.baseDir"),
+        SOURCE_FEEDS_ENTRY_ID("rinfo.main.storage.sourceFeedsEntryId"),
+        CONTAINER_DESCRIPTION_ENTRY_ID("rinfo.main.uriMinter.containerDescriptionEntryId"),
+        ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets"),
+        PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
+        COLLECTOR_LOG_DATA_DIR("rinfo.main.collector.logDataDir");
+
+        private final String value;
+        private ConfigKey(String value) { this.value = value; }
+        public String toString() { return value; }
+    }
 
     private Configuration config
     private Storage storage
@@ -153,7 +152,7 @@ public class Components {
     }
 
     private StorageHandler createEntryRdfValidatorHandler() {
-        // TODO: new URIMinter (takes less conf params.., data from depot..)
+        /* TODO: new URIMinter (takes less conf params.., data from depot..)
         def baseDir = config.getString("rinfo.main.baseDir")
         def repo = RDFUtil.slurpRdf(baseDir+"/datasets/containers.n3")
         def minterDir = baseDir+"/uri_algorithm"
@@ -163,6 +162,7 @@ public class Components {
         URI containerEntryId = new URI(config.getString(
                 ConfigKey.CONTAINER_DESCRIPTION_ENTRY_ID.toString()))
         return new EntryRdfValidatorHandler(uriMinter, containerEntryId)
+        */
     }
 
 }

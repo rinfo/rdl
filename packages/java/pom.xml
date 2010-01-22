@@ -398,17 +398,15 @@
         <version>2.7.1</version>
       </dependency>
 
-      <!-- NOTE: only needed to build maven plugins in groovy.
       <dependency>
-          <groupId>org.codehaus.groovy.maven</groupId>
-          <artifactId>gmaven-mojo</artifactId>
-          <version>1.0</version>
-      </dependency>
-      -->
-      <dependency>
-          <groupId>org.codehaus.groovy.maven.runtime</groupId>
+          <groupId>org.codehaus.gmaven.runtime</groupId>
           <artifactId>gmaven-runtime-1.6</artifactId>
-          <version>1.0</version>
+          <version>1.2</version>
+      </dependency>
+      <dependency>
+          <groupId>org.codehaus.gmaven.runtime</groupId>
+          <artifactId>gmaven-runtime-1.7</artifactId>
+          <version>1.2</version>
       </dependency>
       <!-- }}} -->
 
@@ -462,9 +460,9 @@
           <version>2.2-beta-2</version>
         </plugin>
         <plugin>
-          <groupId>org.codehaus.groovy.maven</groupId>
+          <groupId>org.codehaus.gmaven</groupId>
           <artifactId>gmaven-plugin</artifactId>
-          <version>1.0</version>
+          <version>1.2</version>
         </plugin>
         <plugin>
           <groupId>org.spockframework</groupId>
