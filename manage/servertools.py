@@ -17,16 +17,27 @@ def tail():
     _needs_targetenv()
     sudo("ls -t %(tomcat)s/logs/catalina*.* | head -1 | xargs tail -f"%env)
 
+def tail2():
+    _needs_targetenv()
+    run("tail -f %(tomcat)s/logs/localhost.%(datestamp)s.log"%env)
+
+def restart_all():
+    _needs_targetenv()
+    sudo("/etc/init.d/apache2 stop")
+    restart_tomcat()
+    sudo("/etc/init.d/apache2 start")
+
 def restart_tomcat():
     _needs_targetenv()
+    #/etc/init.d/tomcat restart
     sudo("%(tomcat_stop)s"%env)
     sudo("%(tomcat_start)s"%env)
 
 def restart_apache():
     _needs_targetenv()
-    # .. apache2ctl
-    sudo("/etc/init.d/apache2 stop")
-    sudo("/etc/init.d/apache2 start")
+    #sudo("/etc/init.d/apache2 stop")
+    #sudo("/etc/init.d/apache2 start")
+    sudo("/etc/init.d/apache2 restart")
 
 def war_props(warname="ROOT"):
     _needs_targetenv()

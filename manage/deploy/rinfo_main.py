@@ -11,7 +11,7 @@ def package_main(deps="1"):
     if int(deps): local_lib_rinfo_pkg()
     _needs_targetenv()
     local("cd %(java_packages)s/rinfo-main/ && "
-            "mvn -P%(target)s clean war:war"%env, capture=False)
+            "mvn -P%(target)s clean package war:war"%env, capture=False)
 
 ##
 # Server deploy
@@ -26,6 +26,7 @@ def setup_main():
     if not exists(env.rinfo_main_store):
         sudo("mkdir %(rinfo_main_store)s"%env)
         sudo("chown -R %(tomcat_user)s %(rinfo_main_store)s"%env)
+    sudo("chown -R %(tomcat_user)s %(rinfo_dir)s"%env)
 
 @roles('main')
 def deploy_main():

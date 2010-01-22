@@ -53,7 +53,7 @@ def tg_integration():
     env.dist_dir = 'rinfo_dist'
     env.rinfo_dir = '/opt/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
-    env.webdocroot = "/var/www/dokumentation/"
+    env.docs_webroot = "/var/www/dokumentation/"
     # Tomcat (Ubuntu)
     env.tomcat = "/var/lib/tomcat6"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
@@ -92,6 +92,7 @@ def tg_prod():
     # Name env:
     env.target = "prod"
     # Machines:
+    env.user = 'rinfo'
     env.roledefs = {
         'main': ['94.247.169.66'],
         'service': ['94.247.169.67'],
@@ -102,15 +103,14 @@ def tg_prod():
     env.dist_dir = 'rinfo_dist'
     # Filesystem paths
     env.rinfo_main_store = "/opt/rinfo/store"
-    env.example_stores = "/opt/rinfo/depots"
     env.rinfo_dir = '/opt/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
-    env.webdocroot = "/var/www/dokumentation/v0" # TODO: change to official when OK:d
+    env.docs_webroot = "/var/www/dokumentation"
     # Tomcat
     env.tomcat_version = "6.0.20"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
     env.tomcat_start = '/etc/init.d/tomcat start'
     env.tomcat_stop = '/etc/init.d/tomcat stop'
-    env.tomcat_user = 'root' # FIXME: tomcat
+    env.tomcat_user = 'tomcat'
 

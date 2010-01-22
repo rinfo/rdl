@@ -17,6 +17,7 @@ env.base_data = "%(projectroot)s/resources/base"%env
 env.java_packages = "%(projectroot)s/packages/java"%env
 env.java_pkg_version = "1.0-SNAPSHOT"
 env.timestamp = datetime.datetime.utcnow().strftime('%Y_%m_%d_%H-%M-%S')
+env.datestamp = datetime.datetime.utcnow().strftime('%Y-%m-%d')
 
 env.roledefs = {'main': None, 'service': None, 'doc': None}
 
