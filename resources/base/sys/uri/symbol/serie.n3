@@ -1,10 +1,12 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix coin: <http://purl.org/court/def/2009/coin#> .
 @prefix : <http://rinfo.lagrummet.se/sys/uri/scheme#> .
 @prefix tks_serie: <http://rinfo.lagrummet.se/sys/uri/symbol/serie#> .
 
 
 tks_serie:utr a coin:TokenSet;
+    rdfs:label "Utredningsserier"@sv;
     coin:scheme : .
 
 [] a coin:Token;
@@ -19,6 +21,7 @@ tks_serie:utr a coin:TokenSet;
 
 
 tks_serie:fs a coin:TokenSet;
+    rdfs:label "Författningssamlingar"@sv;
     coin:scheme : .
 
 [] a coin:Token;
@@ -468,6 +471,7 @@ tks_serie:fs a coin:TokenSet;
 
 
 tks_serie:rff a coin:TokenSet;
+    rdfs:label "Rättsfallsförteckningar"@sv;
     coin:scheme : .
 
 [] a coin:Token;
