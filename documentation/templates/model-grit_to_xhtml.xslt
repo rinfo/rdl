@@ -115,7 +115,7 @@
         </dd>
         <dt>Som XML:</dt>
         <dd>
-          <code>&lt;.. TODO... /&gt;</code>
+          <xsl:call-template name="markup-example"/>
         </dd>
       </dl>
 
@@ -230,7 +230,9 @@
             </dd>
             <dt>Som XML:</dt>
             <dd>
-              <code>&lt;.. TODO... /&gt;</code>
+              <xsl:for-each select="$property">
+                <xsl:call-template name="markup-example"/>
+              </xsl:for-each>
             </dd>
           </dl>
         </xsl:if>
@@ -294,6 +296,33 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:template name="markup-example">
+    <xsl:variable name="term" select="self:uri-term(@uri)"/>
+    <xsl:variable name="base" select="substring-before(@uri, $term)"/>
+    <xsl:variable name="ns" select="document('')/*/namespace::*"/>
+    <xsl:variable name="name">
+      <xsl:value-of select="local-name($ns[string(.) = $base])"/>
+      <xsl:text>:</xsl:text>
+      <xsl:value-of select="$term"/>
+    </xsl:variable>
+    <code>
+      <xsl:choose>
+        <xsl:when test="a/owl:Class | a/rdfs:Class | a/owl:DeprecatedClass">
+          &lt;<xsl:value-of select="$name"/> rdf:about="...">
+        </xsl:when>
+        <xsl:when test="a/owl:ObjectProperty">
+          &lt;<xsl:value-of select="$name"/> rdf:resource="..."/>
+        </xsl:when>
+        <xsl:when test="a/owl:DatatypeProperty">
+          &lt;<xsl:value-of select="$name"/> datatype="<xsl:value-of select="rdfs:range/@ref"/>">...<!--&lt;/<xsl:value-of select="$name"/>>-->
+        </xsl:when>
+        <xsl:when test="a/owl:AnnotationProperty | a/rdfs:Property">
+          &lt;<xsl:value-of select="$name"/>>...&lt;/<xsl:value-of select="$name"/>>
+        </xsl:when>
+      </xsl:choose>
+    </code>
+  </xsl:template>
+
 
   <func:function name="self:get-restrictions">
     <xsl:param name="class"/>
@@ -316,10 +345,24 @@
                                 'grit:get(.)')"/>
   </func:function>
 
+  <func:function name="self:super-classes">
+    <xsl:param name="e"/>
+    <xsl:param name="recursive" select="true()"/>
+    <xsl:variable name="supers" select="dyn:map($e/rdfs:subClassOf, 'grit:get(.)')"/>
+    <xsl:choose>
+      <xsl:when test="$recursive">
+        <func:result select="$supers | dyn:map($supers, 'self:super-classes(., $recursive)')"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <func:result select="$supers"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </func:function>
+
 
   <func:function name="self:computed-range">
     <xsl:param name="restr"/>
-    <!-- TODO: really use someValuesFrom (its more like an "example range")? -->
+    <!-- TODO: really use someValuesFrom? (isn't it more like an "example range"?) -->
     <xsl:variable name="classref" select="
                   $restr/owl:allValuesFrom | $restr/owl:someValuesFrom |
                   grit:get($restr/owl:onProperty)/rdfs:range"/>
@@ -342,20 +385,6 @@
         <xsl:for-each select="str:split($uri, '/')[position() = last()]">
           <func:result select="current()"/>
         </xsl:for-each>
-      </xsl:otherwise>
-    </xsl:choose>
-  </func:function>
-
-  <func:function name="self:super-classes">
-    <xsl:param name="e"/>
-    <xsl:param name="recursive" select="true()"/>
-    <xsl:variable name="supers" select="dyn:map($e/rdfs:subClassOf, 'grit:get(.)')"/>
-    <xsl:choose>
-      <xsl:when test="$recursive">
-        <func:result select="$supers | dyn:map($supers, 'self:super-classes(., $recursive)')"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <func:result select="$supers"/>
       </xsl:otherwise>
     </xsl:choose>
   </func:function>

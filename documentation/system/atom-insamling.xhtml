@@ -78,14 +78,16 @@ Identifierar flödet utan att hårdkoppla det med url:ar.
         <p>Alla poster hämtas in då och då över tid. Dessa sparas i systemet 
           och får där nya datumstämplar som motsvarar 
           inhämntningstillfället.</p>
-        <p>Varje post representeras av ett Atom Entry vilket talar om URI:n (i 
-          atom:id), primär representation (atom:content) samt referenser till 
-          representationer. En av representationerna ''måste'' innehålla RDF. 
-          Enligt principen för Atom-arkiv är de ordnade på updated-datum.</p>
+        <p>Varje post representeras av ett s.k. Atom Entry. Här anges URI:n för
+          dokumentet (i atom:id), primär representation (i atom:content) samt
+          referenser till alternativa representationer. En av
+          representationerna <em>måste</em> innehålla RDF. Enligt principen för
+          Atom-arkiv är de ordnade på updated-datum.</p>
         <ul>
-          <li>Entryns ID:n ska motsvara URI:n för resursen som entryt beskriver 
-            (om det är ett rättsinformationsdokument) - se 
-            [wiki:RInfoURIDesign]</li>
+          <li>Posternas ID:n ska motsvara URI:n för resursen som posten levererar.
+            <!--(om det är ett rättsinformationsdokument) -->
+            <!-- se URI:er för rättsinformationsdokument.. -->
+           </li>
           <li>RDF-data som beskriver postens dokument levereras i content eller 
             alternate-link.</li>
         </ul>
@@ -108,28 +110,17 @@ Identifierar flödet utan att hårdkoppla det med url:ar.
     </div>
 
     <div class="section">
-      <h2>4. Atom-arkiv</h2>
-      <p>Större samlingar (eventuellt med många uppdateringar och/eller 
-        raderingar) kan och bör delas upp i Atom-arkiv.</p>
-      <ul>
-        <li><a href="http://tools.ietf.org/html/rfc5005#section-4">Feed Paging 
-            and Archiving: 4. Archived Feeds</a></li>
-      </ul>
-      <p>...</p>
-    </div>
-
-    <div class="section">
-      <h2>5. Uppdateringar</h2>
-      <p>Uppdateringar är tillåtet för ''viss form'' av nytillkommen post-data 
+      <h2>4. Uppdateringar</h2>
+      <p>Uppdateringar är tillåtet för <em>viss form</em> av nytillkommen post-data 
         och -representationer.</p>
-      <p>En uppdaterad post ''ska'' ha ett senare datum än 
+      <p>En uppdaterad post <em>ska</em> ha ett senare datum än 
         publiceringsdatumet. Detta för att undvika att en ny post av misstag 
         fått en redan befintlig identifierare.</p>
     </div>
 
     <div class="section">
-      <h2>6. Raderade poster</h2>
-      <p>För att hantera ''felaktigt inkomna'' poster exponeras även 
+      <h2>5. Raderade poster</h2>
+      <p>För att hantera <em>felaktigt inkomna</em> poster exponeras även 
         <em>raderade'</em> resurser.</p>
       <p>Raderingar representeras av: <a 
           href="http://tools.ietf.org/html/draft-snell-atompub-tombstones-06">The 
@@ -137,6 +128,24 @@ Identifierar flödet utan att hårdkoppla det med url:ar.
         posten som raderats samt raderingsdatum.</p>
       <p><strong>Obs!</strong> Detta stödjs enbart för att ta bort 
         <em>felaktiga</em> poster.</p>
+    </div>
+
+    <div class="section">
+      <h2>6. Tillväxt över tid</h2>
+      <p>Större samlingar (eventuellt med många uppdateringar och/eller 
+        raderingar) kan och bör delas upp i Atom-arkiv.</p>
+      <ul>
+        <li><a href="http://tools.ietf.org/html/rfc5005#section-4">Feed Paging 
+            and Archiving: 4. Archived Feeds</a></li>
+      </ul>
+      <div>
+        <h3>Kompletta feeds</h3>
+        <p>...</p>
+      </div>
+      <div>
+        <h3>Atom-arkiv</h3>
+        <p>...</p>
+      </div>
     </div>
 
     <!--TODO:

@@ -6,22 +6,50 @@
     <link rel="stylesheet" type="text/css" media="screen" href="http://www.lagrummet.se/styles/screen.css" />
     <link rel="stylesheet" type="text/css" media="handheld" href="http://www.lagrummet.se/styles/handheld.css" />
     <link rel="stylesheet" type="text/css" media="print" href="http://www.lagrummet.se/styles/print.css" />
-    <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="http://www.lagrummet.se/styles/ie.css" media="screen" /><![endif]-->
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" type="text/css" href="http://www.lagrummet.se/styles/ie.css" media="screen" />
+    <![endif]-->
+    <style type="text/css">
+
+      #logo {
+        padding: 40px 0 5px 18px;
+      }
+      #logo a {
+        color: rgb(135, 57, 95);
+        text-decoration: none;
+        font-size: 19px;
+        font-weight: bold;
+      }
+
+      #related .newslist {
+          background-color: #F5F5F5;
+          padding: 2px 2px;
+      }
+      #related .newslist .newslistcompact {
+          border: solid 2px #fff;
+          background-color: #F5F5F5;
+          padding: 10px 12px 10px 12px;
+          font-size: 0.8em;
+      }
+    </style>
     <title>Rättsinformationssystemets projektdokumentation</title>
   </head>
   <body>
     <div id="container">
         <div id="header">
             <div id="headercontent">
-                <!--
                 <ul id="quicknav">
                     <li><a href="http://www.lagrummet.se/">Till webbplatsen lagrummet.se</a></li>
                 </ul>
-
+                <!--
                 <a href="/" accesskey="1" class="logo"><img src="http://www.lagrummet.se/img/lr/logo_lagrummet.gif" alt="Till startsidan för projektdokumentationen" /></a>
                 -->
+                <div id="logo">
+                  <a href="/" accesskey="1" class="logo" title="Till startsidan för projektdokumentationen"
+                    >Rättsinformationsprojektet</a>
+                </div>
             </div>
-            <div class="clearer divider"></div>
+            <div class="clearer divider"> </div>
         </div>
         <div id="pageleft">
             <div id="pageright">
@@ -49,6 +77,8 @@
                     Letar du efter information om lagar och regler bör du
                     istället besöka <a href="http://www.lagrummet.se/">portalen lagrummet.se</a>.</p>
 
+                    <p><em>Observera att denna information inte är fastställd i alla delar ännu.</em></p>
+
                     <h2 id="doktyp">Riktlinjer per dokumenttyp</h2>
 
                     <h3 id="myndighetsforeskrifter">Myndighetsföreskrifter</h3>
@@ -73,7 +103,9 @@
                     identifierare, XML-format m.m.</p>
                     <ul>
                         <li><a href="model.pdf">Begreppsmodellen för svenska rättsinformationspublikationer (PDF)</a></li>
-                        <li><a href="system/uri-principer.pdf">Principer för digitala identifierare (PDF)</a></li>
+                        <!--
+                        <li><a href="system/uri-principer.pdf">Principer för elektroniska identifierare (PDF)</a></li>
+                        -->
                     </ul>
 
                     <h2 id="standarder">Rekommendationer/standarder som använts</h2>
@@ -101,19 +133,22 @@
                 </div>
 
                 <div id="related">
-                    <h2>Senaste nyheter från projektet</h2>
-
-                    <script type="text/javascript" src="http://p3k.org/rss/proxy.r?textColor=black&amp;align=&amp;width=200&amp;fontFace=&amp;url=http%3A%2F%2Frinfoprojektet.wordpress.com%2Ffeed%2F&amp;compact=true&amp;frameColor=white&amp;showXmlButton=&amp;boxFillColor=white&amp;_=1255012508966&amp;titleBarColor=%23ccc&amp;maxItems=5&amp;titleBarTextColor=black&amp;"></script>
-
+                  <!--
+                  <div class="newslist">
+                    <div class="newslistcompact">
+                      <h2>Senaste nyheter från projektet</h2>
+                      <script type="text/javascript" src="http://p3k.org/rss/proxy.r?textColor=black&amp;align=&amp;width=200&amp;fontFace=&amp;url=http%3A%2F%2Frinfoprojektet.wordpress.com%2Ffeed%2F&amp;compact=true&amp;frameColor=white&amp;showXmlButton=&amp;boxFillColor=white&amp;_=1255012508966&amp;titleBarColor=%23ccc&amp;maxItems=5&amp;titleBarTextColor=black&amp;"></script>
+                    </div>
+                  </div>
+                  -->
                 </div>
-                <div class="clearer"></div>
+                <div class="clearer"> </div>
             </div>
         </div>
         <div id="footer">
             <div id="footercontent">
                 <div class="contact">
-                    <p class="left">Kontakta: niklas.lindstrom@valtech.se (utvecklare)</p>
-                    <!-- TODO: @dom.se (projektledare) -->
+                    <p class="left">Kontakta: staffan.malmgren@dom.se (projektledare)</p>
                     <p class="right"><a href="http://www.domstol.se">Domstolsverket</a></p>
                 </div>
             </div>
