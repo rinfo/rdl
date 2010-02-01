@@ -3,6 +3,7 @@ package se.lagrummet.rinfo.base.rdf;
 import java.util.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.File;
@@ -149,34 +150,52 @@ public class RDFUtil {
         }
     }
 
-    public static void serialize(
-            Repository repo, String mediaType, OutputStream outStream)
-        throws RDFHandlerException, RepositoryException
-    {
+    public static void serialize(Repository repo, String mediaType,
+            OutputStream outStream)
+            throws RDFHandlerException, RepositoryException, IOException {
+        serialize(repo, mediaType, outStream, false);
+    }
+
+    public static void serialize(Repository repo, String mediaType,
+            OutputStream outStream, boolean pretty)
+            throws RDFHandlerException, RepositoryException, IOException {
         RDFFormat format = RDFFormat.forMIMEType(mediaType);
         RDFWriter writer = null;
-        // TODO: doesn't work with bnodes.
-        //if (format.equals(RDFFormat.RDFXML)) {
-        //    writer = new RDFXMLPrettyWriter(outStream);
-        //} else {
+        if (pretty && format.equals(RDFFormat.RDFXML)) {
+            writer = new RDFXMLPrettyWriter(outStream);
+        } else {
             RDFWriterFactory factory = (RDFWriterFactory) RDFWriterRegistry
                     .getInstance().get(format);
             writer = factory.getWriter(outStream);
-        //}
-        RepositoryConnection conn = repo.getConnection();
-        try {
-            conn.exportStatements(null, null, null, false, writer);
-        } finally {
-            conn.close();
         }
-        //writer.close()
+        try {
+            RepositoryConnection conn = repo.getConnection();
+            try {
+                conn.exportStatements(null, null, null, false, writer);
+            } finally {
+                conn.close();
+            }
+        } finally {
+            if (writer instanceof Closeable) {
+                ((Closeable)writer).close();
+            }
+        }
     }
 
     public static InputStream toInputStream(Repository repo, String mediaType)
             throws IOException, RepositoryException, RDFHandlerException {
+        return toInputStream(repo, mediaType, false);
+    }
+
+    public static InputStream toInputStream(Repository repo, String mediaType,
+            boolean pretty)
+            throws IOException, RepositoryException, RDFHandlerException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        serialize(repo, mediaType, outStream);
-        outStream.close();
+        try {
+            serialize(repo, mediaType, outStream, pretty);
+        } finally {
+            outStream.close();
+        }
         return new ByteArrayInputStream(outStream.toByteArray());
     }
 
