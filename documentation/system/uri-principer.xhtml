@@ -372,15 +372,22 @@
     <div id="bilaga_a" class="appendix">
       <!-- TODO:skriv klart detta block (plus genererad data) -->
       <h2>A. Konstruktionsregler för rättsinformationsindentifierare</h2>
+      <!--
       <p>
         Inledning.. publikationsindentifierare..
       </p>
+      -->
       <div>
         <h3>Regler förankrade i bas-segment</h3>
-        <p>Dessa regler anger hur segment kombineras med egenskaper på dokumentet.
-          (token) som används..</p>
+        <p>Dessa regler anger hur segment kombineras med egenskaper på
+          dokumentet.
+        </p>
+        <p>För listor på symboler för de resurser olika relationer anger, se <a
+            href="#bilaga_c">Bilaga C</a>.
+        </p>
         <xi:include href="build:urischeme.xhtml" xpointer="bases"/>
       </div>
+      <!--
       <div>
         <h3>Sammansättningsalgoritm</h3>
         <div>
@@ -391,15 +398,14 @@
         <div>
           <h4>Hur en symbols tecken transformeras till ett/flera segment i en 
             identifierare..</h4>
-          <!--
           <div class="syntax">
             <code class="javascript"><xi:include
                   href="../../resources/base/uri_algorithm/unicodebasechars.json"
                   parse="text"/></code>
           </div>
-          -->
         </div>
       </div>
+      -->
       <div>
         <h3>Delar av dokument: fragmentidentifierare</h3>
         <p>Delar av dokument identifieras med bestämda fragment. Dessa 
@@ -442,8 +448,8 @@
     </div>
 
     <div id="bilaga_c" class="appendix">
-      <h2>C. Komplett lista på containrar som används som bas av (vissa) 
-        regler..</h2>
+      <h2>C. Symboluppsättningar för segment baserade på relationer</h2>
+      <xi:include href="build:urischeme.xhtml" xpointer="tokensets"/>
     </div>
 
     <div id="bilaga_d" class="appendix">
