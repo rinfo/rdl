@@ -309,7 +309,7 @@
         ],
         [ a owl:Restriction;
             owl:onProperty :forarbete;
-            owl:maxCardinality 1;
+            owl:maxCardinality 1; # TODO: varför max ett?
         ],
         [ a owl:Restriction;
             owl:onProperty :genomforDirektiv;
