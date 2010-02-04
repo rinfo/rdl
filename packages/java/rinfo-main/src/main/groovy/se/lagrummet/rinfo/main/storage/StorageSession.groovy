@@ -73,7 +73,7 @@ class StorageSession {
             List<SourceContent> contents, List<SourceContent> enclosures) {
 
         URI entryId = sourceEntry.getId().toURI()
-        logger.info("Collecting entry <${entryId}>..")
+        logger.info("Examining entry <${entryId}>..")
         DepotEntry depotEntry = depot.getEntry(entryId)
 
         // NOTE: Needed since even if hasCollected is true (via stopOnEntry),

@@ -16,6 +16,8 @@ public class EntryPathMapper {
             "isFormatOf", "dct");
 
     PathHandler pathHandler
+    String pathSep = "/"
+    String extensionSep = "."
 
     public EntryPathMapper(PathHandler pathHandler) {
         this.pathHandler = pathHandler
@@ -26,21 +28,27 @@ public class EntryPathMapper {
     }
 
     public String getEnclosureSlug(Link atomLink, Entry atomEntry) {
-        return getEnclosureSlug(atomLink, atomEntry.getId())
-    }
-
-    public String getEnclosureSlug(Link atomLink, IRI entryId) {
+        URI entryUri = atomEntry.getId().toURI()
         String formatOfResource = atomLink.getAttributeValue(DCT_IS_FORMAT_OF)
         if (formatOfResource != null) {
-            // TODO: is this hash-part=>segment acceptable?
-            def entryContainerUri = new URI(entryId.toString()+"/")
-            String resourcePath = formatOfResource.replace("#", "/")
-            String suffix = "." + pathHandler.hintForMediaType(
+            // TODO: is this hardcoded hash-part=>segment acceptable?
+            def entryContainerUri = new URI(entryUri.toString()+pathSep)
+            String resourcePath = formatOfResource.replace("#", pathSep)
+            String suffix = extensionSep + pathHandler.hintForMediaType(
                     atomLink.getMimeType().toString())
             return entryContainerUri.resolve(resourcePath).getPath() + suffix
         } else {
-            return computeEnclosureSlug(entryId.toURI(),
-                    atomLink.resolvedHref.toURI())
+            def enclosureUri = atomLink.resolvedHref.toURI()
+            def slug = computeEnclosureSlug(entryUri, enclosureUri)
+            if (slug == null) {
+                def contentUri = atomEntry.getContentElement().getResolvedSrc().toURI()
+                slug = inferEnclosureSlug(entryUri.getPath(),
+                        contentUri.getPath(), enclosureUri.getPath())
+            }
+            if (slug == null) {
+                throw new EntryPathMapperException(entryUri, enclosureUri)
+            }
+            return slug
         }
     }
 
@@ -48,11 +56,51 @@ public class EntryPathMapper {
         String entryIdBase = entryUri.getPath()
         String enclPath = enclosureUri.getPath()
         if (!enclPath.startsWith(entryIdBase)) {
-            // TODO: fail with what?
-            throw new RuntimeException("Entry <"+entryUri +
-                    "> references <${enclosureUri}> out of its domain.")
+            return null
         }
         return enclPath
     }
 
+    public String inferEnclosureSlug(
+            String basePath, String contentPath, String enclosurePath) {
+        def commonHrefBase = findCommonBase(enclosurePath, contentPath)
+        if (commonHrefBase == null || commonHrefBase.equals(pathSep)) {
+            return null // must share some base under root
+        }
+        def contentTrail = substringAfter(contentPath, commonHrefBase)
+        if (contentTrail.indexOf(pathSep) > -1) {
+            return null // base must be all but content "file"
+        }
+        def enclosureTrail = substringAfter(enclosurePath, commonHrefBase)
+        if (enclosureTrail.equals("") || enclosureTrail.startsWith(pathSep)) {
+            return null // enclosureTrail must be relative and non-empty
+        }
+        return basePath + pathSep + enclosureTrail
+    }
+
+    String findCommonBase(href1, href2) {
+        def sb = new StringBuffer()
+        int i = 0
+        while (i < href1.length() && i < href2.length() &&
+                href1.charAt(i) == href2.charAt(i)) {
+            i++
+        }
+        return href1.substring(0, i)
+    }
+
+    String substringAfter(string, base) {
+        if (string.startsWith(base)) {
+            return string.substring(base.length())
+        }
+        return string
+    }
+
 }
+
+public class EntryPathMapperException extends RuntimeException {
+    public EntryPathMapperException(URI entryUri, URI enclosureUri) {
+        super("Cannot compute enclosure slug from  <"+enclosureUri +
+                "> within entry <"+entryUri+">.")
+    }
+}
+
