@@ -9,7 +9,7 @@ import org.apache.commons.codec.digest.DigestUtils
 
 
 @Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
-def createServableSources(buildDir, docsBase, feedBase) {
+def createServableSources(buildDir, publicServer, docsBase, feedBase) {
 
     def ant = new AntBuilder()
 
@@ -88,7 +88,7 @@ def createServableSources(buildDir, docsBase, feedBase) {
     def f = new File(buildDir+"/sys/sources.rdf")
     ant.mkdir(dir:f.parentFile)
     def writer = new FileWriter(f)
-    makeSourcesRdf(writer, buildDir, feedPaths)
+    makeSourcesRdf(writer, buildDir, feedPaths, publicServer)
     writer.close()
 
     if (exampleFilePaths) {
@@ -138,7 +138,7 @@ def enclosureFilePath(id, href, mediaType, ord) {
     return path
 }
 
-def makeSourcesRdf(writer, buildDir, feedPaths) {
+def makeSourcesRdf(writer, buildDir, feedPaths, publicServer) {
     def mb = new groovy.xml.MarkupBuilder(writer)
     mb.'rdf:RDF'('xmlns:rdf':"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
             'xmlns:dct':"http://purl.org/dc/terms/",
@@ -149,7 +149,7 @@ def makeSourcesRdf(writer, buildDir, feedPaths) {
                 'dct:source' {
                     def feedBase = (feedPath =~ /(.+)\/.*/)[0][1]
                     'void:Dataset'('rdf:about':"tag:${feedBase},2009:rinfo") {
-                        'iana:current'('rdf:resource':"/${feedPath}")
+                        'iana:current'('rdf:resource':"${publicServer}/${feedPath}")
                     }
                 }
             }
@@ -166,6 +166,7 @@ if (args.length < 2) {
 }
 def docsDir = args[0]
 def buildDir = args[1]
-createServableSources(buildDir,
+def publicServer = args[2]
+createServableSources(buildDir, publicServer,
         "${docsDir}/exempel/documents/publ", "${docsDir}/exempel/feeds")
 

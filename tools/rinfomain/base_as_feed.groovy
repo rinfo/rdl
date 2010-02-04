@@ -1,31 +1,38 @@
+import javax.xml.namespace.QName
+
 import org.apache.commons.io.FileUtils as FU
+import org.apache.commons.io.IOUtils
 
 import org.apache.abdera.Abdera
 import org.apache.abdera.i18n.iri.IRI
 
 import org.openrdf.rio.RDFFormat
+import org.openrdf.model.impl.URIImpl
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.vocabulary.RDFS
 import org.openrdf.model.vocabulary.OWL
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 
-import org.restlet.Application
-import org.restlet.Component
-import org.restlet.Directory
-import org.restlet.Restlet
-import org.restlet.Server
-import org.restlet.data.MediaType as MT
-import org.restlet.data.Protocol
-import org.restlet.data.Request
-import org.restlet.data.Response
-import org.restlet.resource.InputRepresentation
+
+DCT = "http://purl.org/dc/terms/"
+VOID = "http://rdfs.org/ns/void#"
+//DCT_IDENTIFIER = new URIImpl(DCT+"identifier")
+DCT_HAS_PART = new URIImpl(DCT+"hasPart")
+VOID_DATASET = new URIImpl(VOID+"Dataset")
 
 
-FEED_URI = "http://rinfo-admin.lagrummet.se/base/feed"
-FEED_TITLE = "RInfo Base Data"
-PUBLIC_BASE_URI = "http://rinfo.lagrummet.se"
-BASE_PATH = "/admin/feed/current"
+FEED_META = [
+    feedUri: "http://rinfo-admin.lagrummet.se/base/feed",
+    feedTitle: "RInfo Base Data",
+    publicBaseUri: "http://rinfo.lagrummet.se"
+]
+
+FEED_PATH_CONF = [
+    baseUrl: "/admin",
+    feedPath: "/admin/feed/current"
+]
+
 
 @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT')
 @Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
@@ -34,84 +41,44 @@ def main() {
     cli.h 'help', args:0
     cli.b 'base', args:1
     cli.s 'sources', args:1
-    cli.p 'port', args:1
+    cli.o 'outdir', args:1
     def opt = cli.parse(args)
-    if (opt.h) { cli.usage(); System.exit 0 }
+    if (opt.h) {
+        cli.usage(); System.exit 0
+    }
 
     def base = opt.b ?: "../../resources/base/"
     def sources = opt.s ?: null
-    def port = Integer.parseInt(opt.p ?: "8280")
+    def outdir = opt.o
+    assert outdir != null
 
-    Closure makeCollection = {
-        def items = collectItems(base, sources, port)
-        def coll = createAtomCollection(
-                FEED_URI, FEED_TITLE, PUBLIC_BASE_URI, items)
-    }
+    def items = collectItems(FEED_META.publicBaseUri, base, sources)
+    def coll = createAtomCollection(FEED_META, FEED_PATH_CONF, items)
 
-    if (port == -1) {
-        def coll = makeCollection()
-        //coll.each { k, v -> println "${k}: ${v}" }
-        println coll[BASE_PATH].data().text
-    } else {
-        startServer port, makeCollection, sources
-        // TODO: pingMainWithMe?
+    def extMap = [
+        "application/rdf+xml": "rdf",
+        "application/atom+xml": "atom"
+    ]
+    coll.each { href, repr ->
+        def fpath = outdir+href
+        def ext = "."+extMap[repr.mediaType]
+        if (!fpath.endsWith(ext)) {
+            fpath += ext
+        }
+        println fpath
+        def f = new File(fpath)
+        FU.forceMkdir(f.parentFile)
+        f.withOutputStream {
+            def ins = repr.data()
+            IOUtils.copy(ins, it)
+            ins.close()
+        }
     }
 }
 
 //======================================================================
 
-class BaseRestlet extends Restlet {
-    Closure makeCollection
-    def collection
-    def basePath
-    BaseRestlet(makeCollection, basePath) {
-        this.makeCollection = makeCollection
-        this.basePath = basePath
-    }
-    void handle(Request request, Response response) {
-        def path = request.resourceRef.relativeRef.path as String
-        if (collection == null || path == basePath) {
-            collection = makeCollection()
-        }
-        def repr = collection[path]
-        if (repr) {
-            response.setEntity(
-                new InputRepresentation(repr.data(), repr.mediaType) )
-        }
-    }
-}
-
-class SourceApp extends Application {
-    String wwwDir
-    Restlet createRoot() {
-        return new Directory(context, wwwDir as String)
-    }
-}
-
-def startServer(port, makeCollection, sources) {
-    //def restlet = new BaseRestlet(makeCollection)
-    //new Server(Protocol.HTTP, port, restlet).start()
-    def component = new Component()
-    component.servers.add(Protocol.HTTP, port)
-    component.clients.add(Protocol.FILE)
-    component.defaultHost.attach(new BaseRestlet(makeCollection, BASE_PATH))
-    if (sources) {
-        new File(sources).listFiles({it.isDirectory()} as FileFilter).each {
-            if (it.name != "sys") {
-                component.defaultHost.attach("/${it.name}",
-                        new SourceApp(wwwDir:it.toURI().toString()))
-            }
-        }
-    }
-    component.start()
-}
-
-//======================================================================
-// TODO: passing too much state around, make class
-
-def collectItems(base, sources, port) {
-    def baseUri = "http://localhost:${port}/"
-
+def collectItems(baseUri, base, sources) {
     def items = []
     def addItem = {
         if (it) items << it
@@ -119,10 +86,10 @@ def collectItems(base, sources, port) {
 
     FU.iterateFiles(new File(base, "model"),
             ["n3"] as String[], true).each {
-        addItem modelItem(baseUri, it)
+        addItem modelItem(it)
     }
 
-    // Doesn't work - will use external model URI:s (collector won't load those).
+    // Won't work - uses external model URI as atom:id (collector won't store those)
     //FU.iterateFiles(new File(base, "../external/rdf"),
     //        ["rdfs", "owl"] as String[], true).each {
     //    addItem modelItem(it)
@@ -153,32 +120,35 @@ def collectItems(base, sources, port) {
     if (sources) {
         addItem simpleItem(baseUri, "sys/sources",
                 new File(sources, "sys/sources.rdf"))
+    } else {
+        addItem simpleItem(baseUri, "sys/sources",
+                new File(base, "datasets/feeds.n3"))
     }
 
     return items
 }
 
 def simpleItem(baseUri, uriPath, File file) {
-    def itemUri = PUBLIC_BASE_URI+"/"+uriPath
+    def itemUri = baseUri+"/"+uriPath
     return [
         uri: itemUri,
         updated: new Date(file.lastModified()),
         content: [
-            data: managedRdfInputStream(baseUri, file, null, true),
-            mediaType: MT.APPLICATION_RDF_XML
+            data: managedRdfInputStream(file, null, false),
+            mediaType: "application/rdf+xml"
         ],
         enclosures: null
     ]
 }
 
-def modelItem(baseUri, File file) {
+def modelItem(File file) {
     def repo = RDFUtil.createMemoryRepository()
     def conn = repo.connection
     RDFUtil.loadDataFromFile(repo, file)
     def modelUri = getModelUri(conn)
-    //def enclosures = []
-    //collectObjects(conn, modelUri, OWL.IMPORTS).each {
-    //    enclosures << [ href: it as String, mediaType: MT.APPLICATION_RDF_XML ]
+    //def walker = new SesameRDFWalker(conn, about:modelUri)
+    //def enclosures = walker.rel(OWL.IMPORTS).collect {
+    //    [ href: it as String, mediaType: "application/rdf+xml" ]
     //}
     conn.close()
     if (modelUri == null) {
@@ -189,42 +159,33 @@ def modelItem(baseUri, File file) {
         uri: modelUri as String,
         updated: new Date(file.lastModified()),
         content: [
-            data: managedRdfInputStream(baseUri, file, repo),
-            mediaType: MT.APPLICATION_RDF_XML
+            data: managedRdfInputStream(file, repo),
+            mediaType: "application/rdf+xml"
         ],
         enclosures: null
     ]
 }
 
-//def collectObjects(conn, uri, property) {
-//    def stmts = conn.getStatements(uri, property, null, false);
-//    def res = []
-//    while (stmts.hasNext()) {
-//        res << stmts.next().object
-//    }
-//    stmts.close()
-//    return res
-//}
-
 def datasetItem(baseUri, uriPath, List<File> files) {
-    def itemUri = PUBLIC_BASE_URI+"/"+uriPath
+    def itemUri = baseUri+"/"+uriPath
     def enclosures = []
     def youngestEnclDate = null
 
-    def setRepo = RDFUtil.createMemoryRepository()
-    def conn = setRepo.connection
+    def repo = RDFUtil.createMemoryRepository()
+    def conn = repo.connection
+    def vf = repo.valueFactory
+    conn.setNamespace("dct", DCT)
+    conn.setNamespace("void", VOID)
+
+    def itemRdfUri = vf.createURI(itemUri)
+    conn.add(itemRdfUri, RDF.TYPE, VOID_DATASET)
     files.each { file ->
         def slug = "/"+uriPath+"/"+file.name.replace(".n3", ".rdf")
-
-        conn.add(
-                setRepo.valueFactory.createURI(itemUri),
-                RDFS.SEEALSO,
-                setRepo.valueFactory.createURI(PUBLIC_BASE_URI + slug))
-
+        conn.add(itemRdfUri, DCT_HAS_PART, vf.createURI(baseUri+slug))
         enclosures << [
             href: slug,
-            data: managedRdfInputStream(baseUri, file),
-            mediaType: MT.APPLICATION_RDF_XML
+            data: managedRdfInputStream(file),
+            mediaType: "application/rdf+xml"
         ]
         def fileDate = new Date(file.lastModified())
         if (!youngestEnclDate || fileDate > youngestEnclDate) {
@@ -235,7 +196,8 @@ def datasetItem(baseUri, uriPath, List<File> files) {
     return [
         uri: itemUri,
         updated: youngestEnclDate,
-        content: [data: { repoToInStream(setRepo) }, mediaType: MT.APPLICATION_RDF_XML],
+        content: [data: { repoToInStream(repo, true) },
+                  mediaType: "application/rdf+xml"],
         enclosures: enclosures
     ]
 }
@@ -251,32 +213,35 @@ def getModelUri(conn) {
 /**
  * Either uses the file as-is and closes the repo, or returns a lazy serializer..
  */
-// TODO: Skip Closure; serialize directly?
-Closure managedRdfInputStream(baseUri, file, final repo=null, parse=false) {
+Closure managedRdfInputStream(file, final repo=null, parse=false) {
     if (parse || file.name.endsWith(".n3")) {
         if (repo == null) {
             repo = RDFUtil.createMemoryRepository()
-            RDFUtil.loadDataFromFile(repo, file, baseUri, null)
+            RDFUtil.loadDataFromFile(repo, file)
         }
-        return { repoToInStream(repo) }
-        repo.shutDown()
+        // TODO: skip closure and serialize directly?
+        return {
+            def ins = repoToInStream(repo)
+            //repo.shutDown()
+            return ins
+        }
     } else {
         return { new FileInputStream(file) }
     }
 }
 
-def repoToInStream(repo) {
-    return RDFUtil.toInputStream(repo, RDFFormat.RDFXML.defaultMIMEType)
+def repoToInStream(repo, pretty=true) {
+    return RDFUtil.toInputStream(repo, RDFFormat.RDFXML.defaultMIMEType, pretty)
 }
 
 //======================================================================
 
-def createAtomCollection(feedUri, feedTitle, baseUri, items) {
+def createAtomCollection(feedMeta, feedPathConf, items) {
     def collection = [:]
 
     def feed = Abdera.instance.newFeed()
-    feed.id = feedUri
-    feed.setTitle(feedTitle)
+    feed.id = feedMeta.feedUri
+    feed.setTitle(feedMeta.feedTitle)
     def youngestUpdated = null
 
     for (item in items) {
@@ -284,43 +249,44 @@ def createAtomCollection(feedUri, feedTitle, baseUri, items) {
         if (!youngestUpdated || updated > youngestUpdated) {
             youngestUpdated = updated
         }
-        def contentHref = makeHref(baseUri, item.uri, "rdf")
+        def contentHref = makeHref(
+                feedMeta.publicBaseUri, feedPathConf.baseUrl, item.uri, "rdf")
         collection[contentHref] = item.content
         def entry = Abdera.instance.newEntry()
         entry.setId(item.uri)
         entry.setTitle(item.uri)
         entry.setUpdated(updated)
-        entry.setContent(new IRI(contentHref), item.content.mediaType as String)
+        entry.setContent(new IRI(contentHref), item.content.mediaType)
 
         for (encl in item.enclosures) {
-
             // TODO: when abdera *parses* this (in collector), it seems to
             // *remove* "mismatch" of fileext and mediaType!
             // .. cannot reproduce.. Trace..
-            def href = encl.href.replace(".owl", ".rdf").replace(".rdfs", ".rdf")
+            def href = feedPathConf.baseUrl +
+                    encl.href.replace(".owl", ".rdf").replace(".rdfs", ".rdf")
 
             collection[href] = encl
-            entry.addLink(href, "enclosure", encl.mediaType as String,
+            entry.addLink(href, "enclosure", encl.mediaType,
                     null/*title*/, null/*lang*/, -1)
         }
         feed.insertEntry(entry)
     }
     feed.setUpdated(youngestUpdated ?: new Date())
 
-    collection[BASE_PATH] = [
+    collection[feedPathConf.feedPath] = [
         data: {
             def bos = new ByteArrayOutputStream()
             feed.writeTo("prettyxml", bos)
             bos.close()
             return new ByteArrayInputStream(bos.toByteArray())
         },
-        mediaType: MT.APPLICATION_ATOM_XML
+        mediaType: "application/atom+xml"
     ]
     return collection
 }
 
-def makeHref(baseUri, uri, ext) {
-    return uri.replace(baseUri, "").replace('#', '')+"/"+ext
+def makeHref(publicBaseUri, baseUrl, uri, ext) {
+    return uri.replace(publicBaseUri, baseUrl).replace('#', '')+"/"+ext
 }
 
 //======================================================================
