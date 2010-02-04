@@ -14,7 +14,7 @@ def sourceDir = "../documentation/"
 
 def (flags, paths) = args.split { it =~ /^--/ }
 
-def buildDir = paths[0] ?: "../_build/"
+def buildDir = paths[0] ?: "../_build/documentation"
 def patterns = paths[1]? paths[1..-1] : Builder.DEFAULT_RENDER_PATTERNS
 
 def copies = Builder.DEFAULT_COPY_PATTERNS
