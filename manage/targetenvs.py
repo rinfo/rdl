@@ -97,6 +97,7 @@ def tg_prod():
         'main': ['94.247.169.66'],
         'service': ['94.247.169.67'],
         'doc': ['dev.lagrummet.se'],
+        'admin': ['94.247.169.66'],
     }
     # Manage
     env.mgr_workdir = "mgr_work"
@@ -105,6 +106,7 @@ def tg_prod():
     env.rinfo_main_store = "/opt/rinfo/store"
     env.rinfo_dir = '/opt/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
+    env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
     # Tomcat
     env.tomcat_version = "6.0.20"

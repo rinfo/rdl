@@ -4,28 +4,32 @@
 
 # NOTE: iana-related defs collected at (e.g.):
 #   <http://tools.ietf.org/html/draft-nottingham-http-link-header-06>
-# NOTE: see also: <http://purl.org/NET/dady> - about dataset dynamics
+# NOTE: see also: <http://purl.org/NET/dady> - describing dataset dynamics
+
 
 <tag:lagrummet.se,2009:rinfo> a void:Dataset;
-    dct:source <tag:dom.se,2009:rinfo>,
-        <tag:regeringen.se,2009:rinfo>,
-        <tag:verva.se,2007:rinfo>,
+    dct:source
+        #<tag:dom.se,2009:rinfo>,
+        #<tag:regeringen.se,2009:rinfo>,
+        #<tag:verva.se,2007:rinfo>,
         <tag:boverket.se,2009:rinfo:feed>;
     dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
     iana:current <http://rinfo.lagrummet.se/feed/current> .
-#<http://rinfo.lagrummet.se/feed/current> dct:format "application/atom+xml" .
 
-<tag:dom.se,2009:rinfo> a void:Dataset;
-    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
-    iana:current <http://dom.se/dvfs/feed/current> .
+<http://rinfo.lagrummet.se/feed/current> dct:format "application/atom+xml" .
 
-<tag:regeringen.se,2009:rinfo> a void:Dataset;
-    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
-    iana:current <http://regeringen.se/sfs/feed/current> .
 
-<tag:verva.se,2007:rinfo> a void:Dataset;
-    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
-    iana:current <http://regeringen.se/vervafs/feed/current> .
+#<tag:dom.se,2009:rinfo> a void:Dataset;
+#    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+#    iana:current <http://dom.se/dvfs/feed/current> .
+#
+#<tag:regeringen.se,2009:rinfo> a void:Dataset;
+#    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
+#    iana:current <http://regeringen.se/sfs/feed/current> .
+#
+#<tag:verva.se,2007:rinfo> a void:Dataset;
+#    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
+#    iana:current <http://regeringen.se/vervafs/feed/current> .
 
 <tag:boverket.se,2009:rinfo:feed> a void:Dataset;
     dct:publisher <http://rinfo.lagrummet.se/org/boverket>;

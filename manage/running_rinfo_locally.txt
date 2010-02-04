@@ -60,11 +60,14 @@ Now you are ready to start up:
   base prototype feed
       for base data (models, containers; organization, feeds).
 
-  these can be served by running::
+  These can be served by running::
 
-    $ WORK_DIR=/opt/_workapps/rinfo/ # or anything you desire...
-    $ groovy tools/rinfomain/map_feeds_docs.groovy documentation/ $WORK_DIR/rinfo/testsources/www
-    $ groovy tools/rinfomain/base_as_feed.groovy -b resources/base/ -s $WORK_DIR/rinfo/testsources/www/
+    $ cd tools/rinfomain/
+    $ TEST_SRC_DIR=/opt/_workapps/rinfo/testsources/www # any empty dir you want
+    $ TEST_SERVER=http://localhost:8280
+    $ groovy map_feeds_docs.groovy ../../documentation/ $TEST_SRC_DIR $TEST_SERVER
+    $ groovy base_as_feed.groovy -b ../../resources/base/ -s $TEST_SRC_DIR -o $TEST_SRC_DIR
+    $ groovy serve_folder.groovy $TEST_SRC_DIR
 
 * Local instance of the RInfo system:
 

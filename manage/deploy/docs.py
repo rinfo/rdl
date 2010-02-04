@@ -12,5 +12,6 @@ def build_docs():
 @roles('doc')
 def deploy_docs():
     _needs_targetenv()
-    rsync_project(env.docs_webroot, slashed(env.docbuild), exclude=".*", delete=True)
+    rsync_project(env.docs_webroot, slashed(env.docbuild),
+            exclude=".*", delete=True)
 

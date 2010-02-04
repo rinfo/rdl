@@ -7,7 +7,6 @@ popd
 
 # NOTE: do local rsync instead if this gets unwieldy
 pushd $SCRIPT_DIR/../etc/
-
     cp -u init.d/tomcat /etc/init.d/
     chmod 0755 /etc/init.d/tomcat
     update-rc.d tomcat defaults
@@ -21,5 +20,8 @@ pushd $SCRIPT_DIR/../etc/
     cp -u apache2/mods-available/proxy.conf /etc/apache2/mods-available/
 
     cp -u apache2/sites-available/default /etc/apache2/sites-available/
+popd
 
+pushd $SCRIPT_DIR/../www/
+    cp -u *.* /var/www
 popd

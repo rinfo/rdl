@@ -28,7 +28,7 @@ from targetenvs import *
 from servertools import *
 from deploy.rinfo_main import *
 from deploy.rinfo_service import *
-#from deploy.rinfo_testsources import *
+from deploy.rinfo_admin import *
 from deploy.docs import *
 from sysconf import *
 
