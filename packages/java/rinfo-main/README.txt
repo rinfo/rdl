@@ -8,6 +8,12 @@ Overview
 The main web application exposes all collected resources, along with an
 Atom archive timeline.
 
+Logging
+========================================================================
+
+In code: use slf4j API
+Configured to use (declared dependency + config): log4j
+
 Maven Usage
 ========================================================================
 

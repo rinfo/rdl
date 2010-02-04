@@ -47,9 +47,33 @@
       <artifactId>elmo-repository</artifactId>
     </dependency>
 
+    <!-- pass jcl over slf4j -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+    <!-- chosen slf4j impl. -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.codehaus.gmaven.runtime</groupId>
       <artifactId>gmaven-runtime-1.7</artifactId>
+      <exclusions>
+        <!-- exclude gossip (as long as we use another slf4j impl.) -->
+        <exclusion>
+          <groupId>org.sonatype.gossip</groupId>
+          <artifactId>gossip</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

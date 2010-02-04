@@ -167,8 +167,30 @@
 
       <dependency>
         <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.5.10</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <version>1.5.10</version>
+      </dependency>
+      <!-- NOTE: sesame-repository-http uses (used?) jcl104 -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl104-over-slf4j</artifactId>
+        <version>1.0</version>
+      </dependency>
+      <!-- slf4j impls. -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
-        <version>1.5.0</version>
+        <version>1.5.10</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.5.10</version>
       </dependency>
 
       <dependency>
@@ -368,13 +390,6 @@
       </dependency>
 
 
-      <!-- NOTE: sesame-repository-http won't work without dep to jcl104-over-slf4j -->
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl104-over-slf4j</artifactId>
-        <version>1.0</version>
-      </dependency>
-
       <!-- NOTE: needs xerces (a modern one, for e.g. dates) for RDF/XML in sesame -->
       <dependency>
         <groupId>xerces</groupId>
@@ -399,14 +414,9 @@
       </dependency>
 
       <dependency>
-          <groupId>org.codehaus.gmaven.runtime</groupId>
-          <artifactId>gmaven-runtime-1.6</artifactId>
-          <version>1.2</version>
-      </dependency>
-      <dependency>
-          <groupId>org.codehaus.gmaven.runtime</groupId>
-          <artifactId>gmaven-runtime-1.7</artifactId>
-          <version>1.2</version>
+        <groupId>org.codehaus.gmaven.runtime</groupId>
+        <artifactId>gmaven-runtime-1.7</artifactId>
+        <version>1.2</version>
       </dependency>
       <!-- }}} -->
 
