@@ -29,12 +29,14 @@
   <xsl:key name="rel" match="/graph/resource" use="@uri"/>
   <xsl:variable name="r" select="/graph/resource"/>
 
+  <!-- TODO: Really hide things w/o annots in current $lang? See uses of $lang below. -->
+
 
   <xsl:template match="/graph">
     <xsl:variable name="ontology" select="resource[@uri=$ontologyUri]"/>
     <html xml:lang="{$lang}">
       <head profile="http://www.w3.org/ns/rdfa/">
-        <title><xsl:value-of select="$ontology/dct:title | $ontology/rdfs:label"/></title>
+        <title><xsl:apply-templates select="$ontology/dct:title | $ontology/rdfs:label"/></title>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
         <link rel="stylesheet" href="{$mediabase}/css/ontology.css" />
       </head>
@@ -49,12 +51,12 @@
 
   <xsl:template match="resource[a/owl:Ontology]">
     <div class="ontologyInfo" about="{@uri}">
-      <h1><xsl:value-of select="dct:title | rdfs:label"/></h1>
+      <h1><xsl:apply-templates select="dct:title | rdfs:label"/></h1>
       <xsl:if test="comment">
-        <p><xsl:value-of select="rdfs:comment"/></p>
+        <p><xsl:apply-templates select="rdfs:comment"/></p>
       </xsl:if>
       <xsl:if test="dct:description">
-        <p><xsl:value-of select="dct:description"/></p>
+        <p><xsl:apply-templates select="dct:description"/></p>
       </xsl:if>
       <dl class="tech">
         <dt>URI:</dt>
@@ -74,7 +76,7 @@
   <xsl:template match="resource[a[rdfs:Class|owl:Class|owl:DeprecatedClass]]">
     <xsl:variable name="abstract" select="protege:abstract = 'true'"/>
     <div class="classInfo" about="{@uri}" id="{self:uri-term(@uri)}">
-      <h2><xsl:value-of select="rdfs:label"/></h2>
+      <h2><xsl:apply-templates select="rdfs:label"/></h2>
       <xsl:variable name="superClassLinks">
         <xsl:for-each select="rdfs:subClassOf">
           <xsl:variable name="label" select="grit:get(.)/rdfs:label"/>
@@ -83,7 +85,7 @@
               <xsl:text>, </xsl:text>
             </xsl:if>
             <a href="#{self:uri-term(@ref)}">
-              <xsl:value-of select="$label"/>
+              <xsl:apply-templates select="$label"/>
             </a>
           </xsl:if>
         </xsl:for-each>
@@ -102,7 +104,7 @@
             <xsl:sort select="rdfs:label"/>
             <xsl:if test="position() != 1">, </xsl:if>
             <a href="#{self:uri-term(@uri)}">
-              <xsl:value-of select="rdfs:label"/>
+              <xsl:apply-templates select="rdfs:label"/>
             </a>
           </xsl:for-each>
         </p>
@@ -110,7 +112,7 @@
       <xsl:if test="a/owl:DeprecatedClass">
         <h4 class="warning">[obsolet typ]</h4>
       </xsl:if>
-      <p class="comment"><xsl:value-of select="rdfs:comment"/></p>
+      <p class="comment"><xsl:apply-templates select="rdfs:comment"/></p>
       <dl class="tech">
         <dt>URI:</dt>
         <dd>
@@ -124,6 +126,8 @@
         </xsl:if>
       </dl>
 
+      <xsl:variable name="all-classrefs" select="./@uri | self:super-classes(.)/@uri"/>
+
       <xsl:variable name="all-restrictions" select="self:get-restrictions(.)"/>
       <xsl:variable name="all-properties" select="self:get-properties($r, .)"/>
 
@@ -131,6 +135,9 @@
                     select="$all-restrictions[grit:get(owl:onProperty)/rdfs:label[
                                               @xml:lang = $lang]]
                             | $all-properties[rdfs:label[@xml:lang = $lang]]"/>
+
+      <xsl:variable name="all-proprefs" select="$all-properties/@ref
+                            | $all-restrictions/owl:onProperty/@ref"/>
 
       <xsl:if test="$properties-restrs">
         <table>
@@ -147,6 +154,8 @@
                 <xsl:when test="a/owl:Restriction">
                   <xsl:call-template name="table-row">
                     <xsl:with-param name="property" select="grit:get(owl:onProperty)"/>
+                    <xsl:with-param name="all-proprefs" select="$all-proprefs"/>
+                    <xsl:with-param name="all-classrefs" select="$all-classrefs"/>
                     <xsl:with-param name="restr" select="."/>
                     <xsl:with-param name="direct"
                                     select="$class/rdfs:subClassOf[a/owl:Restriction and
@@ -157,6 +166,8 @@
                                         owl:onProperty/@ref = current()/@uri])">
                   <xsl:call-template name="table-row">
                     <xsl:with-param name="property" select="."/>
+                    <xsl:with-param name="all-proprefs" select="$all-proprefs"/>
+                    <xsl:with-param name="all-classrefs" select="$all-classrefs"/>
                     <xsl:with-param name="direct" select="rdfs:domain/@ref = $class/@uri"/>
                   </xsl:call-template>
                 </xsl:when>
@@ -170,6 +181,8 @@
 
   <xsl:template name="table-row">
     <xsl:param name="property"/>
+    <xsl:param name="all-proprefs"/>
+    <xsl:param name="all-classrefs"/>
     <xsl:param name="restr" select="*[false()]"/>
     <xsl:param name="direct" select="true()"/>
     <xsl:variable name="abstract" select="$property/protege:abstract = 'true'"/>
@@ -179,10 +192,10 @@
         <xsl:choose>
           <xsl:when test="not($direct)">
             <!-- TODO: only use css for inherited, not em! -->
-            <em class="inherited"><xsl:value-of select="$label"/></em>
+            <em class="inherited"><xsl:apply-templates select="$label"/></em>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:value-of select="$label"/>
+            <xsl:apply-templates select="$label"/>
           </xsl:otherwise>
         </xsl:choose>
         <xsl:if test="$abstract">
@@ -191,26 +204,31 @@
       </th>
       <td>
         <xsl:if test="$property/rdfs:comment">
-          <p><xsl:value-of select="$property/rdfs:comment"/></p>
+          <p><xsl:apply-templates select="$property/rdfs:comment"/></p>
         </xsl:if>
-        <xsl:if test="$abstract">
+        <xsl:variable name="sub-props" select="$r[rdfs:subPropertyOf/@ref =
+                      $property/@uri and rdfs:label[@xml:lang=$lang] and
+                      (not(rdfs:domain) or self:contains($all-classrefs, rdfs:domain/@ref))]"/>
+        <xsl:if test="$sub-props">
           <p>
             Mer specifika egenskaper:
             <dl>
-              <xsl:for-each select="$r[rdfs:subPropertyOf/@ref = $property/@uri]">
+              <xsl:for-each select="$sub-props">
                 <xsl:sort select="rdfs:label"/>
-                <dt><xsl:value-of select="rdfs:label"/></dt>
-                <dd>
-                  <xsl:value-of select="rdfs:comment"/>
-                  <xsl:variable name="range"
-                                select="grit:get(rdfs:range)"/>
-                  <xsl:if test="$range">
-                    <xsl:text> </xsl:text>
-                    <em>(<xsl:value-of
-                        select="$range/rdfs:label"/>)
-                    </em>
-                  </xsl:if>
-                </dd>
+                <dt><xsl:apply-templates select="rdfs:label"/></dt>
+                <xsl:if test="not(self:contains($all-proprefs, @uri))">
+                  <dd>
+                    <xsl:apply-templates select="rdfs:comment"/>
+                    <xsl:variable name="range"
+                                  select="grit:get(rdfs:range)"/>
+                    <xsl:if test="$range">
+                      <xsl:text> </xsl:text>
+                      <em>(<xsl:apply-templates
+                          select="$range/rdfs:label"/>)
+                      </em>
+                    </xsl:if>
+                  </dd>
+                </xsl:if>
               </xsl:for-each>
             </dl>
           </p>
@@ -223,10 +241,10 @@
                 <xsl:text>(Anges som: </xsl:text>
                 <xsl:choose>
                   <xsl:when test="starts-with($uri, $ontologyUri)">
-                    <a href="#{self:uri-term($uri)}"><xsl:value-of select="."/></a>
+                    <a href="#{self:uri-term($uri)}"><xsl:apply-templates select="."/></a>
                   </xsl:when>
                   <xsl:otherwise>
-                    <xsl:value-of select="."/>
+                    <xsl:apply-templates select="."/>
                   </xsl:otherwise>
                 </xsl:choose>
                 <xsl:text>)</xsl:text>
@@ -257,6 +275,12 @@
         </span>
       </td>
     </tr>
+  </xsl:template>
+
+  <xsl:template match="*[@xml:lang]">
+    <xsl:if test="@xml:lang = $lang">
+      <xsl:value-of select="."/>
+    </xsl:if>
   </xsl:template>
 
 
@@ -319,7 +343,8 @@
         <xsl:when test="a/owl:Class | a/rdfs:Class | a/owl:DeprecatedClass">
           &lt;<xsl:value-of select="$name"/> rdf:about="...">
         </xsl:when>
-        <xsl:when test="a/owl:ObjectProperty and (rdfs:range or not(a/rdf:Property))">
+        <xsl:when test="a/owl:ObjectProperty and (rdfs:range or not(a/rdf:Property)) and
+                      rdfs:range/@ref != 'http://www.w3.org/2000/01/rdf-schema#Literal'">
           &lt;<xsl:value-of select="$name"/> rdf:resource="..."/>
         </xsl:when>
         <xsl:when test="a/owl:DatatypeProperty and rdfs:range and
