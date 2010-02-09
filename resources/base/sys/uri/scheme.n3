@@ -64,7 +64,7 @@
 [] a coin:Containment;
     coin:baseRel rpubl:konsoliderar;
     coin:segment "konsolidering";
-    coin:component rpubl:utfardandedatum;
+    coin:component dct:issued;
     coin:scheme : .
 
 [] a coin:Containment;

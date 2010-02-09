@@ -264,8 +264,7 @@
                     <xsl:if test="$range">
                       <xsl:text> </xsl:text>
                       <em>(<xsl:apply-templates
-                          select="$range/rdfs:label"/>)
-                      </em>
+                              select="$range/rdfs:label[@xml:lang = $lang]"/>)</em>
                     </xsl:if>
                   </dd>
                 </xsl:if>
