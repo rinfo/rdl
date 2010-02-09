@@ -58,9 +58,15 @@
   <xsl:template match="h:div[@id='toc']/h:ul[not(h:li)]">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:for-each select="/h:html/h:body/h:div[contains(@class, 'section')]">
+      <xsl:for-each select="/h:html/h:body/h:div[contains(@class, 'section') or contains(@class, 'appendix')]">
+        <xsl:variable name="div-id">
+          <xsl:choose>
+            <xsl:when test="@id"><xsl:value-of select="@id"/></xsl:when>
+            <xsl:otherwise>s_<xsl:value-of select="position()"/></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
         <li>
-          <a href="#s_{position()}"><xsl:value-of select="h:h2"/></a>
+          <a href="#{$div-id}"><xsl:value-of select="h:h2"/></a>
         </li>
       </xsl:for-each>
     </xsl:copy>

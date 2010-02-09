@@ -7,14 +7,7 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
 
-import org.apache.commons.configuration.ConfigurationUtils
-import net.sf.json.groovy.JsonSlurper
-import org.antlr.stringtemplate.StringTemplateGroup
-
 import se.lagrummet.rinfo.base.rdf.RDFUtil
-
-import se.lagrummet.rinfo.service.dataview.SparqlTreeViewer
-import se.lagrummet.rinfo.service.dataview.ModelViewHandler
 
 
 class Builder {
@@ -30,7 +23,7 @@ class Builder {
         def buildDir = paths[2]
         def clean = "--clean" in flags
         new Builder(resourceDir, sourceDir, buildDir).
-                build(clean, DEFAULT_RENDER_PATTERNS, DEFAULT_COPY_PATTERNS)
+                build(DEFAULT_RENDER_PATTERNS, DEFAULT_COPY_PATTERNS, clean)
     }
 
     static DEFAULT_COPY_PATTERNS = [
@@ -52,8 +45,9 @@ class Builder {
         this.resourceDir = resourceDir
         this.sourceDir = sourceDir
         this.buildDir = buildDir
+        def dtdDir = "${getClass().getResource("dtd")?.path ?: "docgen/dtd"}/"
         systemIdMap = [
-            "http://www.w3.org/TR/xhtml1/DTD/": "${getClass().getResource("dtd").path}/"
+            "http://www.w3.org/TR/xhtml1/DTD/": dtdDir
         ]
         customProtocols = [
             "build": buildDir
@@ -118,47 +112,34 @@ class Builder {
     }
 
     void generateBaseDocs() {
-        generateModelDocs(
+        transformRdfToXhtml(
                 ["${resourceDir}/base/model",
                     "${resourceDir}/base/extended/rdf",
                     "${resourceDir}/external/rdf"],
-                buildDir+"/model")
+                ["${resourceDir}/external/xslt/rdfxml-grit.xslt",
+                    "${sourceDir}/templates/model-grit_to_xhtml.xslt"],
+                buildDir+"/model.xhtml")
+
         transformRdfToXhtml(
                 ["${resourceDir}/base/sys/uri/",
+                    "${resourceDir}/base/datasets/",
                     "${resourceDir}/base/model/rinfo_publ.n3",
                     "${resourceDir}/base/extended/rdf/"],
                 ["${resourceDir}/external/xslt/rdfxml-grit.xslt",
                     "${sourceDir}/templates/coinscheme.xslt"],
-                buildDir+"/urischeme.xhtml")
+                buildDir+"/urischeme.xhtml", false)
     }
 
-    void transformRdfToXhtml(rdfPaths, xslts, outPath) {
+    void transformRdfToXhtml(rdfPaths, xslts, outPath, makePdf=true) {
         def repo = RDFUtil.slurpRdf(rdfPaths as String[])
         def rdfXmlInput = RDFUtil.toInputStream(repo, "application/rdf+xml")
         def doc = new DocTemplate(systemIdMap).transform(rdfXmlInput,
                 xslts as String[])
-        writeXhtml(doc, new File(outPath))
-    }
-
-    void generateModelDocs(rdfPaths, outBasePath) {
-        def repo = RDFUtil.slurpRdf(rdfPaths as String[])
-        def modelHtmlPath = outBasePath+'.xhtml'
-        renderModel(repo, modelHtmlPath, "sv")
-        def doc = new DocTemplate(systemIdMap).render(
-                new File(modelHtmlPath).toURL())
-        new PdfMaker().renderAsPdf(doc, new File(outBasePath+'.pdf'))
-    }
-
-    static renderModel(repo, fname, locale="en", mediabase=".") {
-        def templates = new StringTemplateGroup("sparqltrees")
-        def rqViewer = new SparqlTreeViewer(repo, templates,
-                "sparqltrees/model/model-tree-rq", "sparqltrees/model/model-html")
-        def labelTree = new JsonSlurper().parse(ConfigurationUtils.locate(
-                        "sparqltrees/model/model-settings.json"))
-        def options = [ mediabase: mediabase ]
-        def s = rqViewer.execute(new ModelViewHandler(locale, null, labelTree, options))
-        println "Writing to: $fname"
-        new File(fname).text = s
+        def outFile = new File(outPath)
+        writeXhtml(doc, outFile)
+        if (makePdf) {
+            writePdf(doc, new File(outFile.canonicalPath.replace('.xhtml', '.pdf')))
+        }
     }
 
     static writeXhtml(doc, outFile) {

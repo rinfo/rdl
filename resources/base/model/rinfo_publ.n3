@@ -395,6 +395,7 @@
     rdfs:subPropertyOf dct:references;
     rdfs:label "Förarbete"@sv;
     rdfs:comment "Relaterat förarbete till en författning."@sv;
+    rdfs:domain :FSDokument;
     owl:inverseOf [ rdfs:label "Förarbete till"@sv ]; .
 
 
@@ -757,6 +758,21 @@
             owl:cardinality 1
         ] .
 
+:utrSerienummer a owl:DatatypeProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf :rattsdokumentnummer;
+    rdfs:label "Utredningsnummer"@sv;
+    rdfs:comment """Utredningsnummer på formen "2005:26". Brukar i klartext anges som "Ds 2005:26"."""@sv;
+    rdfs:range rdfs:Literal; .
+
+:utrSerie a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf :publikationssamling;
+    rdfs:label "Utredningsserie"@sv;
+    rdfs:comment """Serie där utredningen/motivet publiceras. T.ex. Ds, SOU, FM."""@sv;
+    rdfs:range :Utredningsserie; .
+
+
 :utgarFran a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
     rdfs:subPropertyOf dct:references;
@@ -771,20 +787,6 @@
     rdfs:comment "Den författning som aktuellt dokument föreslår ändring av."@sv;
     rdfs:range :Forfattning;
     owl:inverseOf [ rdfs:label "Föreslås att ändras av"@sv ]; .
-
-:utrSerienummer a owl:DatatypeProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:subPropertyOf :rattsdokumentnummer;
-    rdfs:label "Utredningsnummer"@sv;
-    rdfs:comment """Utredningsnummer på formen "2005:26". Brukar i klartext anges som "Ds 2005:26"."""@sv;
-    rdfs:range rdfs:Literal; .
-
-:utrSerie a owl:ObjectProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:subPropertyOf :publikationssamling;
-    rdfs:label "Utredningsserie"@sv;
-    rdfs:comment """Serie där utredningen/motivet publiceras. T.ex. Ds, SOU, FM."""@sv;
-    rdfs:range :Utredningsserie; .
 
 
 ##
@@ -823,6 +825,7 @@
     rdfs:subPropertyOf :rattsdokumentnummer;
     rdfs:label "Direktivnummer"@sv;
     rdfs:comment """Direktivnummer på formen "2004:128". Brukar i klartext anges som "Dir. 2004:128"."""@sv;
+    rdfs:domain :Kommittedirektiv;
     rdfs:range rdfs:Literal; .
 
 :avkravtAvrapporteringsdatum a owl:DatatypeProperty;
@@ -836,6 +839,7 @@
     rdfs:subPropertyOf dct:references;
     rdfs:label "Föreslår utredning av ändring i"@sv;
     rdfs:comment "Den författning som aktuellt dokument föreslår utredning av ändring i."@sv;
+    rdfs:domain :Kommittedirektiv;
     rdfs:range :Forfattning;
     owl:inverseOf [ rdfs:label "Föreslås att ändringsutredas av"@sv ]; .
 
@@ -843,7 +847,8 @@
     rdfs:isDefinedBy : ;
     rdfs:subPropertyOf dct:references;
     rdfs:label "Tillägg till"@sv;
-    rdfs:comment "Den kommtté som tilläget riktar sig till."@sv; .
+    rdfs:comment "Den kommitté som tilläget riktar sig till."@sv;
+    rdfs:domain :Kommittedirektiv; .
 
 :departement a owl:ObjectProperty;
     rdfs:isDefinedBy : ;

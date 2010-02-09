@@ -1,5 +1,6 @@
 @Grapes([
-    @Grab('se.lagrummet.rinfo:rinfo-service:1.0-SNAPSHOT'),
+    //@Grab('se.lagrummet.rinfo:rinfo-service:1.0-SNAPSHOT'),
+    @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT'),
     @Grab('com.uwyn:jhighlight:1.0'),
     @Grab('com.lowagie:itext:2.0.8'),
     @Grab('org.xhtmlrenderer:core-renderer:R8pre2'),

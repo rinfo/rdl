@@ -1,5 +1,5 @@
 /*
- *	Stylesheet for PDF versions of documentation artifacts.
+ *  Stylesheet for PDF versions of documentation artifacts.
  *
  */
 
@@ -9,7 +9,7 @@
 
     font-weight: normal;
     line-height: 120%;
-    color: #000000; 
+    color: #000000;
 
     background-color: transparent;
 
@@ -69,19 +69,19 @@ div.changes {
 
 table.changes, table.changes td, table.changes th {
     border: solid 0.5pt #999999;
-	border-collapse: collapse;
+    border-collapse: collapse;
     font-family: "Trebuchet MS", Arial, sans-serif;
     font-size: 9pt;
 }
 
 table.changes td, table.changes th {
-	vertical-align: top;
-	padding: 0.1cm;
+    vertical-align: top;
+    padding: 0.1cm;
 }
 
 table.changes caption {
     font-weight:bold;
-	text-align:left;
+    text-align:left;
 }
 
 div#pagemeta {
@@ -123,17 +123,17 @@ div#pagemeta table {
 }
 
 #pagenumber:before {
-    content: counter(page) "(" counter(pages) ")"; 
+    content: counter(page) "(" counter(pages) ")";
 }
 
-b, 
-strong { 
-    font-weight: bold; 
+b,
+strong {
+    font-weight: bold;
 }
 
-i, 
-em { 
-    font-style: italic; 
+i,
+em {
+    font-style: italic;
 }
 
 u {
@@ -179,7 +179,7 @@ h6 {
 
 h1 {
     line-height: 120%;
-    font-size:15pt; 
+    font-size:15pt;
     margin-top: 21pt;
     margin-bottom: 6pt;
 }
@@ -191,23 +191,32 @@ h2 {
 }
 
 h3 {
-    font-size:11pt;
+    font-size:11.5pt;
     margin-top:11pt;
 }
 
 h4 {
     font-family: Garamond, serif;
-    font-size:11.5pt;
+    font-size:11pt;
 }
 
 hr {
     margin:1em 0;
 }
 
+table {
+}
+
+table caption {
+    font-size: 13pt;
+    padding-top: 1.5em;
+    text-align: center;
+    font-style: italic;
+}
+
 tr,
 th,
 td {
-
     vertical-align: middle;
     width: auto;
 }
@@ -215,6 +224,7 @@ td {
 th {
     text-align: left;
     font-weight: bold;
+    padding-right: 0.6em;
 }
 
 center {
@@ -303,7 +313,7 @@ table.docinfo tr td {
     padding: 0.1em 0.3em;
     vertical-align: top;
     border: solid 0.3pt #000000;
-    font-family: Garamond, serif; 
+    font-family: Garamond, serif;
 }
 
 .classInfo table td p {

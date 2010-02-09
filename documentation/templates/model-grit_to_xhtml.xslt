@@ -74,19 +74,27 @@
 
 
   <xsl:template match="resource[a[rdfs:Class|owl:Class|owl:DeprecatedClass]]">
+    <xsl:variable name="class" select="."/>
     <xsl:variable name="abstract" select="protege:abstract = 'true'"/>
     <div class="classInfo" about="{@uri}" id="{self:uri-term(@uri)}">
       <h2><xsl:apply-templates select="rdfs:label"/></h2>
       <xsl:variable name="superClassLinks">
-        <xsl:for-each select="rdfs:subClassOf">
-          <xsl:variable name="label" select="grit:get(.)/rdfs:label"/>
-          <xsl:if test="$label[@xml:lang=$lang]">
+        <xsl:for-each select="rdfs:subClassOf[grit:get(.)/rdfs:label/@xml:lang=$lang]">
+          <xsl:variable name="label" select="grit:get(.)/rdfs:label[@xml:lang=$lang]"/>
+          <xsl:if test="$label">
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <a href="#{self:uri-term(@ref)}">
-              <xsl:apply-templates select="$label"/>
-            </a>
+            <xsl:choose>
+              <xsl:when test="grit:get(.)/rdfs:isDefinedBy/@ref = $class/rdfs:isDefinedBy/@ref">
+                <a href="#{self:uri-term(@ref)}">
+                  <xsl:apply-templates select="$label"/>
+                </a>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:apply-templates select="$label"/>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:if>
         </xsl:for-each>
       </xsl:variable>
@@ -147,9 +155,8 @@
             <th style="width: 12%">Förekomst</th>
           </thead>
           <tbody>
-            <xsl:variable name="class" select="."/>
             <xsl:for-each select="$properties-restrs">
-              <xsl:sort select="rdfs:label | grit:get(owl:onProperty)/rdfs:label"/>
+              <xsl:sort select="rdfs:label[@xml:lang=$lang] | grit:get(owl:onProperty)/rdfs:label[@xml:lang=$lang]"/>
               <xsl:choose>
                 <xsl:when test="a/owl:Restriction">
                   <xsl:call-template name="table-row">
@@ -209,30 +216,6 @@
         <xsl:variable name="sub-props" select="$r[rdfs:subPropertyOf/@ref =
                       $property/@uri and rdfs:label[@xml:lang=$lang] and
                       (not(rdfs:domain) or self:contains($all-classrefs, rdfs:domain/@ref))]"/>
-        <xsl:if test="$sub-props">
-          <p>
-            Mer specifika egenskaper:
-            <dl>
-              <xsl:for-each select="$sub-props">
-                <xsl:sort select="rdfs:label"/>
-                <dt><xsl:apply-templates select="rdfs:label"/></dt>
-                <xsl:if test="not(self:contains($all-proprefs, @uri))">
-                  <dd>
-                    <xsl:apply-templates select="rdfs:comment"/>
-                    <xsl:variable name="range"
-                                  select="grit:get(rdfs:range)"/>
-                    <xsl:if test="$range">
-                      <xsl:text> </xsl:text>
-                      <em>(<xsl:apply-templates
-                          select="$range/rdfs:label"/>)
-                      </em>
-                    </xsl:if>
-                  </dd>
-                </xsl:if>
-              </xsl:for-each>
-            </dl>
-          </p>
-        </xsl:if>
         <xsl:if test="$restr">
           <xsl:for-each select="self:computed-range($restr)/rdfs:label[@xml:lang = $lang]">
             <xsl:variable name="uri" select="../@uri"/>
@@ -265,6 +248,30 @@
               </xsl:for-each>
             </dd>
           </dl>
+        </xsl:if>
+        <xsl:if test="$sub-props">
+          <p>
+            Mer specifika egenskaper:
+            <dl>
+              <xsl:for-each select="$sub-props">
+                <xsl:sort select="rdfs:label[@xml:lang=$lang]"/>
+                <dt><xsl:apply-templates select="rdfs:label"/></dt>
+                <xsl:if test="not(self:contains($all-proprefs, @uri))">
+                  <dd>
+                    <xsl:apply-templates select="rdfs:comment"/>
+                    <xsl:variable name="range"
+                                  select="grit:get(rdfs:range)"/>
+                    <xsl:if test="$range">
+                      <xsl:text> </xsl:text>
+                      <em>(<xsl:apply-templates
+                          select="$range/rdfs:label"/>)
+                      </em>
+                    </xsl:if>
+                  </dd>
+                </xsl:if>
+              </xsl:for-each>
+            </dl>
+          </p>
         </xsl:if>
       </td>
       <td>
@@ -344,7 +351,7 @@
           &lt;<xsl:value-of select="$name"/> rdf:about="...">
         </xsl:when>
         <xsl:when test="a/owl:ObjectProperty and (rdfs:range or not(a/rdf:Property)) and
-                      rdfs:range/@ref != 'http://www.w3.org/2000/01/rdf-schema#Literal'">
+                      not(rdfs:range/@ref = 'http://www.w3.org/2000/01/rdf-schema#Literal')">
           &lt;<xsl:value-of select="$name"/> rdf:resource="..."/>
         </xsl:when>
         <xsl:when test="a/owl:DatatypeProperty and rdfs:range and
