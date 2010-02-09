@@ -16,111 +16,193 @@
 
     <div class="section">
       <h2>1. Inledning</h2>
-      <p>Rättsinformationssystemet använder elektroniska identifierare för alla
-        viktiga ingående reurser. Här beskrivs principerna för hur dessa ska
-        konstrueras. Syftet är att definiera en strikt form där identifierarna
-        (och således hänvisningar till dessa) hålls entydiga, hållbara och
-        förutsägbara.
+      <p>Rättsinformationssystemet använder elektroniska identifierare
+        i form av URI:er (Uniform Resource Identifier) för alla
+        <em>resurser</em> i systemet. En resurs kan vara ett dokument,
+        som en viss föreskrift, men även en samling av något slag,
+        såsom en viss publikationsserie, eller rent abstakta begrepp,
+        såsom begreppet "författning".</p>
+
+      <p>En identifierare är en teckensträng som unikt identifierar en
+        viss resurs. Inom den juridiska världen är "SFS 1999:175" (en
+        författning) och "RÅ 1998 ref. 44" (ett rättsfallsreferat)
+        exempel på identifierare. Motsvarande elektroniska
+        identifierare, enligt den standard som beskrivs i detta
+        dokument,
+        är <code>http://rinfo.lagrummet.se/publ/sfs/1999:175</code>
+        respektive <code>http://rinfo.lagrummet.se/publ/rf/ra/1998:44</code>.
+      </p>
+
+      <p>Nedan beskrivs principerna för hur dessa identifierare ska
+        konstrueras. Syftet med dessa principer är att identifierarna
+        (och således hänvisningar till dessa) ska vara entydiga,
+        beständiga över tid och förutsägbara.
       </p>
     </div>
 
     <div class="section">
-      <h2>2. Vägledande principer för designen</h2>
+      <h2>2. Vägledande principer</h2>
       <div>
-        <h3>Grunder</h3>
-        <p>Identifierare i systemet ska utgöras av URI:er (Uniform Resource 
-          Identifier) &mdash; specifikt HTTP-URI:er. Dessa möjliggör upptäckbarhet 
-          genom att exponera över nätet hämtbar information. Alla URI:er ska 
-          designas så att de är beständiga över tid.</p>
-        <p>För mer teori och principer kring god URI-design, se <a 
-            href="#bilaga_d">Bilaga D</a>.
-        </p>
-      </div>
-      <div>
-        <h3>Databeroenden</h3>
-        <p>Identifierare ska konstrueras ur befintlig information om en resurs. 
-          Detta gör dem förutsägbara, vilket medför att man kan beräkna en 
-          identifierare om man har tillgång till tillräcklig information.
-        </p>
-        <p>En begränsad mängd centralt kontrollerad <em>data</em> kan vara 
-          nödvändig för att kunna beräkna dessa, men algoritmen ska vara enkel 
-          nog för att inte kräva delad programkod. Detta är viktigt för att 
-          minimera beroendet av ett central <em>tjänst</em> för 
-          URI-tilldelning.
-        </p>
-        <p>Genom kontrollerad administration av bas-segment garanteras även att 
-          URI-rymden undviker namnkollision, om t.ex. framtida termer dyker upp 
-          som är snarlika historiska begrepp. Detta betyder att enbart de 
-          segment som ligger under förutsägbara, kontrollerade bas-URI:er ska 
-          genereras ur resursens data.
-        </p>
+        <h3>2.1. Grunder</h3>
+        <p>Identifierare för resurser i systemet ska vara URI:er
+          &mdash; specifikt HTTP-URI:er.</p>
+
+        <p>En URI består av (minst) tre delar: schema, auktoritet och
+          sökväg. För en HTTP-URI är schemat alltid
+          "http". Auktoriteten utgörs (för HTTP-URI:er) ett domännamn
+          som ägs av den som ansvarar för URI:n. Sökvägen
+          utgörs av en serie segment som separeras med snedstreck
+          (<code>"/"</code>).</p>
+
+	<p>En HTTP-URI gör det möjligt att ta reda på information
+          genom att hämta den över nätet. För en resurs som
+          identifierar ett dokument kan denna information utgöras
+          av själva dokumentets innehåll, men för en resurs som
+          motsvarar ett abstrakt begrepp kan det vara något annat,
+          exempelvis en formell definition av begreppet.</p>
+
+	<p>(En URI kan även innehålla en sökdel och en
+	  fragmentdel. URI:er enligt dessa principer innehåller inte
+	  någon sökdel, men kan innehålla en fragmentdel - se bilaga
+	  A).</p>
+	
+        <h3>2.2. Databeroenden</h3>
+
+        <p>Identifierare ska konstrueras ur befintlig information om
+          en resurs. Detta gör dem förutsägbara, vilket medför att
+          man kan beräkna en identifierare om man har tillgång till
+          tillräcklig information.</p>
+
+	<p>En begränsad mängd centralt kontrollerad <em>data</em> kan
+          vara nödvändig för att kunna beräkna dessa, exempelvis om
+          vilka symboler som ska användas för olika <em>segment</em> i
+          identifieraren.</p>
+	
+	<p>I övrigt ska principerna vara enkla nog för att varje
+          informationsproducent ska kunna konstruera dem själv. Detta
+          är viktigt för att minimera beroendet av ett
+          central <em>tjänst</em> för URI-tilldelning.</p>
+	
+        <p>Genom kontrollerad administration av bas-segment garanteras
+          även att URI-rymden undviker namnkollision, om
+          t.ex. framtida termer dyker upp som är snarlika historiska
+          termer. Rättsinformationssystemets samordningsmyndighet
+          (Domstolsverket) ansvarar för denna administration. Övriga
+          myndigheter med informationsansvar (som publicerar i
+          rättsinformationssystemet) ska som bas för de URI:er som de
+          konstruerar använda dessa segment.</p>
+
+	<p>I ovanstående exempel
+          utgör <code>http://rinfo.lagrummet.se/publ/sfs/</code>
+          respektive <code>http://rinfo.lagrummet.se/publ/rf/ra/</code>
+          sådana bas-URI:er.</p>
+
+	<p>Detta betyder att enbart de segment som ligger
+	<em>under</em> förutsägbara, kontrollerade bas-URI:er ska
+	genereras ur resursens data. För resterande delar ska
+	<em>per resurstyp</em> unika identifierare (tillhörighet,
+	serienummer o.dyl.) användas.</p>
+
+	  <h3>2.3. Namngivningsprinciper</h3>
+
+	<p>Varje enskilt segment ska namnges med korta, enkla
+	  namn. Endast små bokstäver från a-z, siffror och sådana
+	  skiljetecken som redan används i befintliga identifierare
+	  ska användas.</p>
+
+	<p>När en befintlig identifierare som innehåller svenska
+	tecken (exempelvis ÅFS, Åklagarmyndighetens
+	författningssamling) ska uttryckas som ett segmentnamn ska de
+	svenska tecknen översättas enligt följande:</p>
+
+	<table>
+	  <tbody>
+	    <tr><th>Bokstav</th><th>Översättning</th></tr>
+	    <tr><th>å</th><th>aa</th></tr>
+	    <tr><th>ä</th><th>ae</th></tr>
+	    <tr><th>ö</th><th>oe</th></tr>
+	  </tbody>
+	</table>
+	    
+	<p>Segmentnamnet för SJÖFS blir alltså <code>sjoefs</code></p>
+
+	<!-- denna översättning användes framför å => a, ä => a, ö =>
+	     o för att undvika en krock mellan Åklagarmyndighetens
+	     författningssamling (ÅFS) och Arbetsmiljöverkets
+	     författningssamling (AFS). Den kan leda till framtida
+	     krockar, exv mellan en potentiell framtida myndighet
+	     Översättningsverket med författningssamling ÖFS och en
+	     annan potentiell framtida myndighet
+	     Officersevakueringsverket med författningssamlingen
+	     OEFS. Om detta händer får den nedan beskrivna metoden för
+	     att hantera krockar användas. -->
+	
+	<p>Om det inom ett segment uppstår namnkrockar får dessa
+	hanteras från fall till fall, företrädelsevis genom att
+	komplettera segmentnamnet med en årsangivelse. Exempelvis hade
+	den nu nedlagda myndigheten Djurskyddsmyndigheten en
+	författningssamling som förkortades DFS. Dessa föreskrifter är
+	fortfarande gällande, så motsvarande segment i identifierarna
+	blir <code>dfs</code>. Om en ny myndighet under 2011 skulle få
+	föreskriftsrätt och dess författningssamling också fick namnet
+	DFS (vilket är mycket osannolikt) skulle dess motsvarande
+	segmnt få namnet <code>dfs-2011</code>).</p>
+	  
+	<p>Notera att namngivning enligt exemplen ovan rör sådana
+	bas-segment som samordningsmyndigheten ansvarar för. Den enskilda
+	myndigheten behöver alltså inte ta reda på vilket segment som
+	ska användas för att ange dess författningssamling, utan
+	detta meddelas av samordningsmyndigheten.</p>
+	
+
       </div>
     </div>
 
     <div class="section">
-      <h2>3. Krav på utformningen</h2>
+      <h2>3. Systemets URI-rymd</h2>
       <div>
-        <h3>Format</h3>
-        <p>URI:erna anges som HTTP-URL:er. En hierarkisk struktur uppnås m.h.a. 
-          snedstrecksseparerade segment (<code>"/"</code>).
-        </p>
-        <p>Respektive segment ska namnges med korta, enkla namn. Unikhet ska så 
-          långt det är möjligt uppnås m.h.a. centralt kontrollerade namn. För 
-          resterande delar ska <em>per resurstyp</em> unika identiferare 
-          (tillhörighet, serienummer o.dyl.) användas.
-        </p>
-      </div>
-      <div>
-        <h3>Lokal öppenhet</h3>
-        <p>För att i möjligaste mån bespara informationsproducenter arbetet att 
-          konstruera en URI "från början" ska bas-URI:er för en myndighets 
-          publikation vara centralt konstruerade och beständiga. Detta så att 
-          kvarstående arbete för att skapa en URI för ett 
-          rättsinformationsdokument begränsas till att transformera dess 
-          identifierade egenskap(er), t.ex. författningssamlingsnummer, till 
-          avslutande segment i URI:n.
-        </p>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>4. Systemets URI-rymd</h2>
-      <div>
-        <h3>Bas</h3>
+        <h3>3.1. Bas</h3>
         <p>Bas-URI:n för rättsinformationssystemet är:</p>
         <blockquote>
           <xi:include href="build:urischeme.xhtml" xpointer="baseuri"/>
         </blockquote>
       </div>
       <div>
-        <h3>Toppnivån</h3>
+        <h3>3.2. Toppnivån</h3>
         <p>De direkt underliggande segmenten är uppdelade på roll och 
           resurstyp, vilka beskrivs i de efterföljande avsnitten.
         </p>
         <div>
-          <h4>Segment för resurser kontrollerade av producenter</h4>
+          <h4>3.2.1. Segment för resurser kontrollerade av de rättsinformationsproducerande myndigheterna</h4>
           <ul>
             <li><code>publ</code></li>
-            <li><code>serie</code></li>
-            <li><code>org</code></li>
             <li><code>kom</code></li>
           </ul>
-          <p>Se <a href="#s_5">avsnitt 5</a>.
+          <p>Se <a href="#s_4">avsnitt 4</a>.
           </p>
         </div>
+	<div>
+	  <h4>3.2.2. Segment för resurser kontrollerade av samordningsmyndigheten</h4>
+	    <ul>
+	      <li><code>serie</code></li>
+	      <li><code>org</code></li>
+	    </ul>
+          <p>Se <a href="#s_4">avsnitt 4</a>.
+          </p>
+	</div>
         <div>
-          <h4>Segment för resurser kontrollerade av systemet</h4>
+          <h4>3.2.3. Segment för resurser kontrollerade av systemet</h4>
           <ul>
             <li><code>ns</code></li>
             <li><code>sys</code></li>
             <li><code>ext</code></li>
           </ul>
-          <p>Se <a href="#s_6">avsnitt 6</a>.
+          <p>Se <a href="#s_5">avsnitt 5</a>.
           </p>
         </div>
       </div>
       <div>
-        <h3>Konstruktionsregler</h3>
+        <h3>3.3. Konstruktionsregler</h3>
         <p>För teknisk specifikation av hur URI:er ska konstrueras baserat på
           dokuments relationer och egenskaper, se <a href="#bilaga_a">Bilaga
             A</a>.
@@ -134,8 +216,8 @@
       </div>
     </div>
 
-    <div class="section" id="s_5">
-      <h2>5. Identifierare för publikationer, samlingar, organisationer och 
+    <div class="section" id="s_4">
+      <h2>4. Identifierare för publikationer, samlingar, organisationer och 
         kommittéeinformation</h2>
       <p>Detta kapitel beskriver regler för hur producenter ska konstruera 
         URI:er för poster som ingår i rättsinformationssystemet.
@@ -155,48 +237,55 @@
         </dd>
         <dt><code>serie</code></dt>
         <dd>
-          <p>Publikationsserier som är centrala för 
-            rättsinformationsdomänen.
+          <p>Publikationsserier, exempelvis författningssamlingar och
+          rättsfallssamlingar, som är centrala för sådan information
+          som publiceras inom rättsinformationssystemet.
           </p>
         </dd>
         <dt><code>org</code></dt>
         <dd>
-          <p>Organisationer/grupper som är centrala för 
-            rättsinformationsdomänen (såsom myndigheter (inkl. domstolar), 
-            kommittéer).
+          <p>Organisationer/grupper som är centrala för
+          rättsinformationssystemet, såsom förvaltningsmyndigheter,
+          domstolar, regering, departement och riksdag.
           </p>
         </dd>
         <dt><code>kom</code></dt>
         <dd> <p>Resurser i kommittéväsendet.</p> </dd>
       </dl>
       <div>
-        <h3>5.1. Rättsinformationsdokument</h3>
-        <p>URI:er för rättsinformationsdokument (publikationer) faller under 
-          under segmentet <code>publ</code>.
-        </p>
-        <p>Här hamnar alla primära rättsinformationsdokument. Deras URI:er 
-          baseras på en specifik gruppering samt ett lokalt unikt värde för 
-          respektive grupp.
-        </p>
-        <div>
-          <h4>Underliggande segment</h4>
-          <p>Direkt under <code>publ</code> finns ett flertal segment som 
-            representerar tillhörighet. Dessa är centralt definierade och 
-            kräver att förvaltningen av rättsinformationsdomänen skapar nya 
-            platser då nya tillhörighetstyper tillkommer (t.ex. när en ny 
-            författningsamling skapas, eller om en ny grundtyp av dokument 
-            definieras i rättsinformationsmodellen).
+	<h3>4.1. Rättsinformationsdokument</h3>
+
+	<p>URI:er för rättsinformationsdokument (publikationer) faller
+        under under segmentet <code>publ</code>.</p>
+
+	<p>Här hamnar alla primära rättsinformationsdokument. Deras
+        URI:er baseras på en bas-URI som beror på vilken grupp de
+        tillhör (exempelvis författningar i SFS eller
+        rättsfallsreferat från Regeringsrätten), samt ett lokalt unikt
+        värde för respektive grupp (baserat på exempelvis SFS-nummer
+        eller referatbeteckning).</p>
+
+	<div>
+	  <h4>4.1.1. Underliggande segment</h4>
+          <p>Direkt under <code>publ</code> finns ett flertal segment
+          som representerar tillhörighet. Dessa är centralt
+          definierade av samordningsmyndigheten, som ansvarar för att
+          skapa nya segment då nya tillhörighetstyper tillkommer,
+          t.ex. när en ny författningsamling skapas, eller om en ny
+          grundtyp av dokument definieras i rättsinformationsmodellen
+          (ett exempel på en sådan ny grundtyp är förtursförklaringar,
+          som infördes i rättsinformationsförordningen 1 jan 2010).
           </p>
-          <p>Exempel på segment för publikationstillhörighet är:
-          </p>
+
+          <p>Exempel på segment för publikationstillhörighet är:</p>
           <dl>
             <dt><code>/publ/sfs/</code></dt>
             <dd>
-              <p>Dokument publicerade i SFS (Svensk Författningsamling).</p>
+              <p>Författningar publicerade i SFS (Svensk Författningsamling).</p>
             </dd>
-            <dt><code>/publ/nja/</code></dt>
+            <dt><code>/publ/rf/nja/</code></dt>
             <dd>
-              <p>Dokument publicerade i NJA (Nytt Juridiskt Arkiv).</p>
+              <p>Rättsfallsreferat publicerade i NJA (Nytt Juridiskt Arkiv).</p>
             </dd>
             <dt><code>/publ/prop/</code></dt>
             <dd>
@@ -204,25 +293,63 @@
             </dd>
             <dt><code>/publ/dom/domstolsverket/</code></dt>
             <dd>
-              <p>Vägledande domstolsavgöranden utgivna av Domstolsverket.</p>
+              <p>Vägledande domstolsavgöranden utgivna av
+              Domstolsverket (observera att detta inte är samma sak
+              som rättsfallsreferat).</p>
             </dd>
           </dl>
         </div>
       </div>
       <div class="section">
-        <h3>5.2. Publikationsserier</h3>
-        <p>URI:er för de formella dokumentssamlingarna som ingår i rättsinformationsdomänen.</p>
-        <!-- TODO:skriv klart -->
+        <h3>4.2. Publikationsserier</h3>
+        <p>URI:er för själva de dokumentssamlingar som ingår i
+        rättsinformationssystemet.</p>
+	<p>Exempel på segment för publikationstillhörighet är:</p>
+	<dl>
+	  <dt><code>/serie/fs/sfs</code></dt>
+	  <dd>
+	    <p>Svensk Författningsamling (SFS)</p>
+	  </dd>
+	  <dt><code>/serie/rff/nja</code></dt>
+	  <dd>
+	    <p>Nytt Juridiskt Arkiv I (NJA)</p>
+	  </dd>
+	  <dt><code>/serie/utr/sou</code></dt>
+	  <dd>
+	    <p>Statens offentliga utredningar (SOU)</p>
+	  </dd>
+	</dl>
+      </div>
+
+      <div class="section">
+        <h3>4.3. Organisationer</h3>
+        <p>URI:er för de organisationer som ingår i rättsinformationsdomänen.</p>
+	<!-- FIXME: nedanstående, hämtat från
+	     resorces/bases/datasets/org/*.n3 uppfyller inte
+	     namngivningsprinciperna i avsnitt 2 -->
+	<dl>
+	  <dt><code>/org/domstolsverket</code></dt>
+	  <dd>
+	    <p>Domstolsverket</p>
+	  </dd>
+	</dl>
+	<dl>
+	  <dt><code>/org/h%C3%B6gsta_domstolen</code></dt>
+	  <dd>
+	    <p>Högsta Domstolen</p>
+	  </dd>
+	</dl>
+	<dl>
+	  <dt><code>/org/justitiekanslern</code></dt>
+	  <dd>
+	    <p>Justitiekanslern</p>
+	  </dd>
+	</dl>
       </div>
       <div class="section">
-        <h3>5.3. Organisationer</h3>
-        <p>URI:er för de organisationer, primärt myndigheter, som ingår i rättsinformationsdomänen.</p>
-        <!-- TODO:skriv klart -->
-      </div>
-      <div class="section">
-        <h3>5.4. Kommittéregisterposter</h3>
+        <h3>4.4. Kommittéregisterposter</h3>
         <p>URI:er för de ting inom kommittéväsendet som <em>inte</em> är 
-          publikationer  faller under under segmentet "kom".
+          publikationer faller under under segmentet <code>kom</code>.
         </p>
         <p>Exempel på sådana ting är kommittéer och poster i kommittéregistret.
         </p>
@@ -235,8 +362,8 @@
       </div>
     </div>
 
-    <div class="section" id="s_6">
-      <h2>6. Identifierare för centrala poster i rättsinformationssystemet</h2>
+    <div class="section" id="s_5">
+      <h2>5. Identifierare för centrala poster i rättsinformationssystemet</h2>
       <p>Detta kapitel beskriver regler för hur URI:er för centrala poster i 
         rättsinformationssystemet ska konstrueras.
       </p>
@@ -269,13 +396,13 @@
         </dd>
       </dl>
       <div>
-        <h3>6.1. Namnrymden "ns"</h3>
+        <h3>5.1. Namnrymden "ns"</h3>
         <p>Under detta segment placeras tekniska modeller såsom 
           scheman/ontologier (RDFS/OWL), centrala SKOS-vokabular, eventuella 
           GRDDL-dokument, XML-scheman och liknande.
         </p>
         <div>
-          <h4>Definierade modell-URI:er</h4>
+          <h4>5.1.1. Definierade modell-URI:er</h4>
           <dl>
             <dt>Modellen för rättsinformationsdokument</dt>
             <dd>
@@ -295,22 +422,22 @@
         </p>
       </div>
       <div>
-        <h3>6.2. Instrumentella segment</h3>
-        <p>Segmenten <code>sys</code> och <code>ext</code> kontrolleras internt 
-          och är primärt inte till för att länkas till av andra delar än 
-          systemet självt.
+        <h3>5.2. Interna segment</h3>
+        <p>Segmenten <code>sys</code> och <code>ext</code>
+          kontrolleras internt och är primärt inte till för att länkas
+          till av andra delar än systemet självt.
         </p>
       </div>
     </div>
 
     <div class="section">
-      <h2>7. Informationsresurser</h2>
+      <h2>6. Informationsresurser</h2>
       <p>Den stora massan av resurser för vilka rättsinformationssystemet 
         tilldelar URI:er är s.k. "informationsresurser". Dessa är hämtbara 
         elektroniska dokument som finns på ett eller flera format.
       </p>
       <div>
-        <h3>Elektroniska representationer</h3>
+        <h3>6.1. Elektroniska representationer</h3>
         <p>Elektroniskt material omfattar representationer av
           informationsresurser såsom textdokument, bilder m.m. Dessa är direkt
           underordnade en logisk identifierare, och är i systemet även
@@ -322,7 +449,7 @@
           under den givna primära URI:ns segment.
         </p>
         <div>
-          <h4>Exempel på URI:er för elektroniska representationer</h4>
+          <h4>6.1.1 Exempel på URI:er för elektroniska representationer</h4>
           <dl>
             <dt>PDF (på svenska) för SFS 1999:175</dt>
             <dd>
@@ -336,25 +463,27 @@
         </div>
       </div>
       <div>
-        <h3>Associerade filer</h3>
-        <p>Vissa representationer kan ha en eller flera associerade filer i form 
-          av t.ex. bilagor eller stilinformation. Dessa underordnas en primär 
-          URI på samma sätt som representationerna. Deras namngivning är löst 
-          kontrollerad, med krav på:
+        <h3>6.2. Associerade filer</h3>
+        <p>Vissa representationer kan ha en eller flera associerade
+          filer i form av t.ex. bilagor eller stilinformation. Dessa
+          underordnas en primär URI på samma sätt som
+          representationerna. Deras namngivning är löst kontrollerad,
+          med krav på:
         </p>
         <ol>
           <li>Lokal unikhet. Specifikt måste de anges på formen 
-            <code>{bas}.{filtypsändelse}</code>. Detta gör att namnen inte kan 
-            krocka med av systemet definierade representationsnamn (baserade på 
-            mediaformat) eller underordnade segment.</li>
-          <li>
-              Hänvisningar i en given representation ska utgå från en relativ 
-              placering i "samma katalog", med underkataloger separerade med 
-              <code>/</code> på sedvanligt vis.
+            <code>{bas}.{filtypsändelse}</code>. Detta gör att namnen
+            inte kan krocka med av systemet definierade
+            representationsnamn (baserade på mediaformat) eller
+            underordnade segment.</li>
+          <li>Hänvisningar i en given representation ska utgå från en
+            relativ placering i "samma katalog", med underkataloger
+            separerade med
+            <code>/</code> på sedvanligt vis.
           </li>
         </ol>
         <div>
-          <h4>Exempel på URI:er för associerade filer</h4>
+          <h4>6.2.1. Exempel på URI:er för associerade filer</h4>
           <dl>
             <dt>Bilaga som PDF associerad med SFS 1999:175</dt>
             <dd>
