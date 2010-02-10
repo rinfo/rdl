@@ -34,6 +34,7 @@ def createDepot(baseDir) {
     depot.baseUri = new URI("http://rinfo.lagrummet.se")
     depot.atomizer.feedPath = "/feed"
     depot.atomizer.feedSkeletonPath = "feed_skeleton.atom"
+    depot.initialize()
     return depot
 }
 
