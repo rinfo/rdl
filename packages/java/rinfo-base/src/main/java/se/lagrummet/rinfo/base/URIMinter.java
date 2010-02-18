@@ -31,7 +31,7 @@ public class URIMinter {
     private Map<String, String> baseCharMap;
     private String queryStr;
 
-    public static final String BASE_CHAR_MAP_PATH = "uriminter/unicodebasechars.json";
+    public static final String BASE_CHAR_MAP_PATH = "uriminter/unicodebasechars-scandinavian.json";
     public static final String QUERY_PATH = "uriminter/select_coin_items.rq";
 
     public URIMinter(Repository baseData) throws IOException {
