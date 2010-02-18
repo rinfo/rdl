@@ -56,7 +56,7 @@ public class FeedCollector extends FeedArchivePastToPresentReader {
      * Important: this class is not thread safe. Create a new instance for each
      * collect session.
      */
-    private FeedCollector(StorageSession storageSession) {
+    public FeedCollector(StorageSession storageSession) {
         this.storageSession = storageSession
         this.entryPathMapper = new EntryPathMapper(
                 storageSession.getDepot().getPathHandler())
@@ -70,8 +70,11 @@ public class FeedCollector extends FeedArchivePastToPresentReader {
 
     @Override
     public HttpClient createClient() {
-        // TODO: Configure to use SSL (https) and verify cert.!
-        // TODO:? httpClient.setHttpRequestRetryHandler(...)
+        // TODO:
+        //  .. <http://hc.apache.org/httpcomponents-client/tutorial/html/connmgmt.html>
+        //  - set timeout (default is infinite!)
+        //  - Configure to use SSL (https) and verify cert.!
+        //  -? httpClient.setHttpRequestRetryHandler(...)
 
         HttpParams params = new BasicHttpParams()
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1)

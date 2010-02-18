@@ -9,13 +9,13 @@ import org.openrdf.elmo.annotations.rdf;
 @rdf("http://rinfo.lagrummet.se/ns/2008/10/collector#DeletedEntry")
 public interface DeletedEntryEvent {
 
-    @rdf("http://rdfs.org/sioc/ns#about")
-    Resource getAbout();
-    void setAbout(Resource about);
+    @rdf("http://www.w3.org/2008/09/rx#primarySubject")
+    Resource getPrimarySubject();
+    void setPrimarySubject(Resource primarySubject);
 
-    @rdf("http://rdfs.org/sioc/ns#has_space")
-    Resource getSpace();
-    void setSpace(Resource space);
+    @rdf("http://purl.org/dc/terms/isPartOf")
+    Resource getIsPartOf();
+    void setIsPartOf(Resource isPartOf);
 
     @rdf("http://purl.org/NET/c4dm/timeline.owl#at")
     XMLGregorianCalendar getAt();

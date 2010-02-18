@@ -8,20 +8,18 @@ import org.openrdf.elmo.annotations.rdf;
 @rdf("http://bblfish.net/work/atom-owl/2006-06-06/#Entry")
 public interface EntryEvent extends AtomBase {
 
-    @rdf("http://rdfs.org/sioc/ns#about")
-    Resource getAbout(); // TODO: always fails but have to be here!
-    void setAbout(Resource about);
-    // TODO: Needed to get the URI back (via toString); see getAbout
-    @rdf("http://rdfs.org/sioc/ns#about")
-    Entity getAboutObject();
+    @rdf("http://www.w3.org/2008/09/rx#primarySubject")
+    Resource getPrimarySubject(); // TODO: always fails but have to be here!
+    void setPrimarySubject(Resource primarySubject);
+    // TODO: Needed to get the URI back (via toString); see getPrimarySubject
+    @rdf("http://www.w3.org/2008/09/rx#primarySubject")
+    Entity getPrimarySubjectObject();
 
-    //sioc:has_host <http://rinfo.lagrummet.se/>;
-
-    @rdf("http://rdfs.org/sioc/ns#has_space")
-    Resource getSpace();
-    void setSpace(Resource space);
-    @rdf("http://rdfs.org/sioc/ns#has_space")
-    Entity getSpaceObject();
+    @rdf("http://purl.org/dc/terms/isPartOf")
+    Resource getIsPartOf();
+    void setIsPartOf(Resource isPartOf);
+    @rdf("http://purl.org/dc/terms/isPartOf")
+    Entity getIsPartOfObject();
 
     @rdf("http://bblfish.net/work/atom-owl/2006-06-06/#source")
     FeedEvent getSource();

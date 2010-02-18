@@ -40,7 +40,7 @@ class CollectorLogSession {
     private ElmoManager manager
 
     private String systemBaseUri
-    private URI entrySpaceRdfUri
+    private URI entryIsPartOfRdfUri
 
     private CollectEvent collectEvent
     private FeedEvent currentFeedEvent // TODO: don't keep; use it's uri..
@@ -48,7 +48,7 @@ class CollectorLogSession {
 
     CollectorLogSession(CollectorLog collectorLog, ElmoManager manager) {
         this.systemBaseUri = collectorLog.getSystemBaseUri()
-        this.entrySpaceRdfUri = new URIImpl(collectorLog.getEntrySpaceUri())
+        this.entryIsPartOfRdfUri = new URIImpl(collectorLog.getEntryDatasetUri())
         this.manager = manager
         def collectStartTime = new Date()
         collectEvent = manager.create(createCollectUri(), CollectEvent)
@@ -84,8 +84,8 @@ class CollectorLogSession {
         def entryEvent = manager.create(EntryEvent)
         entryEvent.setPublished(createXmlGrCal(depotEntry.getPublished()))
         entryEvent.setUpdated(createXmlGrCal(depotEntry.getUpdated()))
-        entryEvent.setAbout(new URIImpl(sourceEntry.getId().toString()))
-        entryEvent.setSpace(entrySpaceRdfUri)
+        entryEvent.setPrimarySubject(new URIImpl(sourceEntry.getId().toString()))
+        entryEvent.setIsPartOf(entryIsPartOfRdfUri)
         entryEvent.setViaEntry(sourceEntryEvent)
         completeLogEvent()
     }
@@ -95,10 +95,10 @@ class CollectorLogSession {
             Date sourceEntryDeleted,
             DepotEntry depotEntry) {
         def deleted = manager.create(DeletedEntryEvent)
-        deleted.setAbout(new URIImpl(sourceEntryId.toString()))
+        deleted.setPrimarySubject(new URIImpl(sourceEntryId.toString()))
         // TODO: record sourceEntryDeleted in viaDeletedEntryEvent?
         deleted.setAt(createXmlGrCal(depotEntry.getUpdated()))
-        deleted.setSpace(entrySpaceRdfUri)
+        deleted.setIsPartOf(entryIsPartOfRdfUri)
         deleted.setViaFeed(currentFeedEvent)
         completeLogEvent()
     }

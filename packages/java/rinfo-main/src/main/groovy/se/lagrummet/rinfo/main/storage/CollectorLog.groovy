@@ -19,11 +19,11 @@ class CollectorLog {
 
     public static final String DEFAULT_SYSTEM_BASE_URI =
             "http://rinfo.lagrummet.se/system/"
-    public static final String DEFAULT_ENTRY_SPACE_URI =
+    public static final String DEFAULT_DATASET_URI =
             "tag:lagrummet.se,2009:rinfo"
     // TODO: set via configuration
     String systemBaseUri = DEFAULT_SYSTEM_BASE_URI
-    String entrySpaceUri = DEFAULT_ENTRY_SPACE_URI
+    String entryDatasetUri = DEFAULT_DATASET_URI
 
     private static ElmoModule module = new ElmoModule()
     static {
@@ -34,8 +34,7 @@ class CollectorLog {
         module.addConcept(ErrorEvent)
     }
 
-    CollectorLog() {
-    }
+    CollectorLog() { }
 
     CollectorLog(Repository repo) {
         this.repo = repo

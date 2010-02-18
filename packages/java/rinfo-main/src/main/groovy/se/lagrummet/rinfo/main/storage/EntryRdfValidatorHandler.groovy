@@ -56,7 +56,8 @@ class EntryRdfValidatorHandler extends AbstractStorageHandler {
 
     protected void hasExpectedUri(URI subject, repo) {
         // TODO: rules for which resources to compute URI:s for:
-        // if (!rdfType.startsWith(RINFO_PUBL)) return;
+        // .. if (!rdfType.startsWith(RINFO_PUBL)) return;
+        // .. or just: if (!subject.startsWith(forBaseUri)) return;
         try {
             // TODO: supply subject?
             def newUri = uriMinter.computeOfficialUri(repo)

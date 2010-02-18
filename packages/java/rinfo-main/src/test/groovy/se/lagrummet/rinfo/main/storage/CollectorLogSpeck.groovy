@@ -81,30 +81,31 @@ class CollectorLogSpeck {
         logSession.logUpdatedEntry(sourceFeed, sourceEntry, depotEntry)
 
         then:
-        //logSession.findEntryEvent(about, updated, space)
+        //logSession.findEntryEvent(subject, updated, dataset)
         def query = logSession.manager.createQuery("""
         PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-        PREFIX sioc: <http://rdfs.org/sioc/ns#>
+        PREFIX dct: <http://purl.org/dc/terms/>
+        PREFIX rx: <http://www.w3.org/2008/09/rx#>
         PREFIX awol: <http://bblfish.net/work/atom-owl/2006-06-06/#>
         SELECT ?entry WHERE {
             ?entry a awol:Entry;
-                sioc:about ?about;
-                sioc:has_space ?space;
+                rx:primarySubject ?primarySubject;
+                dct:isPartOf ?dataset;
                 awol:updated ?updated .
-        """ + "}")
-        query.setParameter("about",
+        } """)
+        query.setParameter("primarySubject",
                 logSession.manager.find(new QName(entryId, "")))
-        query.setParameter("space",
-                logSession.manager.find(new QName(collectorLog.entrySpaceUri.toString(), "")))
+        query.setParameter("dataset",
+                logSession.manager.find(new QName(collectorLog.entryDatasetUri.toString(), "")))
         query.setParameter("updated", logSession.createXmlGrCal(time))
 
         EntryEvent entryEvent = query.evaluate().collect { it }[0]
         entryEvent != null
-        entryEvent.getAboutObject().toString() == entryId
+        entryEvent.primarySubjectObject.toString() == entryId
         def toTime = { it.toGregorianCalendar().time }
-        toTime(entryEvent.getPublished()) == time
-        toTime(entryEvent.getUpdated()) == time
-        entryEvent.getSpaceObject().toString() == collectorLog.entrySpaceUri.toString()
+        toTime(entryEvent.published) == time
+        toTime(entryEvent.updated) == time
+        entryEvent.isPartOfObject.toString() == collectorLog.entryDatasetUri.toString()
 
         //and:
         //// TODO: seems good to bundle get-/setViaEntry and EntryRdfReader as

@@ -50,9 +50,11 @@ class SourceFeedsConfigHandler extends AbstractStorageHandler {
         Repository repo = EntryRdfReader.readRdf(depotEntry)
         // TODO:IMPROVE: configure, use raw sparql, and/or make this more failsafe.
         /* or..: * /
+        walker.prefixes["dct"] = "..."
+        walker.prefixes["iana"] = "..."
         walker.aboutURI("tag:lagrummet.se,2009:rinfo")
-        for (Object source : walker.pushRel(DCT_NS, "source")) {
-            feedUrls.add(walker.rel(IANA_NS, "current").asURI())
+        for (Object source = walker.pushRel("dct:source"); walker.popRel();) {
+            feedUrls.add(walker.rel("iana:current").asURI())
         }
         /* */
         def tree = SparqlTree.runQuery(repo, sourceFeedsQuery)
