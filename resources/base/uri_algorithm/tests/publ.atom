@@ -70,16 +70,14 @@
     </entry>
 
 
-    <!-- FIXME: must not be described with the properties of the doc it
-         "konsoliderar"? -->
     <entry>
         <id>http://rinfo.lagrummet.se/publ/sfs/1999:175/konsolidering/1999-03-25</id>
         <summary>Konsolidering av en grundförfattning, identifierad på grundförfattning och det datum då konsolideringen utfärdades.</summary>
         <content type="application/rdf+xml">
             <rpubl:KonsolideradGrundforfattning>
                 <rpubl:konsoliderar rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1999:175"/>
-                <rpubl:utfardandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-                                       >1999-03-25</rpubl:utfardandedatum>
+                <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+                                       >1999-03-25</dct:issued>
             </rpubl:KonsolideradGrundforfattning>
         </content>
     </entry>
