@@ -58,6 +58,7 @@ import org.restlet.resource.Representation
 import org.restlet.resource.StringRepresentation
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
+import se.lagrummet.rinfo.base.URIMinter
 
 import se.lagrummet.rinfo.store.depot.Depot
 import se.lagrummet.rinfo.store.depot.FileDepot
@@ -68,6 +69,7 @@ import se.lagrummet.rinfo.main.storage.StorageSession
 import se.lagrummet.rinfo.main.storage.StorageCredentials
 import se.lagrummet.rinfo.main.storage.StorageHandler
 import se.lagrummet.rinfo.main.storage.CollectorLog
+import se.lagrummet.rinfo.main.storage.EntryRdfValidatorHandler
 
 
 class FeedChecker {
@@ -75,6 +77,8 @@ class FeedChecker {
     def repo = new SailRepository(new MemoryStore())
     Depot depot
     File tempDir
+    def handlers = []
+    int maxEntries = -1
 
     FeedChecker() {
         tempDir = createTempDir()
@@ -83,22 +87,22 @@ class FeedChecker {
         depot.initialize()
     }
 
-    def checkFeed(String feedUrl) { checkFeed(new URL(feedUrl)) }
-
-    def checkFeed(URL feedUrl) {
-        def handlers = []
-        def coLog = new CollectorLog(repo)
-        def session = new LaxStorageSession(new StorageCredentials(false),
-                depot, handlers, coLog)
-        def collector = new OneFeedCollector(session)
-        collector.readFeed(feedUrl)
-        collector.shutdown()
-        return repo
-    }
-
     void shutdown() {
         repo.shutDown()
         removeTempDir()
+    }
+
+    def checkFeed(String feedUrl) { checkFeed(new URL(feedUrl)) }
+
+    def checkFeed(URL feedUrl) {
+        def coLog = new CollectorLog(repo)
+        def storageSession = new LaxStorageSession(new StorageCredentials(false),
+                depot, handlers, coLog)
+        storageSession.maxEntries = maxEntries
+        def collector = new OneFeedCollector(storageSession)
+        collector.readFeed(feedUrl)
+        collector.shutdown()
+        return repo
     }
 
     File createTempDir() {
@@ -122,6 +126,8 @@ class FeedChecker {
 }
 
 class LaxStorageSession extends StorageSession {
+    int maxEntries = -1
+    int visitedEntries = 0
     LaxStorageSession(StorageCredentials credentials,
             Depot depot,
             Collection<StorageHandler> storageHandlers,
@@ -130,6 +136,10 @@ class LaxStorageSession extends StorageSession {
     }
     boolean storeEntry(Feed sourceFeed, Entry sourceEntry,
             List<SourceContent> contents, List<SourceContent> enclosures) {
+        if (maxEntries > -1 && visitedEntries == maxEntries) {
+            return false
+        }
+        visitedEntries++
         super.storeEntry(
                 sourceFeed, sourceEntry, contents, enclosures)
         return true // never break on error
@@ -176,10 +186,13 @@ class RInfoChecker extends Resource {
     @Override void handlePost() {
         String feedUrl = request.getEntityAsForm().getFirstValue("feedUrl")
         def feedChecker = new FeedChecker()
-        def logRepo = feedChecker.checkFeed(feedUrl)
-        def ins = RDFUtil.toInputStream(repo, "application/rdf+xml", true)
-        response.setEntity(new InputRepresentation(ins), MediaType.TEXT_XML)
-        feedChecker.shutdown()
+        try {
+            def logRepo = feedChecker.checkFeed(feedUrl)
+            def ins = RDFUtil.toInputStream(repo, "application/rdf+xml", true)
+            response.setEntity(new InputRepresentation(ins), MediaType.TEXT_XML)
+        } finally {
+            feedChecker.shutdown()
+        }
         //response.setEntity("""
         //<p>K&auml;lla: <code class="url">${feedUrl}</code>
         //</p>
@@ -208,18 +221,38 @@ def serve(port) {
     cmp.start()
 }
 
+
 def cli = new CliBuilder()
 cli.p longOpt:'port', args:1, type:int, 'port'
-cli.o longOpt:'outfile', args:1, type:String, 'out file'
+cli.o longOpt:'outfile', args:1, 'out file'
+cli.l longOpt:'entrylimit', args:1, type:int, 'limit maximum of collected entries'
+cli.m longOpt:'minterentry', args:1, 'depot entry to read uri minter config from'
 def opt = cli.parse(args)
+
 if (opt.port) {
     def port = Integer.parseInt(opt.port)
     serve(port)
 } else {
     opt.arguments().each {
-        def feedChecker = new FeedChecker()
+        def maxEntries = opt.entrylimit? Integer.parseInt(opt.entrylimit) : -1
+        def feedChecker = new FeedChecker(maxEntries:maxEntries)
+        def uriMinterHandler = new EntryRdfValidatorHandler(
+                new URI("http://rinfo.lagrummet.se/sys/uri"), "/publ/")
+        // FIXME: must have "uriminter" dir in cwd even though it's in rinfo-base jar!
+        uriMinterHandler.setUriMinter(new URIMinter(RDFUtil.slurpRdf(opt.minterentry)))
+        feedChecker.handlers << uriMinterHandler
         try {
             def checkLogRepo = feedChecker.checkFeed(it)
+            def conn = checkLogRepo.connection
+            def ns = conn.&setNamespace
+            ns("xsd", "http://www.w3.org/2001/XMLSchema#")
+            ns("rx", "http://www.w3.org/2008/09/rx#")
+            ns("dct", "http://purl.org/dc/terms/")
+            ns("awol", "http://bblfish.net/work/atom-owl/2006-06-06/#")
+            ns("iana", "http://www.iana.org/assignments/relation/")
+            ns("tl", "http://purl.org/NET/c4dm/timeline.owl#")
+            ns("rc", "http://rinfo.lagrummet.se/ns/2008/10/collector#")
+            conn.close()
             def mtype = "application/x-turtle"
             def out = opt.outfile? new FileOutputStream(new File(opt.outfile)) : System.out
             RDFUtil.serialize(checkLogRepo, mtype, out)
