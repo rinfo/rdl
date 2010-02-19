@@ -5,17 +5,17 @@ import org.openrdf.repository.Repository
 import se.lagrummet.rinfo.store.depot.DepotEntry
 
 import se.lagrummet.rinfo.base.URIMinter
-import se.lagrummet.rinfo.base.URIComputationException
 
 
 class EntryRdfValidatorHandler implements StorageHandler {
 
     URIMinter uriMinter
     URI containerEntryId
+    String checkedBasePath
 
-    public EntryRdfValidatorHandler(URIMinter uriMinter, URI containerEntryId) {
-        this.uriMinter = uriMinter
+    public EntryRdfValidatorHandler(URI containerEntryId, String checkedBasePath) {
         this.containerEntryId = containerEntryId
+        this.checkedBasePath = checkedBasePath
     }
 
     void onStartup(StorageSession storageSession) throws Exception {
@@ -38,43 +38,37 @@ class EntryRdfValidatorHandler implements StorageHandler {
             throws Exception {
     }
 
-    protected void loadContainerData(depotEntry) {
-        uriMinter.setRepo(EntryRdfReader.readRdf(depotEntry))
+    protected void loadContainerData(DepotEntry depotEntry) {
+        uriMinter = new URIMinter(EntryRdfReader.readRdf(depotEntry))
     }
 
-    protected void validate(depotEntry) {
+    protected void validate(DepotEntry depotEntry) {
         Repository repo = EntryRdfReader.readRdf(depotEntry)
-        // TODO: qualify checks in impl(s), based on RDF.TYPE..
+        // TODO: run qualify checks in impl(s), based on RDF.TYPE..
         try {
             // TODO: chain of validators (Validator(metaRepo).validate(uri, repo)?)
-            hasExpectedUri(depotEntry.id, repo)
+            hasExpectedUri(depotEntry, repo)
         } catch (Exception e) {
-            // TODO: rules for which resources to compute URI:s for
+            throw e
         }
         repo.shutDown()
     }
 
-    protected void hasExpectedUri(URI subject, repo) {
+    protected void hasExpectedUri(DepotEntry depotEntry, Repository repo) {
+        if (uriMinter == null) {
+            return // TODO: log "no minter available"?
+        }
+        URI subjectUri = depotEntry.getId()
         // TODO: rules for which resources to compute URI:s for:
         // .. if (!rdfType.startsWith(RINFO_PUBL)) return;
-        // .. or just: if (!subject.startsWith(forBaseUri)) return;
-        try {
-            // TODO: supply subject?
-            def newUri = uriMinter.computeOfficialUri(repo)
-            if (!depotEntry.id.equals(newUri)) {
-                throw new IllegalEntryIdException(depotEntry)
-            }
-            hasExpectedUri(depotEntry.id, repo)
-        } catch (URIComputationException e) {
-            // TODO: don't catch when rules for which to compute for is in place.
+        if (!subjectUri.getPath().startsWith(checkedBasePath)) {
+            return
+        }
+        // TODO: supply entry uri to exclude "false matches"?
+        def computedUri = uriMinter.computeUri(repo)
+        if (!subjectUri.equals(computedUri)) {
+            throw new IdentifyerMismatchException(subjectUri, computedUri)
         }
     }
 
-}
-
-
-class IllegalEntryIdException extends Exception {
-    IllegalEntryIdException(DepotEntry depotEntry) {
-        super(depotEntry.toString())
-    }
 }

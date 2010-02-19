@@ -19,14 +19,4 @@ public interface ErrorEvent {
     String getValue();
     void setValue(String value);
 
-    /*
-    @rdf("http://rinfo.lagrummet.se/ns/2008/10/collector#expectedUri")
-    URI getExpectedUri();
-    void setExpectedUri(URI expectedUri);
-
-    @rdf("http://rinfo.lagrummet.se/ns/2008/10/collector#computedUri")
-    URI getComputedUri();
-    void setComputedUri(URI computedUri);
-    */
 }
-

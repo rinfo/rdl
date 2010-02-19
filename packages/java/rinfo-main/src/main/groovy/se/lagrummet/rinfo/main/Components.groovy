@@ -41,7 +41,8 @@ public class Components {
         DEPOT_BASE_URI("rinfo.depot.baseUri"),
         DEPOT_BASE_DIR("rinfo.depot.baseDir"),
         SOURCE_FEEDS_ENTRY_ID("rinfo.main.storage.sourceFeedsEntryId"),
-        CONTAINER_DESCRIPTION_ENTRY_ID("rinfo.main.uriMinter.containerDescriptionEntryId"),
+        URIMINTER_DESCRIPTION_ENTRY_ID("rinfo.main.uriMinter.containerDescriptionEntryId"),
+        URIMINTER_CHECKED_BASE_PATH("rinfo.main.uriMinter.checkedBasePath"),
         ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets"),
         PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
         COLLECTOR_LOG_DATA_DIR("rinfo.main.collector.logDataDir");
@@ -152,17 +153,11 @@ public class Components {
     }
 
     private StorageHandler createEntryRdfValidatorHandler() {
-        /* TODO: new URIMinter (takes less conf params.., data from depot..)
-        def baseDir = config.getString("rinfo.main.baseDir")
-        def repo = RDFUtil.slurpRdf(baseDir+"/datasets/containers.n3")
-        def minterDir = baseDir+"/uri_algorithm"
-        def uriMinter = new URIMinter(repo,
-                minterDir+"/collect-uri-data.rq",
-                minterDir+"/create-uri.xslt")
         URI containerEntryId = new URI(config.getString(
-                ConfigKey.CONTAINER_DESCRIPTION_ENTRY_ID.toString()))
-        return new EntryRdfValidatorHandler(uriMinter, containerEntryId)
-        */
+                ConfigKey.URIMINTER_DESCRIPTION_ENTRY_ID.toString()))
+        String checkedBasePath = config.getString(
+                ConfigKey.URIMINTER_CHECKED_BASE_PATH.toString())
+        return new EntryRdfValidatorHandler(containerEntryId, checkedBasePath)
     }
 
 }

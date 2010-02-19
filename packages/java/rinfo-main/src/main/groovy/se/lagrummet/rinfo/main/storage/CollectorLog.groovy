@@ -6,11 +6,7 @@ import org.openrdf.repository.Repository
 import org.openrdf.elmo.ElmoModule
 import org.openrdf.elmo.sesame.SesameManagerFactory
 
-import se.lagrummet.rinfo.main.storage.log.CollectEvent
-import se.lagrummet.rinfo.main.storage.log.FeedEvent
-import se.lagrummet.rinfo.main.storage.log.EntryEvent
-import se.lagrummet.rinfo.main.storage.log.DeletedEntryEvent
-import se.lagrummet.rinfo.main.storage.log.ErrorEvent
+import se.lagrummet.rinfo.main.storage.log.*
 
 
 class CollectorLog {
@@ -32,6 +28,8 @@ class CollectorLog {
         module.addConcept(EntryEvent)
         module.addConcept(DeletedEntryEvent)
         module.addConcept(ErrorEvent)
+        module.addConcept(ChecksumErrorEvent)
+        module.addConcept(IdentifyerErrorEvent)
     }
 
     CollectorLog() { }

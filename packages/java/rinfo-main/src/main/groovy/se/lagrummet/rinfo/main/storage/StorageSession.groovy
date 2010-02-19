@@ -122,7 +122,7 @@ class StorageSession {
                 - source errors (report and log):
                     javax.net.ssl.SSLPeerUnverifiedException
                     MissingRdfContentException
-                    URIComputationException
+                    IdentifyerMismatchException
                     DuplicateDepotEntryException
                     SourceCheckException (from SourceContent#writeTo), ...
 

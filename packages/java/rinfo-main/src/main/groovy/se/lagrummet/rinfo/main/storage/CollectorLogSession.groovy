@@ -21,13 +21,12 @@ import org.openrdf.repository.RepositoryConnection
 import org.openrdf.elmo.ElmoManager
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
-import se.lagrummet.rinfo.store.depot.DepotEntry
 
-import se.lagrummet.rinfo.main.storage.log.CollectEvent
-import se.lagrummet.rinfo.main.storage.log.FeedEvent
-import se.lagrummet.rinfo.main.storage.log.EntryEvent
-import se.lagrummet.rinfo.main.storage.log.DeletedEntryEvent
-import se.lagrummet.rinfo.main.storage.log.ErrorEvent
+import se.lagrummet.rinfo.store.depot.DepotEntry
+import se.lagrummet.rinfo.store.depot.SourceContent
+import se.lagrummet.rinfo.store.depot.SourceCheckException
+
+import se.lagrummet.rinfo.main.storage.log.*
 
 
 /**
@@ -51,7 +50,8 @@ class CollectorLogSession {
         this.entryIsPartOfRdfUri = new URIImpl(collectorLog.getEntryDatasetUri())
         this.manager = manager
         def collectStartTime = new Date()
-        collectEvent = manager.create(createCollectUri(), CollectEvent)
+        collectEvent = manager.create(
+                createCollectUri(collectStartTime), CollectEvent)
         collectEvent.setStart(createXmlGrCal(collectStartTime))
     }
 
@@ -105,12 +105,32 @@ class CollectorLogSession {
 
     void logError(Exception error, Date timestamp,
             Feed sourceFeed, Entry sourceEntry) {
-        def errorEvent = manager.create(ErrorEvent)
+        ErrorEvent errorEvent = null
+        if (error instanceof SourceCheckException) {
+            if (error.failedCheck == SourceContent.Check.MD5) {
+                errorEvent = manager.create(ChecksumErrorEvent)
+                // FIXME: now, we need to handle checks per source
+                // in *collector*, not in SourceContent
+                def src = error.sourceContent
+                def documentInfo = "type=${src.mediaType};lang=${src.lang};slug=${src.enclosedUriPath}"
+                errorEvent.setDocument(documentInfo)
+                errorEvent.setGivenMd5(error.givenValue)
+                errorEvent.setComputedMd5(error.realValue)
+            }
+            // TODO: length
+        } else if (error instanceof IdentifyerMismatchException) {
+            errorEvent = manager.create(IdentifyerErrorEvent)
+            // TODO: get given and computed
+            errorEvent.setGivenUri(error.givenUri)
+            errorEvent.setComputedUri(error.computedUri)
+        }
+        if (errorEvent == null) {
+            errorEvent = manager.create(ErrorEvent)
+            errorEvent.setValue(error.getMessage())
+        }
         errorEvent.setAt(createXmlGrCal(new Date()))
         def sourceEntryEvent = createSourceEntryEvent(sourceEntry)
         errorEvent.setViaEntry(sourceEntryEvent)
-        // TODO: spec what and how to record errors
-        errorEvent.setValue(error.getMessage())
     }
 
     private EntryEvent createSourceEntryEvent(sourceEntry) {
@@ -146,13 +166,13 @@ class CollectorLogSession {
     // TODO: (optional) save *each* log method RDF to file
     // - requires init to make a dir for current collect
     void completeLogEvent() {
+        collectEvent.setEnd(createXmlGrCal(new Date()))
         /*
         def repo = manager.repository
         def conn = repo.connection
         def ns = conn.&setNamespace
         ns("xsd", "http://www.w3.org/2001/XMLSchema#")
         ns("dct", "http://purl.org/dc/terms/")
-        ns("sioc", "http://rdfs.org/sioc/ns#")
         ns("awol", "http://bblfish.net/work/atom-owl/2006-06-06/#")
         ns("iana", "http://www.iana.org/assignments/relation/")
         ns("tl", "http://purl.org/NET/c4dm/timeline.owl#")
