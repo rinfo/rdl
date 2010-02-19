@@ -108,10 +108,7 @@ class StorageSession {
             setViaEntry(depotEntry, sourceFeed, sourceEntry)
 
             for (StorageHandler handler : storageHandlers) {
-                if (doCreate)
-                    handler.onCreate(this, depotEntry)
-                else
-                    handler.onUpdate(this, depotEntry)
+                handler.onModified(this, depotEntry, doCreate)
             }
 
             logSession.logUpdatedEntry(sourceFeed, sourceEntry, depotEntry)

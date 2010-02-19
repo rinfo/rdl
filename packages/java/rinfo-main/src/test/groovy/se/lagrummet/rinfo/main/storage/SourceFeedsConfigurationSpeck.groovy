@@ -24,7 +24,7 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
                 Mock(Depot), [], Mock(CollectorLog))
 
         when: "an entry with expected id is created"
-        sourceFeedsConfigHandler.onCreate(session, mockSourcesEntry())
+        sourceFeedsConfigHandler.onModified(session, mockSourcesEntry(), true)
 
         then: "the collect scheduler gets source feeds from the entry data"
         collectScheduler.sourceFeedUrls == sourceFeedUrls
@@ -38,7 +38,7 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
                 Mock(Depot), [], Mock(CollectorLog))
 
         when: "an entry with expected id is created"
-        sourceFeedsConfigHandler.onCreate(session, mockSourcesEntry())
+        sourceFeedsConfigHandler.onModified(session, mockSourcesEntry(), true)
 
         then: "config handler fails on non-admin credentials"
         thrown(Exception) // TODO: NotAllowedException..

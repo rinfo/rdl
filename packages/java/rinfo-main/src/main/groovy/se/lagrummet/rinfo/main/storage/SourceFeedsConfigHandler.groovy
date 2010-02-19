@@ -11,7 +11,7 @@ import se.lagrummet.rinfo.base.rdf.sparqltree.SparqlTree
 import se.lagrummet.rinfo.store.depot.DepotEntry
 
 
-class SourceFeedsConfigHandler extends AbstractStorageHandler {
+class SourceFeedsConfigHandler implements StorageHandler {
 
     private final Logger logger = LoggerFactory.getLogger(SourceFeedsConfigHandler)
 
@@ -31,11 +31,11 @@ class SourceFeedsConfigHandler extends AbstractStorageHandler {
         DepotEntry depotEntry = storageSession.getDepot().getEntry(
                 configurationEntryId)
         if (depotEntry != null) {
-            onEntry(storageSession, depotEntry, false)
+            onModified(storageSession, depotEntry, false)
         }
     }
 
-    void onEntry(StorageSession storageSession, DepotEntry depotEntry,
+    void onModified(StorageSession storageSession, DepotEntry depotEntry,
             boolean created) throws Exception {
         if (!isConfigurationEntry(depotEntry)) {
             return

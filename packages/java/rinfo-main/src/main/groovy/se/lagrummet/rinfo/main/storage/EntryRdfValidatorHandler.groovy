@@ -8,7 +8,7 @@ import se.lagrummet.rinfo.base.URIMinter
 import se.lagrummet.rinfo.base.URIComputationException
 
 
-class EntryRdfValidatorHandler extends AbstractStorageHandler {
+class EntryRdfValidatorHandler implements StorageHandler {
 
     URIMinter uriMinter
     URI containerEntryId
@@ -21,11 +21,11 @@ class EntryRdfValidatorHandler extends AbstractStorageHandler {
     void onStartup(StorageSession storageSession) throws Exception {
         DepotEntry depotEntry = storageSession.getDepot().getEntry(containerEntryId)
         if (depotEntry != null) {
-            onEntry(storageSession, depotEntry, false)
+            onModified(storageSession, depotEntry, false)
         }
     }
 
-    void onEntry(StorageSession storageSession, DepotEntry depotEntry,
+    void onModified(StorageSession storageSession, DepotEntry depotEntry,
             boolean created) throws Exception {
         if (depotEntry.getId().equals(containerEntryId)) {
             loadContainerData(depotEntry)

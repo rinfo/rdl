@@ -110,7 +110,7 @@ class StorageSessionSpeck {
         session.endPage()
 
         then:
-        1 * handler.onCreate(session, depotEntry)
+        1 * handler.onModified(session, depotEntry, true)
 
         and: "the write is logged"
         session.hasCollected(sourceEntry) == true
@@ -146,7 +146,7 @@ class StorageSessionSpeck {
         session.endPage()
 
         then:
-        1 * handler.onUpdate(session, depotEntry)
+        1 * handler.onModified(session, depotEntry, false)
 
         and: "the write is logged"
         // TODO: log in .. eventRegistry?
