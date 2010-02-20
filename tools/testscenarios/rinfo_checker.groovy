@@ -21,6 +21,7 @@ Needs: we need collected(depot) + collect&error-log?
       - one entry for each collected page:
           - first entry also RDF for "triggered collect"?
           - feed gets RDF uri by (feedsource?+)url+updated
+          - add each entry collect rdf as enclosure to entry?
 
 View data:
  - checkLog.pages*.items*.errors -> html

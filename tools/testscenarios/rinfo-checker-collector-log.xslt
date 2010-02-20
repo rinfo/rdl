@@ -6,7 +6,11 @@
                 xmlns:awol="http://bblfish.net/work/atom-owl/2006-06-06/#"
                 xmlns:tl="http://purl.org/NET/c4dm/timeline.owl#"
                 xmlns:rc="http://rinfo.lagrummet.se/ns/2008/10/collector#"
-                xmlns="http://www.w3.org/1999/xhtml">
+                xmlns="http://www.w3.org/1999/xhtml"
+                extension-element-prefixes="date"
+                xmlns:date="http://exslt.org/dates-and-times">
+
+  <xsl:param name="mediabase"/>
 
   <xsl:key name="rel" match="/graph/resource" use="@uri"/>
   <xsl:variable name="r" select="/graph/resource"/>
@@ -15,62 +19,122 @@
     <xsl:template match="/graph">
         <html>
             <head>
-                <title></title>
-                <link rel="stylesheet" type="text/css" href="" />
+                <title>RInfo Checker: insamlingskontroll</title>
+                <link rel="stylesheet" type="text/css" href="{$mediabase}/rinfo-checker-collector-log.css" />
+                <style type="text/css">
+                </style>
             </head>
             <body>
+              <h1>RInfo Checker: insamlingskontroll</h1>
                 <xsl:apply-templates select="resource[a/rc:Collect]"/>
             </body>
         </html>
     </xsl:template>
 
     <xsl:template match="*[a/rc:Collect]">
-      <h1>Insamlingslogg</h1>
-      <dl>
-        <dt>Start:</dt>
-        <dd><xsl:apply-templates select="tl:start"/></dd>
-        <dt>Stopp:</dt>
-        <dd><xsl:apply-templates select="tl:end"/></dd>
-      </dl>
-      <xsl:for-each select="iana:via">
-        <xsl:apply-templates select="key('rel', ./@ref)"/>
-      </xsl:for-each>
+      <div class="collect">
+        <h2>Utförd insamling</h2>
+        <dl class="summary">
+          <dt>Start:</dt>
+          <dd><xsl:apply-templates select="tl:start"/></dd>
+          <dt>Stopp:</dt>
+          <dd><xsl:apply-templates select="tl:end"/></dd>
+          <dt>Tid:</dt>
+          <dd>
+            <xsl:variable name="dur" select="date:difference(tl:start, tl:end)"/>
+            <xsl:variable name="hours"
+                          select="substring-before(substring-after($dur, 'P'), 'T')"/>
+            <xsl:if test="$hours">
+              <xsl:value-of select="$hours"/>
+              <xsl:text>timmar </xsl:text>
+            </xsl:if>
+            <xsl:value-of select="substring-before(substring-after($dur, 'T'), 'M')"/>
+            <xsl:text> min </xsl:text>
+            <xsl:variable name="fullsecs"
+                          select="substring-before(substring-after($dur, 'M'), 'S')"/>
+            <xsl:value-of select="substring-before($fullsecs, '.')"/>
+            <xsl:text> s</xsl:text>
+          </dd>
+        </dl>
+        <xsl:for-each select="iana:via">
+          <xsl:apply-templates select="key('rel', ./@ref)"/>
+        </xsl:for-each>
+      </div>
     </xsl:template>
 
     <xsl:template match="*[a/awol:Feed]">
-      <div>
-        <h2>Källa</h2>
-        <dl>
+      <xsl:variable name="collected" select="//*[a/awol:Entry and awol:source/@ref = current()/@uri]"/>
+      <div class="source">
+        <h3>Feed-källa</h3>
+        <dl class="summary">
           <dt>Identifierare:</dt>
-          <dd><xsl:value-of select="awol:id"/></dd>
+          <dd><xsl:apply-templates select="awol:id"/></dd>
           <dt>Feed-sidans URI:</dt>
-          <dd><xsl:value-of select="iana:self/@ref"/></dd>
+          <dd><xsl:apply-templates select="iana:self/@ref"/></dd>
           <dt>Uppdaterad:</dt>
           <dd><xsl:apply-templates select="awol:updated"/></dd>
+          <dt>Antal poster:</dt>
+          <dd><xsl:value-of select="count($collected)"/></dd>
         </dl>
+        <h4>Poster</h4>
         <table>
           <tr>
+            <th class="position">#</th>
             <th>Tidpunkt</th>
-            <th>Typ</th>
-            <th>Objekt</th>
-            <th>Givet värde</th>
-            <th>Beräknat värde</th>
+            <th>Status</th>
+            <th>ID</th>
+            <th>Information</th>
           </tr>
-          <xsl:for-each select="//*[a/awol:Entry and awol:source/@ref = current()/@uri]">
-            <xsl:apply-templates select="parent::resource" mode="trow"/>
+          <xsl:variable name="size" select="count($collected)"/>
+          <xsl:for-each select="$collected">
+            <xsl:sort select="awol:updated | tl:at" order="descending"/>
+            <xsl:apply-templates select="parent::resource" mode="trow">
+              <xsl:with-param name="pos" select="$size + 1 - position()"/>
+            </xsl:apply-templates>
           </xsl:for-each>
         </table>
       </div>
     </xsl:template>
 
-    <xsl:template match="*[a/rc:ChecksumError]" mode="trow">
-      <tr class="error">
-        <td><xsl:apply-templates select="tl:at"/></td>
-        <td>Fel MD5-summa</td>
-        <td><xsl:value-of select="rc:document"/></td>
-        <td><xsl:value-of select="rc:givenMd5"/></td>
-        <td><xsl:value-of select="rc:computedMd5"/></td>
+    <xsl:template match="*[a/awol:Entry]" mode="trow">
+      <xsl:param name="pos"/>
+      <tr class="entry">
+        <td class="position"><xsl:value-of select="$pos"/></td>
+        <td><xsl:apply-templates select="awol:updated"/></td>
+        <td class="status">OK</td>
+        <td><xsl:apply-templates select="rx:primarySubject/@ref"/></td>
+        <td></td>
       </tr>
+    </xsl:template>
+
+    <xsl:template match="*[a/rc:ChecksumError]" mode="trow">
+      <xsl:param name="pos"/>
+      <tr class="error">
+        <td class="position"><xsl:value-of select="$pos"/></td>
+        <td><xsl:apply-templates select="tl:at"/></td>
+        <td class="status">Fel MD5-summa</td>
+        <td><xsl:apply-templates select="iana:via/awol:id"/></td>
+        <td>
+          <dl class="lone">
+            <dt>Dokument:</dt>
+            <dd><xsl:value-of select="rc:document"/></dd>
+            <dt>Angiven MD5:</dt>
+            <dd><xsl:value-of select="rc:givenMd5"/></dd>
+            <dt>Beräknad MD5:</dt>
+            <dd><xsl:value-of select="rc:computedMd5"/></dd>
+          </dl>
+        </td>
+      </tr>
+    </xsl:template>
+
+    <xsl:template match="@ref | xsd:anyURI">
+      <code><xsl:value-of select="."/></code>
+    </xsl:template>
+
+    <xsl:template match="xsd:dateTime">
+      <xsl:value-of select="substring-before(., 'T')"/>
+      <xsl:text> </xsl:text>
+      <xsl:value-of select="substring-after(., 'T')"/>
     </xsl:template>
 
 </xsl:stylesheet>

@@ -1,0 +1,110 @@
+
+body {
+    font-family: helvetica, verdana, arial, sans-serif;
+    font-size: 9pt;
+    padding: 0 40pt 0 40pt;
+    background: -webkit-gradient(linear, left top, right top, from(#fff), to(#ddd));
+    background: -moz-linear-gradient(left, #fff, #ddd);
+
+}
+
+h1 {
+    font-size: 18pt;
+    margin: 12pt 0 6pt;
+}
+h2 {
+    font-size: 16pt;
+    margin: 8pt 0 6pt;
+}
+h3 {
+    font-size: 14pt;
+    margin: 8pt 0 6pt;
+}
+h4 {
+    font-size: 12pt;
+    margin: 8pt 0 6pt;
+}
+
+
+dl, dt, dd {
+    margin: 0;
+    padding: 0;
+    display: block;
+    list-style: none;
+}
+
+dl {
+    margin: 0 0 1em 0;
+    overflow: hidden;
+    zoom: 1;
+}
+
+dl.lone {
+    margin: 0;
+}
+
+dl.summary {
+    background-color: #eee;
+    border: solid 0.8pt #000000;
+    padding: 4pt;
+    width: 36em;
+    -moz-border-radius: 4pt;
+    -webkit-border-radius: 4pt;
+}
+
+dt {
+    clear: left;
+    float: left;
+    font-weight: bold;
+}
+
+dd {
+    float: left;
+    margin-left: 0.4em;
+}
+
+table {
+    background-color: #eee;
+    border: solid 0.8pt #000000;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table th {
+    padding: 0.1em 0.3em 0.1em 0.4em;
+    text-align: left;
+    font-weight: bold;
+}
+
+table td {
+    padding: 0.1em 0.3em;
+    vertical-align: top;
+    border: solid 0.8pt #000000;
+}
+
+th.position,
+td.position {
+    background-color: #eee;
+    font-style: italic;
+    text-align: center;
+}
+td.position {
+    text-align: right;
+}
+
+.entry {
+    background-color: #afa;
+}
+
+.error {
+    background-color: #f66;
+}
+
+.status {
+    font-weight: bold;
+}
+
+.error .status {
+    font-style: italic;
+}
+
