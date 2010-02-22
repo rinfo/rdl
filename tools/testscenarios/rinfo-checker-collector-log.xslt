@@ -8,12 +8,15 @@
                 xmlns:rc="http://rinfo.lagrummet.se/ns/2008/10/collector#"
                 xmlns="http://www.w3.org/1999/xhtml"
                 extension-element-prefixes="date"
-                xmlns:date="http://exslt.org/dates-and-times">
+                xmlns:date="http://exslt.org/dates-and-times"
+                exclude-result-prefixes="xsd dct iana rx awol tl rc">
 
   <xsl:param name="mediabase"/>
 
   <xsl:key name="rel" match="/graph/resource" use="@uri"/>
   <xsl:variable name="r" select="/graph/resource"/>
+
+  <xsl:output method="html" indent="yes" encoding="utf-8"/>
 
 
     <xsl:template match="/graph">
@@ -64,6 +67,7 @@
 
     <xsl:template match="*[a/awol:Feed]">
       <xsl:variable name="collected" select="//*[a/awol:Entry and awol:source/@ref = current()/@uri]"/>
+      <xsl:variable name="collect-count" select="count($collected)"/>
       <div class="source">
         <h3>Feed-källa</h3>
         <dl class="summary">
@@ -74,22 +78,29 @@
           <dt>Uppdaterad:</dt>
           <dd><xsl:apply-templates select="awol:updated"/></dd>
           <dt>Antal poster:</dt>
-          <dd><xsl:value-of select="count($collected)"/></dd>
+          <dd><xsl:value-of select="$collect-count"/></dd>
+          <xsl:variable name="sucess-count"
+                        select="count($collected/parent::resource[a/awol:Entry])"/>
+          <xsl:if test="$collect-count != $sucess-count">
+            <dt class="error">Antal fel:</dt>
+            <dd class="error">
+              <xsl:value-of select="$collect-count - $sucess-count"/>
+            </dd>
+          </xsl:if>
         </dl>
         <h4>Poster</h4>
-        <table>
+        <table class="report">
           <tr>
             <th class="position">#</th>
-            <th>Tidpunkt</th>
-            <th>Status</th>
-            <th>ID</th>
-            <th>Information</th>
+            <th class="dateTime">Tidpunkt</th>
+            <th class="status">Status</th>
+            <th class="uri">ID</th>
+            <th class="info">Information</th>
           </tr>
-          <xsl:variable name="size" select="count($collected)"/>
           <xsl:for-each select="$collected">
             <xsl:sort select="awol:updated | tl:at" order="descending"/>
             <xsl:apply-templates select="parent::resource" mode="trow">
-              <xsl:with-param name="pos" select="$size + 1 - position()"/>
+              <xsl:with-param name="pos" select="$collect-count + 1 - position()"/>
             </xsl:apply-templates>
           </xsl:for-each>
         </table>

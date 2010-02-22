@@ -5,38 +5,39 @@ body {
     padding: 0 40pt 0 40pt;
     background: -webkit-gradient(linear, left top, right top, from(#fff), to(#ddd));
     background: -moz-linear-gradient(left, #fff, #ddd);
-
 }
 
 h1 {
     font-size: 18pt;
     margin: 12pt 0 6pt;
 }
+
 h2 {
     font-size: 16pt;
     margin: 8pt 0 6pt;
 }
+
 h3 {
     font-size: 14pt;
     margin: 8pt 0 6pt;
 }
+
 h4 {
     font-size: 12pt;
     margin: 8pt 0 6pt;
 }
-
 
 dl, dt, dd {
     margin: 0;
     padding: 0;
     display: block;
     list-style: none;
+    zoom: 1;
 }
 
 dl {
     margin: 0 0 1em 0;
     overflow: hidden;
-    zoom: 1;
 }
 
 dl.lone {
@@ -45,7 +46,7 @@ dl.lone {
 
 dl.summary {
     background-color: #eee;
-    border: solid 0.8pt #000000;
+    border: 0.8pt solid #000000;
     padding: 4pt;
     width: 36em;
     -moz-border-radius: 4pt;
@@ -61,6 +62,11 @@ dt {
 dd {
     float: left;
     margin-left: 0.4em;
+}
+
+dt.error,
+dd.error {
+    color: #f00;
 }
 
 table {
@@ -88,15 +94,24 @@ td.position {
     font-style: italic;
     text-align: center;
 }
+
 td.position {
     text-align: right;
 }
 
-.entry {
+th.dateTime {
+    width: 12.5em;
+}
+
+th.status {
+    width: 8em;
+}
+
+tr.entry {
     background-color: #afa;
 }
 
-.error {
+tr.error {
     background-color: #f66;
 }
 
