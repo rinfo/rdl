@@ -4,41 +4,35 @@
 Goals:
  - based on collector code in rinfo-main
  - services:
-   - check feed-uri: run (partial?) collect (one page: follow no archive?)
-   - rdf-uri: run handlers.. or feed-uri + "just entry X"?
-   - feed-*source*: attrs per entry (not in collector? add-hoc "validate"?)
+   - check feed by url: run (partial?) collect (one page: follow no archive?)
+   - check rdf by url: run handlers.. or feed-uri + "just entry X"?
+   - check feed *source* (body)): attrs per entry (not in collector? add-hoc "validate"?)
 
-Needs: we need collected(depot) + collect&error-log?
+Suggested changes in rinfo-main,-depot,-collector:
 
- - make CollectorLog an interface? At least add rich objects to log!
+ - make CollectorLog an interface? At least configurable..
    - this checker log needs both collected+collect+errors
    - "normal" skips collected (stored in main feed)
+     .. in that mode, we'd need to combine depot feed (as collect success log) + checkLog
 
- - log method:
-    - keep track of last collect in one feed
-      .. fh:complete? (lossy, no tombstones etc)
-      .. or pop off archives of at least failed?
-      - one entry for each collected page:
-          - first entry also RDF for "triggered collect"?
-          - feed gets RDF uri by (feedsource?+)url+updated
-          - add each entry collect rdf as enclosure to entry?
-
-View data:
- - checkLog.pages*.items*.errors -> html
-   .. logObjs+stringtemplate or repo+grit+xslt
-
-Change in rinfo-main,depot,collector:
-
-- FeedCollector#hasVisitedArchivePage: only current: true for anything else
- - use StorageSession (subclass?):
-  - dummyDepot(Backend)
-    - in-mem *Backend*? (if so, depotEntry.getMetaFile -> getMetaInputStream/-Out..?)
-    - or no depot? write to "/dev/null" to make datachecks? pdf:s? check some?
-  - override StorageSession#storeEntry: don't break on error: always return true
-  - def checkLog = new CheckDataCollectorLog
+ - FeedCollector#hasVisitedArchivePage: only current: true for anything else
+   - use StorageSession (subclass?):
+     - dummyDepot(Backend)
+       - in-mem *Backend*? (if so, depotEntry.getMetaFile -> getMetaInputStream/-Out..?)
+       - or no depot? write to "/dev/null" to make datachecks? pdf:s? check some?
+    - override StorageSession#storeEntry: don't break on error: always return true
+    - def checkLog = new CheckDataCollectorLog
 
 */
 @Grab('se.lagrummet.rinfo:rinfo-main:1.0-SNAPSHOT')
+
+import javax.xml.transform.OutputKeys
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.sax.SAXSource
+import javax.xml.transform.sax.SAXTransformerFactory
+import javax.xml.transform.stream.StreamResult
+import javax.xml.transform.stream.StreamSource
+import org.xml.sax.InputSource
 
 import org.apache.commons.io.FileUtils
 
@@ -162,49 +156,95 @@ class OneFeedCollector extends FeedCollector {
     }
 }
 
+class TransformerUtil {
+
+    static saxTf = (SAXTransformerFactory) TransformerFactory.newInstance()
+
+    static String toXhtml(inputStream, xslts) {
+        def filter = null
+        for (String xslt : xslts) {
+            def tplt = saxTf.newTemplates(new StreamSource(xslt))
+            def nextFilter = saxTf.newXMLFilter(tplt)
+            if (filter) nextFilter.setParent(filter)
+            filter = nextFilter
+        }
+        def transformSource = new SAXSource(filter, new InputSource(inputStream))
+        def htmlTransformer = saxTf.newTransformer()
+        [   (OutputKeys.METHOD): "xml",
+            (OutputKeys.OMIT_XML_DECLARATION): "yes",
+            (OutputKeys.DOCTYPE_PUBLIC): "-//W3C//DTD XHTML 1.0 Strict//EN",
+            (OutputKeys.DOCTYPE_SYSTEM): "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+        ].each htmlTransformer.&setOutputProperty
+        def strWriter = new StringWriter()
+        htmlTransformer.transform(transformSource, new StreamResult(strWriter))
+        return strWriter.toString()
+    }
+
+}
+
+
 class RInfoChecker extends Resource {
 
     RInfoChecker(Context context, Request request, Response response) {
         super(context, request, response)
         variants.add(new Variant(MediaType.TEXT_HTML))
+        // TODO: get config (xslts..) from context
     }
 
-    @Override
-    Representation represent(Variant variant) throws ResourceException {
-        return new StringRepresentation("""
+    static inputFormHtml = """
         <form method="POST">
             <fieldset>
                 <legend>
                     <label for="feedUrl">K&auml;lla (Atom-fl&ouml;de):</label>
                 </legend>
-                <input type="text" class="url" id="feedUrl" />
+                <p>
+                    <label for="feedUrl">URL</label>
+                    <input type="text" class="url" name="feedUrl" id="feedUrl"
+                        size="64" />
+                </p>
+                <p>
+                    <label for="feedUrl">Antal poster att unders&ouml;ka</label>
+                    <input type="text" name="maxEntries" id="maxEntries"
+                        size="3" value="10" />
+                </p>
+                <p>
+                    <input type="submit" value="Check" />
+                </p>
             </fieldset>
         </form>
-        """, MediaType.TEXT_HTML)
+        """
+
+    @Override
+    Representation represent(Variant variant) throws ResourceException {
+        return new StringRepresentation(inputFormHtml, MediaType.TEXT_HTML)
     }
 
-    @Override boolean allowPost() { true }
-    @Override void handlePost() {
-        String feedUrl = request.getEntityAsForm().getFirstValue("feedUrl")
-        def feedChecker = new FeedChecker()
+    @Override boolean allowPost() { return true }
+
+    @Override
+    void handlePost() {
+        def form = request.getEntityAsForm()
+        String feedUrl = form.getFirstValue("feedUrl")
+        String maxEntriesStr = form.getFirstValue("maxEntries")
+        int maxEntries = maxEntriesStr ? Integer.parseInt(maxEntriesStr) : -1
+
+        // TODO: see cmdLine feedChecker (with uriMinterHandler)
+        def feedChecker = new FeedChecker(maxEntries:maxEntries)
         try {
             def logRepo = feedChecker.checkFeed(feedUrl)
-            def ins = RDFUtil.toInputStream(repo, "application/rdf+xml", true)
-            response.setEntity(new InputRepresentation(ins), MediaType.TEXT_XML)
+            def ins = RDFUtil.toInputStream(logRepo, "application/rdf+xml", true)
+            //response.setEntity(new InputRepresentation(ins, MediaType.TEXT_XML))
+            // TODO: pass prepared templates objects instead (and e.g. mediabase param)
+            def html = TransformerUtil.toXhtml(ins,
+                    ["../../resources/external/xslt/rdfxml-grit.xslt",
+                        "rinfo-checker-collector-log.xslt"]
+                )
+            response.setEntity(new StringRepresentation(html, MediaType.TEXT_HTML))
         } finally {
             feedChecker.shutdown()
         }
-        //response.setEntity("""
-        //<p>K&auml;lla: <code class="url">${feedUrl}</code>
-        //</p>
-        //<div id="results">
-        //    <div class="feed">
-        //    </div>
-        //    <div class="entry">
-        //    </div>
-        //</div>
-        //""", MediaType.TEXT_HTML)
     }
+
 
 }
 

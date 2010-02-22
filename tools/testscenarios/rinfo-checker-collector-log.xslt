@@ -11,7 +11,7 @@
                 xmlns:date="http://exslt.org/dates-and-times"
                 exclude-result-prefixes="xsd dct iana rx awol tl rc">
 
-  <xsl:param name="mediabase"/>
+  <xsl:param name="mediabase" select="'.'"/>
 
   <xsl:key name="rel" match="/graph/resource" use="@uri"/>
   <xsl:variable name="r" select="/graph/resource"/>
@@ -24,8 +24,6 @@
             <head>
                 <title>RInfo Checker: insamlingskontroll</title>
                 <link rel="stylesheet" type="text/css" href="{$mediabase}/rinfo-checker-collector-log.css" />
-                <style type="text/css">
-                </style>
             </head>
             <body>
               <h1>RInfo Checker: insamlingskontroll</h1>
@@ -42,6 +40,7 @@
           <dd><xsl:apply-templates select="tl:start"/></dd>
           <dt>Stopp:</dt>
           <dd><xsl:apply-templates select="tl:end"/></dd>
+          <!-- TODO: Xalan doesn't support date:difference !
           <dt>Tid:</dt>
           <dd>
             <xsl:variable name="dur" select="date:difference(tl:start, tl:end)"/>
@@ -58,6 +57,7 @@
             <xsl:value-of select="substring-before($fullsecs, '.')"/>
             <xsl:text> s</xsl:text>
           </dd>
+          -->
         </dl>
         <xsl:for-each select="iana:via">
           <xsl:apply-templates select="key('rel', ./@ref)"/>
