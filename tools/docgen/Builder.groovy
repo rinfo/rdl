@@ -32,6 +32,7 @@ class Builder {
     static DEFAULT_RENDER_PATTERNS = [
             "index.xhtml",
             "handbok/**.xhtml",
+            "introduktion/**.xhtml",
             "system/**.xhtml"
         ]
 

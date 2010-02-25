@@ -1,0 +1,865 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xml" href="../templates/dv-intro.xslt"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>
+      Introduktion till rättsinformationssystemet för implementatörer
+      och tekniskt ansvariga
+    </title>
+  </head>
+  <body>
+    <h1>Introduktion till rättsinformationssystemet</h1>
+    <h2>För implementatörer och tekniskt ansvariga</h2>
+    <p>
+      Denna text förklarar vad rättsinformationssystemet är, dess
+      relation till lagrummet.se och de existerande myndighetssidorna
+      med rättsinformation, samt vad rättsinformationsprojektet
+      innebär för dessa myndigheter. Det vänder sig till dig som är
+      teknisk projektledare eller i övrigt ansvarig för tekniken för
+      publicering av rättsinformationen på din myndighet.
+    </p>
+    <p>
+      Om du har några frågor med anledning av detta dokument eller
+      angående rättsinformationsprojektet i stort, kontakta gärna
+      projektledare Staffan Malmgren på staffan.malmgren@dom.se.
+    </p>
+
+    <h2>Bakgrund</h2>
+    <p>
+      Med rättsinformation menas här författningar, vägledande
+      domstols- och myndighetsavgöranden, förarbeten och andra
+      rättskällor. För övriga begrepp och hur de används i detta
+      dokument hänvisas till ordlistan i slutet av detta dokument.
+    </p>
+    <!--
+	fyll på med lite mer om det befintliga systemet, motiven bakom
+      projektets, och vilket arbete som skett upp till nu
+      -->
+
+    <h2>Teknik- och standardval</h2>
+    <p>
+      För att stödja denna process har rättsinformationsprojektet valt
+      ett antal standarder för märkning, strukturering och
+      möjliggörande av sökning. I arbetet med dessa har stor vikt
+      lagts vid att välja standarder som är lätta att implementera
+      till en låg kostnad.
+    </p>
+    <p>
+      En annan viktig funktion är att innehållet i dokumenten i sig
+      skall kunna läsas av så många som möjligt. Därför har vi valt
+      format som fungerar för användare med särskilda behov.
+    </p>
+
+    <h3>Atom som postförteckning</h3>
+    <p>
+      För att möjliggöra olika typer av sammanställningar och
+      sökningar i materialet behöver rättsinformationssystemet känna
+      alla informationsposter. Detta sker genom att
+      rättsinformationssystemet samlar in det som
+      informationsansvariga organisationer publicerar på sina egna
+      webbplatser genom att läsa av en förteckning i ett
+      standardiserat format.
+      <!--
+	  Denna förteckning ger även möjlighet för
+	  andra, t.ex. företag som förädlar rättsinformation, att på ett
+	  standardiserat sätt läsa av förändringar över tid i en enskild
+	  myndighets samling av rättsinformation. Därmed möjliggörs en
+	  kortad tid från tillgängliggörandet till dess att
+	  rättsinformationen har nått olika mottagare.
+      -->
+    </p>
+    <p>
+      För strukturering av rättsinformationen ur ett
+      samlingsperspektiv (och för att möjliggöra sammanlänkning av
+      informationsansvariga organisationers databaser) används
+      standarden Atom Syndication Format ( <a href=
+      "http://tools.ietf.org/html/rfc4287">IETF RFC 4287</a>). Med
+      denna upprättas en postförteckning över den information en
+      deltagande organisation avser inkludera i
+      rättsinformationssystemet.  Denna postförteckning gör det
+      möjligt för konsumenter av informationen att få reda på
+      förändringar i samlingen över tid (t.ex. nytillkommet
+      material).
+    </p>
+
+    <p>
+      För myndigheter med stora mängder material (över 1000 dokument)
+      kan det vara lämpligt att inte ha hela postförteckningen i en
+      och samma Atom-fil. Istället kan man ha en Atom-fil för en varje
+      viss tidsperiod av en viss storlek (exempelvis ett år eller en
+      månad) och låta nuvarande (aktuell) postförteckning peka på
+      föregående periods postförteckning genom <code>&lt;link
+      rel="prev-archive" href="..."/&gt;</code>. Se vidare dokumentet
+      <em>Atom-insamling</em> och <a
+      href="http://tools.ietf.org/html/rfc5005">RFC 5005: Feed Paging
+      and Archiving</a>
+      
+    </p>
+    
+    <h3>URI:er som identifierare</h3>
+    <p>
+      En central funktion för rättsinformationssystemet är att
+      möjliggöra hänvisningar mellan dokument i form av
+      länkar. Exempel på sådana hänvisningar är den mellan en
+      författning och ett förarbete, mellan en föreskrift och de
+      dokument som utgör dess rättsliga grund samt mellan föreskrifter
+      från olika källor. För att dessa hänvisningar skall fungera
+      måste informationsposter ha entydiga unika elektroniska
+      identifierare. Därför har projektet utarbetat ett sätt att skapa
+      sådana i form av URI:er. En URI är en generaliserad form av en
+      vanlig webbaddress (URL) med den skillnaden att den enbart
+      identifierar en resurs, inte talar om hur man kan hämta den.
+    </p>
+    <p>
+      I exemplen nedan kommer du att hitta referenser som
+      börjar med <code>http://rinfo.lagrummet.se</code>. Dessa
+      identifierare tillhandahålls antingen i sin helhet av
+      rättsinformationsprojektet (t.ex. för identifierare för
+      myndigheter) eller så finns det en algoritm beskriven för hur de
+      skapas (t.ex. för föreskrifter). Se vidare <a
+      href="http://dev.lagrummet.se/dokumentation/system/uri-principer.pdf">URI-principer</a>.
+    </p>
+
+    <h3>Nivå 1 och 2</h3>
+    <p>
+      För märkning och strukturering av rättsinformation finns två
+      nivåer för publicering:
+    </p>
+    <ol>
+      <li>
+	Publicering av information i standarden PDF/A med tillhörande
+	entydigt definierad metadata utanför dokumentet i standarden
+	RDF, och
+      </li>
+      <li>
+	Publicering av information i XHTML i vilket metadata
+	inkluderats i dokumentet.
+      </li>
+    </ol>
+    <p>
+      Dessa kan användas ihop, eller var för sig beroende på
+      vilken typ av material det rör sig om. Det ger även
+      möjlighet för en myndighet att stegvis ansluta sig till
+      standardiserad publicering, först genom att göra mindre
+      justeringar för att publicera enligt nivå 1 och vid ett
+      senare tillfälle enligt nivå 2.
+    </p>
+    <p>
+      Sammantaget ger information i dessa format det stöd som
+      behövs för sökning, sammanställning och presentation på ett
+      enhetligt sätt.
+    </p>
+
+    <h3>RDF som metadatamodell </h3>
+    <p>
+      För att uttrycka metadata används, oberoende av vilken nivå som
+      valt, RDF-modellen. Denna är en generaliserad modell för att
+      beskriva resurser (som exempelvis dokument) genom att ange vilka
+      egenskaper de har. För att unikt identifiera resurser,
+      egenskapstyper och ofta även egenskaper används URI:er.
+    </p>
+    <p>
+      Denna modell är inte direkt knuten till någon syntax eller något
+      dataformat. Samma information kan uttryckas på flera olika
+      sätt. Ett av de vanligaste, och det som ska användas vid
+      publicering enligt Nivå 1, är <a
+      href="http://www.w3.org/TR/REC-rdf-syntax/">RDF/XML</a>. Ett
+      annat, som ska användas vid publicering enligt Nivå 2, är
+      RDFa. Det senare formatet är gjort för att kunna uttrycka
+      dokumentdata och -metadata i samma fil.
+    </p>
+    <p>
+      För en generell översyn över RDF,
+      se <a href="http://www.w3.org/TR/rdf-primer/">RDF Primer</a>.
+    </p>
+
+    <h3>PDF/A för "ogenomskinliga" dokument (Nivå 1)</h3>
+    <p>
+      Under överskådlig tid kommer själva texten i olika
+      rättsinformationsdokument att sakna semantisk struktur, dvs
+      information om dokumentets hierarkiska struktur, vad som är en
+      rubrik eller inledning på ett kapitel, att en viss textmängd ska
+      tolkas som en avgränsad paragraf, med mera. 
+    </p>
+    <p>
+      I brist på detta är PDF-dokument, vars utseende överenstämmer
+      med motsvarande tryckta dokument, ett bra
+      alternativ. PDF-dokument kan dock göras på många olika sätt, och
+      vissa är bättre än andra. PDF/A är en serie regler för hur
+      PDF-dokument ska skapas för att ha maximal lagringsbeständighet,
+      så att de kan läsas utan kompatibilitetsproblem under lång tid
+      framöver. Detta innefattar bland annat att undvika inbäddat
+      material (filmer, javascript, m.m.) och att inkludera alla
+      typsnitt som dokumentet använder sig av. Se mer under "Hur
+      skapar man dokument i PDF/A-formatet?"
+    </p>
+    <p>
+      För att kunna återanvända och länka dokument på nya sätt räcker
+      dock PDF inte till. Det formatet är anpassat efter att visa ett
+      antal sidor med full kontroll över all text, bild och hur dessa
+      är placerade på varje enskild sida. Men det är svårt eller
+      omöjligt att hänvisa till ett visst textavsnitt i en PDF, eller
+      att formattera texten olika beroende på sammanhang (på skärm
+      kanske man vill ha en bred teckenspalt, på en mobiltelefon en
+      smalare, och på papper kanske två spalter bredvid varandra).
+    </p>
+    <p>
+      Man kan därför betrakta PDF som ett "ogenomskinligt" format, som
+      inte möjliggör olika former av återanvändning.
+    </p>
+    <h3>XHTML 1.1+RDFa för strukturerade dokument (Nivå 2)</h3>
+    <p>
+      I ett strukturerat dokument kan exempelvis enskilda kapitel och
+      paragrafer ha egna identifierare. Dettta gör det möjligt att
+      skapa hänvisningar på en finkornigare nivå än bara mellan
+      dokument.
+    </p>
+    <p>
+      Dessa identifierare associeras med de textavsnitt som de
+      motsvarar. Detta gör det möjligt att visa bara en önskad del av
+      ett långt dokument.
+    </p>
+    <p>
+      Vi har valt att använda XHTML 1.1+RDFa. <a
+      href="http://www.w3.org/TR/xhtml1/">XHTML</a> är ett
+      väletablerat XML-baserat format med bra verktygsstöd för
+      generella typer av dokument. Det kan användas som basformat för
+      tryckta publikationer, antingen tillsammans med <a
+      href="http://www.w3.org/Style/CSS/current-work.html">CSS3</a>
+      (se särskilt <a href="http://www.w3.org/TR/css3-page/">Paged
+      Media</a> och <a
+      href="http://www.w3.org/TR/css3-gcpm/">Generated Content for
+      Paged Media</a>) eller <a
+      href="http://www.w3.org/TR/xsl/">XSL-FO</a> kan det användas som
+      basformat även för tryckta publikationer. <a
+      href="http://www.w3.org/TR/rdf-primer/">RDFa</a> är en utökning
+      som gör det möjligt att uttrycka metadata enligt RDF-modellen
+      direkt i själva dokumentet. En stor fördel med detta är att det
+      då bara finns en enda källa till informationen - texten och
+      metadatan hanteras inte på olika håll.
+    </p>
+    <p>
+      För mer information om hur dokument kan representeras i XHTML
+      1.1+RDFa, se avsnittet "Nivå 2" i slutet av detta dokument.
+    </p>
+
+
+    <h2>Systemarkitektur</h2>
+    <p>
+      Tillgängliggörande av rättsinformation sker enligt följande process:
+    </p>
+    <ol>
+      <li>
+	Informationsansvarig organisation utarbetar dokument A.
+	Sättet som rättsinformation framställs på omfattas inte
+	av rättsinformationssystemet.
+      </li>
+      <li>
+	Dokumentet publiceras. Denna process kan i sig delas upp i tre steg:
+	<ol>
+	  <li>
+	    Informationsansvarig organisation publicerar dokument A på den
+	    egna webbplatsen på en bestämd adress.
+	  </li>
+	  <li>
+	    Om nivå 1 används, och metadata alltså inte ingår i själva
+	    dokumentet, publiceras även ett separat dokument i
+	    RDF/XML-format som innehåller metadata.
+	  </li>
+	  <li>
+	    Informationsansvarig organisation uppdaterar
+	    postförteckning på den egna webbplatsen.
+	  </li>
+	</ol>
+      </li>
+      <li>
+	Rättsinformationssystemet läser av postförteckning och får
+	information om länkar till dokument A och metadata om
+	detta. Samtidigt kan även privata aktörer göra samma sak.
+      </li>
+      <li>
+	Rättsinformationssystemet läser in dokument A och metadata om
+	detta.
+      </li>
+      <li>
+	Rättsinformationssystemet tillhandahåller metadata och
+	dokument via tjänstegränssnitt.
+      </li>
+    </ol>
+
+    <h3>Översikt över de olika gränssnitten</h3>
+    <img src="../img/rinfo-oversikt.png" style="width:100%;" alt="Översikt över rättsinformationssystemet arkitektur"/>
+
+    <p>
+      Den centrala delen i rättsinformationssystemet kallas för
+      <b>rinfo-main</b>. Det är en webbapplikation vars främsta
+      uppgift är att med jämna mellanrum hämta information enligt från
+      alla myndigheter som publicerar rättsinfo.
+    </p>
+    <p>
+      (Den myndighet som vill se till att informationen hämtas in
+      omedelbart kommer att kunna "pinga" rinfo-main för att få
+      systemet att utföra en ny hämtning)
+    </p>
+    <p>
+      I samband med insamlingsprocessen sker viss validering av
+      informationen – att dokumenten faktiskt går att hämta, att dess
+      checksummor stämmer överens med vad som angetts i Atom-filen,
+      att RDF-filen är syntaktiskt korrekt, att de URI:er som använts
+      för varje dokument stämmer överens med all metadata som angetts
+      i RDF-filen, och liknande. När detta väl är gjort lagras data
+      (dokument i PDF-format) och metadata (RDF-filer) på disk.
+    </p>
+    <p>
+      Gränssnittet för att komma åt den information som finns lagrad i
+      rinfo-main är på samma form som insamlingen skett med, dvs ett
+      Atom-flöde som i sina entries hänvisar till PDF och RDF-filer
+      (men med sina nya addresser på rinfomain-servern). Skillnaden är
+      att detta Atom-flöde är ett aggregat, dvs det innehåller
+      samtliga dokument från samtliga medverkande myndigheter.
+    </p>
+    <p>
+      Detta gränssnitt är främst avsett för de som vill återanvända
+      all, eller åtminstone stora delar av, rättsinformationen. Det
+      finns ofta behov av mer finkorniga åtkomstmetoder än
+      detta. Därför konstrueras även en parallell tjänst, kallad
+      <b>rinfo-service</b>. Den har ett rikare gränssnitt där en användare
+      kan få tillgång till dokument och sammanställningar i olika
+      format (JSON, Atom och HTML) i ett REST-API, och även ställa
+      fullständiga SPARQL-frågor mot RDF-datat.
+    </p>
+    
+    <h2>De tre publiceringsstegen i detalj</h2>
+
+    <h3>Publicera dokument</h3>
+    <p>
+      Skapa nedladdningsbara filer för varje dokument som ni ska
+      publicera (föreskrift, dom, beslut eller liknande), i ett format
+      som återger utseendet på motsvarande tryckta dokument — i första
+      hand PDF/A. Publicera detta dokument på en bestämd address
+      (URL). Detta gör ni med största sannolikhet redan idag, men
+      rättsinformationssystemet ställer krav på att dennna address ska
+      vara en HTTPS-URL.
+    </p>
+    <p>
+      Eftersom informationen kommer att samlas in med automatik till
+      den centrala platsen måste rättsinformationssystemet kunna
+      lita på att informationen hämtas från rätt ställe (och att
+      exempelvis en tillfällig DNS-attack inte medför att
+      information från en illasinnad tredje part hämtas in i
+      systemet).
+    </p>
+    <p>
+      Ett certifikat som är signerat av någon av de etablerade
+      CA-organisationerna (certificate authorities) är att föredra
+      framför ett självsignerat certifikat.
+    </p>
+
+    <h3>Publicera metadata</h3>
+    <p>
+      Skapa metadata för varje dokument som anger saker som dess
+      titel, nummer (mål-, löp-, diarie- eller annat identifierande
+      nummer), datum, bemyndigandehänvisning, lagrumshänvisning, med
+      mera. Denna metadata uttrycks med RDF-standarden och den
+      begreppsmodell som projektet har tagit fram, och den sparas i en
+      separat fil som också görs tillgänglig på en annan bestämd URL.
+    </p>
+    <div class="syntax">
+      <code class="xml"><![CDATA[
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dct="http://purl.org/dc/terms/"
+         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
+         xml:lang="sv">
+  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2010:2">
+    <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/bfs" />
+    <fsNummer>2010:2</fsNummer>
+    <dct:title>Boverkets föreskrifter om ändring i verkets...</dct:title>
+    <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+    >2010-01-19</beslutsdatum>
+    <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+    >2010-01-30</ikrafttradandedatum>
+    <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+    >2010-01-25</utkomFranTryck>
+    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/boverket" />
+    <beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/boverket" />
+    <andrar rdf:resource="http://rinfo.lagrummet.se/publ/bfs/1993:58" />
+  </Myndighetsforeskrift>
+</rdf:RDF>
+      ]]></code>
+    </div>
+
+    <h3>Publicera postförteckning</h3>
+    <p>
+      Skapa en förteckning som för varje dokument anger addressen till
+      själva dokumentfilen, addressen tillmotsvarande metadatafil,
+      samt några övriga fält, i Atom-format:
+    </p>
+    <div class="syntax">
+      <code class="xml"><![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>tag:boverket.se,2009:rinfo:feed</id>
+  <title>Boverkets författningssamling</title>
+  <updated>2010-01-27T15:37:34Z</updated>
+  <author><email>registraturen@boverket.se</email></author>
+  <link href="https://rinfo.boverket.se/index.atom" rel="self"/>
+  <entry>
+    <id>http://rinfo.lagrummet.se/publ/bfs/1986:81</id>
+    <updated>2010-01-27T15:37:34Z</updated>
+    <published>2010-01-27T15:37:34Z</published>
+    <title>Boverkets föreskrifter om ändring i verkets...</title>
+    <summary>Informationsförfarande enligt...</summary>
+    <content type="application/pdf"
+    src="https://rinfo.boverket.se/tob/pdf/2010-2.pdf"/>
+    <link type="application/rdf+xml"
+    href="https://rinfo.boverket.se/tob/rdf/2010-2.xml"
+    rel="alternate"/>
+  </entry>
+  <entry>...</entry>
+  <entry>...</entry>
+</feed>
+      ]]></code>
+    </div>
+
+    <h2>Frågor och svar</h2>
+    
+    <h3>Hur skapar man dokument i PDF/A-formatet?</h3>
+    <p>
+      Det är troligt att din organisation hanterar material i
+      PDF-formatet redan idag. De flesta programvaror för att
+      skapa PDF-dokument har inställningsmöjligheter för att spara
+      dokumenten enligt ISO-standarden 19005-1:2005 (PDF/A). Se
+      över inställningarna i din programvara och säkerställ att du
+      angivit PDF/A.
+    </p>
+    <p>
+      Några tips:
+    </p>
+    <ol>
+      <li>
+	För att dokumenten skall fungera för personer som använder
+	hjälpmedel bör du se till att du använder rätt funktioner
+	i ordbehandlingsprogrammet för formatering. Det är troligt
+	att du redan gör det. För mer information om hur man
+	säkerställer detta i olika programvaror se <a
+	href="http://www.adobe.com/accessibility/products/acrobat/pdf/A9-accessible-pdf-from-word.pdf"
+	xml:lang="sv">Creating Accessible Adobe PDF Files: A Guide
+	for Document Authors (PDF)</a> och den <a href=
+	"http://www5.goteborg.se/prod/dalis2/dalis2mjh.nsf/81921c9652f3471ac1256a5c002ea985/003eff3e301973f6c125727d004e776d!OpenDocument">vägledning
+	Göteborgs stad</a> har tagit fram.
+      </li>
+      <li>
+	Undvik att publicera skannade dokument. Ett dokument som
+	består av skannade bilder av text är inte tillgängligt,
+	eftersom dokumentinnehållet är bilder och inte sökbar
+	text.  Hjälpmedel kan inte läsa eller extrahera orden,
+	användarna kan inte markera eller redigera texten. Dessa
+	blir oanvändbara för många personer med hjälpmedel och kan
+	inte användas av sökmotorer vilket gör dem svårare att
+	hitta.
+      </li>
+    </ol>
+
+    <h3>Hur hanteras allmänna råd?</h3>
+    <p>
+      I dagsläget omfattas inte allmänna råd av
+      rättsinformationssystemet, men det kan komma att ändras
+      framgent. För de föreskrifter där allmänna råd är varvade
+      med författningstext behöver ingen justering ske i
+      existerande dokument. Om rättsinformationsförordningen
+      utökas till att även omfatta allmänna råd kommer en ny
+      dokumenttyp och egenskaper för denna att skapas av
+      projektet.
+    </p>
+
+    <h3>Hur hanteras bilagor?</h3>
+    <p>
+      För bilagor behöver man endast ange information om titel och
+      koppling till föreskrift. Bilagor kan publiceras som en del
+      av av föreskriftsdokumentet eller i en separat fil.
+    </p>
+    <p>
+      I metadataposten beskrivs en bilaga på följande sätt:
+    </p>
+    <div class="syntax">
+      <code class="xml"><![CDATA[
+<bilaga rdf:parseType="Resource">
+  <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga_1">
+    <dct:title>Bilaga 1</dct:title>
+  </rdf:Description>
+</bilaga>
+      ]]></code>
+    </div>
+    <p>
+      I detta fall upprättas en identifierare för bilagan genom
+      att utgå från den identifierare som gäller för föreskriften
+      och lägger till "#bilaga_" och ett löpnummer:
+    </p>
+    <p>
+      <code>http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga_1</code>
+    </p>
+    <p>
+      För ett komplett exempel se <a
+      href="http://dev.lagrummet.se/dokumentation/handbok/handbok-forfattningar.pdf">handbok
+      för författningar</a>, Bilaga 8: Exempel på metadata i RDF med
+      information om bilaga (Livsmedelsverket LIVSFS 2006:22).
+    </p>
+    <p>
+      Om bilagan publiceras i en extern fil istället för som del
+      av föreskriftsdokumentet behöver även information anges
+      postförteckningen om var bilagan kan hämtas. Det anges med
+      ett link-element på följande sätt:
+    </p>
+    
+    <div class="syntax">
+      <code class="xml"><![CDATA[
+<link rel="enclosure" 
+      href="http://www.slv.se/upload/lagstiftning/2005-2006/2006_22bil1.pdf"
+      type="application/pdf"
+      dct:isFormatOf="http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga_1"
+      length="1168037"
+      le:md5="1115651b5e8380aff8d"/>        
+      ]]></code>
+    </div>
+    <p>
+      <code>dct:isFormatOf</code> kopplar identifieraren för bilagan
+      till filen.
+    </p>
+    <p>
+      Om bilagan är den del av föreskriftsdokumentet anges ingen
+      information i Atom Entry-posten.
+    </p>
+
+    <h3>Hur hanteras författningsreferenser?</h3>
+    <p>
+      Utöver grundläggande information om en föreskrift är det möjligt
+      att påföra ytterligare information i metadataposten. Ett exempel
+      kan vara mer generella författningsreferenser som förekommer i
+      löptext. Sådan information kan tydliggöra vilka författningar
+      och enskilda paragrafer som påverkas vid eventuella
+      ändringar. De kan också visa på med vilket bemyndigande en
+      myndighetsföreskrift utfärdats.
+    </p>
+    <p>
+      För denna typ av referenser används begreppet
+      <code>Forfattningsreferens</code>. Om föreskriften innehåller
+      texten "5 kap. 5 § skollagen (1985:1100)" skulle referensen se
+      ut på följande sätt:
+    </p>
+    <div class="syntax">
+      <code class="xml"><![CDATA[
+<Forfattningsreferens>
+  <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1985:1100"/>
+  <angerKapitelnummer>5</angerKapitelnummer>
+  <angerParagrafnummer>5</angerParagrafnummer>
+</Forfattningsreferens>
+      ]]></code>
+    </div>
+    <p>
+      I referensen pekas grundförfattningen ut med rätt
+      identifierare och begreppen angerKapitelnummer,
+      angerParagrafnummer och angerStyckenummer används för att
+      mer precist peka ut vad som avses. Observera att det är
+      möjligt att utesluta informationen utöver
+      grundförfattningsreferensen om man anser att det av olika
+      orsaker är komplicerat att läsa ut data ur det egna
+      materialet. I sin enklaste form ser referensen ut så här:
+    </p>
+    <div class="syntax">
+      <code class="xml"><![CDATA[
+<Forfattningsreferens>
+  <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1985:1100"/>
+</Forfattningsreferens>
+      ]]></code>
+    </div>
+
+    <h3>Hur hanteras ämnesord?</h3>
+    <p>
+      Flera myndigheter klassificerar rättsinformation med hjälp av
+      ämnesord.  Detta möjliggör olika typer av sammanställningar och
+      bidrar till bättre sökbarhet för den som letar efter
+      rättsinformation inom ett visst område.
+    </p>
+    <p>Projektet har definerat tre sätt att arbeta med ämnesord:</p>
+    <ol>
+      <li>
+	<em>Odefinierade ämnesord angivna i metadata för ett
+	dokument</em>
+	<p>
+	  Detta är den enklaste formen och innebär att ämnesord förs
+	  in i den metadatapost som beskriver ett dokument. Exempel på
+	  sådan post finns i <a
+	  href="http://dev.lagrummet.se/dokumentation/handbok/handbok-forfattningar.pdf">handbok
+	  för författningar</a>, Bilaga 7 (AFFS 2008:8). Nackdelen med
+	  detta sätt är att det inte går att härleda ämnesordet till
+	  en viss definition och det kan vara svårt att veta vad
+	  myndigheten avser med ämnesordet. Det blir därmed svårare
+	  att göra sammanställningar av poster från flera myndigheter
+	  och vara säker på att man menar samma sak.
+	</p>
+      </li>
+      <li>
+	<em>Ämnesord från egen förteckning i standardiserat format</em>
+	<p>
+	  Om man utgår från en ämnesordsförteckning där varje ämnesord
+	  beskrivs på ett strukturerat sätt ökar möjligheterna för
+	  andra att använda dem effektivt. Det råder då ingen
+	  osäkerhet om vad din organisation menar med ett specifikt
+	  ämnesord och ni bidrar då till att minska osäkerheten i
+	  tolkning av information. För att datorer skall kunna ta del
+	  av ämnesorden på ett strukturerat sätt rekommenderar
+	  projektet formatet Simple Knowledge Organization System
+	  (SKOS). Om din ämnesordsförteckning uttrycks i detta format
+	  och publiceras på webben kan andra ta del av och återanvända
+	  dessa ämnesord på ett enhetligt sätt. För ett exempel på en
+	  ämnesordsförteckning i SKOS se <a
+	  href="http://dev.lagrummet.se/dokumentation/handbok/handbok-forfattningar.pdf">handbok
+	  för författningar</a>, bilaga 10: Ämnesordsförteckning i
+	  SKOS. Även i detta fall anges referenser till ämnesord som
+	  del av metadata för en myndighetsföreskrift.
+	</p>
+      </li>
+      <li>
+	<em>Ämnesord från en delad ämnesordsförteckning i standardiserat format</em>
+	<p>
+	  Flest möjligheter att göra olika former av sammanställningar
+	  av rättsinformation från samtliga producenter erhålls om man
+	  utgår från en delad ämnesordsförteckning. Exempel på en
+	  delade ämnesordsförteckningar är <a
+	  href="http://europa.eu/eurovoc/">Eurovoc</a> som
+	  tillhandahålls av EU:s publikationsbyrå, och <a
+	  href="http://www.kb.se/katalogisering/Svenska-amnesord/om/">Svenska
+	  Ämnesord</a> som administreras av Kungl. Biblioteket. Även i
+	  detta fall gör man referenser till ämnesorden i metadata om
+	  ett dokument.
+	</p>
+      </li>
+    </ol>
+    <p>
+      Det går bra att kombinera dessa tre sätt i samma
+      metadatapost.
+    </p>
+
+    <h2>Hur man använder begreppsmodellen</h2>
+
+    <p>
+      Begreppsmodellen har ett avsnitt för varje dokumenttyp, som kan
+      läsas fristående (det är anledningen till att det är mycket
+      upprepningar mellan avsnitten). För varje dokumenttyp finns en
+      lista med egenskaper. Varje sådan egenskap presenteras med ett
+      namn, en beskrivning och en URI. Det är URI:n som identifierar
+      egenskapen -- både namnet och beskrivningen är bara hjälp att
+      förstå vad egenskapen betyder.
+    </p>
+    <p>
+      För att i en RDF-fil uttrycka att ett visst dokument är av typen
+      <code>Myndighetsforeskrift</code> använder man URIn
+      <code>http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#Myndighetsforeskrift</code>. Eftersom
+      detta är så långt och otympligt används vanligen <a
+      href="http://www.w3.org/TR/REC-xml-names/">XML
+      Namespaces</a>. Eftersom prefixet
+      <code>http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#</code> är
+      mest frekvent använt så brukar det vara default namespace.
+    </p>
+    <p>
+      Sammantaget ger detta att man, för att säga att ett dokument
+      med
+      URI <code>http://rinfo.lagrummet.se/publ/bfs/2007:14</code> är
+      av
+      typen <code>http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#Myndighetsforeskrift</code>, skriver följande:
+    </p>
+    <div class="syntax">
+      <code class="xml"><![CDATA[
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:14"/>
+</rdf:RDF>
+
+      ]]></code>
+    </div>
+    <p>
+      På liknande sätt uttrycker man egenskaper hos ett dokument,
+      expempelvis för att säga att dokumentet publicerats i
+      författningssamlingen
+      <code>http://rinfo.lagrummet.se/serie/fs/bfs</code> (alla
+      dokumentsamlingar som används har var sin unika URI) och att
+      det har författningssamlingsnummer "2007:14":
+    </p>
+    <div class="syntax">
+      <code class="xml"><![CDATA[
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:14"/>
+    <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/bfs"/>
+    <fsNummer>2007:14</fsNummer>        
+  </Myndighetsforeskrift>
+</rdf:RDF>
+      ]]></code>
+    </div>
+    <p>
+      Inte alla egenskaper har URI:er som inleds med
+      <code>http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#</code>. Modellen
+      återanvänder även vokabulären <a
+      href="http://dublincore.org/documents/dcmi-terms/#terms-title">DCMI
+      Metadata Terms</a> (allmänt kallad "Dublin Core"), vars
+      egenskaper inleds med
+      <code>http://purl.org/dc/terms/</code>. För att uttrycka att
+      ett dokument har en viss titel används en term ur denna
+      vokabulär, med namespaceprefix <code>dct</code>.
+    </p>
+    <p>Med <code>xml:lang</code>-attributet anges att denna egenskap
+    är uttryckt på svenska.</p>
+    <div class="syntax">
+      <code class="xml"><![CDATA[
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dct="http://purl.org/dc/terms/"
+         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:14">
+    <dct:title xml:lang="sv">Boverkets föreskrifter om ändring i
+      föreskrifterna och de allmänna råden (BFS 2007:4) om
+      energideklaration för byggnader;
+    </dct:title>
+  </Myndighetsforeskrift>
+</rdf:RDF>
+      ]]></code>
+    </div>
+
+    <p>
+      Slutligen kan vissa egenskaper hänvisa till anonyma resurser, så kallade blank nodes (BNodes). Ett exempel på det är bemyndigandehänvisningar. En bemyndigandehänvisning är en sådan annonym resurs (av typen Forfattningsreferens), dvs som saknar en URI, men ändå kan ha egna egenskaper. Exempel:
+    </p>
+    <div class="syntax">
+      <code class="xml"><![CDATA[
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dct="http://purl.org/dc/terms/"
+         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:4">
+    <bemyndigande>
+      <Forfattningsreferens>
+        <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:1592"/>
+        <angerParagrafnummer>5</angerParagrafnummer>
+      </Forfattningsreferens>
+    </bemyndigande>
+    <bemyndigande>
+      <Forfattningsreferens>
+        <angerGrundforfattning rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2006:1592"/>
+        <angerParagrafnummer>6</angerParagrafnummer>
+      </Forfattningsreferens>
+    </bemyndigande>
+  </Myndighetsforeskrift>
+</rdf:RDF>
+      ]]></code>
+    </div>
+    <p>
+      Utöver dessa egenskaper kan myndigheten välja att inkludera
+      information som är specifik för den egna verksamheten (t.ex.
+      ämnesklassificering mm). För mer information och exempel på
+      hur det går till, kontakta projektet.
+      <!-- kolla exv AMSFS som använder foaf:homepage -->
+    </p>
+    <p>
+      I kolumen "förekomst" nedan avser "noll eller flera" valfria
+      egenskaper.
+    </p>
+    <p>
+      För vidare information om hur man uttrycker RDF-data i
+      XML-syntax, se <a
+      href="http://www.w3.org/TR/REC-rdf-syntax/">RDF/XML Syntax
+      Specification (Revised)</a>.
+    </p>
+
+    <h2>Nivå 2</h2>
+    <p>
+      För publicering enligt Nivå 2 ska <a
+      href="http://www.w3.org/TR/rdfa-syntax/">XHTML 1.1+RDFa</a>
+      användas. Genom att använda nästlade
+      <code>&lt;div&gt;</code>-element kan ett dokuments hierarkiska
+      struktur representeras.
+    </p>
+    <p>
+      Metadata som gäller hela dokumentet kan uttryckas i
+      <code>&lt;head&gt;</code>-elementet i form av
+      <code>&lt;link&gt;</code> och <code>&lt;meta&gt;</code>-element
+      (för resursreferenser respektive strängliteraler).
+    </p>
+    <p>
+      I senare upplagor av de enskilda handböckerna kommer det att
+      ingå bilagor som exemplifierar hur de olika dokumenttyperna kan
+      uttryckas i XHTML 1.1
+    </p>
+
+    <h2>Ordlista</h2>
+    <dl>
+      <dt>Atom-förteckning</dt>
+      <dd>
+        En förteckning av tillgängliga dokument, uttryckt i
+        XML-formatet Atom.</dd>
+      <dt>HTTPS-URL</dt>
+      <dd>
+        En URL som använder HTTPS-schemat (HTTP över SSL).</dd>
+      <dt>JSON</dt>
+      <dd>
+	JavaScript Object Notation, en standard för att serialisera
+	datastrukturer på ett sätt som gör att de bl.a. kan användas
+	direkt i en webbläsare via javascript. Se <a
+	href="http://www.json.org/">json.org</a></dd>
+      <dt>Metadata</dt>
+      <dd>
+	Information om en viss resurs, såsom datumet den gavs ut, vem
+	som beslutade om den, vad den har för titel, osv.</dd>
+      <dt>Nivå 1</dt>
+      <dd>
+	Publicering av "ogenomskinliga" dokument i PDF/A-format
+	tillsammans med metadata i RDF/XML-format.</dd>
+      <dt>Nivå 2</dt>
+      <dd>
+	Publicering av strukturerade dokument i XHTML 1.1-formatet där
+	metadatan ingår i själva dokumentet genom RDFa-formatet</dd>
+      <dt>Pinga</dt>
+      <dd>
+	Att skicka ett anrop över nätverket, i form av en HTTP POST,
+	för att meddela Rinfo-main om att den borde hämta
+	Atom-förteckningen igen.</dd>
+      <dt>RDF-filer</dt>
+      <dd>
+	RDF-data för en viss resurs, uttryckt med RDF/XML-syntax och
+	lagrad i en fil.</dd>
+      <dt>RDF</dt>
+      <dd>
+	Resource Description Framework.  För en generell översyn över
+	RDF, se <a href="http://www.w3.org/TR/rdf-primer/">RDF
+	Primer</a>.</dd>
+      <dt>REST-API</dt>
+      <dd>
+	Representational State Transfer -- ett gränssnitt för att göra
+	saker över nätet, exempelvis söka, sammanstäla, hämta resurser
+	och ändra resurser -- som bygger på principerna bakom
+	HTTP-protokollet. Motsatsen är gränssnitt som abstraherar bort
+	detaljerna i HTTP, som exv SOAP-baserade prototkoll.</dd>
+      <dt>Rinfo-main</dt>
+      <dd>
+	Den webbapplikation vars främsta uppgift är att med jämna
+	mellanrum hämta information från alla myndigheter som
+	publicerar rättsinfo (i form av Atom-, RDF-, PDF- och
+	XHTML-filer), lagra denna och paketera den för andra
+	återanvändare.</dd>
+      <dt>Rinfo-service</dt>
+      <dd>
+	En parallell webbapplikation som innehåller samma information
+	som rinfo-main, men som har ett rikare gränssnitt där en
+	användare kan få tillgång till dokument och sammanställningar
+	i olika format (förslagsvis JSON, Atom och HTML) i ett
+	REST-API, och även ställa fullständiga SPARQL-frågor mot
+	RDF-datat.</dd>
+      <dt>SPARQL</dt>
+      <dd>
+	<a href="http://www.w3.org/TR/rdf-sparql-query/">SPARQL Query
+	Language for RDF</a>, ett frågespråk för RDF-databaser.</dd>
+    </dl>
+
+  </body>
+</html>
