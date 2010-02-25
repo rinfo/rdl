@@ -48,7 +48,6 @@ import org.restlet.data.Protocol
 import org.restlet.data.*
 import org.restlet.resource.Resource
 import org.restlet.resource.Variant
-import org.restlet.resource.InputRepresentation
 import org.restlet.resource.Representation
 import org.restlet.resource.StringRepresentation
 
@@ -227,13 +226,11 @@ class RInfoChecker extends Resource {
         String feedUrl = form.getFirstValue("feedUrl")
         String maxEntriesStr = form.getFirstValue("maxEntries")
         int maxEntries = maxEntriesStr ? Integer.parseInt(maxEntriesStr) : -1
-
-        // TODO: see cmdLine feedChecker (with uriMinterHandler)
-        def feedChecker = new FeedChecker(maxEntries:maxEntries)
+        def handlers = context.getAttributes().get("handlers")
+        def feedChecker = new FeedChecker(maxEntries:maxEntries, handlers:handlers)
         try {
             def logRepo = feedChecker.checkFeed(feedUrl)
             def ins = RDFUtil.toInputStream(logRepo, "application/rdf+xml", true)
-            //response.setEntity(new InputRepresentation(ins, MediaType.TEXT_XML))
             // TODO: pass prepared templates objects instead (and e.g. mediabase param)
             def html = TransformerUtil.toXhtml(ins,
                     ["../../resources/external/xslt/rdfxml-grit.xslt",
@@ -245,20 +242,21 @@ class RInfoChecker extends Resource {
         }
     }
 
-
 }
 
 
-def serve(port) {
+def serve(port, handlers) {
     def cmp = new Component()
     cmp.servers.add(Protocol.HTTP, port)
     cmp.clients.add(Protocol.FILE)
     cmp.defaultHost.attach("", new Application() {
         Restlet createRoot() {
-            def router = new Router(context)
-            router.attach("/media", new Directory(context,
-                                            new File("media").toURL().toString()))
+            getContext().getAttributes().putIfAbsent("handlers", handlers)
+            def router = new Router(getContext())
             router.attachDefault(RInfoChecker.class)
+            router.attach("/media", new Directory(getContext(),
+                                            new File("media").toURL().toString()))
+            return router
         }
     })
     cmp.start()
@@ -272,18 +270,22 @@ cli.l longOpt:'entrylimit', args:1, type:int, 'limit maximum of collected entrie
 cli.m longOpt:'minterentry', args:1, 'depot entry to read uri minter config from'
 def opt = cli.parse(args)
 
+def handlers = []
+def uriMinterHandler = new EntryRdfValidatorHandler(
+        new URI("http://rinfo.lagrummet.se/sys/uri"), "/publ/")
+if (opt.minterentry) {
+    // FIXME: must have "uriminter" dir in cwd even though it's in rinfo-base jar!
+    uriMinterHandler.setUriMinter(new URIMinter(RDFUtil.slurpRdf(opt.minterentry)))
+    handlers << uriMinterHandler
+}
+
 if (opt.port) {
     def port = Integer.parseInt(opt.port)
-    serve(port)
+    serve(port, handlers)
 } else {
     opt.arguments().each {
         def maxEntries = opt.entrylimit? Integer.parseInt(opt.entrylimit) : -1
-        def feedChecker = new FeedChecker(maxEntries:maxEntries)
-        def uriMinterHandler = new EntryRdfValidatorHandler(
-                new URI("http://rinfo.lagrummet.se/sys/uri"), "/publ/")
-        // FIXME: must have "uriminter" dir in cwd even though it's in rinfo-base jar!
-        uriMinterHandler.setUriMinter(new URIMinter(RDFUtil.slurpRdf(opt.minterentry)))
-        feedChecker.handlers << uriMinterHandler
+        def feedChecker = new FeedChecker(maxEntries:maxEntries, handlers:handlers)
         try {
             def checkLogRepo = feedChecker.checkFeed(it)
             def conn = checkLogRepo.connection

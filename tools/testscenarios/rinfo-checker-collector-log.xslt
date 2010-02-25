@@ -1,4 +1,5 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
                 xmlns:dct="http://purl.org/dc/terms/"
                 xmlns:iana="http://www.iana.org/assignments/relation/"
@@ -138,9 +139,39 @@
       </tr>
     </xsl:template>
 
+    <xsl:template match="*[a/rc:IdentifyerError]" mode="trow">
+      <xsl:param name="pos"/>
+      <tr class="error">
+        <td class="position"><xsl:value-of select="$pos"/></td>
+        <td><xsl:apply-templates select="tl:at"/></td>
+        <td class="status">URI-fel</td>
+        <td><xsl:apply-templates select="iana:via/awol:id"/></td>
+        <td>
+          <dl class="lone">
+            <dt>Angiven URI:</dt>
+            <dd><xsl:value-of select="rc:givenUri"/></dd>
+            <dt>Beräknad URI:</dt>
+            <dd><xsl:value-of select="rc:computedUri"/></dd>
+          </dl>
+        </td>
+      </tr>
+    </xsl:template>
+
+    <xsl:template match="*[a/rc:Error]" mode="trow">
+      <xsl:param name="pos"/>
+      <tr class="error">
+        <td class="position"><xsl:value-of select="$pos"/></td>
+        <td><xsl:apply-templates select="tl:at"/></td>
+        <td class="status">Fel</td>
+        <td><xsl:apply-templates select="iana:via/awol:id"/></td>
+        <td>
+            <xsl:value-of select="rdf:value"/>
+        </td>
+      </tr>
+    </xsl:template>
+
     <!-- TODO:
          rc:DeletedEntry
-         rc:IdentifyerError
          rc:Error
     -->
 
