@@ -256,6 +256,8 @@ def serve(port) {
     cmp.defaultHost.attach("", new Application() {
         Restlet createRoot() {
             def router = new Router(context)
+            router.attach("/media", new Directory(context,
+                                            new File("media").toURL().toString()))
             router.attachDefault(RInfoChecker.class)
         }
     })

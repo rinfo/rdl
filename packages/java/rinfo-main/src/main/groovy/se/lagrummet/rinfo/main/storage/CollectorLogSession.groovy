@@ -111,16 +111,15 @@ class CollectorLogSession {
                 errorEvent = manager.create(ChecksumErrorEvent)
                 // FIXME: now, we need to handle checks per source
                 // in *collector*, not in SourceContent
-                def src = error.sourceContent
-                def documentInfo = "type=${src.mediaType};lang=${src.lang};slug=${src.enclosedUriPath}"
-                errorEvent.setDocument(documentInfo)
+                def src = (RemoteSourceContent) error.sourceContent
+                errorEvent.setDocument(src.urlPath)
+                //def documentInfo = "type=${src.mediaType};lang=${src.lang};slug=${src.enclosedUriPath}"
                 errorEvent.setGivenMd5(error.givenValue)
                 errorEvent.setComputedMd5(error.realValue)
             }
             // TODO: length
         } else if (error instanceof IdentifyerMismatchException) {
             errorEvent = manager.create(IdentifyerErrorEvent)
-            // TODO: get given and computed
             errorEvent.setGivenUri(error.givenUri)
             errorEvent.setComputedUri(error.computedUri)
         }

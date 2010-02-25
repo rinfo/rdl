@@ -11,7 +11,7 @@
                 xmlns:date="http://exslt.org/dates-and-times"
                 exclude-result-prefixes="xsd dct iana rx awol tl rc">
 
-  <xsl:param name="mediabase" select="'.'"/>
+  <xsl:param name="mediabase" select="'media'"/>
 
   <xsl:key name="rel" match="/graph/resource" use="@uri"/>
   <xsl:variable name="r" select="/graph/resource"/>
@@ -137,6 +137,12 @@
         </td>
       </tr>
     </xsl:template>
+
+    <!-- TODO:
+         rc:DeletedEntry
+         rc:IdentifyerError
+         rc:Error
+    -->
 
     <xsl:template match="@ref | xsd:anyURI">
       <code><xsl:value-of select="."/></code>
