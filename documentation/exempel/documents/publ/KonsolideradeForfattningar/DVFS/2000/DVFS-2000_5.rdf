@@ -1,8 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:dct="http://purl.org/dc/terms/"
-         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
-
-  <KonsolideradForfattning/>
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+   xmlns:dct="http://purl.org/dc/terms/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
+>
+  <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/dvfs/2000:5/konsolidering/2006-03-15">
+    <rdf:type rdf:resource="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#KonsolideradGrundforfattning"/>
+    <dct:title xml:lang="sv">Domstolsverkets föreskrifter om hur fastighetsregistrets inskrivningsdel skall föras (DVFS 2000:5)</dct:title>
+    <rpubl:konsoliderar rdf:resource="http://rinfo.lagrummet.se/publ/dvfs/2000:5"/>
+    <rpubl:konsolideringsunderlag rdf:resource="http://rinfo.lagrummet.se/publ/dvfs/2006:1"/>
+    <rpubl:konsolideringsunderlag rdf:resource="http://rinfo.lagrummet.se/publ/dvfs/2004:2"/>
+    <rpubl:konsolideringsunderlag rdf:resource="http://rinfo.lagrummet.se/publ/dvfs/2005:11"/>
+    <rpubl:konsolideringsunderlag rdf:resource="http://rinfo.lagrummet.se/publ/dvfs/2002:2"/>
+  </rdf:Description>
 </rdf:RDF>
-  
+
