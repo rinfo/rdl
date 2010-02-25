@@ -7,7 +7,7 @@ from targetenvs import _needs_targetenv
 env.adminbuild = '%(builddir)s/rinfo-admin'%env
 
 def package_admin():
-    local("cd %(toolsdir)s &&"
+    local("cd %(toolsdir)s/rinfomain &&"
         "groovy base_as_feed.groovy -b ../../resources/base/"
             " -o %(adminbuild)s"%env)
 
