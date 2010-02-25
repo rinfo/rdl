@@ -84,7 +84,7 @@
     Archiving</a>.
 
     Rättsinformationssystemet ställer *höga* krav på att dessa är 
-    konstistenta, samt beständiga över tid så pass att det är garanterat att 
+    konsistenta, samt beständiga över tid så pass att det är garanterat att 
     systemet har hunnit hämta in informationen.
 
     (Exakta krav är inte fastställda, men livslängder på minst ett år är 

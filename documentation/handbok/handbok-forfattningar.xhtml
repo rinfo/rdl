@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xml" href="../templates/dv-handbok.xslt"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Författningar</title>
+  </head>
+  <body>
+    <div class="alert">
+      <p>Observera att detta dokument inte är fastställt i alla delar
+      ännu. För publicering av författningar enligt nivå 1
+      (PDF-dokument + metadata) bedömer vi dock att inga större ändringar
+      kommer att ske.</p>
+    </div>
+
+    <div class="changes">
+      <table class="changes">
+	<caption>Ändringar</caption>
+	<tr>
+	  <th>Datum</th>
+	  <th>Ändring</th>
+	</tr>
+	<tr>
+	  <td>2010-02-23</td>
+          <td>Nytt namn (var tidigare <em>Startpaket för publicering
+          av myndighetsföreskrifter i rättsinformationssystemet</em>)
+          och något ändrat innehåll (omfattar nu även de författningar
+          som publiceras i SFS). Mycket av materialet som tidigare
+          fanns i detta dokument finns nu i <em>Introduktion för
+          implementatörer och tekniskt ansvariga</em>.</td>
+	</tr>
+	<tr>
+	  <td>2009-11-01</td>
+          <td>Kompletterade exempel med
+	  egenskapen beslutadAv (som för de
+	  flesta är samma som
+	  dct:publisher) och justerade begrepp i RA-FS-exempel.</td>
+	</tr>
+	<tr>
+	  <td>2009-10-22</td>
+          <td>Modifiering av information om
+	  bilagor och struktur för
+	  författningsreferenser (inkl.
+	  bemyndiganden)</td>
+	</tr>
+      </table>
+    </div>
+
+    <h1>
+      Handbok för publicering av författningar i rättsinformationssystemet
+    </h1>
+    <p>
+      Detta dokument är en handbok för den som ska införa publicering av
+      författningar i rättsinformationssystemet. Det vänder sig till
+      den som har det tekniska ansvaret för att implementera det
+      IT-stöd som krävs.
+    </p>
+    <p>
+      Detta dokument kompletteras av <em>Introduktion för
+      implementatörer och teknikansvariga</em>, som bör läsas innan
+      detta. Tillsammans bör dessa två dokument innehålla tillräckligt
+      underlag för att inleda ett införandeprojekt i
+      myndighetsorganisationen.
+    </p>
+    <p>
+      Det här dokumentet innehåller främst information om hur metadata
+      för olika typer av författningar ska utttryckas. Det vänder sig
+      både till den som ansvarar för elektronisk publicering av de de
+      lagar och förordningar som publiceras i SFS, och till den som
+      ansvarar för elektronisk publicering av de föreskrifter som
+      publiceras i en myndighets författningssamling.
+    </p>
+    <p>
+      Det omfattar endast författningarna i den form de kungörs, dvs
+      grund- och ändringsförfattningar. Det omfattar däremot inte
+      konsoliderade författningar, som behandlas i en separat handbok.
+    </p>
+    <p>
+      Om du har några frågor med anledning av detta dokument eller
+      angående rättsinformationsprojektet i stort, kontakta gärna
+      projektledare Staffan Malmgren på staffan.malmgren@dom.se.
+    </p>
+
+    <h2>Olika typer av författningar</h2>
+    <p>
+      De olika dokumenttyperna som används inom
+      rättsinformationssystemet är ordnade i en hierarki, där till
+      exempel dokumenttyperna <code>Lag</code>,
+      <code>Forordning</code> och <code>Myndighetsforeskrift</code>
+      alla är en specifik form av den mer generella dokumenttypen
+      <code>Forfattning</code>.
+    </p>
+    <p>
+      Dessa dokumenttyper har av denna anledning ett stort antal
+      liknande egenskaper, exempelvis <code>beslutadAv</code>,
+      <code>fsNummer</code>, <code>Författningssamling</code> och
+      <code>dct:title</code>. De kan också innehålla likande resurser
+      (av typerna <code>Kapitel</code>, <code>Paragraf</code> och
+      <code>Bilaga</code>).
+    </p>
+    <p>
+      De skiljer sig också delvis från varandra, exempelvis hänvisar
+      en <code>Myndighetsforeskrift</code> vanligen till en eller
+      flera resurser av typen <code>Forfattningsreferens</code> genom
+      hänvisningstypen <code>bemyndigande</code>, medan en
+      <code>Lag</code> alltid hänvisar till några resurser av typen
+      <code>Forarbete</code> genom hänvisningstypen
+      <code>forarbete</code> (notera skillnaden i stora/små bokstäver
+      -- resurstyper inleds alltid med stor bokstav, medan egenskaper
+      såsom hänvisningstyper inleds med liten bokstav).
+    </p>
+
+    <!--
+    <h3>Lagar</h3>
+    <p><i>(information specifikt om lagar)</i></p>
+
+    <h3>Andra författningar i SFS</h3>
+    <p><i>(information specifikt om förordningar)</i></p>
+
+    <h3>Föreskrifter i andra författningssamlingar</h3>
+    <p><i>(information specifikt om föreskrifter)</i></p>
+    -->
+    
+    <h2>Nivå 2-beskrivningar av författningar</h2>
+    <p>
+      Inledningsvis kan det vara lämpligt att inleda med publicering
+      enligt nivå 1. Man bör dock arbeta mot att arbetsflödet för
+      rättsinformationspublicering använder sig av strukturerade
+      semantiska format. När detta väl finns är det ganska lätt att gå
+      över till nivå 2-publicering.
+    </p>
+    <p>
+      För publicering enligt nivå 2 ska <a
+      href="http://www.w3.org/TR/rdfa-syntax/">XHTML 1.1+RDFa</a>
+      användas. Detta är ett generellt dokumentformat, men genom några
+      enkla principer kan man få ganska stor semantisk precision i
+      sitt material.
+    </p>
+    <p>
+      Genom att använda nästlade
+      <code>&lt;div&gt;</code>-element kan en författnings hierarkiska
+      struktur representeras -- en <code>&lt;div&gt;</code> som
+      representerar ett kapitel innehåller en eller flera
+      <code>&lt;div&gt;</code> som representerar paragrafer, som
+      vartoch en innehåller en <code>&lt;p&gt;</code> som
+      representerar ett stycke.
+    </p>
+    <p>
+      Att en <code>&lt;div&gt;</code> representerar just en paragraf
+      eller ett kapitel kan tydliggöras genom att använda
+      <code>typeof</code>-attributet och ange värdet
+      <code>rpubl:Paragraf</code> respektive
+      <code>rpubl:Kapitel</code>. 
+    </p>
+    <p>
+      Metadata som gäller hela dokumentet kan uttryckas i
+      <code>&lt;head&gt;</code>-elementet i form av
+      <code>&lt;link&gt;</code> och <code>&lt;meta&gt;</code>-element
+      (för resursreferenser respektive strängliteraler).
+    </p>
+    <p>
+      I övrigt bör man förlita sig på hur XHTML-elementen är
+      definerade. Man bör vara så semantisk som möjligt och exemeplvis
+      använda <code>&lt;h1&gt;</code> --
+      <code>&lt;h6&gt;</code>-elementen för rubriker snarare än
+      <code>&lt;div class="underrubrik"&lt;</code> -- men man bör inte
+      använda semantik som man inte har täckning för. Om man ska
+      uttrycka ett avsnitt i en författning där kursiv text har
+      använts så bör man använda <code>&gt;i&lt;</code> och inte
+      <code>&gt;em&lt;</code> såvida man inte vet att syftet med
+      kursiveringen var just att uttrycka emfas (ofta används kursiv
+      text för att ange en definition av en term, vilket inte är samma
+      sak som emfas).
+    </p>
+    <!-- TODO: Fler saker att ta upp
+      * användande av CSS-klasser
+      * hur man länkar hänvisningar i löptext
+      -->
+    <p>
+      I en senare upplaga av detta dokument kommer det ingå bilagor
+      som exemplifierar dessa principer.
+    </p>
+
+    <div class="appendix">
+      <h1>Bilaga 1: Modellbeskrivning för typen Lag</h1>
+      <xi:include href="build:model.xhtml" xpointer="Lag"/>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 2: Modellbeskrivning för typen Forordning</h1>
+      <xi:include href="build:model.xhtml" xpointer="Forordning"/>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 3: Modellbeskrivning för typen Myndighetsforeskrift</h1>
+      <xi:include href="build:model.xhtml" xpointer="Myndighetsforeskrift"/>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 4: Postförteckning (Atom) (Riksarkivet RA-FS)</h1>
+      <p>
+	Detta exempel visar de element som måste eller bör ingå i en
+	postförteckning. Varje element är utförligt kommenterat för
+	att illustrera hur de bör användas.
+      </p>
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/feeds/sources/riksarkivet/riksarkivet_source_feed.atom" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 5: Metadata (RDF) för grundförfattning (Riksarkivet RA-FS 2004:2)</h1>
+      <p>
+	Detta är ett exempel på en grundförfattning. Observera att
+	den uttryckligen anger de ingående paragrafresurserna -- man kan
+	från det nedanstående läsa ut att författningen innehåller sju
+	olika paragrafer.
+      </p>
+      <p>
+	Eftersom detta är en myndighetsföreskrift framgår även
+	bemyndigandehänvisningen till 11 och 12 §§ arkivförordningen
+	(1991:446) i maskinläsbar form (de båda
+	<code>bemyndigande</code>-egenskaperna)
+      </p>
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Forfattningar/RA-FS/2004/RA-FS-2004_2.rdf" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 6: Metadata (RDF) för ändringsförfattning (Riksarkivet RA-FS 2006:6)</h1>
+      <p>
+	Detta är ett exempel på en ändringsförfattning, vilket
+	framgår av egenskapen <code>andrar</code>. Det framgår vilken
+	paragraf i grundförfattningen som ändras genom den
+	<code>paragraf</code>-resursen som innehåller en
+	<code>ersatter</code>-anvisning. <!-- inexakt från
+	RDF-synvinkel, men begripligare... -->
+      </p>
+      
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Forfattningar/RA-FS/2006/RA-FS-2006_6.rdf" parse="text"/></code>
+      </div>
+    </div>
+
+
+    <!-- Tillför inget som inte framgår av Bilaga 4: Postförteckning i Atom (Riksarkivet) 
+    <div class="appendix">
+      <h1>Bilaga: Postförteckning i Atom (Arbetsförmedlingen)</h1>
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/feeds/sources/arbetsformedlingen/arbetsformedlingen_source_feed.atom" parse="text"/></code>
+      </div>
+    </div>
+    -->
+    
+    <div class="appendix">
+      <h1>Bilaga 7: Metadata (RDF) med ämnesord (Arbetsförmedlingen AFFS 2008:8)</h1>
+      <p>
+	Här används <code>dces:subject</code> för att ange ett
+	ämnesord i fritext. Ett alternativ hade varit att hänvisa till
+	en URI för ett visst begrepp, om det finns en SKOS-vokabulär
+	som är lämplig att använda. Se <em>Introduktion till
+	rättsinformationssystemet</em> för mer information om hur man
+	kan uttrycka ämnesord.
+      </p>
+      <p>
+	Exemplet visar också att man kan lägga till vilka egenskaper
+	som helst till sin metadata -- här har termen
+	<code>homepage</code> från <a
+	href="http://xmlns.com/foaf/spec/">FOAF-vokabulären</a>
+	använts för att visa på vilken webbsida mer information om
+	dokumentet kan hittas.
+      </p>
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Forfattningar/AFFS/2008/AFFS-2008_8.rdf" parse="text"/></code>
+      </div>
+    </div>
+    <!-- Tillför inget som inte framgår av bilaga 5 och 6 
+    <div class="appendix">
+      <h1>Bilaga 8: Exempel på metadata i RDF ändringsföreskrift (Arbetsförmedlingen AMSFS 2007:28)</h1>
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Forfattningar/AMSFS/2007/AMSFS-2007_28.rdf" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 9: Exempel på metadata i RDF (Arbetsförmedlingen AMSFS 2007:2)</h1>
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Forfattningar/AMSFS/2007/AMSFS-2007_2.rdf" parse="text"/></code>
+      </div>
+    </div>
+    -->
+    <div class="appendix">
+      <h1>
+	Bilaga 8: Metadata (RDF) med information om bilaga
+	(Livsmedelsverket LIVSFS 2006:22)
+      </h1>
+      <p>
+	Detta exempel visar hur man kan ange att en författning har en
+	bilaga.  Observera att RDF-informationen inte innehåller någon
+	information om <em>var</em> informationen kan hittas, utan
+	bara att en viss resurs, identifierad med en URI, utgör en
+	bilaga till författningen. Information om var denna resurs kan
+	hittas finns i postförteckningen i nästa exempel.
+      </p>
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Forfattningar/LIVSFS/2006/LIVSFS-2006_22.rdf" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 9: Postförteckning (Atom) med information om bilaga (Livsmedelsverket LIVSFS)</h1>
+      <p>
+	I denna postförteckning finns två link-element i det enda
+	entry-elementet. Det ena pekar ut själva dokumentet, det andra
+	pekar ut en enclosure och associerar den med en viss URI
+	(vilken framgår från <code>dct:isFormatOf</code>-attributet). Det framgår
+	däremot inte att denna URI är att betrakta som bilaga till
+	själva dokumentet, utan den informationen finns i RDF-datat om
+	dokumentet.
+      </p>
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/feeds/sources/livsmedelsverket/livsmedelsverket_source_feed.atom" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 10: Ämnesordsförteckning i SKOS</h1>
+      <p>
+	Detta är ett grundläggande exempel. SKOS innehåller ett stort
+	antal möjligheter att beskriva samband, alternativa
+	skrivningar och etiketter på andra språk. För mer information
+	se <a href="http://www.w3.org/2004/02/skos/intro"
+	lang="en">Introduction to SKOS</a>.
+      </p>
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/vokabular/exempel.rdf" parse="text"/></code>
+      </div>
+    </div>
+
+  </body>
+</html>

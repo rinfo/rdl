@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xml" href="../templates/dv-handbok.xslt"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="sv" lang="sv">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Utredningar m.m.</title>
+  </head>
+  <body>
+    <div class="alert">
+      <p>Observera att detta dokument inte är fastställt i alla delar
+      ännu. För publicering av dessa dokumenttyper på Nivå 1 bedömer
+      vi dock att inga större ändringar kommer att ske. Fler exempel
+      kommer att tillkomma.</p>
+    </div>
+
+    <div class="changes">
+      <table class="changes">
+	<caption>Ändringar</caption>
+	<tr>
+	  <th>Datum</th>
+	  <th>Ändring</th>
+	</tr>
+	<tr>
+	  <td>2010-02-23</td>
+	  <td>Nytt namn (var tidigare <em>Startpaket för
+	  publicering av kommittédirektiv i
+	  rättsinformationssystemet</em>) och utökat omfång.</td>
+	</tr>
+      </table>
+    </div>
+
+    <h1>Handbok för publicering av utredningar m.m. i
+    rättsinformationssystemet</h1>
+    
+    <p>
+      Detta dokument är en handbok för den som ska införa publicering av
+      författningar i rättsinformationssystemet. Det vänder sig till
+      den som har det tekniska ansvaret för att implementera det
+      IT-stöd som krävs.
+    </p>
+    <p>
+      Detta dokument kompletteras av <em>Introduktion för
+      implementatörer och teknikansvariga</em>, som bör läsas innan
+      detta. Tillsammans bör dessa två dokument innehålla tillräckligt
+      underlag för att inleda ett införandeprojekt i
+      myndighetsorganisationen.
+    </p>
+    <p>
+      Om du har några frågor med anledning av detta dokument eller
+      angående rättsinformationsprojektet i stort, kontakta gärna
+      projektledare Staffan Malmgren på staffan.malmgren@dom.se.
+    </p>
+
+    <h2>Dokument i lagstiftningskedjan</h2>
+    <p>
+      I lagstiftningskedjan produceras en rad olika dokument som på ett
+      eller annat sätt leder fram till nya lagar. Detta inkluderar
+      komittédirektiv, utredningar, betänkanden, propositioner och
+      förordningsmotiv. Även om dokumentens funktion skiftar har de liknande
+      egenskaper.
+    </p>
+    <p>
+      Vissa typer av dokument saknas i den nedanstående genomgången,
+      framförallt lagrådsyttranden och utskottsbetänkanden. Detta
+      beror på att dessa dokumenttyper inte omfattas av
+      rättsinformationsförordningen.
+    </p>
+    <p>
+      Om intresse finns är det dock möjligt att publicera även sådana
+      dokument i rättsinformationssystemet. Kontakta projektet för mer
+      information om hur detta kan gå till.
+    </p>
+      
+    <div class="appendix">
+      <h1>Bilaga 1: Modellbeskrivning för typen Komittedirektiv</h1>
+      <p>
+	Dessa egenskaper utgör en mininivå av information om ett
+	kommittédirektiv. Utöver dessa kan informationsansvarig
+	organisation välja att påföra mer information i de fall man
+	finner det lämpligt.
+      </p>
+      <xi:include href="build:model.xhtml" xpointer="Kommittedirektiv"/>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 2: Modellbeskrivning för typen Forordningsmotiv</h1>
+      <xi:include href="build:model.xhtml" xpointer="Forordningsmotiv"/>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 3: Modellbeskrivning för typen Proposition</h1>
+      <xi:include href="build:model.xhtml" xpointer="Proposition"/>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 4: Modellbeskrivning för typen Utredningsbetankande</h1>
+      <xi:include href="build:model.xhtml" xpointer="Utredningsbetankande"/>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 5: Postförteckning (Atom) för kommittédirektiv</h1>
+      <div class="syntax">
+	<code class="xml"><xi:include href="../../documentation/exempel/feeds/sources/regeringskansliet/rk_source_feed_komdir.atom" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 6: Metadata (RDF) för kommittédirektiv (Dir. 2009:71)</h1>
+      <div class="syntax">
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Direktiv/2009/dir-2009_71.rdf" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 7: Metadata (RDF) för tilläggsdirektiv (Dir. 2008:78)</h1>
+      <div class="syntax">
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Direktiv/2008/dir-2008_78.rdf" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 8: Direktiv i fulltext (XHTML 1.1+RDFa, Dir. 2009:71)</h1>
+      <p>Observera att radbrytningar och vissa justeringar av texten kan ha gjorts i syfte att öka läsbarheten i exemplet.</p>
+      <div class="syntax">
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Direktiv/2009/dir-2009_71.xhtml" parse="text"/></code>
+      </div>
+    </div>
+  </body>
+</html>

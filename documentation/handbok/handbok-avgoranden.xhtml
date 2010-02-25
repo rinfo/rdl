@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xml" href="../templates/dv-handbok.xslt"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Avgöranden</title>
+  </head>
+  <body>
+    <div class="alert">
+      <p>
+	Observera att detta dokument inte är fastställt i alla delar
+	ännu. För publicering av avgöranden enligt nivå 1
+	(PDF-dokument + metadata) bedömer vi dock att inga större
+	ändringar kommer att ske.
+      </p>
+    </div>
+
+    <h1>Handbok för publicering av avgöranden i rättsinformationssystemet</h1>
+    <p>
+      Detta dokument är en handbok för den som ska införa publicering
+      av vägledande avgöranden i rättsinformationssystemet. Det vänder
+      sig till den som har det tekniska ansvaret för att implementera
+      det IT-stöd som krävs.
+    </p>
+    <p>
+      Detta dokument kompletteras av <em>Introduktion för
+      implementatörer och teknikansvariga</em>, som bör läsas innan
+      detta. Tillsammans bör dessa två dokument innehålla tillräckligt
+      underlag för att inleda ett införandeprojekt i
+      myndighetsorganisationen.
+    </p>
+    <p>
+      Det här dokumentet innehåller främst information om hur metadata
+      för olika typer av författningar ska utttryckas. Det vänder sig
+      både till den som ansvarar för elektronisk publicering av
+      vägledande avgöranden på en myndiget
+    </p>
+    <p>
+      Om du har några frågor med anledning av detta dokument eller
+      angående rättsinformationsprojektet i stort, kontakta gärna
+      projektledare Staffan Malmgren på staffan.malmgren@dom.se.
+    </p>
+    
+    <h2>Olika typer av avgöranden</h2>
+    <p>
+      Såväl domstolar som förvaltningsmyndigheter producerar i sin
+      verksamhet avgöranden som kan vara vägledande för senare
+      rättstillämpning. Dessa har juridiska skillnader, men
+      informationsmässigt stora likheter, varför de här behandlas i
+      ett sammanhang.
+    </p>
+
+    <div class="appendix">
+      <h1>Bilaga 1: Modellbeskrivning för typen Rattsfallsreferat</h1>
+      <xi:include href="build:model.xhtml" xpointer="Rattsfallsreferat"/>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 2: Modellbeskrivning för typen VagledandeDomstolsavgorande</h1>
+      <xi:include href="build:model.xhtml" xpointer="VagledandeDomstolsavgorande"/>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 3: Modellbeskrivning för typen VagledandeMyndighetsavgorande</h1>
+      <xi:include href="build:model.xhtml" xpointer="VagledandeMyndighetsavgorande"/>
+    </div>
+
+    <!--
+	TODO: Skriv dessa exempel!
+    <div class="appendix">
+      <h1>Bilaga 4: Metadata för rättsfallsreferat (NJA 2009:1)</h1>
+      <div class="syntax">
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Referat/NJA-2009_1.rdf" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 5: Rättsfallsreferat i fulltext (NJA 2009:1)</h1>
+      <div class="syntax">
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Referat/NJA-2009_1.xhtml" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 6: Metadata för vägledande domstolsavgörande (AD 2009 nr 1)</h1>
+      <div class="syntax">
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Avgoranden/AD/AD-2009_1.rdf" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 7: Vägledande domstolsavgörande i fulltext (AD 2009 nr 1)</h1>
+      <div class="syntax">
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Avgoranden/AD/AD-2009_1.xhtml" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 8: Metadata för vägledande myndighetsavgörande</h1>
+      <div class="syntax">
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Avgoranden/JK/2009-1031.rdf" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 9: Vägledande myndighetsavgörande i fulltext</h1>
+      <div class="syntax">
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Avgoranden/JK/2009-1031.xhtml" parse="text"/></code>
+      </div>
+    </div>
+    -->
+  </body>
+</html>

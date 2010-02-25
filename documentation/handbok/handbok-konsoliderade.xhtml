@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xml" href="../templates/dv-handbok.xslt"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Konsoliderade författningar</title>
+  </head>
+  <body>
+    <div class="alert">
+      <p>
+	Observera att detta dokument inte är fastställt i alla delar
+	ännu. 
+      </p>
+    </div>
+
+    <h1>
+      Handbok för publicering av konsoliderade författningar i
+      rättsinformationssystemet
+    </h1>
+    <p>
+      Detta dokument är handbok för den som ska införa publicering av
+      författningar i rättsinformationssystemet. Det vänder sig till
+      den som har det tekniska ansvaret för att implementera det
+      IT-stöd som krävs.
+    </p>
+    <p>
+      Detta dokument kompletteras av <em>Introduktion för
+      implementatörer och teknikansvariga</em>, som bör läsas innan
+      detta. Tillsammans bör dessa två dokument innehålla tillräckligt
+      underlag för att inleda ett införandeprojekt i
+      myndighetsorganisationen.
+    </p>
+    <p>
+      Det här dokumentet innehåller främst information om hur metadata
+      för konsoliderade författningar ska utttryckas. Det vänder sig
+      både till den som ansvarar för elektronisk publicering av de de
+      lagar och förordningar som publiceras i SFS, och till den som
+      ansvarar för elektronisk publicering av de föreskrifter som
+      publiceras i en myndighets författningssamling.
+    </p>
+    <p>
+      Om du har några frågor med anledning av detta dokument eller
+      angående rättsinformationsprojektet i stort, kontakta gärna
+      projektledare Staffan Malmgren på staffan.malmgren@dom.se.
+    </p>
+
+    <h2>Relationen mellan författningar och konsoliderade
+    författningar</h2>
+
+    <p>
+      Efter att en författning ursprungligen kungjorts i form av en
+      grundförfattning kan det efter en tid finnas anledning att göra
+      en ändring i denna genom ändringsförfattningar. Dessa
+      ändringsförfattningar talar i allmänhet om på vilket sätt
+      grundförfattningen ska ändras, vanligen genom att ange nya
+      lydelser för enskilda befintliga paragrafer, införa nya
+      paragrafer eller upphäva befintliga.
+    </p>
+    <p>
+      Efter några ändringsförfattningar blir författningens innehåll
+      ganska svårgenomträngligt. Därför är det vanligt att man skapar
+      en separat text där grundförfattningens text ändras enligt
+      efterföljande ändringsförfattningar. Denna text kallas i
+      allmänhet för en konsoliderad författning. I vissa sammanhang
+      kan andra beteckningar användas, exv "fulltext" eller "aktuell
+      lydelse".
+    </p>
+    <p>
+      Det är dock endast grund- och ändringsförfattningarna som har
+      formell rättslig betydelse, så den konsoliderade författningen
+      utgör främst ett hjälpmedel för den som vill sätta sig in i
+      författningen.
+    </p>
+    <p>
+      Enligt rättsinformationsförordningen är det endast
+      Regeringskansliet som är skyldiga att publicera konsoliderade
+      versioner av de författningar som ingår i SFS. Det är dock
+      vanligt att myndigheter som en service framställer konsoliderade
+      versioner av de författningar som ingår i deras
+      författningssamlingar. Dessa kan också publiceras
+      rättsinformationssystemet, om myndigheten så önskar.
+    </p>
+
+    <h2>Nivå 2-publicering</h2>
+    <p>
+      Eftersom konsolideringar, i den mån de idag tas fram, inte i
+      första hand är avsedda för tryck utan för webbpublicering är det
+      mer sannolikt att de redan idag produceras på ett sätt som är
+      lämpat för strukturede och semantiska format.
+    </p>
+   
+    <h2>Konsolideringsunderlag och registerinformation</h2>
+    <p>
+      Registerinformation inkluderar en lista på alla
+      ändringsförfattningar, dess titlar och vad de ändrat. För lagar
+      inkluderar de även hänvisningar till förarbeten, för
+      föreskrifter bemyndigandehänvisningar.
+    </p>
+    
+    <h2>URI:er för olika versioner av en konsoliderad text</h2>
+    <p>
+      Grundprincipen är att en konsoliderad författning har samma uri
+      som grundförfattningen med
+      <code>/konsoliderad/&lt;datum&gt;</code>, där &lt;datum&gt; är
+      den dag konsolideringen gjordes, uttryckt i ISO 8601-format
+      (ÅÅÅÅ-MM-DD). 
+    </p>
+    <p>
+      För fler detaljer, se dokumentet <em>URI-principer</em> i den
+      övriga dokumentationen.
+    </p>
+    <div class="appendix">
+      <h2>Bilaga 1: Egenskaper för dokumenttypen KonsolideradGrundforfattning</h2>
+    </div>
+    <!-- TODO:
+	 Skriv dessa exempel!
+    <div class="appendix">
+      <h2>
+	Bilaga 2: Exempel på metadata för en konsoliderad
+	myndighetsföreskrift (DVFS 2000:5)
+      </h2>
+      <p>
+	Det här är en konsolidering av en författning som sedan
+	grundförfattningen (DVFS 2000:5) har ändrats fyra gånger. Den
+	konsoliderade versionen av texten skapades 2006-03-15.
+      </p>
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/KonsolideradeForfattningar/DVFS/2000/DVFS-2000_5.rdf" parse="text"/></code>
+      </div>
+    </div>
+    <div class="appendix">
+      <h2>
+	Bilaga 3: Exempel på en konsoliderad myndighetsföreskrift
+	enligt Nivå 2 (XHTML 1.1+RDFa)
+      </h2>
+      <p>
+	Det här är själva den konsoliderade texten av DVFS 2000:5 med
+	införda ändringar. Av utrymmesskäl är endast 1 kap. 1--8 §§
+	samt första sektionen av bilagan medtagen -- dessa visar dock
+	några exempel på hur vanligt förekommande element (kapitel-
+	och paragrafstrukturer, textformattering, tabeller, och
+	bilagor) i författningstexter kan representeras.
+      </p>
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/KonsolideradeForfattningar/DVFS/2000/DVFS-2000_5.xhtml" parse="text"/></code>
+      </div>
+    </div>
+    <div class="appendix">
+      <h2>
+	Bilaga 4: Exempel på en konsoliderad lag (SFS 2000:1135) enligt Nivå 2
+      </h2>
+      <p>
+	Detta exempel visar hur man i en konsoliderad lagtexts
+	registerinformation kan hänvisa till de individuella
+	förarbetena. Det visar också hur man kan uttrycka hänvisningar
+	till andra lagar, enskilda paragrafer i andra lagar, och
+	paragrafer inom den aktuella lagen.
+      </p>
+      <div class="syntax">
+        <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/KonsolideradeForfattningar/SFS/2000/SFS-2000_1335.xhtml" parse="text"/></code>
+      </div>
+    </div>
+    -->
+  </body>
+</html>
