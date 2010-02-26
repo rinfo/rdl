@@ -145,6 +145,11 @@ tks_serie:fs a coin:TokenSet;
     coin:tokenSet tks_serie:fs .
 
 [] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/fs/affs>;
+    rdf:value "affs";
+    coin:tokenSet tks_serie:fs .
+
+[] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/serie/fs/amsfs>;
     rdf:value "amsfs";
     coin:tokenSet tks_serie:fs .

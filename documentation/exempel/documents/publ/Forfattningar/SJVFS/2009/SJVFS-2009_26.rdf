@@ -8,7 +8,7 @@
 
 		<!-- lite grunddata -->
 		<forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sjvfs"/>
-		<fsNummer>2009:46</fsNummer>
+		<fsNummer>2009:26</fsNummer>
 		<dct:title xml:lang="sv">Föreskrifter (SJVFS 2009:26) om hästdjur som
 			används till avel och om identifiering av hästdjur;</dct:title>
 

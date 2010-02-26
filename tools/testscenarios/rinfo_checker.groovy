@@ -15,13 +15,11 @@ Suggested changes in rinfo-main,-depot,-collector:
    - "normal" skips collected (stored in main feed)
      .. in that mode, we'd need to combine depot feed (as collect success log) + checkLog
 
- - FeedCollector#hasVisitedArchivePage: only current: true for anything else
-   - use StorageSession (subclass?):
-     - dummyDepot(Backend)
-       - in-mem *Backend*? (if so, depotEntry.getMetaFile -> getMetaInputStream/-Out..?)
-       - or no depot? write to "/dev/null" to make datachecks? pdf:s? check some?
-    - override StorageSession#storeEntry: don't break on error: always return true
-    - def checkLog = new CheckDataCollectorLog
+ - StorageSession (subclass?):
+   - dummyDepot(Backend)
+     - in-mem *Backend*? (if so, depotEntry.getMetaFile -> getMetaInputStream/-Out..?)
+     - or no depot? write to "/dev/null" to make datachecks? pdf:s? check some?
+  - def checkLog = new CheckDataCollectorLog
 
 */
 @Grab('se.lagrummet.rinfo:rinfo-main:1.0-SNAPSHOT')
@@ -66,7 +64,7 @@ import se.lagrummet.rinfo.main.storage.CollectorLog
 import se.lagrummet.rinfo.main.storage.EntryRdfValidatorHandler
 
 
-class FeedChecker {
+class Checker {
 
     def repo = new SailRepository(new MemoryStore())
     Depot depot
@@ -74,7 +72,7 @@ class FeedChecker {
     def handlers = []
     int maxEntries = -1
 
-    FeedChecker() {
+    Checker() {
         tempDir = createTempDir()
         depot = new FileDepot(new URI("http://rinfo.lagrummet.se"), tempDir)
         depot.atomizer.feedPath = "/feed"
@@ -182,9 +180,9 @@ class TransformerUtil {
 }
 
 
-class RInfoChecker extends Resource {
+class CheckerResource extends Resource {
 
-    RInfoChecker(Context context, Request request, Response response) {
+    CheckerResource(Context context, Request request, Response response) {
         super(context, request, response)
         variants.add(new Variant(MediaType.TEXT_HTML))
         // TODO: get config (xslts..) from context
@@ -227,9 +225,9 @@ class RInfoChecker extends Resource {
         String maxEntriesStr = form.getFirstValue("maxEntries")
         int maxEntries = maxEntriesStr ? Integer.parseInt(maxEntriesStr) : -1
         def handlers = context.getAttributes().get("handlers")
-        def feedChecker = new FeedChecker(maxEntries:maxEntries, handlers:handlers)
+        def checker = new Checker(maxEntries:maxEntries, handlers:handlers)
         try {
-            def logRepo = feedChecker.checkFeed(feedUrl)
+            def logRepo = checker.checkFeed(feedUrl)
             def ins = RDFUtil.toInputStream(logRepo, "application/rdf+xml", true)
             // TODO: pass prepared templates objects instead (and e.g. mediabase param)
             def html = TransformerUtil.toXhtml(ins,
@@ -238,7 +236,7 @@ class RInfoChecker extends Resource {
                 )
             response.setEntity(new StringRepresentation(html, MediaType.TEXT_HTML))
         } finally {
-            feedChecker.shutdown()
+            checker.shutdown()
         }
     }
 
@@ -253,7 +251,7 @@ def serve(port, handlers) {
         Restlet createRoot() {
             getContext().getAttributes().putIfAbsent("handlers", handlers)
             def router = new Router(getContext())
-            router.attachDefault(RInfoChecker.class)
+            router.attachDefault(CheckerResource.class)
             router.attach("/media", new Directory(getContext(),
                                             new File("media").toURL().toString()))
             return router
@@ -285,9 +283,9 @@ if (opt.port) {
 } else {
     opt.arguments().each {
         def maxEntries = opt.entrylimit? Integer.parseInt(opt.entrylimit) : -1
-        def feedChecker = new FeedChecker(maxEntries:maxEntries, handlers:handlers)
+        def checker = new Checker(maxEntries:maxEntries, handlers:handlers)
         try {
-            def checkLogRepo = feedChecker.checkFeed(it)
+            def checkLogRepo = checker.checkFeed(it)
             def conn = checkLogRepo.connection
             def ns = conn.&setNamespace
             ns("xsd", "http://www.w3.org/2001/XMLSchema#")
@@ -302,7 +300,7 @@ if (opt.port) {
             def out = opt.outfile? new FileOutputStream(new File(opt.outfile)) : System.out
             RDFUtil.serialize(checkLogRepo, mtype, out)
         } finally {
-            feedChecker.shutdown()
+            checker.shutdown()
         }
     }
 }

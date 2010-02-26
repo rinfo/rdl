@@ -3,11 +3,11 @@
          xmlns:dct="http://purl.org/dc/terms/"
          xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
 
-  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/amsfs/2007:2">
+  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/amsfs/2007:28">
 
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/amsfs"/>
-	<fsNummer>2007:2</fsNummer>
+	<fsNummer>2007:28</fsNummer>
         <dct:title xml:lang="sv">Föreskrifter om ändring i
             Arbetsmarknadsstyrelsens administrativa föreskrifter (AMSFS 2007:2)
             om ekonomiadministration;</dct:title>
