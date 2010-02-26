@@ -165,6 +165,7 @@ kbd,
 samp,
 tt {
     font-family: "Courier New", monospace, sans-serif;
+    font-size: small;
 }
 
 h1,

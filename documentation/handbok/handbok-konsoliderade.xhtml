@@ -91,7 +91,27 @@
       mer sannolikt att de redan idag produceras på ett sätt som är
       lämpat för strukturede och semantiska format.
     </p>
-   
+    <p>
+      För publicering enligt nivå 2 ska <a
+      href="http://www.w3.org/TR/rdfa-syntax/">XHTML 1.1+RDFa</a>
+      användas. Detta är ett generellt dokumentformat, men genom några
+      enkla principer kan man få ganska stor semantisk precision i
+      sitt material.
+    </p>
+    <p>
+      Genom att använda nästlade
+      <code>&lt;div&gt;</code>-element kan en författnings hierarkiska
+      struktur representeras -- en <code>&lt;div&gt;</code> som
+      representerar ett kapitel innehåller en eller flera
+      <code>&lt;div&gt;</code> som representerar paragrafer, som
+      vartoch en innehåller en <code>&lt;p&gt;</code> som
+      representerar ett stycke.
+    </p>
+    <p>
+      I bilaga 2 och 3 finns exempel på hur en föreskrift respektive
+      en lag kan uttryckas i XHTML 1.1+RDFa.
+    </p>
+      
     <h2>Konsolideringsunderlag och registerinformation</h2>
     <p>
       En konsoliderad text måste innehålla en hänvisning till
@@ -123,8 +143,9 @@
       (ÅÅÅÅ-MM-DD). 
     </p>
     <p>
-      För fler detaljer, se dokumentet <em>URI-principer</em> i den
-      övriga dokumentationen.
+      För fler detaljer, se
+      dokumentet <em><a href="http://dev.lagrummet.se/dokumentation/system/uri-principer.pdf">URI-principer</a></em>
+      i den övriga dokumentationen.
     </p>
     <div class="appendix">
       <h2>Bilaga 1: Egenskaper för dokumenttypen KonsolideradGrundforfattning</h2>
