@@ -332,6 +332,12 @@ table.docinfo tr td {
     margin: 0 0 1em 1em;
 }
 
+/* needed since ontology.css isn't used for styling the handbooks, even though they include parts of model.xhtml */
+.propdef {
+    font-size: small; /*or the table gets too wide for properties like Publikationsplatsangivelse */
+    vertical-align: top;
+}
+
 .pagebreakbefore {
     page-break-before: always;
 }
