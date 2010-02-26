@@ -604,7 +604,7 @@
         ],
         [ a owl:Restriction;
             owl:onProperty :konsolideringsunderlag;
-            owl:minCardinality 1
+            owl:minCardinality 2
         ],
         [ a owl:Restriction;
             owl:onProperty :kapitel;
@@ -626,11 +626,11 @@
 
 :konsolideringsunderlag a rdf:Property;
     rdfs:isDefinedBy : ;
-    rdfs:label "Underlag"@sv;
-    rdfs:comment """Information om vilka dokument, utöver ursprungsdokumentet,
-                    som ingått i konsolideringsunderlaget. Kan t.ex. utgå från
-                    en tidigare konsoliderad version. Samling med referenser
-		    till dokument."""@sv; .
+    rdfs:label "Konsolideringsunderlag"@sv;
+    rdfs:comment """Information om vilka dokument, inklusive ursprungsdokumentet,
+                    som ingått i konsolideringsunderlaget. Kan t.ex. utgå från en
+		    tidigare konsoliderad version. Samling med referenser till
+                    dokument."""@sv; .
 
 
 #---------------------------------------
@@ -830,7 +830,7 @@
 
 :avkravtAvrapporteringsdatum a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
-    rdfs:label "Avkrävt rapportdatum"@sv;
+    rdfs:label "Avkrävt avrapporteringsdatum"@sv;
     rdfs:comment "Det datum en kommitté ska del- eller slutredovisa sitt uppdrag, enligt kommittédirektivet."@sv;
     rdfs:range xsd:date; .
 
