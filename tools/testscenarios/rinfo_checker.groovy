@@ -272,7 +272,6 @@ def handlers = []
 def uriMinterHandler = new EntryRdfValidatorHandler(
         new URI("http://rinfo.lagrummet.se/sys/uri"), "/publ/")
 if (opt.minterentry) {
-    // FIXME: must have "uriminter" dir in cwd even though it's in rinfo-base jar!
     uriMinterHandler.setUriMinter(new URIMinter(RDFUtil.slurpRdf(opt.minterentry)))
     handlers << uriMinterHandler
 }
