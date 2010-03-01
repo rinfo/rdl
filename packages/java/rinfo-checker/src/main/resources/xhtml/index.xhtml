@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>RInfo Checker: insamlingskontroll</title>
+        <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
+    </head>
+    <body>
+        <h1>RInfo Checker</h1>
+        <form method="POST">
+            <fieldset>
+                <legend>
+                    <label for="feedUrl">Källa (Atom-flöde):</label>
+                </legend>
+                <p>
+                    <label for="feedUrl">URL</label>
+                    <input type="text" class="url" name="feedUrl" id="feedUrl"
+                        size="64" />
+                </p>
+                <p>
+                    <label for="feedUrl">Antal poster att undersöka</label>
+                    <input type="text" name="maxEntries" id="maxEntries"
+                        size="3" value="10" />
+                </p>
+                <p>
+                    <input type="submit" value="Check" />
+                </p>
+            </fieldset>
+        </form>
+    </body>
+</html>

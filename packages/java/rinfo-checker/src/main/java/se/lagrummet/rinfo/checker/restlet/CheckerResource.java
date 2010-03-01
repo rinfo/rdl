@@ -25,11 +25,12 @@ import org.openrdf.repository.Repository;
 import org.restlet.*;
 import org.restlet.data.Protocol;
 import org.restlet.data.*;
+import org.restlet.resource.InputRepresentation;
+import org.restlet.resource.Representation;
 import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
-import org.restlet.resource.Variant;
-import org.restlet.resource.Representation;
 import org.restlet.resource.StringRepresentation;
+import org.restlet.resource.Variant;
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil;
 
@@ -46,6 +47,7 @@ public class CheckerResource extends Resource {
     public CheckerResource(Context context, Request request, Response response) {
         super(context, request, response);
         getVariants().add(new Variant(MediaType.TEXT_HTML));
+        // TODO: get xslts from context (don't reload on each request)
         try {
             gritXslt = TransformerUtil.saxTf.newTemplates(new StreamSource(
                         getClass().getResourceAsStream(
@@ -59,32 +61,10 @@ public class CheckerResource extends Resource {
         }
     }
 
-    // FIXME: put in external source
-    static String inputFormHtml =
-        "<form method=\"POST\">" +
-            "<fieldset>" +
-                "<legend>" +
-                    "<label for=\"feedUrl\">K&auml;lla (Atom-fl&ouml;de):</label>" +
-                "</legend>" +
-                "<p>" +
-                    "<label for=\"feedUrl\">URL</label>" +
-                    "<input type=\"text\" class=\"url\" name=\"feedUrl\" id=\"feedUrl\"" +
-                        "size=\"64\" />" +
-                "</p>" +
-                "<p>" +
-                    "<label for=\"feedUrl\">Antal poster att unders&ouml;ka</label>" +
-                    "<input type=\"text\" name=\"maxEntries\" id=\"maxEntries\"" +
-                        "size=\"3\" value=\"10\" />" +
-                "</p>" +
-                "<p>" +
-                    "<input type=\"submit\" value=\"Check\" />" +
-                "</p>" +
-            "</fieldset>" +
-        "</form>";
-
     @Override
     public Representation represent(Variant variant) throws ResourceException {
-        return new StringRepresentation(inputFormHtml, MediaType.TEXT_HTML);
+        return new InputRepresentation(
+                getClass().getResourceAsStream("/xhtml/index.xhtml"), MediaType.TEXT_HTML);
     }
 
     @Override public boolean allowPost() { return true; }
