@@ -16,11 +16,22 @@ class EntryRdfReader {
     ]
 
     static Repository readRdf(DepotEntry depotEntry) {
-        def rdfContent = getRdfContent(depotEntry.findContents())
+        return readRdf(depotEntry, false)
+    }
+
+    static Repository readRdf(DepotEntry depotEntry, boolean readEnclosures) {
+        DepotContent rdfContent = getRdfContent(depotEntry.findContents())
         if (rdfContent == null) {
             throw new MissingRdfContentException("Found no RDF in <${depotEntry.id}>.")
         }
-        def repo = rdfContentToRepository(rdfContent)
+        Repository repo = rdfContentToRepository(rdfContent)
+        if (readEnclosures) {
+            List<DepotContent> enclosureContents = depotEntry.findEnclosures()
+            for (DepotContent encl : enclosureContents) {
+                RDFUtil.loadDataFromFile(repo, encl.file, encl.mediaType)
+            }
+        }
+        return repo
     }
 
     static DepotContent getRdfContent(List<DepotContent> contents) {
@@ -39,7 +50,7 @@ class EntryRdfReader {
     }
 
     static Repository rdfContentToRepository(DepotContent content) {
-        def repo = RDFUtil.createMemoryRepository()
+        Repository repo = RDFUtil.createMemoryRepository()
         // TODO:IMPROVE: pass logical depot as baseURI?
         RDFUtil.loadDataFromFile(repo, content.file, content.mediaType)
         return repo

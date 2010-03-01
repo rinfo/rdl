@@ -172,7 +172,6 @@
 
     <!-- TODO:
          rc:DeletedEntry
-         rc:Error
     -->
 
     <xsl:template match="@ref | xsd:anyURI">

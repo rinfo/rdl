@@ -3,9 +3,8 @@ package se.lagrummet.rinfo.base;
 import java.util.*;
 import java.io.*;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.FileUtils;
-import static org.apache.commons.configuration.ConfigurationUtils.locate;
-import static org.apache.commons.configuration.ConfigurationUtils.fileFromURL;
 
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -31,21 +30,28 @@ public class URIMinter {
     private Map<String, String> baseCharMap;
     private String queryStr;
 
-    public static final String BASE_CHAR_MAP_PATH = "uriminter/unicodebasechars-scandinavian.json";
-    public static final String QUERY_PATH = "uriminter/select_coin_items.rq";
+    public static final String BASE_CHAR_MAP_PATH =
+            "/uriminter/unicodebasechars-scandinavian.json";
+    public static final String QUERY_PATH =
+            "/uriminter/select_coin_items.rq";
 
     public URIMinter(Repository baseData) throws IOException {
-        this(baseData, BASE_CHAR_MAP_PATH, QUERY_PATH);
-    }
-
-    public URIMinter(Repository baseData,
-            String baseCharMapPath, String queryPath) throws IOException {
         this.baseData = baseData;
-        this.baseCharMap = (Map) JSONSerializer.toJSON(
-                FileUtils.readFileToString(
-                        fileFromURL(locate((baseCharMapPath))), "utf-8") );
-        this.queryStr = FileUtils.readFileToString(
-                fileFromURL(locate((queryPath))), "utf-8");
+        String encoding = "UTF-8";
+        InputStream charMapInStream =
+                getClass().getResourceAsStream(BASE_CHAR_MAP_PATH);
+        try {
+            this.baseCharMap = (Map) JSONSerializer.toJSON(
+                    IOUtils.toString(charMapInStream, encoding));
+        } finally {
+            charMapInStream.close();
+        }
+        InputStream queryInStream = getClass().getResourceAsStream(QUERY_PATH);
+        try {
+            this.queryStr = IOUtils.toString(queryInStream, encoding);
+        } finally {
+            queryInStream.close();
+        }
     }
 
     public Map getBaseCharMap() { return baseCharMap; }
@@ -245,6 +251,8 @@ public class URIMinter {
         }
 
     }
+
+
 
     public static void main(String[] args) throws Exception {
         if (args.length < 2) {
