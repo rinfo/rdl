@@ -157,12 +157,15 @@ class StorageSession {
     static Entry getViaEntry(DepotEntry depotEntry) {
         File viaEntryFile = depotEntry.getMetaFile(VIA_META_FILE_NAME)
         Entry viaEntry = null
+        InputStream viaEntryInStream = new FileInputStream(viaEntryFile)
         try {
             viaEntry = (Entry) Abdera.getInstance().getParser().parse(
-                    new FileInputStream(viaEntryFile)).getRoot();
+                    viaEntryInStream).getRoot();
         } catch (FileNotFoundException e) {
             throw new IllegalStateException("Entry <"+depotEntry.getId() +
                     "> is missing expected meta file <"+viaEntryFile+">.")
+        } finally {
+            viaEntryInStream.close()
         }
         return viaEntry
     }
@@ -177,7 +180,12 @@ class StorageSession {
         // TODO:IMPROVE: is this way of setting base URI enough?
         viaEntry.setBaseUri(viaEntry.getSource().getResolvedBaseUri())
         viaEntry.getSource().setBaseUri(null)
-        viaEntry.writeTo(new FileOutputStream(viaEntryFile))
+        OutputStream viaEntryOutStream = new FileOutputStream(viaEntryFile)
+        try {
+            viaEntry.writeTo(viaEntryOutStream)
+        } finally {
+            viaEntryOutStream.close()
+        }
     }
 
 
