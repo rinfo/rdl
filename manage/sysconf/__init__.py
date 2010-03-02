@@ -28,30 +28,27 @@ def pull_etckeeper_repos():
     pass
 
 @runs_once
-@roles('main')
 def sync_workdir():
     rsync_project(slashed(env.mgr_workdir), p.join(SCRIPT_DIR, env.target)+'/',
             exclude=".*", delete=True)
 
 @runs_once
-@roles('main')
 def run_configure():
     with cd("%(mgr_workdir)s/install/"%env):
         sudo("bash configure.sh")
 
-@roles('main')
+
 def fetch_tomcat_dist():
     _needs_targetenv()
-    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg"
+    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg"%env
     mkdirpath(workdir_tomcat)
     with cd(workdir_tomcat):
         run("bash %(mgr_workdir)s/install/get-tomcat.sh %(tomcat_version)s"%env)
 
-@roles('main')
 def install_tomcat():
-    require('target', provided_by=targetenvs)
-    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg"
+    _needs_targetenv()
+    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg"%env
     mkdirpath(workdir_tomcat)
     with cd(workdir_tomcat):
-        run("bash %(mgr_workdir)s/install/install-tomcat.sh %(tomcat_version)s"%env)
+        sudo("bash %(mgr_workdir)s/install/install-tomcat.sh %(tomcat_version)s"%env)
 

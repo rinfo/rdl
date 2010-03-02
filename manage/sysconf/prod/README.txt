@@ -32,6 +32,23 @@ Aktivera loggning av systemförändringar:
 [Mer information: <http://kitenet.net/~joey/code/etckeeper/> (och t.ex.
 <https://help.ubuntu.com/9.04/serverguide/C/etckeeper.html>).]
 
+Ställ in användare
+========================================================================
+
+Lägg till användare (rinfo + övriga systembehöriga):
+
+    $ adduser rinfo
+    $ export EDITOR=vim
+    $ sudo visudo
+
+Ställ in hostname
+========================================================================
+
+Ange primärt DNS-namn för maskinen:
+
+    $ sudo vim /etc/hostname
+
+
 Kontinuerligt arbete
 ========================================================================
 

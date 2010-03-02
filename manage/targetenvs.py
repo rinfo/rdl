@@ -100,7 +100,7 @@ def tg_prod():
         'admin': ['94.247.169.66'],
     }
     # Manage
-    env.mgr_workdir = "mgr_work"
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
     # Filesystem paths
     env.rinfo_main_store = "/opt/rinfo/store"
