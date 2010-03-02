@@ -30,7 +30,7 @@
 
     <h2>Bakgrund</h2>
     <p>
-      Med rättsinformation menas här författningar, vägledande
+      Med "rättsinformation" menas här författningar, vägledande
       domstols- och myndighetsavgöranden, förarbeten och andra
       rättskällor. För övriga begrepp och hur de används i detta
       dokument hänvisas till ordlistan i slutet av detta dokument.
@@ -42,6 +42,18 @@
 
     <h2>Teknik- och standardval</h2>
     <p>
+      Det befintliga rättsinformationssystemet har ett antal problem,
+      som härstammar från den omständighet att varje myndighet
+      beslutar självständigt hur och i vilket format de publicerar sin
+      rättsinformation. Denna decentralisering var ett ursprungligt
+      mål med rättsinformationssystemet, men gör det svårt att uppnå
+      andra uppställda mål. Framförallt är det svårt att skapa en
+      sammanhållen presentation av rättsinformationen som är enhetligt
+      presenterad och sökbar. För att komma till rätta med detta
+      inleddes 2006 ett projekt för att vidareutveckla
+      rättsinformationssystemet.
+    </p>
+    <p>
       För att stödja denna process har rättsinformationsprojektet valt
       ett antal standarder för märkning, strukturering och
       möjliggörande av sökning. I arbetet med dessa har stor vikt
@@ -49,7 +61,7 @@
       till en låg kostnad.
     </p>
     <p>
-      En annan viktig funktion är att innehållet i dokumenten i sig
+      Ett annat viktigt mål är att innehållet i dokumenten i sig
       skall kunna läsas av så många som möjligt. Därför har vi valt
       format som fungerar för användare med särskilda behov.
     </p>
@@ -73,17 +85,13 @@
       -->
     </p>
     <p>
-      För strukturering av rättsinformationen ur ett
-      samlingsperspektiv (och för att möjliggöra sammanlänkning av
-      informationsansvariga organisationers databaser) används
-      standarden Atom Syndication Format ( <a href=
+      Den standard som används är Atom Syndication Format ( <a href=
       "http://tools.ietf.org/html/rfc4287">IETF RFC 4287</a>). Med
       denna upprättas en postförteckning över den information en
       deltagande organisation avser inkludera i
       rättsinformationssystemet.  Denna postförteckning gör det
       möjligt för konsumenter av informationen att få reda på
-      förändringar i samlingen över tid (t.ex. nytillkommet
-      material).
+      förändringar i samlingen över tid (t.ex. nytillkommet material).
     </p>
 
     <p>
@@ -148,11 +156,6 @@
       justeringar för att publicera enligt nivå 1 och vid ett
       senare tillfälle enligt nivå 2.
     </p>
-    <p>
-      Sammantaget ger information i dessa format det stöd som
-      behövs för sökning, sammanställning och presentation på ett
-      enhetligt sätt.
-    </p>
 
     <h3>RDF som metadatamodell </h3>
     <p>
@@ -214,14 +217,14 @@
     <h3>XHTML 1.1+RDFa för strukturerade dokument (Nivå 2)</h3>
     <p>
       I ett strukturerat dokument kan exempelvis enskilda kapitel och
-      paragrafer ha egna identifierare. Dettta gör det möjligt att
+      paragrafer ha egna identifierare. Detta gör det möjligt att
       skapa hänvisningar på en finkornigare nivå än bara mellan
       dokument.
     </p>
     <p>
-      Dessa identifierare associeras med de textavsnitt som de
-      motsvarar. Detta gör det möjligt att visa bara en önskad del av
-      ett långt dokument.
+      Dessa identifierare associeras direkt i dokumentet med de
+      textavsnitt som de motsvarar. Detta gör det möjligt att visa
+      bara en önskad del av ett långt dokument.
     </p>
     <p>
       Vi har valt att använda XHTML 1.1+RDFa. <a
@@ -234,8 +237,7 @@
       Media</a> och <a
       href="http://www.w3.org/TR/css3-gcpm/">Generated Content for
       Paged Media</a>) eller <a
-      href="http://www.w3.org/TR/xsl/">XSL-FO</a> kan det användas som
-      basformat även för tryckta publikationer. <a
+      href="http://www.w3.org/TR/xsl/">XSL-FO</a>. <a
       href="http://www.w3.org/TR/rdf-primer/">RDFa</a> är en utökning
       som gör det möjligt att uttrycka metadata enligt RDF-modellen
       direkt i själva dokumentet. En stor fördel med detta är att det
@@ -254,7 +256,7 @@
     </p>
     <ol>
       <li>
-	Informationsansvarig organisation utarbetar dokument A.
+	Informationsansvarig organisation utarbetar ett dokument.
 	Sättet som rättsinformation framställs på omfattas inte
 	av rättsinformationssystemet.
       </li>
@@ -262,7 +264,7 @@
 	Dokumentet publiceras. Denna process kan i sig delas upp i tre steg:
 	<ol>
 	  <li>
-	    Informationsansvarig organisation publicerar dokument A på den
+	    Informationsansvarig organisation publicerar dokumentet på den
 	    egna webbplatsen på en bestämd adress.
 	  </li>
 	  <li>
@@ -272,14 +274,14 @@
 	  </li>
 	  <li>
 	    Informationsansvarig organisation uppdaterar
-	    postförteckning på den egna webbplatsen.
+	    postförteckningen på den egna webbplatsen.
 	  </li>
 	</ol>
       </li>
       <li>
-	Rättsinformationssystemet läser av postförteckning och får
-	information om länkar till dokument A och metadata om
-	detta. Samtidigt kan även privata aktörer göra samma sak.
+	Rättsinformationssystemet läser av postförteckningen och får
+	information om länkar till dokumentet och metadata om
+	detta (samtidigt kan även privata aktörer göra samma sak).
       </li>
       <li>
 	Rättsinformationssystemet läser in dokument A och metadata om
@@ -366,7 +368,7 @@
       nummer), datum, bemyndigandehänvisning, lagrumshänvisning, med
       mera. Denna metadata uttrycks med RDF-standarden och den
       begreppsmodell som projektet har tagit fram, och den sparas i en
-      separat fil som också görs tillgänglig på en annan bestämd URL.
+      separat fil som också görs tillgänglig på en annan bestämd URL. Exempel:
     </p>
     <div class="syntax">
       <code class="xml"><![CDATA[
@@ -527,11 +529,12 @@
       ]]></code>
     </div>
     <p>
-      <code>dct:isFormatOf</code> kopplar identifieraren för bilagan
-      till filen.
+      Attributet <code>dct:isFormatOf</code> skapar en koppling mellan
+      identifieraren för bilagan och själva filen som innehåller
+      bilagan.
     </p>
     <p>
-      Om bilagan är den del av föreskriftsdokumentet anges ingen
+      Om bilagan är en del av föreskriftsdokumentet anges ingen
       information i Atom Entry-posten.
     </p>
 
@@ -785,11 +788,6 @@
       <code>&lt;head&gt;</code>-elementet i form av
       <code>&lt;link&gt;</code> och <code>&lt;meta&gt;</code>-element
       (för resursreferenser respektive strängliteraler).
-    </p>
-    <p>
-      I senare upplagor av de enskilda handböckerna kommer det att
-      ingå bilagor som exemplifierar hur de olika dokumenttyperna kan
-      uttryckas i XHTML 1.1
     </p>
 
     <h2>Ordlista</h2>
