@@ -1,6 +1,7 @@
-from fabric.api import env, run, sudo, run, sudo
+from fabric.api import *
 from fabric.contrib.files import exists
 import sys
+
 
 venv = lambda: dict(env, **sys._getframe(1).f_locals)
 

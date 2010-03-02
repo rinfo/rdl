@@ -1,9 +1,10 @@
+"""
+Diagnostics and admin tasks
+"""
 from fabric.api import *
 from util import venv
 from targetenvs import _needs_targetenv
 
-##
-# Diagnostics and admin tasks
 
 def list_dist():
     _needs_targetenv()

@@ -24,31 +24,62 @@ from util import mkdirpath, slashed
 SCRIPT_DIR = p.dirname(__file__)
 
 
-def pull_etckeeper_repos():
-    pass
+##
+# Continuous Maintenance
+
+@runs_once
+def configure_server(sync="1"):
+    if int(sync):
+        sync_workdir()
+
+    etc_dir = "%(mgr_workdir)s/etc/" % env
+
+    if env.get('custom_tomcat'):
+        with cd("%(tomcat)s" % env):
+            sudo("chown -R %(tomcat_user)s webapps temp logs work conf" % env)
+        with cd(etc_dir):
+            if sudo("cp -vu init.d/tomcat /etc/init.d/"):
+                sudo("chmod 0755 /etc/init.d/tomcat")
+                sudo("update-rc.d tomcat defaults")
+    with cd(etc_dir):
+        if env.get('apache_jk_tomcat'):
+            if sudo("cp -vu apache2/workers.properties /etc/apache2/"):
+                sudo("chown root:root /etc/apache2/workers.properties")
+            if sudo("cp -vu apache2/conf.d/jk.conf /etc/apache2/conf.d/"):
+                sudo("chown root:root /etc/apache2/conf.d/jk.conf")
+            sudo("cp -vu apache2/mods-available/proxy.conf /etc/apache2/mods-available/")
+
+        for role in env.roles:
+            sites = env.get('apache_sites')
+            if not sites or role not in sites: continue
+            for site in sites[role]:
+                sudo("cp -vu apache2/sites-available/%s /etc/apache2/sites-available/" % site)
+                sudo("a2ensite %s" % site)
 
 @runs_once
 def sync_workdir():
-    rsync_project(slashed(env.mgr_workdir), p.join(SCRIPT_DIR, env.target)+'/',
+    local_conf_dir = p.join(SCRIPT_DIR, env.target)
+    rsync_project(slashed(env.mgr_workdir), slashed(local_conf_dir),
             exclude=".*", delete=True)
 
-@runs_once
-def run_configure():
-    with cd("%(mgr_workdir)s/install/"%env):
-        sudo("bash configure.sh")
 
+def pull_etckeeper_repos():
+    pass
+
+##
+# Initial Setup
 
 def fetch_tomcat_dist():
     _needs_targetenv()
-    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg"%env
+    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
     mkdirpath(workdir_tomcat)
     with cd(workdir_tomcat):
-        run("bash %(mgr_workdir)s/install/get-tomcat.sh %(tomcat_version)s"%env)
+        run("bash %(mgr_workdir)s/install/get-tomcat.sh %(tomcat_version)s" % env)
 
 def install_tomcat():
     _needs_targetenv()
-    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg"%env
+    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
     mkdirpath(workdir_tomcat)
     with cd(workdir_tomcat):
-        sudo("bash %(mgr_workdir)s/install/install-tomcat.sh %(tomcat_version)s"%env)
+        sudo("bash %(mgr_workdir)s/install/install-tomcat.sh %(tomcat_version)s" % env)
 

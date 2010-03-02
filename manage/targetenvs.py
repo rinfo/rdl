@@ -1,3 +1,6 @@
+"""
+Target Environments
+"""
 from fabric.api import *
 
 
@@ -8,12 +11,9 @@ def _needs_targetenv():
     require('target', 'roledefs', 'dist_dir', 'tomcat',
             provided_by=targetenvs)
 
-##
-# Target environments
-
 @_targetenv
 def tg_dev_unix():
-    "Set target env to: dev-unix"
+    """Set target env to: dev-unix"""
     # Name env:
     env.target = "dev-unix"
     # Machines:
@@ -37,7 +37,7 @@ def tg_dev_unix():
 
 @_targetenv
 def tg_integration():
-    "Set target env to: integration"
+    """Set target env to: integration"""
     # Name env:
     env.target = "integration"
     # Machines:
@@ -63,7 +63,7 @@ def tg_integration():
 
 @_targetenv
 def tg_stg():
-    "Set target env to: stg"
+    """Set target env to: stg"""
     # Name env:
     env.target = "stg"
     # Machines:
@@ -88,16 +88,17 @@ def tg_stg():
 
 @_targetenv
 def tg_prod():
-    "Set target env to: prod"
+    """Set target env to: prod"""
     # Name env:
     env.target = "prod"
     # Machines:
     env.user = 'rinfo'
     env.roledefs = {
-        'main': ['94.247.169.66'],
-        'service': ['94.247.169.67'],
+        'main': ['rinfo.lagrummet.se'],
+        'service': ['service.lagrummet.se'],
+        'checker': ['service.lagrummet.se'],
         'doc': ['dev.lagrummet.se'],
-        'admin': ['94.247.169.66'],
+        'admin': ['rinfo.lagrummet.se'],
     }
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -108,7 +109,14 @@ def tg_prod():
     env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
+    # Apache
+    env.apache_sites = {
+        'main': ['default'],#, 'admin'],
+        'service': ['service', 'checker'],
+    }
+    env.apache_jk_tomcat = True
     # Tomcat
+    env.custom_tomcat = True
     env.tomcat_version = "6.0.20"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
