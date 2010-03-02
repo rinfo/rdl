@@ -24,7 +24,7 @@
         <html>
             <head>
                 <title>RInfo Checker: insamlingskontroll</title>
-                <link rel="stylesheet" type="text/css" href="{$mediabase}/rinfo-checker-collector-log.css" />
+                <link rel="stylesheet" type="text/css" href="{$mediabase}/collector_log.css" />
             </head>
             <body>
               <h1>RInfo Checker: insamlingskontroll</h1>

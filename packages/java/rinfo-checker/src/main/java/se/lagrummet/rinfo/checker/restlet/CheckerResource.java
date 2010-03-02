@@ -55,7 +55,7 @@ public class CheckerResource extends Resource {
             // TODO: set mediabase param
             logXslt = TransformerUtil.saxTf.newTemplates(new StreamSource(
                         getClass().getResourceAsStream(
-                            "/xslt/rinfo-checker-collector-log.xslt")));
+                            "/xslt/collector_log.xslt")));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
