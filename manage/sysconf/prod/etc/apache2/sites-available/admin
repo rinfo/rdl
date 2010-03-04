@@ -1,5 +1,6 @@
 <VirtualHost admin.lagrummet.se:80>
-    ServerAdmin rinfo@lagrummet.se
+    ServerName admin.lagrummet.se
+    ServerSignature On
 
     DocumentRoot /var/www/admin/
     <Directory />
@@ -13,11 +14,10 @@
         allow from all
     </Directory>
 
+    ServerAdmin rinfo@lagrummet.se
+
     ErrorLog /var/log/apache2/admin-error.log
     LogLevel warn
     CustomLog /var/log/apache2/admin-access.log combined
-
-    ServerName admin.lagrummet.se
-    ServerSignature On
 
 </VirtualHost>

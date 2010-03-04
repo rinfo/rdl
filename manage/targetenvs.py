@@ -103,13 +103,13 @@ def tg_prod():
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
-    # Filesystem paths
+    # System paths
     env.rinfo_main_store = "/opt/rinfo/store"
     env.rinfo_dir = '/opt/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
+    # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
-    # Apache
     env.apache_sites = {
         'main': ['default'],#, 'admin'],
         'service': ['service', 'checker'],

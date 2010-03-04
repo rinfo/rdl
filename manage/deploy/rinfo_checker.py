@@ -16,8 +16,15 @@ def package_checker(deps="1"):
 ##
 # Server deploy
 
+@runs_once
+@roles('main')
+def setup_checker():
+    if not exists(env.dist_dir):
+        run("mkdir %(dist_dir)s"%env)
+
 @roles('checker')
 def deploy_checker():
+    setup_checker()
     _deploy_war("%(java_packages)s/rinfo-checker/target/rinfo-checker-%(target)s.war"%env,
             "rinfo-checker")
 

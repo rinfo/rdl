@@ -1,5 +1,6 @@
 <VirtualHost *:80>
-    ServerAdmin rinfo@lagrummet.se
+    #ServerName rinfo.lagrummet.se
+    #ServerSignature On
 
     DocumentRoot /var/www/
     <Directory />
@@ -13,16 +14,16 @@
         allow from all
     </Directory>
 
-    ErrorLog /var/log/apache2/error.log
-    LogLevel warn
-    CustomLog /var/log/apache2/access.log combined
-
-    #ServerName rinfo.lagrummet.se
-    #ServerSignature On
     ProxyPassMatch ^/(index(\..+)?)?$ !
     ProxyPassMatch ^/robots\.txt$ !
     ProxyPass /admin !
     ProxyPass / ajp://localhost:8009/rinfo-main/
     #ProxyPassMatch ^/(.+/.*)$ ajp://localhost:8009/rinfo-main/$1
+
+    ServerAdmin rinfo@lagrummet.se
+
+    ErrorLog /var/log/apache2/error.log
+    LogLevel warn
+    CustomLog /var/log/apache2/access.log combined
 
 </VirtualHost>
