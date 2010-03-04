@@ -28,16 +28,17 @@ h4 {
 }
 
 dl, dt, dd {
-    margin: 0;
-    padding: 0;
     display: block;
+    margin: 0;
+    list-style-type: none;
     list-style: none;
+    padding: 0;
+    overflow: visible;
     zoom: 1;
 }
 
 dl {
     margin: 0 0 1em 0;
-    overflow: hidden;
 }
 
 dl.lone {
@@ -57,10 +58,10 @@ dt {
     clear: left;
     float: left;
     font-weight: bold;
+    margin-right: 0.4em;
 }
 
 dd {
-    float: left;
     margin-left: 0.4em;
 }
 
