@@ -39,6 +39,16 @@ And, in ``/ivysettings/resolvers/chain``, after the first ``filesystem``, add::
 The path in the root property above should match the location for your local
 maven repository. You may have changed that from the default home directory.
 
+The current stable version of Ivy (2.1.0), the dependency manager that
+Groovy uses, has problems parsing some of the dependency information
+contained in the Sesame packages (org.openrdf.* and
+info.aduna.*). However, the current development version of Ivy has
+support for this. This version can be installed with the following commands:
+
+$ cd $GROOVY_HOME/lib
+$ mv ivy-2.1.0.jar ivy-2.1.0.jar-old
+$ wget http://hudson.zones.apache.org/hudson/view/Ant/job/Ivy/lastSuccessfulBuild/artifact/trunk/build/artifact/jars/ivy.jar
+
 That should make all Maven dependencies locatable (provided that you have ``mvn
 install``:ed your packages; see <packages/java/README.txt>).
 
