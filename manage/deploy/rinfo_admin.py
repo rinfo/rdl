@@ -18,8 +18,8 @@ def deploy_admin():
             exclude=".*", delete=True)
 
 def ping_main_with_admin():
-    feed_url = "http://%s/admin/feed/current" % env.roledefs['main'][0]
-    collector_url = "http://%s/collector/" % env.roledefs['admin'][0]
+    feed_url = "http://%s/feed/current" % env.roledefs['admin'][0]
+    collector_url = "http://%s/collector/" % env.roledefs['main'][0]
     print local("curl --data 'feed=%(feed_url)s' %(collector_url)s"%vars())
 
 

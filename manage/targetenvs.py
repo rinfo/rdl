@@ -96,9 +96,9 @@ def tg_prod():
     env.roledefs = {
         'main': ['rinfo.lagrummet.se'],
         'service': ['service.lagrummet.se'],
-        'checker': ['service.lagrummet.se'],
+        'checker': ['checker.lagrummet.se'],
         'doc': ['dev.lagrummet.se'],
-        'admin': ['rinfo.lagrummet.se'],
+        'admin': ['admin.lagrummet.se'],
     }
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
