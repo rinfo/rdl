@@ -215,7 +215,7 @@
         </xsl:if>
         <xsl:variable name="sub-props" select="$r[rdfs:subPropertyOf/@ref =
                       $property/@uri and rdfs:label[@xml:lang=$lang] and
-                      (not(rdfs:domain) or self:contains($all-classrefs, rdfs:domain/@ref))]"/>
+                      self:domain-within(., $all-classrefs)]"/>
         <xsl:if test="$restr">
           <xsl:for-each select="self:computed-range($restr)/rdfs:label[@xml:lang = $lang]">
             <xsl:variable name="uri" select="../@uri"/>
@@ -255,19 +255,25 @@
             <dl>
               <xsl:for-each select="$sub-props">
                 <xsl:sort select="rdfs:label[@xml:lang=$lang]"/>
-                <dt><xsl:apply-templates select="rdfs:label"/></dt>
-                <xsl:if test="not(self:contains($all-proprefs, @uri))">
-                  <dd>
-                    <xsl:apply-templates select="rdfs:comment"/>
-                    <xsl:variable name="range"
-                                  select="grit:get(rdfs:range)"/>
-                    <xsl:if test="$range">
-                      <xsl:text> </xsl:text>
-                      <em>(<xsl:apply-templates
-                              select="$range/rdfs:label[@xml:lang = $lang]"/>)</em>
-                    </xsl:if>
-                  </dd>
-                </xsl:if>
+                <xsl:choose>
+                  <xsl:when test="not(self:contains($all-proprefs, @uri))">
+                    <dt><xsl:apply-templates select="rdfs:label"/></dt>
+                    <dd>
+                      <xsl:apply-templates select="rdfs:comment"/>
+                      <xsl:variable name="range"
+                                    select="grit:get(rdfs:range)"/>
+                      <xsl:if test="$range">
+                        <xsl:text> </xsl:text>
+                        <em>(<xsl:apply-templates
+                                select="$range/rdfs:label[@xml:lang = $lang]"/>)</em>
+                      </xsl:if>
+                    </dd>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <dt><em><xsl:apply-templates select="rdfs:label"/></em></dt>
+                    <dd><em>(se specifik rad för denna egenskap i denna typ)</em></dd>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xsl:for-each>
             </dl>
           </p>
@@ -389,18 +395,15 @@
 
   <func:function name="self:super-classes">
     <xsl:param name="e"/>
-    <xsl:param name="recursive" select="true()"/>
     <xsl:variable name="supers" select="dyn:map($e/rdfs:subClassOf, 'grit:get(.)')"/>
-    <xsl:choose>
-      <xsl:when test="$recursive">
-        <func:result select="$supers | dyn:map($supers, 'self:super-classes(., $recursive)')"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <func:result select="$supers"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <func:result select="$supers | dyn:map($supers, 'self:super-classes(.)')"/>
   </func:function>
 
+  <func:function name="self:super-properties">
+    <xsl:param name="e"/>
+    <xsl:variable name="supers" select="dyn:map($e/rdfs:subPropertyOf, 'grit:get(.)')"/>
+    <func:result select="$supers | dyn:map($supers, 'self:super-properties(.)')"/>
+  </func:function>
 
   <func:function name="self:computed-range">
     <xsl:param name="restr"/>
@@ -409,6 +412,20 @@
                   $restr/owl:allValuesFrom | $restr/owl:someValuesFrom |
                   grit:get($restr/owl:onProperty)/rdfs:range"/>
     <func:result select="grit:get($classref[1])"/>
+  </func:function>
+
+  <func:function name="self:domain-within">
+    <xsl:param name="node"/>
+    <xsl:param name="classrefs"/>
+    <xsl:variable name="domains" select="$node/rdfs:domain | self:super-properties($node)/rdfs:domain"/>
+    <xsl:variable name="matched-domain">
+      <xsl:for-each select="$domains">
+        <xsl:if test="self:contains($classrefs, @ref)">
+          <xsl:text>TRUE</xsl:text>
+        </xsl:if>
+      </xsl:for-each>
+    </xsl:variable>
+    <func:result select="not($domains) or contains($matched-domain, 'TRUE')"/>
   </func:function>
 
   <func:function name="self:contains">

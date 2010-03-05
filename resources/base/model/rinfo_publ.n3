@@ -403,6 +403,7 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Ikraftträdanderegel"@sv;
     rdfs:comment "En bestämmelse som anger om, när och hur författningen träder ikraft."@sv;
+    rdfs:domain :FSDokument;
     protege:abstract "true" .
 
 :ikrafttradandedatum a owl:DatatypeProperty;
