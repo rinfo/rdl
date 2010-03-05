@@ -1,6 +1,6 @@
 <VirtualHost *:80>
-    #ServerName rinfo.lagrummet.se
-    #ServerSignature On
+    ServerName rinfo.lagrummet.se
+    ServerSignature On
 
     DocumentRoot /var/www/
     <Directory />
@@ -16,7 +16,7 @@
 
     ProxyPassMatch ^/(index(\..+)?)?$ !
     ProxyPassMatch ^/robots\.txt$ !
-    ProxyPass /admin !
+    #ProxyPass /admin !
     ProxyPass / ajp://localhost:8009/rinfo-main/
     #ProxyPassMatch ^/(.+/.*)$ ajp://localhost:8009/rinfo-main/$1
 

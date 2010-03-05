@@ -23,14 +23,14 @@ VOID_DATASET = new URIImpl(VOID+"Dataset")
 
 
 FEED_META = [
-    feedUri: "http://rinfo-admin.lagrummet.se/base/feed",
+    feedUri: "http://admin.lagrummet.se/base/feed",
     feedTitle: "RInfo Base Data",
     publicBaseUri: "http://rinfo.lagrummet.se"
 ]
 
 FEED_PATH_CONF = [
-    baseUrl: "/admin",
-    feedPath: "/admin/feed/current"
+    baseUrl: "",
+    feedPath: "/feed/current"
 ]
 
 

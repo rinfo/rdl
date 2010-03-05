@@ -14,7 +14,7 @@ def package_admin():
 @roles('admin')
 def deploy_admin():
     _needs_targetenv()
-    rsync_project((env.admin_webroot), slashed(env.adminbuild)+'admin/',
+    rsync_project((env.admin_webroot), slashed(env.adminbuild),
             exclude=".*", delete=True)
 
 def ping_main_with_admin():

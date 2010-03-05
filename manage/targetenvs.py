@@ -111,7 +111,7 @@ def tg_prod():
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
     env.apache_sites = {
-        'main': ['default'],#, 'admin'],
+        'main': ['default', 'admin'],
         'service': ['service', 'checker'],
     }
     env.apache_jk_tomcat = True

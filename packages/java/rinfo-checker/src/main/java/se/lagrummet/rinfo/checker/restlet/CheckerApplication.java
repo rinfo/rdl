@@ -64,7 +64,7 @@ public class CheckerApplication extends Application {
         Checker adminChecker = new Checker();
         adminChecker.setHandlers(handlers);
         // TODO: read just the URIMinter config directly <http://rinfo.lagrummet.se/sys/uri>?
-        URL adminFeedUrl = new URL("http://rinfo.lagrummet.se/admin/feed/current.atom");
+        URL adminFeedUrl = new URL("http://admin.lagrummet.se/feed/current.atom");
         try {
             adminChecker.checkFeed(adminFeedUrl, true);
         } finally {

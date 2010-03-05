@@ -1,4 +1,4 @@
-<VirtualHost admin.lagrummet.se:80>
+<VirtualHost *:80>
     ServerName admin.lagrummet.se
     ServerSignature On
 
