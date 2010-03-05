@@ -420,9 +420,7 @@
     <xsl:variable name="domains" select="$node/rdfs:domain | self:super-properties($node)/rdfs:domain"/>
     <xsl:variable name="matched-domain">
       <xsl:for-each select="$domains">
-        <xsl:if test="self:contains($classrefs, @ref)">
-          <xsl:text>TRUE</xsl:text>
-        </xsl:if>
+        <xsl:if test="self:contains($classrefs, @ref)">TRUE</xsl:if>
       </xsl:for-each>
     </xsl:variable>
     <func:result select="not($domains) or contains($matched-domain, 'TRUE')"/>
