@@ -24,8 +24,8 @@
       <h3>1.2. Bakgrund</h3>
       <p>Informationen i rättsinformationssystemet kommer primärt från andra 
         myndigheter. Både dessa källor och systemets aggregat av dem ska 
-        representeras av Atom-flöden (feeds). Systemets aggregerade källa utgör 
-        en komplett sammanställning av alla datakällor.
+        representeras av Atom-flöden. Systemets aggregerade källa utgör en 
+        komplett sammanställning av alla datakällor.
       </p>
       <h3>1.4. Definitioner</h3>
       <!-- TODO: utöka Ordlista (i <intro-implementatorer.xhtml>)
@@ -34,14 +34,12 @@
       <h4>Generella</h4>
       <dl>
         <dt>Atom</dt>
-        <dd>En standardiserad syntax för att representera flöden av 
-          uppdateringar i XML-dokument.</dd>
-        <dt>Datakälla</dt>
-        <dd>En plats för lagring av digital information.</dd>
-        <dt>Flöde</dt>
+        <dd>Ett standardformat i XML för att representera flöden av 
+          uppdateringar.</dd>
+        <dt>Atom-flöde</dt>
         <dd>En representation av posters tillväxt i en datakälla. (Eng.: 
           "feed".)</dd>
-        <dt>Post</dt>
+        <dt>Atom-post</dt>
         <dd>En paketering av ett eller flera digitala dokument som 
           beskriver/tillhör samma logiska resurs. (Eng.: "entry".)</dd>
         <dt>Arkiv</dt>
@@ -52,13 +50,13 @@
         <dt>Radering</dt>
         <dd>Borttagning (avpublicering) av en post (och därmed all information 
           som den paketerar).</dd>
-        <dt>Checksumma</dt>
-        <dd>Ett digitalt "tumatryck". En kontrollsumma beräknad på en digital 
-          (binär) representation, algoritmiskt garanterad att vara unik för 
-          innehållet.</dd>
+        <dt>Kontrollsumma</dt>
+        <dd>Ett digitalt "tumavtryck". En kontrollsumma beräknad på en digital 
+          (binär) representation, designad för att upptäcka fel vid lagring och 
+          överföring av information.</dd>
         <dt>MD5</dt>
-        <dd>En vanlig algoritm (öppen och fri att använda) för att beräkna 
-          checksummor. Är inte 100%:igt unik i alla lägen, men anses 
+        <dd>En kryptografisk algoritm (öppen och fri att använda) för att 
+          beräkna kontrollsummor. Är inte 100%:igt unik i alla lägen, men anses 
           tillförlitlig nog för att säkerställa överförd data från en pålitlig 
           källa.</dd>
       </dl>
@@ -66,10 +64,8 @@
       <dl>
         <dt>Rättsinformationssystemet</dt>
         <dd>Den uppsättning datasystem som samordnar syntax, semantik, 
-          inhämtning och exponering av rådata samt vyer av 
-          rättsinformation.</dd>
-        <dt>Rättskälla</dt>
-        <dd>Datakälla som innehåller rättsinformation.</dd>
+          inhämtning och exponering av primär rättsinformation samt vyer av 
+          dessa.</dd>
         <dt>Rättinformation</dt>
         <dd>Rättsliga dokument och metadata om dessa, inkluderande digitala 
           representationer av fysiska dokument, poster som beskriver dessa 
@@ -80,30 +76,47 @@
     <div class="section">
       <h2>2. Varför Atom</h2>
       <h3>2.1. Källor</h3>
-      <p>Rättsinformationsystemets datakällor innehåller poster som växer över 
+      <p>Rättsinformationssystemets datakällor innehåller poster som växer över 
         tid. Posterna utgör en paketering av en "enhet" av rättsinformation (i 
         regel ett dokument såsom en föreskrift), tillsammans med enhetens 
-        publika identifierare och en datumstämpel för när posten tillkommit 
-        <em>i datakällan</em>.
+        publika identifierare och en tidstämpel som anger när posten tillkommit 
+        eller uppdaterats i datakällan.
       </p>
-      <p>Hämta data från myndigheternas datakällor.
+      <p>Eftersom myndigheterna har publiceringsansvar är systemet byggt på att 
+        dessa exponerar tillkommet material som listor av nytillkomna poster. 
+        På så vis kan både det centrala systemet och andra intressenter hämta 
+        information direkt från utgivarna allt eftersom den tillkommer. Detta 
+        sker på samma vis som elektroniska nyhetsläsare (RSS-läsare) idag 
+        hämtar ny information.
       </p>
-      <p>.. inte "lämna in"; myndigheterna har publiceringsansvar, inget 
-        beroende till en central plattform. Möjliggör ändå central åtkomst.
+      <p>RSS (eng. "Really Simple Syndication") är ett samlingsnamn på format 
+        som uttrycker flöden (eng. "feeds") för t.ex. nyhetsuppdateringar. 
+        Ursprungligen stod RSS för "Rich Site Summary" och var ett enskilt 
+        format. Nuförtiden finns det flera versioner av detta format, och 
+        samlingsnamnet inkluderar både dem och Atom-formatet. Atom är ett 
+        specifikt, öppet, XML-baserat format som tagits fram och 
+        standardiserats som RFC 4287. (RFC:er, "Request For Comments", är 
+        standarder vilka publiceras av The Internet Engineering Task Force, <a 
+          href="http://www.ietf.org/">IETF</a>.)
       </p>
-      <!-- så enkelt som möjligt(?) -->
-      <h3>2.2. Standarder</h3>
-      <p>Följande specifikationer används för att hantera inhämtning och 
-        syndikering av innehållet i rättsinformationssystemet:</p>
+      <p>Atom har valts för att det är öppet, standardiserat och väletablerat,  
+        samt har explicit stöd för anpassning och utökning för olika ändamål, 
+        t.ex. detaljerad hantering av paginering för t.ex. arkiverade 
+        postförteckningar, raderingar av poster med mera. Det finns bra 
+        programmerings- och verktygsstöd i olika programspråk/-plattformar för 
+        att hantera formatet.
+      </p>
+      <h3>2.2. Specifikationer</h3>
+      <p>Följande Atom-relaterade specifikationer används för att hantera 
+        inhämtning och syndikering av innehållet i systemet:</p>
       <ul>
         <li>
           <a href="http://tools.ietf.org/html/rfc4287">The Atom Syndication 
              Format</a>
          </li>
          <li>
-           <a 
-             href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02">Atom 
-             Link Extensions</a>
+           <a href="http://tools.ietf.org/html/rfc5005">Feed Paging and 
+              Archiving</a>
          </li>
          <li>
            <a 
@@ -111,15 +124,11 @@
              Atom "deleted-entry" Element</a>
          </li>
          <li>
-           <a href="http://tools.ietf.org/html/rfc5005">Feed Paging and 
-              Archiving</a>
+           <a 
+             href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02">Atom 
+             Link Extensions</a>
          </li>
       </ul>
-      <p>Atom är den standard som valts för att representera tillkomsten av 
-        data i dessa datakällor. Det är en väletablerad standard, baserad på 
-        XML, som anses enkel och för vilken det finns bra verktygsstöd för i 
-        olika programspråk/-plattformar.
-      </p>
       <p>Övriga specifikationer beskriver de detaljer som berör hantering av 
         stora mängder poster (m.h.a. länkade flöden), representation av 
         raderade poster (vid felpublicering) samt checksummor av överförda 
@@ -137,8 +146,6 @@
         information som tillhör denna process åtskiljd från 
         rättsinformationsdomänens specifika information.
       </p>
-      <p>.. kopplingen till domändatan: URI:erna.
-      </p>
       <h3>2.4. Systemet som primär, auktoritativ datakälla</h3>
       <p>
         Systemets kontrollerade sammanställning av källorna exponeras på precis 
@@ -147,165 +154,519 @@
         källorna. Denna källa utgör den primära källan för data ur 
         rättsinformationssystemet, och kan konsumeras av allehanda 
         rättsinformationsintressenter.</p>
-      <!-- se avsnittet "Systemet som källa" -->
     </div>
 
     <div class="section">
       <h2>3. Representationer i Atom</h2>
-      <p>
-        Postförteckningar som uppdateras med nya poster över tid.
+      <p>Atom-flöden uttrycks som postförteckningar i ett eller flera 
+        XML-dokument. Respektive post är försedd med ett unikt ID i form av en 
+        URI, samt en tidstämpel som anger uppdatering.
       </p>
-      <p>
-        ett dokument = lista
-        poster.. (see Struktur nedan)
-        hantering:.. uppdatering, radering, paginering: se Arkiv
-      </p>
-      <!-- exempel-feed -->
-    </div>
+      <p>Exempel på strukturen av ett feed-dokument:</p>
+      <div class="syntax">
+        <code class="xml"><![CDATA[
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:le="http://purl.org/atompub/link-extensions/1.0"
+      xml:lang="sv">
 
-    <div class="section">
-      <h2>4. Källor, ID:n</h2>
-      <h3>Dataset, dynamism, representation, TAG-URI</h3>
-      <p>
-        TAG-URI:er för källornas ID:n
-      </p>
-      <p>
-        E.x.: <code>tag:lagrummet.se,2009:rinfo</code>
-      </p>
-      <p>
-        Atom-id:n är ofta tag-uri:er. För att se till att de myndigheterna har 
-        beständiga identifierare för rättskällorna.
-        Identifierar flödet utan att hårdkoppla det med url:ar.
-      </p>
-      <h3>poster: URI; dokument (+ se URI-dok.)</h3>
-      <p>...</p>
-    </div>
+  <id>tag:riksarkivet.se,2009:rinfo:feed</id>
 
-    <div class="section">
-      <h2>5. Struktur - tidslinje av poster (resurspaket)</h2>
-      <p>Atom-flöden representerar tillkommande poster över tid. Det är <em>av 
-          yttersta vikt</em> att tidstämplar respekteras med avseende på:</p>
-      <ul>
-        <li>Att förändringar <em>måste</em> tidstämplas kronologiskt.</li>
-        <li>Att inga tidsstämplar för exponerat material modifieras i 
-          efterhand.</li>
-      </ul>
-      <p>Eftersom systemet inhämtar resurser från rättskällorna måste det lita 
-        på att kommunicerade tidsstämplar gäller, så att allting före en 
-        påträffad tidpunkt kan garanteras gälla information som redan 
-        beaktats.</p>
+  <title>Riksarkivets författningssamling</title>
+
+  <updated>2009-01-23T12:42:32Z</updated>
+
+  <author>
+    <name>Riksarkivet</name>
+    <uri>http://www.statensarkiv.se/</uri>
+    <email>rinfo@riksarkivet.ra.se</email>
+  </author>
+
+  <link href="https://www.statensarkiv.se/rafs/feed/index.atom" rel="self"/>
+  <link href="https://www.statensarkiv.se/rafs/feed/archive/2008/index.atom" rel="prev-archive"/>
+
+  <entry>
+    <id>http://rinfo.lagrummet.se/publ/ra-fs/2006:6</id>
+    <updated>2007-02-09T00:00:00.000Z</updated>
+    <published>2007-02-09T00:00:00.000Z</published>
+    <title>Föreskrifter om ändring av Riksarkivets föreskrifter och allmänna
+        råd (RA-FS 2004:2) om gallring och återlämnande av handlingar vid
+        upphandling;</title>
+    <summary>Ändringen innebär att undantaget för myndigheter under
+        Försvarsdepartementet har tagits bort och att de allmänna
+        försäkringskassorna har tagits bort ur uppräkningen.</summary>
+    <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2006-06.pdf"
+             type="application/pdf"
+             le:md5="3c5fc4bdc3306ae6541e97b89dbf4d16"/>
+    <link rel="alternate" 
+          href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2006-6"
+          type="application/rdf+xml"
+          length="2317" le:md5="e4e242a358b72405fdbf5ba8bc044b1a"/>
+  </entry>
+
+  <entry>
+    <id>http://rinfo.lagrummet.se/publ/ra-fs/2004:2</id>
+    <updated>2004-09-27T00:00:00.000Z</updated>
+    <published>2004-09-27T00:00:00.000Z</published>
+    <title>Riksarkivets föreskrifter och allmänna råd om gallring och
+        återlämnande av handlingar vid upphandling;</title>
+    <summary></summary>
+    <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
+             type="application/pdf"
+             le:md5="ca68b77f41ad2231586cf3e4d7970629"/>
+    <link rel="alternate"
+          href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
+          type="application/rdf+xml"
+          length="2414" le:md5="8051c695ef087fcc1183e51694c9c8c1"/>
+  </entry>
+
+</feed>
+        ]]></code>
+      </div>
       <div>
-        <h3>Tidsstämplar i rättskällor respektive det centrala systemet</h3>
+        <h3>3.1. Förteckningsdokumentets egenskaper</h3>
+        <h4>ID</h4>
+        <p>
+          <strong>Viktig!</strong>
+          Elementet <code>id</code> anger en *persistent* identifierare (URI) 
+          för datakällan. Exempel:
+        </p>
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+<feed ...>
+  <id>tag:riksarkivet.se,2009:rinfo:feed</id>
+          ]]></code>
+        </div>
+        <p>
+          Rent tekniskt spelar det ingen roll vad för slags URI som används så 
+          länge denna inte ändras. Men i detta exempel används en <a 
+            href="http://tools.ietf.org/html/rfc4151">TAG URI</a>. Sådana är 
+          praktiska i feed-sammanhang, eftersom de inte är bundna till 
+          http-platsen för dokument. Eftersom identifieraren ska vara 
+          persistent över tid kan en HTTP-uri som inte längre leder någonstans 
+          vara vilseledande.
+        </p>
+        <h4>Flödets titel</h4>
+        <p>
+          Exempel:
+        </p>
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+  <title>Riksarkivets författningssamling</title>
+          ]]></code>
+        </div>
+        <p>
+          Anger någon slags titel på detta feed. Används inte till någonting av 
+          Rättsinformationssystemet. Men den kan var användbar för någon som 
+          tar del av denna källa via andra verktyg eller i andra sammanhang.
+        </p>
+        <h4>Flödets Tidstämpel</h4>
+        <p>
+          Exempel:
+        </p>
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+  <updated>2009-01-23T12:42:32Z</updated>
+          ]]></code>
+        </div>
+        <p>
+          Ska ange tidssstämpel då något i detta feed-dokument ändrats. Anges 
+          som <a href="http://tools.ietf.org/html/rfc4287#section-3.3">W3C Date 
+            Time Format</a>.
+        </p>
+        <p>
+          Observera att i exempet används "Zulu Time". Det är inte samma sak 
+          som svensk tid. En del programmeringsspråk har inbyggt stöd för att 
+          generera dessa, i andra fall finns det i regel tredjepartsbibliotek 
+          för W3C DTF.
+        </p>
+        <p>
+          (Anledningen till att vi väljer Zulu Time här är för att dessa är 
+          oberoende av tidszoner, *inklusive* sommartidsavvikelser. Tekniskt är 
+          det okej att istället för "Z" ange t.ex. "+01:00", för svensk 
+          vintertid, "+02:00" för sommartid osv. Korrekt parsning av DTF ska 
+          resultera i samma tidpunkt oavsett.)
+        </p>
+        <h4>Metadata för flödets utgivare</h4>
+        <p>
+          <strong>Viktig!</strong>
+          Exempel:
+        </p>
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+  <author>
+    <name>Riksarkivet</name>
+    <uri>http://www.statensarkiv.se/</uri>
+    <email>rinfo@riksarkivet.ra.se</email>
+  </author>
+          ]]></code>
+        </div>
+        <p>
+          Anger kontaktinformation till ansvarig för publiceringen av denna 
+          datakälla.
+        </p>
+        <p>
+          Planen är att Rättsinformationssystemet ska använda denna information för 
+          att rapportera om eventuella felaktigheter har uppstått vid inhämtning av 
+          informationen.
+        </p>
+        <p>
+          Därför är det lämpligt att e-postadressen går till en 
+          funktionsbrevlåda istället för en enskild handläggare.
+        </p>
+        <p>
+          Namn och URL användsdäremot inte av Rättsinformationssystemet, men 
+          kan vara nyttig i andra sammanhang.
+        </p>
+        <h4>Addressen till flödets representation</h4>
+        <p>
+          Exempel:
+        </p>
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+  <link href="https://www.statensarkiv.se/rafs/feed/index.atom" rel="self"/>
+          ]]></code>
+        </div>
+        <p>
+          Anger den adress där detta feed-dokument ligger. Är inte strikt 
+          tekniskt nödvändig, men underlättar för någon som t.ex. sparar ner 
+          dokumentet lokalt utan att notera ursprungsplats.
+        </p>
+        <h4>Länk till arkiv för äldre poster</h4>
+        <p>
+          <strong>Viktig!</strong>
+          Exempel:
+        </p>
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+  <link href="https://www.statensarkiv.se/rafs/feed/archive/2008/index.atom" 
+        rel="prev-archive"/>
+          ]]></code>
+        </div>
+        <p>
+          Anger plats för ett tidigare dokument i den sammanhängande kedjan av 
+          publicerade feed-dokument över tid.
+        </p>
+        <p>
+          Se <a href="http://tools.ietf.org/html/rfc5005">RFC 5005: Feed Paging and
+            Archiving</a>.
+          Rättsinformationssystemet ställer *höga* krav på att dessa är 
+          konsistenta, samt beständiga över tid så pass att det är garanterat 
+          att systemet har hunnit hämta in informationen.
+        <p>
+        </p>
+          (Exakta krav är inte fastställda, men livslängder på minst ett år är 
+          rimliga.)
+        <p>
+        </p>
+          Observera att arkiverade feed-dokument inte är nödvändiga. Om man har 
+          en lågt antal rättsinformationsdokument kan samtliga förekomma i 
+          samma feed-dokument under en överskådlig tid. Syftet med feed 
+          archiving är att
+          hantera storleken på feed-dokument över tid, så att dessa inte växer 
+          till ohanterliga storlekar (tekniskt normativt, rimligen kan ett par 
+          tusen entry-element hanteras utan större problem.)
+        </p>
+      </div>
+      <div>
+        <h3>3.2. Flödets struktur</h3>
+        <!-- TODO: include from entry in example feed -->
+        <p>Atom-flöden representerar en växande tidslinje av poster över tid. 
+          Varje post har en tidstämpel i sitt <code>updated</code>-element som 
+          anger när den uppstod, eller när information i posten senast 
+          förändrats.
+        </p>
+        <p>Det är viktigt att särskilja denna maskinella tidsangivelse från de 
+          formella datum och tider som gäller för det faktiska 
+          rättsinformationsdokumentet (såsom utgivningsdatum och liknande). 
+        </p>
+        <p>Det är <em>av yttersta vikt</em> att tidstämplar respekteras med 
+            avseende på:</p>
+        <ul>
+          <li>Att förändringar <em>måste</em> tidstämplas kronologiskt.</li>
+          <li>Att inga tidstämplar för exponerat material modifieras i 
+            efterhand.</li>
+        </ul>
+        <p>Eftersom systemet inhämtar resurser från rättskällorna måste det 
+          lita på att kommunicerade tidstämplar gäller, så att allting före en 
+          påträffad tidpunkt kan garanteras gälla information som redan 
+          beaktats.</p>
+      </div>
+      <div>
+        <h3>3.3. Tidstämplar i rättskällor respektive det centrala 
+          systemet</h3>
         <p>Eftersom systemet exponerar all inhämtad (och egen) information på 
           samma vis som källorna &mdash; d.v.s. som Atom-flöden &mdash; kommer 
-          poster som lästs in att få <em>nya</em> tidsstämplar.</p>
-        <p>Orginaltid (och URL:er) sparas ner för respektive post för att kunna 
-          återge detaljer kring den inlästa posten.</p>
+          poster som lästs in att få <em>nya</em> tidstämplar som återger 
+          inhämtningstillfället.</p>
+        <p>Originaltid (och URL:er) sparas ner för respektive post för att 
+          kunna återge detaljer kring den inlästa posten.</p>
       </div>
       <div>
-        <h3>5.1. Poster över tid</h3>
-        <p>Alla poster hämtas in då och då över tid. Dessa sparas i systemet 
-          och får där nya datumstämplar som motsvarar 
-          inhämntningstillfället.</p>
-        <h4>Tillkommande poster</h4>
-        <p>... TODO: detaljer i exempel-feed-kod.</p>
-      </div>
-      <div>
-        <h3>5.2. Posternas innehåll</h3>
+        <h3>3.4. Posternas innehåll</h3>
         <p>Varje post representeras av ett s.k. Atom Entry. Här anges URI:n för
           dokumentet (i atom:id), primär representation (i atom:content) samt
           referenser till alternativa representationer.
         </p>
         <p>En av dessa representationer måste innehålla RDF-data för att 
-          uppfylla systemets krav (se TODO för detaljer kring krav på 
+          uppfylla systemets krav (se [TODO] för detaljer kring krav på 
           inlämningsformat och innehåll).
         </p>
-        <h4>Tidsstämplar</h4>
-        <p>Enligt principen för Atom-arkiv är de ordnade på updated-datum.
+        <h4>3.4.1. ID:n - URI:er</h4>
+        <p>För att koppla en post till det rättsinformationsdokument den 
+          paketerar används den officiella URI:n för dokumentet som värde i 
+          Atom-postens ID.
         </p>
-        <h4>ID:n - URI:er</h4>
-        <ul>
-          <li>Posternas ID:n ska motsvara URI:n för resursen som posten levererar.
-            <!--(om det är ett rättsinformationsdokument) -->
-            <!-- se URI:er för rättsinformationsdokument.. -->
-           </li>
-          <li>RDF-data som beskriver postens dokument levereras i content eller 
-            alternate-link.</li>
-        </ul>
-        <h4>Checksummor på länkade dokument</h4>
+        <p>
+          <div class="syntax">
+            <code class="xml"><![CDATA[
+  <entry>
+    <id>http://rinfo.lagrummet.se/publ/sfs/1999:175</id>
+    ...
+  </entry>
+            ]]></code>
+            </div>
+        </p>
+        <h4>3.4.2. Checksummor på länkade dokument</h4>
         <p>Vidare är respektive länkad resurs annoterad med storlek, mediatyp 
           och <a 
-            href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02#section-3.1">MD5-checksumma</a>.
+            href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02#section-3.1">MD5-kontrollsumma</a>.
         </p>
-        <h4>Bilagor</h4>
+        <h4>3.4.3. Bilagor</h4>
         <p>
-          Enclosures vad *representerar* de? (För "kanoniska" resurser i 
-          rinfo-domänen). Hämtas in och sparas på ny URL:
-          - resolva href mot entry-id;
-          - resolva @dct:isFormatOf + mime-type;
-          - resolva @dct:identifier (+ mime-type?)
+          Enclosures representerar någon slags bilaga till den primära 
+          resursen. Dessa hämtas också in och sparas på en ny URL baserad på 
+          antingen:
+        </p>
+        <!-- TODO: formalisera det som görs av koden i regler -->
+        <ul>
+          <li>resolva href mot entry-id,</li>
+          <li>resolva @dct:isFormatOf + mime-type,</li>
+        </ul>
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+<feed ...
+      xmlns:dct="http://purl.org/dc/terms/">
+  ...
+  <entry>
+    ...
+
+    <link rel="enclosure" 
+          href="http://www.slv.se/upload/lagstiftning/2005-2006/2006_22bil1.pdf"
+          type="application/pdf"
+          dct:isFormatOf="http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga_1"
+          length="1168037"
+          le:md5="1115651b5e8380aff8d"/>
+          ]]></code>
+        </div>
+        <p>
+          Attributet <code>dct:isFormatOf</code> skapar en koppling mellan 
+          identifieraren för bilagan och själva filen som innehåller bilagan.
         </p>
       </div>
     </div>
 
     <div class="section">
-      <h2>6. Insamlingsmetodik</h2>
-      <p>generellt:
-        - följ flödet bakåt i tid (per sida):
-          - samla aktiva;
-          - följ prev-archive (bara för arkiv; se nedan).
-      - per post:
-          - ny/uppdaterad;
-          - raderad.
+      <h2>4. Förändringar av existerande poster</h2>
+      <h3>4.1. Uppdateringar</h3>
+      <p>Uppdateringar är tillåtet för <em>viss form</em> av nytillkommen 
+        post-data och -representationer. Eftersom rättsinformation är statisk i 
+        betydelsen att den när den väl är utgiven inte förändras, bör i teorin 
+        inga digitala förändringar som leder till uppdaterade dokument ske. I 
+        praktiken kan dock vissa korrigeringar vara nödvändiga, så länge de 
+        representerar maskinellt relaterade justeringar, t.ex. format- och 
+        syntax, samt metadata.
       </p>
-    </div>
-
-    <div class="section">
-      <h2>7. Kompletta flöden</h2>
-      <p>För en mindre mängd dokument.</p>
-      <h3>6.1. Algoritm</h3>
-      <p>Systemet sparar lista på URI:er för feed:ets ID. Samlar in nya sedan 
-        sista läsning från sys (sortera på tid, backa; see Arkiv nedan). 
-        Raderar alla som inte finns i listan..
+      <p>
+        Den normativa informationen som hör till den juridiska texten förändras 
+        inte med mindre än att nya rättsinformationsdokument tillkommer.
       </p>
-    </div>
-
-    <div class="section">
-      <h2>8. Arkiv</h2>
-      <h3>8.1. Uppdateringar</h3>
-      <p>Uppdateringar är tillåtet för <em>viss form</em> av nytillkommen post-data 
-        och -representationer.
-      </p>
-      <p>En uppdaterad post <em>ska</em> ha ett senare datum än 
+      <p>
+        En uppdaterad post <em>ska</em> ha ett senare datum än 
         publiceringsdatumet. Detta för att undvika att en ny post av misstag 
         fått en redan befintlig identifierare.
       </p>
-
-      <h3>8.2. Raderade poster</h3>
-      <p>För att hantera <em>felaktigt inkomna</em> poster exponeras även 
-        <em>raderade'</em> resurser.
+      <p>
+        Atom-syntaxen kräver inte närvaron av <em>published</em> för att ange 
+        den ursprungliga tidstämpel då posten publicerades. 
+        Rättsinformationssystemet kräver dock närvaron av detta. Detta 
+        tydliggör de fall då en post uppdaterats sedan ursprunglig publicering 
+        (och likaledes då den är oförändrad, genom att både publiceringstid och 
+        uppdateringstid är identiska).
       </p>
-      <p>Raderingar representeras av: <a 
+      <p>
+        Således måste både ursprungstid och eventuell uppdateringstid sparas av 
+        det publicerande systemet.
+      </p>
+      <h3>4.2. Raderade poster</h3>
+      <p>
+        För att hantera <em>felaktigt inkomna</em> poster exponeras även 
+        <em>raderade</em> resurser.
+      </p>
+      <p>
+        Raderingar representeras av: <a 
           href="http://tools.ietf.org/html/draft-snell-atompub-tombstones-06">The 
           Atom "deleted-entry" Element</a>. Dessa element innehåller ID:t för 
         posten som raderats samt raderingsdatum.
       </p>
-      <p><strong>Obs!</strong> Detta stödjs enbart för att ta bort 
-        <em>felaktiga</em> poster.
-      </p>
-
-      <h3>8.3. Tillväxt över tid</h3>
-      <p>Större samlingar (eventuellt med många uppdateringar och/eller 
-        raderingar) kan och bör delas upp i Atom-arkiv.</p>
-      <h4>Paginering</h4>
       <p>
-        Paginering av feeds möjliggör långa tidssorterade listor av poster. För en 
+        Exempel på radering:
+      </p>
+      <div class="syntax">
+        <code class="xml"><![CDATA[
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:at="http://purl.org/atompub/tombstones/1.0">
+  ...
+
+  <at:deleted-entry
+      ref="http://rinfo.lagrummet.se/publ/ra-fs/3010:0"
+      when="2010-03-08T15:55:34+0100"/>
+        ]]></code>
+      </div>
+      <p>
+        <em>(Notera att Atom-syntaxen förväntar sig att utökningar såsom dessa 
+          för raderade poster ska placeras innan <code>entry</code>-elementen. 
+          Tidsordningen garanteras enbart via tidstämplarna.)</em>
+      </p>
+      <p>
+        <strong>Obs!</strong> Detta stödjs enbart för att ta bort tekniskt 
+        <em>felaktiga</em> poster, t.ex. då misstag vid publikation skett, 
+        såsom fel eller ännu ej färdigställt dokument har publicerats, eller 
+        formatmässigt trasiga filer lagts upp. Raderingar har ingenting med 
+        upphävning av dokuments legala giltighet eller liknande att göra.
+      </p>
+      <p>
+        Om möjligt ska <em>uppdateringar</em> av sådana felaktiga publiceringar 
+        göras i första hand. Bara om systemet exponerat dokument som ännu inte 
+        är giltiga, eller poster med icke-giltiga URI:er i postens 
+        <code>id</code> är det lämpligt att uttrycka en radering i en 
+        postförteckning.
+      </p>
+      <h4>4.2.1. Beständiga raderingar</h4>
+      <p>
+        Notera också att raderingar <em>måste</em> kommas ihåg av den som 
+        publicerar sådana. Detta eftersom konsumenter av postförteckningen 
+        måste underrättas om detta oavsett när de sist läste av denna.
+      </p>
+      <p>
+        Det enda fall då en raderad post kan anses irrelevant i framtiden är om 
+        en korrekt publicerad post med samma URI i <code>id</code>:t för posten 
+        görs.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>5. Kompletta flöden</h2>
+      <p>
+        Feeds markerade som <a 
+          href="http://tools.ietf.org/html/rfc5005#section-2">kompletta</a>
+         är lämpliga för att publicera en lagom mängd dokument i en samling som 
+         inte väntas växa avsevärt över tid.
+      </p>
+      <p>
+        Ett flödesdokument markeras som komplett med:
+      </p>
+      <div class="syntax">
+        <code class="xml"><![CDATA[
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:fh="http://purl.org/syndication/history/1.0">
+  ...
+
+  <fh:complete/>
+        ]]></code>
+      </div>
+      <p>
+        Dessa flöden representeras av ett sammanhållet Atom-dokument. Mängden 
+        poster i sådana bör vara "rimligt liten", förslagsvis under tusentalet 
+        som mjukt gränsvärde. En hantering av sådana skulle kräva att alla 
+        entries från en given källa ska kunna sökas ut av systemet, och vid en 
+        inhämtning skulle alla de som inte finns listade i det kompletta 
+        feed:et betraktas som raderade och tas bort ur det lokala lagret.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>6. Arkiv</h2>
+      <h3>6.3. Paginerad tillväxt över tid</h3>
+      <p>
+        Större samlingar (eventuellt med många uppdateringar och/eller 
+        raderingar) kan och bör delas upp i flera feed-dokument som länkar till 
+        varandra, s.k. paginering av feeds.</p>
+      <p>
+        Paginering möjliggör långa tidssorterade listor av poster. För en 
         stabil inhämtning av sådana listor har systemet valt att både samla in 
         och exponera Atom-arkiv. Se specikationen för dessa: <a 
           href="http://tools.ietf.org/html/rfc5005#section-4">Feed Paging and 
           Archiving: 4. Archived Feeds</a>.
       </p>
-      <h3>8.4. Algoritm</h3>
+      <h4>6.3.1. Tillväxtproblem</h4>
+      <p>
+        En risk med detta är om en mängd uppdateringar sker från någon källa, t.ex. 
+        en massiv korrigering av tusentals publicerade poster. I det fallet kommer 
+        arkiv-listorna bli mer och mer ohanterbara för initial inhämtning, d.v.s. 
+        då en konsument vill "grundladda" från systemet.
+      </p>
+      <p>
+        Möjliga lösningar på detta är:
+      </p>
+      <ol>
+        <li>"Hushåll" arkiven genom att omindexera posterna och då inte exponera 
+          uppdaterade historiska poster, eller raderade som sedemera blivit 
+          återskapade.
+        </li>
+        <li>Exponera paginerade feeds som inte är underkastade samma regler som 
+          arkiv; alternativt erbjud tidsfönster med hjälp av URL-parametrar 
+          ("updated-min", "updated-max").
+        </li>
+        <li>Städa i gamla arkiv-feeds då poster uppdateras, genom att t.ex. 
+          helt plocka bort gamla exponerade revisioner och/eller raderingar.
+        </li>
+      </ol>
+    </div>
+
+    <div class="section">
+      <h2>7. Krav på publiceringen</h2>
+      <h3>Checklista</h3>
+      <!-- TODO: se kommentarerna i våra feed-exempel -->
+      <ul>
+        <li>beständigt feed-id;</li>
+        <li>Posternas ID:n ska motsvara URI:n för resursen som posten levererar.
+          <!--(om det är ett rättsinformationsdokument) -->
+          <!-- se URI:er för rättsinformationsdokument.. -->
+          </li>
+        <li>RDF-data som beskriver postens dokument levereras i content eller 
+          alternate-link.</li>
+        <li>checksumma</li>
+        <li>kronologisk ordning (per feed-dokument; inbördes entry-ordning på 
+          XML-nivå är inte nödvändig då updated-värdet räcker för att ange 
+          detta);</li>
+        <li>fullständighet: händelsearkiv inkl. uppdateringar, raderingar;</li>
+        <li>stabilitet?</li>
+        <li>"kompaktering"?</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>8. Insamlingsmetod</h2>
+      <h3>Generellt</h3>
+      <p>per sida:</p>
+      <ol>
+        <li>följ flödet bakåt i tid:
+          <ol>
+            <li>
+              <p>samla aktiva poster, senaste (yngsta) tidstämpel per entry-id 
+                som antingen är:
+              </p>
+              <ol>
+                <li>uppdaterad</li>
+                <li>raderad</li>
+              </ol>
+            </li>
+            <li>följ <code>prev-archive</code> (bara för arkiv; se nedan)</li>
+          </ol>
+        </li>
+      </ol>
+      <h3>8.1. Insamling av arkiv-flöden</h3>
       <p>
         En metod för att samla in poster från sådana arkiv är att:
       </p>
@@ -348,69 +709,15 @@
         korrekt angivna updated-datum, så att inga yngre poster finns längre bak i 
         arkiven.)
       </p>
-      <h3>Tillväxtsproblem</h3>
-      <p>
-        En risk med detta är om en mängd uppdateringar sker från någon källa, t.ex. 
-        en massiv korrigering av tusentals publicerade poster. I det fallet kommer 
-        arkiv-listorna bli mer och mer ohanterbara för initial inhämtning, d.v.s. 
-        då en konsument vill "grundladda" från systemet.
-      </p>
-      <p>
-        Möjliga lösningar på detta är:
-      </p>
-      <ol>
-        <li>"Hushåll" arkiven genom att omindexera posterna och då inte exponera 
-          uppdaterade historiska poster, eller raderade som sedemera blivit 
-          återskapade.
-        </li>
-        <li>Exponera paginerade feeds som inte är underkastade samma regler som 
-          arkiv; alternativt erbjud tidsfönster med hjälp av URL-parametrar 
-          ("updated-min", "updated-max").
-        </li>
-        <li>Städa i gamla arkiv-feeds då poster uppdateras, genom att t.ex. 
-          helt plocka bort gamla exponerade revisioner och/eller raderingar.
-        </li>
-      </ol>
-      <h3>Kompletta feeds</h3>
-      <p>
-        Det finns ytterligare två alternativ av feeds som skulle kräva en annan 
-        hantering än den som löses med tombstones.
-      </p>
-      <ol>
-        <li>Feeds markerade som 
-          <a href="http://tools.ietf.org/html/rfc5005#section-2">kompletta</a>
-          (med &lt;fh:complete/&gt;).
-        </li>
-        <li>Feeds som enligt någon <i>hitills ej definierad</i> konvention är 
-          paginerade men "kompletta" (i betydelsen att raderade poster helt 
-          enkelt är de som "förut funnits i någon feed-sida men ej längre gör 
-          det").
-        </li>
-      </ol>
-      <p>
-        Av dessa är primärt alternativ 1 potentiellt värdefull (där mängden entries 
-        förväntas vara "rimligt liten", säg under tusentalet som mjukt gränsvärde). 
-        En hantering av sådana skulle kräva att alla entries från en given källa 
-        ska kunna sökas ut av systemet, och vid en inhämtning skulle alla de som 
-        inte finns listade i det kompletta feed:et betraktas som raderade och tas 
-        bort ur det lokala lagret.
+      <h3>8.2. Insamling av kompletta flöden</h3>
+      <p>Systemet sparar lista på URI:er för feed:ets ID. Samlar in nya sedan 
+        sista läsning från sys (sortera på tid, backa; se Arkiv ovan). Raderar 
+        alla som inte finns i listan..
       </p>
     </div>
 
     <div class="section">
-      <h2>9. Krav på publiceringen</h2>
-      <h3>Checklista</h3>
-      <p>
-        kronologisk ordning;
-        uppdateringar;
-        raderingar;
-        fullständighet: händelsearkiv;
-        stabilitet? "kompaktering"? (se "konsekvenser")
-      </p>
-    </div>
-
-    <div class="section">
-      <h2>10. Konsekvenser</h2>
+      <h2>9. Konsekvenser</h2>
       <p>Alla poster hämtas in då och då över tid. Dessa sparas i Lagret och 
         får där nya datumstämplar som motsvarar inhämntningstillfället.
       </p>
@@ -421,36 +728,9 @@
       </p>
     </div>
 
-    <div class="section">
-      <h2>11. Systemet som källa</h2>
-      <p>
-      - auktoritativt, kontrollerat;
-      - en sammanställning - ett aggregat;
-        - men inte "lämna in", systemet hämtar (jmf. sökmotorindexering);
-      - delar är frikopplade; man kan göra andra kombinationer;
-        - dock: uri:erna centrala;
-        - alternativ: systemet som hubb/tunn katalog/omdirigeringstjänst
-      </p>
-    </div>
-
-    <!--
-    <div class="section">
-      <h2>12. Atom-möjligheter/alternativ</h2>
-      <p>
-        * alternativ
-          - dynamiska vyer
-      </p>
-      <p>
-        * Alternativa tekniker:
-          - OAI-PMH
-      </p>
-    </div>
-    -->
-
     <!-- Bilagor: Exempel -->
     <div id="bilaga_a" class="appendix">
       <h2>Bilaga A: Exempel</h2>
-      <!-- TODO: se kommentarerna i våra feed-exempel -->
     </div>
 
   </body>

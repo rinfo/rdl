@@ -8,6 +8,9 @@ Overview
 This service indexes the main data feed as RDF in a triplestore, and expose
 some services for that.
 
+Maven Usage
+========================================================================
+
 Running as war::
 
     $ mvn clean compile war:war jetty:run-war -Djetty.port=8181 -Dmaven.test.skip=true
