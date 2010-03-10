@@ -15,13 +15,13 @@ def resourceDir = "../resources/"
 def sourceDir = "../documentation/"
 
 def (flags, paths) = args.split { it =~ /^--/ }
+def clean = "--clean" in flags
+def nogen = "--nogen" in flags
 
 def buildDir = paths[0] ?: "../_build/documentation"
 def patterns = paths[1]? paths[1..-1] : Builder.DEFAULT_RENDER_PATTERNS
 
 def copies = Builder.DEFAULT_COPY_PATTERNS
-def clean = "--clean" in flags
-def nogen = "--nogen" in flags
 
 def build = new Builder(resourceDir, sourceDir, buildDir).build(
         patterns, copies, clean, !nogen)

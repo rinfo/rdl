@@ -57,7 +57,7 @@ class Builder {
 
     void build(renderPatterns=DEFAULT_RENDER_PATTERNS,
             copyPatterns=DEFAULT_COPY_PATTERNS,
-            clean=false, generate=true) {
+            clean=false, generate=true, examplesZip=true) {
         def ant = new AntBuilder()
 
         if (clean) {
@@ -71,6 +71,13 @@ class Builder {
                     include(name: it)
                 }
             }
+        }
+
+        if (examplesZip) {
+            ant.zip(basedir:"${sourceDir}/exempel",
+                    includes:"**/*.atom **/*.rdf **/*.xhtml **/*.pdf",
+                    destfile:"${buildDir}/handbok/exempel.zip")
+
         }
 
         def svnVersionNumber = getSvnVersionNumber()

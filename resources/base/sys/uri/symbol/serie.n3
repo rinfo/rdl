@@ -490,6 +490,11 @@ tks_serie:rff a coin:TokenSet;
     coin:tokenSet tks_serie:rff .
 
 [] a coin:Token;
+    coin:represents <http://rinfo.lagrummet.se/serie/rff/rk>;
+    rdf:value "rk";
+    coin:tokenSet tks_serie:rff .
+
+[] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/serie/rff/mod>;
     rdf:value "mod";
     coin:tokenSet tks_serie:rff .

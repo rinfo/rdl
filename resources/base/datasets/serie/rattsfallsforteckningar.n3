@@ -16,7 +16,7 @@
 #     Hovrätterna (HR, RH)
 #     Miljööverdomstolen (MÖD)
 #     Regeringsrätten (REG, RÅ)
-#     Kammarrätterna (KR)
+#     Kammarrätterna (KR, RK)
 #     Migrationsöverdomstolen (MIG)
 #     Patentbesvärsrätten (PBR)
 #
@@ -41,6 +41,10 @@
 <http://rinfo.lagrummet.se/serie/rff/rh> a :Rattsfallsforteckning;
     skos:altLabel "RH"@sv;
     skos:prefLabel "Rättsfall från hovrätterna"@sv .
+
+<http://rinfo.lagrummet.se/serie/rff/rk> a :Rattsfallsforteckning;
+    skos:altLabel "RK"@sv;
+    skos:prefLabel "Rättsfall från kammarrätterna"@sv .
 
 <http://rinfo.lagrummet.se/serie/rff/mod> a :Rattsfallsforteckning;
     skos:altLabel "MÖD"@sv;
@@ -72,7 +76,6 @@
 #    skos:prefLabel "Allmänna Reklamationsnämnden"@sv .
 
 
-# KR = Kammarrätterna (inga referat)
 # PBR = Patentbesvärsrätten (inga referat)
 # RN = Rättshjälpsnämnden (inga referat)
 

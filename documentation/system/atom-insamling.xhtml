@@ -370,7 +370,6 @@
       </div>
       <div>
         <h3>3.2. Flödets struktur</h3>
-        <!-- TODO: include from entry in example feed -->
         <p>Atom-flöden representerar en växande tidslinje av poster över tid. 
           Varje post har en tidstämpel i sitt <code>updated</code>-element som 
           anger när den uppstod, eller när information i posten senast 
@@ -408,6 +407,7 @@
           dokumentet (i atom:id), primär representation (i atom:content) samt
           referenser till alternativa representationer.
         </p>
+        <!-- TODO: inkludera entry:t från exemlel-feed:et -->
         <p>En av dessa representationer måste innehålla RDF-data för att 
           uppfylla systemets krav (se [TODO] för detaljer kring krav på 
           inlämningsformat och innehåll).
@@ -417,25 +417,32 @@
           paketerar används den officiella URI:n för dokumentet som värde i 
           Atom-postens ID.
         </p>
-        <p>
-          <div class="syntax">
-            <code class="xml"><![CDATA[
-  <entry>
-    <id>http://rinfo.lagrummet.se/publ/sfs/1999:175</id>
-    ...
-  </entry>
-            ]]></code>
-            </div>
-        </p>
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+<entry>
+  <id>http://rinfo.lagrummet.se/publ/sfs/1999:175</id>
+  ...
+</entry>
+          ]]></code>
+          </div>
+        <!-- TODO: delarna från det kommenterade entry:t -->
         <h4>3.4.2. Checksummor på länkade dokument</h4>
         <p>Vidare är respektive länkad resurs annoterad med storlek, mediatyp 
           och <a 
             href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02#section-3.1">MD5-kontrollsumma</a>.
         </p>
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+          ]]></code>
+        </div>
         <h4>3.4.3. Bilagor</h4>
         <p>
-          Enclosures representerar någon slags bilaga till den primära 
-          resursen. Dessa hämtas också in och sparas på en ny URL baserad på 
+          Enclosures representerar någon slags extern bilaga till den primära 
+          resursen. Detta omfattar alltså bara de fall då bilagorna är separata 
+          filer, och inte t.ex. PDF:er som inkluderar både huvuddokumentet och 
+          tillhörande bilagor.
+        </p>
+        <p>Externa bilagor hämtas in och sparas på en ny URL baserad på 
           antingen:
         </p>
         <!-- TODO: formalisera det som görs av koden i regler -->
@@ -648,72 +655,98 @@
 
     <div class="section">
       <h2>8. Insamlingsmetod</h2>
-      <h3>Generellt</h3>
-      <p>per sida:</p>
-      <ol>
-        <li>följ flödet bakåt i tid:
-          <ol>
-            <li>
-              <p>samla aktiva poster, senaste (yngsta) tidstämpel per entry-id 
-                som antingen är:
-              </p>
-              <ol>
-                <li>uppdaterad</li>
-                <li>raderad</li>
-              </ol>
-            </li>
-            <li>följ <code>prev-archive</code> (bara för arkiv; se nedan)</li>
-          </ol>
-        </li>
-      </ol>
-      <h3>8.1. Insamling av arkiv-flöden</h3>
-      <p>
-        En metod för att samla in poster från sådana arkiv är att:
-      </p>
-      <ol>
-        <li>följ "subscription"-feed:et och "prev-archive",
-        </li>
-        <li>för varje sida: sortera entries (och <i>tombstones</i>) på 
-          "updated" i fallande ordning (d.v.s. yngst (störst datum) först),
-        </li>
-        <li>spara entry-id + updated i mapp om updated inte finns för id:t 
-            eller är större än (yngst) tidigare sparat updated-värde,
-        </li>
-        <li>stoppa när id+updated-par stöts på som finns lokalt inhämtad,
-        </li>
-        <li>klättra framåt i tiden längs inhämtade feeds och spara ner de 
-          poster som finns i mappen med samma värden på id+updated.
-        </li>
-      </ol>
-      <p>Detta säkerställer följande:
-      </p>
-      <ul><li>En markerad början görs (den senaste posten i "current" vid starten 
-          för inhämtning). Detta säkerställer att inhämtningen inte fortgår på 
-          obestämd tid i det (förvisso osannolika) fall då källan uppdateras 
-          snabbare än inhämtningen.
-        </li>
-        <li>Inhämtad data sparas ner i kronologisk ordning, så att ingen slags 
-          fel leder till "luckor" i tidsordningen (detta så att återupptagen 
-          inhämtning kan lita på att lokalt inhämtat entry inte "skuggar" äldre, 
-          ännu ej sedda entries).
-        </li>
-        <li>Inga onödiga inhämtningar av redan uppdaterade poster sker. (Detta 
-          är viktigt eftersom gamla poster inte behöver länka till historiska 
-          dokument, och därför kan ange felaktiga (d.v.s. gamla) checksummor 
-          och filstorlekar, alternativt peka på dokument som tagits bort eller 
-          sakna länkar till nytillagda sådana.)
-        </li>
-      </ul>
-      <p>
-        (Obs! Naturligtvis måste alla feed-sidor som klättras vara försedda med 
-        korrekt angivna updated-datum, så att inga yngre poster finns längre bak i 
-        arkiven.)
-      </p>
-      <h3>8.2. Insamling av kompletta flöden</h3>
-      <p>Systemet sparar lista på URI:er för feed:ets ID. Samlar in nya sedan 
-        sista läsning från sys (sortera på tid, backa; se Arkiv ovan). Raderar 
-        alla som inte finns i listan..
-      </p>
+      <div>
+        <h3>Generellt</h3>
+        <p>per sida:</p>
+        <ol>
+          <li>följ flödet bakåt i tid:
+            <ol>
+              <li>
+                <p>samla aktiva poster, senaste (yngsta) tidstämpel per entry-id 
+                  som antingen är:
+                </p>
+                <ol>
+                  <li>uppdaterad</li>
+                  <li>raderad</li>
+                </ol>
+              </li>
+              <li>följ <code>prev-archive</code> (bara för arkiv; se nedan)</li>
+            </ol>
+          </li>
+        </ol>
+        <p>
+          <em>Viktigt!</em> Notera att insamlande system måste hålla koll på en 
+          posts ursprungstidstämpel för updated och samtidigt exponera en ny 
+          tidstämpel för updated om systemet aggrererar flera källor och inte 
+          fullständigt kan lita på och samla in dessa källors poster i 
+          kronologisk ordning ("breath-first").
+        </p>
+      </div>
+      <div>
+        <h3>8.1. Insamling av kompletta flöden</h3>
+        <p>
+          Kompletta flöden är enkla att samla in, förutsatt att det insamlande 
+          systemet sparar ner en lista på alla post-ID:n för respektive källas 
+          flödes-ID. En enkel algoritm för detta är:
+        </p>
+        <ul>
+          <li>hämta det kompletta flödet</li>
+          <li>använd flödets ID för att läsa upp lista på post-ID:n från 
+            eventuell tidigare insamling,</li>
+          <li>radera alla poster i listan från tidigare insamling som inte 
+            existerar i den nya,</li>
+          <li>sortera posterna på "updated" i stigande ordning (d.v.s. äldst 
+            (minsta tidstämpeln) först),</li>
+          <li>för varje post, samla in ny data om dess updated är nyare än 
+            exiserande insamlad posts ursprungstidstämpel.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>8.2. Insamling av arkiv-flöden</h3>
+        <p>
+          En metod för att samla in poster från sådana arkiv är att:
+        </p>
+        <ol>
+          <li>följ "subscription"-feed:et och "prev-archive",
+          </li>
+          <li>för varje sida: sortera entries (och <i>tombstones</i>) på 
+            "updated" i fallande ordning (d.v.s. yngst (största tidstämpeln) 
+            först),
+          </li>
+          <li>spara entry-id + updated i mapp om updated inte finns för id:t 
+              eller är större än (yngst) tidigare sparat updated-värde,
+          </li>
+          <li>stoppa när id+updated-par stöts på som finns lokalt inhämtad,
+          </li>
+          <li>klättra framåt i tiden längs inhämtade feeds och spara ner de 
+            poster som finns i mappen med samma värden på id+updated.
+          </li>
+        </ol>
+        <p>Detta säkerställer följande:
+        </p>
+        <ul><li>En markerad början görs (den senaste posten i "current" vid starten 
+            för inhämtning). Detta säkerställer att inhämtningen inte fortgår på 
+            obestämd tid i det (förvisso osannolika) fall då källan uppdateras 
+            snabbare än inhämtningen.
+          </li>
+          <li>Inhämtad data sparas ner i kronologisk ordning, så att ingen slags 
+            fel leder till "luckor" i tidsordningen (detta så att återupptagen 
+            inhämtning kan lita på att lokalt inhämtat entry inte "skuggar" äldre, 
+            ännu ej sedda entries).
+          </li>
+          <li>Inga onödiga inhämtningar av redan uppdaterade poster sker. (Detta 
+            är viktigt eftersom gamla poster inte behöver länka till historiska 
+            dokument, och därför kan ange felaktiga (d.v.s. gamla) checksummor 
+            och filstorlekar, alternativt peka på dokument som tagits bort eller 
+            sakna länkar till nytillagda sådana.)
+          </li>
+        </ul>
+        <p>
+          (Obs! Naturligtvis måste alla feed-sidor som klättras vara försedda med 
+          korrekt angivna updated-datum, så att inga yngre poster finns längre bak i 
+          arkiven.)
+        </p>
+      </div>
     </div>
 
     <div class="section">

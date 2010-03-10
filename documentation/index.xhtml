@@ -36,317 +36,322 @@
   </head>
   <body>
     <div id="container">
-        <div id="header">
-            <div id="headercontent">
-                <ul id="quicknav">
-                    <li><a href="http://www.lagrummet.se/">Till webbplatsen lagrummet.se</a></li>
+      <div id="header">
+        <div id="headercontent">
+          <ul id="quicknav">
+            <li><a href="http://www.lagrummet.se/">Till webbplatsen lagrummet.se</a></li>
+          </ul>
+          <!--
+          <a href="/" accesskey="1" class="logo"><img src="http://www.lagrummet.se/img/lr/logo_lagrummet.gif" alt="Till startsidan för projektdokumentationen" /></a>
+          -->
+          <div id="logo">
+            <a href="/" accesskey="1" class="logo" title="Till startsidan för projektdokumentationen"
+              >Rättsinformationsprojektet</a>
+          </div>
+        </div>
+        <div class="clearer divider"> </div>
+      </div>
+      <div id="pageleft">
+        <div id="pageright">
+          <div id="navigation">
+            <p class="menuintro">Innehåll</p>
+            <ul id="mainmenu">
+              <li class="open"><a href="#lasanvisningar"
+                                  class="open">Läsanvisningar</a></li>
+              <li class="open"><a href="#introduktioner" class="open">Introduktioner</a>
+                <ul class="submenu">
+                  <li><a href="#intro-beslutsfattare">För beslutsfattare</a></li>
+                  <li><a href="#intro-implementatorer">För implementatörer</a></li>
                 </ul>
-                <!--
-                <a href="/" accesskey="1" class="logo"><img src="http://www.lagrummet.se/img/lr/logo_lagrummet.gif" alt="Till startsidan för projektdokumentationen" /></a>
-                -->
-                <div id="logo">
-                  <a href="/" accesskey="1" class="logo" title="Till startsidan för projektdokumentationen"
-                    >Rättsinformationsprojektet</a>
-                </div>
+              </li>
+              <li><a href="#handbocker" class="open">Handböcker</a>
+                <ul class="submenu">
+                  <li><a href="#handbok-forfattningar">Författningar</a></li>
+                  <li><a href="#handbok-konsoliderade">Konsoliderade
+                      författningar</a></li>
+                  <li><a href="#handbok-avgoranden">Vägledande avgöranden</a></li>
+                  <li><a href="#handbok-utredningar">Direktiv,
+                      utredningar och propositioner</a></li>
+                </ul>
+              </li>
+              <li class="open"><a href="#specifikationer"
+                                  class="open">Specifikationer</a>
+                <ul class="submenu">
+                  <li><a href="#spec-model">Begreppsmodellen</a></li>
+                  <li><a href="#spec-uri">URI-principer</a></li>
+                  <li><a href="#spec-atom">Atom-insamling</a></li>
+                  <li><a href="#spec-externa">Externa standarder</a></li>
+                </ul>
+              </li>
+              <li class="open"><a href="#verktyg" class="open">Verktyg</a>
+                <ul class="submenu">
+                  <li><a href="#verktyg-rinfo">Rättsinfoprojektets
+                      verktyg</a></li>
+                  <li><a href="#verktyg-generella">Generella verktyg</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+
+          <div id="content" class="tpl-page">
+
+            <h1>Rättsinformationssystemets projektdokumentation</h1>
+
+            <p>Dessa sidor vänder sig främst till myndigheter som
+            producerar rättsinformation som omfattas av <a
+                href="http://62.95.69.15/cgi-bin/thw?%24{HTML}=sfst_lst&amp;%24{OOHTML}=sfst_dok&amp;%24{SNHTML}=sfst_err&amp;%24{BASE}=SFST&amp;%24{TRIPSHOW}=format%3DTHW&amp;BET=1999%3A175%24">Rättsinformationsförordningen (1999:175)</a>.
+            Letar du efter information om lagar och regler bör du
+            istället besöka <a href="http://www.lagrummet.se/">portalen lagrummet.se</a>.</p>
+
+            <p><em>Observera att denna information kommer att
+            ändras löpande. Om du är kontaktperson på en
+            myndighet som producerar rättsinformation, meddela
+            staffan.malmgren@dom.se så får du ett
+            epostmeddelande när så sker.</em></p>
+
+            <h2>Läsanvisningar</h2>
+
+            <p>Beroende på vilken roll du har bör du
+            inledningsvis antingen
+            läsa <a href="#intro-beslutsfattare">introduktionen
+            för beslutsfattare och informationsansvariga</a>
+            eller <a href="#intro-implementatorer">för
+            implementatörer och teknikansvariga</a>. Dessa är
+            fristående från varandra, dvs den ena förutsätter
+            inte att du läst den andra. De förklarar vad
+            rättsinformationssystemet är, dess relation till
+            lagrummet.se och de existerande myndighetssidorna
+            med rättsinformation, samt vad
+            rättsinformationsprojektet innebär för dessa
+            myndigheter, men de har olika utgångspunkter och
+            vänder sig till olika personer.</p>
+
+            <p>Om du är beslutsfattare bör denna introduktion
+            ge dig en bra bild av arbetets omfattning, nyttan
+            med arbetet, och den rättsliga bakgrunden. <!-- Om
+            du är implementatör ... --></p>
+
+            <p>Om du är implementatör, teknisk projektledare
+            eller liknande bör du sedan läsa en av de fyra
+            tillgängliga handböckerna, beroende på vilken typ
+            av rättsinformation du publicerar. Handböckerna
+            går djupare in på tekniken och innehåller bland
+            annat utförliga exempel. Introduktionen och
+            handboken bör räcka för att du ska kunna göra en
+            projektplan med tidsuppskattningar.</p>
+
+            <p>När sedan själva implementationsarbetet tar vid
+            bör du ha de
+            olika <a href="#specifikationer">specifikationsdokumententen</a>
+            tillgängliga. Dessa ska kunna svara på de frågor
+            du har kring hur de olika dokumenten ska utformas
+            och hur de olika medataposterna är semantiskt
+            definerade.</p>
+
+            <p>I eller inför implementationsarbetet kan du
+            även vilja använda något eller några av
+            de <a href="#verktyg">verktyg</a> som projektet
+            tillhandahåller.</p>
+
+
+            <h2 id="introduktioner">Introduktioner</h2>
+            <h3 id="intro-beslutsfattare">För beslutsfattare och informationsansvariga</h3>
+            <p>Vänder sig till dig som idag har det juridiska
+            eller administrativa ansvaret för att din
+            myndighet publicerar rättsinformation.</p>
+            <ul>
+              <li><a href="introduktion/intro-beslutsfattare.pdf">Introduktion
+              för beslutsfattare och informationsansvariga (PDF)</a></li>
+            </ul>
+
+            <h3 id="intro-implementatorer">För implementatörer och teknikansvariga</h3>
+            <p>Vänder sig till dig som har det tekniska
+            ansvaret för din myndighets publicering av
+            rättsinformation.</p>
+            <ul>
+              <li><a href="introduktion/intro-implementatorer.pdf">Introduktion
+              för implementatörer och teknikansvariga (PDF)</a></li>
+            </ul>
+
+            <h2 id="handbocker">Handböcker</h2>
+            <p>Handböckerna är fristående från varandra. Du
+            behöver bara läsa den som rör den dokumenttyp som
+            din myndighet producerar.</p>
+            <h3 id="handbok-forfattningar">Författningar (inklusive myndighetsföreskrifter)</h3>
+            <p>De flesta myndigheter som producerar någon form
+              av rättsinformation gör det i form av
+              <i>föreskrifter</i> som är en typ av
+              författningar.</p>
+            <ul>
+              <li><a href="handbok/handbok-forfattningar.pdf">Handbok
+              för författningar (PDF)</a></li>
+            </ul>
+
+            <h3 id="handbok-konsoliderade">Konsoliderade författningar</h3>
+            <p>
+              <!-- När en författning ändras sker det genom en
+                  ändringsförfattning som talar om hur den
+                  ursprungliga författningen
+                  (grundförfattningen) ska ändras. En text där
+                  man utifrån en grundförfattning fört in alla
+                  ändringar som angetts i efterföljande
+                  ändringsförfattningar kallas för en
+                  konsoliderad författning. Dessa är inte
+                  rättsligt bindande, men är betydligt enklare
+                  att hantera för en läsare. -->
+
+              Endast regeringskansliet är enligt
+              rättsinformationsförordningen skyldiga att
+              framställa konsoliderade författningar (utifrån
+              de lagar och förordningar som publiceras i SFS),
+              men även andra myndigheter <i>får</i> framställa
+              och publicera sådana.</p>
+            <ul>
+              <li><a href="handbok/handbok-konsoliderade.pdf">Handbok
+              för konsoliderade författningar (PDF)</a></li>
+            </ul>
+
+            <h3 id="handbok-avgoranden">Vägledande avgöranden</h3>
+            <p>Såväl domstolar som förvaltningsmyndigheter
+            producerar i sin verksamhet avgöranden som kan
+            vara vägledande för senare rättstillämpning. Dessa
+            har juridiska skillnader, men informationsmässigt
+            stora likheter, varför de här behandlas i ett
+            sammanhang.</p>
+            <ul>
+              <li><a href="handbok/handbok-avgoranden.pdf">Handbok
+                  för vägledande avgöranden (PDF)</a></li>
+            </ul>
+
+            <h3 id="handbok-utredningar">Direktiv, utredningar, propositioner etc.</h3>
+            <p>I lagstiftningskedjan produceras en rad olika
+            dokument som på ett eller annat sätt leder fram
+            till nya lagar. Detta inkluderar komittédirektiv,
+            utredningar, betänkanden, propositioner och
+            förordningsmotiv. Även om dokumentens funktion
+            skiftar har de liknande egenskaper. Av den
+            anledningen behandlas de i samma handbok.</p>
+            <ul>
+              <li><a href="handbok/handbok-utredningar.pdf">Handbok
+                  för utredningar etc. (PDF)</a></li>
+            </ul>
+
+            <h3 id="handbok-kodexempel">Exempeldata</h3>
+            <p>De exempel på data som finns i handböckernas bilagor kan även
+              laddas ner här.</p>
+            <ul>
+              <li><a href="handbok/exempel.zip">Filarkiv med handböckernas
+                  exempel på data i Atom, RDF, XHTML och PDF (ZIP)</a></li>
+            </ul>
+
+            <h2 id="specifikatoner">Specifikationer</h2>
+            <h3 id="spec-model">Begreppsmodellen</h3>
+            <p>
+              Detta dokument är en människoläsbar version av
+              den RDF-vokabulär som vi använder i systemet. Den
+              finns även tillgänglig i maskinläsningsbar
+              form i RDF/XML.
+            </p>
+            <ul>
+              <li><a href="model.pdf">Begreppsmodellen för
+                  svenska rättsinformationspublikationer
+                  (PDF)</a></li>
+              <li>
+                <a href="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ/rdf">Begreppsmodellen
+                  för svenska rättsinformationspublikationer
+                  (RDF/XML)</a>
+              </li>
+            </ul>
+            <h3 id="spec-uri">URI-principer</h3>
+            <p>Detta dokument visar hur de elektroniska
+            identifierare (URI:er) som används i systemet är
+            uppbyggda.</p>
+            <ul>
+              <li><a href="system/uri-principer.pdf">URI-principer
+              (PDF)</a></li>
+            </ul>
+            <h3 id="spec-atom">Atom-insamling</h3>
+            <ul>
+              <li><a href="system/atom-insamling.pdf">Atom-insamling
+              (PDF)</a></li>
+            </ul>
+            <h3 id="spec-uri">Externa standarder</h3>
+
+            <p>Projektet har i så stor utsträckning som möjligt försökt
+            använda existerande standarder. Dokumentation för dessa
+            hittar du här:</p>
+            <ul>
+              <li><a href="http://www.w3.org/RDF/"
+              xml:lang="en">Resource Description Framework
+              (RDF)</a></li>
+
+              <li><a href="http://dublincore.org/"
+              xml:lang="en">The Dublin Core Metadata
+              Initiative</a></li>
+
+              <li><a href="http://tools.ietf.org/html/rfc4287"
+              xml:lang="en">The Atom Syndication
+              Format</a></li>
+
+              <li><a href="http://tools.ietf.org/html/rfc5005"
+              xml:lang="en">Feed Paging and
+              Archiving</a></li>
+
+              <li><a href="http://tools.ietf.org/html/draft-snell-atompub-tombstones-06">The
+              Atom "deleted-entry" Element</a></li>
+            </ul>
+
+            <h2 id="verktyg">Verktyg</h2>
+            <h3>Rättsinformationsprojektets verktyg</h3>
+            <p>
+              Inom projektet pågår för närvarande arbete med
+              att ta fram verktyg för att deltagande
+              myndigheter ska kunna testa sina dataflöden
+              innan den skarpa publiceringen inleds. Det
+              kommer att finnas en validator för de
+              postförteckningar och den metadata som
+              myndigheterna publicerar. Det kommer även finnas
+              en testmiljö till vilken publicering kan ske för
+              teständamål.
+            </p>
+            <h3>Generella verktyg</h3>
+            <p>Verktyg för att förenkla arbetet för utvecklare.
+              Observera att flera av dessa verktyg enbart testar syntax
+              och inte att innehållet är korrekt.</p>
+            <ul>
+              <li><a href="http://validator.w3.org/feed/">W3C:s
+              valideringsverktyg för Atom-formatet</a></li>
+
+              <li><a href="http://www.w3.org/RDF/Validator/">W3C:s
+              valideringsverktyg för RDF</a></li>
+
+              <li><a href="http://validator.w3.org/">W3C:s
+              valideringsverktyg för XHTML</a></li>
+            </ul>
+
+          </div>
+
+          <div id="related">
+            <!--
+            <div class="newslist">
+              <div class="newslistcompact">
+                <h2>Senaste nyheter från projektet</h2>
+                <script type="text/javascript" src="http://p3k.org/rss/proxy.r?textColor=black&amp;align=&amp;width=200&amp;fontFace=&amp;url=http%3A%2F%2Frinfoprojektet.wordpress.com%2Ffeed%2F&amp;compact=true&amp;frameColor=white&amp;showXmlButton=&amp;boxFillColor=white&amp;_=1255012508966&amp;titleBarColor=%23ccc&amp;maxItems=5&amp;titleBarTextColor=black&amp;"></script>
+              </div>
             </div>
-            <div class="clearer divider"> </div>
+            -->
+          </div>
+          <div class="clearer"> </div>
         </div>
-        <div id="pageleft">
-            <div id="pageright">
-                <div id="navigation">
-                    <p class="menuintro">Innehåll</p>
-                    <ul id="mainmenu">
-                      <li class="open"><a href="#lasanvisningar"
-					  class="open">Läsanvisningar</a></li>
-                      <li class="open"><a href="#introduktioner" class="open">Introduktioner</a>
-			<ul class="submenu">
-			  <li><a href="#intro-beslutsfattare">För beslutsfattare</a></li>
-			  <li><a href="#intro-implementatorer">För implementatörer</a></li>
-			</ul>
-		      </li>
-                      <li><a href="#handbocker" class="open">Handböcker</a>
-			<ul class="submenu">
-			  <li><a href="#handbok-forfattningar">Författningar</a></li>
-			  <li><a href="#handbok-konsoliderade">Konsoliderade
-			      författningar</a></li>
-			  <li><a href="#handbok-avgoranden">Vägledande avgöranden</a></li>
-			  <li><a href="#handbok-utredningar">Direktiv,
-			      utredningar och propositioner</a></li>
-			</ul>
-		      </li>
-                      <li class="open"><a href="#specifikationer"
-					  class="open">Specifikationer</a>
-			<ul class="submenu">
-			  <li><a href="#spec-model">Begreppsmodellen</a></li>
-			  <li><a href="#spec-uri">URI-principer</a></li>
-			  <li><a href="#spec-atom">Atom-insamling</a></li>
-			  <li><a href="#spec-externa">Externa standarder</a></li>
-			</ul>
-		      </li>
-                      <li class="open"><a href="#verktyg" class="open">Verktyg</a>
-			<ul class="submenu">
-			  <li><a href="#verktyg-rinfo">Rättsinfoprojektets
-			      verktyg</a></li>
-			  <li><a href="#verktyg-generella">Generella verktyg</a></li>
-			</ul>
-		      </li>
-		    </ul>
-                </div>
-
-                <div id="content" class="tpl-page">
-
-                    <h1>Rättsinformationssystemets projektdokumentation</h1>
-
-                    <p>Dessa sidor vänder sig främst till myndigheter som
-                    producerar rättsinformation som omfattas av <a
-                        href="http://62.95.69.15/cgi-bin/thw?%24{HTML}=sfst_lst&amp;%24{OOHTML}=sfst_dok&amp;%24{SNHTML}=sfst_err&amp;%24{BASE}=SFST&amp;%24{TRIPSHOW}=format%3DTHW&amp;BET=1999%3A175%24">Rättsinformationsförordningen (1999:175)</a>.
-                    Letar du efter information om lagar och regler bör du
-                    istället besöka <a href="http://www.lagrummet.se/">portalen lagrummet.se</a>.</p>
-
-                    <p><em>Observera att denna information kommer att
-                    ändras löpande. Om du är kontaktperson på en
-                    myndighet som producerar rättsinformation, meddela
-                    staffan.malmgren@dom.se så får du ett
-                    epostmeddelande när så sker.</em></p>
-
-		    <h2>Läsanvisningar</h2>
-
-		    <p>Beroende på vilken roll du har bör du
-		    inledningsvis antingen
-		    läsa <a href="#intro-beslutsfattare">introduktionen
-		    för beslutsfattare och informationsansvariga</a>
-		    eller <a href="#intro-implementatorer">för
-		    implementatörer och teknikansvariga</a>. Dessa är
-		    fristående från varandra, dvs den ena förutsätter
-		    inte att du läst den andra. De förklarar vad
-		    rättsinformationssystemet är, dess relation till
-		    lagrummet.se och de existerande myndighetssidorna
-		    med rättsinformation, samt vad
-		    rättsinformationsprojektet innebär för dessa
-		    myndigheter, men de har olika utgångspunkter och
-		    vänder sig till olika personer.</p>
-
-		    <p>Om du är beslutsfattare bör denna introduktion
-		    ge dig en bra bild av arbetets omfattning, nyttan
-		    med arbetet, och den rättsliga bakgrunden. <!-- Om
-		    du är implementatör ... --></p>
-
-		    <p>Om du är implementatör, teknisk projektledare
-		    eller liknande bör du sedan läsa en av de fyra
-		    tillgängliga handböckerna, beroende på vilken typ
-		    av rättsinformation du publicerar. Handböckerna
-		    går djupare in på tekniken och innehåller bland
-		    annat utförliga exempel. Introduktionen och
-		    handboken bör räcka för att du ska kunna göra en
-		    projektplan med tidsuppskattningar.</p>
-
-		    <p>När sedan själva implementationsarbetet tar vid
-		    bör du ha de
-		    olika <a href="#specifikationer">specifikationsdokumententen</a>
-		    tillgängliga. Dessa ska kunna svara på de frågor
-		    du har kring hur de olika dokumenten ska utformas
-		    och hur de olika medataposterna är semantiskt
-		    definerade.</p>
-
-		    <p>I eller inför implementationsarbetet kan du
-		    även vilja använda något eller några av
-		    de <a href="#verktyg">verktyg</a> som projektet
-		    tillhandahåller.</p>
-		    
-
-		    <h2 id="introduktioner">Introduktioner</h2>
-		    <h3 id="intro-beslutsfattare">För beslutsfattare och informationsansvariga</h3>
-		    <p>Vänder sig till dig som idag har det juridiska
-		    eller administrativa ansvaret för att din
-		    myndighet publicerar rättsinformation.</p>
-		    <ul>
-		      <li><a href="introduktion/intro-beslutsfattare.pdf">Introduktion
-		      för beslutsfattare och informationsansvariga (PDF)</a></li>
-		    </ul>
-
-		    <h3 id="intro-implementatorer">För implementatörer och teknikansvariga</h3>
-		    <p>Vänder sig till dig som har det tekniska
-		    ansvaret för din myndighets publicering av
-		    rättsinformation.</p>
-		    <ul>
-		      <li><a href="introduktion/intro-implementatorer.pdf">Introduktion
-		      för implementatörer och teknikansvariga (PDF)</a></li>
-		    </ul>
-		    
-		    <h2 id="handbocker">Handböcker</h2>
-		    <p>Handböckerna är fristående från varandra. Du
-		    behöver bara läsa den som rör den dokumenttyp som
-		    din myndighet producerar.</p>
-		    <h3 id="handbok-forfattningar">Författningar (inklusive myndighetsföreskrifter)</h3>
-		    <p>De flesta myndigheter som producerar någon form
-		      av rättsinformation gör det i form av
-		      <i>föreskrifter</i> som är en typ av
-		      författningar.</p>
-		    <ul>
-		      <li><a href="handbok/handbok-forfattningar.pdf">Handbok
-		      för författningar (PDF)</a></li>
-		    </ul>
-		      
-		    <h3 id="handbok-konsoliderade">Konsoliderade författningar</h3>
-		    <p>
-		      <!-- När en författning ändras sker det genom en
-			 ändringsförfattning som talar om hur den
-			 ursprungliga författningen
-			 (grundförfattningen) ska ändras. En text där
-			 man utifrån en grundförfattning fört in alla
-			 ändringar som angetts i efterföljande
-			 ändringsförfattningar kallas för en
-			 konsoliderad författning. Dessa är inte
-			 rättsligt bindande, men är betydligt enklare
-			 att hantera för en läsare. -->
-
-		      Endast regeringskansliet är enligt
-		      rättsinformationsförordningen skyldiga att
-		      framställa konsoliderade författningar (utifrån
-		      de lagar och förordningar som publiceras i SFS),
-		      men även andra myndigheter <i>får</i> framställa
-		      och publicera sådana.</p>
-		    <ul>
-		      <li><a href="handbok/handbok-konsoliderade.pdf">Handbok
-		      för konsoliderade författningar (PDF)</a></li>
-		    </ul>
-
-                    <h3 id="handbok-avgoranden">Vägledande avgöranden</h3>
-		    <p>Såväl domstolar som förvaltningsmyndigheter
-		    producerar i sin verksamhet avgöranden som kan
-		    vara vägledande för senare rättstillämpning. Dessa
-		    har juridiska skillnader, men informationsmässigt
-		    stora likheter, varför de här behandlas i ett
-		    sammanhang.</p>
-                    <ul>
-                        <li><a href="handbok/handbok-avgoranden.pdf">Handbok
-                        för vägledande avgöranden (PDF)</a></li>
-                    </ul>
-
-
-                    <h3 id="handbok-utredningar">Direktiv, utredningar, propositioner etc.</h3>
-		    <p>I lagstiftningskedjan produceras en rad olika
-		    dokument som på ett eller annat sätt leder fram
-		    till nya lagar. Detta inkluderar komittédirektiv,
-		    utredningar, betänkanden, propositioner och
-		    förordningsmotiv. Även om dokumentens funktion
-		    skiftar har de liknande egenskaper. Av den
-		    anledningen behandlas de i samma handbok.</p>
-                    <ul>
-                        <li><a href="handbok/handbok-utredningar.pdf">Handbok
-                        för utredningar etc. (PDF)</a></li>
-                    </ul>
-
-                    <h2 id="specifikatoner">Specifikationer</h2>
-		    <h3 id="spec-model">Begreppsmodellen</h3>
-		    <p>
-		      Detta dokument är en människoläsbar version av
-		      den RDF-vokabulär som vi använder i systemet. Den
-		      finns även tillgänglig i maskinläsningsbar
-		      form i RDF/XML.
-		    </p>
-                    <ul>
-                        <li><a href="model.pdf">Begreppsmodellen för
-                        svenska rättsinformationspublikationer
-                        (PDF)</a></li>
-                        <li>
-			  <a href="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ/rdf">Begreppsmodellen
-                            för svenska rättsinformationspublikationer
-                            (RDF/XML)</a>
-			</li>
-		    </ul>
-		    <h3 id="spec-uri">URI-principer</h3>
-		    <p>Detta dokument visar hur de elektroniska
-		    identifierare (URI:er) som används i systemet är
-		    uppbyggda.</p>
-		    <ul>
-                      <li><a href="system/uri-principer.pdf">URI-principer
-                      (PDF)</a></li>
-                    </ul>
-		    <!--
-		    <h3 id="spec-atom">Atom-insamling</h3>
-		    <ul>
-                      <li><a href="system/atom-insamling.pdf">Atom-insamling
-                      (PDF)</a></li>
-                    </ul>
-		    -->
-		    <h3 id="spec-uri">Externa standarder</h3>
-
-                    <p>Projektet har i så stor utsträckning som möjligt försökt
-                    använda existerande standarder. Dokumentation för dessa
-                    hittar du här:</p>
-                    <ul>
-                        <li><a href="http://www.w3.org/RDF/"
-                        xml:lang="en">Resource Description Framework
-                        (RDF)</a></li>
-
-                        <li><a href="http://dublincore.org/"
-                        xml:lang="en">The Dublin Core Metadata
-                        Initiative</a></li>
-
-                        <li><a href="http://tools.ietf.org/html/rfc4287"
-                        xml:lang="en">The Atom Syndication
-                        Format</a></li>
-
-                        <li><a href="http://tools.ietf.org/html/rfc5005"
-                        xml:lang="en">Feed Paging and
-                        Archiving</a></li>
-
-                        <li><a href="http://tools.ietf.org/html/draft-snell-atompub-tombstones-06">The
-                        Atom "deleted-entry" Element</a></li>
-                    </ul>
-
-                    <h2 id="verktyg">Verktyg</h2>
-		    <h3>Rättsinformationsprojektets verktyg</h3>
-		    <p>
-		      Inom projektet pågår för närvarande arbete med
-		      att ta fram verktyg för att deltagande
-		      myndigheter ska kunna testa sina dataflöden
-		      innan den skarpa publiceringen inleds. Det
-		      kommer att finnas en validator för de
-		      postförteckningar och den metadata som
-		      myndigheterna publicerar. Det kommer även finnas
-		      en testmiljö till vilken publicering kan ske för
-		      teständamål.
-		    </p>
-		    <h3>Generella verktyg</h3>
-                    <p>Verktyg för att förenkla arbetet för utvecklare.
-                      Observera att flera av dessa verktyg enbart testar syntax
-                      och inte att innehållet är korrekt.</p>
-                    <ul>
-                      <li><a href="http://validator.w3.org/feed/">W3C:s
-                      valideringsverktyg för Atom-formatet</a></li>
-                      
-		      <li><a href="http://www.w3.org/RDF/Validator/">W3C:s
-                      valideringsverktyg för RDF</a></li>
-                      
-		      <li><a href="http://validator.w3.org/">W3C:s
-                      valideringsverktyg för XHTML</a></li>
-                    </ul>
-
-                </div>
-
-                <div id="related">
-                  <!--
-                  <div class="newslist">
-                    <div class="newslistcompact">
-                      <h2>Senaste nyheter från projektet</h2>
-                      <script type="text/javascript" src="http://p3k.org/rss/proxy.r?textColor=black&amp;align=&amp;width=200&amp;fontFace=&amp;url=http%3A%2F%2Frinfoprojektet.wordpress.com%2Ffeed%2F&amp;compact=true&amp;frameColor=white&amp;showXmlButton=&amp;boxFillColor=white&amp;_=1255012508966&amp;titleBarColor=%23ccc&amp;maxItems=5&amp;titleBarTextColor=black&amp;"></script>
-                    </div>
-                  </div>
-                  -->
-                </div>
-                <div class="clearer"> </div>
-            </div>
+      </div>
+      <div id="footer">
+        <div id="footercontent">
+          <div class="contact">
+            <p class="left">Kontakta: staffan.malmgren@dom.se (projektledare)</p>
+            <p class="right"><a href="http://www.domstol.se">Domstolsverket</a></p>
+          </div>
         </div>
-        <div id="footer">
-            <div id="footercontent">
-                <div class="contact">
-                    <p class="left">Kontakta: staffan.malmgren@dom.se (projektledare)</p>
-                    <p class="right"><a href="http://www.domstol.se">Domstolsverket</a></p>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
   </body>
 </html>
