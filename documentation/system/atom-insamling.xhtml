@@ -196,12 +196,12 @@
         Försvarsdepartementet har tagits bort och att de allmänna
         försäkringskassorna har tagits bort ur uppräkningen.</summary>
     <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2006-06.pdf"
-             type="application/pdf"
-             le:md5="3c5fc4bdc3306ae6541e97b89dbf4d16"/>
-    <link rel="alternate" 
-          href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2006-6"
-          type="application/rdf+xml"
-          length="2317" le:md5="e4e242a358b72405fdbf5ba8bc044b1a"/>
+        type="application/pdf"
+        le:md5="3c5fc4bdc3306ae6541e97b89dbf4d16"/>
+    <link rel="alternate"
+        href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2006-6"
+        type="application/rdf+xml"
+        length="2317" le:md5="e4e242a358b72405fdbf5ba8bc044b1a"/>
   </entry>
 
   <entry>
@@ -212,8 +212,8 @@
         återlämnande av handlingar vid upphandling;</title>
     <summary></summary>
     <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
-             type="application/pdf"
-             le:md5="ca68b77f41ad2231586cf3e4d7970629"/>
+          type="application/pdf"
+          le:md5="ca68b77f41ad2231586cf3e4d7970629"/>
     <link rel="alternate"
           href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
           type="application/rdf+xml"
@@ -224,10 +224,10 @@
         ]]></code>
       </div>
       <div>
-        <h3>3.1. Förteckningsdokumentets egenskaper</h3>
+        <h3>3.1. Förteckningsdokumentets beståndsdelar</h3>
         <h4>ID</h4>
         <p>
-          <strong>Viktig!</strong>
+          <em>Nödvändig information!</em>
           Elementet <code>id</code> anger en *persistent* identifierare (URI) 
           för datakällan. Exempel:
         </p>
@@ -289,7 +289,7 @@
         </p>
         <h4>Metadata för flödets utgivare</h4>
         <p>
-          <strong>Viktig!</strong>
+          <em>Nödvändig information!</em>
           Exempel:
         </p>
         <div class="syntax">
@@ -324,7 +324,8 @@
         </p>
         <div class="syntax">
           <code class="xml"><![CDATA[
-  <link href="https://www.statensarkiv.se/rafs/feed/index.atom" rel="self"/>
+  <link rel="self"
+      href="https://www.statensarkiv.se/rafs/feed/index.atom"/>
           ]]></code>
         </div>
         <p>
@@ -334,13 +335,13 @@
         </p>
         <h4>Länk till arkiv för äldre poster</h4>
         <p>
-          <strong>Viktig!</strong>
+          <em>Viktig!</em>
           Exempel:
         </p>
         <div class="syntax">
           <code class="xml"><![CDATA[
-  <link href="https://www.statensarkiv.se/rafs/feed/archive/2008/index.atom" 
-        rel="prev-archive"/>
+  <link rel="prev-archive"
+      href="https://www.statensarkiv.se/rafs/feed/archive/2008/index.atom"/>
           ]]></code>
         </div>
         <p>
@@ -369,7 +370,8 @@
         </p>
       </div>
       <div>
-        <h3>3.2. Flödets struktur</h3>
+        <h3>3.2. Tidstämplar i rättskällor respektive det centrala 
+          systemet</h3>
         <p>Atom-flöden representerar en växande tidslinje av poster över tid. 
           Varje post har en tidstämpel i sitt <code>updated</code>-element som 
           anger när den uppstod, eller när information i posten senast 
@@ -390,10 +392,6 @@
           lita på att kommunicerade tidstämplar gäller, så att allting före en 
           påträffad tidpunkt kan garanteras gälla information som redan 
           beaktats.</p>
-      </div>
-      <div>
-        <h3>3.3. Tidstämplar i rättskällor respektive det centrala 
-          systemet</h3>
         <p>Eftersom systemet exponerar all inhämtad (och egen) information på 
           samma vis som källorna &mdash; d.v.s. som Atom-flöden &mdash; kommer 
           poster som lästs in att få <em>nya</em> tidstämplar som återger 
@@ -402,53 +400,173 @@
           kunna återge detaljer kring den inlästa posten.</p>
       </div>
       <div>
-        <h3>3.4. Posternas innehåll</h3>
+        <h3>3.3. Posternas innehåll</h3>
         <p>Varje post representeras av ett s.k. Atom Entry. Här anges URI:n för
           dokumentet (i atom:id), primär representation (i atom:content) samt
           referenser till alternativa representationer.
         </p>
-        <!-- TODO: inkludera entry:t från exemlel-feed:et -->
-        <p>En av dessa representationer måste innehålla RDF-data för att 
-          uppfylla systemets krav (se [TODO] för detaljer kring krav på 
-          inlämningsformat och innehåll).
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+  <entry>
+    <id>http://rinfo.lagrummet.se/publ/ra-fs/2004:2</id>
+    <updated>2004-09-27T00:00:00.000Z</updated>
+    <published>2004-09-27T00:00:00.000Z</published>
+    <title>Riksarkivets föreskrifter och allmänna råd om gallring och
+        återlämnande av handlingar vid upphandling;</title>
+    <summary></summary>
+    <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
+          type="application/pdf"
+          le:md5="ca68b77f41ad2231586cf3e4d7970629"/>
+    <link rel="alternate"
+          href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
+          type="application/rdf+xml"
+          length="2414" le:md5="8051c695ef087fcc1183e51694c9c8c1"/>
+  </entry>
+          ]]></code>
+        </div>
+        <p>
+          En av dessa representationer måste innehålla RDF-data för att 
+          uppfylla systemets krav. (Se <a 
+            href="introduktion/intro-implementatorer.pdf">Introduktion för 
+            implementatörer och teknikansvariga</a> för detaljer kring krav på 
+          inlämningsformat och innehåll.)
         </p>
-        <h4>3.4.1. ID:n - URI:er</h4>
+        <h4>3.3.1. ID:n - URI:er</h4>
         <p>För att koppla en post till det rättsinformationsdokument den 
           paketerar används den officiella URI:n för dokumentet som värde i 
           Atom-postens ID.
         </p>
-        <div class="syntax">
-          <code class="xml"><![CDATA[
-<entry>
-  <id>http://rinfo.lagrummet.se/publ/sfs/1999:175</id>
-  ...
-</entry>
-          ]]></code>
-          </div>
-        <!-- TODO: delarna från det kommenterade entry:t -->
-        <h4>3.4.2. Checksummor på länkade dokument</h4>
-        <p>Vidare är respektive länkad resurs annoterad med storlek, mediatyp 
-          och <a 
-            href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02#section-3.1">MD5-kontrollsumma</a>.
+        <p>
+          <em>Nödvändig information!</em>
         </p>
         <div class="syntax">
           <code class="xml"><![CDATA[
+    <id>http://rinfo.lagrummet.se/publ/ra-fs/2004:2</id>
           ]]></code>
         </div>
-        <h4>3.4.3. Bilagor</h4>
+        <p>
+          Rättsinformationssystemet matchar id:t i entry för ett 
+          rättsinformationsdokument mot den officiella URI:n (den elektroniska 
+          identifieraren) för detta dokument. Den kommer att användas av alla 
+          system som hanterar poster i rättsinformationssystemet.
+        </p>
+        <p>
+          För att rättsinformationsdokument-URI:er ska bli korrekta har 
+          rättsinformationssystemet en algoritm för att konstruera dessa. Se 
+          dokumenetet <a href="uri-principer.pdf">URI-principer</a> för hur 
+          dessa ska konstrueras.
+        </p>
+
+        <h4>3.3.2. Posters tidstämplar</h4>
+        <p>
+          <em>Nödvändig information!</em>
+        </p>
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+    <updated>2007-02-09T00:00:00.000Z</updated>
+          ]]></code>
+        </div>
+        <p>
+          Uppdateringstiden i <code>updated</code> anger när något i posten 
+          modifierats i källan. Rättsinformationssystemet använder denna för 
+          att avgöra om posten för ett rättsinformationsdokument har 
+          uppdaterats. Det är därför kritiskt att denna är korrekt angiven.
+        </p>
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+    <published>2007-02-09T00:00:00.000Z</published>
+          ]]></code>
+        </div>
+        <p>
+          Publiceringstiden i <code>published</code> anger när posten 
+          officiellt publiceras i källan. För merparten av dokument kommer 
+          denna att vara densamma som updated (se ovan), då förändringar av 
+          rättsinformationsdokument i huvudsak görs i form av nya 
+          rättsinformationsdokument (såsom rättelseblad och 
+          ändringsförfattningar). Enbart i undantagsfall ska poster uppdateras 
+          (eller tas bort) elektroniskt.
+        </p>
+
+        <h4>3.3.3. Titel och beskrivning</h4>
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+    <title>Riksarkivets föreskrifter och allmänna råd om gallring och
+        återlämnande av handlingar vid upphandling;</title>
+    <summary>...</summary>
+          ]]></code>
+        </div>
+        <p>
+          Dessa element måste enligt Atom-specifikationen finnas i en post. Det 
+          är dock inte tekniskt nödvändigt att de innehåller något.
+          Innehåll i dessa element används heller inte av 
+          Rättsinformationssystemet. Vi rekommenderar ändå att något läsbart 
+          värde används för att andra verktyg ska kunna presentera läsbar 
+          information av detta feed. Utan värde kommer t.ex. många vanliga 
+          feed-läsare inte att kunna skapa en användbar presentation av 
+          feed:et.
+        </p>
+
+        <h4>3.3.4. Huvudsakligt innehåll</h4>
+        <p>
+          <em>Nödvändig information!</em>
+        </p>
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+    <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
+          type="application/pdf"
+          le:md5="ca68b77f41ad2231586cf3e4d7970629"/>
+          ]]></code>
+        </div>
+        <p>
+          En primär representation ska representera det faktiska 
+          rättsinformationsdokumentet på ett av Rättsinformationssystemet 
+          godkänt format.
+        </p>
+        <p>
+          (Obs! Det är tänkt att systemet (åtminstone initialt) ska tolerera 
+          avsaknad av en digital dokumentrepresentation, så länge RDF-data om 
+          dokumentet finns tillgänglig. Denna tolerans är enbart till för de 
+          fall då det inte *går* att få fram en digital representation, inte 
+          för att minska kraven på vad rättskällorna ska publicera.)
+        </p>
+        <h4>3.3.5. Länkade dokument</h4>
+        <p>
+          De alternativa formaten som beskriver dokumentet länkas till som 
+          följer.
+        </p>
+        <div class="syntax">
+          <code class="xml"><![CDATA[
+    <link rel="alternate"
+          href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
+          type="application/rdf+xml"
+          length="2414" le:md5="8051c695ef087fcc1183e51694c9c8c1"/>
+          ]]></code>
+        </div>
+        <p>
+          Då dokumenten ska beskrivas med RDF-data måste minst ett sådant 
+          dokument på ett av Rättsinformationssystemet godkänt RDF-format 
+          finnas länkat till.
+        </p>
+        <h4>3.3.5. Checksummor på länkade dokument</h4>
+        <p>
+          Som angivet i exemplen ovan ska respektive länkad resurs vara 
+          annoterad med storlek, mediatyp och <a 
+            href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02#section-3.1">MD5-kontrollsumma</a>.
+        </p>
+        <h4>3.3.6. Bilagor</h4>
         <p>
           Enclosures representerar någon slags extern bilaga till den primära 
           resursen. Detta omfattar alltså bara de fall då bilagorna är separata 
           filer, och inte t.ex. PDF:er som inkluderar både huvuddokumentet och 
           tillhörande bilagor.
         </p>
-        <p>Externa bilagor hämtas in och sparas på en ny URL baserad på 
+        <p>Externa bilagor hämtas in och sparas på en ny URL baserad på att 
           antingen:
         </p>
         <!-- TODO: formalisera det som görs av koden i regler -->
         <ul>
-          <li>resolva href mot entry-id,</li>
-          <li>resolva @dct:isFormatOf + mime-type,</li>
+          <li>lös ("resolve") värdet i @href mot postens id,</li>
+          <li>använd @dct:isFormatOf plus filändelse för angiven mediatyp.</li>
         </ul>
         <div class="syntax">
           <code class="xml"><![CDATA[
@@ -634,7 +752,7 @@
     <div class="section">
       <h2>7. Krav på publiceringen</h2>
       <h3>Checklista</h3>
-      <!-- TODO: se kommentarerna i våra feed-exempel -->
+      <!-- TODO: se "Nödvändig information" ovan (från våra feed-exempel) -->
       <ul>
         <li>beständigt feed-id;</li>
         <li>Posternas ID:n ska motsvara URI:n för resursen som posten levererar.
@@ -686,15 +804,15 @@
         <h3>8.1. Insamling av kompletta flöden</h3>
         <p>
           Kompletta flöden är enkla att samla in, förutsatt att det insamlande 
-          systemet sparar ner en lista på alla post-ID:n för respektive källas 
+          systemet sparar ner en lista på alla poster för respektive källas 
           flödes-ID. En enkel algoritm för detta är:
         </p>
         <ul>
           <li>hämta det kompletta flödet</li>
-          <li>använd flödets ID för att läsa upp lista på post-ID:n från 
-            eventuell tidigare insamling,</li>
-          <li>radera alla poster i listan från tidigare insamling som inte 
-            existerar i den nya,</li>
+          <li>använd flödets ID för att läsa upp lista på alla poster i 
+            systemet som kommer från denna källa,</li>
+          <li>radera alla poster i listan från systemet som inte finns med i 
+            det nya inlästa flödets förteckning,</li>
           <li>sortera posterna på "updated" i stigande ordning (d.v.s. äldst 
             (minsta tidstämpeln) först),</li>
           <li>för varje post, samla in ny data om dess updated är nyare än 
@@ -752,7 +870,7 @@
     <div class="section">
       <h2>9. Konsekvenser</h2>
       <p>Alla poster hämtas in då och då över tid. Dessa sparas i Lagret och 
-        får där nya datumstämplar som motsvarar inhämntningstillfället.
+        får där nya datumstämplar som motsvarar inhämtningstillfället.
       </p>
       <p>
         + arkivlogg;
@@ -761,10 +879,11 @@
       </p>
     </div>
 
-    <!-- Bilagor: Exempel -->
+    <!-- Bilagor: Exempel
     <div id="bilaga_a" class="appendix">
       <h2>Bilaga A: Exempel</h2>
     </div>
+    -->
 
   </body>
 </html>

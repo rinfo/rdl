@@ -21,9 +21,12 @@ class Builder {
         def resourceDir = paths[0]
         def sourceDir = paths[1]
         def buildDir = paths[2]
+        def patterns = paths[3]? paths[3..-1] : DEFAULT_RENDER_PATTERNS
+        def copies = DEFAULT_COPY_PATTERNS
         def clean = "--clean" in flags
+        def nogen = "--nogen" in flags
         new Builder(resourceDir, sourceDir, buildDir).
-                build(DEFAULT_RENDER_PATTERNS, DEFAULT_COPY_PATTERNS, clean)
+                build(patterns, copies, clean, !nogen)
     }
 
     static DEFAULT_COPY_PATTERNS = [
@@ -74,10 +77,10 @@ class Builder {
         }
 
         if (examplesZip) {
+            ant.mkdir(dir:"${buildDir}/handbok")
             ant.zip(basedir:"${sourceDir}/exempel",
                     includes:"**/*.atom **/*.rdf **/*.xhtml **/*.pdf",
                     destfile:"${buildDir}/handbok/exempel.zip")
-
         }
 
         def svnVersionNumber = getSvnVersionNumber()
