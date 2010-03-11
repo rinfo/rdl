@@ -27,11 +27,11 @@
         representeras av Atom-flöden. Systemets aggregerade källa utgör en 
         komplett sammanställning av alla datakällor.
       </p>
-      <h3>1.4. Definitioner</h3>
+      <h3>1.3. Definitioner</h3>
       <!-- TODO: utöka Ordlista (i <intro-implementatorer.xhtml>)
            - alt. separat <ordlista.xhtml>?
       -->
-      <h4>Generella</h4>
+      <h4>1.3.1. Generella</h4>
       <dl>
         <dt>Atom</dt>
         <dd>Ett standardformat i XML för att representera flöden av 
@@ -60,7 +60,7 @@
           tillförlitlig nog för att säkerställa överförd data från en pålitlig 
           källa.</dd>
       </dl>
-      <h4>Specifikt för rättsinformationsdomänen</h4>
+      <h4>1.3.2. Specifikt för rättsinformationsdomänen</h4>
       <dl>
         <dt>Rättsinformationssystemet</dt>
         <dd>Den uppsättning datasystem som samordnar syntax, semantik, 
@@ -94,17 +94,17 @@
         Ursprungligen stod RSS för "Rich Site Summary" och var ett enskilt 
         format. Nuförtiden finns det flera versioner av detta format, och 
         samlingsnamnet inkluderar både dem och Atom-formatet. Atom är ett 
-        specifikt, öppet, XML-baserat format som tagits fram och 
-        standardiserats som RFC 4287. (RFC:er, "Request For Comments", är 
-        standarder vilka publiceras av The Internet Engineering Task Force, <a 
+        specifikt, öppet, XML-baserat format som har standardiserats i form av 
+        RFC 4287. (RFC:er, "Request For Comments", är standarder vilka 
+        publiceras av The Internet Engineering Task Force, <a 
           href="http://www.ietf.org/">IETF</a>.)
       </p>
-      <p>Atom har valts för att det är öppet, standardiserat och väletablerat,  
+      <p>Atom har valts för att det är öppet, standardiserat och väletablerat, 
         samt har explicit stöd för anpassning och utökning för olika ändamål, 
         t.ex. detaljerad hantering av paginering för t.ex. arkiverade 
         postförteckningar, raderingar av poster med mera. Det finns bra 
-        programmerings- och verktygsstöd i olika programspråk/-plattformar för 
-        att hantera formatet.
+        verktygsstöd i olika programspråk/-plattformar för att hantera 
+        formatet.
       </p>
       <h3>2.2. Specifikationer</h3>
       <p>Följande Atom-relaterade specifikationer används för att hantera 
@@ -139,8 +139,9 @@
         Systemet använder Atom enbart för att beskriva tillkomst av poster av 
         information i systemet. Dessa kopplas med sin identifierare till den 
         faktiska resurs (återigen, primärt rättsinformationsdokument) som ingår 
-        i rättsinformationen. Data (dokument) som beskriver och representerar 
-        dessa resurser "paketeras" av posten (länkas till).
+        i rättsinformationen. Data (i form av digitala dokument) som beskriver 
+        och representerar dessa resurser "paketeras" av posten (d.v.s. länkas 
+        till).
       </p>
       <p>På detta vis hålls den tekniska hantering av tillkomst och den 
         information som tillhör denna process åtskiljd från 
@@ -162,7 +163,14 @@
         XML-dokument. Respektive post är försedd med ett unikt ID i form av en 
         URI, samt en tidstämpel som anger uppdatering.
       </p>
-      <p>Exempel på strukturen av ett feed-dokument:</p>
+      <p>
+        Minst ett förteckningsdokument ska finnas för en källa till systemet. 
+        Ett sådant dokument kallas prenumerationsdokument ("subscription feed", 
+        se <a href="http://tools.ietf.org/html/rfc5005">RFC 5005</a> för 
+        detaljer) och är det dokument som ska länkas till för att komma åt 
+        datakällan som flödet representerar.
+      </p>
+      <p>Exempel på strukturen i ett feed-dokument:</p>
       <div class="syntax">
         <code class="xml"><![CDATA[
 <?xml version="1.0"?>
@@ -225,7 +233,7 @@
       </div>
       <div>
         <h3>3.1. Förteckningsdokumentets beståndsdelar</h3>
-        <h4>ID</h4>
+        <h4>3.1.1. Flödets ID</h4>
         <p>
           <em>Nödvändig information!</em>
           Elementet <code>id</code> anger en *persistent* identifierare (URI) 
@@ -246,7 +254,7 @@
           persistent över tid kan en HTTP-uri som inte längre leder någonstans 
           vara vilseledande.
         </p>
-        <h4>Flödets titel</h4>
+        <h4>3.1.2. Flödets titel</h4>
         <p>
           Exempel:
         </p>
@@ -260,7 +268,7 @@
           Rättsinformationssystemet. Men den kan var användbar för någon som 
           tar del av denna källa via andra verktyg eller i andra sammanhang.
         </p>
-        <h4>Flödets Tidstämpel</h4>
+        <h4>3.1.3. Flödets Tidstämpel</h4>
         <p>
           Exempel:
         </p>
@@ -287,7 +295,7 @@
           vintertid, "+02:00" för sommartid osv. Korrekt parsning av DTF ska 
           resultera i samma tidpunkt oavsett.)
         </p>
-        <h4>Metadata för flödets utgivare</h4>
+        <h4>3.1.4. Metadata för flödets utgivare</h4>
         <p>
           <em>Nödvändig information!</em>
           Exempel:
@@ -318,7 +326,7 @@
           Namn och URL användsdäremot inte av Rättsinformationssystemet, men 
           kan vara nyttig i andra sammanhang.
         </p>
-        <h4>Addressen till flödets representation</h4>
+        <h4>3.1.5. Addressen till flödets representation</h4>
         <p>
           Exempel:
         </p>
@@ -333,7 +341,7 @@
           tekniskt nödvändig, men underlättar för någon som t.ex. sparar ner 
           dokumentet lokalt utan att notera ursprungsplats.
         </p>
-        <h4>Länk till arkiv för äldre poster</h4>
+        <h4>3.1.6. Länk till arkiv för äldre poster</h4>
         <p>
           <em>Viktig!</em>
           Exempel:
@@ -351,15 +359,12 @@
         <p>
           Se <a href="http://tools.ietf.org/html/rfc5005">RFC 5005: Feed Paging and
             Archiving</a>.
-          Rättsinformationssystemet ställer *höga* krav på att dessa är 
-          konsistenta, samt beständiga över tid så pass att det är garanterat 
-          att systemet har hunnit hämta in informationen.
-        <p>
+          Rättsinformationssystemet kräver att dessa är konsistenta, samt 
+          beständiga över tid så pass att det är garanterat att systemet har 
+          hunnit hämta in informationen. (Exakta krav är inte fastställda, men 
+          livslängder på minst ett år är rimliga.)
         </p>
-          (Exakta krav är inte fastställda, men livslängder på minst ett år är 
-          rimliga.)
         <p>
-        </p>
           Observera att arkiverade feed-dokument inte är nödvändiga. Om man har 
           en lågt antal rättsinformationsdokument kan samtliga förekomma i 
           samma feed-dokument under en överskådlig tid. Syftet med feed 
@@ -402,8 +407,9 @@
       <div>
         <h3>3.3. Posternas innehåll</h3>
         <p>Varje post representeras av ett s.k. Atom Entry. Här anges URI:n för
-          dokumentet (i atom:id), primär representation (i atom:content) samt
-          referenser till alternativa representationer.
+          dokumentet (i elementet <code>id</code>), primär representation (i 
+          elementet <code>content</code>) samt referenser till alternativa 
+          representationer.
         </p>
         <div class="syntax">
           <code class="xml"><![CDATA[
@@ -424,14 +430,7 @@
   </entry>
           ]]></code>
         </div>
-        <p>
-          En av dessa representationer måste innehålla RDF-data för att 
-          uppfylla systemets krav. (Se <a 
-            href="introduktion/intro-implementatorer.pdf">Introduktion för 
-            implementatörer och teknikansvariga</a> för detaljer kring krav på 
-          inlämningsformat och innehåll.)
-        </p>
-        <h4>3.3.1. ID:n - URI:er</h4>
+        <h4>3.3.1. Postens ID</h4>
         <p>För att koppla en post till det rättsinformationsdokument den 
           paketerar används den officiella URI:n för dokumentet som värde i 
           Atom-postens ID.
@@ -457,7 +456,7 @@
           dessa ska konstrueras.
         </p>
 
-        <h4>3.3.2. Posters tidstämplar</h4>
+        <h4>3.3.2. Postens tidstämplar</h4>
         <p>
           <em>Nödvändig information!</em>
         </p>
@@ -529,7 +528,7 @@
           fall då det inte *går* att få fram en digital representation, inte 
           för att minska kraven på vad rättskällorna ska publicera.)
         </p>
-        <h4>3.3.5. Länkade dokument</h4>
+        <h4>3.3.5. Alternativa format</h4>
         <p>
           De alternativa formaten som beskriver dokumentet länkas till som 
           följer.
@@ -543,31 +542,31 @@
           ]]></code>
         </div>
         <p>
-          Då dokumenten ska beskrivas med RDF-data måste minst ett sådant 
-          dokument på ett av Rättsinformationssystemet godkänt RDF-format 
-          finnas länkat till.
+          Då dokumenten ska beskrivas med RDF-data <em>måste</em> minst ett 
+          sådant dokument på ett av rättsinformationssystemet godkänt 
+          RDF-format finnas länkat till.
         </p>
-        <h4>3.3.5. Checksummor på länkade dokument</h4>
+        <p>
+          Se dokumentet <a 
+            href="introduktion/intro-implementatorer.pdf">Introduktion för 
+            implementatörer och teknikansvariga</a> för detaljer kring krav på 
+          inlämningsformat och innehåll.
+        </p>
+        <h4>3.3.6. Checksummor på länkade dokument</h4>
         <p>
           Som angivet i exemplen ovan ska respektive länkad resurs vara 
-          annoterad med storlek, mediatyp och <a 
-            href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02#section-3.1">MD5-kontrollsumma</a>.
+          annoterad med storlek, mediatyp och en kontrollsumma i MD5. Se den 
+          föreslagna specen för beskrivning av <a 
+            href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02#section-3.1">länk-attributet 
+            för MD5-kontrollsumma</a>.
         </p>
-        <h4>3.3.6. Bilagor</h4>
+        <h4>3.3.7. Bilagor</h4>
         <p>
           Enclosures representerar någon slags extern bilaga till den primära 
           resursen. Detta omfattar alltså bara de fall då bilagorna är separata 
           filer, och inte t.ex. PDF:er som inkluderar både huvuddokumentet och 
           tillhörande bilagor.
         </p>
-        <p>Externa bilagor hämtas in och sparas på en ny URL baserad på att 
-          antingen:
-        </p>
-        <!-- TODO: formalisera det som görs av koden i regler -->
-        <ul>
-          <li>lös ("resolve") värdet i @href mot postens id,</li>
-          <li>använd @dct:isFormatOf plus filändelse för angiven mediatyp.</li>
-        </ul>
         <div class="syntax">
           <code class="xml"><![CDATA[
 <feed ...
@@ -585,9 +584,20 @@
           ]]></code>
         </div>
         <p>
-          Attributet <code>dct:isFormatOf</code> skapar en koppling mellan 
+          Attributet <code>@dct:isFormatOf</code> skapar en koppling mellan 
           identifieraren för bilagan och själva filen som innehåller bilagan.
         </p>
+        <p>Externa bilagor hämtas in och sparas på en ny URL baserad på att 
+          antingen:
+        </p>
+        <!-- TODO: formalisera det som görs av koden i regler -->
+        <ul>
+          <li>lös värdet i <code>@href</code> mot postens primära 
+            innehållsreferens (<code>content/@src</code>), basera basen på 
+            postens formella URI (angivet i <code>id</code>)</li>
+          <li>använd <code>@dct:isFormatOf</code> plus filändelse för angiven 
+            mediatyp.</li>
+        </ul>
       </div>
     </div>
 
@@ -603,8 +613,8 @@
         syntax, samt metadata.
       </p>
       <p>
-        Den normativa informationen som hör till den juridiska texten förändras 
-        inte med mindre än att nya rättsinformationsdokument tillkommer.
+        Den information som den juridiska texten utgör förändras inte med 
+        mindre än att nya rättsinformationsdokument tillkommer.
       </p>
       <p>
         En uppdaterad post <em>ska</em> ha ett senare datum än 
@@ -627,6 +637,12 @@
       <p>
         För att hantera <em>felaktigt inkomna</em> poster exponeras även 
         <em>raderade</em> resurser.
+      </p>
+      <p>
+        (Detaljer kring hur dessa förekommer i flödesdokumenten beskrivs i 
+        kommande avsnitt, specifikt för <a href="#s_arkiv">Arkiv</a>-flöden. I 
+        <a href="#s_kompletta_floeden">Kompletta flöden</a> behövs inte 
+           explicita raderingar.)
       </p>
       <p>
         Raderingar representeras av: <a 
@@ -681,10 +697,11 @@
     </div>
 
     <div class="section">
-      <h2>5. Kompletta flöden</h2>
+      <h2 id="s_kompletta_floeden">5. Kompletta flöden</h2>
       <p>
-        Feeds markerade som <a 
-          href="http://tools.ietf.org/html/rfc5005#section-2">kompletta</a>
+        Feeds markerade som kompletta (se <a 
+          href="http://tools.ietf.org/html/rfc5005#section-2">RFC 5005, sektion 
+          2</a>)
          är lämpliga för att publicera en lagom mängd dokument i en samling som 
          inte väntas växa avsevärt över tid.
       </p>
@@ -711,7 +728,7 @@
     </div>
 
     <div class="section">
-      <h2>6. Arkiv</h2>
+      <h2 id="s_arkiv">6. Arkiv</h2>
       <h3>6.3. Paginerad tillväxt över tid</h3>
       <p>
         Större samlingar (eventuellt med många uppdateringar och/eller 
@@ -720,9 +737,10 @@
       <p>
         Paginering möjliggör långa tidssorterade listor av poster. För en 
         stabil inhämtning av sådana listor har systemet valt att både samla in 
-        och exponera Atom-arkiv. Se specikationen för dessa: <a 
-          href="http://tools.ietf.org/html/rfc5005#section-4">Feed Paging and 
-          Archiving: 4. Archived Feeds</a>.
+        och exponera Atom-arkiv (se <a 
+          href="http://tools.ietf.org/html/rfc5005#section-4">RFC 5005, sektion 
+          4<!--Feed Paging and Archiving: 4. Archived Feeds--></a> för 
+        specikationen av sådana).
       </p>
       <h4>6.3.1. Tillväxtproblem</h4>
       <p>
@@ -751,37 +769,51 @@
 
     <div class="section">
       <h2>7. Krav på publiceringen</h2>
-      <h3>Checklista</h3>
-      <!-- TODO: se "Nödvändig information" ovan (från våra feed-exempel) -->
+      <h3>7.1. Checklista</h3>
+      <p>
+        I korthet ska följande beaktas vid skapandet av Atom-flöden som ska 
+        utgöra källor till rättsinformationssystemet.
+      </p>
       <ul>
-        <li>beständigt feed-id;</li>
-        <li>Posternas ID:n ska motsvara URI:n för resursen som posten levererar.
-          <!--(om det är ett rättsinformationsdokument) -->
-          <!-- se URI:er för rättsinformationsdokument.. -->
-          </li>
-        <li>RDF-data som beskriver postens dokument levereras i content eller 
+        <li>Flödesdokument ska dela samma, för källan beständiga och unika 
+          feed-id.</li>
+        <li>Posternas entry-id:n ska motsvara URI:n för resursen 
+          (rättsinformationsdokumentet) som posten levererar.
+          (Se <a href="uri-principer.pdf">URI-principer</a> för hur dessa ska 
+          konstrueras.)
+        </li>
+        <li>Den primära digitala representationen för dokumenetet  ska länkas 
+          till i postents content-element.</li>
+        <li>RDF-data som beskriver postens dokument ska länkas till i content 
+          (om det primära innehållet även innehåller metadata), eller i en 
           alternate-link.</li>
-        <li>checksumma</li>
-        <li>kronologisk ordning (per feed-dokument; inbördes entry-ordning på 
-          XML-nivå är inte nödvändig då updated-värdet räcker för att ange 
-          detta);</li>
-        <li>fullständighet: händelsearkiv inkl. uppdateringar, raderingar;</li>
+        <li>Alla länkade dokument ska ha en korrekt angiven 
+          MD5-kontrollsumma.</li>
+        <li>Datum i respektive flödesdokument ska följa kronologisk ordning 
+          (per feed-dokument; inbördes entry-ordning på XML-nivå är inte 
+          nödvändig då updated-värdet räcker för att ange detta).</li>
+        <li>Fullständighet måste iakttagas, d.v.s. arkiven ska representera 
+          alla aktuella uppdateringar och raderingar som gäller för 
+          rättskällan.</li>
+        <!--
         <li>stabilitet?</li>
         <li>"kompaktering"?</li>
+        -->
       </ul>
     </div>
 
     <div class="section">
       <h2>8. Insamlingsmetod</h2>
       <div>
-        <h3>Generellt</h3>
-        <p>per sida:</p>
+        <h3>8.1. Generellt</h3>
+        <p>Per sida:</p>
         <ol>
-          <li>följ flödet bakåt i tid:
-            <ol>
+          <li>
+            <p>Följ flödet bakåt i tid:</p>
+            <ul>
               <li>
-                <p>samla aktiva poster, senaste (yngsta) tidstämpel per entry-id 
-                  som antingen är:
+                <p>notera aktiva poster, senaste (yngsta) tidstämpel per 
+                  entry-id som antingen är:
                 </p>
                 <ol>
                   <li>uppdaterad</li>
@@ -789,7 +821,19 @@
                 </ol>
               </li>
               <li>följ <code>prev-archive</code> (bara för arkiv; se nedan)</li>
-            </ol>
+            </ul>
+          </li>
+          <li>
+            <p>
+              Samla in en aktiv post respektive radering i taget, i ordningen 
+              äldst till yngst.
+            </p>
+            <p>
+              (Detta säkerställer att den yngsta insamlade posten markerar vad 
+              det insamlande systemet har lyckats samla in. På så vis 
+              garanteras att påföjande insamlingar inte missar gammalt material 
+              som av något anledning inte kunnat hämtas in.)
+            </p>
           </li>
         </ol>
         <p>
@@ -805,12 +849,12 @@
         <p>
           Kompletta flöden är enkla att samla in, förutsatt att det insamlande 
           systemet sparar ner en lista på alla poster för respektive källas 
-          flödes-ID. En enkel algoritm för detta är:
+          feed-id. Gör följande för att samla in poster i sådana:
         </p>
         <ul>
-          <li>hämta det kompletta flödet</li>
-          <li>använd flödets ID för att läsa upp lista på alla poster i 
-            systemet som kommer från denna källa,</li>
+          <li>hämta det kompletta flödet,</li>
+          <li>använd feed-id:t för att läsa upp lista på alla poster i systemet 
+            som kommer från denna källa,</li>
           <li>radera alla poster i listan från systemet som inte finns med i 
             det nya inlästa flödets förteckning,</li>
           <li>sortera posterna på "updated" i stigande ordning (d.v.s. äldst 
@@ -868,15 +912,50 @@
     </div>
 
     <div class="section">
-      <h2>9. Konsekvenser</h2>
-      <p>Alla poster hämtas in då och då över tid. Dessa sparas i Lagret och 
-        får där nya datumstämplar som motsvarar inhämtningstillfället.
+      <h2>9. Notifieringar om förändringar</h2>
+      <p>
+        Rättsinformationssystemet innehållen en lista på de rättskällor som 
+        information ska samlas in ifrån. Systemet är konfiguererat så att det 
+        då och då läser av alla källor, en i taget, för att samla in poster som 
+        är nya eller förändrats/raderats sedan förra insamlingsrundan utförts.
       </p>
       <p>
-        + arkivlogg;
-        - arkivlogg oanvändbar p.g.a. många korrigeringar i källorna..;
-        behov av kompaktering?
+        <em>Exakt hur ofta systemet gör denna insamling är inte fastställt 
+          idag. Det är en relativt billig operation som kan förväntas göras 
+          många gånger per dag, eventuellt oftare än en gång i timmen.</em>
       </p>
+      <p>
+        Idag kan rättsinformationssystemet även "pingas" om en källa uppdateras 
+        och önskas inhämtas omedelbart. Detta sker genom att URL:en till en 
+        datakällas prenumerationsdokument ("subscription feed") POST:as till 
+        systemet. Om så sker, och källan är med i listan över godkända källor, 
+        kommer systemet att påbörja en insamling direkt.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>10. Konsekvenser</h2>
+      <p>Alla poster hämtas in då och då över tid. Dessa sparas i det centrala 
+        systemet och får där nya datumstämplar som motsvarar 
+        inhämtningstillfället.
+      </p>
+      <p>
+        Med denna insamlingsmetodik skapas en arkivlogg som utgör en komplett 
+        lista på poster (inklusive uppdateringar och raderingar). Denna 
+        exponeras av rättsinformationssystemet och utgör den primära 
+        postförteckningen för systemet, och är således den primära datakällan 
+        för konsumenter intresserade av den kompletta, tekniskt validerade 
+        rättsinformationen.
+      </p>
+      <p>
+        Stora, sammanställda arkivloggar kan bli svåranvänd p.g.a. många 
+        korrigeringar i källorna. En lösning på detta är att "kompaktera" 
+        arkiv, genom att så fort en post uppdateras eller raderas plocka bort 
+        den tidigare förekomsten (som kan ligga i något äldre arkiv-dokument 
+        bak i tiden). I nuläget gör systemet inte detta, men en lösning är 
+        planerar och kan komma att bli aktuell beroende på hur många 
+        korrigeringar som i praktiken visar sig göras i de respektive 
+        rättskällorna.</p>
     </div>
 
     <!-- Bilagor: Exempel

@@ -7,7 +7,7 @@
 
   <xsl:param name="docdate"/>
   <xsl:param name="svnversion"/>
-  <xsl:param name="root" select="'./'"/>
+  <xsl:param name="root" select="'../'"/>
   <xsl:param name="show-formats" select="false()"/>
 
   <xsl:template name="master">
