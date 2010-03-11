@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 
 import org.openrdf.model.BNode
 import org.openrdf.model.Literal
-import org.openrdf.model.URI as RdfURI
+import org.openrdf.model.URI
 import org.openrdf.model.Value
 import org.openrdf.model.vocabulary.XMLSchema
 
@@ -130,7 +130,7 @@ class SparqlTree {
         def node = [:]
         // FIXME: surely this encoding dance must be a bug in.. sesame or java-on-osx.
         def stringValue = new String(value.stringValue().getBytes("utf-8"))
-        if (value instanceof RdfURI) {
+        if (value instanceof org.openrdf.model.URI) {
             node[URI_KEY] = stringValue
         } else if (value instanceof BNode) {
             node[BNODE_KEY] = stringValue
@@ -154,7 +154,7 @@ class SparqlTree {
      * Casting the value (only if it is JSON compatible and can be
      * deterministically converted back).
      */
-    Object typeCast(RdfURI datatype, Value value) {
+    Object typeCast(org.openrdf.model.URI datatype, Value value) {
         if (datatype == XMLSchema.BOOLEAN) {
             return value.booleanValue()
         } else if (datatype == XMLSchema.INTEGER) {

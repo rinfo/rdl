@@ -78,13 +78,6 @@
         <enabled>false</enabled>
       </releases>
     </repository>
-    <repository>
-      <id>spock-snapshots</id>
-      <url>http://m2repo.spockframework.org/snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -414,9 +407,15 @@
       </dependency>
 
       <dependency>
-        <groupId>org.codehaus.gmaven.runtime</groupId>
-        <artifactId>gmaven-runtime-1.7</artifactId>
-        <version>1.2</version>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>1.7.1</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <!-- }}} -->
 
@@ -430,7 +429,7 @@
       <dependency>
         <groupId>org.spockframework</groupId>
         <artifactId>spock-core</artifactId>
-        <version>0.2</version>
+        <version>0.3</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -459,6 +458,17 @@
 
     <pluginManagement>
       <plugins>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.6</source>
+            <target>1.6</target>
+            <encoding>UTF-8</encoding>
+          </configuration>
+        </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
@@ -469,15 +479,44 @@
           <artifactId>maven-assembly-plugin</artifactId>
           <version>2.2-beta-2</version>
         </plugin>
+
         <plugin>
           <groupId>org.codehaus.gmaven</groupId>
           <artifactId>gmaven-plugin</artifactId>
           <version>1.2</version>
+          <configuration>
+            <providerSelection>1.7</providerSelection>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.codehaus.gmaven.runtime</groupId>
+              <artifactId>gmaven-runtime-1.7</artifactId>
+              <version>1.2</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>org.codehaus.groovy</groupId>
+                  <artifactId>groovy-all</artifactId>
+                </exclusion>
+              </exclusions>
+            </dependency>
+            <dependency>
+              <groupId>org.codehaus.groovy</groupId>
+              <artifactId>groovy-all</artifactId>
+              <version>1.7.1</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>org.fusesource.jansi</groupId>
+                  <artifactId>jansi</artifactId>
+                </exclusion>
+              </exclusions>
+            </dependency>
+          </dependencies>
         </plugin>
+
         <plugin>
           <groupId>org.spockframework</groupId>
           <artifactId>spock-maven</artifactId>
-          <version>0.2</version>
+          <version>0.3</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -489,6 +528,7 @@
           <artifactId>maven-jetty-plugin</artifactId>
           <version>6.1.7</version>
         </plugin>
+
       </plugins>
     </pluginManagement>
 

@@ -59,12 +59,12 @@ import org.junit.runner.RunWith; import spock.lang.*
         collectScheduler.isStarted() == wasStarted == true
     }
 
-}
-
-class TestScheduler extends FeedCollectScheduler {
-    TestScheduler() { super(null) }
-    protected void collectFeed(URL feedUrl, boolean lastInBatch) {
-        println "dummy collect: ${feedUrl} (lastInBatch=${lastInBatch})"
-        Thread.sleep 1
+    class TestScheduler extends FeedCollectScheduler {
+        TestScheduler() { super(null) }
+        protected void collectFeed(URL feedUrl, boolean lastInBatch) {
+            println "dummy collect: ${feedUrl} (lastInBatch=${lastInBatch})"
+            Thread.sleep 1
+        }
     }
+
 }

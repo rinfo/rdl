@@ -7,13 +7,8 @@ import spock.lang.*
 @Speck @RunWith(Sputnik)
 class FileDepotReadTest {
 
-    Depot depot
-
-    def setup() {
-        depot = DepotUtil.depotFromConfig(
+    @Shared Depot depot = DepotUtil.depotFromConfig(
                 "src/test/resources/rinfo-depot.properties")
-    }
-
 
     def "should contain entry"() {
         when:

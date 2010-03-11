@@ -105,8 +105,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.codehaus.gmaven.runtime</groupId>
-      <artifactId>gmaven-runtime-1.7</artifactId>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
     </dependency>
 
     <dependency>
@@ -122,15 +122,6 @@
     <defaultGoal>package</defaultGoal>
 
     <plugins>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
 
       <plugin>
         <groupId>org.codehaus.gmaven</groupId>

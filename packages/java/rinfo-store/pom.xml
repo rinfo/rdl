@@ -96,14 +96,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!--
-    <dependency>
-      <groupId>org.codehaus.gmaven.runtime</groupId>
-      <artifactId>gmaven-runtime-1.7</artifactId>
-      <scope>test</scope>
-    </dependency>
-    -->
-
     <dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
@@ -120,15 +112,6 @@
 
   <build>
     <plugins>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
 
       <plugin>
         <groupId>org.codehaus.gmaven</groupId>

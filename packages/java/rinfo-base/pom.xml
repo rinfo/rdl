@@ -135,8 +135,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.codehaus.gmaven.runtime</groupId>
-      <artifactId>gmaven-runtime-1.7</artifactId>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
       <!--
       <scope>test</scope>
       -->
@@ -146,15 +146,6 @@
 
   <build>
     <plugins>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
 
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
