@@ -1,11 +1,9 @@
 package se.lagrummet.rinfo.store.depot
 
-import org.junit.runner.RunWith
 import spock.lang.*
 
 
-@Speck @RunWith(Sputnik)
-class PathHandlerSpeck {
+class PathHandlerSpeck extends Specification {
 
     @Shared pathHandler = new DefaultPathHandler()
 

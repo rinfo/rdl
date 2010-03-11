@@ -1,11 +1,9 @@
 package se.lagrummet.rinfo.store.depot
 
-import org.junit.runner.RunWith
 import spock.lang.*
 
 
-@Speck @RunWith(Sputnik)
-class DatePathUtilTest {
+class DatePathUtilTest extends Specification {
 
     def "turns dates into entry history paths"() {
         when:

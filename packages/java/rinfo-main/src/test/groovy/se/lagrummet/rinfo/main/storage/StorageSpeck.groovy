@@ -1,6 +1,6 @@
 package se.lagrummet.rinfo.main.storage
 
-import org.junit.runner.RunWith; import spock.lang.*
+import spock.lang.*
 
 import se.lagrummet.rinfo.store.depot.Depot
 import org.openrdf.repository.Repository
@@ -8,8 +8,7 @@ import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.memory.MemoryStore
 
 
-@Speck @RunWith(Sputnik)
-class StorageSpeck {
+class StorageSpeck extends Specification {
 
     Depot depot = Mock()
     CollectorLog collectorLog = Mock()

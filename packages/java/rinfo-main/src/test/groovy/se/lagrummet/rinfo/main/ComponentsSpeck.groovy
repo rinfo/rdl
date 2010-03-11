@@ -1,6 +1,6 @@
 package se.lagrummet.rinfo.main
 
-import org.junit.runner.RunWith; import spock.lang.*
+import spock.lang.*
 
 import org.apache.commons.configuration.PropertiesConfiguration
 import org.apache.commons.configuration.ConfigurationException
@@ -9,8 +9,7 @@ import se.lagrummet.rinfo.main.storage.FeedCollectScheduler
 import se.lagrummet.rinfo.main.storage.Storage
 
 
-@Speck @RunWith(Sputnik)
-class ComponentsSpeck {
+class ComponentsSpeck extends Specification {
 
     def "should fail on bad config"() {
         when:

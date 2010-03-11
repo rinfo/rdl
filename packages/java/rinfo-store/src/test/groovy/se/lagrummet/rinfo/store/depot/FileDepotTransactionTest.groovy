@@ -1,11 +1,9 @@
 package se.lagrummet.rinfo.store.depot
 
-import org.junit.runner.RunWith
 import spock.lang.*
 
 
-@Speck @RunWith(Sputnik)
-class FileDepotTransactionTest {
+class FileDepotTransactionTest extends Specification {
 
     @Shared Depot depot
     @Shared def tdu = new TempDepotUtil()

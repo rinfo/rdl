@@ -70,13 +70,6 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <exclusions>
-        <!-- exclude gossip (as long as we use another slf4j impl.) -->
-        <exclusion>
-          <groupId>org.sonatype.gossip</groupId>
-          <artifactId>gossip</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
 

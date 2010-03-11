@@ -7,12 +7,10 @@ import org.apache.abdera.i18n.iri.IRI
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.Feed
 
-import org.junit.runner.RunWith
 import spock.lang.*
 
 
-@Speck @RunWith(Sputnik)
-class AtomizerTest {
+class AtomizerTest extends Specification {
 
     def atomizer = new Atomizer()
 

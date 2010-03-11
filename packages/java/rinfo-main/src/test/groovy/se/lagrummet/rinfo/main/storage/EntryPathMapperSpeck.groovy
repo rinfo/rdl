@@ -1,6 +1,6 @@
 package se.lagrummet.rinfo.main.storage
 
-import org.junit.runner.RunWith; import spock.lang.*
+import spock.lang.*
 
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.Entry
@@ -13,7 +13,7 @@ import se.lagrummet.rinfo.main.storage.StorageSession
 import static se.lagrummet.rinfo.main.storage.EntryPathMapper.DCT_IS_FORMAT_OF
 
 
-@Speck @RunWith(Sputnik) class EntryPathMapperSpeck {
+class EntryPathMapperSpeck extends Specification {
 
     static abdera = Abdera.instance
     @Shared epm = new EntryPathMapper(new DefaultPathHandler())

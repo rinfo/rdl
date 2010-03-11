@@ -1,6 +1,6 @@
 package se.lagrummet.rinfo.main.storage
 
-import org.junit.runner.RunWith; import spock.lang.*
+import spock.lang.*
 
 import javax.xml.namespace.QName
 
@@ -28,8 +28,7 @@ import se.lagrummet.rinfo.main.storage.log.DeletedEntryEvent
 import se.lagrummet.rinfo.main.storage.log.ErrorEvent
 
 
-@Speck @RunWith(Sputnik)
-class CollectorLogSpeck {
+class CollectorLogSpeck extends Specification {
 
     @Shared CollectorLog collectorLog
     CollectorLogSession logSession

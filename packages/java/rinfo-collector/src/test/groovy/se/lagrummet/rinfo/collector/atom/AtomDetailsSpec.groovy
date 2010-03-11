@@ -1,13 +1,11 @@
 package se.lagrummet.rinfo.collector.atom
 
-import org.junit.runner.RunWith
 import spock.lang.*
 
 import org.apache.abdera.model.Entry
 
 
-@Speck @RunWith(Sputnik)
-class AtomDetailsSpec {
+class AtomDetailsSpec extends Specification {
 
     /* FIXME: Works with Abdera trunk, which is in no mvn repo yet (2009-10)!
     def "should handle links with unescaped colon in path"() {

@@ -1,11 +1,9 @@
 package se.lagrummet.rinfo.store.depot
 
-import org.junit.runner.RunWith
 import spock.lang.*
 
 
-@Speck @RunWith(Sputnik)
-class FileDepotReadTest {
+class FileDepotReadTest extends Specification {
 
     @Shared Depot depot = DepotUtil.depotFromConfig(
                 "src/test/resources/rinfo-depot.properties")

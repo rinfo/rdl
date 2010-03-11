@@ -1,13 +1,13 @@
 package se.lagrummet.rinfo.main.storage
 
-import org.junit.runner.RunWith; import spock.lang.*
+import spock.lang.*
 
 import se.lagrummet.rinfo.store.depot.Depot
 import se.lagrummet.rinfo.store.depot.DepotContent
 import se.lagrummet.rinfo.store.depot.DepotEntry
 
 
-@Speck @RunWith(Sputnik) class SourceFeedsConfigurationSpeck {
+class SourceFeedsConfigurationSpeck extends Specification {
 
     def sourceFeedsEntryId = new URI("http://example.org/sources")
     def sourceFeedUrls = [

@@ -1,6 +1,6 @@
 package se.lagrummet.rinfo.main.storage
 
-import org.junit.runner.RunWith; import spock.lang.*
+import spock.lang.*
 
 import org.openrdf.repository.Repository
 import org.openrdf.repository.sail.SailRepository
@@ -16,8 +16,7 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.DepotEntryBatch
 
 
-@Speck @RunWith(Sputnik)
-class StorageSessionSpeck {
+class StorageSessionSpeck extends Specification {
 
     StorageSession session
 

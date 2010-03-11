@@ -1,9 +1,9 @@
 package se.lagrummet.rinfo.main.storage
 
-import org.junit.runner.RunWith; import spock.lang.*
+import spock.lang.*
 
 
-@Speck @RunWith(Sputnik) class FeedCollectSchedulerSpeck {
+class FeedCollectSchedulerSpeck extends Specification {
 
     def "collect scheduler should add adminFeedUrl to sourceFeedUrls"() {
         setup:

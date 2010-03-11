@@ -1,9 +1,9 @@
 package se.lagrummet.rinfo.main.storage
 
-import org.junit.runner.RunWith; import spock.lang.*
+import spock.lang.*
 
 
-@Speck @RunWith(Sputnik) class FeedCollectorSpeck {
+class FeedCollectorSpeck extends Specification {
 
     def "should collect new since last"() {
     }

@@ -1,12 +1,10 @@
 package se.lagrummet.rinfo.store.depot
 
-import org.junit.runner.RunWith
 import spock.lang.*
 import org.apache.abdera.ext.history.FeedPagingHelper as FPH
 
 
-@Speck @RunWith(Sputnik)
-class DepotAtomIndexSpeck {
+class DepotAtomIndexSpeck extends Specification {
 
     @Shared Depot depot
     @Shared Atomizer atomizer

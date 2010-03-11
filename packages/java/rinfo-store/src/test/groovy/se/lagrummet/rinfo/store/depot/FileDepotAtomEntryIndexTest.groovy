@@ -3,12 +3,10 @@ package se.lagrummet.rinfo.store.depot
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.AtomDate
 
-import org.junit.runner.RunWith
 import spock.lang.*
 
 
-@Speck @RunWith(Sputnik)
-class FileDepotAtomEntryIndexTest {
+class FileDepotAtomEntryIndexTest extends Specification {
 
     @Shared Depot depot
     @Shared def tdu = new TempDepotUtil()

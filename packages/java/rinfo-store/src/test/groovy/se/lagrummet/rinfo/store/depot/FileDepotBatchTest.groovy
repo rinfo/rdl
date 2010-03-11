@@ -1,11 +1,9 @@
 package se.lagrummet.rinfo.store.depot
 
-import org.junit.runner.RunWith
 import spock.lang.*
 
 
-@Speck @RunWith(Sputnik)
-class FileDepotBatchTest {
+class FileDepotBatchTest extends Specification {
 
     @Shared FileDepot depot
     @Shared DepotEntryBatch batch
