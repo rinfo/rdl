@@ -1,6 +1,5 @@
 package se.lagrummet.rinfo.collector.atom
 
-import org.junit.runner.RunWith
 import spock.lang.*
 
 import org.apache.abdera.model.AtomDate
@@ -13,8 +12,7 @@ import org.restlet.data.Protocol
 import org.restlet./*resource.*/Directory
 
 
-@Speck @RunWith(Sputnik)
-class FeedArchivePastToPresentReaderTest {
+class FeedArchivePastToPresentReaderTest extends Specification {
 
     @Shared component
     @Shared testHttpPort = 9991
