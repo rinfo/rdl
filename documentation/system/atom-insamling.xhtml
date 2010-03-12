@@ -190,25 +190,30 @@
     <email>rinfo@riksarkivet.ra.se</email>
   </author>
 
-  <link href="https://www.statensarkiv.se/rafs/feed/index.atom" rel="self"/>
-  <link href="https://www.statensarkiv.se/rafs/feed/archive/2008/index.atom" rel="prev-archive"/>
+  <link rel="self"
+        href="https://www.statensarkiv.se/rafs/feed/index.atom"/>
+  <link rel="prev-archive"
+        href=
+      "https://www.statensarkiv.se/rafs/feed/archive/2008/index.atom"
+      />
 
   <entry>
     <id>http://rinfo.lagrummet.se/publ/ra-fs/2006:6</id>
     <updated>2007-02-09T00:00:00.000Z</updated>
     <published>2007-02-09T00:00:00.000Z</published>
-    <title>Föreskrifter om ändring av Riksarkivets föreskrifter och allmänna
-        råd (RA-FS 2004:2) om gallring och återlämnande av handlingar vid
-        upphandling;</title>
+    <title>Föreskrifter om ändring av Riksarkivets föreskrifter och
+        allmänna råd (RA-FS 2004:2) om gallring och återlämnande av
+        handlingar vid upphandling;</title>
     <summary>Ändringen innebär att undantaget för myndigheter under
         Försvarsdepartementet har tagits bort och att de allmänna
         försäkringskassorna har tagits bort ur uppräkningen.</summary>
-    <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2006-06.pdf"
-        type="application/pdf"
+    <content type="application/pdf"
+        src=
+      "https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2006-06.pdf"
         le:md5="3c5fc4bdc3306ae6541e97b89dbf4d16"/>
     <link rel="alternate"
-        href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2006-6"
         type="application/rdf+xml"
+        href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2006-6"
         length="2317" le:md5="e4e242a358b72405fdbf5ba8bc044b1a"/>
   </entry>
 
@@ -219,13 +224,14 @@
     <title>Riksarkivets föreskrifter och allmänna råd om gallring och
         återlämnande av handlingar vid upphandling;</title>
     <summary></summary>
-    <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
-          type="application/pdf"
+    <content type="application/pdf"
+          src=
+        "https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
           le:md5="ca68b77f41ad2231586cf3e4d7970629"/>
     <link rel="alternate"
-          href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
-          type="application/rdf+xml"
-          length="2414" le:md5="8051c695ef087fcc1183e51694c9c8c1"/>
+        type="application/rdf+xml"
+        href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
+        length="2414" le:md5="8051c695ef087fcc1183e51694c9c8c1"/>
   </entry>
 
 </feed>
@@ -270,7 +276,7 @@
           Rättsinformationssystemet. Men den kan var användbar för någon som 
           tar del av denna källa via andra verktyg eller i andra sammanhang.
         </p>
-        <h4>3.1.3. Flödets Tidstämpel</h4>
+        <h4>3.1.3. Flödets tidstämpel</h4>
         <p>
           Exempel:
         </p>
@@ -280,9 +286,9 @@
           ]]></code>
         </div>
         <p>
-          Ska ange tidssstämpel då något i detta feed-dokument ändrats. Anges 
-          som <a href="http://tools.ietf.org/html/rfc4287#section-3.3">W3C Date 
-            Time Format</a>.
+          Ska ange tidstämpel då något i detta feed-dokument ändrats. Anges som 
+          <a href="http://tools.ietf.org/html/rfc4287#section-3.3">W3C Date 
+             Time Format</a>.
         </p>
         <p>
           Observera att i exempet används "Zulu Time". Det är inte samma sak 
@@ -292,7 +298,7 @@
         </p>
         <p>
           (Anledningen till att vi väljer Zulu Time här är för att dessa är 
-          oberoende av tidszoner, *inklusive* sommartidsavvikelser. Tekniskt är 
+          oberoende av tidzoner, *inklusive* sommartidavvikelser. Tekniskt är 
           det okej att istället för "Z" ange t.ex. "+01:00", för svensk 
           vintertid, "+02:00" för sommartid osv. Korrekt parsning av DTF ska 
           resultera i samma tidpunkt oavsett.)
@@ -327,7 +333,7 @@
           funktionsbrevlåda istället för en enskild handläggare.
         </p>
         <p>
-          Namn och URL användsdäremot inte av Rättsinformationssystemet, men 
+          Namn och URL används däremot inte av Rättsinformationssystemet, men 
           kan vara nyttig i andra sammanhang.
         </p>
         <h4>3.1.5. Addressen till flödets representation</h4>
@@ -355,7 +361,9 @@
         <div class="syntax">
           <code class="xml"><![CDATA[
   <link rel="prev-archive"
-      href="https://www.statensarkiv.se/rafs/feed/archive/2008/index.atom"/>
+        href=
+      "https://www.statensarkiv.se/rafs/feed/archive/2008/index.atom"
+      />
           ]]></code>
         </div>
         <p>
@@ -383,7 +391,7 @@
       <div>
         <h3>3.2. Tidstämplar i rättskällor respektive det centrala 
           systemet</h3>
-        <p>Atom-flöden representerar en växande tidslinje av poster över tid. 
+        <p>Atom-flöden representerar en växande tidlinje av poster över tid. 
           Varje post har en tidstämpel i sitt <code>updated</code>-element som 
           anger när den uppstod, eller när information i posten senast 
           förändrats.
@@ -426,12 +434,14 @@
     <title>Riksarkivets föreskrifter och allmänna råd om gallring och
         återlämnande av handlingar vid upphandling;</title>
     <summary></summary>
-    <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
-          type="application/pdf"
+    <content type="application/pdf"
+          src=
+        "https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
           le:md5="ca68b77f41ad2231586cf3e4d7970629"/>
     <link rel="alternate"
-          href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
           type="application/rdf+xml"
+          href=
+            "https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
           length="2414" le:md5="8051c695ef087fcc1183e51694c9c8c1"/>
   </entry>
           ]]></code>
@@ -517,8 +527,9 @@
         </p>
         <div class="syntax">
           <code class="xml"><![CDATA[
-    <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
-          type="application/pdf"
+    <content type="application/pdf"
+          src=
+        "https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
           le:md5="ca68b77f41ad2231586cf3e4d7970629"/>
           ]]></code>
         </div>
@@ -545,7 +556,8 @@
         <div class="syntax">
           <code class="xml"><![CDATA[
     <link rel="alternate"
-          href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
+          href=
+            "https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
           type="application/rdf+xml"
           length="2414" le:md5="8051c695ef087fcc1183e51694c9c8c1"/>
           ]]></code>
@@ -585,9 +597,11 @@
     ...
 
     <link rel="enclosure" 
-          href="http://www.slv.se/upload/lagstiftning/2005-2006/2006_22bil1.pdf"
+          href=
+    "http://www.slv.se/upload/lagstiftning/2005-2006/2006_22bil1.pdf"
           type="application/pdf"
-          dct:isFormatOf="http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga_1"
+          dct:isFormatOf=
+              "http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga_1"
           length="1168037"
           le:md5="1115651b5e8380aff8d"/>
           ]]></code>
@@ -744,9 +758,9 @@
         raderingar) kan och bör delas upp i flera feed-dokument som länkar till 
         varandra, s.k. paginering av feeds.</p>
       <p>
-        Paginering möjliggör långa tidssorterade listor av poster. För en 
-        stabil inhämtning av sådana listor har systemet valt att både samla in 
-        och exponera Atom-arkiv (se <a 
+        Paginering möjliggör långa tidsorterade listor av poster. För en stabil 
+        inhämtning av sådana listor har systemet valt att både samla in och 
+        exponera Atom-arkiv (se <a 
           href="http://tools.ietf.org/html/rfc5005#section-4">RFC 5005, sektion 
           4<!--Feed Paging and Archiving: 4. Archived Feeds--></a> för 
         specikationen av sådana).
@@ -907,9 +921,9 @@
           </li>
           <li>Inga onödiga inhämtningar av redan uppdaterade poster sker. (Detta 
             är viktigt eftersom gamla poster inte behöver länka till historiska 
-            dokument, och därför kan ange felaktiga (d.v.s. gamla) checksummor 
-            och filstorlekar, alternativt peka på dokument som tagits bort eller 
-            sakna länkar till nytillagda sådana.)
+            dokument, och därför kan ange felaktiga (d.v.s. gamla) 
+            kontrollsummor och filstorlekar, alternativt peka på dokument som 
+            tagits bort eller sakna länkar till nytillagda sådana.)
           </li>
         </ul>
         <p>
