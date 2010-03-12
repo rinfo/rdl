@@ -194,11 +194,13 @@ h2 {
 h3 {
     font-size:11.5pt;
     margin-top:11pt;
+    margin-bottom: 6pt;
 }
 
 h4 {
     font-family: Garamond, serif;
     font-size:11.7pt;
+    margin-bottom: 6pt;
 }
 
 hr {
