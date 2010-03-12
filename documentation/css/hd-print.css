@@ -1,0 +1,117 @@
+/* Exmpelstylesheet för att formattera ett avgörande från högsta
+domstolen, uttryckt i XHTML 1.1+RDFa-format, till samma utseende som
+HD:s dom tryckt form har.
+
+Är delvis beroende av att en viss konvention för XHTML-struktur och
+klassnamn använts.
+exempel/documents/publ/Avgoranden/HD/2009/T_170-08.xhtml för ett
+exempeldokument som funkar bra med detta.
+
+För att avstavning ska fungera bra krävs stöd för den proprietära
+CSS-egenskapen prince-hyphenate-patterns
+
+*/
+
+@namespace rpubl "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#";
+
+@page {
+    size: a4 portrait;
+    margin-top: 80pt;
+    margin-bottom: 80pt;
+    margin-left: 135pt;
+    margin-right: 70pt;
+    @top-left {
+	content:"HÖGSTA DOMSTOLEN";
+    }
+    @top-right {
+	content: string(malnr);
+    }
+    @top-right-corner {
+	content: "Sid " counter(page);
+    }
+}
+
+@page:first {
+    margin-bottom: 20pt;
+    @top-right {
+	content: "Sida " counter(page) "(" counter(pages) ")";
+    }
+    @top-left {
+	content:none;
+    }
+}
+
+
+h1 {
+    font: 30pt Garamond;
+    text-transform: uppercase;
+    font-stretch: extra-expanded;
+    }
+
+body {
+    font: 13pt/1.8 Times;
+}
+
+.malnr {
+    float: right;
+    position: relative;
+    top: -50pt;
+}
+
+*[property="rpubl:malnummer"] {
+    string-set: malnr content();
+}
+
+div.forsattsblad h2 {
+    font-size: 13pt;
+    margin: 0;
+
+}
+
+div.forsattsblad p {
+    margin: 0 0 24pt 0;
+}
+
+.sidfot {
+    margin-left: -90pt;
+    margin-right: -30pt;
+    font: 11pt/1.1;
+    page-break-after: always;
+}
+.dokid {
+    font-size: 10pt;
+    margin:0;
+}
+
+table.kontaktuppgifter {
+    width: 100%;
+    border-top: 0.5pt solid black;
+}
+table.kontaktuppgifter td {
+    vertical-align: top;
+}
+
+div.domskal, div.skiljaktig {
+    hyphens: auto;
+    prince-hyphenate-patterns: url("hyph_sv_SE.dic"); 
+}
+
+div.domslut h2, div.yrkanden h2, div.domskal h2, div.skiljaktig h2  {
+    font-size: 13pt;
+    font-weight: normal;
+    }
+div.domskal h3 {
+    font-size: 13pt;
+    font-weight: normal;
+    font-style: italic;
+}
+
+div.domskal h4 {
+    font-size: 13pt;
+    font-weight: normal;
+    font-decoration: underline;
+}
+
+div.skiljaktig {
+    page-break-before: always;
+}

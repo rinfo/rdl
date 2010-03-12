@@ -34,7 +34,7 @@
     </p>
     <p>
       Det här dokumentet innehåller främst information om hur metadata
-      för olika typer av författningar ska utttryckas. Det vänder sig
+      för olika typer av avgöranden ska uttryckas. Det vänder sig
       både till den som ansvarar för elektronisk publicering av
       vägledande avgöranden på en myndiget
     </p>
@@ -57,10 +57,49 @@
       metadata och fulltextdokument kan uttryckas med
       begreppsmodellen.
     </p>
-      
+
+    <h2>Skillnaden mellan avgöranden och referat</h2>
+    <p>
+      I modellen gör vi skillnad mellan ett faktiskt avgörande från en
+      domstol eller en myndighet, och ett referat av
+      detsamma. Avgörandet är själva den handling som utgör domstolen
+      eller myndighetens beslut, medan referat är en sammanställning
+      av hur ett ärende behandlats genom olika instanser. Inom
+      rättsinformationssystemet förekommer referat främst för ärenden
+      inom de allmänna domstolarna (TR, HovR, HD) och
+      förvaltningsdomstolarna (FR, KamR, RegR).
+    </p>
+    <p>
+      Referat publiceras vanligtvis i en rättsfallssamling, exempelvis
+      NJA, RÅ eller RH. Ett referat bygger på ett eller (vanligtvis)
+      flera avgöranden.
+    </p>
+    <p>
+      Ett avgörande som i en bilaga inkluderar ett tidigare,
+      överklagat, avgörande i samma sak (vilket framförallt är vanligt
+      för Arbetsdomstolens domar) är inte att betrakta som ett
+      referat.
+    </p>
+    <p>
+      Det förekommer att ett referat sammanställer två separata
+      ärenden, när dessa rör liknande frågor och kommer upp samtidigt
+      i högsta instans. I domstolen är fråga om två separata mål med
+      separata målnummer, och i referatet ges de båda ärendena
+      vanligen beteckningen "I" respektive "II". I senare praxis och
+      kommentarer förekommer hänvisningar till de enskilda avgörandena
+      på formen "RÅ 1999 ref. 18 I" respektive "RÅ 1999 ref. 18
+      II". Detta betraktas ändå som ett enda referat.
+    </p>
+    <p>
+      Annorlunda uttryckt kan man säga att avgöranden har mål-,
+      ärende- eller diarienummer. Referat har
+      publikationsbeteckningar. 
+    </p>
+    
     <div class="appendix">
       <h1>Bilaga 1: Modellbeskrivning för typen Rattsfallsreferat</h1>
-      <xi:include href="build:model.xhtml" xpointer="Rattsfallsreferat"/>
+      <xi:include href="build:model.xhtml"
+      xpointer="Rattsfallsreferat"/>
     </div>
 
     <div class="appendix">
@@ -73,36 +112,35 @@
       <xi:include href="build:model.xhtml" xpointer="VagledandeMyndighetsavgorande"/>
     </div>
 
+    <div class="appendix">
+      <h1>Bilaga 4: Metadata för rättsfallsreferat (NJA 2009 s 695)</h1>
+      <div class="syntax">
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Referat/NJA/2009/NJA-2009_s._695.rdf" parse="text"/></code>
+      </div>
+    </div>
+
+    <div class="appendix">
+      <h1>Bilaga 5: Rättsfallsreferat i fulltext (NJA 2009 s 695)</h1>
+      <div class="syntax">
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Referat/NJA/2009/NJA-2009_s._695.rdf" parse="text"/></code>
+      </div>
+    </div>
+    <div class="appendix">
+      <h1>Bilaga 6: Metadata för vägledande domstolsavgörande (Högsta domstolen, målnr T 170-08)</h1>
+      <div class="syntax">
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Domslut/HD/2009/T_170-08.rdf" parse="text"/></code>
+      </div>
+    </div>
+
     <!--
-	TODO: Skriv dessa exempel!
     <div class="appendix">
-      <h1>Bilaga 4: Metadata för rättsfallsreferat (NJA 2009:1)</h1>
+      <h1>Bilaga 7: Vägledande domstolsavgörande i fulltext (Högsta domstolen, målnr T 170-08)</h1>
       <div class="syntax">
-	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Referat/NJA-2009_1.rdf" parse="text"/></code>
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Domslut/HD/2009/T_170-08.xhtml" parse="text"/></code>
       </div>
     </div>
-
-    <div class="appendix">
-      <h1>Bilaga 5: Rättsfallsreferat i fulltext (NJA 2009:1)</h1>
-      <div class="syntax">
-	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Referat/NJA-2009_1.xhtml" parse="text"/></code>
-      </div>
-    </div>
-
-    <div class="appendix">
-      <h1>Bilaga 6: Metadata för vägledande domstolsavgörande (AD 2009 nr 1)</h1>
-      <div class="syntax">
-	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Avgoranden/AD/AD-2009_1.rdf" parse="text"/></code>
-      </div>
-    </div>
-
-    <div class="appendix">
-      <h1>Bilaga 7: Vägledande domstolsavgörande i fulltext (AD 2009 nr 1)</h1>
-      <div class="syntax">
-	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Avgoranden/AD/AD-2009_1.xhtml" parse="text"/></code>
-      </div>
-    </div>
-
+    -->
+    <!--
     <div class="appendix">
       <h1>Bilaga 8: Metadata för vägledande myndighetsavgörande</h1>
       <div class="syntax">

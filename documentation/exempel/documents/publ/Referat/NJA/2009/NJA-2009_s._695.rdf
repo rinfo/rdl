@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+   xmlns:dct="http://purl.org/dc/terms/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
+>
+  <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/rf/nja/2009:68">
+    <rpubl:lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#P_32"/>
+    <rpubl:lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#P_5"/>
+    <rpubl:lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#P_31"/>
+    <rpubl:lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#P_1"/>
+    <rpubl:lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#P_1a"/>
+    <rpubl:lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#P_2"/>
+    <rpubl:publikationsordinal xml:lang="sv">2009:55</rpubl:publikationsordinal>
+    <rpubl:domstolsavdelning xml:lang="sv">2</rpubl:domstolsavdelning>
+    <rpubl:arsutgava xml:lang="sv">2009</rpubl:arsutgava>
+    <rpubl:avgorandedatum xml:lang="sv">2009-11-04</rpubl:avgorandedatum>
+    <dct:subject xml:lang="sv">Mönsterrätt</dct:subject>
+    <dct:subject xml:lang="sv">Formgivarrätt</dct:subject>
+    <dct:subject xml:lang="sv">Dubbelöverlåtelse</dct:subject>
+    <dct:subject xml:lang="sv">Godtrosförvärv</dct:subject>
+    <dct:subject xml:lang="sv">Formgivning</dct:subject>
+    <dct:title xml:lang="sv">Överföring av mönsterregistrering på grund av bättre rätt till formgivarrätt</dct:title>
+    <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/ref/rff/nja"/>
+    <rpubl:sidnummer xml:lang="sv">695</rpubl:sidnummer>
+    <dct:creator rdf:resource="http://rinfo.lagrummet.se/org/h%C3%B6sta_domstolen"/>
+    <rpubl:malnummer xml:lang="sv">T170</rpubl:malnummer>
+    <dct:identifier xml:lang="sv">NJA 2009 s. 695</dct:identifier>
+  </rdf:Description>
+</rdf:RDF>
+

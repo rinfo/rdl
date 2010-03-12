@@ -1,0 +1,210 @@
+/* Exmpelstylesheet för att formattera en författning i XHTML
+1.1+RDFa-format till samma utseende som SFS i tryckt form har.
+
+Är delvis beroende av att en viss konvention för XHTML-struktur och
+klassnamn använts. Se
+exempel/documents/publ/Forfattningar/SFS/1999/SFS-1999_175.xhtml för
+ett exempeldokument som funkar bra med detta.
+
+För att avstavning ska fungera bra krävs stöd för den proprietära
+CSS-egenskapen prince-hyphenate-patterns
+
+*/
+@namespace rpubl "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#";
+
+@page {
+    size: 165mm 242mm;
+    margin-top: 30pt;
+    margin-bottom: 70pt;
+    margin-inside: 50pt;
+    margin-outside: 120pt;
+    padding: 0;
+}
+
+@page:first {
+    size: 165mm 242mm;
+    @top-right {
+	content: none;
+    }
+}
+
+@page:left {
+    size: 165mm 242mm;
+    @top-left {
+	content: string(beteckning);
+	font-size: 10.5pt;
+	font-weight: bold;
+        margin-left: -85pt;
+	margin-top: 45pt;
+    }
+
+    @bottom-left {
+        margin-left: -75pt;
+	content: counter(page);
+	font-size: 9.5pt;
+	margin-bottom: 80pt;
+    }
+}
+
+@page:right {
+    size: 165mm 242mm;
+    @top-right {
+	content: string(beteckning);
+	font-size: 10.5pt;
+	font-weight: bold;
+        margin-right: -85pt;
+	margin-top: 45pt;
+    }
+    
+    @bottom-right {
+        margin-right: -75pt;
+	content: counter(page);
+	font-size: 9.5pt;
+	margin-bottom: 80pt;
+    }
+}
+
+@page last {
+    size: 165mm 242mm;
+    @top-left {
+	content: none;
+    }
+    @bottom-left {
+	content: none;
+    }
+    @top-right {
+	content: none;
+    }
+    @bottom-right {
+	content: none;
+    }
+}
+
+body {
+    font: 9.5pt/1.3 Times;
+
+}
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.header {
+    margin-right: -75pt;
+    border-bottom: 1pt solid black;
+}
+.header h1 {
+    float: left;
+    font-size: 18pt;
+}
+
+.header .logo {
+    float: right;
+    margin-right: 30pt;
+
+}
+.meta {
+    float: right;
+    margin-right: -84pt;
+    width: 75pt;
+}
+.meta h2 {
+    font-size: 12pt;
+    margin-bottom: 0pt;
+    string-set: beteckning content();
+}
+.meta p {
+    font-size: 8.5pt;
+    margin-top: 0pt;
+}
+
+h1[property="dct:title"] {
+    font-size: 13pt;
+}
+
+.text {
+}
+
+.text span[property="rpubl:paragrafnummer"] {
+    font-weight: bold;
+    margin-right: 6pt;
+}
+.text h2 {
+    font-size: 10.5pt;
+    margin-top: 12pt;
+    margin-bottom: 6pt;
+ }
+.text h3 {
+    font-weight: normal;
+    font-style: italic;
+    font-size: 9.5pt;
+    margin-top: 12pt;
+    margin-bottom: 6pt;
+ }
+
+.text p {
+    padding-left: 10pt;
+    text-indent: -10pt hanging;
+    text-align: justify;
+    margin: 0;
+    hyphens: auto;
+    prince-hyphenate-patterns: url("hyph_sv_SE.dic"); 
+}
+
+/* första stycket i varje paragraf ska inte indenteras */
+div > p:first-of-type {
+    text-indent: 0;
+    padding-left: 0;
+}
+
+ol {
+    margin-left: 25pt; 
+}
+
+
+li {
+    text-indent: -25pt hanging;
+}
+
+ul.strecksatslista {
+    list-style-type: none;
+    margin-left: 10pt;
+}
+ul.strecksatslista li {
+    text-indent: -10pt hanging;
+}
+div[typeof="rpubl:Paragraf"] {
+   margin-bottom: 10pt;
+}
+
+*[property="rpubl:overgangsbestammelsetext"] {
+    border-top: 1pt solid black;
+    width: 50pt;
+}
+
+*[property="rpubl:overgangsbestammelsetext"] ol {
+    width: 270pt;
+}
+
+*[property="rpubl:overgangsbestammelsetext"] ol li {
+    text-align: justify;
+    hyphens: auto;
+    prince-hyphenate-patterns: url("hyph_sv_SE.dic"); 
+}
+
+.signenter {
+    page-break-inside: avoid;
+}
+
+.signenter .kontrasignent {
+    margin-left: 140pt;
+}
+.tryckinfo {
+    page:last;
+    page-break-before: always;
+    positioning: relative;
+    text-align: right;
+    right:0;
+    bottom:0;
+    font-size: 5.5pt;
+}
