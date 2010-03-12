@@ -128,8 +128,7 @@ class SparqlTree {
 
     Object makeNode(Value value) {
         def node = [:]
-        // FIXME: surely this encoding dance must be a bug in.. sesame or java-on-osx.
-        def stringValue = new String(value.stringValue().getBytes("utf-8"))
+        def stringValue = value.stringValue()
         if (value instanceof org.openrdf.model.URI) {
             node[URI_KEY] = stringValue
         } else if (value instanceof BNode) {

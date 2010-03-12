@@ -1,4 +1,3 @@
-PREFIX st: <http://oort.to/ns/2008/09/sparqltree>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -9,10 +8,6 @@ PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
 
 
 SELECT DISTINCT * WHERE {
-
-    # TODO: filter-var for doc (and use locale-var?)
-
-    #FILTER(?doc = <http://rinfo.lagrummet.se/publ/sfs/1999:175>).
 
     ?doc a ?doc__1_type .
 
@@ -68,7 +63,7 @@ SELECT DISTINCT * WHERE {
       FILTER(datatype(?doc__daterel__value) = xsd:date)
     }
 
-    #$ if(get_relrev):{
+    #$if (get_relrev)$
 
         OPTIONAL {
 
@@ -103,22 +98,22 @@ SELECT DISTINCT * WHERE {
                 (!BOUND(?doc__rel__1_superRel) ||
                     ?doc__rel__1_superRel != dct:hasPart &&
                     ?doc__rel__1_superRel != rpubl:publikationssamling ) &&
-                REGEX(STR(?doc__rel__subject), "^http://rinfo\\.lagrummet\\.se/publ/")
+                REGEX(STR(?doc__rel__subject), "^http://rinfo\\\\.lagrummet\\\\.se/publ/")
             )
 
         }
 
-##        # TODO: this one is *extremely* expensive..
-##        OPTIONAL {
-##        ?doc__rev__subject ?doc__rev ?doc .
-##            OPTIONAL {
-##            ?doc__rev owl:inverseOf ?doc__rev__1_inverse .
-##            ?doc__rev__1_inverse rdfs:label ?doc__rev__1_inverse__1_label .
-##            }
-##        }
-##
-##    #}$
+        # TODO: this one is *extremely* expensive..
+        #OPTIONAL {
+        #?doc__rev__subject ?doc__rev ?doc .
+        #    OPTIONAL {
+        #    ?doc__rev owl:inverseOf ?doc__rev__1_inverse .
+        #    ?doc__rev__1_inverse rdfs:label ?doc__rev__1_inverse__1_label .
+        #    }
+        #}
 
-    #TODO:newline+ $filters$
+    #$endif$
+
+    #$\n$ $filter$
 
 }

@@ -3,10 +3,12 @@ prefix skos: <http://www.w3.org/2004/02/skos/core#>
 prefix dct: <http://purl.org/dc/terms/>
 prefix bibo: <http://purl.org/ontology/bibo/>
 prefix foaf: <http://xmlns.com/foaf/0.1/>
-prefix awol: <http://bblfish.net/work/atom-owl/2006-06-06/#>
+prefix void: <http://rdfs.org/ns/void#>
 prefix iana: <http://www.iana.org/assignments/relation/>
 
+
 select distinct * where {
+
     ?org a foaf:Organization;
         foaf:name ?org__1_name .
     optional { ?org skos:altLabel ?org__1_alt }
@@ -32,11 +34,13 @@ select distinct * where {
         optional { ?org__serie rdfs:comment ?org__serie__1_comment }
     }
     optional {
-        ?org__feed
-            a awol:Feed;
-            awol:id ?org__feed__1_id;
+        ?org__datasource
+            a void:Dataset;
             dct:publisher ?org;
-            iana:current ?org__feed__1_current .
+            iana:current ?org__datasource__1_current .
     }
+
 }
+
 order by desc(?org)
+

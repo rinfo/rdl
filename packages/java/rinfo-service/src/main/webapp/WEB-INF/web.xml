@@ -25,6 +25,7 @@
         <!-- NOTE: The enumeration of initParameters of the Servlet will be
              copied to the "context.parameters" property of the application.
         -->
+        <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>

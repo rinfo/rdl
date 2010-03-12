@@ -95,13 +95,28 @@
     <dependency>
       <groupId>org.antlr</groupId>
       <artifactId>stringtemplate</artifactId>
-      <version>3.2</version>
     </dependency>
     <dependency>
       <groupId>net.sf.json-lib</groupId>
       <artifactId>json-lib</artifactId>
-      <version>2.2.3</version>
       <classifier>jdk15</classifier>
+    </dependency>
+
+    <!-- pass jcl over slf4j -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+    <!-- chosen slf4j impl. -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
     </dependency>
 
     <dependency>
@@ -129,9 +144,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>generateStubs</goal>
               <goal>compile</goal>
-              <goal>generateTestStubs</goal>
               <goal>testCompile</goal>
             </goals>
           </execution>

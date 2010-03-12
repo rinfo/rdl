@@ -32,8 +32,6 @@ import se.lagrummet.rinfo.rdf.repo.RepositoryHandler
 import se.lagrummet.rinfo.rdf.repo.RepositoryHandlerFactory
 
 
-// TODO: time for IoC composition of all the service parts?
-
 class ServiceApplication extends Application {
 
     public static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service.properties"
@@ -42,11 +40,14 @@ class ServiceApplication extends Application {
     public static final String RDF_LOADER_CONTEXT_KEY =
             "rinfo.service.rdfloader.restlet.context"
 
+    String mediaDirUrl = "war:///css/"
+
     SesameLoadScheduler loadScheduler
     RepositoryHandler repositoryHandler
 
     public ServiceApplication(Context parentContext) {
         super(parentContext)
+        // TODO: reuse IoC pattern from main (Components etc.)
         def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
 
         repositoryHandler = RepositoryHandlerFactory.create(config.subset(
@@ -61,13 +62,13 @@ class ServiceApplication extends Application {
     @Override
     public synchronized Restlet createRoot() {
         def router = new Router(getContext())
-        router.attach("/collector", new Finder(getContext(), RDFLoaderHandler))
-        router.attach("/view", new SparqlTreeRouter(
-                getContext(), repositoryHandler.repository))
-        // TODO:? put path to css dir in properties (different when out-of-war deployed)
-        router.attach("/css", new Directory(getContext(), "war:///css/"))
-        //TODO:? router.attach("/spec", new Directory(getContext(), ".../documents/acceptance"))
         router.attach("/status", StatusResource)
+        router.attach("/collector", new Finder(getContext(), RDFLoaderHandler))
+        router.attach("/rdata", new SparqlTreeRouter(
+                getContext(), repositoryHandler.repository))
+        if (mediaDirUrl) {
+            router.attach("/css", new Directory(getContext(), mediaDirUrl))
+        }
         return router
     }
 

@@ -20,7 +20,9 @@ class SesameLoadScheduler extends AbstractCollectScheduler {
     }
 
     void configure(Configuration config) {
-        setInitialDelay(-1) // TODO:? never schedule running collects?
+        // TODO: never schedule running collects?
+        setInitialDelay(-1)
+        setScheduleInterval(-1)
         sourceFeedUrls = new ArrayList<URL>()
         for (String url : config.getList("rinfo.service.sourceFeedUrls")) {
             sourceFeedUrls.add(new URL(url))

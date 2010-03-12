@@ -19,7 +19,7 @@ class ModelViewHandler extends BasicViewHandler {
 
     ModelViewHandler(String locale, Map queryData, Map settingsTree, Map options) {
         super(locale, queryData)
-        this.settings = GraphBuilder.buildGraph(lens, settingsTree)
+        this.settings = GraphBuilder.buildGraph(getLens(), settingsTree)
         this.options = options
         settings.prefixes.each { k, v ->
             if (v instanceof String) {

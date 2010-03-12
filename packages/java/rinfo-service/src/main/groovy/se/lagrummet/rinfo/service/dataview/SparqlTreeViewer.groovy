@@ -15,26 +15,35 @@ class SparqlTreeViewer {
     Repository repo
     StringTemplateGroup templates
     String queryPath
-    String viewPath
+    String templatePath
 
-    SparqlTreeViewer(Repository repo, String queryPath, String viewPath) {
-        this(repo, null, queryPath, viewPath)
+    SparqlTreeViewer(Repository repo, String queryPath, String templatePath) {
+        this(repo, null, queryPath, templatePath)
     }
 
     SparqlTreeViewer(Repository repo, StringTemplateGroup templates,
-            String queryPath, String viewPath) {
+            String queryPath, String templatePath) {
         this.repo = repo
         this.templates = templates
         this.queryPath = queryPath
-        this.viewPath = viewPath
+        this.templatePath = templatePath
     }
 
     String execute(ViewHandler handler) {
-        def query = runTemplate(queryPath, handler.getQueryData())
-        def tree = handler.handleTree(SparqlTree.runQuery(repo, query))
+        def tree = execQuery(handler)
         def result = handler.handleGraph(
                 GraphBuilder.buildGraph(handler.getLens(), tree))
-        return runTemplate(viewPath, result)
+        return runTemplate(templatePath, result)
+    }
+
+    Map execQuery(ViewHandler handler) {
+        def query = runTemplate(queryPath, handler.getQueryData())
+        // TODO: log
+        //logger.debug("Query: " + "="*72 + query + "="*72)
+        def result = handler.handleTree(SparqlTree.runQuery(repo, query))
+        // FIXME: only for debug (to put query as comment in result html)
+        result['query'] = query
+        return result
     }
 
     protected String runTemplate(String templatePath, Map data) {
