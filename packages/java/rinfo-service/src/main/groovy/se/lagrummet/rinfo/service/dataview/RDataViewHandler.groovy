@@ -2,6 +2,7 @@ package se.lagrummet.rinfo.service.dataview
 
 import se.lagrummet.rinfo.base.rdf.sparqltree.Lens
 import se.lagrummet.rinfo.base.rdf.sparqltree.SmartLens
+import se.lagrummet.rinfo.base.rdf.sparqltree.SparqlTree
 
 
 class RDataViewHandler implements ViewHandler {
@@ -41,23 +42,29 @@ class RDataLens extends SmartLens {
         super(locale)
     }
 
-    //Map newResource(Map node) {
-    //    def rnode = super.newResource(node)
-    //    def uri = rnode['resource_uri']
-    //    if (uri) {
-    //        rnode['rdata_url'] = rdataUrl(uri)
-    //    }
-    //}
+    Map newResource(Map node) {
+        def rnode = super.newResource(node)
+        def uri = rnode['resource_uri']
+        if (uri) {
+            rnode['rdata_url'] = rdataUrl(uri)
+        }
+        return rnode
+    }
 
     Object castLiteral(Object node) {
-        def value = super.castLiteral(node)
+        def value
+        if (SparqlTree.isDatatypeNode(node)) {
+            value = node[SparqlTree.VALUE_KEY]
+        } else {
+            value = super.castLiteral(node)
+        }
         // TODO: html-escape text (unless xmlliterals)
         return value
     }
 
     def rdataUrl(uri) {
-        return uri.replace("http://rinfo.lagrummet.se/rpubl/",
-                "/rdata/rpubl/")
+        return uri.replace("http://rinfo.lagrummet.se/publ/",
+                "/rdata/publ/")
     }
 
 }

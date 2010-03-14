@@ -4,7 +4,7 @@ $sparqltrees/base_html(
         <ul>
             $doc:{
             <li>
-                <h2>$it.title$</h2>
+                <h2><a href="$it.rdata_url$">$it.title$</a></h2>
                 <p>
                     <code>$it.resource_uri$</code>
                 </p>

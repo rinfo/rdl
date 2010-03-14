@@ -2,6 +2,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
@@ -21,13 +22,13 @@ SELECT DISTINCT * WHERE {
         ?doc
             rpubl:fsNummer ?doc__1_serieNummer;
             rpubl:forfattningssamling ?doc__1_serie .
-        ?doc__1_serie rdfs:label ?doc__1_serie__1_label .
+        ?doc__1_serie skos:altLabel ?doc__1_serie__1_label .
 
     } UNION {
         ?doc
             rpubl:utrSerie ?doc__1_serie;
             rpubl:utrSerienummer ?doc__1_serieNummer .
-        OPTIONAL { ?serie rdfs:label ?doc__1_serie__label }
+        OPTIONAL { ?serie skos:altLabel ?doc__1_serie__label }
 
     # Rattsfallsreferat
     #} UNION {
@@ -38,7 +39,7 @@ SELECT DISTINCT * WHERE {
           rpubl:konsoliderar [
             rpubl:forfattningssamling [
             # TODO: shortLabel..
-              rdfs:label ?serieLabel;
+              skos:altLabel ?serieLabel;
             ];
             rpubl:fsNummer ?serieNummer
           ];
@@ -54,12 +55,15 @@ SELECT DISTINCT * WHERE {
     OPTIONAL {
         ?doc dct:publisher ?doc__1_publisher .
       OPTIONAL {
-        ?doc__1_publisher rdfs:label ?doc__1_publisher__1_label .
+        ?doc__1_publisher foaf:name ?doc__1_publisher__1_name .
       }
     }
 
     OPTIONAL {
       ?doc ?doc__daterel ?doc__daterel__value .
+      OPTIONAL {
+        ?doc__daterel rdfs:label ?doc__daterel__1_label .
+      }
       FILTER(datatype(?doc__daterel__value) = xsd:date)
     }
 
@@ -71,6 +75,8 @@ SELECT DISTINCT * WHERE {
                 FILTER( isURI(?doc__rel__subject) )
                 OPTIONAL {
                     ?doc__rel__subject a ?doc__rel__subject__1_type .
+                    ?doc__rel__subject__1_type
+                        rdfs:label ?doc__rel__subject__1_type__1_label .
                 }
 
             OPTIONAL {
@@ -104,13 +110,13 @@ SELECT DISTINCT * WHERE {
         }
 
         # TODO: this one is *extremely* expensive..
-        #OPTIONAL {
-        #?doc__rev__subject ?doc__rev ?doc .
-        #    OPTIONAL {
-        #    ?doc__rev owl:inverseOf ?doc__rev__1_inverse .
-        #    ?doc__rev__1_inverse rdfs:label ?doc__rev__1_inverse__1_label .
-        #    }
-        #}
+        OPTIONAL {
+        ?doc__rev__subject ?doc__rev ?doc .
+            OPTIONAL {
+            ?doc__rev owl:inverseOf ?doc__rev__1_inverse .
+            ?doc__rev__1_inverse rdfs:label ?doc__rev__1_inverse__1_label .
+            }
+        }
 
     #$endif$
 
