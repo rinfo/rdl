@@ -752,7 +752,6 @@
 
     <div class="section">
       <h2 id="s_arkiv">6. Arkiv</h2>
-      <h3>6.3. Paginerad tillväxt över tid</h3>
       <p>
         Större samlingar (eventuellt med många uppdateringar och/eller 
         raderingar) kan och bör delas upp i flera feed-dokument som länkar till 
@@ -765,29 +764,44 @@
           4<!--Feed Paging and Archiving: 4. Archived Feeds--></a> för 
         specikationen av sådana).
       </p>
-      <h4>6.3.1. Tillväxtproblem</h4>
+      <h3>6.1. Tillväxtproblem</h3>
       <p>
         En risk med detta är om en mängd uppdateringar sker från någon källa, t.ex. 
         en massiv korrigering av tusentals publicerade poster. I det fallet kommer 
         arkiv-listorna bli mer och mer ohanterbara för initial inhämtning, d.v.s. 
         då en konsument vill "grundladda" från systemet.
       </p>
+      <!-- TODO: konsolidera nedanstående tankar med sista avsnittet i 
+           "Konsekvenser" nedan! -->
+      <h4 id="s_arkivhushaalning">6.1.1. Arkivhushållning</h4>
       <p>
-        Möjliga lösningar på detta är:
+        En möjlig lösning på detta är att <em>"kompaktera"</em> arkiven. Med 
+        detta menas att hushålla i de äldre flödesdokumenten genom att städa i 
+        gamla arkiv-feeds då poster uppdateras, och då helt plocka bort 
+        inaktuella exponerade poster och/eller raderingar. Detta är tekniskt 
+        tillåtet enligt RFC 5005, även om det inte uttryckligen förespråkas. 
+        Genom ett sådant förfarande förloras formell historik, men samtidigt 
+        uppnås en förbättring för konsumtionen av flödet eftersom behovet av 
+        att hoppa över inaktuellt material kan elimineras.
       </p>
-      <ol>
-        <li>"Hushåll" arkiven genom att omindexera posterna och då inte exponera 
-          uppdaterade historiska poster, eller raderade som sedemera blivit 
-          återskapade.
-        </li>
-        <li>Exponera paginerade feeds som inte är underkastade samma regler som 
-          arkiv; alternativt erbjud tidsfönster med hjälp av URL-parametrar 
-          ("updated-min", "updated-max").
-        </li>
-        <li>Städa i gamla arkiv-feeds då poster uppdateras, genom att t.ex. 
-          helt plocka bort gamla exponerade revisioner och/eller raderingar.
-        </li>
-      </ol>
+      <p>
+        En liknande metod är att då och då skapa helt nya arkivdokument genom 
+        att omindexera alla ingående poster och då inte exponera uppdaterade 
+        historiska poster, eller raderade som sedemera blivit återskapade. För 
+        att uppfylla kraven från RFC 5005 är det tillrådigt att låta de nya 
+        arkiven få nya URL:er, eftersom de representerar nyskapade arkivlistor 
+        (om än med gammalt material). En sådan omskrivning av arkiv kommer att 
+        störa för insamlande system, men kan anses acceptabel om tiden för 
+        störningen kan hållas till ett minimum (genom att t.ex. inte länka om 
+        prenumerationsdokumentets första arkiv förrän de nya arkiven är klara, 
+        och först efter det plocka bort de gamla arkivdokumenten.)
+      </p>
+      <!--
+      <p>Exponera paginerade feeds som inte är underkastade samma regler som 
+        arkiv; alternativt erbjud tidsfönster med hjälp av URL-parametrar 
+        ("updated-min", "updated-max").
+      </p>
+      -->
     </div>
 
     <div class="section">
@@ -868,7 +882,7 @@
         </p>
       </div>
       <div>
-        <h3>8.1. Insamling av kompletta flöden</h3>
+        <h3>8.2. Insamling av kompletta flöden</h3>
         <p>
           Kompletta flöden är enkla att samla in, förutsatt att det insamlande 
           systemet sparar ner en lista på alla poster för respektive källas 
@@ -887,7 +901,7 @@
         </ol>
       </div>
       <div>
-        <h3>8.2. Insamling av arkiv-flöden</h3>
+        <h3>8.3. Insamling av arkiv-flöden</h3>
         <p>
           En metod för att samla in poster från sådana arkiv är att:
         </p>
@@ -972,12 +986,13 @@
       </p>
       <p>
         Stora, sammanställda arkivloggar kan bli svåranvänd p.g.a. många 
-        korrigeringar i källorna. En lösning på detta är att "kompaktera" 
-        arkiv, genom att så fort en post uppdateras eller raderas plocka bort 
-        den tidigare förekomsten (som kan ligga i något äldre arkiv-dokument 
-        bak i tiden). I nuläget gör systemet inte detta, men en lösning är 
-        planerar och kan komma att bli aktuell beroende på hur många 
-        korrigeringar som i praktiken visar sig göras i de respektive 
+        korrigeringar i källorna. En lösning på detta är att, som nämns i <a 
+          href="#s_arkivhushaalning">avsnitt 6</a> ovan, "hushålla" arkiv. 
+        Detta kan åstadkommas genom att så fort en post uppdateras eller 
+        raderas plocka bort den tidigare förekomsten (som kan ligga i något 
+        äldre arkiv-dokument bak i tiden). I nuläget gör systemet inte detta, 
+        men en lösning är planerad och kan komma att bli aktuell beroende på 
+        hur många korrigeringar som i praktiken visar sig göras i de respektive 
         rättskällorna.</p>
     </div>
 
