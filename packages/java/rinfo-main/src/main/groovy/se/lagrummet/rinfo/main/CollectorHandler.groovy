@@ -30,6 +30,8 @@ class CollectorHandler extends Handler {
         def collectScheduler = (FeedCollectScheduler) context.getAttributes().get(
                 MainApplication.COLLECTOR_RUNNER_CONTEXT_KEY)
 
+        // TODO: pubsubhubbub:
+        // if ("publish".equals(POST["hub.mode"]) { ... POST["hub.url"] }
         String feedUrl = request.getEntityAsForm().getFirstValue("feed")
         if (feedUrl == null) {
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, BAD_MSG)

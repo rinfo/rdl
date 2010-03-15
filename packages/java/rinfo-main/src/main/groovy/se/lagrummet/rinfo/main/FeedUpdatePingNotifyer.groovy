@@ -26,6 +26,8 @@ class FeedUpdatePingNotifyer implements Runnable {
     void doPing(URL pingTarget, URL feedUrl) {
         def request = new Request(Method.POST, pingTarget.toString())
         def feedUrlMsg = "feed=${feedUrl}"
+        // TODO: pubsubhubbub:
+        // "hub.mode=publish&hub.url=${feedUrl}", "application/x-www-form-urlencoded"
         request.setEntity(feedUrlMsg, MediaType.MULTIPART_FORM_DATA)
         //request.setReferrerRef(...)
         def client = new Client(Protocol.HTTP)
