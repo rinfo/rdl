@@ -1,0 +1,119 @@
+/* Exmpelstylesheet för att formattera ett rättsfallsreferat uttryckt
+i XHTML 1.1+RDFa-format till samma utseende som NJA i tryckt form har.
+
+Är delvis beroende av att en viss konvention för XHTML-struktur och
+klassnamn använts. Se
+exempel/documents/publ/Referat/NJA/2009/NJA-2009_s.695.xhtml för ett
+exempeldokument som funkar bra med detta.
+
+För att avstavning ska fungera bra krävs stöd för den proprietära
+CSS-egenskapen prince-hyphenate-patterns.
+
+*/
+@namespace rpubl "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#";
+
+@page {
+    size: 135mm 210mm; /*gissningar */
+    margin-top: 25mm;
+    margin-bottom: 17mm;
+    margin-inside: 20mm;
+    margin-outside: 13mm;
+    padding: 0;
+    @top {
+	content: string(publikationsordinal);
+	text-align: center;
+    }
+}
+
+
+@page:left {
+    @top-left {
+	content: counter(page);
+    }
+}
+
+@page:right{
+    @top-right {
+	content: counter(page);
+    }
+}
+
+body {
+    font: 10pt/1.3 Baskerville BT;
+    text-align: justify;
+    hyphens: auto;
+    prince-hyphenate-patterns: url("hyph_sv_SE.dic"); 
+}
+
+.sidnummer {
+    display:none;
+    counter-reset: page 695;
+}
+
+*[property="rpubl:publikationsordinal"] {
+    display:none;
+    string-set: publikationsordinal content();
+}
+
+.ordinal {
+    font-size: 18pt;
+    text-align: center;
+}
+
+
+h1 {
+    font-size: 10pt;
+}
+
+h2 {
+    font-size: 10pt;
+    background: #efe;
+    margin-bottom: 0;
+}
+
+h3 {
+    font-size: 10pt;
+    text-transform: uppercase;
+    font-variant: small-caps;
+    background: #ffe;
+    margin-bottom: 0;
+}
+
+h4 {
+    font-size: 10pt;
+    font-weight: normal;
+    font-style: italic;
+    margin-bottom: 0;
+}
+
+h5 {
+    font-size: 10pt;
+    font-weight: normal;
+    font-style: italic;
+    display: inline;
+}
+
+p {
+    padding-left: 10pt;
+    text-indent: -10pt hanging;
+    margin: 0;
+    background: #fef;
+}
+
+
+/* första stycket i varje paragraf ska inte indenteras */
+p:first-of-type {
+    text-indent: 0;
+    padding-left: 0;
+}
+
+.skiljaktig {
+    margin-left: 5mm;
+    font-size: 9pt;
+}
+.div {
+    margin:10pt;
+    padding:0;
+    border: none;
+    background: #eff;
+}

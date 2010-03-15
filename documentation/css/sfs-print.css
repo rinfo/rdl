@@ -10,6 +10,7 @@ För att avstavning ska fungera bra krävs stöd för den proprietära
 CSS-egenskapen prince-hyphenate-patterns
 
 */
+
 @namespace rpubl "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#";
 
 @page {

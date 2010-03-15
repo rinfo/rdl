@@ -34,9 +34,9 @@
     </p>
     <p>
       Det här dokumentet innehåller främst information om hur metadata
-      för olika typer av avgöranden ska uttryckas. Det vänder sig
-      både till den som ansvarar för elektronisk publicering av
-      vägledande avgöranden på en myndiget
+      för olika typer av avgöranden ska uttryckas. Det vänder sig till
+      den som ansvarar för elektronisk publicering av vägledande
+      avgöranden på en myndighet.
     </p>
     <p>
       Om du har några frågor med anledning av detta dokument eller
@@ -52,34 +52,28 @@
       informationsmässigt stora likheter, varför de här behandlas i
       ett sammanhang.
     </p>
-    <p>
-      I en senare upplaga av detta dokument kommer exempel på hur
-      metadata och fulltextdokument kan uttryckas med
-      begreppsmodellen.
-    </p>
 
     <h2>Skillnaden mellan avgöranden och referat</h2>
     <p>
-      I modellen gör vi skillnad mellan ett faktiskt avgörande från en
-      domstol eller en myndighet, och ett referat av
-      detsamma. Avgörandet är själva den handling som utgör domstolen
-      eller myndighetens beslut, medan referat är en sammanställning
-      av hur ett ärende behandlats genom olika instanser. Inom
-      rättsinformationssystemet förekommer referat främst för ärenden
-      inom de allmänna domstolarna (TR, HovR, HD) och
-      förvaltningsdomstolarna (FR, KamR, RegR).
+      I begreppsmodellen gör vi skillnad mellan ett faktiskt avgörande
+      från en domstol eller en myndighet (dokumenttyperna
+      <code>VagledandeDomstolsavgorande</code> respektive
+      <code>VagledandeMyndighetsavgorande</code>), och ett referat av
+      detsamma (dokumenttypen <code>Referat</code>). Avgörandet är
+      själva den handling som utgör domstolen eller myndighetens
+      beslut, medan referat är en sammanställning av hur ett ärende
+      eller mål behandlats genom olika instanser. Inom
+      rättsinformationssystemet förekommer referat främst för mål i de
+      allmänna domstolarna (TR, HovR, HD) och förvaltningsdomstolarna
+      (FR, KamR, RegR).
     </p>
+
     <p>
       Referat publiceras vanligtvis i en rättsfallssamling, exempelvis
       NJA, RÅ eller RH. Ett referat bygger på ett eller (vanligtvis)
       flera avgöranden.
     </p>
-    <p>
-      Ett avgörande som i en bilaga inkluderar ett tidigare,
-      överklagat, avgörande i samma sak (vilket framförallt är vanligt
-      för Arbetsdomstolens domar) är inte att betrakta som ett
-      referat.
-    </p>
+
     <p>
       Det förekommer att ett referat sammanställer två separata
       ärenden, när dessa rör liknande frågor och kommer upp samtidigt
@@ -90,12 +84,165 @@
       på formen "RÅ 1999 ref. 18 I" respektive "RÅ 1999 ref. 18
       II". Detta betraktas ändå som ett enda referat.
     </p>
+
     <p>
-      Annorlunda uttryckt kan man säga att avgöranden har mål-,
-      ärende- eller diarienummer. Referat har
-      publikationsbeteckningar. 
+      Det är svårare att göra en distinktion mellan avgörande och
+      referat när det kommer till specialdomstolarna. Avgöranden från
+      dessa domstolar tas in i stort sett materiellt oförändrade i
+      särskilda rättsfallssamlingar, och publiceras i samma form på
+      dagens Vägledande avgöranden (www.rattsinfosok.dom.se). Eftersom
+      viss redigering av den ursprungliga domen ändå förekommer
+      (exempelvis förekommer inte sökord eller referatbeteckningar i
+      stil med "AD 2010 nr 1" eller "MD 2010:1" i ursprungsdomarna)
+      bör ändå de dokument som domstolsverket publicerar centralt
+      betraktas som referat.
+    </p>
+
+    <p>
+      I den mån domstolarna själva vill publicera sina avgöranden i
+      rättsinformationssystemet (vilket i sådana fall klassas som
+      "övrigt innehåll" enligt 9 § rättsinformationsförordningen) så
+      bör de däremot använda sig av dokumentformen
+      <code>VagledandeDomstolsavgorande</code>.
+    </p>
+      
+    <p>
+      Distinktionen mellan avgörande och referat går också igen i de
+      identifierare som används. Genomgående används i
+      rättsinformationssystemet URI:er som identifierare för dokument
+      och andra resurser. Ett avgörande från Högsta domstolen har en
+      URI på formen
+      <code>http://rinfo.lagrummet.se/publ/<b>dom</b>/hd/t170-08</code>,
+      medan dess motsvarande referat i NJA har en URI på formen
+      <code>http://rinfo.lagrummet.se/publ/<b>rf</b>/nja/2009:68</code>. 
+    </p>
+
+    <p>
+      Notera att för vägledande avgöranden så används segmentet
+      <code>dom</code> i URI:n, medan för referat så används segmentet
+      <code>rf</code>. För mer information om hur URI:er konstrueras,
+      se dokumentet "URI-principer".
+    </p>
+
+
+    <h2>Koppling mellan referat och bakomliggande avgöranden</h2>
+    <p>
+      Enligt ovanstående resonemant är det inte domstolsavgöranden,
+      utan endast referat av domstolsavgöranden, som publiceras i
+      rättsinformationssystemet idag. Det är dock tänkbart att
+      domstolar i framtiden kommer att självständigt publicera sina
+      avgöranden direkt i systemet. En stor fördel med detta skulle
+      vara att information om exempelvis ett avgörande i högsta
+      instans blir omedelbart tillgängligt, utan att behöva vänta på
+      att referatet ska skrivas.
+    </p>
+
+    <p>
+      När sedan själva referatet publiceras bör detta uttryckligen
+      hänvisa till bakomliggande avgöranden. Då kan till exempel den
+      sida som presenterar avgörandet kompletteras med information om
+      att det finns ett sammanställt referat av målet.
+    </p>
+
+    <p>
+      Dessa hänvisningar görs med termen
+      <code>referatAvDomstolsavgorande</code>. Ett exempel på hur
+      detta kan se ut finns i Bilaga 4: Metadata för rättsfallsreferat
+      (NJA 2009 s 695).
+    </p>
+
+    <p>
+      Med den metadata som finns tillgänglig idag är det svårt att i
+      ett referat göra hänvisningar till domar i lägre instans,
+      eftersom den informationen saknas i referatstexten. Därför får
+      man än så länge nöja sig med att enbart hänvisa till avgörandet
+      i sista instans.
     </p>
     
+    <h2>Hänvisningar till lagrum, andra rättsfall och andra resurser</h2>
+
+    <p>
+      Ett avgörande eller dess referat hänvisar regelmässigt till ett
+      antal externa dokument och begrepp. Särskilt brukar de hänvisa
+      till lagrum, tidigare rättsfall och sökord.
+    </p>
+    
+    <p>
+      Dessa hänvisningar kan göras både från själva avgörandena såväl
+      som från dess referat. Att från domskälen ta fram dessa listor
+      är en form av förädlning eller redaktionellt material, som
+      vanligen görs inför referatskrivandet. Därför är det åtminstone
+      för domstolsavgöranden att föredra att hänvisningarna görs från
+      referatet, inte från själva avgörandet.
+    </p>
+
+    <h3>Lagrum</h3>
+    <p>
+      I likhet med övriga resurser har varje lagrum (ned på
+      paragrafnivå, men inte enskilda stycken) en URI som kan beräknas
+      genom de principer som används i systemet. Termen
+      <code>lagrum</code> i begreppsmodellen används för att uttrycka
+      en relation mellan ett rättsfall och det/de lagrum som
+      rättfallet stödjer sig på.
+    </p>
+    <p>
+      Exempel på hur dessa relationer kan uttryckas finns i Bilaga 4.
+    </p>
+    <p>
+      Idag finns inget sätt att med systemets URI-principer uttrycka
+      hänvisningar till lagrum utanför de svenska
+      författningssamlingarna (exv EG-direktiv eller internationella
+      konventioner). Rättsinformationsprojektet avvaktar här den
+      internationella utvecklingen för att se om det kommer etableras
+      en internationell standard för vilka URI:er som ska användas för
+      sådana resurser.
+    </p>
+
+    <h3>Rättsfall</h3>
+    <p>
+      För att från ett rättsfall hänvisa till tidigare rättsfall måste
+      man, i likhet med hur lagrumshänvisningar uttrycks, räkna ut
+      rätt URI för rättsfallet. Eftersom hänvisningarna nästan helt
+      uteslutande använder sig av ett rättsfalls referatbeteckning är
+      det också referat-versionen av URI:n som ska användas (jfr ovan
+      angående skillnaden mellan referat och avgöranden).
+    </p>
+    <p>
+      Termen <code>rattsfallshanvisning</code> i begreppsmodellen
+      används för att uttrycka en relation mellan ett rättsfall och
+      tidigare rättsfall som ligger till grund för domslutet.
+    </p>
+
+    <h3>Sökord</h3>
+    <p>
+      Ett referat är ofta försett med ett antal sökord. Dessa kommer
+      inte från en strikt kontrollerad vokabulär, även om man,
+      särskilt inom en domstol, strävar efter att ha ett konsekvent
+      användande av sökord. 
+    </p>
+    <p>
+      Dessa kan uttryckas som odefinerade ämnesord (se dokumentet
+      Introduktion till rättsinformationssystemet - För
+      implementatörer och tekniskt ansvariga) genom termen
+      <code>subject</code> från vokabulären <a
+      href="http://dublincore.org/documents/dcmi-terms/">DCMI
+      Terms</a>. Exempel på hur detta kan göras finns i Bilaga 4.
+    </p>
+    
+    <h3>Andra resurser</h3>
+    <p>
+      Det är vanligt att ett rättsfall även hänvisar till förarbeten
+      och rättsvetenskaplig doktrin (vanligtvis under rubriken
+      "Litteratur"). Det finns idag ingen term i begreppsmodellen för
+      att uttrycka dessa referenser, men eftersom det är en generisk
+      hänvisning kan termen <code>references</code> från vokabulären
+      <a href="http://dublincore.org/documents/dcmi-terms/">DCMI
+      Terms</a> användas. Rättsinformationsprojektet avser att i
+      framtiden komma med närmare riktlinjer för hur dessa relationer
+      ska uttryckas.
+    </p>
+
+
     <div class="appendix">
       <h1>Bilaga 1: Modellbeskrivning för typen Rattsfallsreferat</h1>
       <xi:include href="build:model.xhtml"
@@ -118,15 +265,8 @@
 	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Referat/NJA/2009/NJA-2009_s._695.rdf" parse="text"/></code>
       </div>
     </div>
-
     <div class="appendix">
-      <h1>Bilaga 5: Rättsfallsreferat i fulltext (NJA 2009 s 695)</h1>
-      <div class="syntax">
-	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Referat/NJA/2009/NJA-2009_s._695.rdf" parse="text"/></code>
-      </div>
-    </div>
-    <div class="appendix">
-      <h1>Bilaga 6: Metadata för vägledande domstolsavgörande (Högsta domstolen, målnr T 170-08)</h1>
+      <h1>Bilaga 5: Metadata för vägledande domstolsavgörande (Högsta domstolen, målnr T 170-08)</h1>
       <div class="syntax">
 	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Domslut/HD/2009/T_170-08.rdf" parse="text"/></code>
       </div>
@@ -134,12 +274,22 @@
 
     <!--
     <div class="appendix">
-      <h1>Bilaga 7: Vägledande domstolsavgörande i fulltext (Högsta domstolen, målnr T 170-08)</h1>
+      <h1>Bilaga 6: Rättsfallsreferat i fulltext (NJA 2009 s 695)</h1>
       <div class="syntax">
-	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Domslut/HD/2009/T_170-08.xhtml" parse="text"/></code>
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Referat/NJA/2009/NJA-2009_s._695.xhtml" parse="text"/></code>
       </div>
     </div>
     -->
+
+    <!--
+    <div class="appendix">
+      <h1>Bilaga 7: Vägledande domstolsavgörande i fulltext (Högsta domstolen, målnr T 170-08)</h1>
+      <div class="syntax">
+	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Domslut/HD/2009/T_170-08.rdf" parse="text"/></code>
+      </div>
+    </div>
+    -->
+
     <!--
     <div class="appendix">
       <h1>Bilaga 8: Metadata för vägledande myndighetsavgörande</h1>
