@@ -22,10 +22,11 @@
         hjälp av s.k. Atom-flöden.
       </p>
       <h3>1.2. Bakgrund</h3>
-      <p>Informationen i rättsinformationssystemet kommer primärt från andra 
-        myndigheter. Både dessa källor och systemets aggregat av dem ska 
-        representeras av Atom-flöden. Systemets aggregerade källa utgör en 
-        komplett sammanställning av alla datakällor.
+      <p>Informationen i rättsinformationssystemet kommer primärt från
+        andra myndigheter. Både dessa källor och systemets
+        sammanställning (aggregat) av dem ska representeras av
+        Atom-flöden. Systemets aggregerade källa utgör en komplett
+        sammanställning av alla datakällor.
       </p>
       <h3>1.3. Definitioner</h3>
       <!-- TODO: utöka Ordlista (i <intro-implementatorer.xhtml>)
@@ -76,11 +77,12 @@
     <div class="section">
       <h2>2. Varför Atom</h2>
       <h3>2.1. Källor</h3>
-      <p>Rättsinformationssystemets datakällor innehåller poster som växer över 
-        tid. Posterna utgör en paketering av en "enhet" av rättsinformation (i 
-        regel ett dokument såsom en föreskrift), tillsammans med enhetens 
-        publika identifierare och en tidstämpel som anger när posten tillkommit 
-        eller uppdaterats i datakällan.
+      <p>Rättsinformationssystemets datakällor utgörs av samlingar av
+        poster som växer över tid. Posterna utgör en paketering av en
+        "enhet" av rättsinformation (i regel ett dokument såsom en
+        föreskrift), tillsammans med enhetens identifierare och en
+        tidstämpel som anger när posten tillkommit eller uppdaterats i
+        datakällan.
       </p>
       <p>Eftersom myndigheterna har publiceringsansvar är systemet byggt på att 
         dessa exponerar tillkommet material som listor av nytillkomna poster. 
@@ -89,15 +91,15 @@
         sker på samma vis som elektroniska nyhetsläsare (RSS-läsare) idag 
         hämtar ny information.
       </p>
-      <p>RSS (eng. "Really Simple Syndication") är ett samlingsnamn på format 
-        som uttrycker flöden (eng. "feeds") för t.ex. nyhetsuppdateringar. 
-        Ursprungligen stod RSS för "Rich Site Summary" och var ett enskilt 
-        format. Nuförtiden finns det flera versioner av detta format, och 
-        samlingsnamnet inkluderar både dem och Atom-formatet. Atom är ett 
-        specifikt, öppet, XML-baserat format som har standardiserats i form av 
-        RFC 4287. (RFC:er, "Request For Comments", är standarder vilka 
-        publiceras av The Internet Engineering Task Force, <a 
-          href="http://www.ietf.org/">IETF</a>.)
+      <p>RSS (eng. "Really Simple Syndication") är ett samlingsnamn på
+        format som uttrycker flöden (eng. "feeds") för
+        t.ex. nyhetsuppdateringar.  Ursprungligen stod RSS för "Rich
+        Site Summary" och var ett enskilt format. Nuförtiden finns det
+        flera versioner av detta format, och samlingsnamnet inkluderar
+        både dem och Atom-formatet. Atom är ett specifikt, öppet,
+        XML-baserat format som har standardiserats i form av RFC 4287
+        (<a href="http://tools.ietf.org/html/rfc4287">The Atom
+        Syndication Format</a>).
       </p>
       <p>Atom har valts för att det är öppet, standardiserat och väletablerat, 
         samt har explicit stöd för anpassning och utökning för olika ändamål, 
@@ -111,21 +113,20 @@
         inhämtning och syndikering av innehållet i systemet:</p>
       <ul>
         <li>
-          <a href="http://tools.ietf.org/html/rfc4287">The Atom Syndication 
+          RFC 4287: <a href="http://tools.ietf.org/html/rfc4287">The Atom Syndication 
              Format</a>
          </li>
          <li>
-           <a href="http://tools.ietf.org/html/rfc5005">Feed Paging and 
+           RFC 5005: <a href="http://tools.ietf.org/html/rfc5005">Feed Paging and 
               Archiving</a>
          </li>
          <li>
-           <a 
+           (Internet-draft) <a 
              href="http://tools.ietf.org/html/draft-snell-atompub-tombstones-06">The 
              Atom "deleted-entry" Element</a>
          </li>
          <li>
-           <a 
-             href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02">Atom 
+           (Internet-draft) <a href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02">Atom
              Link Extensions</a>
          </li>
       </ul>
@@ -149,26 +150,30 @@
       </p>
       <h3>2.4. Systemet som primär, auktoritativ datakälla</h3>
       <p>
-        Systemets kontrollerade sammanställning av källorna exponeras på precis 
-        samma vis som källorna till systemet. Detta sammanställda flöde 
-        representerar tillkomsten av kontrollerade poster som hämtats från 
-        källorna. Denna källa utgör den primära källan för data ur 
-        rättsinformationssystemet, och kan konsumeras av allehanda 
+        Systemets kontrollerade sammanställning (aggregat) av källorna
+        exponeras på precis samma vis som källorna till
+        systemet. Detta sammanställda flöde representerar tillkomsten
+        av kontrollerade poster som hämtats från källorna. Denna källa
+        utgör den primära källan för data ur
+        rättsinformationssystemet, och kan konsumeras av allehanda
         rättsinformationsintressenter.</p>
     </div>
 
     <div class="section">
       <h2>3. Representationer i Atom</h2>
-      <p>Atom-flöden uttrycks som postförteckningar i ett eller flera 
-        XML-dokument. Respektive post är försedd med ett unikt ID i form av en 
-        URI, samt en tidstämpel som anger uppdatering.
+      <p>Atom-flöden uttrycks som postförteckningar i ett eller flera
+        XML-dokument. Respektive post är försedd med en unik
+        identifierare i form av en URI, samt en tidstämpel som anger
+        uppdatering.
       </p>
       <p>
-        Minst ett förteckningsdokument ska finnas för en källa till systemet. 
-        Ett sådant dokument kallas prenumerationsdokument ("subscription feed", 
-        se <a href="http://tools.ietf.org/html/rfc5005">RFC 5005</a> för 
-        detaljer) och är det dokument som ska länkas till för att komma åt 
-        datakällan som flödet representerar.
+        Minst ett förteckningsdokument ska finnas för en källa till
+        systemet.  Ett sådant dokument kallas prenumerationsdokument
+        ("subscription feed", se RFC
+        5005: <a href="http://tools.ietf.org/html/rfc5005">Feed Paging
+        and Archiving</a> för detaljer) och är det dokument som ska
+        länkas till för att komma åt datakällan som flödet
+        representerar.
       </p>
       <p>Exempel på strukturen i ett feed-dokument:</p>
       <div class="syntax">
@@ -244,7 +249,7 @@
           <em>Nödvändig information!</em>
         </p>
         <p>
-          Elementet <code>id</code> anger en *persistent* identifierare (URI) 
+          Elementet <code>id</code> anger en <strong>persistent</strong> identifierare (URI) 
           för datakällan. Exempel:
         </p>
         <div class="syntax">
@@ -288,17 +293,17 @@
         <p>
           Ska ange tidstämpel då något i detta feed-dokument ändrats. Anges som 
           <a href="http://tools.ietf.org/html/rfc4287#section-3.3">W3C Date 
-             Time Format</a>.
+             Time Format</a> (DTF).
         </p>
         <p>
           Observera att i exempet används "Zulu Time". Det är inte samma sak 
           som svensk tid. En del programmeringsspråk har inbyggt stöd för att 
           generera dessa, i andra fall finns det i regel tredjepartsbibliotek 
-          för W3C DTF.
+          för DTF.
         </p>
         <p>
           (Anledningen till att vi väljer Zulu Time här är för att dessa är 
-          oberoende av tidzoner, *inklusive* sommartidavvikelser. Tekniskt är 
+          oberoende av tidzoner, <strong>inklusive</strong> sommartidavvikelser. Tekniskt är 
           det okej att istället för "Z" ange t.ex. "+01:00", för svensk 
           vintertid, "+02:00" för sommartid osv. Korrekt parsning av DTF ska 
           resultera i samma tidpunkt oavsett.)
@@ -518,7 +523,7 @@
           värde används för att andra verktyg ska kunna presentera läsbar 
           information av detta feed. Utan värde kommer t.ex. många vanliga 
           feed-läsare inte att kunna skapa en användbar presentation av 
-          feed:et.
+          Atom-flödet.
         </p>
 
         <h4>3.3.4. Huvudsakligt innehåll</h4>
@@ -539,11 +544,13 @@
           godkänt format.
         </p>
         <p>
-          (Obs! Det är tänkt att systemet (åtminstone initialt) ska tolerera 
-          avsaknad av en digital dokumentrepresentation, så länge RDF-data om 
-          dokumentet finns tillgänglig. Denna tolerans är enbart till för de 
-          fall då det inte *går* att få fram en digital representation, inte 
-          för att minska kraven på vad rättskällorna ska publicera.)
+          (Obs! Det är tänkt att systemet (åtminstone initialt) ska
+          tolerera avsaknad av en digital dokumentrepresentation, så
+          länge RDF-data om dokumentet finns tillgänglig. Denna
+          tolerans är enbart till för de fall då det
+          inte <strong>går</strong> att få fram en digital
+          representation, inte för att minska kraven på vad
+          rättskällorna ska publicera.)
         </p>
         <h4>3.3.5. Alternativa format</h4>
         <p>
@@ -568,18 +575,20 @@
           RDF-format finnas länkat till.
         </p>
         <p>
-          Se dokumentet <a 
-            href="introduktion/intro-implementatorer.pdf">Introduktion för 
-            implementatörer och teknikansvariga</a> för detaljer kring krav på 
-          inlämningsformat och innehåll.
+          Se
+            dokumentet <a href="http://dev.lagrummet.se/dokumentation/introduktion/intro-implementatorer.pdf">Introduktion
+            till rättsinformationssystemet - För implementatörer och
+            tekniskt ansvariga</a> för detaljer kring krav på
+            inlämningsformat och innehåll.
         </p>
         <h4>3.3.6. Checksummor på länkade dokument</h4>
         <p>
-          Som angivet i exemplen ovan ska respektive länkad resurs vara 
-          annoterad med storlek, mediatyp och en kontrollsumma i MD5. Se den 
-          föreslagna specen för beskrivning av <a 
-            href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02#section-3.1">länk-attributet 
-            för MD5-kontrollsumma</a>.
+          Som angivet i exemplen ovan ska respektive länkad resurs
+          vara annoterad med storlek, mediatyp och en kontrollsumma i
+          MD5. Se <a
+          href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02#section-3.1">Atom
+          Link Extensions, sektion 3.1</a> för beskrivning av
+          länk-attributet för MD5-kontrollsumma.
         </p>
         <h4>3.3.7. Bilagor</h4>
         <p>
@@ -615,10 +624,10 @@
         </p>
         <!-- TODO: formalisera det som görs av koden i regler -->
         <ul>
-          <li>lös värdet i <code>@href</code> mot postens primära 
+          <li>lösa värdet i <code>@href</code> mot postens primära 
             innehållsreferens (<code>content/@src</code>), basera basen på 
             postens formella URI (angivet i <code>id</code>)</li>
-          <li>använd <code>@dct:isFormatOf</code> plus filändelse för angiven 
+          <li>använda <code>@dct:isFormatOf</code> plus filändelse för angiven 
             mediatyp.</li>
         </ul>
       </div>
@@ -636,8 +645,12 @@
         syntax, samt metadata.
       </p>
       <p>
-        Den information som den juridiska texten utgör förändras inte med 
-        mindre än att nya rättsinformationsdokument tillkommer.
+        Den information som den juridiska texten utgör förändras inte
+        med mindre än att nya rättsinformationsdokument
+        tillkommer. Detta gäller även konsoliderade versioner av
+        författningar. Varje konsolidering som görs till följd av att
+        en ändringsförfattning antagits, betraktas inom systemet som
+        en ny post.
       </p>
       <p>
         En uppdaterad post <em>ska</em> ha ett senare datum än 
@@ -668,10 +681,11 @@
            explicita raderingar.)
       </p>
       <p>
-        Raderingar representeras av: <a 
-          href="http://tools.ietf.org/html/draft-snell-atompub-tombstones-06">The 
-          Atom "deleted-entry" Element</a>. Dessa element innehåller ID:t för 
-        posten som raderats samt raderingsdatum.
+        Raderingar representeras av ett
+        <code>deleted-entry</code>-element, se <a
+        href="http://tools.ietf.org/html/draft-snell-atompub-tombstones-06">The
+        Atom "deleted-entry" Element</a>. Dessa element innehåller
+        ID:t för posten som raderats samt raderingsdatum.
       </p>
       <p>
         Exempel på radering:
@@ -753,9 +767,12 @@
     <div class="section">
       <h2 id="s_arkiv">6. Arkiv</h2>
       <p>
-        Större samlingar (eventuellt med många uppdateringar och/eller 
-        raderingar) kan och bör delas upp i flera feed-dokument som länkar till 
-        varandra, s.k. paginering av feeds.</p>
+        Större samlingar (eventuellt med många uppdateringar och/eller
+        raderingar) kan och bör delas upp i flera feed-dokument som
+        länkar till varandra, s.k. paginering av feeds. Det går inte
+        att kombinera kompletta flöden enligtsektion 5 med sådana
+        arkiv.
+      </p>
       <p>
         Paginering möjliggör långa tidsorterade listor av poster. För en stabil 
         inhämtning av sådana listor har systemet valt att både samla in och 
@@ -819,16 +836,17 @@
           (Se <a href="uri-principer.pdf">URI-principer</a> för hur dessa ska 
           konstrueras.)
         </li>
-        <li>Den primära digitala representationen för dokumenetet  ska länkas 
-          till i postents content-element.</li>
-        <li>RDF-data som beskriver postens dokument ska länkas till i content 
+        <li>Den primära digitala representationen för dokumentet  ska länkas 
+          till i postents <code>content</code>-element.</li>
+        <li>RDF-data som beskriver postens dokument ska länkas till i <code>content</code> 
           (om det primära innehållet även innehåller metadata), eller i en 
-          alternate-link.</li>
+          <code>alternate</code>-link.</li>
         <li>Alla länkade dokument ska ha en korrekt angiven 
           MD5-kontrollsumma.</li>
-        <li>Datum i respektive flödesdokument ska följa kronologisk ordning 
-          (per feed-dokument; inbördes entry-ordning på XML-nivå är inte 
-          nödvändig då updated-värdet räcker för att ange detta).</li>
+        <li>Datum i respektive flödesdokument ska följa kronologisk
+        ordning (per feed-dokument; inbördes entry-ordning på XML-nivå
+        är inte nödvändig då <code>updated</code>-värdet räcker för
+        att ange detta).</li>
         <li>Fullständighet måste iakttagas, d.v.s. arkiven ska representera 
           alla aktuella uppdateringar och raderingar som gäller för 
           rättskällan.</li>
@@ -841,6 +859,11 @@
 
     <div class="section">
       <h2>8. Insamlingsmetod</h2>
+      <p>
+	Denna sektion beskriver hur rättsinformationssystemet centralt
+	hanterar insamling. Denna beskrivning är enbart för
+	informativa syften.
+      </p>
       <div>
         <h3>8.1. Generellt</h3>
         <p>Per sida:</p>
@@ -878,7 +901,7 @@
           posts ursprungstidstämpel för updated och samtidigt exponera en ny 
           tidstämpel för updated om systemet aggrererar flera källor och inte 
           fullständigt kan lita på och samla in dessa källors poster i 
-          kronologisk ordning ("breath-first").
+          kronologisk ordning ("breadth-first").
         </p>
       </div>
       <div>
@@ -894,8 +917,8 @@
             som kommer från denna källa,</li>
           <li>radera alla poster i listan från systemet som inte finns med i 
             det nya inlästa flödets förteckning,</li>
-          <li>sortera posterna på "updated" i stigande ordning (d.v.s. äldst 
-            (minsta tidstämpeln) först),</li>
+          <li>sortera posterna på "updated" i stigande ordning, d.v.s. äldst 
+            (minsta tidstämpeln) först,</li>
           <li>för varje post, samla in ny data om dess updated är nyare än 
             exiserande insamlad posts ursprungstidstämpel.</li>
         </ol>
@@ -909,8 +932,8 @@
           <li>följ "subscription"-feed:et och "prev-archive",
           </li>
           <li>för varje sida: sortera entries (och <i>tombstones</i>) på 
-            "updated" i fallande ordning (d.v.s. yngst (största tidstämpeln) 
-            först),
+            "updated" i fallande ordning, d.v.s. yngst (största tidstämpeln) 
+            först,
           </li>
           <li>spara entry-id + updated i mapp om updated inte finns för id:t 
               eller är större än (yngst) tidigare sparat updated-värde,
