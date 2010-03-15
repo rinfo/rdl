@@ -38,11 +38,11 @@
         <dd>Ett standardformat i XML för att representera flöden av 
           uppdateringar.</dd>
         <dt>Atom-flöde</dt>
-        <dd>En representation av posters tillväxt i en datakälla. (Eng.: 
+        <dd>En representation av posters tillväxt i en datakälla. (Eng. 
           "feed".)</dd>
         <dt>Atom-post</dt>
         <dd>En paketering av ett eller flera digitala dokument som 
-          beskriver/tillhör samma logiska resurs. (Eng.: "entry".)</dd>
+          beskriver/tillhör samma logiska resurs. (Eng. "entry".)</dd>
         <dt>Arkiv</dt>
         <dd>En arkiverad representation av ett flöde med fixerade start- och 
           slutdatum.</dd>
@@ -57,9 +57,9 @@
           överföring av information.</dd>
         <dt>MD5</dt>
         <dd>En kryptografisk algoritm (öppen och fri att använda) för att 
-          beräkna kontrollsummor. Är inte 100%:igt unik i alla lägen, men anses 
-          tillförlitlig nog för att säkerställa överförd data från en pålitlig 
-          källa.</dd>
+          beräkna kontrollsummor. Är inte garanterat unik i alla lägen, men 
+          anses tillförlitlig för att säkerställa överförd data från en 
+          pålitlig källa.</dd>
       </dl>
       <h4>1.3.2. Specifikt för rättsinformationsdomänen</h4>
       <dl>
@@ -249,8 +249,8 @@
           <em>Nödvändig information!</em>
         </p>
         <p>
-          Elementet <code>id</code> anger en <strong>persistent</strong> identifierare (URI) 
-          för datakällan. Exempel:
+          Elementet <code>id</code> anger en <em>persistent</em> identifierare 
+          (URI) för datakällan. Exempel:
         </p>
         <div class="syntax">
           <code class="xml"><![CDATA[
@@ -303,10 +303,10 @@
         </p>
         <p>
           (Anledningen till att vi väljer Zulu Time här är för att dessa är 
-          oberoende av tidzoner, <strong>inklusive</strong> sommartidavvikelser. Tekniskt är 
-          det okej att istället för "Z" ange t.ex. "+01:00", för svensk 
-          vintertid, "+02:00" för sommartid osv. Korrekt parsning av DTF ska 
-          resultera i samma tidpunkt oavsett.)
+          oberoende av tidzoner, <em>inklusive</em> sommartidavvikelser. 
+          Tekniskt är det okej att istället för "Z" ange t.ex. "+01:00", för 
+          svensk vintertid, "+02:00" för sommartid osv. Korrekt parsning av DTF 
+          ska resultera i samma tidpunkt oavsett.)
         </p>
         <h4>3.1.4. Metadata för flödets utgivare</h4>
         <p>
@@ -387,10 +387,9 @@
           Observera att arkiverade feed-dokument inte är nödvändiga. Om man har 
           en lågt antal rättsinformationsdokument kan samtliga förekomma i 
           samma feed-dokument under en överskådlig tid. Syftet med feed 
-          archiving är att
-          hantera storleken på feed-dokument över tid, så att dessa inte växer 
-          till ohanterliga storlekar (tekniskt normativt, rimligen kan ett par 
-          tusen entry-element hanteras utan större problem.)
+          archiving är att hantera storleken på feed-dokument över tid, så att 
+          dessa inte växer till ohanterliga storlekar. Se asvnittet om <a 
+            href="#s_arkiv">Arkiv</a> nedan för detaljer.
         </p>
       </div>
       <div>
@@ -548,7 +547,7 @@
           tolerera avsaknad av en digital dokumentrepresentation, så
           länge RDF-data om dokumentet finns tillgänglig. Denna
           tolerans är enbart till för de fall då det
-          inte <strong>går</strong> att få fram en digital
+          inte <em>går</em> att få fram en digital
           representation, inte för att minska kraven på vad
           rättskällorna ska publicera.)
         </p>
@@ -703,7 +702,7 @@
       </div>
       <p>
         <em>(Notera att Atom-syntaxen förväntar sig att utökningar såsom dessa 
-          för raderade poster ska placeras innan <code>entry</code>-elementen. 
+          för raderade poster ska placeras före <code>entry</code>-elementen. 
           Tidsordningen garanteras enbart via tidstämplarna.)</em>
       </p>
       <p>
@@ -767,11 +766,10 @@
     <div class="section">
       <h2 id="s_arkiv">6. Arkiv</h2>
       <p>
-        Större samlingar (eventuellt med många uppdateringar och/eller
-        raderingar) kan och bör delas upp i flera feed-dokument som
-        länkar till varandra, s.k. paginering av feeds. Det går inte
-        att kombinera kompletta flöden enligtsektion 5 med sådana
-        arkiv.
+        Större samlingar (eventuellt med många uppdateringar och/eller 
+        raderingar) kan och bör delas upp i flera feed-dokument som länkar till 
+        varandra, s.k. paginering av feeds. Det går inte att kombinera 
+        kompletta flöden enligt sektion 5 med sådana arkiv.
       </p>
       <p>
         Paginering möjliggör långa tidsorterade listor av poster. För en stabil 
@@ -780,6 +778,25 @@
           href="http://tools.ietf.org/html/rfc5005#section-4">RFC 5005, sektion 
           4<!--Feed Paging and Archiving: 4. Archived Feeds--></a> för 
         specikationen av sådana).
+      </p>
+      <p>
+        Tekniskt kan rimligen upp till något tusental entry-element i samma 
+        dokument hanteras utan större problem. Men om man från början 
+        uppskattar att tillväxttakten kommer att göra arkiverade feeds 
+        nödvändiga är det möjligt att max några hundra poster per dokument är 
+        en rimligare maxgräns. Detta är beroende på filstorlek och 
+        överföringskapacitet, d.v.s webbinfrastruktur i stort. Beakta att 
+        insamlande system kan komma att hämta hem åtminstone 
+        prenumerationsdokumentet många gånger per dag, eller t.o.m. per 
+        timme.
+      </p>
+      <p>
+        Här spelar också HTTP-mekanismer för tidstämplar och ETags en stor 
+        roll, vilka rekommenderas för att undvika överflödig inhämtning av 
+        oförändrade dokument. Se detaljer kring "conditional GET" i 
+        specifikationen för <a 
+          href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.3">HTTP/1.1</a> 
+        för detaljer.
       </p>
       <h3>6.1. Tillväxtproblem</h3>
       <p>
@@ -860,10 +877,11 @@
     <div class="section">
       <h2>8. Insamlingsmetod</h2>
       <p>
-	Denna sektion beskriver hur rättsinformationssystemet centralt
-	hanterar insamling. Denna beskrivning är enbart för
-	informativa syften.
+        Denna sektion beskriver hur rättsinformationssystemet centralt hanterar 
+        insamling. Denna beskrivning är enbart för informativa syften.
       </p>
+      <!-- TODO: utöka med detaljer om HTTP Conditional GET, d.v.s. 
+           If-Modified-Since och ETag/If-None-Match.. -->
       <div>
         <h3>8.1. Generellt</h3>
         <p>Per sida:</p>
@@ -991,6 +1009,13 @@
         systemet. Om så sker, och källan är med i listan över godkända källor, 
         kommer systemet att påbörja en insamling direkt.
       </p>
+      <p>
+        Kontakta rättsinformationsprojektet för detaljer kring hur denna 
+        notifieringsmekanism ska anropas.
+      </p>
+      <!-- TODO: specificera i samförstånd med pubsubhubbub-specen:
+        http://pubsubhubbub.googlecode.com/svn/trunk/pubsubhubbub-core-0.3.html#anchor9
+      -->
     </div>
 
     <div class="section">
