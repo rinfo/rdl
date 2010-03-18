@@ -5,12 +5,23 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX iana: <http://www.iana.org/assignments/relation/>
+PREFIX awol: <http://bblfish.net/work/atom-owl/2006-06-06/#>
 PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
 
 
 SELECT DISTINCT * WHERE {
 
     ?doc a ?doc__1_type .
+
+    ?doc__1_entry foaf:primaryTopic ?doc;
+        a awol:Entry .
+    {
+        ?doc__1_entry awol:content ?doc__1_entry__repr .
+    } UNION {
+        ?doc__1_entry iana:alternate ?doc__1_entry__repr .
+    }
+    ?doc__1_entry__repr awol:type ?doc__1_entry__repr__1_mediaType .
 
     OPTIONAL {
         ?doc__1_type rdfs:label ?doc__1_type__1_label .

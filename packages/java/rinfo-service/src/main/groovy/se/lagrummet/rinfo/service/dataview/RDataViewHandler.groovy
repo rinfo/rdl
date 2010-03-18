@@ -38,16 +38,17 @@ class RDataViewHandler implements ViewHandler {
 }
 
 class RDataLens extends SmartLens {
+
+    String baseUrl
+
     RDataLens(String locale) {
         super(locale)
+        baseUrl = "http://rinfo.lagrummet.se/"
     }
 
     Map newResource(Map node) {
         def rnode = super.newResource(node)
-        def uri = rnode['resource_uri']
-        if (uri) {
-            rnode['rdata_url'] = rdataUrl(uri)
-        }
+        decorateResource(rnode)
         return rnode
     }
 
@@ -62,9 +63,16 @@ class RDataLens extends SmartLens {
         return value
     }
 
-    def rdataUrl(uri) {
-        return uri.replace("http://rinfo.lagrummet.se/publ/",
-                "/rdata/publ/")
+    void decorateResource(Map rnode) {
+        def uri = rnode['resource_uri']
+        if (!uri || !uri.startsWith(baseUrl))
+            return
+        def path = uri.substring(baseUrl.size())
+        rnode['rdata_url'] = "/rdata/" + path
+        //switch (path) {
+        //    case ~/publ\/.+/:
+        //    break
+        //}
     }
 
 }

@@ -25,6 +25,7 @@ import org.apache.abdera.i18n.iri.IRI
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.collector.atom.FeedArchivePastToPresentReader
+import static se.lagrummet.rinfo.collector.atom.FeedArchiveReader.unescapeColon
 import se.lagrummet.rinfo.collector.atom.AtomEntryDeleteUtil
 
 
@@ -58,9 +59,9 @@ class SesameLoader extends FeedArchivePastToPresentReader {
     boolean stopOnEntry(Entry entry) {
         // TODO:? store "youngest collected entry + date", stop only on that?
         // (pageUrl, entry and date)
-        def entryRepoData = new EntryRepoData(
+        def repoEntry = new RepoEntry(
                 entry.id.toURI(), entry.updated, conn)
-        return entryRepoData.isCollected()
+        return repoEntry.isCollected()
     }
 
     void processFeedPageInOrder(URL pageUrl, Feed feed,
@@ -69,25 +70,26 @@ class SesameLoader extends FeedArchivePastToPresentReader {
         deleteFromMarkers(feed, deletedMap)
 
         for (Entry entry : effectiveEntries) {
-            def entryRepoData = new EntryRepoData(entry.id.toURI(), entry.updated, conn)
+            def repoEntry = new RepoEntry(entry.id.toURI(), entry.updated, conn)
             // TODO: isn't this a strange exceptional state now?
             // (FeedArchivePastToPresentReader shouldn't supply known stuff..)
-            if (entryRepoData.isCollected()) {
+            if (repoEntry.isCollected()) {
                 logger.debug("skipping collected entry <${entry.id}> [${entry.updated}]")
                 continue
             } else {
-                if (entryRepoData.getStoredContext() != null) {
+                if (repoEntry.getStoredContext() != null) {
                     // NOTE: clear, not remove, since we want to remember seen
                     // updates *and* deletes
-                    entryRepoData.clearContext()
+                    repoEntry.clearContext()
                 }
             }
-            entryRepoData.addContext()
+            repoEntry.addContext()
+            repoEntry.addAtomEntryMetadata(entry)
             logger.info("Loading RDF from entry <${entry.id}>")
             Collection<ReprRef> rdfReferences = getRdfReferences(entry)
             for (ReprRef rdfRef : rdfReferences) {
                 logger.info("RDF from <${rdfRef.url}>")
-                loadData(rdfRef, entryRepoData.getContext())
+                loadData(rdfRef, repoEntry.getContext())
             }
             // TODO:? rdataService.addContextEntryAnnotations(...)
         }
@@ -95,14 +97,14 @@ class SesameLoader extends FeedArchivePastToPresentReader {
 
     protected void deleteFromMarkers(Feed sourceFeed, Map<IRI, AtomDate> deletedMap) {
         for (Map.Entry<URI, Date> delItem : deletedMap.entrySet()) {
-            def entryRepoData = new EntryRepoData(
+            def repoEntry = new RepoEntry(
                     delItem.getKey().toURI(), delItem.getValue().getDate(),
                     conn)
             // TODO: unless already deleted..
-            logger.info("Deleting RDF from entry <${entryRepoData.id}>")
-            entryRepoData.clearContext() // TODO: error if not exists?
+            logger.info("Deleting RDF from entry <${repoEntry.id}>")
+            repoEntry.clearContext() // TODO: error if not exists?
             // TODO:? ok to just add the tombstone as a marker (for collect) like this?
-            entryRepoData.addContext()
+            repoEntry.addContext()
         }
     }
 
@@ -142,33 +144,46 @@ class SesameLoader extends FeedArchivePastToPresentReader {
 }
 
 
-class EntryRepoData {
+class RepoEntry {
 
     static final AWOL_ENTRY
     static final AWOL_ID
     static final AWOL_UPDATED
+    static final AWOL_CONTENT
+    static final AWOL_TYPE
+    static final IANA_ALTERNATE
+    static final IANA_ENCLOSURE
+    static final FOAF_PRIMARY_TOPIC
     static {
         ValueFactory vf = ValueFactoryImpl.getInstance()
         def AWOL_NS = "http://bblfish.net/work/atom-owl/2006-06-06/#"
+        def IANA_NS = "http://www.iana.org/assignments/relation/"
+        def FOAF_NS = "http://xmlns.com/foaf/0.1/"
         AWOL_ENTRY = vf.createURI(AWOL_NS, "Entry")
         AWOL_ID = vf.createURI(AWOL_NS, "id")
         AWOL_UPDATED = vf.createURI(AWOL_NS, "updated")
+        AWOL_CONTENT = vf.createURI(AWOL_NS, "content")
+        AWOL_TYPE = vf.createURI(AWOL_NS, "type")
+        IANA_ALTERNATE = vf.createURI(IANA_NS, "alternate")
+        IANA_ENCLOSURE = vf.createURI(IANA_NS, "enclosure")
+        FOAF_PRIMARY_TOPIC = vf.createURI(FOAF_NS, "primaryTopic")
     }
 
     URI id
     Date updated
     RepositoryConnection conn
+    ValueFactory vf
 
     private Resource storedContext
     private Resource newContext
     private Literal entryIdLiteral
     private Literal entryUpdatedLiteral
 
-    EntryRepoData(URI id, Date updated, RepositoryConnection conn) {
+    RepoEntry(URI id, Date updated, RepositoryConnection conn) {
         this.id = id
         this.updated = updated
         this.conn = conn
-        def vf = conn.repository.valueFactory
+        vf = conn.repository.valueFactory
         entryIdLiteral = vf.createLiteral(id.toString(), XMLSchema.ANYURI)
         entryUpdatedLiteral = RDFUtil.createDateTime(vf, updated)
     }
@@ -199,8 +214,7 @@ class EntryRepoData {
     Resource getContext() {
         if (newContext == null) {
             // TODO:? Mint uri from id? Cannot use getSelfLink for tombstones.
-            def vf = conn.repository.valueFactory
-            newContext = vf.createBNode()
+            newContext = vf.createURI(id.toString() + "/entry#context")
         }
         return newContext
     }
@@ -212,6 +226,34 @@ class EntryRepoData {
         conn.add(ctx, RDF.TYPE, AWOL_ENTRY, ctx)
         conn.add(ctx, AWOL_ID, entryIdLiteral, ctx)
         conn.add(ctx, AWOL_UPDATED, entryUpdatedLiteral, ctx)
+        conn.add(ctx, FOAF_PRIMARY_TOPIC, vf.createURI(id.toString()), ctx)
+    }
+
+    void addAtomEntryMetadata(Entry entry) {
+        def ctx = getContext()
+        def contentElem = entry.contentElement
+        def contentUrlPath = unescapeColon(contentElem.resolvedSrc.toString())
+        def content = vf.createURI(contentUrlPath)
+        conn.add(ctx, AWOL_CONTENT, content, ctx)
+        def contentMimeType = vf.createLiteral(contentElem.mimeType.toString())
+        conn.add(content, AWOL_TYPE, contentMimeType, ctx)
+        for (link in entry.links) {
+            def linkRel = null
+            if (link.rel == "alternate") {
+                linkRel = IANA_ALTERNATE
+            } else if (link.rel == "enclosure") {
+                linkRel = IANA_ENCLOSURE
+            } else {
+                //linkRel = vf.createURI(link.rel, base=IANA_NS)
+            }
+            if (linkRel == null)
+                continue
+            def urlPath = unescapeColon(link.resolvedHref.toString())
+            def linkUri = vf.createURI(urlPath)
+            conn.add(ctx, linkRel, linkUri, ctx)
+            def mediaType = vf.createLiteral(link.getMimeType().toString())
+            conn.add(linkUri, AWOL_TYPE, mediaType, ctx)
+        }
     }
 
     void clearContext() {

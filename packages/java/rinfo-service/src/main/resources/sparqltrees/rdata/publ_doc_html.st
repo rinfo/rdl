@@ -34,11 +34,23 @@ $sparqltrees/base_html(
                 -->
             </table>
 
+            $if (it.entry.repr)$
+                <ul>
+                    $it.entry.repr:{
+                        <li>
+                            <a href="$it.resource_uri$">$it.mediaType$</a>
+                        </li>
+                    }$
+                </ul>
+            $endif$
+            <!--
             $if (it.pdf_url)$
                 <p class="pdflink">
                     <a href="$it.pdf_url$">Ladda ner PDF-version av SFS 1999:175</a>
                 </p>
             $endif$
+            -->
+
 
             <!--
             <h2>Ändringar och övergångsbestämmelser</h2>
