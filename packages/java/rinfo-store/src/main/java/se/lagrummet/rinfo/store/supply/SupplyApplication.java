@@ -18,7 +18,7 @@ import se.lagrummet.rinfo.store.depot.FileDepot;
 public class SupplyApplication extends Application {
 
     private Depot depot;
-    public static final int DEFAULT_PORT = 8182;
+    public static final int DEFAULT_PORT = 8282;
 
     public SupplyApplication(Context context) throws ConfigurationException {
         this(context, DepotUtil.depotFromConfig());
@@ -38,18 +38,20 @@ public class SupplyApplication extends Application {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        int port = (args.length > 0)? new Integer(args[0]) : DEFAULT_PORT;
-        String propertiesPath = args.length > 1 ? args[1] : DEFAULT_PROPERTIES_PATH;
-
-        Depot depot = DepotUtil.depotFromConfig(propertiesPath, DEPOT_CONFIG_SUBSET_KEY);
-
+    public static void serveDepot(Depot depot, int port) throws Exception {
         Component component = new Component();
         component.getServers().add(Protocol.HTTP, port);
         Context context = component.getContext().createChildContext();
         component.getDefaultHost().attach(
                 new SupplyApplication(context, depot));
         component.start();
+    }
+
+    public static void main(String[] args) throws Exception {
+        int port = (args.length > 0)? new Integer(args[0]) : DEFAULT_PORT;
+        String propertiesPath = args.length > 1 ? args[1] : DEFAULT_PROPERTIES_PATH;
+        Depot depot = DepotUtil.depotFromConfig(propertiesPath, DEPOT_CONFIG_SUBSET_KEY);
+        serveDepot(depot, port);
     }
 
 }
