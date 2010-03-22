@@ -13,7 +13,7 @@ CSS-egenskapen prince-hyphenate-patterns.
 @namespace rpubl "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#";
 
 @page {
-    size: 135mm 210mm; /*gissningar */
+    size: 155mm 230mm; /*gissningar */
     margin-top: 25mm;
     margin-bottom: 17mm;
     margin-inside: 20mm;
@@ -67,7 +67,7 @@ h1 {
 
 h2 {
     font-size: 10pt;
-    background: #efe;
+    /* background: #efe; */
     margin-bottom: 0;
 }
 
@@ -75,7 +75,7 @@ h3 {
     font-size: 10pt;
     text-transform: uppercase;
     font-variant: small-caps;
-    background: #ffe;
+    /* background: #ffe; */
     margin-bottom: 0;
 }
 
@@ -97,7 +97,7 @@ p {
     padding-left: 10pt;
     text-indent: -10pt hanging;
     margin: 0;
-    background: #fef;
+    /* background: #fef;*/
 }
 
 
@@ -115,5 +115,5 @@ p:first-of-type {
     margin:10pt;
     padding:0;
     border: none;
-    background: #eff;
+    /*background: #eff; */
 }

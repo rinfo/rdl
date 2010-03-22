@@ -1,0 +1,130 @@
+/* Exmpelstylesheet för att formattera ett kommittédirektiv i XHTML
+1.1+RDFa-format till samma utseende som SFS i tryckt form har.
+
+Är delvis beroende av att en viss konvention för XHTML-struktur och
+klassnamn använts. Se
+exempel/documents/publ/Direktiv/2009/dir-2009_71.xhtml för ett
+exempeldokument som funkar bra med detta.
+
+För att avstavning ska fungera bra krävs stöd för den proprietära
+CSS-egenskapen prince-hyphenate-patterns
+
+*/
+
+@namespace rpubl "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#";
+
+@page {
+    size: a4;
+    margin-top: 65pt;
+    margin-bottom: 295pt;
+    margin-left: 70pt;
+    margin-right: 240pt;
+    padding: 0;
+}
+
+@page:first {
+    margin-top: 50pt;
+    @top-right {
+	content: none;
+    }
+}
+
+@page:left {
+    @top-left {
+	content: counter(page);
+	font-size: 11pt;
+    }
+}
+
+@page:right {
+    @top-right {
+	content: counter(page);
+	font-size: 11pt;
+    }
+}
+
+body {
+    font: 11pt/1.1 Times;
+
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.header {
+    margin-right: -75pt;
+    border-bottom: 1pt solid black;
+}
+.header h1 {
+    float: left;
+    font-size: 20pt;
+}
+
+.header h2 {
+    float: left;
+    font-size: 14pt;
+    font-weight: normal;
+    width: 250pt;
+}
+
+.header .logo {
+    float: right;
+    width: 70pt;
+}
+
+*[property="rpubl:direktivnummer"] {
+    font-weight: bold;
+    font-size: 14pt;
+}
+
+
+h1[property="dct:title"] {
+    font-size: 13pt;
+}
+
+.text {
+}
+
+.text h2 {
+    font-size: 11pt;
+    margin-top: 12pt;
+    margin-bottom: 6pt;
+ }
+.text h3 {
+    font-weight: normal;
+    font-style: italic;
+    font-size: 11pt;
+    margin-top: 12pt;
+    margin-bottom: 6pt;
+ }
+
+.text p {
+    padding-left: 10pt;
+    text-indent: -10pt hanging;
+    text-align: justify;
+    margin: 0;
+    hyphens: auto;
+    prince-hyphenate-patterns: url("hyph_sv_SE.dic"); 
+}
+
+/* första stycket i varje paragraf ska inte indenteras */
+div > p:first-of-type {
+    text-indent: 0;
+    padding-left: 0;
+}
+
+
+div[rel="rpubl:departement"] {
+    margin-top: 12pt;
+    text-align: right;
+}
+
+div[rel="rpubl:departement"] span:before {
+    content: "(";
+}
+
+div[rel="rpubl:departement"] span:after {
+    content: ")";
+}
