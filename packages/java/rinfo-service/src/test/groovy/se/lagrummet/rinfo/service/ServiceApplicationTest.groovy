@@ -1,7 +1,6 @@
 package se.lagrummet.rinfo.service
 
-import org.junit.*
-import static org.junit.Assert.*
+import spock.lang.*
 
 import org.apache.commons.configuration.PropertiesConfiguration
 
@@ -11,13 +10,8 @@ import org.restlet.data.MediaType
 import org.restlet.data.Method
 import org.restlet.data.Protocol
 import org.restlet.data.Request
-import org.restlet.data.Response
 import org.restlet.data.Status
 import org.restlet./*routing.*/VirtualHost
-
-import org.openrdf.repository.Repository
-import org.openrdf.repository.sail.SailRepository
-import org.openrdf.sail.nativerdf.NativeStore
 
 import se.lagrummet.rinfo.rdf.repo.RepositoryHandler
 import se.lagrummet.rinfo.service.util.FeedApplication
@@ -29,7 +23,7 @@ import se.lagrummet.rinfo.service.util.FeedApplication
  *
  * Cleans repository before and after testing.
  */
-class ServiceApplicationTest {
+class ServiceApplicationSpec extends Specification {
 
     static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service-test.properties"
 
@@ -42,8 +36,7 @@ class ServiceApplicationTest {
 
     static RepositoryHandler repositoryHandler
 
-    @BeforeClass
-    static void setupClass() {
+    def setupSpec() {
         def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
         serviceAppPort = config.getInt("test.serviceAppPort")
         feedAppPort = config.getInt("test.feedAppPort")
@@ -82,26 +75,26 @@ class ServiceApplicationTest {
         component.start()
     }
 
-    @AfterClass
-    static void stopComponent() {
+    def cleanupSpec() {
         repositoryHandler.cleanRepository()
         component.stop()
     }
 
-    @Test
-    void testReadMetaFromFeed() {
+    def "should read meta from feed"() {
+        given:
+        countContexts() == 0
 
-        // add metadata
+        when: "service is pinged with a feed containing entries referencing rdf"
         def request = new Request(Method.POST, "${serviceAppUrl}/collector")
         def param = "feed=${feedAppUrl}/1-init.atom"
         request.setEntity(param, MediaType.MULTIPART_FORM_DATA)
         def client = new Client(Protocol.HTTP)
         def response = client.handle(request)
-        assertEquals Status.SUCCESS_OK, response.status
-
         Thread.sleep(2000)
 
-        assertEquals 2, countContexts()
+        then: "contexts will be created for each entry"
+        response.status == Status.SUCCESS_OK
+        countContexts() == 2
     }
 
     int countContexts() {
