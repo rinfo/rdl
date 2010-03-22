@@ -1,7 +1,7 @@
 /*
 Works with sources from <http://trac.lagen.nu/wiki/DataSets>:
-    - "https://lagen.nu/sfs/parsed/rdf.nt"
-    - "https://lagen.nu/dv/parsed/rdf.nt"
+    - https://lagen.nu/sfs/parsed/rdf.nt
+    - https://lagen.nu/dv/parsed/rdf.nt
 Eats memory; prepare by:
     export JAVA_OPTS="-Xms512Mb -Xmx1024Mb"
 */
@@ -11,6 +11,8 @@ Eats memory; prepare by:
     @Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
 ])
 import static org.apache.commons.lang.StringUtils.replaceOnce
+import org.openrdf.model.vocabulary.RDF
+import org.openrdf.model.vocabulary.XMLSchema
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.store.depot.*
 
@@ -32,20 +34,23 @@ def createEntry(session, uri, nt) {
     }
 }
 
-RINFO_PUBL  = "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
+RPUBL  = "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
+LEGACY_PUBL = "http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#"
 LAGENNNU = "http://lagen.nu/terms#"
 
 def rewriteLagenNuNTLines(lines) {
     return lines.findAll {
-        !it.find("<${LAGENNNU}senastHamtad>")
+        !( it.find("<${LAGENNNU}senastHamtad>") ||
+            it.find("<${LEGACY_PUBL}konsoliderar>") ||
+            it.find("<${LEGACY_PUBL}konsolideringsunderlag>") )
     }.collect {
         // TODO: correct org refs?
         def s = replaceOnce(it, "<http://lagen.nu/org/2008/", "<http://rinfo.lagrummet.se/org/")
-        s = replaceOnce(s, "<${LAGENNNU}paragrafnummer", "<${RINFO_PUBL}paragrafnummer")
+        s = replaceOnce(s, "<${LAGENNNU}paragrafnummer>", "<${RPUBL}paragrafnummer>")
         s = replaceOnce(s,
-                "<http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#KonsolideradGrundforfattning>",
-                "<${RINFO_PUBL}Forordning>")
-        s = replaceOnce(s, "<http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#", "<${RINFO_PUBL}")
+                "<${LEGACY_PUBL}KonsolideradGrundforfattning>", "<${RPUBL}Forordning>")
+        s = replaceOnce(s, "<${LEGACY_PUBL}", "<${RPUBL}")
+        s = s.replaceAll(/("\d{4}-\d{2}-\d{2}")(@\w+)?/, '$1'+"^^<${XMLSchema.NAMESPACE}date>")
         return s
     }
 }
@@ -74,13 +79,18 @@ def grouped = lines.groupBy {
 
 def session = depot.openSession()
 try {
-
     grouped.each { k, v ->
         def uri = new URI(k)
-        def nt = rewriteLagenNuNTLines(v).join("\n")
-        createEntry(session, uri, nt)
+        def newNtLines = rewriteLagenNuNTLines(v)
+        if (!newNtLines.find { it.contains(" <${RDF.TYPE}> ") }) {
+            newNtLines += [
+                "<${uri}> <${RDF.TYPE}> <${RPUBL}Forordning> .",
+                "<${uri}> <${RPUBL}forfattningsamling> <http://rinfo.lagrummet.se/ref/sfs> .",
+                "<${uri}> <http://purl.org/dc/terms/publisher> <http://rinfo.lagrummet.se/org/regeringskansliet> .",
+            ]
+        }
+        createEntry(session, uri, newNtLines.join("\n"))
     }
-
 } finally {
     session.close()
 }

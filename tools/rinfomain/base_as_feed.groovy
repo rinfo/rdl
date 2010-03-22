@@ -28,6 +28,7 @@ FEED_META = [
     publicBaseUri: "http://rinfo.lagrummet.se"
 ]
 
+// FIXME: doesn't work locally now (when statically server under "/admin" )
 FEED_PATH_CONF = [
     baseUrl: "",
     feedPath: "/feed/current"

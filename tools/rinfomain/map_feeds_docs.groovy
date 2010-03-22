@@ -148,7 +148,10 @@ def makeSourcesRdf(writer, buildDir, feedPaths, publicServer) {
             feedPaths.each { feedPath ->
                 'dct:source' {
                     def feedBase = (feedPath =~ /(.+)\/.*/)[0][1]
+                    def orgSlug = feedBase.replace('.se', '')
+                    def orgUri = "http://rinfo.lagrummet.se/org/${orgSlug}"
                     'void:Dataset'('rdf:about':"tag:${feedBase},2009:rinfo") {
+                        'dct:publisher'('rdf:resource':orgUri)
                         'iana:current'('rdf:resource':"${publicServer}/${feedPath}")
                     }
                 }

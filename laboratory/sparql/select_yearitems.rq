@@ -1,0 +1,24 @@
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+prefix scv: <http://purl.org/NET/scovo#>
+prefix event: <http://purl.org/NET/c4dm/event.owl#>
+prefix tl: <http://purl.org/NET/c4dm/timeline.owl#>
+prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
+prefix dct: <http://purl.org/dc/terms/>
+
+SELECT * WHERE {
+
+    FILTER(
+        ?year = "1994"^^xsd:gYear &&
+        ?property = rpubl:utfardandedatum
+    )
+    ?eventItem
+        tl:atYear ?year;
+        scv:dimension ?property;
+        event:product ?doc .
+    ?doc a rpubl:Forordning;
+        ?property ?timestamp;
+        dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet> .
+
+}
+ORDER BY ?timestamp
+
