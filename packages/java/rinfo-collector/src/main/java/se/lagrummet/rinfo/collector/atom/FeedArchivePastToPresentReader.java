@@ -177,6 +177,23 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
         return false;
     }
 
+    // FIXME: implement support for this:
+    ///**
+    // * Optional template method called if an encountered feed is marked as
+    // * <em>complete</em>, according to <a
+    // * href="http://tools.ietf.org/html/rfc5005#section-2">RFC 5005: Feed
+    // * Paging and Archiving, section 2</a>. If implemented, it must return id:s
+    // * for all previously collected entries from a feed with the given id. This
+    // * list will be compared against the currently collected feed to determine
+    // * which entries are to be updated, and if any entries are to be deleted
+    // * (i.e. any id in the returned collection which is missing in the
+    // * currently collected feed).
+    // * @throws UnsupportedOperationException by default.
+    // */
+    //public Map<IRI, Data> getCollectedEntryIdsForCompleteFeedId(IRI feedId) {
+    //    throw new UnsupportedOperationException();
+    //}
+
     /**
      * Default method used to get tombstone markers from a feed.
      * @return A map of entry id:s and deletion times. The default uses {@link
