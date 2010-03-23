@@ -161,12 +161,13 @@
 
 
     <entry>
-        <id>http://rinfo.lagrummet.se/publ/dom/hd/b333-04</id>
+        <id>http://rinfo.lagrummet.se/publ/dom/hd/b333-04/2005-06-17</id>
         <summary></summary>
         <content type="application/rdf+xml">
             <rpubl:VagledandeDomstolsavgorande>
                 <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/h%C3%B6gsta_domstolen"/>
                 <rpubl:malnummer>B333-04</rpubl:malnummer>
+                <rpubl:avgorandedatum>2005-06-17</rpubl:avgorandedatum>
             </rpubl:VagledandeDomstolsavgorande>
         </content>
     </entry>

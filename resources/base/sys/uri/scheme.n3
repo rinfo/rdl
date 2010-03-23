@@ -55,8 +55,13 @@
     coin:contains [ coin:segment "dom";
             coin:forType rpubl:VagledandeDomstolsavgorande;
             coin:contains [ coin:useTokenSet tks_org:;
-                    coin:component dct:publisher;
-                    coin:contains [ coin:component rpubl:malnummer ] ] ];
+                coin:component dct:publisher;
+                coin:contains [
+                            coin:component rpubl:malnummer;
+                            coin:contains [ coin:component rpubl:avgorandedatum ]
+                        ]
+                    ]
+        ];
 
     coin:scheme : .
 
