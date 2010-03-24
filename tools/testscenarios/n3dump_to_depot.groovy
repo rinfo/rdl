@@ -17,6 +17,67 @@ import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.store.depot.*
 
 
+RPUBL  = "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
+LEGACY_PUBL = "http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#"
+LAGENNNU = "http://lagen.nu/terms#"
+
+GRUNDLAG_NUMBERS = [
+    '1974:152', // regeringsform
+    '1810:0926', // successionsordningen
+    '1949:105', // tryckfrihetsförordningen
+    '1991:1469', // yttrandefrihetsgrundlagen
+]
+
+
+def convertLagenNuNTLines(URI uri, List<String> lines) {
+    def newLines = rewriteLagenNuNTLines(lines)
+
+    def typeTripleIndex = newLines.findIndexOf { it.startsWith("<${uri}> <${RDF.TYPE}> ") }
+
+    if (GRUNDLAG_NUMBERS.find(uri.toString().&endsWith)) {
+        newLines[typeTripleIndex] = "<${uri}> <${RDF.TYPE}> <${RPUBL}Grundlag> ."
+
+    } else if (isLaw(newLines)) {
+        newLines[typeTripleIndex] = "<${uri}> <${RDF.TYPE}> <${RPUBL}Lag> ."
+
+    } else if (typeTripleIndex == -1) {
+        newLines += [
+            "<${uri}> <${RDF.TYPE}> <${RPUBL}Forordning> .",
+            "<${uri}> <${RPUBL}forfattningsamling> <http://rinfo.lagrummet.se/ref/sfs> .",
+            "<${uri}> <http://purl.org/dc/terms/publisher> <http://rinfo.lagrummet.se/org/regeringskansliet> .",
+        ]
+    }
+    return newLines
+}
+
+def rewriteLagenNuNTLines(lines) {
+    return lines.findAll {
+        !( it.find("<${LAGENNNU}senastHamtad>") ||
+            it.find("<${LEGACY_PUBL}konsoliderar>") ||
+            it.find("<${LEGACY_PUBL}konsolideringsunderlag>") )
+    }.collect {
+        // TODO:? are org refs always correct?
+        def s = replaceOnce(it, "<http://lagen.nu/org/2008/", "<http://rinfo.lagrummet.se/org/")
+        s = replaceOnce(s, "<${LAGENNNU}paragrafnummer>", "<${RPUBL}paragrafnummer>")
+        s = replaceOnce(s,
+                "<${LEGACY_PUBL}KonsolideradGrundforfattning>", "<${RPUBL}Forordning>")
+        s = replaceOnce(s, "<${LEGACY_PUBL}", "<${RPUBL}")
+        s = s.replaceAll(/("\d{4}-\d{2}-\d{2}")(@\w+)?/, '$1'+"^^<${XMLSchema.NAMESPACE}date>")
+        return s
+    }
+}
+
+def isLaw(lines) {
+    def titleTriple = lines.find { it =~ "title>" }
+    if (!titleTriple)
+        return false
+    def title = titleTriple.replaceFirst(/.+"([^"]+)"@sv\s*.$/, '$1')
+    return (title.startsWith('Lag ') ||
+            (title.endsWith('lag') && !title.startsWith('Förordning')) ||
+            title.endsWith('balk'))
+}
+
+
 RDFXML_MEDIA_TYPE = "application/rdf+xml"
 
 def createEntry(session, uri, nt) {
@@ -31,27 +92,6 @@ def createEntry(session, uri, nt) {
         session.createEntry(uri, new Date(), [rdfContent])
     } finally {
         inStream.close()
-    }
-}
-
-RPUBL  = "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
-LEGACY_PUBL = "http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#"
-LAGENNNU = "http://lagen.nu/terms#"
-
-def rewriteLagenNuNTLines(lines) {
-    return lines.findAll {
-        !( it.find("<${LAGENNNU}senastHamtad>") ||
-            it.find("<${LEGACY_PUBL}konsoliderar>") ||
-            it.find("<${LEGACY_PUBL}konsolideringsunderlag>") )
-    }.collect {
-        // TODO: correct org refs?
-        def s = replaceOnce(it, "<http://lagen.nu/org/2008/", "<http://rinfo.lagrummet.se/org/")
-        s = replaceOnce(s, "<${LAGENNNU}paragrafnummer>", "<${RPUBL}paragrafnummer>")
-        s = replaceOnce(s,
-                "<${LEGACY_PUBL}KonsolideradGrundforfattning>", "<${RPUBL}Forordning>")
-        s = replaceOnce(s, "<${LEGACY_PUBL}", "<${RPUBL}")
-        s = s.replaceAll(/("\d{4}-\d{2}-\d{2}")(@\w+)?/, '$1'+"^^<${XMLSchema.NAMESPACE}date>")
-        return s
     }
 }
 
@@ -70,25 +110,19 @@ depot = new FileDepot(baseUri, depotDir)
 depot.atomizer.feedPath = "/feed"
 //depot.atomizer.feedSkeletonPath = "feed_skeleton.atom"
 
-def lines = new File(rdfSource).readLines()
-lines.sort()
-def grouped = lines.groupBy {
+def allLines = new File(rdfSource).readLines()
+allLines.sort()
+def grouped = allLines.groupBy {
     def m = (it =~ /^<([^>#]+)(#[^>]+)?>/);
     if (m[0]) m[0][1]
 }
 
 def session = depot.openSession()
 try {
-    grouped.each { k, v ->
-        def uri = new URI(k)
-        def newNtLines = rewriteLagenNuNTLines(v)
-        if (!newNtLines.find { it.contains(" <${RDF.TYPE}> ") }) {
-            newNtLines += [
-                "<${uri}> <${RDF.TYPE}> <${RPUBL}Forordning> .",
-                "<${uri}> <${RPUBL}forfattningsamling> <http://rinfo.lagrummet.se/ref/sfs> .",
-                "<${uri}> <http://purl.org/dc/terms/publisher> <http://rinfo.lagrummet.se/org/regeringskansliet> .",
-            ]
-        }
+    grouped.each { key, lines ->
+        def uri = new URI(key)
+        // TODO: "retype" docs with lagennu-supplied "är lag"-hint
+        def newNtLines = convertLagenNuNTLines(uri, lines)
         createEntry(session, uri, newNtLines.join("\n"))
     }
 } finally {
