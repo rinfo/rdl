@@ -7,6 +7,9 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX iana: <http://www.iana.org/assignments/relation/>
 PREFIX awol: <http://bblfish.net/work/atom-owl/2006-06-06/#>
+PREFIX tl: <http://purl.org/NET/c4dm/timeline.owl#>
+PREFIX event: <http://purl.org/NET/c4dm/event.owl#>
+PREFIX scv: <http://purl.org/NET/scovo#>
 PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
 
 
@@ -23,9 +26,7 @@ SELECT DISTINCT * WHERE {
     }
     ?doc__1_entry__repr awol:type ?doc__1_entry__repr__1_mediaType .
 
-    OPTIONAL {
-        ?doc__1_type rdfs:label ?doc__1_type__1_label .
-    }
+    OPTIONAL { ?doc__1_type rdfs:label ?doc__1_type__1_label }
 
     OPTIONAL { ?doc dct:title ?doc__1_title }
 
@@ -63,22 +64,49 @@ SELECT DISTINCT * WHERE {
         ?doc__1_rattsdokNrProperty rdfs:subPropertyOf rpubl:rattsdokumentnummer .
     }
 
+
+    $if (path)$
+        FILTER(?doc = <http://rinfo.lagrummet.se/publ/$path$>)
+    $endif$
+
+
     OPTIONAL {
         ?doc dct:publisher ?doc__1_publisher .
-      OPTIONAL {
-        ?doc__1_publisher foaf:name ?doc__1_publisher__1_name .
-      }
     }
 
     OPTIONAL {
-      ?doc ?doc__daterel ?doc__daterel__value .
-      OPTIONAL {
-        ?doc__daterel rdfs:label ?doc__daterel__1_label .
-      }
-      FILTER(datatype(?doc__daterel__value) = xsd:date)
+        ?doc ?doc__daterel ?doc__daterel__value .
+        FILTER(datatype(?doc__daterel__value) = xsd:date)
     }
 
-    #$if (get_relrev)$
+    $if (filter_parts)$
+        ?doc__daterel__eventItem
+            event:product ?doc;
+            scv:dimension ?doc__daterel;
+            tl:atYear ?doc__daterel__eventItem__1_atYear .
+        FILTER(
+            $filter_parts:{
+                $if (it.typeSelector)$
+                    ?doc__1_type = $it.typeSelector$
+                $elseif (it.dateSelector)$
+                    (?doc__daterel = $it.dateSelector$ &&
+                    STR(?doc__daterel__eventItem__1_atYear) = "$it.value$")
+                $elseif (it.leafSelector)$
+                    REGEX(STR(?doc__1_publisher), "[#/]$it.value$\$")
+                $endif$
+            }; separator="&&"$
+        )
+    $endif$
+
+    $if (details)$
+
+        OPTIONAL {
+            ?doc__1_publisher foaf:name ?doc__1_publisher__1_name .
+        }
+
+        OPTIONAL {
+            ?doc__daterel rdfs:label ?doc__daterel__1_label .
+        }
 
         OPTIONAL {
 
@@ -120,17 +148,27 @@ SELECT DISTINCT * WHERE {
 
         }
 
-        # TODO: this one is *extremely* expensive..
+        # IMPORTANT: this one is *very* expensive..
         OPTIONAL {
-        ?doc__rev__subject ?doc__rev ?doc .
+            ?doc__rev__subject ?doc__rev ?doc . FILTER(isURI(?doc__rev__subject))
             OPTIONAL {
-            ?doc__rev owl:inverseOf ?doc__rev__1_inverse .
-            ?doc__rev__1_inverse rdfs:label ?doc__rev__1_inverse__1_label .
+                ?doc__rev__subject a ?doc__rev__subject__1_type .
+            }
+            FILTER(!(?doc__rev = foaf:primaryTopic &&
+                    ?doc__rev__subject__1_type = awol:Entry))
+            OPTIONAL {
+                ?doc__rev owl:inverseOf ?doc__rev__1_inverse .
+                ?doc__rev__1_inverse rdfs:label ?doc__rev__1_inverse__1_label .
             }
         }
 
-    #$endif$
-
-    #$\n$ $filter$
+    $endif$
 
 }
+
+ORDER BY DESC(?doc)
+
+$if (!filter_parts)$
+    LIMIT $max_limit$
+$endif$
+

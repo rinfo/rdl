@@ -1,0 +1,37 @@
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+prefix scv: <http://purl.org/NET/scovo#>
+prefix event: <http://purl.org/NET/c4dm/event.owl#>
+prefix tl: <http://purl.org/NET/c4dm/timeline.owl#>
+prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
+prefix dct: <http://purl.org/dc/terms/>
+
+select distinct
+    ?eventItem__1_year
+    ?eventItem__1_property
+    ?docType
+    ?publisher
+    ?collectionProperty
+where {
+
+    ?eventItem
+        tl:atYear ?eventItem__1_year;
+        scv:dimension ?eventItem__1_property .
+    {
+        ?eventItem__1_property rdfs:domain ?docType .
+    } union {
+        ?docType rdfs:subClassOf [
+            owl:onProperty ?eventItem__1_property
+        ] .
+    }
+    ?eventItem event:product [
+        a ?docType;
+        dct:publisher ?publisher;
+        ?collectionProperty ?publSaml
+    ] .
+    ?collectionProperty rdfs:subPropertyOf rpubl:publikationssamling .
+
+}
+order by desc(?eventItem__1_year)
+

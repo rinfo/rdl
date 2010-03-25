@@ -13,10 +13,7 @@ select distinct * where {
         foaf:name ?org__1_name .
     optional { ?org skos:altLabel ?org__1_alt }
     optional { ?org rdfs:comment ?org__1_comment }
-    optional {
-        ?org__serie
-            dct:publisher ?org;
-            a ?org__serie__1_type .
+    #optional {
         {
             ?org__serie__1_type rdfs:subClassOf bibo:Collection
         } union {
@@ -24,6 +21,9 @@ select distinct * where {
                 rdfs:subClassOf bibo:Collection
             ]
         }
+        ?org__serie a ?org__serie__1_type;
+            dct:publisher ?org .
+
         ?org__serie__1_type rdfs:label ?org__serie__1_type__1_label .
         {
             ?org__serie skos:prefLabel ?org__serie__1_someLabel
@@ -32,7 +32,7 @@ select distinct * where {
         }
         optional { ?org__serie skos:altLabel ?org__serie__1_shortname }
         optional { ?org__serie rdfs:comment ?org__serie__1_comment }
-    }
+    #}
     optional {
         ?org__datasource
             a void:Dataset;

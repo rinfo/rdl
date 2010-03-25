@@ -43,7 +43,7 @@ def convertLagenNuNTLines(URI uri, List<String> lines) {
     } else if (typeTripleIndex == -1) {
         newLines += [
             "<${uri}> <${RDF.TYPE}> <${RPUBL}Forordning> .",
-            "<${uri}> <${RPUBL}forfattningsamling> <http://rinfo.lagrummet.se/ref/sfs> .",
+            "<${uri}> <${RPUBL}forfattningssamling> <http://rinfo.lagrummet.se/ref/sfs> .",
             "<${uri}> <http://purl.org/dc/terms/publisher> <http://rinfo.lagrummet.se/org/regeringskansliet> .",
         ]
     }
@@ -59,6 +59,7 @@ def rewriteLagenNuNTLines(lines) {
         // TODO:? are org refs always correct?
         def s = replaceOnce(it, "<http://lagen.nu/org/2008/", "<http://rinfo.lagrummet.se/org/")
         s = replaceOnce(s, "<${LAGENNNU}paragrafnummer>", "<${RPUBL}paragrafnummer>")
+        s = replaceOnce(s, "<${LEGACY_PUBL}forfattningsamling>", "<${RPUBL}forfattningssamling>")
         s = replaceOnce(s,
                 "<${LEGACY_PUBL}KonsolideradGrundforfattning>", "<${RPUBL}Forordning>")
         s = replaceOnce(s, "<${LEGACY_PUBL}", "<${RPUBL}")
@@ -108,6 +109,7 @@ try {
 def baseUri = new URI("http://rinfo.lagrummet.se/")
 depot = new FileDepot(baseUri, depotDir)
 depot.atomizer.feedPath = "/feed"
+depot.atomizer.feedBatchSize = 100
 //depot.atomizer.feedSkeletonPath = "feed_skeleton.atom"
 
 def allLines = new File(rdfSource).readLines()

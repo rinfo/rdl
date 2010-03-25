@@ -145,8 +145,8 @@ class RepoEntry {
         // TODO: error if already deleted, or doesn't exist at all?
         removeYearDimension()
         clearContext()
-        // TODO:? ok to just add the tombstone as a marker (for collect) like this?
-        addContext()
+        // TODO:? just add the tombstone as a marker (for collect) like this?
+        //addContext()
     }
 
     protected void addContext() {

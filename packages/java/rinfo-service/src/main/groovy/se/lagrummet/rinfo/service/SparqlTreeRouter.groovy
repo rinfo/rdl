@@ -1,5 +1,6 @@
 package se.lagrummet.rinfo.service
 
+
 import org.restlet.Context
 import org.restlet.data.CharacterSet
 import org.restlet.data.Language
@@ -29,194 +30,176 @@ import org.openrdf.repository.Repository
 
 import org.antlr.stringtemplate.StringTemplateGroup
 
-import net.sf.json.groovy.JsonSlurper
+import net.sf.json.JSONSerializer
+//import net.sf.json.groovy.JsonSlurper
 
-import se.lagrummet.rinfo.service.dataview.SparqlTreeViewer
-import se.lagrummet.rinfo.service.dataview.ViewHandler
-import se.lagrummet.rinfo.service.dataview.BasicViewHandler
-//import se.lagrummet.rinfo.service.dataview.ModelViewHandler
-import se.lagrummet.rinfo.service.dataview.RDataViewHandler
+import se.lagrummet.rinfo.service.dataview.TemplateUtil
+import se.lagrummet.rinfo.service.dataview.RDataSparqlTree
 
 
 class SparqlTreeRouter extends Router {
 
-    SparqlTreeRouter(Context context, Repository repository) {
+    SparqlTreeRouter(Context context, Repository repo) {
         super(context)
-        setDefaultMatchingMode(Template.MODE_EQUALS)
 
         def templates = new StringTemplateGroup("sparqltrees")
         templates.setFileCharEncoding("utf-8")
         templates.setRefreshInterval(0) // TODO: cache-control; make configurable
+        def tpltUtil = new TemplateUtil(templates)
 
         // TODO: app-specific global data
         // .. reasonably updated by certain incoming resources (e.g. model, datasets)
         Map appData = [
-            :
+            "encoding": "utf-8",
+            "resourceBaseUrl": "http://rinfo.lagrummet.se/",
+            "basePath": "/rdata",
+            "profile": [
+                "prefix": [
+                    "rpubl": "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#",
+                    "dct": "http://purl.org/dc/terms/",
+                ],
+                "default": "rpubl",
+                "define": ["a": "rdf:type"],
+                "define": ["publisher": "dct:publisher"],
+            ]
         ]
-        // new RInfoServiceApplicationData()
-        //appData.model.labels, appData.categories, ...
 
-        //attachDefault(...)
+        // complete list
+        attach("/org", new RDataFinder(context,
+                    repo, appData, tpltUtil,
+                    "sparqltrees/org/org-tree-rq",
+                    "sparqltrees/org/org_html"))
 
-        attach("/org",
-                new SparqlTreeFinder(context,
-                        new SparqlTreeViewer(repository, templates,
-                                "sparqltrees/org/org-tree-rq",
-                                "sparqltrees/org/org-html")
-                    ) {
-                    ViewHandler createViewHandler(String locale, Request request) {
-                        new BasicViewHandler(locale, [encoding: "utf-8"])
-                    }
-                })
-        //attach("/org/{path}",
+        // TODO:IMPROVE:
+        // - nicer paths? But even "/rpubl/-/{path}" goes to "/rpubl/{path}"!
+        // - find a nicer way to capture path param.. Like {path:anyPath}..
 
-        def searchFinder = new RDataSearchFinder(context,
-                new SparqlTreeViewer(repository, templates,
+        // filtering + narrowing
+        attach("/browse/publ", new RDataFinder(context,
+                    repo, appData, tpltUtil,
+                    "sparqltrees/rdata/publ-list_all_params-rq",
+                    "sparqltrees/rdata/publ_params_html"))
+        //"/years/publ?"
+
+        // list of
+        attach("/list/publ", new RDataFinder(context,
+                    repo, appData, tpltUtil,
+                    "sparqltrees/rdata/rpubl-tree-rq",
+                    "sparqltrees/rdata/publ_list_html"))
+
+        // one
+        attach("/publ/{path}", new RDataFinder(context,
+                        repo, appData, tpltUtil,
                         "sparqltrees/rdata/rpubl-tree-rq",
-                        "sparqltrees/rdata/publ_list_html"),
-                appData)
-        // TODO: even "/rpubl/-/{path}" goes to "/rpubl/{path}"!
-        attach("/list/", searchFinder)
-        attach("/list/-/{path}", searchFinder).getTemplate().getVariables().
+                        "sparqltrees/rdata/publ_doc_html") {
+
+                    @Override
+                    Map createQueryData(Map httpQueryMap, String path) {
+                        def queryData = super.createQueryData(httpQueryMap, path)
+                        queryData['details'] = true
+                        return queryData
+                    }
+
+            }).getTemplate().getVariables().
                 put("path", new Variable(Variable.TYPE_URI_PATH))
 
-        def docFinder = new RDataDocFinder(context,
-                new SparqlTreeViewer(repository, templates,
-                        "sparqltrees/rdata/rpubl-tree-rq",
-                        "sparqltrees/rdata/publ_doc_html"),
-                appData)
-        attach("/publ/{path}", docFinder).getTemplate().getVariables().
-                put("path", new Variable(Variable.TYPE_URI_PATH))
-
-        // TODO: find a nicer way to capture rest of path.. {path:anyPath}
-
-        /* NOTE: unused (remove)
-        def labelTree = new JsonSlurper().parse(
-                ConfigurationUtils.locate("sparqltrees/model/model-settings.json"))
-        attach("/model",
-                new SparqlTreeFinder(context,
-                            new SparqlTreeViewer(repository, templates,
-                                    "sparqltrees/model/model-tree-rq",
-                                    "sparqltrees/model/model-html")) {
-                    ViewHandler createViewHandler(String locale, Request request) {
-                        new ModelViewHandler(locale, null, labelTree)
-                    }
-                })
-        */
     }
 
 }
 
 
-abstract class SparqlTreeFinder extends Finder {
+class RDataFinder extends Finder {
 
-    SparqlTreeViewer rqViewer
     static final DEFAULT_LOCALE = "sv"
+    static final DEFAULT_MAX_LIMIT = 4096
 
-    SparqlTreeFinder(Context context, SparqlTreeViewer rqViewer) {
+    Repository repo
+    Map appData
+    TemplateUtil tpltUtil
+    String queryTpltPath
+    String viewTpltPath
+
+    RDataFinder(Context context, Repository repo,
+            appData, tpltUtil, queryTpltPath, viewTpltPath) {
         super(context)
-        this.rqViewer = rqViewer
+        this.repo = repo
+        this.appData = appData
+        this.tpltUtil = tpltUtil
+        this.queryTpltPath = queryTpltPath
+        this.viewTpltPath = viewTpltPath
     }
 
     @Override
     Handler findTarget(Request request, Response response) {
+        def repr = generateRepresentation(request)
+        if (repr == null) {
+            // TODO: 404..
+            //response.setStatus(Status.CLIENT_ERROR_NOT_FOUND)
+            return null
+        }
         def resource = new Resource(getContext(), request, response)
-        resource.variants.add(generateRepresentation(request))
+        resource.variants.add(repr)
         return resource
     }
 
     Representation generateRepresentation(Request request) {
         def locale = computeLocale(request)
-        return new StringRepresentation(
-                rqViewer.execute(createViewHandler(locale, request)),
-                MediaType.TEXT_HTML,
-                new Language(locale),
-                new CharacterSet("utf-8"))
+        def dataRqTree = new RDataSparqlTree(appData.resourceBaseUrl, locale)
+
+        def queryData = getQueryData(request)
+        def query = tpltUtil.runTemplate(queryTpltPath, queryData)
+        def tree = dataRqTree.runQuery(repo, query)
+        if (queryData["path"] && !tree.any { k, v -> v } )
+            return null
+
+        def asJson = request.resourceRef.extensions == "json"
+        if (asJson) {
+            return toRepresentation(JSONSerializer.toJSON(tree).toString(4),
+                    MediaType.APPLICATION_JSON, locale)
+        } else {
+            tree["query"] = query
+            tree.putAll(appData)
+            return toRepresentation(tpltUtil.runTemplate(viewTpltPath, tree),
+                    MediaType.TEXT_HTML, locale)
+        }
     }
 
     String computeLocale(Request request) {
-        return DEFAULT_LOCALE // TODO: from path or conneg?
+        return DEFAULT_LOCALE
     }
 
-    abstract ViewHandler createViewHandler(String locale, Request request);
-}
-
-
-abstract class RDataFinder extends SparqlTreeFinder {
-
-    Map appData
-    RDataFinder(Context context, SparqlTreeViewer rqViewer, Map appData) {
-        super(context, rqViewer)
-        this.appData = appData
-    }
-    ViewHandler createViewHandler(String locale, Request request) {
-        return new RDataViewHandler(locale, appData, makeQueryData(request))
-    }
-
-    Map makeQueryData(Request request) {
+    def getQueryData(Request request) {
+        // TODO: remove extension from path (always?)
         def path = request.attributes["path"]
-        return queryDataFromPath(path)
+        def httpQueryMap = request.resourceRef.queryAsForm.valuesMap
+        return createQueryData(httpQueryMap, path)
     }
 
-    abstract Map queryDataFromPath(String path);
-
-}
-
-
-class RDataSearchFinder extends RDataFinder {
-
-    RDataSearchFinder(Context context, SparqlTreeViewer rqViewer, Map appData) {
-        super(context, rqViewer, appData)
-    }
-
-    static final DEFAULT_MAX_ITEMS = 100
-
-    Map queryDataFromPath(String path) {
-        return [
-            filter: createSearchFilter(path),
-            get_relrev: false
+    Map createQueryData(Map httpQueryMap, String path) {
+        def queryData = [
+            "max_limit": DEFAULT_MAX_LIMIT,
         ]
-    }
-
-    protected String createSearchFilter(String path) {
-        // TODO: create data to use in sparql stringtemplate instead!
-        def categoryTokens = path? path.split("/"): []
-        def filterParts = []
-        for (token in categoryTokens) {
-            if (token.indexOf("-") > -1) {
-                def bits = token.split("-")
-                if (bits[1] =~ /^\d+$/) {
-                    filterParts.add('REGEX(STR(?doc__daterel), "[#/]'+bits[0]+'$")')
-                    filterParts.add('REGEX(STR(?doc__daterel__value), "^'+bits[1]+'")')
-                }
+        if (path) {
+            queryData["path"] = path
+        }
+        def filters = []
+        httpQueryMap?.each { key, value ->
+            if (key == "a") {
+                filters << ["typeSelector": value]
             } else {
-                filterParts.add('REGEX(STR(?doc__1_type), "[#/]'+token+'")')
+                def selector = (value =~ /^\d+$/)? "dateSelector" : "leafSelector"
+                filters << [(selector): key, value: value]
             }
         }
-        if (!filterParts)
-            return ""
-        else
-            return "FILTER(" + filterParts.join(" && ") + ")"
+        if (filters) {
+            queryData["filter_parts"] = filters
+        }
+        return queryData
+    }
+
+    def toRepresentation(repr, mediaType, locale) {
+        return new StringRepresentation(repr, mediaType,
+                new Language(locale), new CharacterSet("utf-8"))
     }
 
 }
-
-
-class RDataDocFinder extends RDataFinder {
-
-    RDataDocFinder(Context context, SparqlTreeViewer rqViewer, Map appData) {
-        super(context, rqViewer, appData)
-    }
-
-    Map queryDataFromPath(String path) {
-        // TODO: create data to use in sparql stringtemplate instead!
-        def rinfoUri = "http://rinfo.lagrummet.se/publ/${path}"
-        def filter = "FILTER(?doc = <${rinfoUri}>)"
-        return [
-            filter:filter,
-            get_relrev: true
-        ]
-    }
-}
-
-

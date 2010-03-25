@@ -55,7 +55,31 @@
         <div id="pageright">
           <div id="navigation">
             <p class="menuintro">Gå direkt till</p>
-            <ul id="mainmenu"><li class="open"><a href="/rattsinformation/" class="open">Rättsinformation</a><ul class="submenu"><li><a href="/rattsinformation/forfattningar/">Författningar</a></li><li><a href="/rattsinformation/forarbeten/">Förarbeten</a></li><li><a href="/rattsinformation/rattspraxis/">Rättspraxis</a></li><li><a href="/rattsinformation/internationellt/">Internationellt material</a></li><li><a href="/rattsinformation/alla/">Alla våra rättskällor</a></li></ul></li><li class="open"><a href="/lar-dig-mer/" class="open">Lär dig mer</a><ul class="submenu"><li><a href="/lar-dig-mer/faq/">Vanliga frågor </a></li><li><a href="/lar-dig-mer/ordlista/">Ordlista A-Ö</a></li><li><a href="/lar-dig-mer/tips/">Söktips</a></li><li class="selected"><a href="/lar-dig-mer/vart/" class="selected">Vart vänder jag mig?</a></li></ul></li>
+            <ul id="mainmenu">
+              <li class="open">
+                <a href="/rdata" class="open">Rättsinformation</a>
+                <ul class="submenu">
+                  <li><a href="/rdata/browse/publ">Dokumenttyp per utgivare och år</a></li>
+                  <!--
+                  <li><a href="/filter/forfattningar/">Författningar</a></li>
+                  <li><a href="/filter/forarbeten/">Förarbeten</a></li>
+                  <li><a href="/filter/rattspraxis/">Rättspraxis</a></li>
+                  <li><a href="/filter/internationellt/">Internationellt material</a></li>
+                  -->
+                  <li><a href="/rdata/org">Alla rättskällor</a></li>
+                </ul>
+              </li>
+              <!--
+              <li class="open">
+                <a href="/lar-dig-mer/" class="open">Lär dig mer</a>
+                <ul class="submenu">
+                  <li><a href="/lar-dig-mer/faq/">Vanliga frågor </a></li>
+                  <li><a href="/lar-dig-mer/ordlista/">Ordlista A-Ö</a></li>
+                  <li><a href="/lar-dig-mer/tips/">Söktips</a></li>
+                  <li class="selected"><a href="/lar-dig-mer/vart/" class="selected">Vart vänder jag mig?</a></li>
+                </ul>
+              </li>
+              -->
             </ul>
           </div>
 

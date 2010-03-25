@@ -1,5 +1,7 @@
 $sparqltrees/base_html(
-    title={ List },
+    title={
+        Lista ($length(doc)$ poster)
+    },
     main={
         <ul>
             $doc:{

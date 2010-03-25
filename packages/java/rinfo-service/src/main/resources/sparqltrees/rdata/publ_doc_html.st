@@ -20,7 +20,7 @@ $sparqltrees/base_html(
                             $if (it.label)$
                                 $it.label$
                             $else$
-                                $it.uri_term$
+                                <code>$it.uri_term$</code>
                             $endif$
                         </th>
                         <td>$it.value$</td>
@@ -60,12 +60,12 @@ $sparqltrees/base_html(
                 <ul>
                     $it.rel:{
                         <li>
-                            $it.label$:
+                            <span class="rel">$it.label$</span>:
                             $it.subject:{
                                 <a href="$it.rdata_url$">$if (it.label)$
                                         $it.label$
                                     $else$
-                                        $it.resource_uri$
+                                        <code>$it.resource_uri$</code>
                                     $endif$
                                     $if (it.type)$ ($it.type.label$) $endif$</a>
                             }$
@@ -85,8 +85,16 @@ $sparqltrees/base_html(
                 <h2>Andra dokument som relaterar till detta</h2>
                 <ul class="chain">
                     $it.rev:{
-                        <li class="prev">
-                            $it.inverse.label$:
+                        <li class="rev">
+                            <span class="rel">$if (it.inverse)$
+                                $if (it.inverse.label)$
+                                    $it.inverse.label$
+                                $else$
+                                    <code>$it.inverse.uri_term$</code>
+                                $endif$
+                            $else$
+                                <em>Via <code>$it.uri_term$</code></em>
+                            $endif$</span>:
                             $it.subject:{
                                 <a href="$it.rdata_url$">$it.resource_uri$</a>
                             }$

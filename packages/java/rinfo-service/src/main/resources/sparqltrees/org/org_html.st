@@ -7,7 +7,6 @@ $sparqltrees/base_html(
                 <a href="$it.resource_uri$">$it.name$
                 $if (it.alt)$<span>($it.alt$)</span>$endif$</a>
             </h2>
-            <div>$it.resource_uri$</div>
             $if (it.comment)$ <p><em>$it.comment$</em></p> $endif$
             $if (it.serie)$
                 <h3>Serier</h3>
@@ -16,7 +15,6 @@ $sparqltrees/base_html(
                     <li>
                         <p>
                             <a href="$it.resource_uri$">$it.shortname$</a>
-                            <em>$it.name$</em>
                             $it.someLabel$ ($it.type.label$)
                         </p>
                         $if (it.comment)$
@@ -28,12 +26,14 @@ $sparqltrees/base_html(
             $endif$
             $if (it.datasource)$
             <h3>Datakällor</h3>
+                <ul>
                 $it.datasource:{
-                <dl>
-                    <dt>URI</dt> <dd>$it.resource_uri$</dd>
-                    <dt>current</dt> <dd>$it.current.resource_uri$</dd>
-                </dl>
+                    <li>
+                        <a href="$it.current.resource_uri$"
+                            ><code>$it.resource_uri$</code></a>
+                    </li>
                 }$
+                </ul>
             $endif$
         }$
 

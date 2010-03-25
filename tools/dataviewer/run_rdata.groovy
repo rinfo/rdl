@@ -4,13 +4,17 @@
     @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT')
 ])
 import org.openrdf.repository.http.HTTPRepository
+import org.antlr.stringtemplate.StringTemplate
 import org.antlr.stringtemplate.StringTemplateGroup
 import net.sf.json.JSONSerializer
-import se.lagrummet.rinfo.service.dataview.SparqlTreeViewer
-import se.lagrummet.rinfo.service.dataview.RDataViewHandler
+import se.lagrummet.rinfo.base.rdf.sparqltree.SparqlTree
+
+import se.lagrummet.rinfo.service.dataview.TemplateUtil
+import se.lagrummet.rinfo.service.dataview.RDataSparqlTree
 
 
-def (flags, posArgs) = args.split { it =~ /^--/ }
+def (flags, posArgs) = args.split { it =~ /^-/ }
+
 def queryPath = posArgs[0]
 def viewPath = posArgs[1]
 def path = posArgs[2]
@@ -18,23 +22,52 @@ def locale = "sv"
 
 def repo = new HTTPRepository("http://localhost:8080/openrdf-sesame", "rinfo")
 
-def templates = new StringTemplateGroup("sparqltrees")
-def viewer = new SparqlTreeViewer(repo, templates, queryPath, viewPath)
-def appData = [:]
-
-def rinfoUri = "http://rinfo.lagrummet.se/publ/${path}"
-def filter = "FILTER(?doc = <${rinfoUri}>)"
+def appData = [
+    "encoding": "utf-8",
+    "resourceBaseUrl": "http://rinfo.lagrummet.se/",
+    "basePath": "/rdata",
+]
 def queryData = [
-        filter:filter,
-        get_relrev: true
-    ]
-
-def rdataVH = new RDataViewHandler(locale, appData, queryData)
-if ('-d' in flags) {
-    def tree = viewer.execQuery(rdataVH)
-    tree.remove('query')
-    println JSONSerializer.toJSON(tree).toString(4)
+    "max_limit": 1024,
+]
+if (path) {
+    queryData["path"] = path
+    queryData["details"] = true
 } else {
-    println viewer.execute(rdataVH)
+    queryData["filter_parts"] = [
+        ["typeSelector": "rpubl:Lag"],
+        ["dateSelector": "rpubl:utfardandedatum", "value": "1918"],
+        ["leafSelector":  "dct:publisher", "value": "regeringskansliet"],
+    ]
 }
+
+def templates = new StringTemplateGroup("sparqltrees")
+def tpltUtil = new TemplateUtil(templates)
+def dataRqTree = new RDataSparqlTree(appData.resourceBaseUrl, locale)
+def query = tpltUtil.runTemplate(queryPath, queryData)
+
+println "=" * 72
+
+if ('-q' in flags) {
+    println()
+    println query
+    println()
+} else {
+    def start = new Date()
+    println "Running query..."
+    def tree = dataRqTree.runQuery(repo, query)
+    println "=" * 72
+    println()
+    if ('-d' in flags) {
+        println JSONSerializer.toJSON(tree).toString(4)
+    } else {
+        println tpltUtil.runTemplate(viewPath, tree)
+    }
+    println()
+    println "=" * 72
+    def duration = new Date().time - start.time
+    println "Done in ${duration/1000} s."
+}
+
+println "=" * 72
 

@@ -23,30 +23,47 @@ class SparqlTree {
 
     private static final Logger logger = LoggerFactory.getLogger(SparqlTree.class)
 
-    static String URI_KEY = '$uri'
-    static String BNODE_KEY = '$id'
-    static String DATATYPE_KEY = '$datatype'
-    static String VALUE_KEY = '$value'
-    static String LANG_TAG = '@'
     static String SEP = '__'
     static String ONE_MARKER = '1_'
 
+    static String DEFAULT_URI_KEY = '$uri'
+    static String DEFAULT_BNODE_KEY = '$id'
+    static String DEFAULT_DATATYPE_KEY = '$datatype'
+    static String DEFAULT_VALUE_KEY = '$value'
+    static String DEFAULT_LANG_TAG = '@'
+
+    String uriKey = DEFAULT_URI_KEY
+    String bnodeKey = DEFAULT_BNODE_KEY
+    String datatypeKey = DEFAULT_DATATYPE_KEY
+    String valueKey = DEFAULT_VALUE_KEY
+    String langTag = DEFAULT_LANG_TAG
+    //String locale = null
+    //boolean laxOne = true
+
+    /**
+     * A SparqlTree instance is stateless apart from its configuration
+     * properties. It is thus thread-safe and ok to keep around indefinitely.
+     */
     SparqlTree() {
     }
 
-    static Map runQuery(Repository repo, String query) {
+    Map runQuery(Repository repo, String query) {
         def root = [:]
         def conn = repo.getConnection()
         def resultTree
         try {
-            def tupleQuery = conn.prepareTupleQuery(
+            TupleQuery tupleQuery = conn.prepareTupleQuery(
                     QueryLanguage.SPARQL, query)
             // TODO: configurable..
             tupleQuery.setIncludeInferred(false)
-            def result = tupleQuery.evaluate()
-            resultTree = new SparqlTree().buildTree(
-                    new QueryResult(result), root)
-            result.close()
+            logger.debug("Running query..")
+            TupleQueryResult result = tupleQuery.evaluate()
+            logger.debug("Query complete.")
+            try {
+                resultTree = buildTree(new QueryResult(result), root)
+            } finally {
+                result.close()
+            }
         } catch (IOException e) {
             throw new RuntimeException("Internal stream error.", e)
         } finally {
@@ -55,7 +72,6 @@ class SparqlTree {
         return resultTree
     }
 
-    // TODO: remove runQuery and start here?
     Map buildTree(QueryResult result, Map root) {
         logger.debug("Building tree..")
         def varModel = makeVarTreeModel(result.getBindingNames())
@@ -64,7 +80,41 @@ class SparqlTree {
         return root
     }
 
-    Map makeVarTreeModel(List bindingNames) {
+    boolean isLangNode(obj) {
+        return (obj instanceof Map) && obj.find(
+                { k, v -> k.startsWith(langTag) }) != null
+    }
+
+    boolean isDatatypeNode(obj) {
+        return (obj instanceof Map) && obj.containsKey(datatypeKey)
+    }
+
+    boolean isLiteral(obj) {
+        return !(obj instanceof Map) || isDatatypeNode(obj) || isLangNode(obj)
+    }
+
+    boolean isResource(obj) {
+        // TODO: currently we do allow for "pure" anonymous nodes (w/o BNODE_KEY:s)
+        // but this check is more expensive:
+        return ! isLiteral(obj)
+    }
+
+    /**
+     * Overridable template method which is called with a node once it has been
+     * populated with all keys and descendant values.
+     *
+     * @param node The value this node will be represented by, unless altered
+     *             by this method call.
+     * @param parentNode The parent node where this node will be put.
+     * @param key The name for which this node is reached from the parentNode.
+     * @return The final value for the node (defaults to the unmodified node
+     *         itself).
+     */
+    Object completeNode(Object node, String key, Map parentNode) {
+        return node
+    }
+
+    protected Map makeVarTreeModel(List bindingNames) {
         bindingNames = new ArrayList(bindingNames)
         Collections.sort(bindingNames)
         def varTree = [:]
@@ -89,22 +139,21 @@ class SparqlTree {
         return varTree
     }
 
-    void fillNodes(Map varModel, Map treeNode, Iterable bindings) {
+    protected void fillNodes(Map varModel, Map parentNode, Iterable bindings) {
         varModel.entrySet().each { mapEntry ->
             def key = mapEntry.key
             def (useOne, varName, subVarModel) = mapEntry.value
-            List nodes = []
+            List<Object> nodes = []
 
             for (Map.Entry<String, List> resultMapEntry : groupBy(bindings,
                     { it.getValue(varName) }).entrySet()) {
                 def varValue = resultMapEntry.getKey()
-                def groupedBindings = resultMapEntry.getValue()
-
                 if (!varValue) {
                     continue
                 }
-                def node = makeNode(varValue)
 
+                def groupedBindings = resultMapEntry.getValue()
+                def node = makeNode(varValue)
                 /* TODO: ...
                 // if already stored (less necessary if grouping is smart?
                 // Nah, lack of REDUCED/DISTINCT reasonably requires this..)
@@ -117,27 +166,34 @@ class SparqlTree {
                 }
                 */
                 nodes.add(node)
-
                 if (node instanceof Map && subVarModel) {
                     fillNodes(subVarModel, node, groupedBindings)
                 }
             }
-            treeNode[key] = useOne? toOne(nodes) : nodes
+            def finalValue = nodes
+            if (useOne) {
+                finalValue = completeNode(toOne(nodes), key, parentNode)
+            } else {
+                for (int i = 0; i < nodes.size(); i++) {
+                    nodes[i] = completeNode(nodes[i], key, parentNode)
+                }
+            }
+            parentNode[key] = finalValue
         }
     }
 
-    Object makeNode(Value value) {
+    protected Object makeNode(Value value) {
         def node = [:]
         def stringValue = value.stringValue()
         if (value instanceof org.openrdf.model.URI) {
-            node[URI_KEY] = stringValue
+            node[uriKey] = stringValue
         } else if (value instanceof BNode) {
-            node[BNODE_KEY] = stringValue
+            node[bnodeKey] = stringValue
         } else if (value instanceof Literal) {
             def lang = value.getLanguage()
             def datatype = value.getDatatype()
             if (lang != null) {
-                node[LANG_TAG+lang] = stringValue
+                node[langTag+lang] = stringValue
             } else if (datatype != null) {
                 node = typeCast(datatype, value)
             } else {
@@ -153,7 +209,7 @@ class SparqlTree {
      * Casting the value (only if it is JSON compatible and can be
      * deterministically converted back).
      */
-    Object typeCast(org.openrdf.model.URI datatype, Value value) {
+    protected Object typeCast(org.openrdf.model.URI datatype, Value value) {
         if (datatype == XMLSchema.BOOLEAN) {
             return value.booleanValue()
         } else if (datatype == XMLSchema.INTEGER) {
@@ -162,13 +218,13 @@ class SparqlTree {
             return value.floatValue()
         } else {
             def node = [:]
-            node[VALUE_KEY] = value.stringValue()
-            node[DATATYPE_KEY] = datatype.toString()
+            node[valueKey] = value.stringValue()
+            node[datatypeKey] = datatype.toString()
             return node
         }
     }
 
-    Object toOne(nodes) {
+    protected Object toOne(nodes) {
         if (nodes.size() == 0) {
             return null
         }
@@ -177,7 +233,7 @@ class SparqlTree {
             first = new HashMap()
             for (node in nodes) {
                 if (!(node instanceof Map)) {
-                    node = [(LANG_TAG): node]
+                    node = [(langTag): node]
                     // TODO: warn if a node isn't a dict:
                     //   "value was expected to be a lang dict but was %r."
                 }
@@ -197,10 +253,10 @@ class SparqlTree {
         return first
     }
 
-    static boolean isLangMap(Object obj) {
+    protected boolean isLangMap(Object obj) {
         if (obj instanceof Map) {
             for (key in ((Map)obj).keySet()) {
-                if (key.startsWith(LANG_TAG)) {
+                if (key.startsWith(langTag)) {
                     return true
                 }
             }
@@ -217,25 +273,6 @@ class SparqlTree {
                 map[key] = [o]
             return map
         }
-    }
-
-    static boolean isLangNode(obj) {
-        return (obj instanceof Map) && obj.find(
-                { k, v -> k.startsWith(LANG_TAG) }) != null
-    }
-
-    static boolean isDatatypeNode(obj) {
-        return (obj instanceof Map) && obj.containsKey(DATATYPE_KEY)
-    }
-
-    static boolean isLiteral(obj) {
-        return !(obj instanceof Map) || isDatatypeNode(obj) || isLangNode(obj)
-    }
-
-    static boolean isResource(obj) {
-        // TODO: currently we do allow for "pure" anonymous nodes (w/o BNODE_KEY:s)
-        // but this check is more expensive:
-        return ! isLiteral(obj)
     }
 
 }
