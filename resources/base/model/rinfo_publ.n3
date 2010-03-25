@@ -939,6 +939,10 @@
             owl:cardinality 1
         ],
         [ a owl:Restriction;
+            owl:onProperty :referatrubrik;
+            owl:minCardinality 1
+        ],
+        [ a owl:Restriction;
             owl:onProperty :arsutgava;
             owl:maxCardinality 1
         ],
