@@ -30,71 +30,69 @@ tks_org: a coin:TokenSet;
     rdf:value "hd";
     coin:tokenSet tks_org: .
 
-# TODO: fill in missing values!
-
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/svea_hovr%C3%A4tt>;
-    rdf:value "";
+    rdf:value "hsv";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/g%C3%B6ta_hovr%C3%A4tt>;
-    rdf:value "";
+    rdf:value "hgo";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/hovr%C3%A4tten_%C3%B6ver_sk%C3%A5ne_och_blekinge>;
-    rdf:value "";
+    rdf:value "hsb";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/hovr%C3%A4tten_f%C3%B6r_v%C3%A4stra_sverige>;
-    rdf:value "";
+    rdf:value "hvs";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/hovr%C3%A4tten_f%C3%B6r_nedre_norrland>;
-    rdf:value "";
+    rdf:value "hnn";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/hovr%C3%A4tten_f%C3%B6r_%C3%B6vre_norrland>;
-    rdf:value "";
+    rdf:value "hon";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/milj%C3%B6%C3%B6verdomstolen>;
-    rdf:value "";
+    rdf:value "mod";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/regeringsr%C3%A4tten>;
-    rdf:value "";
+    rdf:value "regr";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/kammarr%C3%A4tten_i_stockholm>;
-    rdf:value "";
+    rdf:value "kst";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/kammarr%C3%A4tten_i_goteborg>;
-    rdf:value "";
+    rdf:value "kgg";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/kammarr%C3%A4tten_i_sundsvall>;
-    rdf:value "";
+    rdf:value "ksu";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/kammarr%C3%A4tten_i_j%C3%B6nk%C3%B6ping>;
-    rdf:value "";
+    rdf:value "kjo";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/migrations%C3%B6verdomstolen>;
-    rdf:value "";
+    rdf:value "mig";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
@@ -104,21 +102,21 @@ tks_org: a coin:TokenSet;
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/arbetsdomstolen>;
-    rdf:value "";
+    rdf:value "ad";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/marknadsdomstolen>;
-    rdf:value "";
+    rdf:value "md";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/patentbesv%C3%A4rsr%C3%A4tten>;
-    rdf:value "";
+    rdf:value "pbr";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/statens_ansvarsn%C3%A4mnd>;
-    rdf:value "";
+    rdf:value "san";
     coin:tokenSet tks_org: .
 
