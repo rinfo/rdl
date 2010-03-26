@@ -20,6 +20,7 @@ import se.lagrummet.rinfo.store.depot.*
 RPUBL  = "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
 LEGACY_PUBL = "http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#"
 LAGENNNU = "http://lagen.nu/terms#"
+DCT = "http://purl.org/dc/terms/"
 
 GRUNDLAG_NUMBERS = [
     '1974:152', // regeringsform
@@ -34,6 +35,7 @@ def convertLagenNuNTLines(URI uri, List<String> lines) {
 
     def typeTripleIndex = newLines.findIndexOf { it.startsWith("<${uri}> <${RDF.TYPE}> ") }
 
+    // retype:
     if (GRUNDLAG_NUMBERS.find(uri.toString().&endsWith)) {
         newLines[typeTripleIndex] = "<${uri}> <${RDF.TYPE}> <${RPUBL}Grundlag> ."
 
@@ -47,6 +49,17 @@ def convertLagenNuNTLines(URI uri, List<String> lines) {
             "<${uri}> <http://purl.org/dc/terms/publisher> <http://rinfo.lagrummet.se/org/regeringskansliet> .",
         ]
     }
+
+    // only for type:
+    if (newLines[typeTripleIndex].endsWith("<${RPUBL}Rattsfallsreferat> .")) {
+        newLines = newLines.collect {
+            def s = replaceOnce(it, "<${DCT}description>", "<${RPUBL}referatrubrik>")
+            s = s.replaceAll(/(.+) <${DCT}identifier> "\w+ ([^"]+)"@sv \./,
+                            '$1 <'+RPUBL+'publikationsplatsangivelse> "$2" .')
+            return s
+        }
+    }
+
     return newLines
 }
 
@@ -54,18 +67,33 @@ def rewriteLagenNuNTLines(lines) {
     return lines.findAll {
         !( it.find("<${LAGENNNU}senastHamtad>") ||
             it.find("<${LEGACY_PUBL}konsoliderar>") ||
-            it.find("<${LEGACY_PUBL}konsolideringsunderlag>") )
+            it.find("<${LEGACY_PUBL}konsolideringsunderlag>") ||
+            it.find('relation> ""')
+        )
     }.collect {
         // TODO:? are org refs always correct?
         def s = replaceOnce(it, "<http://lagen.nu/org/2008/", "<http://rinfo.lagrummet.se/org/")
+
         s = replaceOnce(s, "<${LAGENNNU}paragrafnummer>", "<${RPUBL}paragrafnummer>")
         s = replaceOnce(s, "<${LEGACY_PUBL}forfattningsamling>", "<${RPUBL}forfattningssamling>")
         s = replaceOnce(s,
                 "<${LEGACY_PUBL}KonsolideradGrundforfattning>", "<${RPUBL}Forordning>")
         s = replaceOnce(s, "<${LEGACY_PUBL}", "<${RPUBL}")
         s = s.replaceAll(/("\d{4}-\d{2}-\d{2}")(@\w+)?/, '$1'+"^^<${XMLSchema.NAMESPACE}date>")
+
+        s = s.replaceAll(/#K(\d+)P/, '#k_$1-p_')
+        s = replaceOnce(s, "#K", "#k_")
+        s = replaceOnce(s, "#P", "#p_")
+
+        s = replaceOnce(s, "<http://rinfo.lagrummet.se/publ/rattsfall/",
+                            "<http://rinfo.lagrummet.se/publ/rf/")
         return s
     }
+}
+
+def fixUri(uri) {
+    return replaceOnce(uri, "http://rinfo.lagrummet.se/publ/rattsfall/",
+                        "http://rinfo.lagrummet.se/publ/rf/")
 }
 
 def isLaw(lines) {
@@ -122,10 +150,14 @@ def grouped = allLines.groupBy {
 def session = depot.openSession()
 try {
     grouped.each { key, lines ->
-        def uri = new URI(key)
-        // TODO: "retype" docs with lagennu-supplied "är lag"-hint
+        def uri = new URI(fixUri(key))
         def newNtLines = convertLagenNuNTLines(uri, lines)
-        createEntry(session, uri, newNtLines.join("\n"))
+        def ntStr = newNtLines.join("\n")
+        if (false) {
+            println "DEBUG for <${uri}>:"; println ntStr; System.exit 0
+        } else {
+            createEntry(session, uri, ntStr)
+        }
     }
 } finally {
     session.close()
