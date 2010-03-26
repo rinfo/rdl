@@ -164,13 +164,23 @@ class RDataFinder extends Finder {
         }
     }
 
+    def toRepresentation(repr, mediaType, locale) {
+        return new StringRepresentation(repr, mediaType,
+                new Language(locale), new CharacterSet("utf-8"))
+    }
+
     String computeLocale(Request request) {
         return DEFAULT_LOCALE
     }
 
     def getQueryData(Request request) {
-        // TODO: remove extension from path (always?)
+        // TODO:? configure metadataService to remove extension?
+        // (+ how does conneg work right now?)
         def path = request.attributes["path"]
+        def ext = request.resourceRef.extensions
+        if (ext && path.endsWith("."+ext)) {
+            path = path.substring(0, path.length()-(ext.length()+1))
+        }
         def httpQueryMap = request.resourceRef.queryAsForm.valuesMap
         return createQueryData(httpQueryMap, path)
     }
@@ -195,11 +205,6 @@ class RDataFinder extends Finder {
             queryData["filter_parts"] = filters
         }
         return queryData
-    }
-
-    def toRepresentation(repr, mediaType, locale) {
-        return new StringRepresentation(repr, mediaType,
-                new Language(locale), new CharacterSet("utf-8"))
     }
 
 }

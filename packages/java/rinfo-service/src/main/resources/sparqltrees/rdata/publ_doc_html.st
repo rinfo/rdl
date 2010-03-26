@@ -2,13 +2,10 @@ $sparqltrees/base_html(
     title={ $first(doc).title$ },
     main={
         $doc:{
+        <div class="doc">
             <h2>$it.serie.label$ $it.serieNummer$</h2>
-            <p>
-                <em>$it.type.label$</em>
-            </p>
-            <p>
-                <code>$it.resource_uri$</code>
-            </p>
+            <p><em>$it.type.label$</em></p>
+            <p><code>$it.resource_uri$</code></p>
             <table class="docmeta">
                 <tr>
                     <th>Utgivare</th>
@@ -35,7 +32,7 @@ $sparqltrees/base_html(
             </table>
 
             $if (it.entry.repr)$
-                <ul>
+                <ul class="representations">
                     $it.entry.repr:{
                         <li>
                             <a href="$it.resource_uri$">$it.mediaType$</a>
@@ -57,7 +54,7 @@ $sparqltrees/base_html(
             -->
             $if (it.rel)$
                 <h2>Relationer</h2>
-                <ul>
+                <ul class="relations">
                     $it.rel:{
                         <li>
                             <span class="rel">$it.label$</span>:
@@ -73,6 +70,7 @@ $sparqltrees/base_html(
                     }$
                 </ul>
             $endif$
+        </div>
         }$
     },
     related={
@@ -83,9 +81,9 @@ $sparqltrees/base_html(
             -->
             $if (it.rev)$
                 <h2>Andra dokument som relaterar till detta</h2>
-                <ul class="chain">
+                <ul class="incoming">
                     $it.rev:{
-                        <li class="rev">
+                        <li>
                             <span class="rel">$if (it.inverse)$
                                 $if (it.inverse.label)$
                                     $it.inverse.label$

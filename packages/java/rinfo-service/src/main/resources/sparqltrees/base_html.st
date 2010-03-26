@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv">
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-    <link href="http://www.lagrummet.se/favicon.ico" rel="shortcut icon" />
-    <link rel="stylesheet" type="text/css" media="screen" href="http://www.lagrummet.se/styles/screen.css" />
-    <link rel="stylesheet" type="text/css" media="handheld" href="http://www.lagrummet.se/styles/handheld.css" />
-    <link rel="stylesheet" type="text/css" media="print" href="http://www.lagrummet.se/styles/print.css" />
+    <link href="/img/favicon.ico" rel="shortcut icon" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/screen.css" />
+    <link rel="stylesheet" type="text/css" media="handheld" href="/css/handheld.css" />
+    <link rel="stylesheet" type="text/css" media="print" href="/css/print.css" />
     <!--[if lte IE 6]>
-    <link rel="stylesheet" type="text/css" href="http://www.lagrummet.se/styles/ie.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="/css/ie.css" media="screen" />
     <![endif]-->
     <style type="text/css">
 
@@ -38,9 +38,11 @@
     <div id="container">
       <div id="header">
         <div id="headercontent">
+          <!--
           <ul id="quicknav">
             <li><a href="http://www.lagrummet.se/">Till webbplatsen lagrummet.se</a></li>
           </ul>
+          -->
           <!--
           <a href="/" accesskey="1" class="logo"><img src="http://www.lagrummet.se/img/lr/logo_lagrummet.gif" alt="Till startsidan för projektdokumentationen" /></a>
           -->
@@ -99,8 +101,14 @@
       <div id="footer">
         <div id="footercontent">
           <div class="contact">
-            <p class="left">Kontakta: rinfo-service@lagrummet.se</p>
-            <p class="right"><a href="http://www.domstol.se">Domstolsverket</a></p>
+            <p class="left">
+              Kontakta: rinfo-service@lagrummet.se
+            </p>
+            <p class="right">
+              <!--
+              <a href="http://www.domstol.se">Domstolsverket</a>
+              -->
+            </p>
           </div>
         </div>
       </div>

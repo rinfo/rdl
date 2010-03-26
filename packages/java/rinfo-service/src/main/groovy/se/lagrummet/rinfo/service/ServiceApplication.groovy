@@ -40,7 +40,7 @@ class ServiceApplication extends Application {
     public static final String RDF_LOADER_CONTEXT_KEY =
             "rinfo.service.rdfloader.restlet.context"
 
-    String mediaDirUrl = "war:///css/"
+    String mediaDirUrl = "war:///"
 
     SesameLoadScheduler loadScheduler
     RepositoryHandler repositoryHandler
@@ -67,7 +67,9 @@ class ServiceApplication extends Application {
         router.attach("/rdata", new SparqlTreeRouter(
                 getContext(), repositoryHandler.repository))
         if (mediaDirUrl) {
-            router.attach("/css", new Directory(getContext(), mediaDirUrl))
+            router.attach("/css", new Directory(getContext(), mediaDirUrl+"css/"))
+            router.attach("/img", new Directory(getContext(), mediaDirUrl+"img/"))
+            router.attach("/js", new Directory(getContext(), mediaDirUrl+"js/"))
         }
         return router
     }

@@ -28,7 +28,7 @@ def appData = [
     "basePath": "/rdata",
 ]
 def queryData = [
-    "max_limit": 1024,
+    "max_limit": 4096,
 ]
 if (path) {
     queryData["path"] = path

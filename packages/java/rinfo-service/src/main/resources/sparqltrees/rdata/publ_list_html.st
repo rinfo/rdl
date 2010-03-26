@@ -3,13 +3,12 @@ $sparqltrees/base_html(
         Lista ($length(doc)$ poster)
     },
     main={
-        <ul>
+        <ul class="doclist">
             $doc:{
             <li>
                 <h2><a href="$it.rdata_url$">$it.title$</a></h2>
-                <p>
-                    <code>$it.resource_uri$</code>
-                </p>
+                <h3>$it.serie.label$ $it.serieNummer$</h3>
+                <div><code>$it.resource_uri$</code></div>
             </li>
             }$
         </ul>
