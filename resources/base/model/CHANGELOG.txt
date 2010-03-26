@@ -2,10 +2,15 @@
 CHANGELOG
 ########################################################################
 
+2010-03-26
+--------------------
+
+* Lade till egenskapen :domsnummer för :VagledandeDomstolsavgorande
+
 2010-03-24
 --------------------
 
-* Lade till owl:restriction för :referatrubrik på Rattsfallsreferat
+* Lade till owl:restriction för :referatrubrik på :Rattsfallsreferat
 
 2010-03-05
 --------------------

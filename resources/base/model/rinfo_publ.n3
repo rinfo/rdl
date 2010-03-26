@@ -872,6 +872,10 @@
             owl:cardinality 1
         ],
         [ a owl:Restriction;
+            owl:onProperty :domsnummer;
+            owl:maxCardinality 1
+        ],
+        [ a owl:Restriction;
             owl:onProperty :domstolsavdelning;
             owl:maxCardinality 1
         ],
@@ -886,17 +890,11 @@
     rdfs:label "Målnummer"@sv;
     rdfs:comment "Det målnummer som domstolen tilldelar målet vid anhängiggörandet."@sv; .
 
-# TODO: förutom malnummer behövs troligen domsnummer och diarienummer.
-#
-#:domsnummer a owl:DatatypeProperty;
-#    rdfs:isDefinedBy : ;
-#    rdfs:label "Domsnummer"@sv;
-#    rdfs:comment "Det domsnummer som domstolen tilldelar målet vid TODO."@sv; .
-#
-#:diarienummer a owl:DatatypeProperty;
-#    rdfs:isDefinedBy : ;
-#    rdfs:label "Diarienummer"@sv;
-#    rdfs:comment "Det diarienummer som domstolen tilldelar målet vid TODO."@sv; .
+:domsnummer a owl:DatatypeProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Domsnummer"@sv;
+    rdfs:comment "Det domsnummer som domstolen tilldelar målet vid ..."@sv; .
+
 
 :domstolsavdelning a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
@@ -1107,3 +1105,4 @@
     rdfs:label "Diarienummer"@sv;
     rdfs:comment "Diarienummer för ett ärende."@sv;
     rdfs:isDefinedBy : .
+
