@@ -177,9 +177,11 @@ class RDataFinder extends Finder {
         // TODO:? configure metadataService to remove extension?
         // (+ how does conneg work right now?)
         def path = request.attributes["path"]
-        def ext = request.resourceRef.extensions
-        if (ext && path.endsWith("."+ext)) {
-            path = path.substring(0, path.length()-(ext.length()+1))
+        if (path) {
+            def ext = request.resourceRef.extensions
+            if (ext && path.endsWith("."+ext)) {
+                path = path.substring(0, path.length()-(ext.length()+1))
+            }
         }
         def httpQueryMap = request.resourceRef.queryAsForm.valuesMap
         return createQueryData(httpQueryMap, path)
