@@ -35,11 +35,11 @@ class StorageSession {
     StorageSession(StorageCredentials credentials,
             Depot depot,
             Collection<StorageHandler> storageHandlers,
-            CollectorLog collectorLog) {
+            CollectorLogSession logSession) {
         this.credentials = credentials
         this.depot = depot
         this.storageHandlers = storageHandlers
-        logSession = collectorLog.openSession()
+        this.logSession = logSession
     }
 
     void close() {

@@ -21,7 +21,7 @@ class SourceFeedsConfigurationSpeck extends Specification {
         def sourceFeedsConfigHandler = new SourceFeedsConfigHandler(
                 collectScheduler, sourceFeedsEntryId)
         def session = new StorageSession(new StorageCredentials(true),
-                Mock(Depot), [], Mock(CollectorLog))
+                Mock(Depot), [], Mock(CollectorLogSession))
 
         when: "an entry with expected id is created"
         sourceFeedsConfigHandler.onModified(session, mockSourcesEntry(), true)
@@ -35,7 +35,7 @@ class SourceFeedsConfigurationSpeck extends Specification {
         def sourceFeedsConfigHandler = new SourceFeedsConfigHandler(
                 null, sourceFeedsEntryId)
         def session = new StorageSession(new StorageCredentials(false),
-                Mock(Depot), [], Mock(CollectorLog))
+                Mock(Depot), [], Mock(CollectorLogSession))
 
         when: "an entry with expected id is created"
         sourceFeedsConfigHandler.onModified(session, mockSourcesEntry(), true)

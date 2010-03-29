@@ -40,7 +40,7 @@ public class Storage {
 
     public StorageSession openSession(StorageCredentials credentials) {
         return new StorageSession(credentials,
-                depot, storageHandlers, collectorLog);
+                depot, storageHandlers, collectorLog.openSession());
     }
 
     public void shutdown() {
