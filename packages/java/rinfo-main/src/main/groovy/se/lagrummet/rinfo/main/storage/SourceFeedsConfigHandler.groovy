@@ -57,7 +57,7 @@ class SourceFeedsConfigHandler implements StorageHandler {
             feedUrls.add(walker.rel("iana:current").asURI())
         }
         /* */
-        def tree = SparqlTree.runQuery(repo, sourceFeedsQuery)
+        def tree = new SparqlTree().runQuery(repo, sourceFeedsQuery)
         tree.rinfoset.each {
             it.source.each {
                 feedUrls.add(new URL(it.feed['$uri']))
