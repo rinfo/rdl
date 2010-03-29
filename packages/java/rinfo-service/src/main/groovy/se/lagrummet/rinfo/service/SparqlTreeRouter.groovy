@@ -75,13 +75,28 @@ class SparqlTreeRouter extends Router {
         // - find a nicer way to capture path param.. Like {path:anyPath}..
 
         // filtering + narrowing
-        attach("/browse/publ", new RDataFinder(context,
+        def browseFinder = new RDataFinder(context,
                     repo, appData, tpltUtil,
                     "sparqltrees/rdata/publ-list_all_params-rq",
-                    "sparqltrees/rdata/publ_params_html"))
+                    "sparqltrees/rdata/publ_params_html") {
+
+                    @Override
+                    Map getQueryData(Request request) {
+                        def queryData = [
+                            "docType": request.attributes["type"],
+                            "publisher": request.attributes["publisher"],
+                        ]
+                        return queryData
+                    }
+
+            }
+        attach("/browse/publ", browseFinder)
+        attach("/browse/publ/{type}", browseFinder)
+        attach("/browse/publ/{type}/{publisher}", browseFinder)
         //"/years/publ?"
 
         // list of
+        //attach("/browse/publ/{type}/{publisher}/{year}", listFinder)
         attach("/list/publ", new RDataFinder(context,
                     repo, appData, tpltUtil,
                     "sparqltrees/rdata/rpubl-tree-rq",
@@ -173,7 +188,7 @@ class RDataFinder extends Finder {
         return DEFAULT_LOCALE
     }
 
-    def getQueryData(Request request) {
+    Map getQueryData(Request request) {
         // TODO:? configure metadataService to remove extension?
         // (+ how does conneg work right now?)
         def path = request.attributes["path"]

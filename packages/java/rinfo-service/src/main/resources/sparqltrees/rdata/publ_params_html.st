@@ -4,12 +4,17 @@ $sparqltrees/base_html(
         <ul>
             $docType:{docType|
             <li>
-                <h2>$docType.label$</h2>
+                <h2>
+                    <a href="$basePath$/browse/publ/rpubl:$docType.uri_term$">$docType.label$</a>
+                </h2>
                 <ul>
                     $docType.publisher:{publ|
                     <li>
                         <ul>
-                            <h3>$publ.name$</h3>
+                            <h3>
+                                <a href="$basePath$/browse/publ/rpubl:$docType.uri_term$/$publ.uri_term$"
+                                   >$publ.name$</a>
+                            </h3>
                             $publ.eventItem:{
                             <li>
                                 <a href="$basePath$/list/publ?a=rpubl:$docType.uri_term$&amp;dct:publisher=$publ.uri_term$&amp;rpubl:$it.property.uri_term$=$it.year$">$it.year$</a>
