@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+                xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                xmlns:grddl="http://www.w3.org/2003/g/data-view#"
+                exclude-result-prefixes="rdf grddl">
 
-    <!-- Last modified: 2009-12-21
-         Copyright: Niklas Lindström [lindstream@gmail.com]
-         License: BSD-style -->
+    <!--
+        Last modified: 2010-03-28
+        Copyright: Niklas Lindström <lindstream@gmail.com>
+        License: BSD-style
+    -->
     <xsl:template name="_description">
         <doas:XSLTStylesheet rdf:about="http://purl.org/oort/impl/xslt/grit/rdfxml-grit.xslt"
                              xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -16,7 +20,7 @@
             <dct:created rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
                          >2009-12-08</dct:created>
             <dct:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-                        >2009-12-21</dct:modified>
+                        >2010-03-28</dct:modified>
             <dct:license rdf:resource="http://usefulinc.com/doap/licenses/bsd"/>
             <foaf:primaryTopic rdf:resource="http://purl.org/oort/def/2009/grit"/>
             <dct:creator>
@@ -29,34 +33,49 @@
         </doas:XSLTStylesheet>
     </xsl:template>
 
-    <!--
-    TODO:
-        - interpreted rdf:li, @rdf:_* (rdf:Seq, rdf:Bag, rdf:Alt)..
-        - non-sugared rdf:List..
+    <!-- TODO:
+
+    * Design Issues:
+        - evaluate the usefulness of current solution for datatyped literals (@fmt)
+
+    * Less important:
 
         - @xml:base: to resolve about, resource and ID against
             - currently no or uniform use of relative uri:s is assumed
             - and crude special-casing of "#..." is done in final uri values
+            - see also <http://xsltsl.sourceforge.net/>
 
         - @rdf:ID: normalize with @rdf:about use ("concat($base, '#', @rdf:ID)")
             - currently assumes uses of ID are isolated
 
-    To improve:
-        - topresources algorithm.. (about and nodeID via //*, *[not(...)] top-level bnodes)
+        - interpreted rdf:li, @rdf:_* (rdf:Seq, rdf:Bag, rdf:Alt)..
+        - handle non-sugared rdf:List..
 
-    Unsupported by current design:
-        - named bnodes (@rdf:nodeID) in output (bnodes are inlined in rels)
+    * Improve:
+        - topresources algorithm.. (about and nodeID via //*, *[not(...)] top-level bnodes)
+        - optional support for $lang-filter (remove all lang literals with different lang)
+
     -->
 
     <xsl:param name="base" select="/*/@xml:base[position()=1]"/>
+    <xsl:param name="lang-filter"/>
+    <xsl:param name="grddl-ref">
+        <!-- <xsl:text>http://purl.org/oort/impl/xslt/grit/grit-grddl.xslt</xsl:text> -->
+    </xsl:param>
 
     <xsl:variable name="all-namespaces" select="//*/namespace::*"/>
 
-    <xsl:key name="bnode" match="//*[@rdf:nodeID]" use="@rdf:nodeID"/>
     <xsl:key name="about" match="//*[@rdf:about]" use="@rdf:about"/>
+    <xsl:key name="bnode" match="//*[@rdf:nodeID and *]" use="@rdf:nodeID"/>
+    <xsl:key name="bnoderef" match="//*[@rdf:nodeID and not(*)]" use="@rdf:nodeID"/>
 
     <xsl:template match="/" name="grit">
         <graph>
+            <xsl:if test="$grddl-ref">
+                <xsl:attribute name="grddl:transformation">
+                    <xsl:value-of select="$grddl-ref"/>
+                </xsl:attribute>
+            </xsl:if>
             <xsl:copy-of select="$all-namespaces"/>
             <xsl:copy-of select="$base"/>
             <xsl:call-template name="topresources">
@@ -72,7 +91,8 @@
         <xsl:for-each select="$descriptions">
             <xsl:choose>
                 <!--
-                <xsl:when test="self::rdf:Description[not(*)] and not(../@rdf:parseType='Collection')"/>
+                <xsl:when test="self::rdf:Description[not(*)] and
+                          not(../@rdf:parseType='Collection')"/>
                 -->
                 <xsl:when test="self::rdf:Description[not(*)]"/>
 
@@ -109,23 +129,41 @@
                     </resource>
                 </xsl:when>
 
-                <xsl:when test="$atroot and not(@rdf:nodeID) or (@rdf:nodeID and
-                          generate-id() = generate-id(key('bnode', @rdf:nodeID)[1]) and
-                          not($atroot and ../*//*[@rdf:nodeID = current()/@rdf:nodeID]) )">
-                    <resource>
-                        <xsl:for-each select=". | key('bnode', @rdf:nodeID)">
-                            <xsl:call-template name="resourcebody"/>
-                        </xsl:for-each>
-                    </resource>
-                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:variable name="all-nodeids" select="key('bnode', @rdf:nodeID)"/>
+                    <xsl:variable name="ref-count" select="count(key('bnoderef', @rdf:nodeID))"/>
+                    <xsl:variable name="true-blank" select="$atroot and not(@rdf:nodeID)"/>
+                    <xsl:variable name="first-named-bnode"
+                                  select="@rdf:nodeID and generate-id() =
+                                                generate-id($all-nodeids[1])"/>
+                    <xsl:variable name="first-spread-bnode" select="
+                            $first-named-bnode and not($atroot and
+                                    (../*//*[@rdf:nodeID = current()/@rdf:nodeID])
+                                    )"/>
+                    <xsl:variable name="selfref"
+                                  select=".//*[@rdf:nodeID = current()/@rdf:nodeID]"/>
+                    <xsl:if test="$true-blank or ($first-named-bnode and $selfref) or
+                             ($first-spread-bnode and
+                                (($ref-count = 0 and $atroot) or $ref-count > 1))">
+                        <resource>
+                            <xsl:if test="$ref-count > 0">
+                                <xsl:attribute name="uri">
+                                    <xsl:text>_:</xsl:text>
+                                    <xsl:value-of select="@rdf:nodeID"/>
+                                </xsl:attribute>
+                            </xsl:if>
+                            <xsl:for-each select=". | $all-nodeids">
+                                <xsl:call-template name="resourcebody"/>
+                            </xsl:for-each>
+                        </resource>
+                    </xsl:if>
+                </xsl:otherwise>
             </xsl:choose>
 
             <xsl:call-template name="topresources">
                 <xsl:with-param name="descriptions"
-                                select="*[not(@rdf:parseType='XMLLiteral')]/*[@rdf:about | *]"/>
+                                select="*[not(@rdf:parseType='Literal')]/*[@rdf:about | *]"/>
             </xsl:call-template>
-            <!-- if inlined bnodes weren't kept inlined, they should be expanded here:
-                    select="*/*[@rdf:nodeID | @rdf:parseType='Resource']" -->
 
         </xsl:for-each>
     </xsl:template>
@@ -172,19 +210,13 @@
                     </xsl:attribute>
                 </xsl:when>
                 <xsl:when test="@rdf:nodeID">
-                    <xsl:variable name="nodeRef" select="."/>
-                    <xsl:for-each select="key('bnode', @rdf:nodeID)">
-                        <!-- NOTE: key should not select referencing properties.. -->
-                        <xsl:if test=". != $nodeRef">
-                            <xsl:call-template name="resourcebody"/>
-                        </xsl:if>
-                    </xsl:for-each>
+                    <xsl:call-template name="output-bnode-in-property"/>
                 </xsl:when>
                 <xsl:when test="@rdf:parseType='Resource'">
                     <xsl:apply-templates mode="type" select="rdf:type"/>
                     <xsl:apply-templates mode="property" select="*|@*"/>
                 </xsl:when>
-                <xsl:when test="@rdf:parseType='XMLLiteral'">
+                <xsl:when test="@rdf:parseType='Literal'">
                     <xsl:attribute name="fmt">xml</xsl:attribute>
                     <xsl:copy-of select="node()"/>
                 </xsl:when>
@@ -197,8 +229,13 @@
                         </xsl:with-param>
                     </xsl:call-template>
                 </xsl:when>
+                <xsl:when test="key('bnode', */@rdf:nodeID)">
+                    <xsl:for-each select="key('bnode', */@rdf:nodeID)">
+                        <xsl:call-template name="output-bnode-in-property"/>
+                    </xsl:for-each>
+                </xsl:when>
                 <xsl:when test="*[not(@rdf:about)]">
-                    <xsl:for-each select="*[not(@rdf:about)] | key('bnode', */@rdf:nodeID)">
+                    <xsl:for-each select="*[not(@rdf:about)]">
                         <xsl:call-template name="resourcebody"/>
                     </xsl:for-each>
                 </xsl:when>
@@ -212,6 +249,28 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:element>
+    </xsl:template>
+
+    <xsl:template name="output-bnode-in-property">
+        <xsl:variable name="ref-count" select="count(key('bnoderef', @rdf:nodeID))"/>
+        <xsl:variable name="thisNode" select="."/>
+        <xsl:variable name="selfref"
+                      select="ancestor::*[@rdf:nodeID = current()/@rdf:nodeID]"/>
+        <xsl:choose>
+            <xsl:when test="$ref-count &lt; 2 and not($selfref)">
+                <xsl:for-each select="key('bnode', @rdf:nodeID)">
+                    <xsl:if test=". != $thisNode">
+                        <xsl:call-template name="resourcebody"/>
+                    </xsl:if>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:attribute name="ref">
+                    <xsl:text>_:</xsl:text>
+                    <xsl:value-of select="@rdf:nodeID"/>
+                </xsl:attribute>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <xsl:template mode="property" match="@rdf:about | @rdf:resource | @rdf:nodeID | @rdf:ID |
@@ -315,7 +374,15 @@
                 <xsl:value-of select="$base"/>
             </xsl:when>
             <xsl:when test="starts-with($uri, '#')">
-                <xsl:value-of select="concat($base, $uri)"/>
+                <xsl:choose>
+                    <xsl:when test="contains($base, '#')">
+                        <xsl:value-of select="substring-before($base, '#')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$base"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:value-of select="$uri"/>
             </xsl:when>
             <!-- overly careful "is relative" check -->
             <xsl:when test="not(contains($uri, ':')) and not(contains($uri, '/'))">
