@@ -54,6 +54,8 @@ def convertLagenNuNTLines(URI uri, List<String> lines) {
     if (newLines[typeTripleIndex].endsWith("<${RPUBL}Rattsfallsreferat> .")) {
         newLines = newLines.collect {
             def s = replaceOnce(it, "<${DCT}description>", "<${RPUBL}referatrubrik>")
+            // TODO: is "issued" good enough?
+            s = replaceOnce(it, "<${RPUBL}avgorandedatum>", "<${DCT}issued>")
             s = s.replaceAll(/(.+) <${DCT}identifier> "\w+ ([^"]+)"@sv \./,
                             '$1 <'+RPUBL+'publikationsplatsangivelse> "$2" .')
             return s
