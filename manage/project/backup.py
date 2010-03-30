@@ -20,8 +20,9 @@ def configure():
     env.bakfile = "rinfo-backups.tgz"
 
 def _get_svn_host():
-    return re.sub(r'.*Repository Root: \w+://([^/]+?)/.*', r'\1',
-            local("svn info").replace('\n', ' '))
+    for l in local("svn info --xml").splitlines():
+        for svnhost in re.findall(r'\s*<root>\w+://([^/]+?)/.*</root>', l):
+            return svnhost
 
 configure()
 
@@ -60,6 +61,7 @@ def bak_admin_log():
 
 def bak():
     "Create backups of all project data."
+
     bak_trac()
     bak_svn()
     bak_admin_log()
