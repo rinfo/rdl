@@ -8,13 +8,18 @@ class RDataSparqlTree extends SparqlTree {
 
     String locale
     String localeKey
-    String resourceBaseUrl
+    Map appData
+    Map basePrefixMap
 
-    RDataSparqlTree(String resourceBaseUrl, String locale) {
+    RDataSparqlTree(Map appData, String locale) {
         setUriKey("resource_uri")
         this.locale = locale
         this.localeKey = langTag+locale
-        this.resourceBaseUrl = resourceBaseUrl
+        this.appData = appData
+        basePrefixMap = [:]
+        appData.profile.prefix.each { k, v ->
+            basePrefixMap[v] = k
+        }
     }
 
     Object completeNode(Object node, String key, Map parentNode) {
@@ -26,9 +31,12 @@ class RDataSparqlTree extends SparqlTree {
         } else if (isResource(node)) {
             def uri = node[uriKey]
             if (uri) {
-                node['uri_term'] = uriTerm(uri)
-                if (uri.startsWith(resourceBaseUrl)) {
-                    def path = uri.substring(resourceBaseUrl.size())
+                def baseUrl = appData.resourceBaseUrl
+                    def term = getUriTerm(uri)
+                node['uri_term'] = term
+                node['qname'] = qname(uri, term)
+                if (uri.startsWith(baseUrl)) {
+                    def path = uri.substring(baseUrl.size())
                     //switch (path) {
                     //    case ~/publ\/.+/:
                     //    break
@@ -40,10 +48,18 @@ class RDataSparqlTree extends SparqlTree {
         return node
     }
 
-    String uriTerm(uri) {
+    String getUriTerm(uri) {
         return uri.substring(
                 uri.lastIndexOf(uri.contains('#')? '#' : '/') + 1,
                 uri.size())
+    }
+
+    String qname(uri, term) {
+        def basePart = uri.substring(0, uri.size()-term.size())
+        def pfx = basePrefixMap[basePart]
+        if (pfx == null)
+            return
+        return pfx+":"+term
     }
 
 }

@@ -37,8 +37,11 @@ if (path) {
     queryData["filter_parts"] = [
         ["typeSelector": "rpubl:Lag"],
         ["dateSelector": "rpubl:utfardandedatum", "value": "1918"],
-        ["leafSelector":  "dct:publisher", "value": "regeringskansliet"],
+        ["publisherSelector":  true, "value": "regeringskansliet"],
     ]
+    //
+    queryData["docType"] = "rpubl:Rattsfallsreferat"
+    queryData["publisher"] = "domstolsverket"
 }
 
 def templates = new StringTemplateGroup("sparqltrees")

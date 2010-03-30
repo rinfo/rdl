@@ -91,7 +91,7 @@ SELECT DISTINCT * WHERE {
                 $elseif (it.dateSelector)$
                     (?doc__daterel = $it.dateSelector$ &&
                     STR(?doc__daterel__eventItem__1_atYear) = "$it.value$")
-                $elseif (it.leafSelector)$
+                $elseif (it.publisherSelector)$
                     REGEX(STR(?doc__1_publisher), "[#/]$it.value$\$")
                 $endif$
             }; separator="&&"$

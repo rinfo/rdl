@@ -31,6 +31,12 @@ where {
             ?docType rdfs:subClassOf [
                 owl:onProperty ?docType__publisher__eventItem__1_property
             ] .
+        } union {
+            ?docType rdfs:subClassOf [
+                rdfs:subClassOf [
+                    owl:onProperty ?docType__publisher__eventItem__1_property
+                ]
+            ] .
         }
 
         ?docType__publisher__eventItem

@@ -47,6 +47,8 @@ class ServiceApplication extends Application {
 
     public ServiceApplication(Context parentContext) {
         super(parentContext)
+        tunnelService.extensionsTunnel = true
+
         // TODO: reuse IoC pattern from main (Components etc.)
         def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
 

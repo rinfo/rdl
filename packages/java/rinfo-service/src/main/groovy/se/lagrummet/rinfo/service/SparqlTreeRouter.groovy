@@ -42,11 +42,6 @@ class SparqlTreeRouter extends Router {
     SparqlTreeRouter(Context context, Repository repo) {
         super(context)
 
-        def templates = new StringTemplateGroup("sparqltrees")
-        templates.setFileCharEncoding("utf-8")
-        templates.setRefreshInterval(0) // TODO: cache-control; make configurable
-        def tpltUtil = new TemplateUtil(templates)
-
         // TODO: app-specific global data
         // .. reasonably updated by certain incoming resources (e.g. model, datasets)
         Map appData = [
@@ -58,11 +53,16 @@ class SparqlTreeRouter extends Router {
                     "rpubl": "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#",
                     "dct": "http://purl.org/dc/terms/",
                 ],
-                "default": "rpubl",
-                "define": ["a": "rdf:type"],
-                "define": ["publisher": "dct:publisher"],
+                //"default": "rpubl",
+                //"define": ["a": "rdf:type"],
+                //"define": ["publisher": "dct:publisher"],
             ]
         ]
+
+        def templates = new StringTemplateGroup("sparqltrees")
+        templates.setFileCharEncoding(appData["encoding"])
+        templates.setRefreshInterval(0) // TODO: cache-control; make configurable
+        def tpltUtil = new TemplateUtil(templates)
 
         // complete list
         attach("/org", new RDataFinder(context,
@@ -72,22 +72,21 @@ class SparqlTreeRouter extends Router {
 
         // TODO:IMPROVE:
         // - nicer paths? But even "/rpubl/-/{path}" goes to "/rpubl/{path}"!
-        // - find a nicer way to capture path param.. Like {path:anyPath}..
 
         // filtering + narrowing
         def browseFinder = new RDataFinder(context,
-                    repo, appData, tpltUtil,
-                    "sparqltrees/rdata/publ-list_all_params-rq",
-                    "sparqltrees/rdata/publ_params_html") {
+                repo, appData, tpltUtil,
+                "sparqltrees/rdata/publ-list_all_params-rq",
+                "sparqltrees/rdata/publ_params_html") {
 
-                    @Override
-                    Map getQueryData(Request request) {
-                        def queryData = [
-                            "docType": request.attributes["type"],
-                            "publisher": request.attributes["publisher"],
-                        ]
-                        return queryData
-                    }
+                @Override
+                Map getQueryData(Request request) {
+                    def queryData = [
+                        "docType": request.attributes["type"],
+                        "publisher": request.attributes["publisher"],
+                    ]
+                    return queryData
+                }
 
             }
         attach("/browse/publ", browseFinder)
@@ -96,27 +95,56 @@ class SparqlTreeRouter extends Router {
         //"/years/publ?"
 
         // list of
-        //attach("/browse/publ/{type}/{publisher}/{year}", listFinder)
-        attach("/list/publ", new RDataFinder(context,
-                    repo, appData, tpltUtil,
-                    "sparqltrees/rdata/rpubl-tree-rq",
-                    "sparqltrees/rdata/publ_list_html"))
+        attach("/list/publ/{type}/{publisher}/{dateProperty}@{year}",
+            new RDataFinder(context,
+                repo, appData, tpltUtil,
+                "sparqltrees/rdata/rpubl-tree-rq",
+                "sparqltrees/rdata/publ_list_html") {
+
+                @Override
+                Map getQueryData(Request request) {
+                    def queryData = [:]
+                    def attrs = request.attributes
+                    def filters = [
+                        ["typeSelector": attrs["type"]],
+                        ["dateSelector": attrs["dateProperty"], "value": attrs["year"]],
+                        ["publisherSelector": true, "value": attrs["publisher"]],
+                    ]
+                    if (filters) {
+                        queryData["filter_parts"] = filters
+                    }
+                    return queryData
+                }
+
+            })
 
         // one
-        attach("/publ/{path}", new RDataFinder(context,
-                        repo, appData, tpltUtil,
-                        "sparqltrees/rdata/rpubl-tree-rq",
-                        "sparqltrees/rdata/publ_doc_html") {
+        attach("/publ/{path}",
+            new RDataFinder(context,
+                    repo, appData, tpltUtil,
+                    "sparqltrees/rdata/rpubl-tree-rq",
+                    "sparqltrees/rdata/publ_doc_html") {
 
-                    @Override
-                    Map createQueryData(Map httpQueryMap, String path) {
-                        def queryData = super.createQueryData(httpQueryMap, path)
-                        queryData['details'] = true
-                        return queryData
+                @Override
+                Map getQueryData(Request request) {
+                    // TODO:? configure metadataService to remove extension?
+                    // (+ how does conneg work right now?)
+                    def path = request.attributes["path"]
+                    if (path) {
+                        def ext = request.resourceRef.extensions
+                        if (ext && path.endsWith("."+ext)) {
+                            path = path.substring(0, path.length()-(ext.length()+1))
+                        }
                     }
+                    return [
+                        "path": path,
+                        'details': true,
+                    ]
+                }
 
-            }).getTemplate().getVariables().
-                put("path", new Variable(Variable.TYPE_URI_PATH))
+            }
+        // TODO:IMPROVE: find a nicer way to capture path param.. Like {path:anyPath}..
+        ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
 
     }
 
@@ -144,84 +172,65 @@ class RDataFinder extends Finder {
         this.viewTpltPath = viewTpltPath
     }
 
-    @Override
-    Handler findTarget(Request request, Response response) {
-        def repr = generateRepresentation(request)
-        if (repr == null) {
-            // TODO: 404..
-            //response.setStatus(Status.CLIENT_ERROR_NOT_FOUND)
-            return null
-        }
-        def resource = new Resource(getContext(), request, response)
-        resource.variants.add(repr)
-        return resource
+    /**
+     * Template method used to extract params to query from request.
+     */
+    Map getQueryData(Request request) {
+        return [:]
     }
 
-    Representation generateRepresentation(Request request) {
-        def locale = computeLocale(request)
-        def dataRqTree = new RDataSparqlTree(appData.resourceBaseUrl, locale)
-
+    Map runQuery(Request request) {
+        def locale = DEFAULT_LOCALE // or from Variant..
+        def dataRqTree = new RDataSparqlTree(appData, locale)
         def queryData = getQueryData(request)
+        queryData["max_limit"] = DEFAULT_MAX_LIMIT
         def query = tpltUtil.runTemplate(queryTpltPath, queryData)
         def tree = dataRqTree.runQuery(repo, query)
         if (queryData["path"] && !tree.any { k, v -> v } )
             return null
-
-        def asJson = request.resourceRef.extensions == "json"
-        if (asJson) {
-            return toRepresentation(JSONSerializer.toJSON(tree).toString(4),
-                    MediaType.APPLICATION_JSON, locale)
-        } else {
-            tree["query"] = query
-            tree.putAll(appData)
-            return toRepresentation(tpltUtil.runTemplate(viewTpltPath, tree),
-                    MediaType.TEXT_HTML, locale)
-        }
+        tree.locale = locale
+        tree.putAll(appData)
+        return tree
     }
 
-    def toRepresentation(repr, mediaType, locale) {
-        return new StringRepresentation(repr, mediaType,
-                new Language(locale), new CharacterSet("utf-8"))
+    String makeHtmlView(Map tree) {
+        return tpltUtil.runTemplate(viewTpltPath, tree)
     }
 
-    String computeLocale(Request request) {
-        return DEFAULT_LOCALE
-    }
+    @Override
+    Handler findTarget(Request request, Response response) {
+        return new Resource(getContext(), request, response) {
 
-    Map getQueryData(Request request) {
-        // TODO:? configure metadataService to remove extension?
-        // (+ how does conneg work right now?)
-        def path = request.attributes["path"]
-        if (path) {
-            def ext = request.resourceRef.extensions
-            if (ext && path.endsWith("."+ext)) {
-                path = path.substring(0, path.length()-(ext.length()+1))
+            @Override
+            List<Variant> getVariants() {
+                return [
+                    new Variant(MediaType.TEXT_HTML),
+                    new Variant(MediaType.APPLICATION_JSON),
+                ]
             }
-        }
-        def httpQueryMap = request.resourceRef.queryAsForm.valuesMap
-        return createQueryData(httpQueryMap, path)
-    }
 
-    Map createQueryData(Map httpQueryMap, String path) {
-        def queryData = [
-            "max_limit": DEFAULT_MAX_LIMIT,
-        ]
-        if (path) {
-            queryData["path"] = path
-        }
-        def filters = []
-        httpQueryMap?.each { key, value ->
-            if (key == "a") {
-                filters << ["typeSelector": value]
-            } else {
-                def selector = (value =~ /^\d+$/)? "dateSelector" : "leafSelector"
-                filters << [(selector): key, value: value]
+            @Override
+            Representation represent(Variant variant) {
+                def tree = runQuery(getRequest())
+                if (tree == null) {
+                    return null
+                }
+                if (variant.mediaType.equals(MediaType.APPLICATION_JSON)) {
+                    return toRepresentation(JSONSerializer.toJSON(tree).toString(4),
+                            MediaType.APPLICATION_JSON, tree.locale)
+                } else {
+                    return toRepresentation(makeHtmlView(tree),
+                            MediaType.TEXT_HTML, tree.locale)
+                }
             }
+
+            def toRepresentation(repr, mediaType, locale) {
+                return new StringRepresentation(repr, mediaType,
+                        new Language(locale), new CharacterSet("utf-8"))
+            }
+
         }
-        if (filters) {
-            queryData["filter_parts"] = filters
-        }
-        return queryData
+
     }
 
 }
