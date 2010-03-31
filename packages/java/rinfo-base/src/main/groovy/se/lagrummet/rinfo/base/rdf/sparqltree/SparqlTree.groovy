@@ -140,7 +140,7 @@ class SparqlTree {
     }
 
     protected void fillNodes(Map varModel, Map parentNode, Iterable bindings) {
-        varModel.entrySet().each { mapEntry ->
+        for (mapEntry in varModel.entrySet()) {
             def key = mapEntry.key
             def (useOne, varName, subVarModel) = mapEntry.value
             List<Object> nodes = []
