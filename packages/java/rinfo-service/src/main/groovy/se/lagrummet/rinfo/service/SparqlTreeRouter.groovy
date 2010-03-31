@@ -39,39 +39,45 @@ import se.lagrummet.rinfo.service.dataview.RDataSparqlTree
 
 class SparqlTreeRouter extends Router {
 
+    static APP_DATA = [
+        "encoding": "utf-8",
+        "resourceBaseUrl": "http://rinfo.lagrummet.se/",
+        "basePath": "/rdata",
+        "profile": [
+            "prefix": [
+                "rpubl": "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#",
+                "dct": "http://purl.org/dc/terms/",
+            ],
+            //"default": "rpubl",
+            //"define": ["a": "rdf:type"],
+            //"define": ["publisher": "dct:publisher"],
+        ],
+        "mediaTypes": [
+            "application/rdf+xml": "RDF-data",
+            "application/pdf": "PDF-dokument"
+        ]
+    ]
+
     SparqlTreeRouter(Context context, Repository repo) {
         super(context)
 
         // TODO: app-specific global data
         // .. reasonably updated by certain incoming resources (e.g. model, datasets)
-        Map appData = [
-            "encoding": "utf-8",
-            "resourceBaseUrl": "http://rinfo.lagrummet.se/",
-            "basePath": "/rdata",
-            "profile": [
-                "prefix": [
-                    "rpubl": "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#",
-                    "dct": "http://purl.org/dc/terms/",
-                ],
-                //"default": "rpubl",
-                //"define": ["a": "rdf:type"],
-                //"define": ["publisher": "dct:publisher"],
-            ]
-        ]
+        Map appData = APP_DATA
 
         def templates = new StringTemplateGroup("sparqltrees")
         templates.setFileCharEncoding(appData["encoding"])
         templates.setRefreshInterval(0) // TODO: cache-control; make configurable
         def tpltUtil = new TemplateUtil(templates)
 
+        // TODO:IMPROVE:
+        // - nicer paths? But even "/rpubl/-/{path}" goes to "/rpubl/{path}"!
+
         // complete list
         attach("/org", new RDataFinder(context,
                     repo, appData, tpltUtil,
                     "sparqltrees/org/org-tree-rq",
                     "sparqltrees/org/org_html"))
-
-        // TODO:IMPROVE:
-        // - nicer paths? But even "/rpubl/-/{path}" goes to "/rpubl/{path}"!
 
         // filtering + narrowing
         def browseFinder = new RDataFinder(context,
@@ -127,8 +133,6 @@ class SparqlTreeRouter extends Router {
 
                 @Override
                 Map getQueryData(Request request) {
-                    // TODO:? configure metadataService to remove extension?
-                    // (+ how does conneg work right now?)
                     def path = request.attributes["path"]
                     if (path) {
                         def ext = request.resourceRef.extensions

@@ -40,11 +40,14 @@ SELECT DISTINCT * WHERE {
         ?doc
             rpubl:utrSerie ?doc__1_serie;
             rpubl:utrSerienummer ?doc__1_serieNummer .
-        OPTIONAL { ?serie skos:altLabel ?doc__1_serie__label }
+        OPTIONAL { ?doc__1_serie skos:altLabel ?doc__1_serie__1_label }
 
-    # Rattsfallsreferat
-    #} UNION {
-    #
+    } UNION {
+        ?doc # a rpubl:Rattsfallsreferat;
+            rpubl:rattsfallspublikation ?doc__1_serie;
+            rpubl:publikationsordinal ?doc__1_serieNummer .
+        OPTIONAL { ?doc rpubl:referatrubrik ?doc__1_title }
+        OPTIONAL { ?doc__1_serie skos:altLabel ?doc__1_serie__1_label }
 
     } UNION {
         ?doc a rpubl:KonsolideradGrundforfattning;

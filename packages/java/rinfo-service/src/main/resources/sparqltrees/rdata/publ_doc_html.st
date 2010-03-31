@@ -23,49 +23,49 @@ $sparqltrees/base_html(
                         <td>$it.value$</td>
                     </tr>
                 }$
-                <!-- TODO:
+                $!<!-- TODO:
                 <tr>
                     <th>Källa</th>
                     <td><a href="/">Regeringskansliets rättsdatabaser</a></td>
                 </tr>
-                -->
+                -->!$
             </table>
 
             $if (it.entry.repr)$
+                <h3>Finns på formaten</h3>
                 <ul class="representations">
                     $it.entry.repr:{
                         <li>
-                            <a href="$it.resource_uri$">$it.mediaType$</a>
+                            <a href="$it.resource_uri$">
+                                $if (mediaTypes.(it.mediaType))$
+                                    $mediaTypes.(it.mediaType)$
+                                $else$
+                                    $it.mediaType$
+                                $endif$
+                            </a>
                         </li>
                     }$
                 </ul>
             $endif$
-            <!--
-            $if (it.pdf_url)$
-                <p class="pdflink">
-                    <a href="$it.pdf_url$">Ladda ner PDF-version av SFS 1999:175</a>
-                </p>
-            $endif$
-            -->
 
-
-            <!--
-            <h2>Ändringar och övergångsbestämmelser</h2>
-            -->
             $if (it.rel)$
                 <h2>Relationer</h2>
                 <ul class="relations">
                     $it.rel:{
                         <li>
                             <span class="rel">$it.label$</span>:
+                            <ul>
                             $it.subject:{
-                                <a href="$it.rdata_url$">$if (it.label)$
-                                        $it.label$
-                                    $else$
-                                        <code>$it.resource_uri$</code>
-                                    $endif$
-                                    $if (it.type)$ ($it.type.label$) $endif$</a>
+                                <li>
+                                    <a href="$it.rdata_url$">$if (it.label)$
+                                            $it.label$
+                                        $else$
+                                            <code>$it.resource_uri$</code>
+                                        $endif$
+                                        $if (it.type)$ ($it.type.label$) $endif$</a>
+                                </li>
                             }$
+                            </ul>
                         </li>
                     }$
                 </ul>
@@ -76,9 +76,6 @@ $sparqltrees/base_html(
     related={
         $doc:{
         <div class="panel">
-            <!--
-            <h2>Förarbeten</h2>
-            -->
             $if (it.rev)$
                 <h2>Andra dokument som relaterar till detta</h2>
                 <ul class="incoming">
@@ -93,17 +90,15 @@ $sparqltrees/base_html(
                             $else$
                                 <em>Via <code>$it.uri_term$</code></em>
                             $endif$</span>:
+                            <ul>
                             $it.subject:{
-                                <a href="$it.rdata_url$">$it.resource_uri$</a>
+                                <li>
+                                    <a href="$it.rdata_url$">$it.resource_uri$</a>
+                                </li>
                             }$
+                            </ul>
                         </li>
                     }$
-                    <!--
-                    <li class="current">
-                        $it.title$
-                        ($it.serie.label$ $it.serieNummer$)
-                    </li>
-                    -->
                 </ul>
             $endif$
         </div>

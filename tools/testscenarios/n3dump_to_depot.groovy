@@ -92,15 +92,13 @@ def rewriteLagenNuNTLines(lines) {
         s = replaceOnce(s, "#K", "#k_")
         s = replaceOnce(s, "#P", "#p_")
 
-        s = replaceOnce(s, "<${RINFO}publ/rattsfall/",
-                            "<${RINFO}publ/rf/")
+        s = replaceOnce(s, "<${RINFO}publ/rattsfall/", "<${RINFO}publ/rf/")
         return s
     }
 }
 
 def fixUri(uri) {
-    return replaceOnce(uri, "${RINFO}publ/rattsfall/",
-                        "${RINFO}publ/rf/")
+    return replaceOnce(uri, "${RINFO}publ/rattsfall/", "${RINFO}publ/rf/")
 }
 
 def isLaw(lines) {

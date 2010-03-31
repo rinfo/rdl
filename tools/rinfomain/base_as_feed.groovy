@@ -28,11 +28,13 @@ FEED_META = [
     publicBaseUri: "http://rinfo.lagrummet.se"
 ]
 
-// FIXME: doesn't work locally now (when statically server under "/admin" )
-FEED_PATH_CONF = [
-    baseUrl: "",
-    feedPath: "/feed/current"
-]
+// FIXME: cumbersome to make it work locally now (when statically server under "/admin" )
+def feedPathConf(localBase="") {
+    return [
+        baseUrl: "${localBase}",
+        feedPath: "${localBase}/feed/current"
+    ]
+}
 
 
 @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT')
@@ -43,6 +45,7 @@ def main() {
     cli.b 'base', args:1
     cli.s 'sources', args:1
     cli.o 'outdir', args:1
+    cli.l 'localBase', args:1
     def opt = cli.parse(args)
     if (opt.h) {
         cli.usage(); System.exit 0
@@ -54,7 +57,7 @@ def main() {
     assert outdir != null
 
     def items = collectItems(FEED_META.publicBaseUri, base, sources)
-    def coll = createAtomCollection(FEED_META, FEED_PATH_CONF, items)
+    def coll = createAtomCollection(FEED_META, feedPathConf(opt.l), items)
 
     def extMap = [
         "application/rdf+xml": "rdf",

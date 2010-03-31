@@ -1,7 +1,8 @@
 @Grapes([
     @Grab('org.antlr:stringtemplate:3.2.1'),
     @Grab('net.sf.json-lib:json-lib:2.2.3:jdk15'),
-    @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT')
+    @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT'),
+    @Grab('org.restlet:org.restlet:1.1.4')
 ])
 import org.openrdf.repository.http.HTTPRepository
 import org.antlr.stringtemplate.StringTemplate
@@ -9,6 +10,7 @@ import org.antlr.stringtemplate.StringTemplateGroup
 import net.sf.json.JSONSerializer
 import se.lagrummet.rinfo.base.rdf.sparqltree.SparqlTree
 
+import static se.lagrummet.rinfo.service.SparqlTreeRouter.APP_DATA
 import se.lagrummet.rinfo.service.dataview.TemplateUtil
 import se.lagrummet.rinfo.service.dataview.RDataSparqlTree
 
@@ -22,11 +24,7 @@ def locale = "sv"
 
 def repo = new HTTPRepository("http://localhost:8080/openrdf-sesame", "rinfo")
 
-def appData = [
-    "encoding": "utf-8",
-    "resourceBaseUrl": "http://rinfo.lagrummet.se/",
-    "basePath": "/rdata",
-]
+def appData = APP_DATA
 def queryData = [
     "max_limit": 4096,
 ]
@@ -46,7 +44,7 @@ if (path) {
 
 def templates = new StringTemplateGroup("sparqltrees")
 def tpltUtil = new TemplateUtil(templates)
-def dataRqTree = new RDataSparqlTree(appData.resourceBaseUrl, locale)
+def dataRqTree = new RDataSparqlTree(appData, locale)
 def query = tpltUtil.runTemplate(queryPath, queryData)
 
 println "=" * 72
