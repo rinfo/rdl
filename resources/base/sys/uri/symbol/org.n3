@@ -97,7 +97,7 @@ tks_org: a coin:TokenSet;
 
 [] a coin:Token;
     coin:represents <http://rinfo.lagrummet.se/org/r%C3%A4ttshj%C3%A4lpsn%C3%A4mnden>;
-    rdf:value "";
+    rdf:value "rhn";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
