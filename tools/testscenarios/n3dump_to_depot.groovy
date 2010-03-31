@@ -17,8 +17,9 @@ import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.store.depot.*
 
 
-RPUBL  = "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
-LEGACY_PUBL = "http://rinfo.lagrummet.se/taxo/2007/09/rinfo/pub#"
+RINFO = "http://rinfo.lagrummet.se/"
+RPUBL  = "${RINFO}ns/2008/11/rinfo/publ#"
+LEGACY_PUBL = "${RINFO}taxo/2007/09/rinfo/pub#"
 LAGENNNU = "http://lagen.nu/terms#"
 DCT = "http://purl.org/dc/terms/"
 
@@ -45,8 +46,8 @@ def convertLagenNuNTLines(URI uri, List<String> lines) {
     } else if (typeTripleIndex == -1) {
         newLines += [
             "<${uri}> <${RDF.TYPE}> <${RPUBL}Forordning> .",
-            "<${uri}> <${RPUBL}forfattningssamling> <http://rinfo.lagrummet.se/ref/sfs> .",
-            "<${uri}> <http://purl.org/dc/terms/publisher> <http://rinfo.lagrummet.se/org/regeringskansliet> .",
+            "<${uri}> <${RPUBL}forfattningssamling> <${RINFO}serie/fs/sfs> .",
+            "<${uri}> <http://purl.org/dc/terms/publisher> <${RINFO}org/regeringskansliet> .",
         ]
     }
 
@@ -55,7 +56,7 @@ def convertLagenNuNTLines(URI uri, List<String> lines) {
         newLines = newLines.collect {
             def s = replaceOnce(it, "<${DCT}description>", "<${RPUBL}referatrubrik>")
             // TODO: is "issued" good enough?
-            s = replaceOnce(it, "<${RPUBL}avgorandedatum>", "<${DCT}issued>")
+            s = replaceOnce(s, "<${RPUBL}avgorandedatum>", "<${DCT}issued>")
             s = s.replaceAll(/(.+) <${DCT}identifier> "\w+ ([^"]+)"@sv \./,
                             '$1 <'+RPUBL+'publikationsplatsangivelse> "$2" .')
             return s
@@ -74,7 +75,11 @@ def rewriteLagenNuNTLines(lines) {
         )
     }.collect {
         // TODO:? are org refs always correct?
-        def s = replaceOnce(it, "<http://lagen.nu/org/2008/", "<http://rinfo.lagrummet.se/org/")
+        def s = replaceOnce(it, "<http://lagen.nu/org/2008/", "<${RINFO}org/")
+
+        s = replaceOnce(s, "<${RINFO}ref/sfs>", "<${RINFO}serie/fs/sfs>")
+        s = replaceOnce(s, "<${RINFO}ref/fs", "<${RINFO}serie/fs")
+        s = replaceOnce(s, "<${RINFO}ref/rff", "<${RINFO}serie/rff")
 
         s = replaceOnce(s, "<${LAGENNNU}paragrafnummer>", "<${RPUBL}paragrafnummer>")
         s = replaceOnce(s, "<${LEGACY_PUBL}forfattningsamling>", "<${RPUBL}forfattningssamling>")
@@ -87,15 +92,15 @@ def rewriteLagenNuNTLines(lines) {
         s = replaceOnce(s, "#K", "#k_")
         s = replaceOnce(s, "#P", "#p_")
 
-        s = replaceOnce(s, "<http://rinfo.lagrummet.se/publ/rattsfall/",
-                            "<http://rinfo.lagrummet.se/publ/rf/")
+        s = replaceOnce(s, "<${RINFO}publ/rattsfall/",
+                            "<${RINFO}publ/rf/")
         return s
     }
 }
 
 def fixUri(uri) {
-    return replaceOnce(uri, "http://rinfo.lagrummet.se/publ/rattsfall/",
-                        "http://rinfo.lagrummet.se/publ/rf/")
+    return replaceOnce(uri, "${RINFO}publ/rattsfall/",
+                        "${RINFO}publ/rf/")
 }
 
 def isLaw(lines) {
@@ -136,7 +141,7 @@ try {
     System.exit 0
 }
 
-def baseUri = new URI("http://rinfo.lagrummet.se/")
+def baseUri = new URI(RINFO)
 depot = new FileDepot(baseUri, depotDir)
 depot.atomizer.feedPath = "/feed"
 depot.atomizer.feedBatchSize = 100
