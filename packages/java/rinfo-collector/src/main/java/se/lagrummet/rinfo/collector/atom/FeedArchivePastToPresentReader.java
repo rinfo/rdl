@@ -14,6 +14,8 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.i18n.iri.IRI;
 
+import org.apache.abdera.ext.history.FeedPagingHelper;
+
 
 /**
  * A FeedArchiveReader guaranteed to track backwards in time through feed pages,
@@ -46,6 +48,23 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
             try {
                 try {
                     Feed feed = feedRef.openFeed();
+
+                    // TODO: must not have paged feed links! Fail if so.
+                    // .. not at all necessary to use this pastToPresent
+                    // two-pass logic on complete feeds - there will be only
+                    // one feedRef in feedTrail!
+                    // Also, must reasonably *not* use the stopOnEntry
+                    // mechanism - we need *all* to make a complete diff. Yet
+                    // another reason to switch from "archive reading" to
+                    // "complete reading"...
+                    boolean completeFeed = FeedPagingHelper.isComplete(feed);
+                    if (completeFeed) {
+                        Map<IRI, Date> collectedEntryIds =
+                                getCollectedEntryIdsForCompleteFeedId(feed.getId());
+                        // FIXME: compute deleted markers by diffing current
+                        // entry set with collectedEntryIds
+                    }
+
                     feed = feed.sortEntriesByUpdated(false);
 
                     Map<IRI, AtomDate> deletedMap =
@@ -112,6 +131,11 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
 
     @Override
     public boolean processFeedPage(URL pageUrl, Feed feed) throws Exception {
+        // TODO:?
+        //if (!pageUrl.equals(subscriptionUrl)) {
+        //    assert FeedPagingHelper.isArchive(feed);
+        //}
+
         feedTrail.addFirst(new FeedReference(pageUrl, feed));
         feed = feed.sortEntriesByUpdated(true);
 
@@ -177,22 +201,21 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
         return false;
     }
 
-    // FIXME: implement support for this:
-    ///**
-    // * Optional template method called if an encountered feed is marked as
-    // * <em>complete</em>, according to <a
-    // * href="http://tools.ietf.org/html/rfc5005#section-2">RFC 5005: Feed
-    // * Paging and Archiving, section 2</a>. If implemented, it must return id:s
-    // * for all previously collected entries from a feed with the given id. This
-    // * list will be compared against the currently collected feed to determine
-    // * which entries are to be updated, and if any entries are to be deleted
-    // * (i.e. any id in the returned collection which is missing in the
-    // * currently collected feed).
-    // * @throws UnsupportedOperationException by default.
-    // */
-    //public Map<IRI, Data> getCollectedEntryIdsForCompleteFeedId(IRI feedId) {
-    //    throw new UnsupportedOperationException();
-    //}
+    /**
+     * Optional template method called if an encountered feed is marked as
+     * <em>complete</em>, according to <a
+     * href="http://tools.ietf.org/html/rfc5005#section-2">RFC 5005: Feed
+     * Paging and Archiving, section 2</a>. If implemented, it must return id:s
+     * for all previously collected entries from a feed with the given id. This
+     * list will be compared against the currently collected feed to determine
+     * which entries are to be updated, and if any entries are to be deleted
+     * (i.e. any id in the returned collection which is missing in the
+     * currently collected feed).
+     * @throws UnsupportedOperationException by default.
+     */
+    public Map<IRI, Date> getCollectedEntryIdsForCompleteFeedId(IRI feedId) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Default method used to get tombstone markers from a feed.
