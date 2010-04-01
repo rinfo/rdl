@@ -30,6 +30,10 @@ SELECT DISTINCT * WHERE {
 
     OPTIONAL { ?doc dct:title ?doc__1_title }
 
+    OPTIONAL {
+        ?doc dct:publisher ?doc__1_publisher .
+    }
+
     {
         ?doc
             rpubl:fsNummer ?doc__1_serieNummer;
@@ -73,16 +77,8 @@ SELECT DISTINCT * WHERE {
     $endif$
 
 
-    OPTIONAL {
-        ?doc dct:publisher ?doc__1_publisher .
-    }
-
-    OPTIONAL {
-        ?doc ?doc__daterel ?doc__daterel__value .
-        FILTER(datatype(?doc__daterel__value) = xsd:date)
-    }
-
     $if (filter_parts)$
+        ?doc ?doc__daterel ?doc__daterel__value .
         ?doc__daterel__eventItem
             event:product ?doc;
             scv:dimension ?doc__daterel;
@@ -108,12 +104,14 @@ SELECT DISTINCT * WHERE {
         }
 
         OPTIONAL {
-            ?doc__daterel rdfs:label ?doc__daterel__1_label .
-        }
-
-        OPTIONAL {
 
             {
+
+                ?doc ?doc__daterel ?doc__daterel__value .
+                FILTER(datatype(?doc__daterel__value) = xsd:date)
+                ?doc__daterel rdfs:label ?doc__daterel__1_label .
+
+            } UNION {
 
                 ?doc ?doc__rel ?doc__rel__subject .
                     FILTER( isURI(?doc__rel__subject) )

@@ -32,12 +32,18 @@ if (path) {
     queryData["path"] = path
     queryData["details"] = true
 } else {
+    // for list
+    //queryData["filter_parts"] = [
+    //    ["typeSelector": "rpubl:Lag"],
+    //    ["publisherSelector":  true, "value": "regeringskansliet"],
+    //    ["dateSelector": "rpubl:utfardandedatum", "value": "1918"],
+    //]
     queryData["filter_parts"] = [
-        ["typeSelector": "rpubl:Lag"],
-        ["dateSelector": "rpubl:utfardandedatum", "value": "1918"],
+        ["typeSelector": "rpubl:Forordning"],
         ["publisherSelector":  true, "value": "regeringskansliet"],
+        ["dateSelector": "rpubl:utfardandedatum", "value": "2007"],
     ]
-    //
+    // for browse
     queryData["docType"] = "rpubl:Rattsfallsreferat"
     queryData["publisher"] = "domstolsverket"
 }
@@ -56,7 +62,12 @@ if ('-q' in flags) {
 } else {
     def start = new Date()
     println "Running query..."
-    def tree = dataRqTree.runQuery(repo, query)
+    def tree = null
+    try {
+        tree = dataRqTree.runQuery(repo, query)
+    } finally {
+        repo.shutDown()
+    }
     println "=" * 72
     println()
     if ('-d' in flags) {
