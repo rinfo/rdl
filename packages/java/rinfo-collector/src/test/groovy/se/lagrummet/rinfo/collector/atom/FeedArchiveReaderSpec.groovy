@@ -5,37 +5,26 @@ import spock.lang.*
 import org.apache.abdera.model.Feed
 import org.apache.abdera.model.Entry
 
-import org.restlet.Application
-import org.restlet.Component
-import org.restlet.Context
-import org.restlet.Restlet
-import org.restlet.data.Protocol
-import org.restlet./*resource.*/Directory
 
+class FeedArchiveReaderSpec extends Specification {
 
-class FeedArchiveReaderTest extends Specification {
-
-    @Shared Component component
-    @Shared def testHttpPort = 9991
-    @Shared def baseUrl = "http://localhost:${testHttpPort}"
-
-    URL feedUrl
-    FeedArchiveReader reader
+    @Shared feedApp
+    @Shared baseUrl
 
     def setupSpeck() {
-        component = new Component()
-        component.servers.add(Protocol.HTTP, testHttpPort)
-        component.clients.add(Protocol.FILE)
-        component.defaultHost.attach(new FeedApp())
-        component.start()
+        feedApp = new TestFeedApp("src/test/resources/feed")
+        baseUrl = "http://localhost:${feedApp.port}"
+        feedApp.start()
     }
 
     def cleanupSpeck() {
-        component.stop()
+        feedApp.stop()
     }
 
+    URL feedUrl = new URL("${baseUrl}/index.atom")
+    FeedArchiveReader reader
+
     def setup() {
-        feedUrl =  new URL("${baseUrl}/index.atom")
         reader = new DummyFeeder()
     }
 
@@ -49,6 +38,7 @@ class FeedArchiveReaderTest extends Specification {
     }
 
 }
+
 
 class DummyFeeder extends FeedArchiveReader {
     def visitedPages = []
@@ -69,10 +59,4 @@ class DummyFeeder extends FeedArchiveReader {
     }
 }
 
-class FeedApp extends Application {
-    static ROOT_URI = new File("src/test/resources/feed").toURI().toString()
-    Restlet createRoot() {
-        return new Directory(context, ROOT_URI)
-    }
-}
 

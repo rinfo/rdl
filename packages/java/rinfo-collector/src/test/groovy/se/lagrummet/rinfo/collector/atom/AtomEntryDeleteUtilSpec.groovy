@@ -4,21 +4,20 @@ import org.apache.abdera.model.*
 import org.apache.abdera.i18n.iri.IRI
 import org.apache.abdera.Abdera
 
-import org.junit.Test
-import static org.junit.Assert.*
+import spock.lang.*
 
 
-class AtomEntryDeleteUtilTest {
+class AtomEntryDeleteUtilSpec extends Specification {
 
-    @Test
-    void shouldGetDeletedMarkers() {
+    def "should get deleted markers"() {
+        given:
         def feed = Abdera.instance.parser.parse(
                 new FileInputStream("src/test/resources/feed_with_deleted.atom")
             ).root
-
-        assertEquals(
-                AtomEntryDeleteUtil.getDeletedMarkers(feed),
-                [
+        when:
+        def feedMarkers = AtomEntryDeleteUtil.getDeletedMarkers(feed)
+        then:
+        feedMarkers == [
                     (new IRI("http://example.org/docs/fs/5")):
                             new AtomDate("2008-10-08T00:00:04.000Z"),
                     (new IRI("http://example.org/docs/fs/4")):
@@ -30,7 +29,6 @@ class AtomEntryDeleteUtilTest {
                     (new IRI("http://example.org/docs/fs/1")):
                             new AtomDate("2008-10-08T00:00:00.000Z")
                 ]
-            )
     }
 
 }

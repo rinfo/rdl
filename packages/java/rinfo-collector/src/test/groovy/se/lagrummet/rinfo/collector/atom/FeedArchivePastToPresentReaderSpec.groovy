@@ -7,34 +7,28 @@ import org.apache.abdera.model.Feed
 import org.apache.abdera.model.Entry
 import org.apache.abdera.i18n.iri.IRI
 
-import org.restlet.*
-import org.restlet.data.Protocol
-import org.restlet./*resource.*/Directory
 
+class FeedArchivePastToPresentReaderSpec extends Specification {
 
-class FeedArchivePastToPresentReaderTest extends Specification {
-
-    @Shared component
-    @Shared testHttpPort = 9991
-
-    def baseUrl = "http://localhost:${testHttpPort}"
-    def feedUrl =  new URL("${baseUrl}/index1.atom")
+    @Shared feedApp
+    @Shared baseUrl
 
     def setupSpeck() {
-        component = new Component()
-        component.servers.add(Protocol.HTTP, testHttpPort)
-        component.clients.add(Protocol.FILE)
-        component.defaultHost.attach(new ChangedFeedApp())
-        component.start()
+        feedApp = new TestFeedApp("src/test/resources/feed/multiplechanges")
+        baseUrl = "http://localhost:${feedApp.port}"
+        feedApp.start()
     }
 
     def cleanupSpeck() {
-        component.stop()
+        feedApp.stop()
     }
 
+    def feedUrl =  new URL("${baseUrl}/index1.atom")
+
     def "should read feed in order"() {
-        when:
+        setup:
         def reader = new CollectReader()
+        when:
         reader.readFeed(feedUrl)
         then:
         reader.visitedPages == [new URL("${baseUrl}/arch1.atom"), feedUrl]
@@ -78,7 +72,7 @@ class FeedArchivePastToPresentReaderTest extends Specification {
         reader.visitedEntries.size() == 2
     }
 
-    /* TODO: high-level meaningful specs(s) related to "putUriDateIfNewOrYoungest":
+    /* TODO: high-level, more meaningful specs(s) than "put uri if.." below
         - shouldReportResurrectedEntry:
             an older delete mustn't supress a younged updated
             - given continuous feed events:
@@ -89,11 +83,7 @@ class FeedArchivePastToPresentReaderTest extends Specification {
             - should report:
                 - Entry(id="123", deleted=3)
                 - Entry(id="123", updated=4)
-
-        * TODO: write runnable specs like the above for most tests!
-            - robotframework or BDD unit-tests?
     */
-
     def "should put uri if new or date is youngest"() {
         setup:
         def map = [:]
@@ -157,12 +147,3 @@ class CollectReader extends FeedArchivePastToPresentReader {
     }
 
 }
-
-class ChangedFeedApp extends Application {
-    static ROOT_URI = new File(
-            "src/test/resources/feed/multiplechanges").toURI().toString()
-    Restlet createRoot() {
-        return new Directory(context, ROOT_URI)
-    }
-}
-

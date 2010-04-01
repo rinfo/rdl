@@ -1,14 +1,12 @@
 package se.lagrummet.rinfo.collector
 
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import static org.junit.Assert.*
+
+import spock.lang.*
 
 import java.util.concurrent.Semaphore
 
 
-class AbstractCollectSchedulerTest {
+class AbstractCollectSchedulerTest extends Specification {
 
     static SOURCE_FEEDS = [
         [url: new URL("http://source1.example.org/"), items:["1a", "1b"]],
@@ -17,8 +15,7 @@ class AbstractCollectSchedulerTest {
 
     AbstractCollectScheduler collectScheduler
 
-    @Before
-    void startUp() {
+    void setup() {
         collectScheduler = new ManagedDummyScheduler(
             initialDelay: 0,
             scheduleInterval: -1,
@@ -27,38 +24,44 @@ class AbstractCollectSchedulerTest {
         )
     }
 
-    @After
-    void tearDown() {
+    void cleanup() {
         collectScheduler.shutdown()
     }
 
-    @Test
-    void shouldTriggerCollect() {
+    def "should trigger collect"() {
+        when:
         collectScheduler.startup()
         def fakeSource = SOURCE_FEEDS[0]
-        assertTrue collectScheduler.triggerFeedCollect(fakeSource.url)
+        then:
+        assert collectScheduler.triggerFeedCollect(fakeSource.url)
+
+        when:
         collectScheduler.waitForCompletedCollect()
-        assertEquals fakeSource.items, collectScheduler.collectedItems
+        then:
+        fakeSource.items == collectScheduler.collectedItems
     }
 
-    @Test
-    void shouldCollectAllFeeds() {
+    def "should collect all feeds"() {
+        setup:
         collectScheduler.feedsToWaitFor = SOURCE_FEEDS.size()
+        when:
         collectScheduler.startup()
         collectScheduler.collectAllFeeds()
         collectScheduler.waitForCompletedCollect()
-        assertEquals SOURCE_FEEDS.collect { it.items }.flatten(),
-                collectScheduler.collectedItems
+        then:
+        SOURCE_FEEDS.collect { it.items }.flatten() == collectScheduler.collectedItems
     }
 
-    @Test
-    void shouldNotTriggerWhenRunningScheduled() {
+    def "should not trigger when running scheduled"() {
+        setup:
         collectScheduler.scheduleInterval = 20
+        when:
         collectScheduler.pause()
         collectScheduler.startup()
         Thread.sleep(collectScheduler.initialDelay + 100)
-        assertFalse "Expected stalled collector to block trigger.",
-                collectScheduler.triggerFeedCollect(SOURCE_FEEDS[1].url)
+        then: "Expected stalled collector to block trigger."
+        ! collectScheduler.triggerFeedCollect(SOURCE_FEEDS[1].url)
+        cleanup:
         collectScheduler.unpause()
     }
 
@@ -66,32 +69,39 @@ class AbstractCollectSchedulerTest {
     @Test
     void shouldNeverCollectConcurrently() {
         ...
-        assertFalse "Expected stalled collector to block new collectAll.", ...
+        ! "Expected stalled collector to block new collectAll.", ...
     }
     */
 
-    @Test(expected=NotAllowedSourceFeedException)
-    void shouldFailOnDisallowedSourceUrl() {
+    def "should fail on disallowed source url"() {
+        when:
         collectScheduler.startup()
         collectScheduler.triggerFeedCollect(new URL("http://bad.example.org/"))
+        then:
+        thrown(NotAllowedSourceFeedException)
     }
 
-    @Test
-    void shouldBeRestartable() {
+    def "should be restartable"() {
+        setup:
         collectScheduler.scheduleInterval = 20
-
+        when:
         collectScheduler.startup()
-        assertTrue collectScheduler.isStarted()
+        then:
+        assert collectScheduler.isStarted()
 
+        when:
         collectScheduler.shutdown()
-        assertTrue collectScheduler.getScheduleService().isShutdown()
-        assertTrue collectScheduler.getExecutorService().isShutdown()
-        assertFalse collectScheduler.isStarted()
+        then:
+        assert collectScheduler.getScheduleService().isShutdown()
+        assert collectScheduler.getExecutorService().isShutdown()
+        ! collectScheduler.isStarted()
 
+        when:
         collectScheduler.startup()
-        assertTrue collectScheduler.isStarted()
-        assertFalse collectScheduler.getScheduleService().isShutdown()
-        assertFalse collectScheduler.getExecutorService().isShutdown()
+        then:
+        assert collectScheduler.isStarted()
+        ! collectScheduler.getScheduleService().isShutdown()
+        ! collectScheduler.getExecutorService().isShutdown()
     }
 }
 
