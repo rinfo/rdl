@@ -19,64 +19,65 @@
 
 <http://rinfo.lagrummet.se/org/hovraetten_oever_skaane_och_blekinge>
     a foaf:Organization;
-        foaf:name "Hovrätten över Skåne och Blekinge"@sv .
+    foaf:name "Hovrätten över Skåne och Blekinge"@sv .
 
 <http://rinfo.lagrummet.se/org/hovraetten_foer_vaestra_sverige>
     a foaf:Organization;
-        foaf:name "Hovrätten för Västra Sverige"@sv .
+    foaf:name "Hovrätten för Västra Sverige"@sv .
 
 <http://rinfo.lagrummet.se/org/hovraetten_foer_nedre_norrland>
     a foaf:Organization;
-        foaf:name "Hovrätten för Nedre Norrland"@sv .
+    foaf:name "Hovrätten för Nedre Norrland"@sv .
 
 <http://rinfo.lagrummet.se/org/hovraetten_foer_oevre_norrland>
     a foaf:Organization;
-        foaf:name "Hovrätten för Övre Norrland"@sv .
+    foaf:name "Hovrätten för Övre Norrland"@sv .
 
 <http://rinfo.lagrummet.se/org/miljoeoeverdomstolen>
     a foaf:Organization;
-        foaf:name "Miljööverdomstolen"@sv .
+    foaf:name "Miljööverdomstolen"@sv .
 
 <http://rinfo.lagrummet.se/org/regeringsraetten>
     a foaf:Organization;
-        foaf:name "Regeringsrätten"@sv .
+    foaf:name "Regeringsrätten"@sv .
 
 <http://rinfo.lagrummet.se/org/kammarraetten_i_stockholm>
     a foaf:Organization;
-        foaf:name "Kammarrätten i Stockholm"@sv .
+    foaf:name "Kammarrätten i Stockholm"@sv .
 
 <http://rinfo.lagrummet.se/org/kammarraetten_i_goteborg>
     a foaf:Organization;
-        foaf:name "Kammarrätten i Göteborg"@sv .
+    foaf:name "Kammarrätten i Göteborg"@sv .
 
 <http://rinfo.lagrummet.se/org/kammarraetten_i_sundsvall>
     a foaf:Organization;
-        foaf:name "Kammarrätten i Sundsvall"@sv .
+    foaf:name "Kammarrätten i Sundsvall"@sv .
 
 <http://rinfo.lagrummet.se/org/kammarraetten_i_joenkoeping>
     a foaf:Organization;
-        foaf:name "Kammarrätten i Jönköping"@sv .
+    foaf:name "Kammarrätten i Jönköping"@sv .
 
 <http://rinfo.lagrummet.se/org/migrationsoeverdomstolen>
     a foaf:Organization;
-        foaf:name "Migrationsöverdomstolen"@sv .
+    foaf:name "Migrationsöverdomstolen"@sv .
 
 <http://rinfo.lagrummet.se/org/raettshjaelpsnaemnden>
     a foaf:Organization;
-        foaf:name "Rättshjälpsnämnden"@sv .
+    foaf:name "Rättshjälpsnämnden"@sv .
 
 <http://rinfo.lagrummet.se/org/arbetsdomstolen>
     a foaf:Organization;
-        foaf:name "Arbetsdomstolen"@sv .
+    foaf:name "Arbetsdomstolen"@sv .
 
 <http://rinfo.lagrummet.se/org/marknadsdomstolen>
     a foaf:Organization;
-        foaf:name "Marknadsdomstolen"@sv .
+    foaf:name "Marknadsdomstolen"@sv .
 
 <http://rinfo.lagrummet.se/org/patentbesvaersraetten>
     a foaf:Organization;
-        foaf:name "Patentbesvärsrätten"@sv .
+    foaf:name "Patentbesvärsrätten"@sv .
 
 <http://rinfo.lagrummet.se/org/statens_ansvarsnaemnd>
     a foaf:Organization;
-        foaf:name "Statens ansvarsnämnd"@sv .
+    foaf:name "Statens ansvarsnämnd"@sv .
+
