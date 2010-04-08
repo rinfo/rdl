@@ -2,6 +2,11 @@
 CHANGELOG
 ########################################################################
 
+2010-04-07
+--------------------
+
+* Lade till egenskapen :celexNummer, för europeiska dokument med CELEX-nummer.
+
 2010-03-26
 --------------------
 

@@ -1106,3 +1106,10 @@
     rdfs:comment "Diarienummer för ett ärende."@sv;
     rdfs:isDefinedBy : .
 
+#---------------------------------------
+
+:celexNummer a owl:DatatypeProperty;
+    rdfs:label "CELEX-nummer"@sv;
+    rdfs:comment "Indentifierare för ett dokument som ingår i EUR-LEX, den europeiska rättsinformationsdatabasen."@sv;
+    rdfs:isDefinedBy : .
+
