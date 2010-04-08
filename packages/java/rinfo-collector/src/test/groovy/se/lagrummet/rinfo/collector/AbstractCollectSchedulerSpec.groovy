@@ -1,16 +1,15 @@
 package se.lagrummet.rinfo.collector
 
-
 import spock.lang.*
 
 import java.util.concurrent.Semaphore
 
 
-class AbstractCollectSchedulerTest extends Specification {
+class AbstractCollectSchedulerSpec extends Specification {
 
     static SOURCE_FEEDS = [
-        [url: new URL("http://source1.example.org/"), items:["1a", "1b"]],
-        [url: new URL("http://source2.example.org/"), items:["2a", "2b"]],
+        [url: new URL("http://source1.example.org/"), items:['1a', '1b']],
+        [url: new URL("http://source2.example.org/"), items:['2a', '2b']],
     ]
 
     AbstractCollectScheduler collectScheduler
@@ -38,7 +37,7 @@ class AbstractCollectSchedulerTest extends Specification {
         when:
         collectScheduler.waitForCompletedCollect()
         then:
-        fakeSource.items == collectScheduler.collectedItems
+        fakeSource.items.clone() == collectScheduler.collectedItems.clone()
     }
 
     def "should collect all feeds"() {
@@ -66,8 +65,7 @@ class AbstractCollectSchedulerTest extends Specification {
     }
 
     /*
-    @Test
-    void shouldNeverCollectConcurrently() {
+    def "should never collect concurrently"() {
         ...
         ! "Expected stalled collector to block new collectAll.", ...
     }
@@ -122,7 +120,7 @@ class ManagedDummyScheduler extends AbstractCollectScheduler {
             blockCollectSemaphore.acquire()
             blockCollectSemaphore.release()
         }
-        AbstractCollectSchedulerTest.SOURCE_FEEDS.find {
+        AbstractCollectSchedulerSpec.SOURCE_FEEDS.find {
                 it.url == feedUrl
         }.items.each {
             collectedItems << it

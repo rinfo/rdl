@@ -13,13 +13,13 @@ class FeedArchivePastToPresentReaderSpec extends Specification {
     @Shared feedApp
     @Shared baseUrl
 
-    def setupSpeck() {
+    def setupSpec() {
         feedApp = new TestFeedApp("src/test/resources/feed/multiplechanges")
         baseUrl = "http://localhost:${feedApp.port}"
         feedApp.start()
     }
 
-    def cleanupSpeck() {
+    def cleanupSpec() {
         feedApp.stop()
     }
 

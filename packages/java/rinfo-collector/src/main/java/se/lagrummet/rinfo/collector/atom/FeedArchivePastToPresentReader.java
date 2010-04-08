@@ -48,32 +48,27 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
             try {
                 try {
                     Feed feed = feedRef.openFeed();
+                    feed = feed.sortEntriesByUpdated(/*new_first=*/false);
 
                     // TODO: must not have paged feed links! Fail if so.
                     // .. not at all necessary to use this pastToPresent
                     // two-pass logic on complete feeds - there will be only
                     // one feedRef in feedTrail!
-                    // Also, must reasonably *not* use the stopOnEntry
-                    // mechanism - we need *all* to make a complete diff. Yet
-                    // another reason to switch from "archive reading" to
-                    // "complete reading"...
+                    // Could maybe also use the complete state to simplify the
+                    // stopOnEntry mechanism? Remember, we need all to make a
+                    // complete diff. Yet another reason to switch from
+                    // "archive reading" to "complete reading"...
                     boolean completeFeed = FeedPagingHelper.isComplete(feed);
-                    if (completeFeed) {
-                        Map<IRI, Date> collectedEntryIds =
-                                getCollectedEntryIdsForCompleteFeedId(feed.getId());
-                        // FIXME: compute deleted markers by diffing current
-                        // entry set with collectedEntryIds
-                    }
 
-                    feed = feed.sortEntriesByUpdated(false);
+                    Map<IRI, AtomDate> deletedMap = (completeFeed)?
+                            computeDeletedFromComplete(feed) : getDeletedMarkers(feed);
 
-                    Map<IRI, AtomDate> deletedMap =
-                            AtomEntryDeleteUtil.getDeletedMarkers(feed);
                     List<Entry> effectiveEntries = new ArrayList<Entry>();
-
                     for (Entry entry: feed.getEntries()) {
                         IRI entryId = entry.getId();
                         if (deletedMap.containsKey(entryId)) {
+                            // FIXME:? only if deleted is youngest(!), right?
+                            // else, delete then re-add, or ignore delete?
                             continue;
                         }
                         Date entryUpdated = entry.getUpdated();
@@ -95,8 +90,15 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                             effectiveEntries.add(entry);
                         }
                     }
+
                     processFeedPageInOrder(feedRef.getFeedUrl(), feed,
                             effectiveEntries, deletedMap);
+
+                    // TODO: don't do this here? Should impl take care of doing this
+                    // in a granular, storage-specific way?
+                    if (completeFeed)
+                        storeNewCompleteFeedEntryIdIndex(feed);
+
                 } finally {
                     feedRef.close();
                 }
@@ -165,6 +167,16 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
     }
 
     /**
+     * Default method used to get tombstone markers from a feed.
+     * @return A map of entry id:s and deletion times. The default uses {@link
+     *         AtomEntryDeleteUtil.getDeletedMarkers}.
+     */
+    public Map<IRI, AtomDate> getDeletedMarkers(Feed feed)
+            throws URISyntaxException {
+        return AtomEntryDeleteUtil.getDeletedMarkers(feed);
+    }
+
+    /**
      * Template method intended for the actual feed processing.
      * This method is guaranteed to be called in sequence from oldest page
      * to newest, with a feed entries sorted in chronological order <em>from
@@ -202,29 +214,41 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
     }
 
     /**
-     * Optional template method called if an encountered feed is marked as
-     * <em>complete</em>, according to <a
-     * href="http://tools.ietf.org/html/rfc5005#section-2">RFC 5005: Feed
-     * Paging and Archiving, section 2</a>. If implemented, it must return id:s
-     * for all previously collected entries from a feed with the given id. This
-     * list will be compared against the currently collected feed to determine
-     * which entries are to be updated, and if any entries are to be deleted
-     * (i.e. any id in the returned collection which is missing in the
-     * currently collected feed).
+     * Optional getter for a {@link CompleteFeedEntryIdIndex}, used if an
+     * encountered feed is marked as <em>complete</em>. See that interface for
+     * details.
      * @throws UnsupportedOperationException by default.
      */
-    public Map<IRI, Date> getCollectedEntryIdsForCompleteFeedId(IRI feedId) {
-        throw new UnsupportedOperationException();
+    public CompleteFeedEntryIdIndex getCompleteFeedEntryIdIndex() {
+        throw new UnsupportedOperationException("No support for complete feed indexing.");
     }
 
-    /**
-     * Default method used to get tombstone markers from a feed.
-     * @return A map of entry id:s and deletion times. The default uses {@link
-     *         AtomEntryDeleteUtil.getDeletedMarkers}.
-     */
-    public Map<IRI, AtomDate> getDeletedMarkers(Feed feed)
-            throws URISyntaxException {
-        return AtomEntryDeleteUtil.getDeletedMarkers(feed);
+
+    Map<IRI, AtomDate> computeDeletedFromComplete(Feed feed) {
+        Set<IRI> collectedEntryIds = getCompleteFeedEntryIdIndex().
+                getEntryIdsForCompleteFeedId(feed.getId());
+        Set<IRI> deletedIris = new HashSet<IRI>();
+        if (collectedEntryIds == null) {
+            return Collections.emptyMap();
+        }
+        deletedIris.addAll(collectedEntryIds);
+        for (Entry entry: feed.getEntries()) {
+            deletedIris.remove(entry.getId());
+        }
+        Map<IRI, AtomDate> deletedMap = new HashMap<IRI, AtomDate>();
+        for (IRI deletedIri : deletedIris) {
+            deletedMap.put(deletedIri, feed.getUpdatedElement().getValue());
+        }
+        return deletedMap;
+    }
+
+    void storeNewCompleteFeedEntryIdIndex(Feed feed) {
+        Set<IRI> entryIds = new HashSet<IRI>();
+        for (Entry entry: feed.getEntries()) {
+            entryIds.add(entry.getId());
+        }
+        getCompleteFeedEntryIdIndex().storeEntryIdsForCompleteFeedId(
+                feed.getId(), entryIds);
     }
 
     public static boolean isYoungerThan(Date date, Date thanDate) {
@@ -249,6 +273,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
         map.put(iri, atomDate);
         return true;
     }
+
 
     public static class FeedReference {
 
