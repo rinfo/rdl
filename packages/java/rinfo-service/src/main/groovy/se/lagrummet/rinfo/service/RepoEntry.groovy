@@ -143,7 +143,7 @@ class RepoEntry {
 
     void delete() {
         // TODO: error if already deleted, or doesn't exist at all?
-        removeYearDimension()
+        removeFromYearDimension()
         clearContext()
         // TODO:? just add the tombstone as a marker (for collect) like this?
         //addContext()
@@ -158,7 +158,9 @@ class RepoEntry {
     }
 
     protected void clearContext() {
-        conn.clear(getStoredContext())
+        def ctx = getStoredContext()
+        if (ctx != null)
+            conn.clear(ctx)
     }
 
     protected void processContents() {
@@ -269,11 +271,16 @@ class RepoEntry {
         return eventItem
     }
 
-    protected void removeYearDimension() {
-        def eventItem = findYearItemFor(property, year)
-        if (eventItem == null)
+    protected void removeFromYearDimension() {
+        def eventItemStmt = RDFUtil.one(conn, null, EVENT_PRODUCT, entryUri)
+        def eventItem = eventItemStmt ? eventItemStmt.getSubject() : null
+        if (!eventItem)
             return
-        conn.remove(eventItem, EVENT_PRODUCT, entryUri, timeStatsCtx)
+        conn.remove(eventItemStmt, timeStatsCtx)
+        // NOTE: if no other products, remove all about eventItem
+        if (!conn.hasStatement(eventItem, EVENT_PRODUCT, null, false, timeStatsCtx)) {
+            conn.remove(eventItem, null, null, timeStatsCtx)
+        }
     }
 
 }
