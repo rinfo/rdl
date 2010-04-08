@@ -165,7 +165,7 @@
         <summary></summary>
         <content type="application/rdf+xml">
             <rpubl:VagledandeDomstolsavgorande>
-                <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/h%C3%B6gsta_domstolen"/>
+                <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/hoegsta_domstolen"/>
                 <rpubl:malnummer>B333-04</rpubl:malnummer>
                 <rpubl:avgorandedatum>2005-06-17</rpubl:avgorandedatum>
             </rpubl:VagledandeDomstolsavgorande>

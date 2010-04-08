@@ -7,102 +7,103 @@
 
 <http://rinfo.lagrummet.se/org/arbetsdepartementet>
     a foaf:Organization;
-	foaf:name "Arbetsdepartementet"@sv .
+    foaf:name "Arbetsdepartementet"@sv .
 
 
 <http://rinfo.lagrummet.se/org/arbetsmarknadsdepartementet>
     a foaf:Organization;
-	foaf:name "Arbetsmarknadsdepartementet"@sv .
+    foaf:name "Arbetsmarknadsdepartementet"@sv .
 
 <http://rinfo.lagrummet.se/org/bostadsdepartementet>
     a foaf:Organization;
-	foaf:name "Bostadsdepartementet"@sv .
+    foaf:name "Bostadsdepartementet"@sv .
 
 <http://rinfo.lagrummet.se/org/civildepartementet>
     a foaf:Organization;
-	foaf:name "Civildepartementet"@sv .
+    foaf:name "Civildepartementet"@sv .
 
 <http://rinfo.lagrummet.se/org/finansdepartementet>
     a foaf:Organization;
-	foaf:name "Finansdepartementet"@sv .
+    foaf:name "Finansdepartementet"@sv .
 
 
-<http://rinfo.lagrummet.se/org/f%C3%B6rsvarsdepartementet>
+<http://rinfo.lagrummet.se/org/foersvarsdepartementet>
     a foaf:Organization;
-	foaf:name "Försvarsdepartementet"@sv .
+    foaf:name "Försvarsdepartementet"@sv .
 
 
 <http://rinfo.lagrummet.se/org/industridepartementet>
     a foaf:Organization;
-	foaf:name "Industridepartementet"@sv .
+    foaf:name "Industridepartementet"@sv .
 
 <http://rinfo.lagrummet.se/org/inrikesdepartementet>
     a foaf:Organization;
-	foaf:name "Inrikesdepartementet"@sv .
+    foaf:name "Inrikesdepartementet"@sv .
 
-<http://rinfo.lagrummet.se/org/integrations-_och_j%C3%A4mst%C3%A4lldhetsdepartementet>
+<http://rinfo.lagrummet.se/org/integrations-_och_jaemstaelldhetsdepartementet>
     a foaf:Organization;
-	foaf:name "Integrations- och jämställdhetsdepartementet"@sv .
+    foaf:name "Integrations- och jämställdhetsdepartementet"@sv .
 
 
 <http://rinfo.lagrummet.se/org/jordbruksdepartementet>
     a foaf:Organization;
-	foaf:name "Jordbruksdepartementet"@sv .
+    foaf:name "Jordbruksdepartementet"@sv .
 
 
 <http://rinfo.lagrummet.se/org/justitiedepartementet>
     a foaf:Organization;
-	foaf:name "Justitiedepartementet"@sv .
+    foaf:name "Justitiedepartementet"@sv .
 
 
 <http://rinfo.lagrummet.se/org/kommunikationsdepartementet>
     a foaf:Organization;
-	foaf:name "Kommunikationsdepartementet"@sv .
+    foaf:name "Kommunikationsdepartementet"@sv .
 
 <http://rinfo.lagrummet.se/org/kulturdepartementet>
     a foaf:Organization;
-	foaf:name "Kulturdepartementet"@sv .
+    foaf:name "Kulturdepartementet"@sv .
 
-<http://rinfo.lagrummet.se/org/milj%C3%B6-_och_energidepartementet>
+<http://rinfo.lagrummet.se/org/miljoe-_och_energidepartementet>
     a foaf:Organization;
-	foaf:name "Miljö- och energidepartementet"@sv .
+    foaf:name "Miljö- och energidepartementet"@sv .
 
 
-<http://rinfo.lagrummet.se/org/milj%C3%B6-_och_naturresursdepartementet>
+<http://rinfo.lagrummet.se/org/miljoe-_och_naturresursdepartementet>
     a foaf:Organization;
-	foaf:name "Miljö- och naturresursdepartementet"@sv .
+    foaf:name "Miljö- och naturresursdepartementet"@sv .
 
 
-<http://rinfo.lagrummet.se/org/milj%C3%B6-_och_samh%C3%A4llsbyggnadsdepartementet>
+<http://rinfo.lagrummet.se/org/miljoe-_och_samhaellsbyggnadsdepartementet>
     a foaf:Organization;
-	foaf:name "Miljö- och samhällsbyggnadsdepartementet"@sv .
+    foaf:name "Miljö- och samhällsbyggnadsdepartementet"@sv .
 
 
-<http://rinfo.lagrummet.se/org/milj%C3%B6departementet>
+<http://rinfo.lagrummet.se/org/miljoedepartementet>
     a foaf:Organization;
-	foaf:name "Miljödepartementet"@sv .
+    foaf:name "Miljödepartementet"@sv .
 
 
-<http://rinfo.lagrummet.se/org/n%C3%A4rings-_och_handelsdepartementet>
+<http://rinfo.lagrummet.se/org/naerings-_och_handelsdepartementet>
     a foaf:Organization;
-	foaf:name "Närings- och handelsdepartementet"@sv .
+    foaf:name "Närings- och handelsdepartementet"@sv .
 
-<http://rinfo.lagrummet.se/org/n%C3%A4ringsdepartementet>
+<http://rinfo.lagrummet.se/org/naeringsdepartementet>
     a foaf:Organization;
-	foaf:name "Näringsdepartementet"@sv .
+    foaf:name "Näringsdepartementet"@sv .
 
 <http://rinfo.lagrummet.se/org/socialdepartementet>
     a foaf:Organization;
-	foaf:name "Socialdepartementet"@sv .
+    foaf:name "Socialdepartementet"@sv .
 
 <http://rinfo.lagrummet.se/org/statsradsberedningen>
     a foaf:Organization;
-	foaf:name "Statsrådsberedningen"@sv .
+    foaf:name "Statsrådsberedningen"@sv .
 
 <http://rinfo.lagrummet.se/org/utbildningsdepartementet>
     a foaf:Organization;
-	foaf:name "Utbildningsdepartementet"@sv .
+    foaf:name "Utbildningsdepartementet"@sv .
 
 <http://rinfo.lagrummet.se/org/utrikesdepartementet>
     a foaf:Organization;
-	foaf:name "Utrikesdepartementet"@sv .
+    foaf:name "Utrikesdepartementet"@sv .
+

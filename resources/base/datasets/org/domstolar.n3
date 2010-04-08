@@ -5,63 +5,63 @@
 
 # Domstolar
 
-<http://rinfo.lagrummet.se/org/h%C3%B6gsta_domstolen>
+<http://rinfo.lagrummet.se/org/hoegsta_domstolen>
     a foaf:Organization;
     foaf:name "Högsta domstolen"@sv .
 
-<http://rinfo.lagrummet.se/org/svea_hovr%C3%A4tt>
+<http://rinfo.lagrummet.se/org/svea_hovraett>
     a foaf:Organization;
     foaf:name "Svea hovrätt"@sv .
 
-<http://rinfo.lagrummet.se/org/g%C3%B6ta_hovr%C3%A4tt>
+<http://rinfo.lagrummet.se/org/goeta_hovraett>
     a foaf:Organization;
     foaf:name "Göta hovrätt"@sv .
 
-<http://rinfo.lagrummet.se/org/hovr%C3%A4tten_%C3%B6ver_sk%C3%A5ne_och_blekinge>
+<http://rinfo.lagrummet.se/org/hovraetten_oever_skaane_och_blekinge>
     a foaf:Organization;
         foaf:name "Hovrätten över Skåne och Blekinge"@sv .
 
-<http://rinfo.lagrummet.se/org/hovr%C3%A4tten_f%C3%B6r_v%C3%A4stra_sverige>
+<http://rinfo.lagrummet.se/org/hovraetten_foer_vaestra_sverige>
     a foaf:Organization;
         foaf:name "Hovrätten för Västra Sverige"@sv .
 
-<http://rinfo.lagrummet.se/org/hovr%C3%A4tten_f%C3%B6r_nedre_norrland>
+<http://rinfo.lagrummet.se/org/hovraetten_foer_nedre_norrland>
     a foaf:Organization;
         foaf:name "Hovrätten för Nedre Norrland"@sv .
 
-<http://rinfo.lagrummet.se/org/hovr%C3%A4tten_f%C3%B6r_%C3%B6vre_norrland>
+<http://rinfo.lagrummet.se/org/hovraetten_foer_oevre_norrland>
     a foaf:Organization;
         foaf:name "Hovrätten för Övre Norrland"@sv .
 
-<http://rinfo.lagrummet.se/org/milj%C3%B6%C3%B6verdomstolen>
+<http://rinfo.lagrummet.se/org/miljoeoeverdomstolen>
     a foaf:Organization;
         foaf:name "Miljööverdomstolen"@sv .
 
-<http://rinfo.lagrummet.se/org/regeringsr%C3%A4tten>
+<http://rinfo.lagrummet.se/org/regeringsraetten>
     a foaf:Organization;
         foaf:name "Regeringsrätten"@sv .
 
-<http://rinfo.lagrummet.se/org/kammarr%C3%A4tten_i_stockholm>
+<http://rinfo.lagrummet.se/org/kammarraetten_i_stockholm>
     a foaf:Organization;
         foaf:name "Kammarrätten i Stockholm"@sv .
 
-<http://rinfo.lagrummet.se/org/kammarr%C3%A4tten_i_goteborg>
+<http://rinfo.lagrummet.se/org/kammarraetten_i_goteborg>
     a foaf:Organization;
         foaf:name "Kammarrätten i Göteborg"@sv .
 
-<http://rinfo.lagrummet.se/org/kammarr%C3%A4tten_i_sundsvall>
+<http://rinfo.lagrummet.se/org/kammarraetten_i_sundsvall>
     a foaf:Organization;
         foaf:name "Kammarrätten i Sundsvall"@sv .
 
-<http://rinfo.lagrummet.se/org/kammarr%C3%A4tten_i_j%C3%B6nk%C3%B6ping>
+<http://rinfo.lagrummet.se/org/kammarraetten_i_joenkoeping>
     a foaf:Organization;
         foaf:name "Kammarrätten i Jönköping"@sv .
 
-<http://rinfo.lagrummet.se/org/migrations%C3%B6verdomstolen>
+<http://rinfo.lagrummet.se/org/migrationsoeverdomstolen>
     a foaf:Organization;
         foaf:name "Migrationsöverdomstolen"@sv .
 
-<http://rinfo.lagrummet.se/org/r%C3%A4ttshj%C3%A4lpsn%C3%A4mnden>
+<http://rinfo.lagrummet.se/org/raettshjaelpsnaemnden>
     a foaf:Organization;
         foaf:name "Rättshjälpsnämnden"@sv .
 
@@ -73,10 +73,10 @@
     a foaf:Organization;
         foaf:name "Marknadsdomstolen"@sv .
 
-<http://rinfo.lagrummet.se/org/patentbesv%C3%A4rsr%C3%A4tten>
+<http://rinfo.lagrummet.se/org/patentbesvaersraetten>
     a foaf:Organization;
         foaf:name "Patentbesvärsrätten"@sv .
 
-<http://rinfo.lagrummet.se/org/statens_ansvarsn%C3%A4mnd>
+<http://rinfo.lagrummet.se/org/statens_ansvarsnaemnd>
     a foaf:Organization;
         foaf:name "Statens ansvarsnämnd"@sv .

@@ -20,8 +20,8 @@
     <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2008-08-21</utkomFranTryck>
 
     <!-- ursprung -->
-    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/arbetsf%C3%B6rmedlingen"/>
-    <beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/arbetsf%C3%B6rmedlingen"/>
+    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/arbetsfoermedlingen"/>
+    <beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/arbetsfoermedlingen"/>
 
     <!-- Egna ämnesord (ett element per ämnesord) -->
     <dces:subject xml:lang="sv">Arbetsmiljöarbete</dces:subject>

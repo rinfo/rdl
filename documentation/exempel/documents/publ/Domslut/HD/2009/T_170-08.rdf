@@ -6,7 +6,7 @@
 >
   <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/dom/hd/t170-08">
     <rpubl:malnummer xml:lang="sv">T 170-08</rpubl:malnummer>
-    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/h%C3%B6sta_domstolen"/>
+    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/hoesta_domstolen"/>
     <rdf:type rdf:resource="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#VagledandeDomstolsavgorande"/>
   </rdf:Description>
 </rdf:RDF>

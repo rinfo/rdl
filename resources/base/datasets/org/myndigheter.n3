@@ -7,11 +7,11 @@
     a foaf:Organization;
     foaf:name "Regeringskansliet"@sv .
 
-<http://rinfo.lagrummet.se/org/aff%C3%A4rsverket_svenska_kraftn%C3%A4t>
+<http://rinfo.lagrummet.se/org/affaersverket_svenska_kraftnaet>
     a foaf:Organization;
     foaf:name "Affärsverket svenska kraftnät"@sv .
 
-<http://rinfo.lagrummet.se/org/arbetsf%C3%B6rmedlingen>
+<http://rinfo.lagrummet.se/org/arbetsfoermedlingen>
     a foaf:Organization;
     foaf:name "Arbetsförmedlingen"@sv .
 
@@ -19,7 +19,7 @@
     a foaf:Organization;
     foaf:name "Arbetsgivarverket"@sv .
 
-<http://rinfo.lagrummet.se/org/arbetsmilj%C3%B6verket>
+<http://rinfo.lagrummet.se/org/arbetsmiljoeverket>
     a foaf:Organization;
     foaf:name "Arbetsmiljöverket"@sv .
 
@@ -35,7 +35,7 @@
     a foaf:Organization;
     foaf:name "Boverket"@sv .
 
-<http://rinfo.lagrummet.se/org/centrala_studiest%C3%B6dsn%C3%A4mnden>
+<http://rinfo.lagrummet.se/org/centrala_studiestoedsnaemnden>
     a foaf:Organization;
     foaf:name "Centrala studiestödsnämnden"@sv .
 
@@ -47,7 +47,7 @@
     a foaf:Organization;
     foaf:name "Domstolsverket"@sv .
 
-<http://rinfo.lagrummet.se/org/els%C3%A4kerhetsverket>
+<http://rinfo.lagrummet.se/org/elsaekerhetsverket>
     a foaf:Organization;
     foaf:name "Elsäkerhetsverket"@sv .
 
@@ -63,23 +63,23 @@
     a foaf:Organization;
     foaf:name "Fiskeriverket"@sv .
 
-<http://rinfo.lagrummet.se/org/f%C3%B6rsvarsmakten>
+<http://rinfo.lagrummet.se/org/foersvarsmakten>
     a foaf:Organization;
     foaf:name "Försvarsmakten"@sv .
 
-<http://rinfo.lagrummet.se/org/f%C3%B6rs%C3%A4kringskassan>
+<http://rinfo.lagrummet.se/org/foersaekringskassan>
     a foaf:Organization;
     foaf:name "Försäkringskassan"@sv .
 
-<http://rinfo.lagrummet.se/org/h%C3%B6gskoleverket>
+<http://rinfo.lagrummet.se/org/hoegskoleverket>
     a foaf:Organization;
     foaf:name "Högskoleverket"@sv .
 
-<http://rinfo.lagrummet.se/org/inspektionen_f%C3%B6r_arbetsl%C3%B6shetsf%C3%B6rs%C3%A4kringen>
+<http://rinfo.lagrummet.se/org/inspektionen_foer_arbetsloeshetsfoersaekringen>
     a foaf:Organization;
     foaf:name "Inspektionen för arbetslöshetsförsäkringen"@sv .
 
-<http://rinfo.lagrummet.se/org/institutet_f%C3%B6r_tillv%C3%A4xtpolitiska_studier>
+<http://rinfo.lagrummet.se/org/institutet_foer_tillvaextpolitiska_studier>
     a foaf:Organization;
     foaf:name "Institutet för tillväxtpolitiska studier"@sv .
 
@@ -107,7 +107,7 @@
     a foaf:Organization;
     foaf:name "Kronofogdemyndigheten"@sv .
 
-<http://rinfo.lagrummet.se/org/lantm%C3%A4teriet>
+<http://rinfo.lagrummet.se/org/lantmaeteriet>
     a foaf:Organization;
     foaf:name "Lantmäteriet"@sv .
 
@@ -119,7 +119,7 @@
     a foaf:Organization;
     foaf:name "Lotteriinspektionen"@sv .
 
-<http://rinfo.lagrummet.se/org/l%C3%A4kemedelsverket>
+<http://rinfo.lagrummet.se/org/laekemedelsverket>
     a foaf:Organization;
     foaf:name "Läkemedelsverket"@sv .
 
@@ -127,11 +127,11 @@
     a foaf:Organization;
     foaf:name "Migrationsverket"@sv .
 
-<http://rinfo.lagrummet.se/org/myndigheten_f%C3%B6r_samh%C3%A4llsskydd_och_beredskap>
+<http://rinfo.lagrummet.se/org/myndigheten_foer_samhaellsskydd_och_beredskap>
     a foaf:Organization;
     foaf:name "Myndigheten för samhällsskydd och beredskap"@sv .
 
-<http://rinfo.lagrummet.se/org/naturv%C3%A5rdsverket>
+<http://rinfo.lagrummet.se/org/naturvaardsverket>
     a foaf:Organization;
     foaf:name "Naturvårdsverket"@sv .
 
@@ -147,7 +147,7 @@
     a foaf:Organization;
     foaf:name "Radio- och TV-verket"@sv .
 
-<http://rinfo.lagrummet.se/org/revisorsn%C3%A4mnden>
+<http://rinfo.lagrummet.se/org/revisorsnaemnden>
     a foaf:Organization;
     foaf:name "Revisorsnämnden"@sv .
 
@@ -155,7 +155,7 @@
     a foaf:Organization;
     foaf:name "Riksarkivet"@sv .
 
-<http://rinfo.lagrummet.se/org/riksg%C3%A4ldskontoret>
+<http://rinfo.lagrummet.se/org/riksgaeldskontoret>
     a foaf:Organization;
     foaf:name "Riksgäldskontoret"@sv .
 
@@ -167,7 +167,7 @@
     a foaf:Organization;
     foaf:name "Sametinget"@sv .
 
-<http://rinfo.lagrummet.se/org/sj%C3%B6fartsverket>
+<http://rinfo.lagrummet.se/org/sjoefartsverket>
     a foaf:Organization;
     foaf:name "Sjöfartsverket"@sv .
 
@@ -187,7 +187,7 @@
     a foaf:Organization;
     foaf:name "Statens energimyndighet"@sv .
 
-<http://rinfo.lagrummet.se/org/statens_folkh%C3%A4lsoinstitut>
+<http://rinfo.lagrummet.se/org/statens_folkhaelsoinstitut>
     a foaf:Organization;
     foaf:name "Statens folkhälsoinstitut"@sv .
 
@@ -195,7 +195,7 @@
     a foaf:Organization;
     foaf:name "Statens jordbruksverk"@sv .
 
-<http://rinfo.lagrummet.se/org/statens_kulturr%C3%A5d>
+<http://rinfo.lagrummet.se/org/statens_kulturraad>
     a foaf:Organization;
     foaf:name "Statens kulturråd"@sv .
 
@@ -203,27 +203,27 @@
     a foaf:Organization;
     foaf:name "Statens skolverk"@sv .
 
-<http://rinfo.lagrummet.se/org/statistiska_centralbyr%C3%A5n>
+<http://rinfo.lagrummet.se/org/statistiska_centralbyraan>
     a foaf:Organization;
     foaf:name "Statistiska centralbyrån"@sv .
 
-<http://rinfo.lagrummet.se/org/str%C3%A5ls%C3%A4kerhetsmyndigheten>
+<http://rinfo.lagrummet.se/org/straalsaekerhetsmyndigheten>
     a foaf:Organization;
     foaf:name "Strålsäkerhetsmyndigheten"@sv .
 
-<http://rinfo.lagrummet.se/org/styrelsen_f%C3%B6r_ackreditering_och_teknisk_kontroll>
+<http://rinfo.lagrummet.se/org/styrelsen_foer_ackreditering_och_teknisk_kontroll>
     a foaf:Organization;
     foaf:name "Styrelsen för ackreditering och teknisk kontroll"@sv .
 
-<http://rinfo.lagrummet.se/org/sveriges_geologiska_unders%C3%B6kning>
+<http://rinfo.lagrummet.se/org/sveriges_geologiska_undersoekning>
     a foaf:Organization;
     foaf:name "Sveriges geologiska undersökning"@sv .
 
-<http://rinfo.lagrummet.se/org/tandv%C3%A5rds-_och_l%C3%A4kemedelsf%C3%B6rm%C3%A5nsverket>
+<http://rinfo.lagrummet.se/org/tandvaards-_och_laekemedelsfoermaansverket>
     a foaf:Organization;
     foaf:name "Tandvårds- och läkemedelsförmånsverket"@sv .
 
-<http://rinfo.lagrummet.se/org/totalf%C3%B6rsvarets_pliktverk>
+<http://rinfo.lagrummet.se/org/totalfoersvarets_pliktverk>
     a foaf:Organization;
     foaf:name "Totalförsvarets pliktverk"@sv .
 
@@ -240,25 +240,25 @@
     foaf:name "Valmyndigheten"@sv .
 
 # TODO: uri-minter-regeln enligt detta är "slugify(skos:altLabel or foaf:name)"
-#<http://rinfo.lagrummet.se/org/verket_f%C3%B6r_f%C3%B6rvaltningsutveckling>
+#<http://rinfo.lagrummet.se/org/verket_foer_foervaltningsutveckling>
 <http://rinfo.lagrummet.se/org/verva>
     a foaf:Organization;
     foaf:name "Verket för förvaltningsutveckling"@sv;
     rdfs:comment "Nedlagd sedan 2008-12-31."@sv;
     skos:altLabel "Verva"@sv .
 
-<http://rinfo.lagrummet.se/org/verket_f%C3%B6r_n%C3%A4ringslivsutveckling>
+<http://rinfo.lagrummet.se/org/verket_foer_naeringslivsutveckling>
     a foaf:Organization;
     foaf:name "Verket för näringslivsutveckling"@sv .
 
-<http://rinfo.lagrummet.se/org/vetenskapsr%C3%A5det>
+<http://rinfo.lagrummet.se/org/vetenskapsraadet>
     a foaf:Organization;
     foaf:name "Vetenskapsrådet"@sv .
 
-<http://rinfo.lagrummet.se/org/v%C3%A4gverket>
+<http://rinfo.lagrummet.se/org/vaegverket>
     a foaf:Organization;
     foaf:name "Vägverket"@sv .
 
-<http://rinfo.lagrummet.se/org/%C3%A5klagarmyndigheten>
+<http://rinfo.lagrummet.se/org/aaklagarmyndigheten>
     a foaf:Organization;
     foaf:name "Åklagarmyndigheten"@sv .

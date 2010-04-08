@@ -26,77 +26,77 @@ tks_org: a coin:TokenSet;
 # Domstolar
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/h%C3%B6gsta_domstolen>;
+    coin:represents <http://rinfo.lagrummet.se/org/hoegsta_domstolen>;
     rdf:value "hd";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/svea_hovr%C3%A4tt>;
+    coin:represents <http://rinfo.lagrummet.se/org/svea_hovraett>;
     rdf:value "hsv";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/g%C3%B6ta_hovr%C3%A4tt>;
+    coin:represents <http://rinfo.lagrummet.se/org/goeta_hovraett>;
     rdf:value "hgo";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/hovr%C3%A4tten_%C3%B6ver_sk%C3%A5ne_och_blekinge>;
+    coin:represents <http://rinfo.lagrummet.se/org/hovraetten_oever_skaane_och_blekinge>;
     rdf:value "hsb";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/hovr%C3%A4tten_f%C3%B6r_v%C3%A4stra_sverige>;
+    coin:represents <http://rinfo.lagrummet.se/org/hovraetten_foer_vaestra_sverige>;
     rdf:value "hvs";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/hovr%C3%A4tten_f%C3%B6r_nedre_norrland>;
+    coin:represents <http://rinfo.lagrummet.se/org/hovraetten_foer_nedre_norrland>;
     rdf:value "hnn";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/hovr%C3%A4tten_f%C3%B6r_%C3%B6vre_norrland>;
+    coin:represents <http://rinfo.lagrummet.se/org/hovraetten_foer_oevre_norrland>;
     rdf:value "hon";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/milj%C3%B6%C3%B6verdomstolen>;
+    coin:represents <http://rinfo.lagrummet.se/org/miljoeoeverdomstolen>;
     rdf:value "mod";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/regeringsr%C3%A4tten>;
+    coin:represents <http://rinfo.lagrummet.se/org/regeringsraetten>;
     rdf:value "regr";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/kammarr%C3%A4tten_i_stockholm>;
+    coin:represents <http://rinfo.lagrummet.se/org/kammarraetten_i_stockholm>;
     rdf:value "kst";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/kammarr%C3%A4tten_i_goteborg>;
+    coin:represents <http://rinfo.lagrummet.se/org/kammarraetten_i_goteborg>;
     rdf:value "kgg";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/kammarr%C3%A4tten_i_sundsvall>;
+    coin:represents <http://rinfo.lagrummet.se/org/kammarraetten_i_sundsvall>;
     rdf:value "ksu";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/kammarr%C3%A4tten_i_j%C3%B6nk%C3%B6ping>;
+    coin:represents <http://rinfo.lagrummet.se/org/kammarraetten_i_joenkoeping>;
     rdf:value "kjo";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/migrations%C3%B6verdomstolen>;
+    coin:represents <http://rinfo.lagrummet.se/org/migrationsoeverdomstolen>;
     rdf:value "mig";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/r%C3%A4ttshj%C3%A4lpsn%C3%A4mnden>;
+    coin:represents <http://rinfo.lagrummet.se/org/raettshjaelpsnaemnden>;
     rdf:value "rhn";
     coin:tokenSet tks_org: .
 
@@ -111,12 +111,12 @@ tks_org: a coin:TokenSet;
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/patentbesv%C3%A4rsr%C3%A4tten>;
+    coin:represents <http://rinfo.lagrummet.se/org/patentbesvaersraetten>;
     rdf:value "pbr";
     coin:tokenSet tks_org: .
 
 [] a coin:Token;
-    coin:represents <http://rinfo.lagrummet.se/org/statens_ansvarsn%C3%A4mnd>;
+    coin:represents <http://rinfo.lagrummet.se/org/statens_ansvarsnaemnd>;
     rdf:value "san";
     coin:tokenSet tks_org: .
 
