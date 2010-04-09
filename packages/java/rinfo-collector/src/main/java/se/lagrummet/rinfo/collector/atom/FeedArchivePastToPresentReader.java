@@ -51,13 +51,18 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                     feed = feed.sortEntriesByUpdated(/*new_first=*/false);
 
                     // TODO: must not have paged feed links! Fail if so.
+                    //
+                    // Also fail if feed is already known but only now was
+                    // marked as complete.. (Otherwise collector must construct
+                    // complete source+entry index).
+                    //
                     // .. not at all necessary to use this pastToPresent
                     // two-pass logic on complete feeds - there will be only
                     // one feedRef in feedTrail!
-                    // Could maybe also use the complete state to simplify the
-                    // stopOnEntry mechanism? Remember, we need all to make a
-                    // complete diff. Yet another reason to switch from
-                    // "archive reading" to "complete reading"...
+                    // Could possibly also use the complete state to simplify
+                    // the stopOnEntry mechanism? Remember, we need all to make
+                    // a complete diff. Another reason to separate "archive
+                    // reading" from "complete reading"...
                     boolean completeFeed = FeedPagingHelper.isComplete(feed);
 
                     Map<IRI, AtomDate> deletedMap = (completeFeed)?
@@ -91,11 +96,20 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                         }
                     }
 
+                    // TODO: not necessary if incremental logging is used. See
+                    // also the TODO after processFeedPageInOrder call.
+                    if (completeFeed)
+                        storeIntermediateCompleteFeedEntryIdIndex(feed);
+
                     processFeedPageInOrder(feedRef.getFeedUrl(), feed,
                             effectiveEntries, deletedMap);
 
                     // TODO: don't do this here? Should impl take care of doing this
-                    // in a granular, storage-specific way?
+                    // in a granular, storage-specific way? Like:
+                    // - make sure or assume that all in new feed older than
+                    //   knownStoppingEntry are stored,
+                    // - remove all deleted and
+                    // - add new to entry index for feed..
                     if (completeFeed)
                         storeNewCompleteFeedEntryIdIndex(feed);
 
@@ -240,6 +254,26 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
             deletedMap.put(deletedIri, feed.getUpdatedElement().getValue());
         }
         return deletedMap;
+    }
+
+    /**
+     * This is necessary to guarantee knowledge of "possibly stored posts", to
+     * be able to always determine which things should be deleted on future
+     * collects. This is done by storing a union of existing and new entries.
+     * This list will contain entries not yet stored, but also not yet deleted,
+     * which guarantees that a new diff will not miss anything to be deleted.
+     */
+    void storeIntermediateCompleteFeedEntryIdIndex(Feed feed) {
+        Set<IRI> allEntryIds = getCompleteFeedEntryIdIndex().
+                getEntryIdsForCompleteFeedId(feed.getId());
+        if (allEntryIds == null) {
+            allEntryIds = new HashSet<IRI>();
+        }
+        for (Entry entry: feed.getEntries()) {
+            allEntryIds.add(entry.getId());
+        }
+        getCompleteFeedEntryIdIndex().storeEntryIdsForCompleteFeedId(
+                feed.getId(), allEntryIds);
     }
 
     void storeNewCompleteFeedEntryIdIndex(Feed feed) {

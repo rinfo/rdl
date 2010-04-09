@@ -74,7 +74,6 @@ class DefaultArchiveReader extends FeedArchivePastToPresentReader {
 
 class CompleteFeedAwareReader extends DefaultArchiveReader {
     CompleteFeedEntryIdIndex completeFeedEntryIdIndex
-    // new File(baseDir, "complete-source-index")
 
     CompleteFeedAwareReader() {
         completeFeedEntryIdIndex = new CompleteFeedEntryIdIndex() {

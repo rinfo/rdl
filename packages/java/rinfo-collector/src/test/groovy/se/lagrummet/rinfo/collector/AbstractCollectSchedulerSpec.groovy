@@ -37,7 +37,7 @@ class AbstractCollectSchedulerSpec extends Specification {
         when:
         collectScheduler.waitForCompletedCollect()
         then:
-        fakeSource.items.clone() == collectScheduler.collectedItems.clone()
+        fakeSource.items == collectScheduler.collectedItems
     }
 
     def "should collect all feeds"() {
