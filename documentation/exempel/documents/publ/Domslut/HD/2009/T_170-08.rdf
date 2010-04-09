@@ -2,12 +2,76 @@
 <rdf:RDF
    xmlns:dct="http://purl.org/dc/terms/"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
+   xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
 >
-  <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/dom/hd/t170-08">
-    <rpubl:malnummer xml:lang="sv">T 170-08</rpubl:malnummer>
-    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/hoesta_domstolen"/>
-    <rdf:type rdf:resource="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#VagledandeDomstolsavgorande"/>
-  </rdf:Description>
+  <VagledandeDomstolsavgorande
+      rdf:about="http://rinfo.lagrummet.se/publ/dom/hd/t170-08/2009-11-04">
+    
+    <avgorandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+		    >2009-11-04</avgorandedatum>
+    <domstolsavdelning>2</domstolsavdelning>
+    <malnummer>T 170-08</malnummer>
+
+    <!-- Exakta hänvisningar till enskilda paragrafer i en lag  -->
+    <lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#p_1"/>
+    <lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#p_1_a"/>
+    <lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#p_2"/>
+    <lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#p_5"/>
+    <lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#p_31"/>
+    <lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#p_32"/>
+
+    <!-- Exakt hänvisning till EU-förordningen (i sin helhet, inte
+         enskilda artiklar) -->
+    <lagrum rdf:resource="http://rinfo.lagrummet.se/ext/eur-lex/32002R0006"/>
+
+    <!-- exempel på inexakta hänvisningar. Dessa uttrycker delvis
+         samma information som de ovanstående, men är människoläsbara
+         istället för maskinläsbara. Det är OK att uttrycka båda
+         formerna.  -->
+    <lagrum>
+      <!-- rdf:Description anger att detta är en resurs som saknar
+           känd URI (BNode). Vi behöver dock inte en URI för resursen
+           för att kunna ange saker om den -->
+      <rdf:Description>
+	<!-- dct:description anger att detta är en beskrivning av
+	     resursen. dct:description och rdf:Description uttrycker
+	     helt olika saker. -->
+	<dct:description>
+	  1 §, 1 a §, 2 §, 5 §, 31 § och 32 § mönsterskyddslagen
+	  (1970:485)
+	</dct:description>
+      </rdf:Description>
+    </lagrum>
+
+    <lagrum>
+      <rdf:Description>
+	<dct:description>
+	  Artikel 3, artikel 4, artikel 10, artikel 11, artikel 15,
+	  artikel 19 och artikel 27 Rådets förordning (EG) nr 6/2002
+	  av den 12 december 2001 om gemenskapsformgivning
+	</dct:description>
+      </rdf:Description>
+    </lagrum>
+
+    <dct:title xml:lang="sv">
+      Överföring av mönsterregistrering på grund av bättre rätt till
+      formgivarrätt
+    </dct:title>
+
+    <dct:publisher
+	rdf:resource="http://rinfo.lagrummet.se/org/hoegsta_domstolen"/>
+
+    <!-- det datum då denna resurs först blev tillgänglig. Kanske kan
+         hämtas från InfogatDatum i nuvarande system? -->
+    <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+		>2009-11-05</dct:issued>
+    
+    <dct:subject xml:lang="sv">Mönsterrätt</dct:subject>
+    <dct:subject xml:lang="sv">Dubbelöverlåtelse</dct:subject>
+    <dct:subject xml:lang="sv">Formgivarrätt</dct:subject>
+    <dct:subject xml:lang="sv">Godtrosförvärv</dct:subject>
+    <dct:subject xml:lang="sv">Formgivning</dct:subject>
+
+  </VagledandeDomstolsavgorande>
 </rdf:RDF>
 

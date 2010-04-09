@@ -197,7 +197,7 @@
       Sättet som RDF-informationen skapas på är såklart valfritt. Det kan dock
       vara bra att försöka hålla länken teknikoberoende för att göra det
       möjligt att byta ut underliggande implementation i framtiden.
-    -->
+    --> 
 
 
   </entry>

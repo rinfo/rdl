@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+   xmlns:dct="http://purl.org/dc/terms/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
+>
+  <!-- notera att "Ö" översatts till "oe" när identifieraren för detta
+       rättsfall skapats -->
+  <VagledandeDomstolsavgorande
+     rdf:about="http://rinfo.lagrummet.se/publ/dom/hd/oe2034-09/2010-03-31">
+    <avgorandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+       >2010-03-31</avgorandedatum>
+    <domstolsavdelning xml:lang="sv">2</domstolsavdelning>
+    <malnummer xml:lang="sv">Ö 2034-09</malnummer>
+    
+    <lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1942:740#k_8-p_2"/>
+
+    <!-- Nedanstående två hänvisningar till rättsfall görs genom
+       publikationsplatsangivelser. Notera att vi lika gärna kunde ha
+       hänvisat genom publikationsordinaler - identifierarna hade då
+       blivit http://rinfo.lagrummet.se/publ/rf/nja/1998:4 resp -->
+    <rattsfallshanvisning rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/1998s22"/>
+       
+    <!-- samma för denna hänvisning -->
+    <rattsfallshanvisning rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/2000:24"/>
+
+    <!-- Det finns idag inte någon definierad princip för vilka
+       identifierare notisfall (som "NJA 2007 N 72") och liknande ska
+       ha. Liknande problem kan finnas när domstolen hänvisar till
+       rättsfall från EU-domstolen och internationella domstolar. När
+       man inte kan konstruera en exakt identifierare kan man alltid
+       hänvisa indirekt till en anonym resurs som man sedan beskriver
+       så gott man kan. Ett liknande exempel, fast för
+       lagrumshänvisningar, finns i T_170-08.rdf. Observera att där
+       används termen dct:description, medans nedan används
+       dct:identifier.  -->
+    <rattsfallshanvisning>
+      <rdf:Description>
+        <dct:identifier>NJA 1951 C 58</dct:identifier>
+      </rdf:Description>
+    </rattsfallshanvisning>
+
+    <rattsfallshanvisning>
+      <rdf:Description>
+        <dct:identifier>NJA 2007 N 72</dct:identifier>
+      </rdf:Description>
+    </rattsfallshanvisning>
+
+    <dct:title xml:lang="sv">
+      Fråga om dispens från kravet att den som antas som ledamot av
+      Sveriges advokatsamfund inte får vara anställd hos annan än
+      advokat. Högsta domstolen kan endast pröva om beslutet
+      tillkommit i behörig ordning och om dispens överhuvudtaget
+      krävs, men inte om dispens ska ges.
+    </dct:title>
+
+    <dct:publisher
+       rdf:resource="http://rinfo.lagrummet.se/org/hoegsta_domstolen"/>
+
+    <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+                >2010-04-01</dct:issued>
+
+    <dct:subject xml:lang="sv">Advokat</dct:subject>
+    <dct:subject xml:lang="sv">Dispens</dct:subject>
+  </VagledandeDomstolsavgorande>
+</rdf:RDF>

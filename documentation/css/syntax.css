@@ -23,3 +23,11 @@ color: rgb(0,0,0); font-weight: bold; font-style: italic;
 color: rgb(193,0,0);
 }
 
+.comment {
+    font-size: small;
+    font-style: italic;
+}
+.predicate, .uri {
+    font-size: small;
+    font-family: courier new, monospace;
+}
