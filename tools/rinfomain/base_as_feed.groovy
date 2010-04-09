@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils
 
 import org.apache.abdera.Abdera
 import org.apache.abdera.i18n.iri.IRI
+import org.apache.abdera.ext.history.FeedPagingHelper
 
 import org.openrdf.rio.RDFFormat
 import org.openrdf.model.impl.URIImpl
@@ -57,7 +58,7 @@ def main() {
     assert outdir != null
 
     def items = collectItems(FEED_META.publicBaseUri, base, sources)
-    def coll = createAtomCollection(FEED_META, feedPathConf(opt.l), items)
+    def coll = createAtomCollection(FEED_META, feedPathConf(opt.l ?: ""), items)
 
     def extMap = [
         "application/rdf+xml": "rdf",
@@ -246,6 +247,7 @@ def createAtomCollection(feedMeta, feedPathConf, items) {
     def feed = Abdera.instance.newFeed()
     feed.id = feedMeta.feedUri
     feed.setTitle(feedMeta.feedTitle)
+    FeedPagingHelper.setComplete(feed, true)
     def youngestUpdated = null
 
     for (item in items) {
