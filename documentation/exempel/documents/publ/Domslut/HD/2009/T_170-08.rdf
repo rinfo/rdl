@@ -19,7 +19,6 @@
     <lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#p_5"/>
     <lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#p_31"/>
     <lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1970:485#p_32"/>
-
     <!-- Exakt hänvisning till EU-förordningen (i sin helhet, inte
          enskilda artiklar) -->
     <lagrum rdf:resource="http://rinfo.lagrummet.se/ext/eur-lex/32002R0006"/>
