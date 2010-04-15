@@ -13,7 +13,9 @@
         <content type="application/rdf+xml">
             <rpubl:Forordning>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
-                <rpubl:fsNummer>1999:175</rpubl:fsNummer>
+                <!-- <rpubl:fsNummer>1999:175</rpubl:fsNummer> -->
+		<rpubl:arsutgava>1999</rpubl:arsutgava>
+		<rpubl:lopnummer>175</rpubl:lopnummer>
             </rpubl:Forordning>
         </content>
     </entry>
@@ -24,18 +26,23 @@
         <content type="application/rdf+xml">
             <rpubl:Forordning>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
-                <rpubl:fsNummer>1899:bih. 40 s. 3</rpubl:fsNummer>
+                <!-- <rpubl:fsNummer>1899:bih. 40 s. 3</rpubl:fsNummer> -->
+		<rpubl:arsutgava>1899</rpubl:arsutgava>
+		<rpubl:bihangsnummer>40</rpubl:bihangsnummer>
+		<rpubl:sidnummer>3</rpubl:sidnummer>
             </rpubl:Forordning>
         </content>
     </entry>
 
     <entry>
+      <!-- Vi vet inte hur den avslutande "2" ska tolkas -->
         <id>http://rinfo.lagrummet.se/publ/sfs/1736:0123_2</id>
         <summary>Äldre lag (handelsbalken) i svensk författningsamling (SFS), med identifierare delvis konstruerad ur publikationshänvisning</summary>
         <content type="application/rdf+xml">
             <rpubl:Forordning>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
-                <rpubl:fsNummer>1736:0123 2</rpubl:fsNummer>
+                <!-- <rpubl:fsNummer>1736:0123 2</rpubl:fsNummer> -->
+		<rpubl:platsangivelse>1736:0123 2</rpubl:platsangivelse>
             </rpubl:Forordning>
         </content>
     </entry>
@@ -46,8 +53,9 @@
         <content type="application/rdf+xml">
             <rpubl:Forordning>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
-		<!-- obs: inget mellanslag mellan "s." och "1" -->
-                <rpubl:fsNummer>1851:55 s.4</rpubl:fsNummer>
+                <!-- <rpubl:fsNummer>1851:55 s.4</rpubl:fsNummer> -->
+		<rpubl:arsutgava>1851</rpubl:arsutgava>
+		<rpubl:sidnummer>4</rpubl:sidnummer>
             </rpubl:Forordning>
 g        </content>
     </entry>
@@ -58,7 +66,9 @@ g        </content>
         <content type="application/rdf+xml">
             <rpubl:Forordning>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
-                <rpubl:fsNummer>1899:bih. 25</rpubl:fsNummer>
+                <!-- <rpubl:fsNummer>1899:bih. 25</rpubl:fsNummer> -->
+		<rpubl:arsutgava>1899</rpubl:arsutgava>
+		<rpubl:bihangsnummer>25</rpubl:bihangsnummer>
             </rpubl:Forordning>
         </content>
     </entry>
@@ -83,7 +93,8 @@ g        </content>
         <content type="application/rdf+xml">
             <rpubl:Myndighetsforeskrift>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/agvfs"/>
-                <rpubl:fsNummer>2002:3 B 3</rpubl:fsNummer>
+                <!-- <rpubl:fsNummer>2002:3 B 3</rpubl:fsNummer> -->
+		<rpubl:platsangivelse>2002:3 B 3</rpubl:platsangivelse>
             </rpubl:Myndighetsforeskrift>
         </content>
     </entry>
@@ -97,14 +108,16 @@ g        </content>
         <content type="application/rdf+xml">
             <rpubl:Myndighetsforeskrift>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/06fs"/>
-                <rpubl:fsNummer>1971:96 b</rpubl:fsNummer>
+                <!-- <rpubl:fsNummer>1971:96 b</rpubl:fsNummer> -->
+		<rpubl:arsutgava>1971</rpubl:arsutgava>
+		<rpubl:lopnummer>96 b</rpubl:lopnummer>
             </rpubl:Myndighetsforeskrift>
         </content>
     </entry>
 
     <!-- Se exempel från <http://www.msb.se/sv/Kunskapsbank/Lag-och-ratt/Forfattningar/> -->
     <entry>
-        <id>http://rinfo.lagrummet.se/publ/saeifs/</id>
+        <id>http://rinfo.lagrummet.se/publ/saeifs/1983:1</id>
         <summary>Myndighetsföreskrift vars identifierare inte följer standard</summary>
         <content type="application/rdf+xml">
             <rpubl:Myndighetsforeskrift>
@@ -112,6 +125,8 @@ g        </content>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/saeifs"/>
 		<!-- OBS: Dokumentets identifierare är just "SÄI 1983:1", inte "SÄIFS 1983:1" -->
 		<dct:identifier>SÄI 1983:1</dct:identifier>
+		<rpubl:arsutgava>1983</rpubl:arsutgava>
+		<rpubl:lopnummer>1</rpubl:lopnummer>
             </rpubl:Myndighetsforeskrift>
         </content>
     </entry>
@@ -143,7 +158,7 @@ g        </content>
     </entry>
 
 
-    <!-- Rättsfallsreferat -->
+    <!-- Rättsfallsreferat och rättsfallsnotiser-->
 
     <!-- Referat från Högsta domstolen, utgivna i Nytt Juridiskt arkiv -->
     <entry>
@@ -158,7 +173,9 @@ g        </content>
         <content type="application/rdf+xml">
             <rpubl:Rattsfallsreferat>
                 <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/nja"/>
-                <rpubl:publikationsordinal>2005:57</rpubl:publikationsordinal>
+                <!-- <rpubl:publikationsordinal>2005:57</rpubl:publikationsordinal> -->
+		<rpubl:arsutgava>2005</rpubl:arsutgava>
+		<rpubl:lopnummer>57</rpubl:lopnummer>
             </rpubl:Rattsfallsreferat>
         </content>
     </entry>
@@ -171,56 +188,56 @@ g        </content>
         <content type="application/rdf+xml">
             <rpubl:Rattsfallsreferat>
                 <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/nja"/>
-                <rpubl:publikationsplatsangivelse>2005 s. 523</rpubl:publikationsplatsangivelse>
+                <!-- <rpubl:publikationsplatsangivelse>2005 s. 523</rpubl:publikationsplatsangivelse> -->
+		<rpubl:arsutgava>2005</rpubl:arsutgava>
+		<rpubl:sidnummer>523</rpubl:sidnummer>
             </rpubl:Rattsfallsreferat>
         </content>
     </entry>
 
     <entry>
       <!-- Äldre referens från HD på formen "NJA 1913 B 418" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/nja/1913B418</id>
-      <summary>Rättsfallsreferat utgivet i </summary>
+      <id>http://rinfo.lagrummet.se/publ/rf/nja/1913/not/B418</id>
+      <summary>Rättsfallsnotis utgiven i Nytt Juridiskt Arkiv</summary>
       <content type="application/rdf+xml">
-	<rpubl:Rattsfallsreferat>
+	<rpubl:Rattsfallsnotis>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/nja"/>
-	  <rpubl:publikationsordinal>1913 B 418</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
-      </content>
-    </entry>
-
-    <entry>
-      <!-- Referens till del av referat på formen "NJA 1939 s. 364 II" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/nja/1939s364#II</id>
-      <summary>Rättsfallsreferat utgivet i </summary>
-      <content type="application/rdf+xml">
-	<rpubl:Rattsfallsreferat>
-	<rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/nja"/>
-	<rpubl:publikationsordinal>1939 s. 364 II</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
+	  <!-- <rpubl:publikationsordinal>1913 B 418</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>1913</rpubl:arsutgava>
+	  <rpubl:notisserie>B</rpubl:notisserie>
+	  <rpubl:lopnummer>418</rpubl:lopnummer>
+	</rpubl:Rattsfallsnotis>
       </content>
     </entry>
 
     <entry>
       <!-- Äldre referens från HD på formen "NJA 1957 C 499" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/nja/1957C499</id>
-      <summary>Rättsfallsreferat utgivet i </summary>
+      <id>http://rinfo.lagrummet.se/publ/rf/nja/1957/not/C499</id>
+      <summary>Rättsfallsnotis utgiven i Nytt Juridiskt Arkiv</summary>
       <content type="application/rdf+xml">
-	<rpubl:Rattsfallsreferat>
+	<rpubl:Rattsfallsnotis>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/nja"/>
-	  <rpubl:publikationsordinal>1957 C 499</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
+	  <!-- <rpubl:publikationsordinal>1957 C 499</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>1957</rpubl:arsutgava>
+	  <rpubl:notisserie>C</rpubl:notisserie>
+	  <rpubl:lopnummer>499</rpubl:lopnummer>
+	</rpubl:Rattsfallsnotis>
       </content>
     </entry>
 
     <entry>
       <!-- Referens till notisfall från HD på formen "NJA 2007 N 72" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/nja/2007N72</id>
-      <summary>Rättsfallsreferat utgivet i </summary>
+      <id>http://rinfo.lagrummet.se/publ/rf/nja/2007/not/72</id>
+      <summary>Rättsfallsnotis utgiven i Nytt Juridiskt Arkiv</summary>
       <content type="application/rdf+xml">
-	<rpubl:Rattsfallsreferat>
+	<rpubl:Rattsfallsnotis>>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/nja"/>
-	  <rpubl:publikationsordinal>2007 N 72</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
+	  <!-- <rpubl:publikationsordinal>2007 N 72</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>2007</rpubl:arsutgava>
+	  <!-- "N" ska utläsas som att det är ett notisfall, inte att
+	       det är publicerat i notisserien "N" -->
+	  <rpubl:lopnummer>72</rpubl:lopnummer>
+	</rpubl:Rattsfallsnotis>
       </content>
     </entry>
 
@@ -232,167 +249,161 @@ g        </content>
       <content type="application/rdf+xml">
 	<rpubl:Rattsfallsreferat>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/ra"/>
-	  <rpubl:publikationsordinal>1910 ref. 17</rpubl:publikationsordinal>
+	  <!-- <rpubl:publikationsordinal>1910 ref. 17</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>1910</rpubl:arsutgava>
+	  <rpubl:lopnummer>17</rpubl:lopnummer>
 	</rpubl:Rattsfallsreferat>
       </content>
     </entry>
 
     <entry>
       <!-- Äldre referens från regeringsrätten på formen "RÅ 1933 Fi 655" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/ra/1933Fi655</id>
+      <id>http://rinfo.lagrummet.se/publ/rf/ra/1933/not/Fi655</id>
       <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok </summary>
       <content type="application/rdf+xml">
-	<rpubl:Rattsfallsreferat>
+	<rpubl:Rattsfallsnotis>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/ra"/>
-	  <rpubl:publikationsordinal>1933 Fi 655</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
+	  <!-- <rpubl:publikationsordinal>1933 Fi 655</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>1933</rpubl:arsutgava>
+	  <rpubl:notisserie>Fi</rpubl:notisserie>
+	  <rpubl:lopnummer>655</rpubl:lopnummer>
+	</rpubl:Rattsfallsnotis>
       </content>
     </entry>
     
     <entry>
       <!-- Äldre referens från regeringsrätten på formen "RÅ 1936 not. Fi 223" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/ra/1936notFi223</id>
-      <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok </summary>
+      <id>http://rinfo.lagrummet.se/publ/rf/ra/1936/not/Fi223</id>
+      <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok</summary>
       <content type="application/rdf+xml">
-	<rpubl:Rattsfallsreferat>
+	<rpubl:Rattsfallsnotis>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/ra"/>
-	  <rpubl:publikationsordinal>1936 not. Fi 223</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
+	  <!-- <rpubl:publikationsordinal>1936 not. Fi 223</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>1936</rpubl:arsutgava>
+	  <rpubl:notisserie>Fi</rpubl:notisserie>
+	  <rpubl:lopnummer>223</rpubl:lopnummer>
+	</rpubl:Rattsfallsnotis>
       </content>
     </entry>
 
     <entry>
       <!-- Äldre referens från regeringsrätten på formen "RÅ 1942 S 460" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/ra/1942S460</id>
-     <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok </summary>
+      <id>http://rinfo.lagrummet.se/publ/rf/ra/1942/not/S460</id>
+     <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok</summary>
       <content type="application/rdf+xml">
-	<rpubl:Rattsfallsreferat>
+	<rpubl:Rattsfallsnotis>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/ra"/>
-	  <rpubl:publikationsordinal>1942 S 460</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
+	  <!-- <rpubl:publikationsordinal>1942 S 460</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>1936</rpubl:arsutgava>
+	  <rpubl:notisserie>Fi</rpubl:notisserie>
+	  <rpubl:lopnummer>223</rpubl:lopnummer>
+	</rpubl:Rattsfallsnotis>
       </content>
     </entry>
 
     <entry>
       <!-- Traditionell referens från regeringsrätten på formen "RÅ 1966 not. 842" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/ra/1966not842</id>
+      <id>http://rinfo.lagrummet.se/publ/rf/ra/1966/not/842</id>
       <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok </summary>
       <content type="application/rdf+xml">
-	<rpubl:Rattsfallsreferat>
+	<rpubl:Rattsfallsnotis>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/*   rå"/>
-	  <rpubl:publikationsordinal>1966 not. 842</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
+	  <!-- <rpubl:publikationsordinal>1966 not. 842</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>1966</rpubl:arsutgava>
+	  <rpubl:lopnummer>842</rpubl:lopnummer>
+	</rpubl:Rattsfallsnotis>
       </content>
     </entry>
 
     <entry>
       <!-- Äldre referens från regeringsrätten på formen "RÅ 1967 not. Jo 16" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/ra/1967notJo16</id>
+      <id>http://rinfo.lagrummet.se/publ/rf/ra/1967/not/Jo16</id>
       <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok </summary>
       <content type="application/rdf+xml>
-	<rpubl:Rattsfallsreferat>
+	<rpubl:Rattsfallsnotis>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/ra"/>
-	  <rpubl:publikationsordinal>1967 not. Jo 16</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
+	  <!-- <rpubl:publikationsordinal>1967 not. Jo 16</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>1967</rpubl:arsutgava>
+	  <rpubl:notisserie>Jo</rpubl:notisserie>
+	  <rpubl:lopnummer>16</rpubl:lopnummer>
+	</rpubl:Rattsfallsnotis>
       </content>
     </entry>
 
     <entry>
       <!-- Äldre referens från regeringsrätten på formen "RÅ 1971 C 59" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/ra/1971C59</id>
+      <id>http://rinfo.lagrummet.se/publ/rf/ra/1971/not/C59</id>
       <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok </summary>
       <content type="application/rdf+xml">
-	<rpubl:Rattsfallsreferat>
+	<rpubl:Rattsfallsnotis>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/ra"/>
-	  <rpubl:publikationsordinal>1971 C 59</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
+	  <!-- <rpubl:publikationsordinal>1971 C 59</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>1971</rpubl:arsutgava>
+	  <rpubl:notisserie>C</rpubl:notisserie>
+	  <rpubl:lopnummer>59</rpubl:lopnummer>
+	</rpubl:Rattsfallsnotis>
       </content>
     </entry>
 
     <entry>
       <!-- Äldre referens från regeringsrätten på formen "RÅ 1970:11" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/ra/1970:11</id>
+      <id>http://rinfo.lagrummet.se/publ/rf/ra/1970ref11</id>
       <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok </summary>
       <content type="application/rdf+xml">
 	<rpubl:Rattsfallsreferat>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/ra"/>
-	  <rpubl:publikationsordinal>1970:11</rpubl:publikationsordinal>
+	  <!-- <rpubl:publikationsordinal>1970:11</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>1970</rpubl:arsutgava>
+	  <rpubl:lopnummer>11</rpubl:lopnummer>
 	</rpubl:Rattsfallsreferat>
       </content>
     </entry>
 
     <entry>
       <!-- Äldre referens från regeringsrätten på formen "RÅ 1974 A 1277" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/ra/1974A1277</id>
+      <id>http://rinfo.lagrummet.se/publ/rf/ra/1974/not/A1277</id>
       <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok </summary>
       <content type="application/rdf+xml">
-	<rpubl:Rattsfallsreferat>
+	<rpubl:Rattsfallsnotis>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/ra"/>
-	  <rpubl:publikationsordinal>1974 A 1277</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
+	  <!-- <rpubl:publikationsordinal>1974 A 1277</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>1974</rpubl:arsutgava>
+	  <rpubl:notisserie>A</rpubl:notisserie>
+	  <rpubl:lopnummer>1277</rpubl:lopnummer>
+	</rpubl:Rattsfallsnotis>
       </content>
     </entry>
 
     <entry>
       <!-- Äldre referens från regeringsrätten på formen "RÅ 1975 Ab 324" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/ra/1975Ab324</id>
+      <id>http://rinfo.lagrummet.se/publ/rf/ra/1975/not/Ab324</id>
       <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok </summary>
       <content type="application/rdf+xml">
-	<rpubl:Rattsfallsreferat>
+	<rpubl:Rattsfallsnotis>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/ra"/>
-	  <rpubl:publikationsordinal>1975 Ab 324</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
+	  <!-- <rpubl:publikationsordinal>1975 Ab 324</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>1975</rpubl:arsutgava>
+	  <rpubl:notisserie>Ab</rpubl:notisserie>
+	  <rpubl:lopnummer>324</rpubl:lopnummer>
+	</rpubl:Rattsfallsnotis>
       </content>
     </entry>
 
     <entry>
       <!-- Äldre referens från regeringsrätten på formen "RÅ 1978 2:37" -->
       <id>http://rinfo.lagrummet.se/publ/rf/ra/1978/2:37</id>
-      <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok </summary>
+      <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok</summary>
       <content type="application/rdf+xml">
 	<rpubl:Rattsfallsreferat>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/ra"/>
-	  <rpubl:publikationsordinal>1978 2:37</rpubl:publikationsordinal>
+	  <!-- <rpubl:publikationsordinal>1978 2:37</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>1978</rpubl:arsutgava>
+	  <rpubl:referatserie>2</rpubl:referatserie>
+	  <rpubl:lopnummer>37</rpubl:lopnummer>
 	</rpubl:Rattsfallsreferat>
       </content>
     </entry>
 
-    <entry>
-      <!-- Traditionell referens från regeringsrätten på formen "RÅ 1994 ref. 41 I-III" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/ra/1994ref41#I-III</id>
-      <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok </summary>
-      <content type="application/rdf+xml">
-	<rpubl:Rattsfallsreferat>
-	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/ra"/>
-	  <rpubl:publikationsordinal>1994 ref. 41 I-III</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
-      </content>
-    </entry>
-
-    <entry>
-      <!-- Traditionell referens från regeringsrätten på formen "RÅ 2001 ref. 34 I och II" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/ra/2001ref34#I,II</id>
-      <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok </summary>
-      <content type="application/rdf+xml">
-	<rpubl:Rattsfallsreferat>
-	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/ra"/>
-	  <rpubl:publikationsordinal>2001 ref. 34 I och II</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
-      </content>
-    </entry>
-
-    <entry>
-      <!-- Traditionell referens från regeringsrätten på formen "RÅ 2001 ref. 34 II" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/ra/2001ref34#II</id>
-      <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok </summary>
-      <content type="application/rdf+xml">
-	<rpubl:Rattsfallsreferat>
-	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/*   rå"/>
-	  <rpubl:publikationsordinal>2001 ref. 34 II</rpubl:publikationsordinal>
-	</rpubl:Rattsfallsreferat>
-      </content>
-    </entry>
-    
     <!-- Referat från hovrätterna, utgivna i Rättsfall från hovrätterna -->
     <entry>
       <!-- "RH 2009:48" -->
@@ -424,7 +435,7 @@ g        </content>
     <!-- Referat från marknadsdomstolen -->
     <entry>
       <!-- "MD 2010:7" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/MD 2010:7</id>
+      <id>http://rinfo.lagrummet.se/publ/rf/md/2010:7</id>
       <summary>Rättsfallsreferat utgivet i </summary>
       <content type="application/rdf+xml">
 	<rpubl:Rattsfallsreferat>
@@ -437,7 +448,7 @@ g        </content>
     <!-- Referat från arbetsdomstolen -->
     <entry>
       <!-- "AD 2010 nr 14" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/AD 2010 nr 14</id>
+      <id>http://rinfo.lagrummet.se/publ/rf/ad/2010nr14</id>
       <summary>Rättsfallsreferat utgivet i </summary>
       <content type="application/rdf+xml">
 	<rpubl:Rattsfallsreferat>
@@ -450,7 +461,7 @@ g        </content>
     <!-- Referat från Miljööverdomstolen -->
     <entry>
       <!-- "MÖD 2009:31" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/MÖD 2009:31</id>
+      <id>http://rinfo.lagrummet.se/publ/rf/mod/2009:31</id>
       <summary>Rättsfallsreferat utgivet i </summary>
       <content type="application/rdf+xml">
 	<rpubl:Rattsfallsreferat>
@@ -463,7 +474,7 @@ g        </content>
     <!-- Referat från Migrationsöverdomstolen -->
     <entry>
       <!-- "MIG 2009:34" -->
-      <id>http://rinfo.lagrummet.se/publ/rf/MIG 2009:34</id>
+      <id>http://rinfo.lagrummet.se/publ/rf/mig/2009:34</id>
       <summary>Rättsfallsreferat utgivet i </summary>
       <content type="application/rdf+xml">
 	<rpubl:Rattsfallsreferat>
