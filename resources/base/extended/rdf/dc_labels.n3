@@ -21,7 +21,7 @@ dct:creator a rdf:Property;
 
 dct:subject a rdf:Property;
     rdfs:label "Ämnesord"@sv;
-    rdfs:comment ""@sv .
+    rdfs:comment "Resursens ämne/tema"@sv .
 
 dct:references a rdf:Property;
     rdfs:label "Hänvisar"@sv;
@@ -40,5 +40,11 @@ dct:issued a rdf:Property;
     rdfs:label "Utgiven"@sv;
     rdfs:comment "Datum då resursen formellt utgavs (t.ex. publicering)."@sv .
 
+dct:identifier a rdf:Property;
+    rdfs:label "Identifierare"@sv;
+    rdfs:comment "En otvetydig hänvisning till resursen inom en givet kontext."@sv .
 
+dct:alternative a rdf:Property;
+    rdfs:label "Alternativ titel"@sv;
+    rdfs:comment "Ett alternativt namn för resursen."@sv .
 
