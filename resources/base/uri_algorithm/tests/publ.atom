@@ -319,7 +319,7 @@ g        </content>
       <!-- Äldre referens från regeringsrätten på formen "RÅ 1967 not. Jo 16" -->
       <id>http://rinfo.lagrummet.se/publ/rf/ra/1967/not/Jo16</id>
       <summary>Rättsfallsreferat utgivet i Regeringsrättens årsbok </summary>
-      <content type="application/rdf+xml>
+      <content type="application/rdf+xml">
 	<rpubl:Rattsfallsnotis>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/ra"/>
 	  <!-- <rpubl:publikationsordinal>1967 not. Jo 16</rpubl:publikationsordinal> -->
@@ -412,7 +412,9 @@ g        </content>
       <content type="application/rdf+xml">
 	<rpubl:Rattsfallsreferat>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/rh"/>
-	  <rpubl:publikationsordinal>2009:48</rpubl:publikationsordinal>
+	  <!-- <rpubl:publikationsordinal>2009:48</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>2009</rpubl:arsutgava>
+	  <rpubl:lopnummer>48</rpubl:lopnummer>
 	</rpubl:Rattsfallsreferat>
       </content>
     </entry>
@@ -427,7 +429,9 @@ g        </content>
       <content type="application/rdf+xml">
 	<rpubl:Rattsfallsreferat>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/rk"/>
-	  <rpubl:publikationsordinal>2009:3</rpubl:publikationsordinal>
+	  <!-- <rpubl:publikationsordinal>2009:3</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>2009</rpubl:arsutgava>
+	  <rpubl:lopnummer>3</rpubl:lopnummer>
 	</rpubl:Rattsfallsreferat>
       </content>
     </entry>
@@ -440,7 +444,9 @@ g        </content>
       <content type="application/rdf+xml">
 	<rpubl:Rattsfallsreferat>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/md"/>
-	  <rpubl:publikationsordinal>2010:7</rpubl:publikationsordinal>
+	  <!-- <rpubl:publikationsordinal>2010:7</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>2010</rpubl:arsutgava>
+	  <rpubl:lopnummer>7</rpubl:lopnummer>
 	</rpubl:Rattsfallsreferat>
       </content>
     </entry>
@@ -453,7 +459,9 @@ g        </content>
       <content type="application/rdf+xml">
 	<rpubl:Rattsfallsreferat>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/ad"/>
-	  <rpubl:publikationsordinal>2010 nr 14</rpubl:publikationsordinal>
+	  <!-- <rpubl:publikationsordinal>2010 nr 14</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>2010</rpubl:arsutgava>
+	  <rpubl:lopnummer>14</rpubl:lopnummer>
 	</rpubl:Rattsfallsreferat>
       </content>
     </entry>
@@ -466,7 +474,9 @@ g        </content>
       <content type="application/rdf+xml">
 	<rpubl:Rattsfallsreferat>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/mod"/>
-	  <rpubl:publikationsordinal>2009:31</rpubl:publikationsordinal>
+	  <!-- <rpubl:publikationsordinal>2009:31</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>2009</rpubl:arsutgava>
+	  <rpubl:lopnummer>31</rpubl:lopnummer>
 	</rpubl:Rattsfallsreferat>
       </content>
     </entry>
@@ -479,7 +489,9 @@ g        </content>
       <content type="application/rdf+xml">
 	<rpubl:Rattsfallsreferat>
 	  <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/mig"/>
-	  <rpubl:publikationsordinal>2009:34</rpubl:publikationsordinal>
+	  <!-- <rpubl:publikationsordinal>2009:34</rpubl:publikationsordinal> -->
+	  <rpubl:arsutgava>2009</rpubl:arsutgava>
+	  <rpubl:lopnummer>34</rpubl:lopnummer>
 	</rpubl:Rattsfallsreferat>
       </content>
     </entry>
