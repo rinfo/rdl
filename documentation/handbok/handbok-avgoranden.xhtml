@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xml" href="../templates/dv-handbok.xslt"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv"
       xmlns:xi="http://www.w3.org/2001/XInclude">
   <head>
@@ -17,8 +17,36 @@
 	ändringar kommer att ske.
       </p>
     </div>
-
+    <div class="changes">
+      <table class="changes">
+	<caption>Ändringar</caption>
+	<tr>
+	  <th>Datum</th>
+	  <th>Ändring</th>
+	</tr>
+	<tr>
+	  <td>2010-04-19</td>
+          <td>
+	    Omarbetad version med ny uppdelning mellan dokumenttyperna
+	    <code>VagledandeDomstolsavgorande</code> och
+	    <code>Rattsfallsreferat</code>, samt nya
+	    dokumentegenskaper (<code>lopnummer</code>, <code>dct:identifer</code>
+	    m.fl. istället för <code>publikationsordinal</code> och
+	    <code>publikationsplatsangivelse</code>) och en ny dokumenttyp
+	    (<code>Rattsfallsnotis</code>).
+	  </td>
+	</tr>
+	<tr>
+	  <td>2010-03-12</td>
+          <td>Initial version</td>
+	</tr>
+      </table>
+    </div>
     <h1>Handbok för publicering av avgöranden i rättsinformationssystemet</h1>
+    <div id="toc">
+      <h2>Innehåll</h2>
+      <ul/>
+    </div>
     <p>
       Detta dokument är en handbok för den som ska införa publicering
       av vägledande avgöranden i rättsinformationssystemet. Det vänder
@@ -43,454 +71,726 @@
       angående rättsinformationsprojektet i stort, kontakta gärna
       projektledare Staffan Malmgren på staffan.malmgren@dom.se.
     </p>
-    
-    <h2>1. Olika typer av avgöranden</h2>
-    <p>
-      Såväl domstolar som förvaltningsmyndigheter producerar i sin
-      verksamhet avgöranden som kan vara vägledande för senare
-      rättstillämpning. Dessa har juridiska skillnader, men
-      informationsmässigt stora likheter, varför de här behandlas i
-      ett sammanhang.
-    </p>
 
-    <h2>2. Domstolsavgöranden och referat</h2>
-    <p>
-      Begreppsmodellen skiljer på ett faktiskt avgörande från en
-      domstol (dokumenttypen <code>VagledandeDomstolsavgorande</code>
-      och ett referat av ett avgörande
-      (dokumenttypen <code>Referat</code>). Avgörandet är själva den
-      handling som utgör domstolens slutgiltiga beslut, medan referat
-      är en redogörelse för hur ett ärende eller mål behandlats genom
-      olika instanser. Texten i referatet publiceras vanligtvis i en
-      rättsfallssamling, exempelvis NJA, RÅ eller RH, medan texten i
-      domslutet endast finns att tillgå direkt från
-      domstolen. Referatet använder dock till största delen samma text
-      som domstolsavgörandet, särskilt domskälsavsnitten.
-    </p>
+    <div class="section">
+      <h2>1. Olika dokumenttyper</h2>
+      <p>
+	Såväl domstolar som förvaltningsmyndigheter producerar i sin
+	verksamhet avgöranden som kan vara vägledande för senare
+	rättstillämpning. Dessa har juridiska skillnader, men
+	informationsmässigt stora likheter, varför de här behandlas i
+	ett sammanhang.
+      </p>
 
-    <p>
-      (Det förekommer att ett referat sammanställer två separata
-      domstolsavgöranden, när dessa rör liknande frågor och kommer upp samtidigt
-      i högsta instans. I domstolen är fråga om två separata mål med
-      separata målnummer, och i referatet ges de båda ärendena
-      vanligen beteckningen "I" respektive "II". I senare praxis och
-      kommentarer förekommer hänvisningar till de enskilda avgörandena
-      på formen "RÅ 1999 ref. 18 I" respektive "RÅ 1999 ref. 18
-      II". Detta betraktas ändå som ett enda referat.)
-    </p>
-
-    <p>
-      Syftet med begrepssmodellens uppdelning är att efterlikna hur
-      dokumentproduktionen ser ut på domstolarna och hos
-      domstolsverket. Först avkunnar en domstol en dom
-      (<code>VagledandeDomstolsavgorande</code>), sedan bearbetas
-      denna till ett referat som publiceras i en rättsfallsamling och
-      på nätet (<code>Rattsfallsreferat</code>). I vissa fall kan
-      referatet publiceras mycket kort tid efter att domen avkunnats,
-      i andra fall kan det dröja flera månader mellan dom och
-      referat. Det ska därför vara möjligt att även i
-      rättsinformationssystemet publicera domen först och referatet
-      senare.
-    </p>
-
-    <p>
-      I båda typerna av dokument finns data (själva löptexten) och
-      metadata (exv beteckning, målnummer, avgörandedatum,
-      hänvisningar till tidigare rättsfall m.m.). I dagens system
-      finns endast löptexten för referaten, inte för de bakomliggande
-      avgörandena, tillgänglig. Däremot finns metadata för både
-      referaten och avgörandena.
-    </p>
-
-    <p>
-      Distinktionen mellan avgörande och referat går också igen i de
-      identifierare som används. Genomgående används i
-      rättsinformationssystemet URI:er som identifierare för dokument
-      och andra resurser. Ett avgörande från Högsta domstolen har en
-      URI på formen
-      <code>http://rinfo.lagrummet.se/publ/<b>dom</b>/hd/t170-08/2009-11-04</code>,
-      medan dess motsvarande referat i NJA har en URI på formen
-      <code>http://rinfo.lagrummet.se/publ/<b>rf</b>/nja/2009:68</code>. 
-    </p>
-
-    <p>
-      Notera att för vägledande avgöranden så används segmentet
-      <code>dom</code> i URI:n, medan för referat så används segmentet
-      <code>rf</code>. För mer information om hur URI:er konstrueras,
-      se bilaga 6, "Mappning av nuvarande data", samt dokumentet
-      "URI-principer".
-    </p>
-
-    <h3>2.1 Alternativ URI för NJA-referat</h3>
-    <p>
-      Enligt ovanstående ska en URI för ett referat skapas från
-      bl.a. referatets publikationsordinal. Publikationsordinalen är
-      enligt begreppsmodellen ett positionsnummer i en publikation,
-      och ska inte förväxlas medpublikationsplatsangivelse. Problemet
-      är att det traditionella sättet att hänvisa till ett NJA-referat
-      ("NJA 2009 s. 695") anger en publikationsplatsangivelse, inte en
-      publikationsordinal (en sådan hänvisning är på formen "NJA
-      2009:55", men sådana hänvisningar är mycket ovanliga).
-    </p>
-    <p>
-      Eftersom man behöver kunna uttrycka hänvisningar från ett nytt
-      avgörande till äldre referat, och då enbart har traditionella
-      hänvisningar att utgå från, måste det vara möjligt att
-      konstruera en URI från en sådan hänvisning.
-    </p>
-    <p>
-      Därför kan man i dessa fall välja att använda en URI som
-      konstrueras utifrån publikationsplatsanvivelsen. En sådan URI
-      skapas efter följande mönster.
-    </p>
-    <p>
-      <code>http://rinfo.lagrummet.se/publ/rf/</code><i>[transformation av rpubl:publikationsplatsordinal]</i>
-    </p>
-    <p>
-      Transformationen av rpubl:publikationsordinal sker på så sätt
-      att det första mellanrummet byts ut mot ett "/", övriga
-      mellanrum (samt punkter) tas bort, och alla bokstäver
-      transformeras till gemener. "NJA 2009 s. 695" blir
-      alltså "nja/2009s695", och den fullständiga URI:n följdaktligen
-      <code>http://rinfo.lagrummet.se/publ/rf/nja/2009s695</code>.
-    </p>
-    <p>
-      När man skapar en post för ett referat ska man ange både
-      huvud-URIn och den alternativa URIn. Då blir det möjligt för
-      rättsinformationssystemet, när det träffar på en hänvisning på
-      formen
-      <code>http://rinfo.lagrummet.se/publ/rf/nja/2009s695</code>,
-      förstå att detta är identiskt med en hänvisning till
-      <code>http://rinfo.lagrummet.se/publ/rf/nja/2009:68</code>.
-    </p>
-    <p>
-      Denna ekvivalens uttrycks med hjälp av <code>owl:sameAs</code>.
-    </p>
-    <div class="syntax">
-      <code class="xml"><![CDATA[
-<?xml version="1.0" encoding="UTF-8"?>
-<rdf:RDF
-   xmlns:dct="http://purl.org/dc/terms/"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
-   xmlns:owl="http://www.w3.org/2002/07/owl#"
->
-  <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/rf/nja/2009:68">
-    ...
-    <owl:sameAs rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/2009s695"/>
-    ...
-  </rdf:Description>
-</rdf:RDF>
-      ]]></code>
-    </div>
-    <p>Se även ett fullständigt exempel i bilaga 9.</p>
-    
-    <h3>2.2 Koppling mellan referat och bakomliggande avgöranden</h3>
-    <p>
-      När sedan själva referatet publiceras bör detta uttryckligen
-      hänvisa till bakomliggande avgöranden. Då kan till exempel den
-      sida som presenterar avgörandet kompletteras med information om
-      att det finns ett sammanställt referat av målet.
-    </p>
-    <p>
-      Dessa hänvisningar görs med termen
-      <code>referatAvDomstolsavgorande</code>. Ett exempel på hur
-      detta kan se ut finns i Bilaga 8: Metadata för rättsfallsreferat
-      (NJA 2009 s 695).
-    </p>
-    <p>
-      Med den metadata som finns tillgänglig idag är det svårt att i
-      ett referat göra hänvisningar till domar i lägre instans,
-      eftersom den informationen saknas i referatstexten. Därför får
-      man än så länge nöja sig med att enbart hänvisa till avgörandet
-      i sista instans.
-    </p>
-
-    <h2>3. Det befintliga systemet för vägledande avgöranden</h2>
-    <p>
-      I domstolsverkets nuvarande lösning innehåller databasens
-      huvudtabell (Avgorande) i huvudsak sådana egenskaper som svarar
-      mot 
-      <code>VagledandeDomstolsavgorande</code>. Några egenskaper
-      svarar däremot mot <code>Rattsfallsreferat</code>
-      (PublikationsBeteckning, Publikationsbeteckning2 och
-      ReferatDok). 
-    </p>
-    <p>
-      Från varje fullständig rad i den befintliga Avgorande-tabellen
-      bör man därför skapa <em>två</em> resurser, en av varje typ.
-      Publicering av kortform är publicering av ett
-      VagledandeDomstolsavgorande. När referatet finns tillgängligt
-      kan man även publicera ett Rattsfallsreferat. Dessa två typer
-      kan publiceras i samma flöde, se nedan.
-    </p>
-
-    <h2>4. Hänvisningar till lagrum, rättsfall och andra resurser</h2>
-    <p>
-      Ett avgörande hänvisar regelmässigt till ett antal externa
-      dokument och begrepp. Särskilt brukar de hänvisa till lagrum,
-      tidigare rättsfall och sökord.
-    </p>
-
-    <h3>4.1 Lagrum</h3>
-    <p>
-      I likhet med övriga resurser har varje lagrum (ned på
-      paragrafnivå, men inte enskilda stycken) en URI som kan beräknas
-      genom de principer som används i systemet. Termen
-      <code>lagrum</code> i begreppsmodellen används för att uttrycka
-      en relation mellan ett rättsfall och det/de lagrum som
-      rättfallet stödjer sig på.
-    </p>
-    <p>
-      Exempel på hur dessa relationer kan uttryckas finns i bilaga 10 och 11.
-    </p>
-    <p>
-      Idag finns inget sätt att med systemets URI-principer uttrycka
-      hänvisningar till lagrum utanför de svenska
-      författningssamlingarna (exv internationella
-      konventioner). Rättsinformationsprojektet avvaktar här den
-      internationella utvecklingen för att se om det kommer etableras
-      en standard för vilka URI:er som ska användas för sådana
-      resurser.
-    </p>
-    
-    <h3>4.2 Rättsfall</h3>
-    <p>
-      För att från ett rättsfall hänvisa till tidigare rättsfall måste
-      man, i likhet med hur lagrumshänvisningar uttrycks, räkna ut
-      rätt URI för rättsfallet. Eftersom hänvisningarna nästan helt
-      uteslutande använder sig av ett rättsfalls referatbeteckning är
-      det också referat-versionen av URI:n som ska användas (jfr ovan
-      angående skillnaden mellan referat och avgöranden).
-    </p>
-    <p>
-      Termen <code>rattsfallshanvisning</code> i begreppsmodellen
-      används för att uttrycka en relation mellan ett rättsfall och
-      tidigare rättsfall som ligger till grund för domslutet.
-    </p>
-    <p>
-      För NJA-referat är det i många fall svårt eller omöjligt att
-      från en typisk hänvisning, exv "NJA 1960 s. 522", konstruera en
-      URI för det rättsfallet, eftersom URI-mönstret utgår från att
-      man kan hitta ett referats publikationsordinal (exv
-      "1960:91"). Därför kan man i dessa fall ange den alternativa
-      URI:n enligt ovan. I exemplet skulle detta bli
-      <code>http://rinfo.lagrummet.se/publ/rf/nja/1960s522</code>
-    </p>
-
-    <h3>4.3 EU-rättsligt material (både rättsfall och lagrum)</h3>
-    <p>
-      EU-rättsligt material ligger inte inom
-      rättsinformationsprojektets ansvar, och omfattas inte direkt av
-      systemets URI-principer. Eftersom EU-rätten dock är en del av
-      svensk rätt är det önskvärt att på ett exakt sätt kunna hänvisa
-      till EU-rättsakter, men det finns ingen annan etablerad
-      URI-princip för dessa. Det som däremot finns etablerat är bruket
-      av CELEX-nummer.
-    </p>
-    <p>
-      Givet att man man kan få fram CELEX-numret för ett direktiv,
-      EU-domstolsfall eller annan EU-rättsakt, konstruerar man en URI
-      enligt följande mönster:
-    </p>
-    <p>
-      <code>http://rinfo.lagrummet.se/ext/eur-lex/</code><i>[CELEX-nummer]</i>
-    </p>
-    <p>
-      En hänvisning till Rådets förordning (EG) nr 6/2002 har
-      CELEX-nummer 32002R0006, och URIn för förordningen blir alltså
-      <code>http://rinfo.lagrummet.se/ext/eur-lex/32002R0006</code>.
-    </p>
-    <p>
-      CELEX-nummer, både för rättsfall, förordningar, direktiv och
-      fördragen, följer en specificerad mall (en ensiffrig sektorkod,
-      följd av ett årtal, följd av en bokstav som anger dokumenttyp,
-      följd av ett löpnummer). Det är i många fall möjligt att räkna
-      ut ett celexnummer om man kan uttolka dessa data ur en
-      löptexthänvisning. Men om detta inte skulle vara möjligt kan man
-      ändå alltid göra en inexakt hänvisning (se nedan).
-    </p>
-    
-    <h3>4.4 Sökord/ämnesord</h3>
-    <p>
-      Ett referat är ofta försett med ett antal sökord. Dessa kommer
-      inte från en strikt kontrollerad vokabulär, även om man,
-      särskilt inom en domstol, strävar efter att ha ett konsekvent
-      användande av sökord. 
-    </p>
-    <p>
-      Dessa kan uttryckas som odefinerade <em>ämnesord</em> (se
-      dokumentet "Introduktion till rättsinformationssystemet - för
-      implementatörer och tekniskt ansvariga") genom
-      termen <code>subject</code> från
-      vokabulären <a href="http://dublincore.org/documents/dcmi-terms/">DCMI
-      Terms</a>. Exempel på hur detta kan göras finns i Bilaga 10 och 11.
-    </p>
-
-    <h3>4.5 Inexakta hänvisningar med anonyma resurser (BNodes)</h3>
-    <p>
-      Ibland är det inte möjligt att göra en exakt hänvisning med en
-      URI. Löptexten som man har att utgå ifrån kanske inte låter sig
-      automatiskt konverteras till en URI, eller så finns det ingen
-      princip för hur man ska definera en URI för lagrummet eller
-      rättsfallet i fråga (detta gäller särskilt hänvisningar till
-      utländsk rätt).
-    </p>
-    <p>
-      När man på detta sätt inte vet identifieraren för den resurs man
-      vill hänvisa till kan man istället använda anonyma identifierare
-      (det som i RDF-standarden kallas BNodes eller "Blank nodes"),
-      och sedan beskriva det man vet om dessa identifierare. Istället
-      för att säga att ett visst rättsfall hänvisar till
-      lagrummet <code>http://rinfo.lagrummet.se/publ/sfs/1970:485#p_1</code>
-      så kan man säga att ett visst rättsfall hänvisar till ett lagrum
-      som i sin tur kan beskrivas som "1 § mönsterskyddslagen
-      (1970:485)". Detta kan även användas för en hänvisning som går
-      till flera olika lagrum, exempelvis "1 §, 1 a §, 2 §, 5 §, 31 §
-      och 32 § mönsterskyddslagen (1970:485)"
-    </p>
-    <p>
-      Man hänvisar till en BNode hänvisas till på ungefär samma sätt
-      som en identifierad resurs, men istället för att ange addressen
-      i med attributet <code>rdf:resource</code> så anger man den
-      information man har i själva elementet:
-    </p>
-    <div class="syntax">
-      <code class="xml"><![CDATA[
-    <lagrum>
-      <rdf:Description>
-      	<dct:description>
-	  1 §, 1 a §, 2 §, 5 §, 31 § och 32 § mönsterskyddslagen
-	  (1970:485)
-	</dct:description>
-      </rdf:Description>
-    </lagrum>
-      ]]></code>
-    </div>
-
-    <p>
-      I ovanstående exempel används termen "description" från
-      vokabulären <a
-      href="http://dublincore.org/documents/dcmi-terms/">DCMI
-      Terms</a> (<code>dct:description</code>). Det rekommenderas att
-      man använder <code>dct:identifier</code> för
-      rättsfallshänvisningar, och <code>dct:description</code> för
-      lagrumshänvisningar.
-    </p>
+      <p>
+	Rättsinformationsprojektet har definerat en begreppsmodell för
+	all rättsinformation som är uppbyggd genom ett antal olika
+	dokumenttyper och egenskaper för dessa (dessa behandlas i
+	nästa avsnitt). En post i rättsinformationssystemet utgörs
+	ytterst av en samling egenskaper om en specifik resurs, där
+	dokumenttypen är en av egenskaperna. 
+      </p>
       
-    <!--
-	Denna metadata finns inte i databasen idag, så vi väntar med den
-    <h3>4.6 Andra resurser</h3>
-    <p>
-      Det är vanligt att ett rättsfall även hänvisar till förarbeten
-      och rättsvetenskaplig doktrin (vanligtvis under rubriken
-      "Litteratur"). Det finns idag ingen term i begreppsmodellen för
-      att uttrycka dessa referenser, men eftersom det är en generisk
-      hänvisning kan termen <code>references</code> från DCMI terms
-      användas. Rättsinformationsprojektet avser att i framtiden komma
-      med närmare riktlinjer för hur dessa relationer ska uttryckas.
-    </p>
-    -->
-    
-    <h2>5. Flöden</h2>
-    <h3>5.1 Olika resurstyper i samma flöde</h3>
-    <p>TODO:</p>
-    <h3>5.2 Arkivering</h3>
-    <p>TODO:</p>
-    <h3>5.3 content och link-elementen</h3>
-    <p>TODO:</p>
+      <p>
+	Vad gäller vägledande avgöranden av olika slag finns det fyra
+	olika dokumenttyper:
+      </p>
+      
+      <ul>
+	<li><code>VagledandeDomstolsavgorande</code></li>
+	<li><code>VagledandeMyndighetsavgorande</code></li>
+	<li><code>Rattsfallsreferat</code></li>
+	<li><code>Rattsfallsnotis</code></li>
+      </ul>
+      
+      <p>
+	Begreppsmodellen skiljer alltså på ett faktiskt avgörande från
+	en domstol (dokumenttypen
+	<code>VagledandeDomstolsavgorande</code> och ett referat av ett
+	avgörande (dokumenttypen
+	<code>Rattsfallsreferat</code>). Avgörandet är själva den
+	handling som utgör domstolens slutgiltiga beslut, medan referat
+	är en redogörelse för hur ett ärende eller mål behandlats genom
+	olika instanser. Texten i referatet publiceras vanligtvis i en
+	rättsfallssamling, exempelvis NJA, RÅ eller RH, medan texten i
+	domslutet endast finns att tillgå direkt från
+	domstolen. Referatet använder dock till största delen samma text
+	som domstolsavgörandet, särskilt domskälsavsnitten.
+      </p>
 
-    <div class="appendix">
-      <h1>Bilaga 1: Modellbeskrivning för typen Rattsfallsreferat</h1>
-      <xi:include href="build:model.xhtml"
-      xpointer="Rattsfallsreferat"/>
+      <p>
+	(Det förekommer att ett referat sammanställer två separata
+	domstolsavgöranden, när dessa rör liknande frågor och kommer upp samtidigt
+	i högsta instans. I domstolen är fråga om två separata mål med
+	separata målnummer, och i referatet ges de båda ärendena
+	vanligen beteckningen "I" respektive "II". I senare praxis och
+	kommentarer förekommer hänvisningar till de enskilda avgörandena
+	på formen "RÅ 1999 ref. 18 I" respektive "RÅ 1999 ref. 18
+	II". Detta betraktas ändå som ett enda referat.)
+      </p>
+
+      <p>
+	Syftet med begrepssmodellens uppdelning är att efterlikna hur
+	dokumentproduktionen ser ut på domstolarna och hos
+	domstolsverket. Först avkunnar en domstol en dom
+	(<code>VagledandeDomstolsavgorande</code>), sedan bearbetas
+	denna till ett referat som publiceras i en rättsfallsamling och
+	på nätet (<code>Rattsfallsreferat</code>). I vissa fall kan
+	referatet publiceras mycket kort tid efter att domen avkunnats,
+	i andra fall kan det dröja flera månader mellan dom och
+	referat. Det ska därför vara möjligt att även i
+	rättsinformationssystemet publicera domen först och referatet
+	senare.
+      </p>
+
+      <p>
+	Vissa domstolsavgöranden refereras inte i sin helhet i de
+	tryckta rättsfallssamlingarna, utan endast i notisform. För
+	att kunna uttrycka även information om dessa finns
+	dokumenttypen <code>Rattsfallsnotis</code>. I nuvarande
+	databas över vägledande avgöranden saknas dessa notisfall, men
+	det förekommer däremot hänvisningar till dem.
+      </p>
+      
+    </div>
+
+    <div class="section">
+      <h2>2. Egenskaper</h2>
+      <p>
+	Utöver dokumenttypen kan man även ange en rad andra
+	egenskaper. Vilka egenskaper som ska anges beror på
+	dokumenttyp. Den kompletta listan över egenskaper finns i
+	bilaga 1-4, men i det nedanstående gås de viktigaste
+	egenskaperna igenom i mer detalj. Det bör tilläggas att det
+	enligt RDF-modellen generellt är tillåtet att ange vilka
+	egenskaper som helst. Rättsinformationssystemets
+	begreppsmodell innehåller ett antal termer för egenskaper som
+	är specifika för svensk rättsinformation, men den baserar sig
+	även på DCMI Terms, som definerar ett stort antal mer
+	generella termer.
+      </p>
+      
+      <h3>2.1 Egenskaper för Vagledandedomstolsavgorande och
+      VagledandeMyndighetsavgorande.</h3>
+
+      <table>
+	<tr>
+	  <td>
+	    <code>malnummer</code>
+	  </td>
+	  <td rowspan="3">
+	    Dessa tre egenskaper är olika typer av myndighetsinterna
+	    identifierare eller nummer för målet / ärendet. De ska
+	    anges som en textsträng, på precis samma sätt som de anges
+	    i de ursprungliga handlingarna. Normalt sett har ett
+	    ärende bara en av dessa egenskaper, men om det skulle ha
+	    två eller flera så ska alla dessa anges.
+	  </td>
+	</tr>
+	<tr><td><code>domsnummer</code></td></tr>
+	<tr><td><code>diarienummer</code></td></tr>
+
+	<tr>
+	  <td>
+	    <code>domstolsavdelning</code>
+	  </td>
+	  <td>
+	    Ska anges som en textsträng, om informationen finns tillgänglig.
+	  </td>
+	</tr>
+	<tr>
+	  <td><code>lagrum</code></td>
+	  <td>
+	    För varje enskilt lagrum som avgörandet hänvisar till så
+	    ska det finnas en <code>lagrum</code>-egenskap. Det ska
+	    anges i form av en hänvisningen till lagrummets URI där så
+	    är möjligt. Se avsnitt 4 för närmare information.
+	  </td>
+	</tr>
+	<tr>
+	  <td><code>rattsfallshanvisning</code></td>
+	  <td>Anges på liknande sätt som lagrum.</td>
+	</tr>
+	<tr>
+	  <td><code>avgorandedatum</code></td>
+	  <td>
+	    Det datum då avgörandet beslutades. Ska anges som
+	    datatypen <code>xsd:date</code> -- se exempel i bilaga 10
+	    och 11 för hur detta uttrycks.
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <code>dct:publisher</code>
+	  </td>
+	  <td>
+	    En hänvisning till en URI för den myndighet som beslutat
+	    avgörandet. I bilaga 5 finns en lista på URIer för de
+	    flesta domstolar och andra myndigheter.
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <code>dct:title</code>
+	  </td>
+	  <td>
+	    En kort beskrivning av avgörandet i rubrikform.
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <code>dct:issued</code>
+	  </td>
+	  <td>
+	    Det datum då avgörandet gjordes tillgängligt i
+	    rättsinformationssystemet. Detta är i allmänhet samma dag
+	    som avgörandedatumet, men kan också vara senare.
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <code>dct:subject</code>
+	  </td>
+	  <td>
+	    Ett nyckel-, sök- eller ämnesord som beskriver avgörandets
+	    innehåll. Flera sådana kan anges.
+	  </td>
+	</tr>
+      </table>
+
+
+      <h3>2.2 Egenskaper för Rattsfallsreferat och Rattsfallsnotis</h3>
+
+      <table>
+	<tr>
+	  <td><code>rattsfallspublikation</code></td>
+	  <td>
+	    En hänvisning till en URI för den rättsfallssamling som
+	    referatet eller notisen ingår i. I bilaga 6 finns en lista
+	    på URIer för de nu existerande rättsfallssamlingarna.
+	  </td>
+	</tr>
+	<tr>
+	  <td><code>arsutgava</code></td>
+	  <td>
+	    Den årsutgåva av rättsfallssamlingen som referatet tryckts i. 
+	  </td>
+	</tr>
+	<tr>
+	  <td><code>lopnummer</code></td>
+	  <td>
+	    Det ordningsnummer som referatet eller notisen blivit
+	    tilldelad i den tryckta utgåvan av rättsfallssamlingen.
+	  </td>
+	</tr>
+	<tr>
+	  <td><code>sidnummer</code></td>
+	  <td>
+	    Det sidnummer på vilket referatet inleds i den tryckta
+	    utgåvan av rättsfallssamlingen. Anges endast för sådana
+	    referat som trycks i Nytt Juridiskt Arkiv.
+	  </td>
+	</tr>	
+	<tr>
+	  <td><code>notisserie</code></td>
+	  <td>
+	    För poster av dokumenttyp Rattsfallsnotis förekommer det i
+	    äldre fall att notiserna publicerats i en av flera
+	    serier. Dessa serier identifieras vanligen genom en
+	    enskild bokstav eller kort bokstavskombination, exempelvis
+	    "A" eller "Fi".
+	  </td>
+	</tr>	
+	<tr>
+	  <td><code>referatserie</code></td>
+	  <td>
+	    Motsvarande, fast för referat. Mellan ca 1976 och 1985
+	    publicerades regeringsrättens avgöranden i referatserie 1
+	    och 2.
+	  </td>
+	</tr>	
+	<tr>
+	  <td><code>referatAvDomstolsavgorande</code></td>
+	  <td>
+	    En hänvisning till ett eller flera domstolsavgöranden som
+	    detta referat sammanfattar. Hänvisningen sker i form av en
+	    URI, se avsnitt 3 för mer information om hur denna URI kan
+	    konstrueras.
+	  </td>
+	</tr>
+	<tr>
+	  <td><code>referatrubrik</code></td>
+	  <td>
+	    En kort beskrivning av avgörandet i rubrikform, vanligen
+	    samma text som anges som <code>dct:title</code> för
+	    motsvarande <code>VagledandeDomstolsavgorande</code>.
+	  </td>
+	</tr>	
+	<tr>
+	  <td><code>dct:identifier</code></td>
+	  <td>
+	    Beteckningen för referatet så som det vanligen hänvisas
+	    till i juridisk text, exv "NJA 2009 s. 695" eller "RÅ 2010
+	    ref. 12"
+	  </td>
+	</tr>	
+	<tr>
+	  <td><code>dct:publisher</code></td>
+	  <td>
+	    Alternativ beteckning för referatet, exv "NJA 2009:68"
+	  </td>
+	</tr>	
+	<tr>
+	  <td><code>dct:publisher</code></td>
+	  <td>
+	    En hänvisning till en URI för den myndighet som publicerat
+	    referatet. Denna är i allmänhet domstolsverket,
+	    <code>http://rinfo.lagrummet.se/org/domstolsverket</code>
+	  </td>
+	</tr>	
+	<tr>
+	  <td><code>dct:issued</code></td>
+	  <td>
+	    Det datum då avgörandet gjordes tillgängligt i
+	    rättsinformationssystemet. 
+	  </td>
+	</tr>	
+	<tr>
+	  <td><code>owl:sameAs</code></td>
+	  <td>
+	    En alternativ URI för detta avgörande. Se avsnitt 3.2 nedan.
+	  </td>
+	</tr>	
+      </table>
+
+      <h3>2.3 Koppling mellan referat och bakomliggande avgöranden</h3>
+      <p>
+	När sedan själva referatet publiceras bör detta uttryckligen
+	hänvisa till bakomliggande avgöranden. Då kan till exempel den
+	sida som presenterar avgörandet kompletteras med information om
+	att det finns ett sammanställt referat av målet.
+      </p>
+      <p>
+	Dessa hänvisningar görs med termen
+	<code>referatAvDomstolsavgorande</code>. Ett exempel på hur
+	detta kan se ut finns i Bilaga 10: Metadata för rättsfallsreferat
+	(NJA 2009 s 695).
+      </p>
+      <p>
+	Med den metadata som finns tillgänglig idag är det svårt att i
+	ett referat göra hänvisningar till domar i lägre instans,
+	eftersom den informationen saknas i referatstexten. Därför får
+	man än så länge nöja sig med att enbart hänvisa till avgörandet
+	i sista instans.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>3. URI:er</h2>
+      <h3>3.1 URI:er för avgöranden och referat</h3>
+      <p>
+	Distinktionen mellan avgörande och referat syns även i de
+	dokumentidentifierare som används. Genomgående används i
+	rättsinformationssystemet URI:er som identifierare för dokument
+	och andra resurser. Ett avgörande från Högsta domstolen har en
+	URI på formen
+	<code>http://rinfo.lagrummet.se/publ/<b>dom</b>/hd/t170-08/2009-11-04</code>,
+	medan dess motsvarande referat i NJA har en URI på formen
+	<code>http://rinfo.lagrummet.se/publ/<b>rf</b>/nja/2009:68</code>. 
+      </p>
+
+      <p>
+	Notera att för vägledande avgöranden så används segmentet
+	<code>dom</code> i URI:n, medan för referat så används segmentet
+	<code>rf</code>. För mer information om hur URI:er konstrueras,
+	se bilaga 7, "Mappning av nuvarande data", samt dokumentet
+	"URI-principer".
+      </p>
+
+      <h3>3.2 Alternativ URI för NJA-referat</h3>
+      <p>
+	Enligt ovanstående ska en URI för ett referat skapas från
+	bl.a. referatets löpnummer. Problemet är att det traditionella
+	sättet att hänvisa till ett NJA-referat ("NJA 2009 s. 695")
+	anger en sida, inte ett löpnummer (en sådan hänvisning är på
+	formen "NJA 2009:68", men sådana hänvisningar är mycket
+	ovanliga).
+      </p>
+      <p>
+	Eftersom man behöver kunna uttrycka hänvisningar från ett nytt
+	avgörande till äldre referat, och då enbart har traditionella
+	hänvisningar att utgå från, måste det vara möjligt att
+	konstruera en URI från en sådan hänvisning.
+      </p>
+      <p>
+	Därför kan man i dessa fall välja att använda en URI som
+	konstrueras utifrån sidnumret. En sådan URI
+	skapas efter följande mönster.
+      </p>
+      <p>
+	<code>http://rinfo.lagrummet.se/publ/rf/</code><i>[symbol för rattsfallspublikation]</i><code>/</code><i>[arsutgava]</i><code>s</code><i>[sidnummer]</i>
+      </p>
+      <p>
+	URI för "NJA 2009 s. 695" blir alltså
+	<code>http://rinfo.lagrummet.se/publ/rf/nja/2009s695</code>.
+      </p>
+      <p>
+	När man skapar en post för ett referat ska man ange både
+	huvud-URIn och den alternativa URIn. Då blir det möjligt för
+	rättsinformationssystemet, när det träffar på en hänvisning på
+	formen
+	<code>http://rinfo.lagrummet.se/publ/rf/nja/2009s695</code>,
+	förstå att detta är identiskt med en hänvisning till
+	<code>http://rinfo.lagrummet.se/publ/rf/nja/2009:68</code>.
+      </p>
+      <p>
+	Denna ekvivalens uttrycks med hjälp av <code>owl:sameAs</code>.
+      </p>
+      <div class="syntax">
+	<code class="xml"><![CDATA[
+	<?xml version="1.0" encoding="UTF-8"?>
+	<rdf:RDF
+	xmlns:dct="http://purl.org/dc/terms/"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
+	xmlns:owl="http://www.w3.org/2002/07/owl#"
+	>
+	<rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/rf/nja/2009:68">
+	...
+	<owl:sameAs rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/2009s695"/>
+	...
+	</rdf:Description>
+	</rdf:RDF>
+	]]></code>
+      </div>
+      <p>Se även ett fullständigt exempel i bilaga 10.</p>
+    </div>
+
+    <div class="section">
+      <h2>4. Hänvisningar till lagrum, rättsfall och andra resurser</h2>
+      <p>
+	Ett avgörande hänvisar regelmässigt till ett antal externa
+	dokument och begrepp. Särskilt brukar de hänvisa till lagrum,
+	tidigare rättsfall och sökord.
+      </p>
+
+      <h3>4.1 Lagrum</h3>
+      <p>
+	I likhet med övriga resurser har varje lagrum (ned på
+	paragrafnivå, men inte enskilda stycken) en URI som kan beräknas
+	genom de principer som används i systemet. Termen
+	<code>lagrum</code> i begreppsmodellen används för att uttrycka
+	en relation mellan ett rättsfall och det/de lagrum som
+	rättfallet stödjer sig på.
+      </p>
+      <p>
+	Exempel på hur dessa relationer kan uttryckas finns i bilaga 11 och 12.
+      </p>
+      <p>
+	Idag finns inget sätt att med systemets URI-principer uttrycka
+	hänvisningar till lagrum utanför de svenska
+	författningssamlingarna (exv internationella
+	konventioner). Rättsinformationsprojektet avvaktar här den
+	internationella utvecklingen för att se om det kommer etableras
+	en standard för vilka URI:er som ska användas för sådana
+	resurser.
+      </p>
+      
+      <h3>4.2 Rättsfall</h3>
+      <p>
+	För att från ett rättsfall hänvisa till tidigare rättsfall måste
+	man, i likhet med hur lagrumshänvisningar uttrycks, räkna ut
+	rätt URI för rättsfallet. Eftersom hänvisningarna nästan helt
+	uteslutande använder sig av ett rättsfalls referatbeteckning är
+	det också referat-versionen av URI:n som ska användas (jfr ovan
+	angående skillnaden mellan referat och avgöranden).
+      </p>
+      <p>
+	Termen <code>rattsfallshanvisning</code> i begreppsmodellen
+	används för att uttrycka en relation mellan ett rättsfall och
+	tidigare rättsfall som ligger till grund för domslutet.
+      </p>
+      <p>
+	För NJA-referat är det i många fall svårt eller omöjligt att
+	från en typisk hänvisning, exv "NJA 1960 s. 522", konstruera en
+	URI för det rättsfallet, eftersom URI-mönstret utgår från att
+	man kan hitta ett referats publikationsordinal (exv
+	"1960:91"). Därför kan man i dessa fall ange den alternativa
+	URI:n enligt ovan. I exemplet skulle detta bli
+	<code>http://rinfo.lagrummet.se/publ/rf/nja/1960s522</code>
+      </p>
+
+      <h3>4.3 EU-rättsligt material (både rättsfall och lagrum)</h3>
+      <p>
+	EU-rättsligt material ligger inte inom
+	rättsinformationsprojektets ansvar, och omfattas inte direkt av
+	systemets URI-principer. Eftersom EU-rätten dock är en del av
+	svensk rätt är det önskvärt att på ett exakt sätt kunna hänvisa
+	till EU-rättsakter, men det finns ingen annan etablerad
+	URI-princip för dessa. Det som däremot finns etablerat är bruket
+	av CELEX-nummer.
+      </p>
+      <p>
+	Givet att man man kan få fram CELEX-numret för ett direktiv,
+	EU-domstolsfall eller annan EU-rättsakt, konstruerar man en URI
+	enligt följande mönster:
+      </p>
+      <p>
+	<code>http://rinfo.lagrummet.se/ext/eur-lex/</code><i>[CELEX-nummer]</i>
+      </p>
+      <p>
+	En hänvisning till Rådets förordning (EG) nr 6/2002 har
+	CELEX-nummer 32002R0006, och URIn för förordningen blir alltså
+	<code>http://rinfo.lagrummet.se/ext/eur-lex/32002R0006</code>.
+      </p>
+      <p>
+	CELEX-nummer, både för rättsfall, förordningar, direktiv och
+	fördragen, följer en specificerad mall (en ensiffrig sektorkod,
+	följd av ett årtal, följd av en bokstav som anger dokumenttyp,
+	följd av ett löpnummer). Det är i många fall möjligt att räkna
+	ut ett celexnummer om man kan uttolka dessa data ur en
+	löptexthänvisning. Men om detta inte skulle vara möjligt kan man
+	ändå alltid göra en inexakt hänvisning (se nedan).
+      </p>
+      
+      <h3>4.4 Sökord/ämnesord</h3>
+      <p>
+	Ett referat är ofta försett med ett antal sökord. Dessa kommer
+	inte från en strikt kontrollerad vokabulär, även om man,
+	särskilt inom en domstol, strävar efter att ha ett konsekvent
+	användande av sökord. 
+      </p>
+      <p>
+	Dessa kan uttryckas som odefinerade <em>ämnesord</em> (se
+	dokumentet "Introduktion till rättsinformationssystemet - för
+	implementatörer och tekniskt ansvariga") genom
+	termen <code>subject</code> från
+	vokabulären <a href="http://dublincore.org/documents/dcmi-terms/">DCMI
+	Terms</a>. Exempel på hur detta kan göras finns i Bilaga 11 och 12.
+      </p>
+
+      <h3>4.5 Inexakta hänvisningar med anonyma resurser (BNodes)</h3>
+      <p>
+	Ibland är det inte möjligt att göra en exakt hänvisning med en
+	URI. Löptexten som man har att utgå ifrån kanske inte låter sig
+	automatiskt konverteras till en URI, eller så finns det ingen
+	princip för hur man ska definera en URI för lagrummet eller
+	rättsfallet i fråga (detta gäller särskilt hänvisningar till
+	utländsk rätt).
+      </p>
+      <p>
+	När man på detta sätt inte vet identifieraren för den resurs man
+	vill hänvisa till kan man istället använda anonyma identifierare
+	(det som i RDF-standarden kallas BNodes eller "Blank nodes"),
+	och sedan beskriva det man vet om dessa identifierare. Istället
+	för att säga att ett visst rättsfall hänvisar till
+	lagrummet <code>http://rinfo.lagrummet.se/publ/sfs/1970:485#p_1</code>
+	så kan man säga att ett visst rättsfall hänvisar till ett lagrum
+	som i sin tur kan beskrivas som "1 § mönsterskyddslagen
+	(1970:485)". Detta kan även användas för en hänvisning som går
+	till flera olika lagrum, exempelvis "1 §, 1 a §, 2 §, 5 §, 31 §
+	och 32 § mönsterskyddslagen (1970:485)"
+      </p>
+      <p>
+	Man hänvisar till en BNode hänvisas till på ungefär samma sätt
+	som en identifierad resurs, men istället för att ange addressen
+	i med attributet <code>rdf:resource</code> så anger man den
+	information man har i själva elementet:
+      </p>
+      <div class="syntax">
+	<code class="xml"><![CDATA[
+	<lagrum>
+	<rdf:Description>
+	<dct:description>
+	1 §, 1 a §, 2 §, 5 §, 31 § och 32 § mönsterskyddslagen
+	(1970:485)
+	</dct:description>
+	</rdf:Description>
+	</lagrum>
+	]]></code>
+      </div>
+
+      <p>
+	I ovanstående exempel används termen "description" från
+	vokabulären <a
+	href="http://dublincore.org/documents/dcmi-terms/">DCMI
+	Terms</a> (<code>dct:description</code>). Det rekommenderas att
+	man använder <code>dct:identifier</code> för
+	rättsfallshänvisningar, och <code>dct:description</code> för
+	lagrumshänvisningar.
+      </p>
+      
+      <!--
+	  Denna metadata finns inte i databasen idag, så vi väntar med den
+	  <h3>4.6 Andra resurser</h3>
+	  <p>
+	  Det är vanligt att ett rättsfall även hänvisar till förarbeten
+	  och rättsvetenskaplig doktrin (vanligtvis under rubriken
+	  "Litteratur"). Det finns idag ingen term i begreppsmodellen för
+	  att uttrycka dessa referenser, men eftersom det är en generisk
+	  hänvisning kan termen <code>references</code> från DCMI terms
+	  användas. Rättsinformationsprojektet avser att i framtiden komma
+	  med närmare riktlinjer för hur dessa relationer ska uttryckas.
+	  </p>
+      -->
+    </div>
+    <div class="section">
+      <h2>5. Postförteckningar (Atom-flöden)</h2>
+      <h3>5.1 Olika resurstyper i samma postförteckning</h3>
+      <p>
+	En enskild informationsproducent kan publicera poster med
+	olika dokumenttyp. Dessa kan med fördel publiceras i samma
+	postförteckning. Se bilaga 9 för ett exempel på en sådan kort
+	postförteckning.
+      </p>
+      <h3>5.2 Arkivering</h3>
+      <p>
+	Eftersom antalet poster i postförteckningen kommer vara
+	närmare 20 000 bör denna delas upp i ett antal separata
+	filer. Detta görs genom att nytillkommna poster skrivs till en
+	huvudfil, som med jämna mellanrum (förslagsvis månadsvis)
+	knoppas av till arkivfiler med andra filnamn. När en arkivfil
+	väl blivit avknoppad behöver den aldrig röras igen.
+      </p>
+      <p>
+	För att en insamlare ska få kännedom om vilka arkivfiler som
+	finns tillgängliga ska huvudfilen länka till den senaste
+	arkivfilen (som i sin tur länkar till den näst senaste, och så
+	vidare. För ett exempel på hur denna länkning uttrycks, se
+	bilaga 9.
+      </p>
+      <p>
+	Se även, för närmare beskrivning av arkiveringsmekanismen,
+	avsitt 6 i dokumentet "Atom-insamling".
+      </p>
+      
+      <h3>5.3 content och link-elementen</h3>
+
+      <p>
+	Utgångspunkten för postförteckningarna är att varje enskild
+	<code>entry</code> innehåller en länk till själva dokumentets
+	text, uttryckt som ett <code>content</code>-element, samt en
+	länk till RDF-representationen av dokumentets metadata,
+	uttryckt som ett <code>link</code>-element.
+      </p>
+      <p>
+	För just vägledande domstolsavgöranden finns det som tidigare
+	sagts olika dokumenttyper
+	(<code>VagledandeDomstolsavgorande</code> respektive
+	<code>Rattfallsreferat</code>). För båda typerna finns olika
+	uppsättningar av metadata (beteckning, målnummer,
+	avgörandedatum, hänvisningar till tidigare rättsfall,
+	respektive rättsfallspublikation, referatbeteckning, m.m.).
+      </p>
+      <p>
+	I dagens databas finns endast löptexten för referaten, inte
+	för de bakomliggande avgörandena, tillgänglig. Däremot finns
+	metadata för både referaten och avgörandena. Därmed finns det
+	för <code>VagledandeDomstolsavgorande</code> inte någon
+	dokumenttext att länka till. För dessa poster kan man istället
+	använda ett tomt <code>content</code>-element. Se bilaga 9 för
+	ett exempel på hur detta uttrycks.
+      </p>
+
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 2: Modellbeskrivning för typen VagledandeDomstolsavgorande</h1>
+      <h2>Bilaga 1: Modellbeskrivning för typen VagledandeDomstolsavgorande</h2>
       <xi:include href="build:model.xhtml" xpointer="VagledandeDomstolsavgorande"/>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 3: Modellbeskrivning för typen VagledandeMyndighetsavgorande</h1>
+      <h2>Bilaga 2: Modellbeskrivning för typen VagledandeMyndighetsavgorande</h2>
       <xi:include href="build:model.xhtml" xpointer="VagledandeMyndighetsavgorande"/>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 4: URI:er och URI-segmentsymboler för domstolar/myndigheter</h1>
-      <xi:include href="handbok-avgoranden-bilaga-4.xhtml" xpointer="content"/>
+      <h2>Bilaga 3: Modellbeskrivning för typen Rattsfallsreferat</h2>
+      <xi:include href="build:model.xhtml"
+		  xpointer="Rattsfallsreferat"/>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 5: URI:er och URI-segmentsymboler för rättsfallssamlingar</h1>
+      <h2>Bilaga 4: Modellbeskrivning för typen Rattsfallsnotis</h2>
+      <xi:include href="build:model.xhtml"
+		  xpointer="Rattsfallsnotis"/>
+    </div>
+
+    <div class="appendix">
+      <h2>Bilaga 5: URI:er och URI-segmentsymboler för domstolar/myndigheter</h2>
       <xi:include href="handbok-avgoranden-bilaga-5.xhtml" xpointer="content"/>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 6: Mappning av nuvarande data</h1>
+      <h2>Bilaga 6: URI:er och URI-segmentsymboler för rättsfallssamlingar</h2>
       <xi:include href="handbok-avgoranden-bilaga-6.xhtml" xpointer="content"/>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 7: Exempel på hmappning mellan befintligt databasinnehåll och RDF-data.</h1>
+      <h2>Bilaga 7: Mappning av nuvarande data</h2>
       <xi:include href="handbok-avgoranden-bilaga-7.xhtml" xpointer="content"/>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 8: Kombinerad postförteckning (Atom) för VagledandeAvgorande och Referat</h1>
+      <h2>Bilaga 8: Exempel på mappning mellan befintligt databasinnehåll och RDF-data.</h2>
+      <xi:include href="handbok-avgoranden-bilaga-8.xhtml" xpointer="content"/>
+    </div>
+
+    <div class="appendix">
+      <h2>Bilaga 9: Kombinerad postförteckning (Atom) för VagledandeAvgorande och Referat</h2>
       <div class="syntax">
         <code class="xml"><xi:include href="../../documentation/exempel/feeds/sources/vagledande-avgoranden/vagledande-avgoranden_source_feed.atom" parse="text"/></code>
       </div>
     </div>
     <div class="appendix">
-      <h1>Bilaga 9: Metadata för rättsfallsreferat (NJA 2009 s 695)</h1>
+      <h2>Bilaga 10: Metadata för rättsfallsreferat (NJA 2009 s 695)</h2>
       <div class="syntax">
 	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Referat/NJA/2009/NJA-2009_s._695.rdf" parse="text"/></code>
       </div>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 10: Metadata för vägledande domstolsavgörande (Högsta domstolen, målnr T 170-08)</h1>
+      <h2>Bilaga 11: Metadata för vägledande domstolsavgörande (Högsta domstolen, målnr T 170-08)</h2>
       <div class="syntax">
 	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Domslut/HD/2009/T_170-08.rdf" parse="text"/></code>
       </div>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 11: Metadata för vägledande domstolsavgörande (Högsta domstolen, målnr Ö 2034-09)</h1>
+      <h2>Bilaga 12: Metadata för vägledande domstolsavgörande (Högsta domstolen, målnr Ö 2034-09)</h2>
       <div class="syntax">
 	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Domslut/HD/2010/OE_2034-09.rdf" parse="text"/></code>
       </div>
     </div>
 
     <!--
-    <div class="appendix">
-      <h1>Bilaga 9: Rättsfallsreferat i fulltext (NJA 2009 s 695)</h1>
-      <div class="syntax">
+	<div class="appendix">
+	<h1>Bilaga 9: Rättsfallsreferat i fulltext (NJA 2009 s 695)</h1>
+	<div class="syntax">
 	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Referat/NJA/2009/NJA-2009_s._695.xhtml" parse="text"/></code>
-      </div>
-    </div>
+	</div>
+	</div>
 
-    <div class="appendix">
-      <h1>Bilaga 10: Vägledande domstolsavgörande i fulltext (Högsta domstolen, målnr T 170-08)</h1>
-      <div class="syntax">
-	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Domslut/HD/2009/T_170-08.rdf" parse="text"/></code>
-      </div>
-    </div>
+<div class="appendix">
+<h1>Bilaga 10: Vägledande domstolsavgörande i fulltext (Högsta domstolen, målnr T 170-08)</h1>
+<div class="syntax">
+<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Domslut/HD/2009/T_170-08.rdf" parse="text"/></code>
+</div>
+</div>
 
-    <div class="appendix">
-      <h1>Bilaga 11: Metadata för vägledande myndighetsavgörande</h1>
-      <div class="syntax">
-	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Avgoranden/JK/2009-1031.rdf" parse="text"/></code>
-      </div>
-    </div>
+<div class="appendix">
+<h1>Bilaga 11: Metadata för vägledande myndighetsavgörande</h1>
+<div class="syntax">
+<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Avgoranden/JK/2009-1031.rdf" parse="text"/></code>
+</div>
+</div>
 
-    <div class="appendix">
-      <h1>Bilaga 12: Vägledande myndighetsavgörande i fulltext</h1>
-      <div class="syntax">
-	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Avgoranden/JK/2009-1031.xhtml" parse="text"/></code>
-      </div>
-    </div>
+<div class="appendix">
+<h1>Bilaga 12: Vägledande myndighetsavgörande i fulltext</h1>
+<div class="syntax">
+<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Avgoranden/JK/2009-1031.xhtml" parse="text"/></code>
+</div>
+</div>
     -->
   </body>
 </html>

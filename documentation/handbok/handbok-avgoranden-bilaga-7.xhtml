@@ -35,7 +35,7 @@
 	</tr>
 	<tr>
 	  <td colspan="2">Avgorande.Avdelning</td>
-	  <td class="predicate">rpubl:domstolsavdelning</td>
+	  <td class="predicate">domstolsavdelning</td>
 	</tr>
 	<tr>
 	  <td colspan="2">Avgorande.Myndighetskod</td>
@@ -52,17 +52,17 @@
 	</tr>
 	<tr>
 	  <td colspan="2">Avgorande.MalNr</td>
-	  <td class="predicate">rpubl:malnummer</td>
+	  <td class="predicate">malnummer</td>
 	  <td class="comment"></td>
 	</tr>
 	<tr>
 	  <td colspan="2">Avgorande.Domsnr</td>
-	  <td class="predicate">rpubl:domsnummer</td>
+	  <td class="predicate">domsnummer</td>
 	  <td class="comment"></td>
 	</tr>
 	<tr>
 	  <td colspan="2">Avgorande.AvgorandeDatum</td>
-	  <td class="predicate">rpubl:avgorandedatum</td>
+	  <td class="predicate">avgorandedatum</td>
 	  <td class="comment"></td>
 	</tr>
 	<tr>
@@ -95,7 +95,7 @@
 	<tr>
 	  <td>&nbsp;</td>
 	  <td>Rattsfall.RattsfallsReferens</td>
-	  <td class="predicate">rpubl:rattsfallshanvisning</td>
+	  <td class="predicate">rattsfallshanvisning</td>
 	  <td class="comment">
 	    Här måste en URI konstrueras från löptexten, exv "NJA 2006
 	    s. 36" =>
@@ -114,13 +114,13 @@
 	<tr>
 	  <td>&nbsp;</td>
 	  <td>Lagrum.LagrumsReferens</td>
-	  <td class="predicate">rpubl:lagrum</td>
+	  <td class="predicate">lagrum</td>
 	  <td class="comment">
 	    Där så är möjligt, utvinn referenser i form av exakta
 	    URI:er. För andra fall, konstruera anonyma resurser
 	    (BNodes) för hänvisningar som beskrivs med hjälp av
 	    lagrumshänvisningar i löptext (se avsnittet "Inexakta
-	    hänvisningar" samt bilaga 10 (målnr T 170-08))
+	    hänvisningar" samt bilaga 11 (målnr T 170-08))
 	  </td>
 	</tr>
       </table>
@@ -129,19 +129,19 @@
 	Konstruera sedan URIn för resursen enligt följande mönster:
       </p>
       <p>
-	<code>http://rinfo.lagrummet.se/publ/dom/</code><i>[symbol för dct:publisher]</i><code>/</code><i>[rpubl:malnummer]</i><code>/</code><i>[rpubl:avgorandedatum]</i>
+	<code>http://rinfo.lagrummet.se/publ/dom/</code><i>[symbol för dct:publisher]</i><code>/</code><i>[malnummer]</i><code>/</code><i>[avgorandedatum]</i>
       </p>
 
       <ul>
-	<li>Symbolen för <code>dct:publisher</code> hämtas från Bilaga 1</li>
+	<li>Symbolen för <code>dct:publisher</code> hämtas från Bilaga 5</li>
 	<li>
-	  <code>rpubl:malnummer</code> ska vara utan mellanslag och
+	  <code>malnummer</code> ska vara utan mellanslag och
 	  med eventuella å, ä och ö transformerade till aa, ae och oe,
 	  respektive (vilket är i linje med de generella
 	  URI-principerna för systemet)
 	</li>
 	<li>
-	  <code>rpubl:avgorandedatum</code> ska skrivas på formen ÅÅÅÅ-MM-DD.
+	  <code>avgorandedatum</code> ska skrivas på formen ÅÅÅÅ-MM-DD.
 	</li>
       </ul>
       <p>
@@ -152,29 +152,29 @@
       <h2>Mappning för Rattsfallsreferat</h2>
       <table border="1">
 	<tr>
-	  <th colspan="2">Fältnamn e dyl.</th>
+	  <th>Fältnamn e dyl.</th>
 	  <th>RDF-egenskap</th>
 	  <th>Kommentar</th>
 	</tr>
 	<tr>
-	  <td colspan="2">[URI för avgörande enligt ovan]</td>
-	  <td class="predicate">rpubl:
+	  <td>[URI för avgörande enligt ovan]</td>
+	  <td class="predicate">
 	  referatAvDomstolsavgorande</td>
 	</tr>
 	<tr>
-	  <td colspan="2">Avgorande.RubrikText</td>
-	  <td class="predicate">rpubl:referatrubrik</td>
+	  <td>Avgorande.RubrikText</td>
+	  <td class="predicate">referatrubrik</td>
 	  <td class="comment"></td>
 	</tr>
 	<tr>
-	  <td colspan="2"><code>"http://rinfo.lagrummet.se/
+	  <td><code>"http://rinfo.lagrummet.se/
 	  org/domstolsverket"</code></td>
 	  <td class="predicate">dct:publisher</td>
 	  <td class="comment"></td>
 	</tr>
 	<tr>
-	  <td colspan="2">Avgorande.Myndighetskod</td>
-	  <td class="predicate">rpubl:rattsfallspublikation</td>
+	  <td>Avgorande.Myndighetskod</td>
+	  <td class="predicate">rattsfallspublikation</td>
 	  <td class="comment">
 	    Strängen "HDO" mappas till
 	    "http://rinfo.lagrummet.se/
@@ -184,62 +184,61 @@
 	  </td>
 	</tr>
 	<tr>
-	  <td colspan="2">Avgorande.PubliceringsDatum</td>
+	  <td>Avgorande.PubliceringsDatum</td>
 	  <td class="predicate">dct:issued</td>
 	  <td class="comment"></td>
 	</tr>
 	<tr>
-	  <td colspan="2">Avgorande.PublikationsBeteckning</td>
-	  <td class="predicate">rpubl:arsutgava</td>
-	  <td class="comment">Endast årtal, exv "NJA 2009 s. 695" transformeras till "2009".</td>
-	</tr>
-	<tr>
-	  <td colspan="3">om Avgorande.MyndighetsKod == "HDO"</td>
-	</tr>
-	<tr>
 	  <td></td>
 	  <td>Avgorande.PublikationsBeteckning</td>
-	  <td class="predicate">rpubl:
-	  publikationsplatsangivelse</td>
+	  <td class="predicate">dct:identifier</td>
+	</tr>
+	<tr>
+	  <td>Avgorande.PublikationsBeteckning</td>
+	  <td class="predicate">arsutgava</td>
 	  <td class="comment">
-	    Endast avslutande sidnr, dvs strängen "NJA 2009 s. 695"
-	    transformeras till "2009 s. 695"
+	    Endast årtal, exv "NJA 2009 s. 695" transformeras till "2009".
 	  </td>
 	</tr>
 	<tr>
-	  <td></td>
+	  <th colspan="3">om Avgorande.MyndighetsKod == "HDO"</th>
+	</tr>
+	<tr>
 	  <td>Avgorande.Publikationsbeteckning2</td>
-	  <td class="predicate">rpubl:publikationsordinal</td>
-	  <td class="comment">
-	    Med inledande rättsfallssamlingsidentifierare borttaget, dvs
-	    strängen "NJA 2009:55" transformeras till "2009:55"
-	  </td>
+	  <td class="predicate">dct:bibliographicCitation</td>
 	</tr>
+
 	<tr>
-	  <td></td>
 	  <td>Avgorande.PublikationsBeteckning</td>
-	  <td class="predicate">rpubl:sidnummer</td>
+	  <td class="predicate">sidnummer</td>
 	  <td class="comment">
-	    Endast avslutande sidnr, exv. "2009 s. 695" transformeras
+	    Endast avslutande sidnr, exv. "NJA 2009 s. 695" transformeras
 	    till "695"
 	  </td>
 	</tr>
 	<tr>
-	  <td></td>
+	  <td>Avgorande.Publikationsbeteckning2</td>
+	  <td class="predicate">lopnummer</td>
+	  <td class="comment">
+	    Endast avslutande löpnummer, exv. "NJA 2009:68" transformeras
+	    till "68"
+	  </td>
+	</tr>
+	<tr>
 	  <td>[Alternativ URI]</td>
 	  <td class="predicate">owl:sameAs</td>
-	  <td class="comment">Se nedan under rubriken "Alternativ URI för NJA-referat"</td>
+	  <td class="comment">Se avsnitt 3.2, "Alternativ URI för NJA-referat"</td>
+	</tr>
+
+	<tr>
+	  <th colspan="3">Annars:</th>
 	</tr>
 	<tr>
-	  <td colspan="3">Annars:</td>
-	</tr>
-	<tr>
-	  <td></td>
 	  <td>Avgorande.PublikationsBeteckning</td>
-	  <td class="predicate">rpubl:publikationsordinal</td>
+	  <td class="predicate">lopnummer</td>
 	  <td class="comment">
-	    Med inledande rättsfallssamlingsidentifierare borttaget, dvs
-	    strängen "RÅ 2009 ref. 99" transformeras till "2009 ref. 99"
+	    Endast avslutande löpnummer, exv. "RÅ 2010 ref. 14" transformeras
+	    till "14"
 	  </td>
 	</tr>
       </table>
@@ -248,11 +247,14 @@
 	Konstruera sedan URIn för resursen enligt följande mönster:
       </p>
       <p>
-	<code>http://rinfo.lagrummet.se/publ/rf/</code><i>[symbol för rpubl:rattsfallspublikation]</i><code>/</code><i>[rpubl:publikationsplatsordinal]</i>
+	<code>http://rinfo.lagrummet.se/publ/rf/</code><i>[symbol för rattsfallspublikation]</i><code>/</code><i>[arsutgava]</i><code>:</code><i>[lopnummer]</i>
       </p>
       <p>
-	Ett typiskt exempel på en URI är
-	<code>http://rinfo.lagrummet.se/publ/rf/nja/2009:68</code>.
+	<!-- TODO: Ska RÅ-exemplet verkligen vara med ":" och inte "ref" el likn.? -->
+	Några typiska exempel på en URI:er är
+	<code>http://rinfo.lagrummet.se/publ/rf/nja/2009:68</code>,
+	<code>http://rinfo.lagrummet.se/publ/rf/ra/2010:14</code> och
+	<code>http://rinfo.lagrummet.se/publ/rf/md/2010:7</code>. 
       </p>
     </div>
   </body>
