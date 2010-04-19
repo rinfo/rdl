@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Avgöranden - Bilaga 6: Exempel på mappning mellan befintligt databasinnehåll och RDF-data</title>
+  </head>
+  <body>
+    <div id="content">
+      <p>
+	Denna bilaga innehåller exempel på hur datat kan förekomma i
+	den befintliga databasstrukturen. I bilaga 9-11 visas hur denna
+	data representeras i RDF-format, och i bilaga 8 hur en
+	Atom-fil som utgör postförteckningen för datat kan se ut.
+      </p>
+
+      <h2>Två exempelrader i tabellen Avgorande</h2>
+      <p>Några fält med intern betydelse för det nuvarande systemet,
+      men vars värden inte ska publiceras till
+      rättsinformationssystemet, har utelämnats.</p>
+      <p>Tabellen har av utrymmesskäl visats vriden 90 grader från det
+      normala.</p>
+      <table border="1">
+	<tr>
+	  <th>AvgorandeIdNr</th>
+	  <td>12044</td>
+	  <td>12363</td>
+	</tr>
+	<tr>
+	  <th>PublikationsBeteckning</th>
+	  <td>NJA 2009 s. 695</td>
+	</tr>
+	<tr>
+	  <th>Publikationsbeteckning2</th>
+	  <td>NJA 2009:68</td>
+	</tr>
+	<tr>
+	  <th>ReferatFinns</th>
+	  <td>J</td>
+	  <td>N</td>
+	</tr>
+	<tr>
+	  <th>ReferatDok</th>
+	  <td><![CDATA[<html><head><meta http-equiv=...]]></td>
+	</tr>
+	<tr>
+	  <th>Avdelning</th>
+	  <td>2</td>
+	  <td>2</td>
+   	</tr>
+	<tr>
+	  <th>Myndighetskod</th>
+	  <td>HDO</td>
+	  <td>HDO</td>
+	</tr>
+	<tr>
+	  <th>MalNr</th>
+	  <td>T170-08</td>
+	  <td>Ö2034-09</td>
+	</tr>
+	<tr>
+	  <th>Domsnr</th>
+	</tr>
+	<tr>
+	  <th>AvgorandeDatum</th>
+	  <td>2009-11-04</td>
+	  <td>2010-03-31</td>
+	</tr>
+	<tr>
+	  <th>RubrikText</th>
+	  <td>
+	    Överföring av mönsterregistrering på grund av bättre rätt
+	    till formgivarrätt.
+	  </td>
+	  <td>
+	    Fråga om dispens från kravet att den som antas som ledamot
+	    av Sveriges advokatsamfund inte får vara anställd hos
+	    annan än advokat. Högsta domstolen kan endast pröva om
+	    beslutet tillkommit i behörig ordning och om dispens
+	    överhuvudtaget krävs, men inte om dispens ska ges.
+	  </td>
+	</tr>
+	<tr>
+	  <th>PubliceringsDatum</th>
+	  <td>?</td>
+	  <td>?</td>
+	</tr>
+      </table>
+
+      <h2>Kompletterande exempelrader i tabellen Lagrum</h2>
+      <table border="1">
+	<tr>
+	  <th>AvgorandeIdNr</th>
+	  <th>LagrumsReferens</th>
+	  <th>SfsNr</th>
+	</tr>
+	<tr>
+	  <td>12044</td>
+	  <td>1 §, 1 a §, 2 §, 5 §, 31 § och 32 § mönsterskyddslagen (1970:485)</td>
+	  <td>1970:485</td>
+	</tr>
+	<tr>
+	  <td>12044</td>
+	  <td>Artikel 3, artikel 4, artikel 10, artikel 11, artikel 15,
+	  artikel 19 och artikel 27 Rådets förordning (EG) nr 6/2002 av
+	  den 12 december 2001 om gemenskapsformgivning</td>
+	</tr>
+	<tr>
+	  <td>12363</td>
+	  <td>8 kap. 2 § rättegångsbalken (1942:740)</td>
+	  <td>1942:740</td>
+	</tr>
+      </table>
+      <h2>Kompletterande exempelrader i tabellen Sokord</h2>
+      <table border="1">
+	<tr>
+	  <th>AvgorandeIdNr</th>
+	  <th>SokOrd</th>
+	</tr>
+	<tr>
+	  <td>12044</td>
+	  <td>Formgivarrätt</td>
+	</tr>
+	<tr>
+	  <td>12044</td>
+	  <td>Formgivning</td>
+	</tr>
+	<tr>
+	  <td>12044</td>
+	  <td>Mönsterrätt</td>
+	</tr>
+	<tr>
+	  <td>12044</td>
+	  <td>Godtrosförvärv</td>
+	</tr>
+	<tr>
+	  <td>12044</td>
+	  <td>Dubbelöverlåtelse</td>
+	</tr>
+	<tr>
+	  <td>12363</td>
+	  <td>Advokat</td>
+	</tr>
+	<tr>
+	  <td>12363</td>
+	  <td>Dispens</td>
+	</tr>
+      </table>
+      <h2>Kompletterande exempelrader i tabellen Rattsfall</h2>
+      <table border="1">
+	<tr>
+	  <th>AvgorandeIdNr</th>
+	  <th>RattsfallsReferens</th>
+	</tr>
+	<tr>
+	  <td>12363</td>
+	  <td>NJA 1951 C 58</td>
+	</tr>
+	<tr>
+	  <td>12363</td>
+	  <td>NJA 1998 s. 22</td>
+	</tr>
+	<tr>
+	  <td>12363</td>
+	  <td>NJA 2000 s. 135</td>
+	</tr>
+	<tr>
+	  <td>12363</td>
+	  <td>NJA 2007 N 72</td>
+	</tr>
+      </table>
+    </div>
+  </body>
+</html>

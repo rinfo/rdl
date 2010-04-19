@@ -4,257 +4,59 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Avgöranden - Bilaga 6: Mappning av nuvarande data</title>
+    <title>Avgöranden - Bilaga 5: URI:er och URI-segmentsymboler för rättsfallssamlingar</title>
   </head>
   <body>
-    <div id="content">
-      <p>
-      I domstolsverkets nuvarande lösning innehåller databasens
-      huvudtabell (Avgorande) i huvudsak sådana egenskaper som svarar
-      mot 
-      <code>VagledandeDomstolsavgorande</code>. Några egenskaper
-      svarar däremot mot <code>Rattsfallsreferat</code>
-      (PublikationsBeteckning, Publikationsbeteckning2 och
-      ReferatDok). 
-      </p>
-      <p>
-      Från varje fullständig rad i den befintliga Avgorande-tabellen
-      skapas därför <em>två</em> resurser, en av varje typ.
-      Publicering av kortform är publicering av ett
-      VagledandeDomstolsavgorande. När referatet finns tillgängligt
-      kan man även publicera ett Rattsfallsreferat. Dessa två typer
-      kan publiceras i samma flöde, se nedan.
-      </p>
-
-      <h2>Mappning för VagledandeDomstolsavgorande</h2>
-      <table border="1">
+      <table id="content">
 	<tr>
-	  <th colspan="2">Fältnamn</th>
-	  <th>RDF-egenskap</th>
-	  <th>Kommentar</th>
+	  <td>Nytt Juridiskt Arkiv (Högsta domstolen)</td>
+	  <td><code>http://rinfo.lagrummet.se/serie/rff/nja</code></td>
+	  <td>nja</td>
 	</tr>
 	<tr>
-	  <td colspan="2">Avgorande.Avdelning</td>
-	  <td class="predicate">rpubl:domstolsavdelning</td>
-	</tr>
-	<tr>
-	  <td colspan="2">Avgorande.Myndighetskod</td>
-	  <td class="predicate">dct:publisher</td>
-	  <td class="comment">
-	    Värdet ska mappas från en treställig bokstavsförkortning
-	    till en URI som representerar domstolen/myndigheten. Dessa
-	    URI:er anges av rättsinformationsprojektet. Exv "HDO" =>
-	    "http://rinfo.lagrummet.se/ org/hoegsta_domstolen". Den
-	    fullständiga listan över URI:er finns i en bilaga till detta
-	    dokument, och kommer finnas i uppdaterad form på
-	    rinfo.lagrummet.se.
+	  <td>
+	    Rättsfall från hovrätterna (Svea hovrätt, Göta hovrätt,
+	    Hovrätten över Skåne och Blekinge, Hovrätten för Västra
+	    Sverige, Hovrätten för Nedre Norrland och Hovrätten för
+	    Övre Norrland).
 	  </td>
+	  <td><code>http://rinfo.lagrummet.se/serie/rff/rh</code></td>
+	  <td>rh</td>
 	</tr>
 	<tr>
-	  <td colspan="2">Avgorande.MalNr</td>
-	  <td class="predicate">rpubl:malnummer</td>
-	  <td class="comment"></td>
+	  <td>Miljööverdomstolen</td>
+	  <td><code>http://rinfo.lagrummet.se/serie/rff/mod</code></td>
+	  <td>mod</td>
 	</tr>
 	<tr>
-	  <td colspan="2">Avgorande.Domsnr</td>
-	  <td class="predicate">rpubl:domsnummer</td>
-	  <td class="comment"></td>
+	  <td>Regeringsrättens årsbok (Regeringsrätten)</td>
+	  <td><code>http://rinfo.lagrummet.se/serie/rff/ra</code></td>
+	  <td>ra</td>
 	</tr>
 	<tr>
-	  <td colspan="2">Avgorande.AvgorandeDatum</td>
-	  <td class="predicate">rpubl:avgorandedatum</td>
-	  <td class="comment"></td>
-	</tr>
-	<tr>
-	  <td colspan="2">Avgorande.RubrikText</td>
-	  <td class="predicate">dct:title</td>
-	  <td class="comment"></td>
-	</tr>
-	<tr>
-	  <td colspan="2">Avgorande.PubliceringsDatum</td>
-	  <td class="predicate">dct:issued</td>
-	  <td class="comment">
-	    Under förutsättning att PubliceringsDatum stämmer bäst
-	    överens med definitionen av dct:issued ("Date of formal
-	    issuance (e.g., publication) of the resource.") -- andra
-	    alternativ är InfogatDatum, UppdateratDatum och TimeStamp.
+	  <td>
+	    Rättsfall från kammarrätterna (Kammarrätten i Stockholm,
+	    Kammarrätten i Göteborg, Kammarrätten i Sundsvall och
+	    Kammarrätten i Jönköping)
 	  </td>
+	  <td><code>http://rinfo.lagrummet.se/serie/rff/rk</code></td>
+	  <td>rk</td>
 	</tr>
 	<tr>
-	  <td colspan="3">För varje kopplad rad i tabellen Sokord:</td>
+	  <td>Migrationsöverdomstolen</td>
+	  <td><code>http://rinfo.lagrummet.se/serie/rff/mig</code></td>
+	  <td>mig</td>
 	</tr>
 	<tr>
-	  <td>&nbsp;</td>
-	  <td>Sokord.SokOrd</td>
-	  <td class="predicate">dct:subject</td>
-	  <td class="comment"></td>
+	  <td>Arbetsdomstolen</td>
+	  <td><code>http://rinfo.lagrummet.se/serie/rff/ad</code></td>
+	  <td>ad</td>
 	</tr>
 	<tr>
-	  <td colspan="3">För varje kopplad rad i tabellen Rattsfall:</td>
-	</tr>
-	<tr>
-	  <td>&nbsp;</td>
-	  <td>Rattsfall.RattsfallsReferens</td>
-	  <td class="predicate">rpubl:rattsfallshanvisning</td>
-	  <td class="comment">
-	    Här måste en URI konstrueras från löptexten, exv "NJA 2006
-	    s. 36" =>
-	    "http://rinfo.lagrummet.se/ publ/rf/nja/2006s36". Mönstret
-	    för att göra detta är:
-	    http://rinfo.lagrummet.se/ publ/rf/[RattsfallsReferens],
-	    där publikationsbeteckningen transformeras så att det första
-	    mellanrummet byts ut mot ett "/", övriga mellanrum (samt
-	    punkt) tas bort, och alla bokstäver transformeras till
-	    gemener.
-	  </td>
-	</tr>
-	<tr>
-	  <td colspan="3">För varje kopplad rad i tabellen Lagrum:</td>
-	</tr>
-	<tr>
-	  <td>&nbsp;</td>
-	  <td>Lagrum.LagrumsReferens</td>
-	  <td class="predicate">rpubl:lagrum</td>
-	  <td class="comment">
-	    Där så är möjligt, utvinn referenser i form av exakta
-	    URI:er. För andra fall, konstruera anonyma resurser
-	    (BNodes) för hänvisningar som beskrivs med hjälp av
-	    lagrumshänvisningar i löptext (se avsnittet "Inexakta
-	    hänvisningar" samt bilaga 10 (målnr T 170-08))
-	  </td>
+	  <td>Marknadsdomstolen</td>
+	  <td><code>http://rinfo.lagrummet.se/serie/rff/md</code></td>
+	  <td>md</td>
 	</tr>
       </table>
-
-      <p>
-	Konstruera sedan URIn för resursen enligt följande mönster:
-      </p>
-      <p>
-	<code>http://rinfo.lagrummet.se/publ/dom/</code><i>[symbol för dct:publisher]</i><code>/</code><i>[rpubl:malnummer]</i><code>/</code><i>[rpubl:avgorandedatum]</i>
-      </p>
-
-      <ul>
-	<li>Symbolen för <code>dct:publisher</code> hämtas från Bilaga 1</li>
-	<li>
-	  <code>rpubl:malnummer</code> ska vara utan mellanslag och
-	  med eventuella å, ä och ö transformerade till aa, ae och oe,
-	  respektive (vilket är i linje med de generella
-	  URI-principerna för systemet)
-	</li>
-	<li>
-	  <code>rpubl:avgorandedatum</code> ska skrivas på formen ÅÅÅÅ-MM-DD.
-	</li>
-      </ul>
-      <p>
-	Ett typiskt exempel på en URI är
-	<code>http://rinfo.lagrummet.se/publ/dom/hd/t170-08/2009-11-04</code>.
-      </p>
-
-      <h2>Mappning för Rattsfallsreferat</h2>
-      <table border="1">
-	<tr>
-	  <th colspan="2">Fältnamn e dyl.</th>
-	  <th>RDF-egenskap</th>
-	  <th>Kommentar</th>
-	</tr>
-	<tr>
-	  <td colspan="2">[URI för avgörande enligt ovan]</td>
-	  <td class="predicate">rpubl:
-	  referatAvDomstolsavgorande</td>
-	</tr>
-	<tr>
-	  <td colspan="2">Avgorande.RubrikText</td>
-	  <td class="predicate">rpubl:referatrubrik</td>
-	  <td class="comment"></td>
-	</tr>
-	<tr>
-	  <td colspan="2"><code>"http://rinfo.lagrummet.se/
-	  org/domstolsverket"</code></td>
-	  <td class="predicate">dct:publisher</td>
-	  <td class="comment"></td>
-	</tr>
-	<tr>
-	  <td colspan="2">Avgorande.Myndighetskod</td>
-	  <td class="predicate">rpubl:rattsfallspublikation</td>
-	  <td class="comment">
-	    Strängen "HDO" mappas till
-	    "http://rinfo.lagrummet.se/
-	    serie/rff/nja", "ADO" till
-	    "http://rinfo.lagrummet.se/
-	    serie/rff/ad" osv.
-	  </td>
-	</tr>
-	<tr>
-	  <td colspan="2">Avgorande.PubliceringsDatum</td>
-	  <td class="predicate">dct:issued</td>
-	  <td class="comment"></td>
-	</tr>
-	<tr>
-	  <td colspan="2">Avgorande.PublikationsBeteckning</td>
-	  <td class="predicate">rpubl:arsutgava</td>
-	  <td class="comment">Endast årtal, exv "NJA 2009 s. 695" transformeras till "2009".</td>
-	</tr>
-	<tr>
-	  <td colspan="3">om Avgorande.MyndighetsKod == "HDO"</td>
-	</tr>
-	<tr>
-	  <td></td>
-	  <td>Avgorande.PublikationsBeteckning</td>
-	  <td class="predicate">rpubl:
-	  publikationsplatsangivelse</td>
-	  <td class="comment">
-	    Endast avslutande sidnr, dvs strängen "NJA 2009 s. 695"
-	    transformeras till "2009 s. 695"
-	  </td>
-	</tr>
-	<tr>
-	  <td></td>
-	  <td>Avgorande.Publikationsbeteckning2</td>
-	  <td class="predicate">rpubl:publikationsordinal</td>
-	  <td class="comment">
-	    Med inledande rättsfallssamlingsidentifierare borttaget, dvs
-	    strängen "NJA 2009:55" transformeras till "2009:55"
-	  </td>
-	</tr>
-	<tr>
-	  <td></td>
-	  <td>Avgorande.PublikationsBeteckning</td>
-	  <td class="predicate">rpubl:sidnummer</td>
-	  <td class="comment">
-	    Endast avslutande sidnr, exv. "2009 s. 695" transformeras
-	    till "695"
-	  </td>
-	</tr>
-	<tr>
-	  <td></td>
-	  <td>[Alternativ URI]</td>
-	  <td class="predicate">owl:sameAs</td>
-	  <td class="comment">Se nedan under rubriken "Alternativ URI för NJA-referat"</td>
-	</tr>
-	<tr>
-	  <td colspan="3">Annars:</td>
-	</tr>
-	<tr>
-	  <td></td>
-	  <td>Avgorande.PublikationsBeteckning</td>
-	  <td class="predicate">rpubl:publikationsordinal</td>
-	  <td class="comment">
-	    Med inledande rättsfallssamlingsidentifierare borttaget, dvs
-	    strängen "RÅ 2009 ref. 99" transformeras till "2009 ref. 99"
-	  </td>
-	</tr>
-      </table>
-      
-      <p>
-	Konstruera sedan URIn för resursen enligt följande mönster:
-      </p>
-      <p>
-	<code>http://rinfo.lagrummet.se/publ/rf/</code><i>[symbol för rpubl:rattsfallspublikation]</i><code>/</code><i>[rpubl:publikationsplatsordinal]</i>
-      </p>
-      <p>
-	Ett typiskt exempel på en URI är
-	<code>http://rinfo.lagrummet.se/publ/rf/nja/2009:68</code>.
-      </p>
-    </div>
   </body>
 </html>
-      
