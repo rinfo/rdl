@@ -8,6 +8,24 @@
   </head>
   <body>
     <div id="content">
+      <p>
+      I domstolsverkets nuvarande lösning innehåller databasens
+      huvudtabell (Avgorande) i huvudsak sådana egenskaper som svarar
+      mot 
+      <code>VagledandeDomstolsavgorande</code>. Några egenskaper
+      svarar däremot mot <code>Rattsfallsreferat</code>
+      (PublikationsBeteckning, Publikationsbeteckning2 och
+      ReferatDok). 
+      </p>
+      <p>
+      Från varje fullständig rad i den befintliga Avgorande-tabellen
+      skapas därför <em>två</em> resurser, en av varje typ.
+      Publicering av kortform är publicering av ett
+      VagledandeDomstolsavgorande. När referatet finns tillgängligt
+      kan man även publicera ett Rattsfallsreferat. Dessa två typer
+      kan publiceras i samma flöde, se nedan.
+      </p>
+
       <h2>Mappning för VagledandeDomstolsavgorande</h2>
       <table border="1">
 	<tr>
