@@ -8,7 +8,9 @@
 
         <!-- identifiering -->
         <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/livsfs"/>
-        <fsNummer>2006:22</fsNummer>
+	<arsutgava>2006</arsutgava>
+	<lopnummer>22</lopnummer>
+	<dct:identifier>LIVSFS 2006:22</dct:identifier>
         <dct:title xml:lang="sv">Livsmedelsverkets föreskrifter (LIVSFS 2006:22) om bekämpningsmedelsrester i livsmedel</dct:title>
 
         <!-- tidsaspekter -->

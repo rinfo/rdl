@@ -7,7 +7,9 @@
 
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/ra-fs"/>
-    <fsNummer>2004:2</fsNummer>
+    <arsutgava>2004</arsutgava>
+    <lopnummer>2</lopnummer>
+    <dct:identifier>RA-FS 2004:2</dct:identifier>
     <dct:title xml:lang="sv">Riksarkivets föreskrifter och allmänna råd om
         gallring och återlämnande av handlingar vid upphandling;</dct:title>
 

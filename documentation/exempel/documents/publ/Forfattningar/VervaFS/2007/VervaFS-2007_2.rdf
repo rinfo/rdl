@@ -7,7 +7,10 @@
 
         <!-- identifiering -->
         <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/vervafs"/>
-        <fsNummer>2007:2</fsNummer>
+	<arsutgava>2007</arsutgava>
+	<lopnummer>2</lopnummer>
+	<dct:identifier>VERVAFS 2007:2</dct:identifier>
+
         <dct:title xml:lang="sv">Vervas föreskrift om statliga myndigheters arbete med säkert elektroniskt informationsutbyte;</dct:title>
 
         <!-- tidsaspekter -->

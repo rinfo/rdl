@@ -7,7 +7,9 @@
       
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/ra-fs"/>
-    <fsNummer>2006:6</fsNummer>
+    <arsutgava>2006</arsutgava>
+    <lopnummer>6</lopnummer>
+    <dct:identifier>RA-FS 2006:6</dct:identifier>
     <dct:title xml:lang="sv">Föreskrifter om ändring av Riksarkivets
         föreskrifter och allmänna råd (RA-FS 2004:2) om gallring och
         återlämnande av handlingar vid upphandling;</dct:title>

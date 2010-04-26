@@ -5,19 +5,24 @@
     xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
 
     <Kommittedirektiv rdf:about="http://rinfo.lagrummet.se/publ/dir/2008:78">
-        <direktivnummer>2008:78</direktivnummer>
-        <dct:title xml:lang="sv">Tilläggsdirektiv till Straffnivåutredningen (Ju 2007:04)</dct:title>
-
-        <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2008-06-12</beslutsdatum>
-        <avkravtAvrapporteringsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2008-09-30</avkravtAvrapporteringsdatum>
+        <arsutgava>2008</arsutgava>
+        <lopnummer>78</lopnummer>
+        <dct:title xml:lang="sv">
+	  Tilläggsdirektiv till Straffnivåutredningen (Ju 2007:04)
+	</dct:title>
+	<dct:identifier>Dir. 2008:78</dct:identifier>
+        <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+		      >2008-06-12</beslutsdatum>
+        <avkravtAvrapporteringsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+				     >2008-09-30</avkravtAvrapporteringsdatum>
 
         <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
         <departement rdf:parseType="Resource">
             <foaf:name>Justitiedepartementet</foaf:name>
         </departement>
 
-		<!-- Tilläggsdirektiv skall kopplas till den utredning de riktar sig till -->
-		<tillaggTill rdf:resource="http://rinfo.lagrummet.se/kom/kommitte/Ju_2007:04"/>
+	<!-- Tilläggsdirektiv skall kopplas till den utredning de riktar sig till -->
+	<tillaggTill rdf:resource="http://rinfo.lagrummet.se/kom/kommitte/Ju_2007:04"/>
 
     </Kommittedirektiv>
 </rdf:RDF>

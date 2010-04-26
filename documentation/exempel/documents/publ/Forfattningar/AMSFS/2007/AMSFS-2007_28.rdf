@@ -7,7 +7,9 @@
 
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/amsfs"/>
-	<fsNummer>2007:28</fsNummer>
+	<arsutgava>2007</arsutgava>
+	<lopnummer>28</lopnummer>
+	<dct:identifier>AMSFS 2007:28</dct:identifier>
         <dct:title xml:lang="sv">Föreskrifter om ändring i
             Arbetsmarknadsstyrelsens administrativa föreskrifter (AMSFS 2007:2)
             om ekonomiadministration;</dct:title>

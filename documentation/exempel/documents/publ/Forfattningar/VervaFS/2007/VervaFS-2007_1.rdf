@@ -7,7 +7,9 @@
 
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/vervafs"/>
-    <fsNummer>2007:1</fsNummer>
+    <arsutgava>2007</arsutgava>
+    <lopnummer>1</lopnummer>
+    <dct:identifier>VERVAFS 2007:1</dct:identifier>
     <dct:title xml:lang="sv">Vervas föreskrifter om statliga myndigheters elektroniska fakturor;</dct:title>
 
     <!-- tidsaspekter -->

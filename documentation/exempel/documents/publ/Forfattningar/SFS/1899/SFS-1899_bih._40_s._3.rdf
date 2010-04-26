@@ -7,7 +7,10 @@
 
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
-    <fsNummer>1899:bih. 40 s. 3</fsNummer>
+    <arsutgava>1899</arsutgava>
+    <bihangsnummer>40</bihangsnummer>
+    <sidnummer>3</sidnummer>
+    <dct:identifier>SFS 1899:bih. 40 s. 3</dct:identifier>
     <dct:title xml:lang="sv">Kungl. Maj:ts Resolution angående rättighet för anglikanska kyrkans prästerskap i allmänhet att med laga verkan förrätta vigsel här i riket</dct:title>
     <!-- tidsaspekter -->
     <utfardandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1899-05-19</utfardandedatum>

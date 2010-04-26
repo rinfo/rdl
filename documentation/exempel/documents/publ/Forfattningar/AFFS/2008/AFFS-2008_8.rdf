@@ -9,7 +9,9 @@
 
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/affs"/>
-	<fsNummer>2008:8</fsNummer>
+        <arsutgava>2008</arsutgava>
+	<lopnummer>8</lopnummer>
+	<dct:identifier>AFFS 2008:8</dct:identifier>
         <dct:title xml:lang="sv">Arbetsförmedlingens administrativa
             föreskrifter om uppgiftsfördelning i det systematiska
             arbetsmiljöarbetet vid Arbetsförmedlingen;</dct:title>

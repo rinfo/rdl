@@ -6,7 +6,9 @@
   <Forordning rdf:about="http://rinfo.lagrummet.se/publ/sfs/2000:80">
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
-    <fsNummer>2000:80</fsNummer>
+    <arsutgava>2000</arsutgava>
+    <lopnummer>80</lopnummer>
+    <dct:identifier>SFS 2000:80</dct:identifier>
     <dct:title xml:lang="sv">Förordning om ändring i rättsinformationsförordningen (1999:175);</dct:title>
     <!-- tidsaspekter -->
     <utfardandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2000-02-24</utfardandedatum>

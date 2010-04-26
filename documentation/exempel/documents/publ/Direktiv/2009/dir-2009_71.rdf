@@ -5,11 +5,18 @@
     xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
 
     <Kommittedirektiv rdf:about="http://rinfo.lagrummet.se/publ/dir/2009:71">
+        <arsutgava>2009</arsutgava>
+	<lopnummer>71</lopnummer>
+	<dct:identifier>Dir. 2009:71</dct:identifier>
         <direktivnummer>2009:71</direktivnummer>
-        <dct:title xml:lang="sv">Dir. 2009:71 Rätt till skolgång m.m. för barn som vistas i landet utan tillstånd</dct:title>
+        <dct:title xml:lang="sv">
+	  Rätt till skolgång m.m. för barn som vistas i landet utan tillstånd
+	</dct:title>
 
-        <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-08-13</beslutsdatum>
-        <avkravtAvrapporteringsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2010-01-29</avkravtAvrapporteringsdatum>
+        <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+		      >2009-08-13</beslutsdatum>
+        <avkravtAvrapporteringsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+				     >2010-01-29</avkravtAvrapporteringsdatum>
 
         <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
         <departement rdf:parseType="Resource">

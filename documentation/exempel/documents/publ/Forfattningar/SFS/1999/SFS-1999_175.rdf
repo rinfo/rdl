@@ -6,7 +6,9 @@
   <Forordning rdf:about="http://rinfo.lagrummet.se/publ/sfs/1999:175">
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
-    <fsNummer>1999:175</fsNummer>
+    <arsutgava>1999</arsutgava>
+    <lopnummer>175</lopnummer>
+    <dct:identifier>SFS 1999:175</dct:identifier>
     <dct:title xml:lang="sv">Rättsinformationsförordning</dct:title>
     <!-- tidsaspekter -->
     <utfardandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1999-03-25</utfardandedatum>

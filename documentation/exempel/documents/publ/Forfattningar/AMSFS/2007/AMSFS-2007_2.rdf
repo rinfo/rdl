@@ -8,7 +8,9 @@
 
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/amsfs"/>
-	<fsNummer>2007:2</fsNummer>
+	<arsutgava>2007</arsutgava>
+	<lopnummer>2</lopnummer>
+	<dct:identifier>AMSFS 2007:2</dct:identifier>
         <dct:title xml:lang="sv">Arbetsmarknadsstyrelsens administrativa
             föreskrifter om ekonomiadministration;</dct:title>
 
