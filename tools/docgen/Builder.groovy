@@ -146,9 +146,6 @@ class Builder {
         def rdfXmlInput = RDFUtil.toInputStream(repo, "application/rdf+xml")
         def doc = new DocTemplate(systemIdMap).transform(rdfXmlInput,
                 xslts as String[])
-        def tmpOutFile = new File(outPath+".xml")
-	RDFUtil.serialize(repo, "application/rdf+xml", tmpOutFile.newOutputStream())
-
         def outFile = new File(outPath)
         writeXhtml(doc, outFile)
         if (makePdf) {
