@@ -5,6 +5,9 @@
 # NOTE: iana-related defs collected at (e.g.):
 #   <http://tools.ietf.org/html/draft-nottingham-http-link-header-06>
 # NOTE: see also: <http://purl.org/NET/dady> - describing dataset dynamics
+# NOTE: and: DCAT (and how egov@w3c will progress with it)
+
+# NOTE: some figuring: the only thing feed docs of a single logical collection share are it's feed id. Might as well identify the datasource (since feed *docs* are identified by URL, and linked feed docs from the same collection share the same id). Might need more disambiguation!
 
 
 <tag:lagrummet.se,2009:rinfo> a void:Dataset;

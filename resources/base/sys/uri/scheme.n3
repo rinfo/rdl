@@ -1,103 +1,239 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix coin: <http://purl.org/court/def/2009/coin#> .
 @prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
 @prefix : <http://rinfo.lagrummet.se/sys/uri/scheme#> .
-@prefix tks_serie: <http://rinfo.lagrummet.se/sys/uri/symbol/serie#> .
-@prefix tks_org: <http://rinfo.lagrummet.se/sys/uri/symbol/org#> .
 
 
 : a coin:CoinScheme;
-    coin:root "http://rinfo.lagrummet.se/";
-    coin:separator "/";
+    coin:base "http://rinfo.lagrummet.se";
     coin:fragmentSeparator "-";
-    coin:tokenTranslation [
+    rdfs:seeAlso <http://rinfo.lagrummet.se/sys/uri/slugs>;
+    coin:slugTranslation [
             a coin:LowerCasedTranslation, coin:BaseCharTranslation;
             coin:spaceReplacement "_";
-            #coin:stripRegexp "[^a-z0-9_().,:-]";
-            #coin:validRegexp "^[a-z0-9][a-z0-9_().,:-]*$"
-        ] .
+        ];
 
+    coin:template [
+        # TODO: priority rules? ("most components win"?)
+        coin:uriTemplate "/publ/{fs}/{arsutgava}:{lopnummer}_s._{sidnummer}";
+        coin:component [ coin:variable "fs";
+                coin:property rpubl:forfattningssamling;
+                coin:slugFrom :abbrSlug;
+            ], [ coin:variable "arsutgava";
+                coin:property rpubl:arsutgava
+            ], [ coin:variable "lopnummer";
+                coin:property rpubl:lopnummer
+            ], [ coin:variable "sidnummer";
+                coin:property rpubl:sidnummer
+            ]
+    ], [
+        coin:uriTemplate "/publ/{fs}/{arsutgava}:{lopnummer}";
+        coin:component [ coin:variable "fs";
+                coin:property rpubl:forfattningssamling;
+                coin:slugFrom :abbrSlug
+            ], [
+                coin:variable "arsutgava";
+                coin:property rpubl:arsutgava
+            ], [
+                coin:variable "lopnummer";
+                coin:property rpubl:lopnummer#, rpubl:hanvisning
+            ]
+    ], [ # TODO: arsutgava + platsangivelse?
+        coin:uriTemplate "/publ/{fs}/{platsangivelse}";
+        coin:component [ coin:variable "fs";
+                coin:property rpubl:forfattningssamling;
+                coin:slugFrom :abbrSlug;
+            ], [ coin:property rpubl:platsangivelse ]
+    ], [
+        coin:uriTemplate "/publ/{fs}/{arsutgava}:bih._{bihang}_s._{sidnummer}";
+        coin:component [ coin:variable "fs";
+                coin:property rpubl:forfattningssamling;
+                coin:slugFrom :abbrSlug;
+            ], [ coin:variable "arsutgava";
+                coin:property rpubl:arsutgava
+            ], [ coin:variable "bihang";
+                coin:property rpubl:bihangsnummer
+            ], [ coin:variable "sidnummer";
+                coin:property rpubl:sidnummer
+            ]
+    ], [
+        coin:uriTemplate "/publ/{fs}/{arsutgava}:bih._{bihang}";
+        coin:component [ coin:variable "fs";
+                coin:property rpubl:forfattningssamling;
+                coin:slugFrom :abbrSlug;
+            ], [ coin:variable "arsutgava";
+                coin:property rpubl:arsutgava
+            ], [ coin:variable "bihang";
+                coin:property rpubl:bihangsnummer
+            ]
+    ],
 
-[] a coin:Base;
-    coin:scheme : ;
-    coin:segment "publ";
+    [
+        coin:uriTemplate "/publ/utr/{serie}/{nr}";
+        coin:component [ coin:variable "serie";
+                coin:property rpubl:utrSerie;
+                coin:slugFrom :abbrSlug;
+            ], [ coin:variable "nr";
+                coin:property rpubl:utrSerienummer
+            ]
+    ],
 
-    coin:contains [ coin:useTokenSet tks_serie:fs;
-            coin:component rpubl:forfattningssamling;
-            coin:contains [ coin:component rpubl:fsNummer ] ];
-    coin:contains [ coin:segment "utr";
-            coin:useTokenSet tks_serie:utr;
-            coin:component rpubl:utrSerie;
-            coin:contains [ coin:component rpubl:utrSerienummer ] ];
-    coin:contains [ coin:segment "rf";
-            coin:useTokenSet tks_serie:rff;
-            coin:component rpubl:rattsfallspublikation;
-            coin:contains [ coin:component rpubl:publikationsordinal ] ];
+    [
+        coin:uriTemplate "/publ/rf/{serie}/{arsutgava}/not/{notisserie}_{lopnummer}";
+        coin:forType rpubl:Rattsfallsnotis;
+        coin:component [ coin:variable "serie";
+                coin:property rpubl:rattsfallspublikation;
+                coin:slugFrom :abbrSlug;
+            ], [
+                coin:property rpubl:arsutgava
+            ], [
+                coin:property rpubl:notisserie
+            ], [
+                coin:property rpubl:lopnummer
+            ]
+    ], [
+        coin:uriTemplate "/publ/rf/{serie}/{arsutgava}/not/{lopnummer}";
+        coin:forType rpubl:Rattsfallsnotis;
+        coin:component [ coin:variable "serie";
+                coin:property rpubl:rattsfallspublikation;
+                coin:slugFrom :abbrSlug;
+            ], [
+                coin:property rpubl:arsutgava
+            ], [
+                coin:property rpubl:lopnummer
+            ]
+    ], [
+        coin:uriTemplate "/publ/rf/{serie}/{arsutgava}:{lopnummer}";
+        coin:component [ coin:variable "serie";
+                coin:property rpubl:rattsfallspublikation;
+                coin:slugFrom :abbrSlug;
+            ], [
+                coin:property rpubl:arsutgava
+            ], [
+                coin:property rpubl:lopnummer
+            ]
+    ], [
+        coin:uriTemplate "/publ/rf/{serie}/{arsutgava}/s_{sidnummer}";
+        coin:component [ coin:variable "serie";
+                coin:property rpubl:rattsfallspublikation;
+                coin:slugFrom :abbrSlug;
+            ], [
+                coin:property rpubl:arsutgava
+            ], [
+                coin:property rpubl:sidnummer
+            ]
+    ],
 
-    coin:contains [ coin:segment "prop";
-            coin:forType rpubl:Proposition;
-            coin:component rpubl:propositionsnummer ];
-    coin:contains [ coin:segment "fm";
-            coin:forType rpubl:Forordningsmotiv;
-            coin:component rpubl:fmNummer ];
-    coin:contains [ coin:segment "dir";
-            coin:forType rpubl:Kommittedirektiv;
-            coin:component rpubl:direktivnummer ];
-    coin:contains [ coin:segment "so";
-            coin:forType rpubl:InternationellOverenskommelse;
-            coin:component rpubl:soNummer ];
+    # TODO: legacy; remove these {{{
+    [
+        coin:uriTemplate "/publ/{fs}/{fsNummer}";
+        coin:component [ coin:variable "fs";
+                coin:property rpubl:forfattningssamling;
+                coin:slugFrom :abbrSlug;
+            ], [ coin:variable "fsNummer";
+                coin:property rpubl:fsNummer
+            ]
+    ], [ # TODO: legacy; remove!
+        coin:uriTemplate "/publ/utr/{serie}/{nr}";
+        coin:component [ coin:variable "serie";
+                coin:property rpubl:utrSerie;
+                coin:slugFrom :abbrSlug;
+            ], [ coin:variable "nr";
+                coin:property rpubl:utrSerienummer
+            ]
+    ], [ # TODO: legacy; remove!
+        coin:uriTemplate "/publ/rf/{serie}/{nr}";
+        coin:component [ coin:variable "serie";
+                coin:property rpubl:rattsfallspublikation;
+                coin:slugFrom :abbrSlug;
+            ], [ coin:variable "nr";
+                coin:property rpubl:publikationsordinal
+            ]
+    ],
+    # }}}
 
-    coin:contains [ coin:segment "avg";
-            coin:forType rpubl:VagledandeMyndighetsavgorande;
-            coin:contains [ coin:useTokenSet tks_org:;
-                    coin:component dct:publisher;
-                    coin:contains [ coin:component rpubl:diarienummer ] ] ];
-    coin:contains [ coin:segment "dom";
-            coin:forType rpubl:VagledandeDomstolsavgorande;
-            coin:contains [ coin:useTokenSet tks_org:;
-                coin:component dct:publisher;
-                coin:contains [
-                            coin:component rpubl:malnummer;
-                            coin:contains [ coin:component rpubl:avgorandedatum ]
-                        ]
-                    ]
-        ] .
+    # Here we have done one "risky" move by pushing short names for document
+    # types into the same "directory" ("segment space") as some series' names.
+    # But this directly reflects how these documents are formally referred to
+    # in text, and the series' names are controllably coined. So in practise
+    # that should never become a problem.
+    # So for these, their types are their "series"..
+    [
+        coin:uriTemplate "/publ/prop/{propositionsnummer}";
+        coin:forType rpubl:Proposition;
+        coin:component [ coin:property rpubl:propositionsnummer ]
+    ], [
+        coin:uriTemplate "/publ/fm/{fmNummer}";
+        coin:forType rpubl:Forordningsmotiv;
+        coin:component [ coin:property rpubl:fmNummer ]
+    ], [
+        coin:uriTemplate "/publ/dir/{direktivnummer}";
+        coin:forType rpubl:Kommittedirektiv;
+        coin:component [ coin:property rpubl:direktivnummer ]
+    ], [
+        coin:uriTemplate "/publ/so/{soNummer}";
+        coin:forType rpubl:InternationellOverenskommelse;
+        coin:component [ coin:property rpubl:soNummer ]
+    ],
+    # These have publisher-local identifiers
+    [
+        coin:uriTemplate "/publ/avg/{publisher}/{diarienummer}";
+        coin:forType rpubl:VagledandeMyndighetsavgorande;
+        coin:component [ coin:variable "publisher";
+                coin:property dct:publisher;
+                coin:slugFrom :abbrSlug;
+            ] , [ coin:variable "diarienummer";
+                coin:property rpubl:diarienummer
+            ]
+    ], [
+        coin:uriTemplate "/publ/dom/{publisher}/{malnummer}/{avgorandedatum}";
+        coin:forType rpubl:VagledandeDomstolsavgorande;
+        coin:component [ coin:variable "publisher";
+                coin:property dct:publisher;
+                coin:slugFrom :abbrSlug;
+            ], [ coin:variable "malnummer";
+                coin:property rpubl:malnummer
+            ], [ coin:variable "avgorandedatum";
+                coin:property rpubl:avgorandedatum
+            ]
+    ],
 
-[] a coin:Base;
-    coin:scheme : ;
-    coin:segment "ext";
-    coin:contains [ coin:segment "eur-lex";
-            coin:component rpubl:celexNummer ] .
+    # these get base from relation to other doc
+    [
+        coin:relToBase rpubl:konsoliderar;
+        # TODO: appendTemplate?
+        coin:uriTemplate "{base}/konsolidering/{issued}";
+        coin:component [ coin:property dct:issued ]
+    ], [
+        coin:relFromBase rpubl:paragraf;
+        coin:fragmentPrefix "p_";
+        coin:component [ coin:property rpubl:paragrafnummer ]
+    ], [
+        coin:relFromBase rpubl:kapitel;
+        coin:fragmentPrefix "k_";
+        coin:component [ coin:property rpubl:kapitelnummer ]
+    ], [
+        coin:relFromBase rpubl:bilaga;
+        coin:fragmentPrefix "bilaga_";
+        # TODO: externally provided ordinal..
+        coin:component [ coin:property dct:title, rdfs:label ]
+    ],
 
-[] a coin:Base;
-    coin:scheme : ;
-    coin:segment "org";
-    coin:contains [
-            coin:forType foaf:Organization;
-            coin:component foaf:name ] .
+    # other (non core publication) resources
+    [
+        coin:uriTemplate "/ext/eur-lex/{celexNummer}";
+        coin:component [ coin:property rpubl:celexNummer ]
+    ], [
+        coin:uriTemplate "/org/{name}";
+        coin:forType foaf:Organization;
+        coin:component [ coin:property foaf:name ]
 
+    ] .
 
-[] a coin:Containment;
-    coin:baseRel rpubl:konsoliderar;
-    coin:segment "konsolidering";
-    coin:component dct:issued;
-    coin:scheme : .
-
-[] a coin:Containment;
-    coin:baseRev rpubl:paragraf;
-    coin:fragmentPrefix "p_";
-    coin:component rpubl:paragrafnummer;
-    coin:scheme : .
-[] a coin:Containment;
-    coin:baseRev rpubl:kapitel;
-    coin:fragmentPrefix "k_";
-    coin:component rpubl:kapitelnummer;
-    coin:scheme : .
-[] a coin:Containment;
-    coin:baseRev rpubl:bilaga;
-    coin:fragmentPrefix "bilaga_";
-    coin:component dct:title, rdfs:label; # TODO: externally provided ordinal..
-    coin:scheme : .
+:abbrSlug a rdf:Property;
+    rdfs:subPropertyOf coin:abbrSlug;
+    rdfs:isDefinedBy : .
 
