@@ -44,6 +44,10 @@ dct:identifier a rdf:Property;
     rdfs:label "Identifierare"@sv;
     rdfs:comment "En otvetydig hänvisning till resursen inom en givet kontext."@sv .
 
+dct:bibliographicCitation a rdf:Property;
+    rdfs:label "Bibliografisk hänvisning"@sv;
+    rdfs:comment "En bibliografisk hänvisning till resursen."@sv .
+    
 dct:alternative a rdf:Property;
     rdfs:label "Alternativ titel"@sv;
     rdfs:comment "Ett alternativt namn för resursen."@sv .
