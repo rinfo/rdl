@@ -24,27 +24,10 @@
     <!-- samma för denna hänvisning -->
     <rattsfallshanvisning rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/2000:24"/>
 
-    <!-- Det finns idag inte någon definierad princip för vilka
-       identifierare notisfall (som "NJA 2007 N 72") och liknande ska
-       ha. Liknande problem kan finnas när domstolen hänvisar till
-       rättsfall från EU-domstolen och internationella domstolar. När
-       man inte kan konstruera en exakt identifierare kan man alltid
-       hänvisa indirekt till en anonym resurs som man sedan beskriver
-       så gott man kan. Ett liknande exempel, fast för
-       lagrumshänvisningar, finns i T_170-08.rdf. Observera att där
-       används termen dct:description, medans nedan används
-       dct:identifier.  -->
-    <rattsfallshanvisning>
-      <rdf:Description>
-        <dct:identifier>NJA 1951 C 58</dct:identifier>
-      </rdf:Description>
-    </rattsfallshanvisning>
-
-    <rattsfallshanvisning>
-      <rdf:Description>
-        <dct:identifier>NJA 2007 N 72</dct:identifier>
-      </rdf:Description>
-    </rattsfallshanvisning>
+    <!-- dessa hänvisningar till notisfall (NJA 1951 C 58 resp NJA
+    2007 N 72) använder URI:er med lite annat mönster -->
+    <rattsfallshanvisning rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/1951/not/C58"/>
+    <rattsfallshanvisning rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/2007/not/N72"/>
 
     <dct:title xml:lang="sv">
       Fråga om dispens från kravet att den som antas som ledamot av

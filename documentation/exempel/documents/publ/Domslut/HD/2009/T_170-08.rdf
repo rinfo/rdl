@@ -8,7 +8,7 @@
       rdf:about="http://rinfo.lagrummet.se/publ/dom/hd/t170-08/2009-11-04">
     
     <avgorandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-		    >2009-11-04</avgorandedatum>
+                    >2009-11-04</avgorandedatum>
     <domstolsavdelning>2</domstolsavdelning>
     <malnummer>T 170-08</malnummer>
 
@@ -32,23 +32,23 @@
            känd URI (BNode). Vi behöver dock inte en URI för resursen
            för att kunna ange saker om den -->
       <rdf:Description>
-	<!-- dct:description anger att detta är en beskrivning av
-	     resursen. dct:description och rdf:Description uttrycker
-	     helt olika saker. -->
-	<dct:description>
-	  1 §, 1 a §, 2 §, 5 §, 31 § och 32 § mönsterskyddslagen
-	  (1970:485)
-	</dct:description>
+        <!-- dct:description anger att detta är en beskrivning av
+             resursen. dct:description och rdf:Description uttrycker
+             helt olika saker. -->
+        <dct:description>
+          1 §, 1 a §, 2 §, 5 §, 31 § och 32 § mönsterskyddslagen
+          (1970:485)
+        </dct:description>
       </rdf:Description>
     </lagrum>
 
     <lagrum>
       <rdf:Description>
-	<dct:description>
-	  Artikel 3, artikel 4, artikel 10, artikel 11, artikel 15,
-	  artikel 19 och artikel 27 Rådets förordning (EG) nr 6/2002
-	  av den 12 december 2001 om gemenskapsformgivning
-	</dct:description>
+        <dct:description>
+          Artikel 3, artikel 4, artikel 10, artikel 11, artikel 15,
+          artikel 19 och artikel 27 Rådets förordning (EG) nr 6/2002
+          av den 12 december 2001 om gemenskapsformgivning
+        </dct:description>
       </rdf:Description>
     </lagrum>
 
@@ -58,12 +58,12 @@
     </dct:title>
 
     <dct:publisher
-	rdf:resource="http://rinfo.lagrummet.se/org/hoegsta_domstolen"/>
+        rdf:resource="http://rinfo.lagrummet.se/org/hoegsta_domstolen"/>
 
     <!-- det datum då denna resurs först blev tillgänglig. Kanske kan
          hämtas från InfogatDatum i nuvarande system? -->
     <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-		>2009-11-05</dct:issued>
+                >2009-11-05</dct:issued>
     
     <dct:subject xml:lang="sv">Mönsterrätt</dct:subject>
     <dct:subject xml:lang="sv">Dubbelöverlåtelse</dct:subject>

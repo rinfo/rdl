@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Avgöranden - Bilaga 6: Mappning av nuvarande data</title>
+    <title>Avgöranden - Bilaga 7: Mappning av nuvarande data</title>
   </head>
   <body>
     <div id="content">
@@ -27,7 +27,7 @@
       </p>
 
       <h2>Mappning för VagledandeDomstolsavgorande</h2>
-      <table border="1">
+      <table class="border">
 	<tr>
 	  <th colspan="2">Fältnamn</th>
 	  <th>RDF-egenskap</th>
@@ -53,22 +53,18 @@
 	<tr>
 	  <td colspan="2">Avgorande.MalNr</td>
 	  <td class="predicate">malnummer</td>
-	  <td class="comment"></td>
 	</tr>
 	<tr>
 	  <td colspan="2">Avgorande.Domsnr</td>
 	  <td class="predicate">domsnummer</td>
-	  <td class="comment"></td>
 	</tr>
 	<tr>
 	  <td colspan="2">Avgorande.AvgorandeDatum</td>
 	  <td class="predicate">avgorandedatum</td>
-	  <td class="comment"></td>
 	</tr>
 	<tr>
 	  <td colspan="2">Avgorande.RubrikText</td>
 	  <td class="predicate">dct:title</td>
-	  <td class="comment"></td>
 	</tr>
 	<tr>
 	  <td colspan="2">Avgorande.PubliceringsDatum</td>
@@ -81,19 +77,18 @@
 	  </td>
 	</tr>
 	<tr>
-	  <td colspan="3">För varje kopplad rad i tabellen Sokord:</td>
+	  <th colspan="3">För varje kopplad rad i tabellen Sokord:</th>
 	</tr>
 	<tr>
-	  <td>&nbsp;</td>
+	  <th>&nbsp;</th>
 	  <td>Sokord.SokOrd</td>
 	  <td class="predicate">dct:subject</td>
-	  <td class="comment"></td>
 	</tr>
 	<tr>
-	  <td colspan="3">För varje kopplad rad i tabellen Rattsfall:</td>
+	  <th colspan="3">För varje kopplad rad i tabellen Rattsfall:</th>
 	</tr>
 	<tr>
-	  <td>&nbsp;</td>
+	  <th>&nbsp;</th>
 	  <td>Rattsfall.RattsfallsReferens</td>
 	  <td class="predicate">rattsfallshanvisning</td>
 	  <td class="comment">
@@ -109,10 +104,10 @@
 	  </td>
 	</tr>
 	<tr>
-	  <td colspan="3">För varje kopplad rad i tabellen Lagrum:</td>
+	  <th colspan="3">För varje kopplad rad i tabellen Lagrum:</th>
 	</tr>
 	<tr>
-	  <td>&nbsp;</td>
+	  <th>&nbsp;</th>
 	  <td>Lagrum.LagrumsReferens</td>
 	  <td class="predicate">lagrum</td>
 	  <td class="comment">
@@ -126,51 +121,29 @@
       </table>
 
       <p>
-	Konstruera sedan URIn för resursen enligt följande mönster:
-      </p>
-      <p>
-	<code>http://rinfo.lagrummet.se/publ/dom/</code><i>[symbol för dct:publisher]</i><code>/</code><i>[malnummer]</i><code>/</code><i>[avgorandedatum]</i>
-      </p>
-
-      <ul>
-	<li>Symbolen för <code>dct:publisher</code> hämtas från Bilaga 5</li>
-	<li>
-	  <code>malnummer</code> ska vara utan mellanslag och
-	  med eventuella å, ä och ö transformerade till aa, ae och oe,
-	  respektive (vilket är i linje med de generella
-	  URI-principerna för systemet)
-	</li>
-	<li>
-	  <code>avgorandedatum</code> ska skrivas på formen ÅÅÅÅ-MM-DD.
-	</li>
-      </ul>
-      <p>
-	Ett typiskt exempel på en URI är
-	<code>http://rinfo.lagrummet.se/publ/dom/hd/t170-08/2009-11-04</code>.
+	Konstruera sedan URIn för resursen enligt avsnitt 3.1.
       </p>
 
       <h2>Mappning för Rattsfallsreferat</h2>
-      <table border="1">
+      <table class="border">
 	<tr>
 	  <th>Fältnamn e dyl.</th>
 	  <th>RDF-egenskap</th>
 	  <th>Kommentar</th>
 	</tr>
 	<tr>
-	  <td>[URI för avgörande enligt ovan]</td>
+	  <td>[URI för avgörande enligt avsnitt 3.1]</td>
 	  <td class="predicate">
 	  referatAvDomstolsavgorande</td>
 	</tr>
 	<tr>
 	  <td>Avgorande.RubrikText</td>
 	  <td class="predicate">referatrubrik</td>
-	  <td class="comment"></td>
 	</tr>
 	<tr>
 	  <td><code>"http://rinfo.lagrummet.se/
 	  org/domstolsverket"</code></td>
 	  <td class="predicate">dct:publisher</td>
-	  <td class="comment"></td>
 	</tr>
 	<tr>
 	  <td>Avgorande.Myndighetskod</td>
@@ -186,7 +159,6 @@
 	<tr>
 	  <td>Avgorande.PubliceringsDatum</td>
 	  <td class="predicate">dct:issued</td>
-	  <td class="comment"></td>
 	</tr>
 	<tr>
 	  <td></td>
@@ -244,18 +216,9 @@
       </table>
       
       <p>
-	Konstruera sedan URIn för resursen enligt följande mönster:
+	Konstruera sedan URIn för resursen enligt avsnitt 3.1.
       </p>
-      <p>
-	<code>http://rinfo.lagrummet.se/publ/rf/</code><i>[symbol för rattsfallspublikation]</i><code>/</code><i>[arsutgava]</i><code>:</code><i>[lopnummer]</i>
-      </p>
-      <p>
-	<!-- TODO: Ska RÅ-exemplet verkligen vara med ":" och inte "ref" el likn.? -->
-	Några typiska exempel på en URI:er är
-	<code>http://rinfo.lagrummet.se/publ/rf/nja/2009:68</code>,
-	<code>http://rinfo.lagrummet.se/publ/rf/ra/2010:14</code> och
-	<code>http://rinfo.lagrummet.se/publ/rf/md/2010:7</code>. 
-      </p>
+
     </div>
   </body>
 </html>

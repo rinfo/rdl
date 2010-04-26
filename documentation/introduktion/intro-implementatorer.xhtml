@@ -795,7 +795,19 @@
       <dt>Atom-förteckning</dt>
       <dd>
         En förteckning av tillgängliga dokument, uttryckt i
-        XML-formatet Atom.</dd>
+      XML-formatet Atom.</dd>
+      <dt>Begreppsmodellen</dt>
+      <dd>
+	Den vokabulär som rättsinformationsprojektet tagit fram för
+	att beskriva egenskaper på svensk rättsinformation.
+      </dd>
+      <dt>DCMI Terms</dt>
+      <dd>
+	En generell vokabulär för att beskriva egenskaper på
+	dokument. Rättsinformationssystemets begreppsmodell bygger i
+	tillämpliga delar på DCMI Terms. Kallas även "Dublin Core",
+	förkortas "dct".
+      </dd>
       <dt>HTTPS-URL</dt>
       <dd>
         En URL som använder HTTPS-schemat (HTTP över SSL).</dd>
@@ -852,12 +864,47 @@
 	användare kan få tillgång till dokument och sammanställningar
 	i olika format (förslagsvis JSON, Atom och HTML) i ett
 	REST-API, och även ställa fullständiga SPARQL-frågor mot
-	RDF-datat.</dd>
+	RDF-datat.
+      </dd>
+      <dt>Rättsinformationsprojektet</dt>
+      <dd>
+	Det projekt som utvecklar rättsinformationssystemet.
+      </dd>
+      <dt>Rättsinformationssystemet</dt>
+      <dd>
+	Ett centralt system som samlar in och sammanställer
+	rättsinformation från de rättsinformationsproducerande
+	myndigheterna, enligt en fastställd
+	specifikation. Domstolsverket ansvarar för utvecklingen av
+	specifikationen och systemet.
+      </dd>
       <dt>SPARQL</dt>
       <dd>
 	<a href="http://www.w3.org/TR/rdf-sparql-query/">SPARQL Query
 	Language for RDF</a>, ett frågespråk för RDF-databaser.</dd>
+      <dt>URI</dt>
+      <dd>
+	Uniform Resource Identifier, en textsträng som unikt
+	identifierar en viss resurs. Ska inte likställas med URL
+	(Uniform Resource Locator), som är en URI som dessutom
+	innehåller information om hur man hittar resursen. Inom
+	rättsinformationssystemet används huvudsakligen sådana URI:er
+	som även är URL:er, men från rättsinformationssystemets
+	perspektiv är de alla URI:er, och kommer aldrig att försöka
+	hämta information från dem. (På vissa ställen anges och
+	används URL:er, exv i &lt;link&gt; och
+	&lt;content&gt;-elementen i Atom-förteckningar.)
+      </dd>
+      <dt>Vokabulär</dt>
+      <dd>
+	En formell beskrivning av egenskaper inom en viss
+	informationsdomän. Inom rättsinformationsprojektet har en
+	vokabulär (i dokumentationen allmänt kallas
+	"begreppsmodellen") för att beskriva egenskaper på svensk
+	rättsinformation (titel, utgivningsdatum,
+	författningssamlingsnummer, hänvisning till
+	bemyndigandelagrum, och mycket mer).
+      </dd>
     </dl>
-
   </body>
 </html>

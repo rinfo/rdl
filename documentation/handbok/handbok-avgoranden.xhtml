@@ -32,8 +32,8 @@
 	    <code>Rattsfallsreferat</code>, samt nya
 	    dokumentegenskaper (<code>lopnummer</code>, <code>dct:identifer</code>
 	    m.fl. istället för <code>publikationsordinal</code> och
-	    <code>publikationsplatsangivelse</code>) och en ny dokumenttyp
-	    (<code>Rattsfallsnotis</code>).
+	    <code>publikationsplatsangivelse</code>), en ny dokumenttyp
+	    (<code>Rattsfallsnotis</code>) och utökade exemplifierande bilagor.
 	  </td>
 	</tr>
 	<tr>
@@ -85,10 +85,10 @@
       <p>
 	Rättsinformationsprojektet har definerat en begreppsmodell för
 	all rättsinformation som är uppbyggd genom ett antal olika
-	dokumenttyper och egenskaper för dessa (dessa behandlas i
-	nästa avsnitt). En post i rättsinformationssystemet utgörs
-	ytterst av en samling egenskaper om en specifik resurs, där
-	dokumenttypen är en av egenskaperna. 
+	dokumenttyper och egenskaper för dessa. En post i
+	rättsinformationssystemet utgörs ytterst av en samling
+	egenskaper om en specifik resurs, där dokumenttypen är en av
+	egenskaperna.
       </p>
       
       <p>
@@ -106,27 +106,30 @@
       <p>
 	Begreppsmodellen skiljer alltså på ett faktiskt avgörande från
 	en domstol (dokumenttypen
-	<code>VagledandeDomstolsavgorande</code> och ett referat av ett
-	avgörande (dokumenttypen
+	<code>VagledandeDomstolsavgorande</code>) och ett referat av
+	ett avgörande (dokumenttypen
 	<code>Rattsfallsreferat</code>). Avgörandet är själva den
-	handling som utgör domstolens slutgiltiga beslut, medan referat
-	är en redogörelse för hur ett ärende eller mål behandlats genom
-	olika instanser. Texten i referatet publiceras vanligtvis i en
-	rättsfallssamling, exempelvis NJA, RÅ eller RH, medan texten i
-	domslutet endast finns att tillgå direkt från
-	domstolen. Referatet använder dock till största delen samma text
-	som domstolsavgörandet, särskilt domskälsavsnitten.
+	handling som utgör domstolens slutgiltiga beslut i en viss
+	instans, medan referat är en redogörelse för hur ett ärende
+	eller mål behandlats genom olika instanser. Texten i referatet
+	publiceras vanligtvis i en rättsfallssamling, exempelvis NJA,
+	RÅ eller RH, medan texten i domslutet endast finns att tillgå
+	direkt från domstolen. Referatet använder dock till största
+	delen samma text som domstolsavgörandet, särskilt
+	domskälsavsnitten, men lägger också till text från andra
+	källor, exempelvis parternas yrkanden och svaromål.
       </p>
 
       <p>
-	(Det förekommer att ett referat sammanställer två separata
-	domstolsavgöranden, när dessa rör liknande frågor och kommer upp samtidigt
-	i högsta instans. I domstolen är fråga om två separata mål med
-	separata målnummer, och i referatet ges de båda ärendena
-	vanligen beteckningen "I" respektive "II". I senare praxis och
-	kommentarer förekommer hänvisningar till de enskilda avgörandena
-	på formen "RÅ 1999 ref. 18 I" respektive "RÅ 1999 ref. 18
-	II". Detta betraktas ändå som ett enda referat.)
+	(Det förekommer att ett referat sammanställer två (eller
+	flera) separata domstolsavgöranden, när dessa rör liknande
+	frågor och kommer upp samtidigt i högsta instans. I domstolen
+	är det fråga om två separata mål med separata målnummer, och i
+	referatet ges de båda ärendena vanligen beteckningen "I"
+	respektive "II". I senare praxis och kommentarer förekommer
+	hänvisningar till de enskilda avgörandena på formen "RÅ 1999
+	ref. 18 I" respektive "RÅ 1999 ref. 18 II". Detta betraktas
+	ändå som ett enda referat.)
       </p>
 
       <p>
@@ -160,20 +163,15 @@
 	Utöver dokumenttypen kan man även ange en rad andra
 	egenskaper. Vilka egenskaper som ska anges beror på
 	dokumenttyp. Den kompletta listan över egenskaper finns i
-	bilaga 1-4, men i det nedanstående gås de viktigaste
-	egenskaperna igenom i mer detalj. Det bör tilläggas att det
-	enligt RDF-modellen generellt är tillåtet att ange vilka
-	egenskaper som helst. Rättsinformationssystemets
-	begreppsmodell innehåller ett antal termer för egenskaper som
-	är specifika för svensk rättsinformation, men den baserar sig
-	även på DCMI Terms, som definerar ett stort antal mer
-	generella termer.
+	bilaga 1-4, men i det nedanstående behandlas de viktigaste
+	egenskaperna i mer detalj. I bilaga 10 - 12 finns exempel på
+	hur dessa egenskaper uttrycks i RDF/XML.
       </p>
       
       <h3>2.1 Egenskaper för Vagledandedomstolsavgorande och
       VagledandeMyndighetsavgorande.</h3>
 
-      <table>
+      <table class="border">
 	<tr>
 	  <td>
 	    <code>malnummer</code>
@@ -184,7 +182,7 @@
 	    anges som en textsträng, på precis samma sätt som de anges
 	    i de ursprungliga handlingarna. Normalt sett har ett
 	    ärende bara en av dessa egenskaper, men om det skulle ha
-	    två eller flera så ska alla dessa anges.
+	    två eller flera så ska alla tillgängliga anges.
 	  </td>
 	</tr>
 	<tr><td><code>domsnummer</code></td></tr>
@@ -215,8 +213,8 @@
 	  <td><code>avgorandedatum</code></td>
 	  <td>
 	    Det datum då avgörandet beslutades. Ska anges som
-	    datatypen <code>xsd:date</code> -- se exempel i bilaga 10
-	    och 11 för hur detta uttrycks.
+	    datatypen <code>xsd:date</code> -- se exemplen för hur
+	    detta uttrycks.
 	  </td>
 	</tr>
 	<tr>
@@ -224,9 +222,9 @@
 	    <code>dct:publisher</code>
 	  </td>
 	  <td>
-	    En hänvisning till en URI för den myndighet som beslutat
-	    avgörandet. I bilaga 5 finns en lista på URIer för de
-	    flesta domstolar och andra myndigheter.
+	    En hänvisning till den myndighet som beslutat avgörandet,
+	    i form av en URI. I bilaga 5 finns en lista på URIer för
+	    de flesta domstolar och andra myndigheter.
 	  </td>
 	</tr>
 	<tr>
@@ -261,13 +259,14 @@
 
       <h3>2.2 Egenskaper för Rattsfallsreferat och Rattsfallsnotis</h3>
 
-      <table>
+      <table class="border">
 	<tr>
 	  <td><code>rattsfallspublikation</code></td>
 	  <td>
-	    En hänvisning till en URI för den rättsfallssamling som
-	    referatet eller notisen ingår i. I bilaga 6 finns en lista
-	    på URIer för de nu existerande rättsfallssamlingarna.
+	    En hänvisning till den rättsfallssamling som referatet
+	    eller notisen ingår i, i form av en en URI. I bilaga 6
+	    finns en lista på URIer för de nu existerande
+	    rättsfallssamlingarna.
 	  </td>
 	</tr>
 	<tr>
@@ -294,11 +293,11 @@
 	<tr>
 	  <td><code>notisserie</code></td>
 	  <td>
-	    För poster av dokumenttyp Rattsfallsnotis förekommer det i
-	    äldre fall att notiserna publicerats i en av flera
-	    serier. Dessa serier identifieras vanligen genom en
-	    enskild bokstav eller kort bokstavskombination, exempelvis
-	    "A" eller "Fi".
+	    För poster av dokumenttyp <code>Rattsfallsnotis</code>
+	    förekommer det i äldre fall att notiserna publicerats i en
+	    av flera serier. Dessa serier identifieras vanligen genom
+	    en enskild bokstav eller kort bokstavskombination,
+	    exempelvis "A" eller "Fi".
 	  </td>
 	</tr>	
 	<tr>
@@ -314,8 +313,8 @@
 	  <td>
 	    En hänvisning till ett eller flera domstolsavgöranden som
 	    detta referat sammanfattar. Hänvisningen sker i form av en
-	    URI, se avsnitt 3 för mer information om hur denna URI kan
-	    konstrueras.
+	    URI, se avsnitt 2.3 samt bilaga 7 för mer information om
+	    hur denna URI kan konstrueras.
 	  </td>
 	</tr>
 	<tr>
@@ -343,8 +342,8 @@
 	<tr>
 	  <td><code>dct:publisher</code></td>
 	  <td>
-	    En hänvisning till en URI för den myndighet som publicerat
-	    referatet. Denna är i allmänhet domstolsverket,
+	    En hänvisning till den myndighet som publicerat
+	    referatet, i form av en URI. Denna är i allmänhet domstolsverket,
 	    <code>http://rinfo.lagrummet.se/org/domstolsverket</code>
 	  </td>
 	</tr>	
@@ -366,9 +365,9 @@
       <h3>2.3 Koppling mellan referat och bakomliggande avgöranden</h3>
       <p>
 	När sedan själva referatet publiceras bör detta uttryckligen
-	hänvisa till bakomliggande avgöranden. Då kan till exempel den
-	sida som presenterar avgörandet kompletteras med information om
-	att det finns ett sammanställt referat av målet.
+	hänvisa till bakomliggande avgöranden. Detta möjliggör
+	exempelvis att den sida som presenterar avgörandet
+	kompletteras med det sammanställda referat av målet.
       </p>
       <p>
 	Dessa hänvisningar görs med termen
@@ -389,22 +388,66 @@
       <h2>3. URI:er</h2>
       <h3>3.1 URI:er för avgöranden och referat</h3>
       <p>
-	Distinktionen mellan avgörande och referat syns även i de
-	dokumentidentifierare som används. Genomgående används i
-	rättsinformationssystemet URI:er som identifierare för dokument
-	och andra resurser. Ett avgörande från Högsta domstolen har en
-	URI på formen
+	Genomgående används i rättsinformationssystemet URI:er som
+	identifierare för dokument och andra resurser. Ett avgörande
+	från Högsta domstolen (dvs ett dokument av typen
+	<code>VagledandeDomstolsavgorande</code>) har en URI på formen
 	<code>http://rinfo.lagrummet.se/publ/<b>dom</b>/hd/t170-08/2009-11-04</code>,
-	medan dess motsvarande referat i NJA har en URI på formen
-	<code>http://rinfo.lagrummet.se/publ/<b>rf</b>/nja/2009:68</code>. 
+	medan dess motsvarande referat i NJA (dvs ett dokument av
+	typen <code>Rattsfallsreferat</code>) har en URI på formen
+	<code>http://rinfo.lagrummet.se/publ/<b>rf</b>/nja/2009:68</code>.
       </p>
 
       <p>
 	Notera att för vägledande avgöranden så används segmentet
-	<code>dom</code> i URI:n, medan för referat så används segmentet
-	<code>rf</code>. För mer information om hur URI:er konstrueras,
-	se bilaga 7, "Mappning av nuvarande data", samt dokumentet
-	"URI-principer".
+	<code>dom</code> i URI:n, medan för referat så används
+	segmentet <code>rf</code>. Det är alltså olika mönster som
+	används för de olika dokumenttyperna.
+      </p>
+
+      <p>
+	För dokument av typen <code>VagledandeDomstolsavgorande</code>
+	används följande mönster:
+      </p>
+
+      <p>
+	<code>http://rinfo.lagrummet.se/publ/dom/</code><i>[symbol för dct:publisher]</i><code>/</code><i>[malnummer]</i><code>/</code><i>[avgorandedatum]</i>
+      </p>
+
+      <ul>
+	<li>Symbolen för <code>dct:publisher</code> hämtas från Bilaga 5</li>
+	<li>
+	  <code>malnummer</code> ska vara utan mellanslag och
+	  med eventuella å, ä och ö transformerade till aa, ae och oe,
+	  respektive (vilket är i linje med de generella
+	  URI-principerna för systemet)
+	</li>
+	<li>
+	  <code>avgorandedatum</code> ska skrivas på formen ÅÅÅÅ-MM-DD.
+	</li>
+      </ul>
+
+	<code>http://rinfo.lagrummet.se/publ/rf/</code><i>[symbol för rattsfallspublikation]</i><code>/</code><i>[arsutgava]</i><code>:</code><i>[lopnummer]</i>
+
+      <p>
+	För dokument av typen <code>Rattsfallsreferat</code> används följande mönster:
+      </p>
+      
+      <p>
+	<code>http://rinfo.lagrummet.se/publ/rf/</code><i>[symbol för rattsfallspublikation]</i><code>/</code><i>[arsutgava]</i><code>:</code><i>[lopnummer]</i>
+      </p>
+
+      <p>
+	<!-- TODO: Ska RÅ-exemplet verkligen vara med ":" och inte "ref" el likn.? -->
+	Några typiska exempel på en URI:er är
+	<code>http://rinfo.lagrummet.se/publ/rf/nja/2009:68</code>,
+	<code>http://rinfo.lagrummet.se/publ/rf/ra/2010:14</code> och
+	<code>http://rinfo.lagrummet.se/publ/rf/md/2010:7</code>. 
+      </p>
+
+      <p>
+	För mer information om hur URI:er konstrueras, se bilaga 7
+	samt dokumentet "URI-principer".
       </p>
 
       <h3>3.2 Alternativ URI för NJA-referat</h3>
@@ -448,22 +491,33 @@
       </p>
       <div class="syntax">
 	<code class="xml"><![CDATA[
-	<?xml version="1.0" encoding="UTF-8"?>
-	<rdf:RDF
-	xmlns:dct="http://purl.org/dc/terms/"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
-	xmlns:owl="http://www.w3.org/2002/07/owl#"
-	>
-	<rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/rf/nja/2009:68">
-	...
-	<owl:sameAs rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/2009s695"/>
-	...
-	</rdf:Description>
-	</rdf:RDF>
-	]]></code>
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:dct="http://purl.org/dc/terms/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    >
+    <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/rf/nja/2009:68">
+        ...
+        <owl:sameAs rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/2009s695"/>
+        ...
+    </rdf:Description>
+</rdf:RDF>
+]]></code>
       </div>
       <p>Se även ett fullständigt exempel i bilaga 10.</p>
+
+      <h3>3.3 URI:er för notisfall</h3>
+      <p>
+	S.k. notisfall finns inte med i den nuvarande databasen. Det
+	förekommer dock att rättsfall hänvisar till notisfall. Det är
+	därför nödvändigt att kunna hänvisa till dessa genom en URI. En
+	sådan URI skapas efter följande mönster.
+      </p>
+      <p>
+	<code>http://rinfo.lagrummet.se/publ/rf/</code><i>[symbol för rattsfallspublikation]</i><code>/</code><i>[arsutgava]</i><code>/not/</code><i>[notisserie][lopnummer]</i>
+      </p>
     </div>
 
     <div class="section">
@@ -489,11 +543,13 @@
       <p>
 	Idag finns inget sätt att med systemets URI-principer uttrycka
 	hänvisningar till lagrum utanför de svenska
-	författningssamlingarna (exv internationella
-	konventioner). Rättsinformationsprojektet avvaktar här den
-	internationella utvecklingen för att se om det kommer etableras
-	en standard för vilka URI:er som ska användas för sådana
-	resurser.
+	författningssamlingarna (exv internationella konventioner),
+	förutom för visst EG-rättsligt
+	material. Rättsinformationsprojektet avvaktar här den
+	internationella utvecklingen för att se om det kommer
+	etableras en standard för vilka URI:er som ska användas för
+	sådana resurser. Det är dock alltid möjligt att göra inexakta
+	hänvisningar, se nedan.
       </p>
       
       <h3>4.2 Rättsfall</h3>
@@ -510,24 +566,26 @@
 	används för att uttrycka en relation mellan ett rättsfall och
 	tidigare rättsfall som ligger till grund för domslutet.
       </p>
+      <!-- överlapp med avsnitt 3.2
       <p>
 	För NJA-referat är det i många fall svårt eller omöjligt att
-	från en typisk hänvisning, exv "NJA 1960 s. 522", konstruera en
-	URI för det rättsfallet, eftersom URI-mönstret utgår från att
-	man kan hitta ett referats publikationsordinal (exv
-	"1960:91"). Därför kan man i dessa fall ange den alternativa
-	URI:n enligt ovan. I exemplet skulle detta bli
+	från en typisk hänvisning, exv "NJA 1960 s. 522", konstruera
+	en URI för det rättsfallet, eftersom URI-mönstret utgår från
+	att man kan hitta ett referats löpnummer ("91" i den atypiska
+	hänvisningen "NJA 1960:91"). Därför kan man i dessa fall ange
+	den alternativa URI:n enligt ovan. I exemplet skulle detta bli
 	<code>http://rinfo.lagrummet.se/publ/rf/nja/1960s522</code>
       </p>
+      -->
 
       <h3>4.3 EU-rättsligt material (både rättsfall och lagrum)</h3>
       <p>
 	EU-rättsligt material ligger inte inom
 	rättsinformationsprojektets ansvar, och omfattas inte direkt av
-	systemets URI-principer. Eftersom EU-rätten dock är en del av
+	systemets URI-principer. Eftersom EU-rätten är en del av
 	svensk rätt är det önskvärt att på ett exakt sätt kunna hänvisa
 	till EU-rättsakter, men det finns ingen annan etablerad
-	URI-princip för dessa. Det som däremot finns etablerat är bruket
+	URI-princip för dessa. Det finns dock ett etablerat bruk
 	av CELEX-nummer.
       </p>
       <p>
@@ -540,7 +598,7 @@
       </p>
       <p>
 	En hänvisning till Rådets förordning (EG) nr 6/2002 har
-	CELEX-nummer 32002R0006, och URIn för förordningen blir alltså
+	CELEX-nummer 32002R0006, och URI:n för förordningen blir alltså
 	<code>http://rinfo.lagrummet.se/ext/eur-lex/32002R0006</code>.
       </p>
       <p>
@@ -556,17 +614,15 @@
       <h3>4.4 Sökord/ämnesord</h3>
       <p>
 	Ett referat är ofta försett med ett antal sökord. Dessa kommer
-	inte från en strikt kontrollerad vokabulär, även om man,
-	särskilt inom en domstol, strävar efter att ha ett konsekvent
-	användande av sökord. 
+	inte från en kontrollerad lista, även om man strävar efter att
+	ha ett konsekvent användande av sökord.
       </p>
       <p>
 	Dessa kan uttryckas som odefinerade <em>ämnesord</em> (se
 	dokumentet "Introduktion till rättsinformationssystemet - för
-	implementatörer och tekniskt ansvariga") genom
-	termen <code>subject</code> från
-	vokabulären <a href="http://dublincore.org/documents/dcmi-terms/">DCMI
-	Terms</a>. Exempel på hur detta kan göras finns i Bilaga 11 och 12.
+	implementatörer och tekniskt ansvariga") genom termen
+	<code>dct:subject</code> från DCMI Terms. Exempel på hur detta kan
+	göras finns i Bilaga 11 och 12.
       </p>
 
       <h3>4.5 Inexakta hänvisningar med anonyma resurser (BNodes)</h3>
@@ -599,23 +655,21 @@
       </p>
       <div class="syntax">
 	<code class="xml"><![CDATA[
-	<lagrum>
-	<rdf:Description>
+<lagrum>
+    <rdf:Description>
 	<dct:description>
-	1 §, 1 a §, 2 §, 5 §, 31 § och 32 § mönsterskyddslagen
-	(1970:485)
+            1 §, 1 a §, 2 §, 5 §, 31 § och 32 § mönsterskyddslagen
+            (1970:485)
 	</dct:description>
-	</rdf:Description>
-	</lagrum>
+    </rdf:Description>
+</lagrum>
 	]]></code>
       </div>
 
       <p>
 	I ovanstående exempel används termen "description" från
-	vokabulären <a
-	href="http://dublincore.org/documents/dcmi-terms/">DCMI
-	Terms</a> (<code>dct:description</code>). Det rekommenderas att
-	man använder <code>dct:identifier</code> för
+	vokabulären DCMI Terms (<code>dct:description</code>). Det
+	rekommenderas att man använder <code>dct:identifier</code> för
 	rättsfallshänvisningar, och <code>dct:description</code> för
 	lagrumshänvisningar.
       </p>
@@ -645,12 +699,13 @@
       </p>
       <h3>5.2 Arkivering</h3>
       <p>
-	Eftersom antalet poster i postförteckningen kommer vara
-	närmare 20 000 bör denna delas upp i ett antal separata
-	filer. Detta görs genom att nytillkommna poster skrivs till en
-	huvudfil, som med jämna mellanrum (förslagsvis månadsvis)
-	knoppas av till arkivfiler med andra filnamn. När en arkivfil
-	väl blivit avknoppad behöver den aldrig röras igen.
+	Eftersom antalet poster i postförteckningen redan från början
+	kommer vara mycket stort (närmare 20 000) bör denna delas upp
+	i ett antal separata filer. Detta görs genom att nytillkommna
+	poster skrivs till en huvudfil, som med jämna mellanrum
+	(förslagsvis månadsvis) knoppas av till arkivfiler med andra
+	filnamn. När en arkivfil väl blivit avknoppad behöver den
+	aldrig röras igen.
       </p>
       <p>
 	För att en insamlare ska få kännedom om vilka arkivfiler som
@@ -727,12 +782,12 @@
     </div>
 
     <div class="appendix">
-      <h2>Bilaga 7: Mappning av nuvarande data</h2>
+      <h2>Bilaga 7: Mappning av nuvarande data till RDF</h2>
       <xi:include href="handbok-avgoranden-bilaga-7.xhtml" xpointer="content"/>
     </div>
 
     <div class="appendix">
-      <h2>Bilaga 8: Exempel på mappning mellan befintligt databasinnehåll och RDF-data.</h2>
+      <h2>Bilaga 8: Exempel på mappning av nuvarande data till RDF</h2>
       <xi:include href="handbok-avgoranden-bilaga-8.xhtml" xpointer="content"/>
     </div>
 

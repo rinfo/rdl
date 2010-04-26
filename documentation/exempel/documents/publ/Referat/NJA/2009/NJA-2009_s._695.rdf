@@ -9,24 +9,19 @@
      rdf:about="http://rinfo.lagrummet.se/publ/rf/nja/2009:68">
     <owl:sameAs rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/2009s695"/>
     <rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/ref/rff/nja"/>
+    <arsutgava>2009</arsutgava>
     <lopnummer>68</lopnummer>
     <sidnummer>695</sidnummer>
-    <dct:identifier>NJA 2009 s. 695</dct:identifier>
-    <dct:bibliographicCitation>NJA 2009:68</dct:bibliographicCitation>
-    
     <referatAvDomstolsavgorande
        rdf:resource="http://rinfo.lagrummet.se/publ/dom/hd/t170-08/2009-11-04"/>
     <referatrubrik xml:lang="sv">
       Överföring av mönsterregistrering på grund av bättre rätt till
       formgivarrätt
     </referatrubrik>
-    <sidnummer>695</sidnummer>
+    <dct:identifier>NJA 2009 s. 695</dct:identifier>
+    <dct:bibliographicCitation>NJA 2009:68</dct:bibliographicCitation>
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/domstolsverket"/>
-    <!-- det datum då denna resurs först blev tillgänglig. Kanske kan
-         hämtas från UppdateratDatum i nuvarande system? -->
-    <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-		>2009-11-05</dct:issued>
-    <arsutgava>2009</arsutgava>
+    <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-11-05</dct:issued>
   </Rattsfallsreferat>
 </rdf:RDF>
 

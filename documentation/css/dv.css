@@ -378,3 +378,9 @@ dl.tech dd {
     margin:0;
     padding:0;
 }
+
+table.border td {
+    border: solid 0.3pt #000000;
+    border-collapse: collapse;
+    margin: 0;
+}
