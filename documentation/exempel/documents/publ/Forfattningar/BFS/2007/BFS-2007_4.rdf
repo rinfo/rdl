@@ -6,7 +6,9 @@
     <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:4">
 
         <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/bfs"/>
-        <fsNummer>2007:4</fsNummer>        
+        <arsutgava>2007</arsutgava>
+	<lopnummer>4</lopnummer>
+	<dct:identifier>BFS 2007:4</dct:identifier>
         <dct:title xml:lang="sv">Boverkets föreskrifter och allmänna råd om
             energideklaration för byggnader</dct:title>
 
