@@ -1,20 +1,17 @@
 package se.lagrummet.rinfo.base.rdf.sparqltree
 
-import org.junit.Test
-import org.junit.Before
-import static org.junit.Assert.*
+
+import spock.lang.*
 
 
-class SparqlTreeTest {
+class SparqlTreeTest  extends Specification {
 
     SparqlTree rqTree
 
-    @Before
     void setup() {
     }
 
-    @Test
-    void shouldCreateVarModel() {
+    def "should create var model"() {
         def vars = ["org", "org__1_name", "org__feed", "org__feed__1_title"]
         /* ...
         def model = SparqlTree.makeVarTreeModel
@@ -25,8 +22,7 @@ class SparqlTreeTest {
         */
     }
 
-    @Test
-    void shouldBuildTree() {
+    def "should build tree"() {
         // ...
     }
 

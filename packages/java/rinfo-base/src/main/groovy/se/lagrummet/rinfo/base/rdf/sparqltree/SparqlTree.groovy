@@ -119,6 +119,8 @@ class SparqlTree {
         Collections.sort(bindingNames)
         def varTree = [:]
         for (var in bindingNames) {
+            if (var.startsWith("_"))
+                continue
             def currTree = varTree
             for (key in var.split(SEP)) {
                 boolean useOne = false

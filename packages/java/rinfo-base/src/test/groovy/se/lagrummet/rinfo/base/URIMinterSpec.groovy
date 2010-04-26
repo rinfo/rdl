@@ -12,29 +12,32 @@ import groovy.xml.DOMBuilder
 import groovy.xml.dom.DOMCategory
 import groovy.xml.dom.DOMUtil
 
+import spock.lang.*
 
-class URIMinterTest {
 
-    static URIMinter uriMinter
-    static String testFeedPath
+class URIMinterSpec extends Specification {
 
-    @BeforeClass
-    static void setupClass() {
+    @Shared URIMinter uriMinter
+    @Shared String testFeedPath
+
+    def setupSpec() {
         def baseDir = "../../../resources/base"
         def repo = RDFUtil.slurpRdf("${baseDir}/sys/uri")
-        uriMinter = new URIMinter(repo)
+        def schemeUri = "http://rinfo.lagrummet.se/sys/uri/scheme#"
+        uriMinter = new URIMinter(repo, schemeUri)
         def minterDir = "${baseDir}/uri_algorithm"
         testFeedPath = "${minterDir}/tests/publ.atom"
     }
 
-    @Test
-    void shouldMintURIFromStream() {
+    def "should mint urifrom stream"() {
+        given:
         def sourceStream = null
-
+        when:
         def feed = DOMBuilder.parse(new FileReader(testFeedPath)).documentElement
+        then:
         use (DOMCategory) {
             feed.entry.each {
-                def expectedUri = new URI(it.id.text())
+                def expectedUri = it.id.text()
                 def content = it.content[0]
                 def data = DOMUtil.serialize(content.'*'[0])
                 def format = RDFFormat.forMIMEType(content.'@type')
@@ -43,8 +46,8 @@ class URIMinterTest {
                 try {
                     conn.add(new StringReader(data), "", format)
                     def computedUri = uriMinter.computeUri(repo)
-                    assertEquals "Error in entry:\n${it}\n",
-                            expectedUri, computedUri
+                    //"Error in entry:\n${it}\n"
+                    assert expectedUri == computedUri
                 } finally {
                     conn.close()
                 }

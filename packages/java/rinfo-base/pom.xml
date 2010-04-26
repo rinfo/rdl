@@ -133,6 +133,11 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
@@ -157,10 +162,22 @@
               <tasks>
                 <copy todir="${project.build.outputDirectory}/uriminter">
                     <fileset dir="${basedir}/../../../resources/base/uri_algorithm"
-                             includes="*.rq, *.json"/>
+                             includes="*.json"/>
                 </copy>
               </tasks>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.spockframework</groupId>
+        <artifactId>spock-maven</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>find-specs</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
