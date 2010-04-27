@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:le="http://purl.org/atompub/link-extensions/1.0"
+      xml:lang="sv">
+  <!--
+     Denna postförteckning är uttryckt i Atom Syndication Format. Se 
+     http://tools.ietf.org/html/rfc4287 för en specifikation.
+  -->
+
+  <id>tag:rinfo.regeringen.se,2010:sfst:feed</id>
+  <!-- Viktig!
+
+    Elementet `id` anger en *persistent* identifierare (URI) för denna
+    datakälla.
+
+    Rent tekniskt spelar det ingen roll vad för slags URI som används
+    så länge denna inte ändras. Men i detta exempel används en TAG URI
+    (se http://tools.ietf.org/html/rfc4151). Sådana är praktiska i
+    feed-sammanhang, eftersom de inte är bundna till http-platsen för
+    dokument. Eftersom identifieraren ska vara persistent över tid kan
+    en HTTP-uri som inte längre leder någonstans vara vilseledande.
+
+  -->
+
+  <title>SFS i fulltext</title>
+  <!--
+    Anger någon slags titel på detta feed. Används inte till någonting av 
+    Rättsinformationssystemet. Men den kan var användbar för någon som tar del 
+    av denna källa via andra verktyg eller i andra sammanhang.
+  -->
+
+  <updated>2010-04-27T16:37:01Z</updated>
+  <!--
+    Ska ange tidssstämpel då något i detta feed-dokument
+    ändrats. Anges som W3C Date Time Format (se
+    http://tools.ietf.org/html/rfc4287#section-3.3).
+  -->
+
+  <author>
+    <!-- Viktig!
+
+      Anger kontaktinformation till ansvarig för publiceringen av denna 
+      datakälla.
+
+      Planen är att Rättsinformationssystemet ska använda denna information för 
+      att rapportera om eventuella felaktigheter har uppstått vid inhämtning av 
+      informationen.
+
+      Därför är det lämpligt att e-postadressen går till en funktionsbrevlåda 
+      istället för en enskild handläggare.
+
+      Namn och URL används däremot inte av Rättsinformationssystemet, men kan vara 
+      nyttig i andra sammanhang.
+    -->
+    <name>Regeringskansliet</name>
+    <uri>http://regeringen.se/</uri>
+    <email>rinfo@regeringen.se</email>
+  </author>
+
+  <link href="https://rinfo.regeringen.se/sfst/feed/index.atom" rel="self"/>
+  <!--
+    Anger den adress där detta feed-dokument ligger. Är inte strikt tekniskt
+    nödvändig, men underlättar för någon som t.ex. sparar ner dokumentet lokalt
+    utan att notera ursprungsplats.
+  -->
+
+  <link href="https://rinfo.regeringen.se/sfst/feed/archive/2010-01.atom" rel="prev-archive"/>
+  <!-- Viktig!
+
+    Anger plats för ett tidigare dokument i den sammanhängande kedjan av
+    publicerade feed-dokument över tid.
+
+    Se RFC 5005: Feed Paging and Archiving
+    (http://tools.ietf.org/html/rfc5005) och dokumentet
+    "Atom-insamling".
+
+    Rättsinformationssystemet ställer *höga* krav på att dessa är 
+    konsistenta, samt beständiga över tid så pass att det är garanterat att 
+    systemet har hunnit hämta in informationen.
+
+    (Exakta krav är inte fastställda, men livslängder på minst ett år är 
+    rimliga.)
+  -->
+
+  <entry>
+    <id>http://rinfo.lagrummet.se/publ/sfs/1999:175/konsolidering/2009-11-20</id>
+    <!-- Viktig!
+
+      Rättsinformationssystemet betraktar id:t i entry för ett 
+      rättsinformationsdokument som angivande den officiella URI:n (den 
+      elektroniska identifieraren) för detta dokument. Den kommer att användas 
+      av alla system som hanterar poster i rättsinformationssystemet.
+
+      För att rättsinformationsdokument-URI:er ska bli korrekta har
+      rättsinformationssystemet en algoritm för att konstruera dessa.
+    -->
+    <updated>2009-11-20T00:00:00.000Z</updated>
+    <!-- Viktig!
+
+      Detta är den tidsstämpel som Rättsinformationssystemet använder för att 
+      avgöra om posten för ett rättsinformationsdokument har uppdaterats. Det 
+      är kritiskt att denna är korrekt angiven.
+    -->
+
+    <published>2009-11-20T00:00:00.000Z</published>
+    <!-- Viktig!
+
+      Denna tidsstämpel anger när posten officiellt publiceras i källan.
+
+      För merparten av dokument kommer denna att vara densamma som updated (se 
+      ovan), då förändringar av rättsinformationsdokument i huvudsak görs i 
+      form av nya rättsinformationsdokument (såsom rättelseblad och 
+      ändringsförfattningar). Enbart i undantagsfall ska poster uppdateras 
+      (eller tas bort) elektroniskt.
+    -->
+
+    <title>SFS 1999:175 i lydelse enligt SFS 2009:1059</title>
+    <!-- Måste finnas enligt Atom-standarden.
+
+      Detta element används inte av Rättsinformationssystemet.
+      Vi rekommenderar ändå att något läsbart värde används för att andra 
+      verktyg ska kunna presentera läsbar information av detta feed. Utan värde 
+      kommer t.ex. många vanliga feed-läsare inte att kunna skapa en användbar 
+      Presentation av feed:et.
+    -->
+
+    <summary>
+      Rättsinformationsförordning (1999:175)
+    </summary>
+    <!--
+      Måste enligt Atom-standarden finnas om elementet `content` refererar
+      innehåll med attributet `src`.
+
+      Detta element används inte av Rättsinformationssystemet.
+      Vi rekommenderar ändå att något läsbart värde används för att andra 
+      verktyg ska kunna presentera läsbar information av detta feed. Många 
+      feed-läsare visar innehållet i detta element.
+    -->
+
+    <content src="https://rinfo.regeringen.se/sfst/1999:175/2009-11-20.xhtml"
+             type="application/xhtml+xml"
+             le:md5="518ae4b8357d92d959850461a9cc56e4"/>
+    <!-- Viktig!
+
+      En primär representation ska representera det faktiska 
+      rättsinformationsdokumentet på ett av Rättsinformationssystemet godkänt 
+      format.
+
+      le:md5-attributet ska innehålla en checksumma på
+      XHTML-dokumentet enligt MD5-standarden.
+    -->
+  </entry>
+
+  <entry>
+    <id>http://rinfo.lagrummet.se/publ/sfs/2000:1335/konsolidering/2006-12-22</id>
+    <updated>2006-12-22T00:00:00.000Z</updated>
+    <published>2006-12-22T00:00:00.000Z</published>
+    <title>SFS 2000:1335 i lydelse enligt SFS 2006:1464</title>
+    <summary>
+      Lag (2000:1335) om kreditering på skattekonto av stöd till kommuner för anläggande av telenät
+    </summary>
+    <content src="https://rinfo.regeringen.se/sfst/2000:1335/2006-12-22.xhtml"
+             type="application/xhtml+xml"
+             le:md5="b606a838e3113238e0948f33e40381e9"/>
+  </entry>
+
+</feed>
