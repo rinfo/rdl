@@ -541,7 +541,8 @@ g        </content>
         <summary>Kommittédirektiv</summary>
         <content type="application/rdf+xml">
             <rpubl:Kommittedirektiv>
-                <rpubl:direktivnummer>1999:42</rpubl:direktivnummer>
+                <rpubl:arsutgava>1999</rpubl:arsutgava>
+                <rpubl:lopnummer>42</rpubl:lopnummer>
             </rpubl:Kommittedirektiv>
         </content>
     </entry>
@@ -553,7 +554,8 @@ g        </content>
         <content type="application/rdf+xml">
             <rpubl:Utredningsbetankande>
                 <rpubl:utrSerie rdf:resource="http://rinfo.lagrummet.se/serie/utr/ds"/>
-                <rpubl:utrSerienummer>2005:26</rpubl:utrSerienummer>
+                <rpubl:arsutgava>2005</rpubl:arsutgava>
+                <rpubl:lopnummer>26</rpubl:lopnummer>
             </rpubl:Utredningsbetankande>
         </content>
     </entry>
@@ -564,7 +566,8 @@ g        </content>
         <content type="application/rdf+xml">
             <rpubl:Utredningsbetankande>
                 <rpubl:utrSerie rdf:resource="http://rinfo.lagrummet.se/serie/utr/sou"/>
-                <rpubl:utrSerienummer>2000:114</rpubl:utrSerienummer>
+                <rpubl:arsutgava>2000</rpubl:arsutgava>
+                <rpubl:lopnummer>114</rpubl:lopnummer>
             </rpubl:Utredningsbetankande>
         </content>
     </entry>
@@ -575,7 +578,8 @@ g        </content>
         <summary>Förordningsmotiv</summary>
         <content type="application/rdf+xml">
             <rpubl:Forordningsmotiv>
-                <rpubl:fmNummer>2005:2</rpubl:fmNummer>
+                <rpubl:arsutgava>2005</rpubl:arsutgava>
+                <rpubl:lopnummer>2</rpubl:lopnummer>
             </rpubl:Forordningsmotiv>
         </content>
     </entry>
@@ -586,7 +590,8 @@ g        </content>
         <summary>Proposition</summary>
         <content type="application/rdf+xml">
             <rpubl:Proposition>
-                <rpubl:propositionsnummer>2002/03:20</rpubl:propositionsnummer>
+                <rpubl:arsutgava>2002/03</rpubl:arsutgava>
+                <rpubl:lopnummer>20</rpubl:lopnummer>
             </rpubl:Proposition>
         </content>
     </entry>
@@ -596,7 +601,8 @@ g        </content>
         <summary>Äldre proposition</summary>
         <content type="application/rdf+xml">
             <rpubl:Proposition>
-                <rpubl:propositionsnummer>1975:95</rpubl:propositionsnummer>
+                <rpubl:arsutgava>1975</rpubl:arsutgava>
+                <rpubl:lopnummer>95</rpubl:lopnummer>
             </rpubl:Proposition>
         </content>
     </entry>
@@ -607,7 +613,8 @@ g        </content>
         <summary>Internationell överenskommelse utgiven i Sveriges Internationella Överenskommelser</summary>
         <content type="application/rdf+xml">
             <rpubl:InternationellOverenskommelse>
-                <rpubl:soNummer>2005:60</rpubl:soNummer>
+                <rpubl:arsutgava>2005</rpubl:arsutgava>
+                <rpubl:lopnummer>60</rpubl:lopnummer>
             </rpubl:InternationellOverenskommelse>
         </content>
     </entry>
