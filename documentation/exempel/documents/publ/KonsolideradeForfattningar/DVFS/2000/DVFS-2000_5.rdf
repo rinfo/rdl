@@ -7,6 +7,7 @@
   <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/dvfs/2000:5/konsolidering/2006-03-15">
     <rdf:type rdf:resource="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#KonsolideradGrundforfattning"/>
     <dct:title xml:lang="sv">Domstolsverkets föreskrifter om hur fastighetsregistrets inskrivningsdel skall föras (DVFS 2000:5)</dct:title>
+    <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2006-03-15</dct:issued>
     <rpubl:konsoliderar rdf:resource="http://rinfo.lagrummet.se/publ/dvfs/2000:5"/>
     <rpubl:konsolideringsunderlag rdf:resource="http://rinfo.lagrummet.se/publ/dvfs/2006:1"/>
     <rpubl:konsolideringsunderlag rdf:resource="http://rinfo.lagrummet.se/publ/dvfs/2004:2"/>

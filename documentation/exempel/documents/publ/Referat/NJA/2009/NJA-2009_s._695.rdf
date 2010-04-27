@@ -7,8 +7,8 @@
 >
   <Rattsfallsreferat
      rdf:about="http://rinfo.lagrummet.se/publ/rf/nja/2009:68">
-    <owl:sameAs rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/2009s695"/>
-    <rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/ref/rff/nja"/>
+    <owl:sameAs rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/2009/s_695"/>
+    <rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/nja"/>
     <arsutgava>2009</arsutgava>
     <lopnummer>68</lopnummer>
     <sidnummer>695</sidnummer>
@@ -24,4 +24,3 @@
     <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2009-11-05</dct:issued>
   </Rattsfallsreferat>
 </rdf:RDF>
-

@@ -6,9 +6,9 @@
 
     <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:14">
         <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/bfs"/>
-	<arsutgava>2007</arsutgava>
-	<lopnummer>4<lopnummer>
-	<dct:identifier>BFS 2007:14</dct:identifier>
+        <arsutgava>2007</arsutgava>
+        <lopnummer>4</lopnummer>
+        <dct:identifier>BFS 2007:14</dct:identifier>
         <dct:title xml:lang="sv">Boverkets föreskrifter om ändring i
             föreskrifterna och de allmänna råden (BFS 2007:4) om
             energideklaration för byggnader;
@@ -18,7 +18,7 @@
         <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-08-16</beslutsdatum>
         <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-09-01</ikrafttradandedatum>
         <utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2007-08-27</utkomFranTryck>
-        
+
         <!-- ursprung -->
         <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/boverket"/>
         <beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/boverket"/>
