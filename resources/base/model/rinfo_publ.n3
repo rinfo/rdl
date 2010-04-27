@@ -21,8 +21,8 @@
                     rättsinformationssystemet."""@sv;
     dct:created "2006-12-05"^^xsd:date;
     dct:updated "2010-04-26"^^xsd:date;
-    owl:versionInfo "0.5";
-    owl:imports dct:, skos:, foaf:, protege: .
+    owl:versionInfo "0.5" .
+    #owl:imports dct:, skos:, foaf:, protege: . # NOTE: imports implies too much.
 
 # Grund
 #-----------------------------------------------------------------------
@@ -34,8 +34,8 @@
     rdfs:comment "Post eller dokument i det svenska offentliga rättsinformationssystemet."@sv;
     protege:abstract "true";
     rdfs:subClassOf
-	# Alla dokument har inte dct:title (exv :Rattsfallsreferat,
-	# som däremot har subklassen :referatrubrik)
+        # Alla dokument har inte dct:title (exv :Rattsfallsreferat,
+        # som däremot har subklassen :referatrubrik)
         [ a owl:Restriction;
             owl:onProperty dct:title;
             owl:allValuesFrom rdfs:Literal;
@@ -63,7 +63,7 @@
             owl:onProperty dct:publisher;
             owl:allValuesFrom foaf:Agent;
             owl:maxCardinality 1;
-	    rdfs:comment "Utgivande organisation (inte fysisk person)";
+            rdfs:comment "Utgivande organisation (inte fysisk person)";
         ],
         [ a owl:Restriction;
             owl:onProperty :bilaga;
@@ -73,8 +73,8 @@
             owl:onProperty dct:identifier;
             owl:allValuesFrom rdfs:Literal;
             owl:maxCardinality 1; # Alla resurser kommer inte ha en
-				  # etablerad identifierare (exv
-				  # vägledande avgöranden)
+                                  # etablerad identifierare (exv
+                                  # vägledande avgöranden)
         ];
     rdfs:isDefinedBy : .
 
@@ -200,7 +200,6 @@
         ],
         [ a owl:Restriction;
             owl:onProperty :utkomFranTryck;
-            owl:minCardinality 0;
             owl:maxCardinality 1
         ],
         [ a owl:Restriction;
@@ -670,7 +669,7 @@
     rdfs:label "Konsolideringsunderlag"@sv;
     rdfs:comment """Information om vilka dokument, inklusive ursprungsdokumentet,
                     som ingått i konsolideringsunderlaget. Kan t.ex. utgå från en
-		    tidigare konsoliderad version. Samling med referenser till
+                    tidigare konsoliderad version. Samling med referenser till
                     dokument."""@sv; .
 
 #---------------------------------------
@@ -969,12 +968,12 @@
         [ a owl:Restriction;
             owl:onProperty dct:bibliographicCitation;
             owl:maxCardinality 1;
-	    rdfs:comment """En hänvisning av den typ som förekommer i källförteckningar/bibliografier, exv "NJA 2009 s. 695"."""@sv
+            rdfs:comment """En hänvisning av den typ som förekommer i källförteckningar/bibliografier, exv "NJA 2009 s. 695"."""@sv
         ],
         [ a owl:Restriction;
             owl:onProperty owl:sameAs;
             owl:maxCardinality 1;
-	    rdfs:comment "En alternativ URI (skapad utifrån sidnummer, endast för NJA-referat) för denna resurs"@sv 
+            rdfs:comment "En alternativ URI (skapad utifrån sidnummer, endast för NJA-referat) för denna resurs"@sv 
         ];
     .
 
@@ -1046,10 +1045,10 @@
 # förmodligen till olika departement/rättsområden) och "Aa", "Ab",
 # "Ba" (oklart vad detta hänvisar till).
 :notisserie a owl:DatatypeProperty; # Ska nog formellt vara
-				    # ObjectProperty, men vi kommer
-				    # inte kunna lista alla olika
-				    # serier såsom vi har gjort för
-				    # publikationssamlingar
+                                    # ObjectProperty, men vi kommer
+                                    # inte kunna lista alla olika
+                                    # serier såsom vi har gjort för
+                                    # publikationssamlingar
     rdfs:isDefinedBy : ;
     rdfs:label "Notisserie"@sv;
     rdfs:comment """Anger vilken notisserie som notisen eventuellt tillhör."""@sv;

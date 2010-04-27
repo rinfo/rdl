@@ -16,9 +16,10 @@
             coin:spaceReplacement "_";
         ];
 
+    # FSDokument:s
     coin:template [
         # TODO: priority rules? ("most components win"?)
-        coin:uriTemplate "/publ/{fs}/{arsutgava}:{lopnummer}_s._{sidnummer}";
+        coin:uriTemplate "/publ/{fs}/{arsutgava}:{lopnummer}_s_{sidnummer}";
         coin:component [ coin:variable "fs";
                 coin:property rpubl:forfattningssamling;
                 coin:slugFrom :abbrSlug;
@@ -48,7 +49,7 @@
                 coin:slugFrom :abbrSlug;
             ], [ coin:property rpubl:platsangivelse ]
     ], [
-        coin:uriTemplate "/publ/{fs}/{arsutgava}:bih._{bihang}_s._{sidnummer}";
+        coin:uriTemplate "/publ/{fs}/{arsutgava}:bih_{bihang}_s_{sidnummer}";
         coin:component [ coin:variable "fs";
                 coin:property rpubl:forfattningssamling;
                 coin:slugFrom :abbrSlug;
@@ -60,7 +61,7 @@
                 coin:property rpubl:sidnummer
             ]
     ], [
-        coin:uriTemplate "/publ/{fs}/{arsutgava}:bih._{bihang}";
+        coin:uriTemplate "/publ/{fs}/{arsutgava}:bih_{bihang}";
         coin:component [ coin:variable "fs";
                 coin:property rpubl:forfattningssamling;
                 coin:slugFrom :abbrSlug;
@@ -71,16 +72,38 @@
             ]
     ],
 
+    # Here we have done one "risky" move by pushing short names for document
+    # types into the same "directory" ("segment space") as some series' names.
+    # But this directly reflects how these documents are formally referred to
+    # in text, and the series' names are controllably coined. So in practise
+    # that should never become a problem.
+    # So for these, their types are their "series"..
+
     [
-        coin:uriTemplate "/publ/utr/{serie}/{nr}";
-        coin:component [ coin:variable "serie";
-                coin:property rpubl:utrSerie;
+        coin:uriTemplate "/publ/{rtype}/{arsutgava}:{lopnummer}";
+        coin:component [ coin:variable "rtype";
+                coin:property rdf:type;
                 coin:slugFrom :abbrSlug;
-            ], [ coin:variable "nr";
-                coin:property rpubl:utrSerienummer
+            ], [
+                coin:property rpubl:arsutgava
+            ], [
+                coin:property rpubl:lopnummer
             ]
     ],
 
+    [
+        coin:uriTemplate "/publ/utr/{serie}/{arsutgava}:{lopnummer}";
+        coin:component [ coin:variable "serie";
+                coin:property rpubl:utrSerie;
+                coin:slugFrom :abbrSlug;
+            ], [
+                coin:property rpubl:arsutgava
+            ], [
+                coin:property rpubl:lopnummer
+            ]
+    ],
+
+    # Rattsfall
     [
         coin:uriTemplate "/publ/rf/{serie}/{arsutgava}/not/{notisserie}_{lopnummer}";
         coin:forType rpubl:Rattsfallsnotis;
@@ -106,6 +129,18 @@
                 coin:property rpubl:lopnummer
             ]
     ], [
+        coin:uriTemplate "/publ/rf/{serie}/{arsutgava}_{referatserie}:{lopnummer}";
+        coin:component [ coin:variable "serie";
+                coin:property rpubl:rattsfallspublikation;
+                coin:slugFrom :abbrSlug;
+            ], [
+                coin:property rpubl:arsutgava
+            ], [
+                coin:property rpubl:referatserie
+            ], [
+                coin:property rpubl:lopnummer
+            ]
+    ], [
         coin:uriTemplate "/publ/rf/{serie}/{arsutgava}:{lopnummer}";
         coin:component [ coin:variable "serie";
                 coin:property rpubl:rattsfallspublikation;
@@ -127,57 +162,6 @@
             ]
     ],
 
-    # TODO: legacy; remove these {{{
-    [
-        coin:uriTemplate "/publ/{fs}/{fsNummer}";
-        coin:component [ coin:variable "fs";
-                coin:property rpubl:forfattningssamling;
-                coin:slugFrom :abbrSlug;
-            ], [ coin:variable "fsNummer";
-                coin:property rpubl:fsNummer
-            ]
-    ], [ # TODO: legacy; remove!
-        coin:uriTemplate "/publ/utr/{serie}/{nr}";
-        coin:component [ coin:variable "serie";
-                coin:property rpubl:utrSerie;
-                coin:slugFrom :abbrSlug;
-            ], [ coin:variable "nr";
-                coin:property rpubl:utrSerienummer
-            ]
-    ], [ # TODO: legacy; remove!
-        coin:uriTemplate "/publ/rf/{serie}/{nr}";
-        coin:component [ coin:variable "serie";
-                coin:property rpubl:rattsfallspublikation;
-                coin:slugFrom :abbrSlug;
-            ], [ coin:variable "nr";
-                coin:property rpubl:publikationsordinal
-            ]
-    ],
-    # }}}
-
-    # Here we have done one "risky" move by pushing short names for document
-    # types into the same "directory" ("segment space") as some series' names.
-    # But this directly reflects how these documents are formally referred to
-    # in text, and the series' names are controllably coined. So in practise
-    # that should never become a problem.
-    # So for these, their types are their "series"..
-    [
-        coin:uriTemplate "/publ/prop/{propositionsnummer}";
-        coin:forType rpubl:Proposition;
-        coin:component [ coin:property rpubl:propositionsnummer ]
-    ], [
-        coin:uriTemplate "/publ/fm/{fmNummer}";
-        coin:forType rpubl:Forordningsmotiv;
-        coin:component [ coin:property rpubl:fmNummer ]
-    ], [
-        coin:uriTemplate "/publ/dir/{direktivnummer}";
-        coin:forType rpubl:Kommittedirektiv;
-        coin:component [ coin:property rpubl:direktivnummer ]
-    ], [
-        coin:uriTemplate "/publ/so/{soNummer}";
-        coin:forType rpubl:InternationellOverenskommelse;
-        coin:component [ coin:property rpubl:soNummer ]
-    ],
     # These have publisher-local identifiers
     [
         coin:uriTemplate "/publ/avg/{publisher}/{diarienummer}";
