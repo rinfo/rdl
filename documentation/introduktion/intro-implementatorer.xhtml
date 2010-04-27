@@ -14,6 +14,7 @@
   <body>
     <h1>Introduktion till rättsinformationssystemet</h1>
     <h2>För implementatörer och tekniskt ansvariga</h2>
+
     <p>
       Denna text förklarar vad rättsinformationssystemet är, dess
       relation till lagrummet.se och de existerande myndighetssidorna
@@ -28,19 +29,40 @@
       projektledare Staffan Malmgren på staffan.malmgren@dom.se.
     </p>
 
-    <h2>Bakgrund</h2>
+    <div id="toc">
+      <h2>Innehåll</h2>
+      <ul/>
+    </div>
+
+    <div class="section">
+    <h2>1. Bakgrund</h2>
     <p>
       Med "rättsinformation" menas här författningar, vägledande
       domstols- och myndighetsavgöranden, förarbeten och andra
       rättskällor. För övriga begrepp och hur de används i detta
       dokument hänvisas till ordlistan i slutet av detta dokument.
     </p>
-    <!--
-	fyll på med lite mer om det befintliga systemet, motiven bakom
-      projektets, och vilket arbete som skett upp till nu
-      -->
-
-    <h2>Teknik- och standardval</h2>
+    <p>
+      Sedan 1999 är myndigheter som producerar viss typ av
+      rättsinformation skyldig att publicera denna på internet. Detta
+      regleras genom en förordning, var syfte är att den offentliga
+      förvaltningen samt enskilda ska ha tillgång till grundläggande
+      rättsinformation.
+    </p>
+    <p>
+      Idag regleras inte närmare hur denna publicering ska gå till
+      (förutom att myndigheters föreskrifter ska göras tillgängliga i
+      den form som de kunggörs, dvs i PDF-format i samma utseende som
+      den tryckta versionen). Varje enskild myndighet har en
+      ingångssida till sin information där man på olika sätt kan
+      navigera och söka bland de rättsinformationsdokument som
+      myndigheten gjort tillgänglig.
+    </p>
+    <p>
+      Webbplatsen lagrummet.se utgör sedan ingången till det
+      befintliga rättsinformationssystemet genom att länka till alla
+      dessa ingångssidor.
+    </p>
     <p>
       Det befintliga rättsinformationssystemet har ett antal problem,
       som härstammar från den omständighet att varje myndighet
@@ -53,12 +75,15 @@
       inleddes 2006 ett projekt för att vidareutveckla
       rättsinformationssystemet.
     </p>
+    </div>
+    <div class="section">
+    <h2>2. Teknik- och standardval</h2>
     <p>
-      För att stödja denna process har rättsinformationsprojektet valt
-      ett antal standarder för märkning, strukturering och
-      möjliggörande av sökning. I arbetet med dessa har stor vikt
-      lagts vid att välja standarder som är lätta att implementera
-      till en låg kostnad.
+      För att stödja processen med att vidareutveckla systemet har
+      rättsinformationsprojektet valt ett antal standarder för
+      märkning, strukturering och möjliggörande av sökning. I arbetet
+      med dessa har stor vikt lagts vid att välja standarder som är
+      lätta att implementera till en låg kostnad.
     </p>
     <p>
       Ett annat viktigt mål är att innehållet i dokumenten i sig
@@ -66,7 +91,7 @@
       format som fungerar för användare med särskilda behov.
     </p>
 
-    <h3>Atom som postförteckning</h3>
+    <h3>2.1 Atom som postförteckning</h3>
     <p>
       För att möjliggöra olika typer av sammanställningar och
       sökningar i materialet behöver rättsinformationssystemet känna
@@ -108,7 +133,7 @@
       
     </p>
     
-    <h3>URI:er som identifierare</h3>
+    <h3>2.2 URI:er som identifierare</h3>
     <p>
       En central funktion för rättsinformationssystemet är att
       möjliggöra hänvisningar mellan dokument i form av
@@ -132,7 +157,7 @@
       href="http://dev.lagrummet.se/dokumentation/system/uri-principer.pdf">URI-principer</a>.
     </p>
 
-    <h3>Nivå 1 och 2</h3>
+    <h3>2.3 Nivå 1 och 2</h3>
     <p>
       För märkning och strukturering av rättsinformation finns två
       nivåer för publicering:
@@ -157,7 +182,7 @@
       senare tillfälle enligt nivå 2.
     </p>
 
-    <h3>RDF som metadatamodell </h3>
+    <h3>2.4 RDF som metadatamodell </h3>
     <p>
       För att uttrycka metadata används, oberoende av vilken nivå som
       valt, RDF-modellen. Denna är en generaliserad modell för att
@@ -180,7 +205,7 @@
       se <a href="http://www.w3.org/TR/rdf-primer/">RDF Primer</a>.
     </p>
 
-    <h3>PDF/A för "ogenomskinliga" dokument (Nivå 1)</h3>
+    <h3>2.5 PDF/A för "ogenomskinliga" dokument (Nivå 1)</h3>
     <p>
       Under överskådlig tid kommer själva texten i olika
       rättsinformationsdokument att sakna semantisk struktur, dvs
@@ -214,7 +239,7 @@
       Man kan därför betrakta PDF som ett "ogenomskinligt" format, som
       inte möjliggör olika former av återanvändning.
     </p>
-    <h3>XHTML 1.1+RDFa för strukturerade dokument (Nivå 2)</h3>
+    <h3>2.6 XHTML 1.1+RDFa för strukturerade dokument (Nivå 2)</h3>
     <p>
       I ett strukturerat dokument kan exempelvis enskilda kapitel och
       paragrafer ha egna identifierare. Detta gör det möjligt att
@@ -248,9 +273,10 @@
       För mer information om hur dokument kan representeras i XHTML
       1.1+RDFa, se avsnittet "Nivå 2" i slutet av detta dokument.
     </p>
+    </div>
 
-
-    <h2>Systemarkitektur</h2>
+    <div class="section">
+    <h2>3. Systemarkitektur</h2>
     <p>
       Tillgängliggörande av rättsinformation sker enligt följande process:
     </p>
@@ -292,8 +318,9 @@
 	dokument via tjänstegränssnitt.
       </li>
     </ol>
-
-    <h3>Översikt över de olika gränssnitten</h3>
+    </div>
+    <div class="section">
+    <h2>4. Översikt över de olika gränssnitten</h2>
     <img src="../img/rinfo-oversikt.png" style="width:100%;" alt="Översikt över rättsinformationssystemet arkitektur"/>
 
     <p>
@@ -334,10 +361,12 @@
       format (JSON, Atom och HTML) i ett REST-API, och även ställa
       fullständiga SPARQL-frågor mot RDF-datat.
     </p>
+    </div>
     
-    <h2>De tre publiceringsstegen i detalj</h2>
-
-    <h3>Publicera dokument</h3>
+    <div class="section">
+    <h2>5. De tre publiceringsstegen i detalj</h2>
+    
+    <h3>5.1 Publicera dokument</h3>
     <p>
       Skapa nedladdningsbara filer för varje dokument som ni ska
       publicera (föreskrift, dom, beslut eller liknande), i ett format
@@ -361,7 +390,7 @@
       framför ett självsignerat certifikat.
     </p>
 
-    <h3>Publicera metadata</h3>
+    <h3>5.2 Publicera metadata</h3>
     <p>
       Skapa metadata för varje dokument som anger saker som dess
       titel, nummer (mål-, löp-, diarie- eller annat identifierande
@@ -395,7 +424,7 @@
       ]]></code>
     </div>
 
-    <h3>Publicera postförteckning</h3>
+    <h3>5.3 Publicera postförteckning</h3>
     <p>
       Skapa en förteckning som för varje dokument anger addressen till
       själva dokumentfilen, addressen tillmotsvarande metadatafil,
@@ -427,10 +456,12 @@
 </feed>
       ]]></code>
     </div>
+    </div>
 
-    <h2>Frågor och svar</h2>
+    <div class="section">
+    <h2>6. Frågor och svar</h2>
     
-    <h3>Hur skapar man dokument i PDF/A-formatet?</h3>
+    <h3>6.1 Hur skapar man dokument i PDF/A-formatet?</h3>
     <p>
       Det är troligt att din organisation hanterar material i
       PDF-formatet redan idag. De flesta programvaror för att
@@ -467,7 +498,7 @@
       </li>
     </ol>
 
-    <h3>Hur hanteras allmänna råd?</h3>
+    <h3>6.2 Hur hanteras allmänna råd?</h3>
     <p>
       I dagsläget omfattas inte allmänna råd av
       rättsinformationssystemet, men det kan komma att ändras
@@ -479,7 +510,7 @@
       projektet.
     </p>
 
-    <h3>Hur hanteras bilagor?</h3>
+    <h3>6.3 Hur hanteras bilagor?</h3>
     <p>
       För bilagor behöver man endast ange information om titel och
       koppling till föreskrift. Bilagor kan publiceras som en del
@@ -538,7 +569,7 @@
       information i Atom Entry-posten.
     </p>
 
-    <h3>Hur hanteras författningsreferenser?</h3>
+    <h3>6.4 Hur hanteras författningsreferenser?</h3>
     <p>
       Utöver grundläggande information om en föreskrift är det möjligt
       att påföra ytterligare information i metadataposten. Ett exempel
@@ -581,7 +612,7 @@
       ]]></code>
     </div>
 
-    <h3>Hur hanteras ämnesord?</h3>
+    <h3>6.5 Hur hanteras ämnesord?</h3>
     <p>
       Flera myndigheter klassificerar rättsinformation med hjälp av
       ämnesord.  Detta möjliggör olika typer av sammanställningar och
@@ -647,8 +678,10 @@
       Det går bra att kombinera dessa tre sätt i samma
       metadatapost.
     </p>
+    </div>
 
-    <h2>Hur man använder begreppsmodellen</h2>
+    <div class="section">
+    <h2>7. Hur man använder begreppsmodellen</h2>
 
     <p>
       Begreppsmodellen har ett avsnitt för varje dokumenttyp, som kan
@@ -774,8 +807,10 @@
       href="http://www.w3.org/TR/REC-rdf-syntax/">RDF/XML Syntax
       Specification (Revised)</a>.
     </p>
+    </div>
 
-    <h2>Nivå 2</h2>
+    <div class="section">
+    <h2>8. Nivå 2</h2>
     <p>
       För publicering enligt Nivå 2 ska <a
       href="http://www.w3.org/TR/rdfa-syntax/">XHTML 1.1+RDFa</a>
@@ -789,8 +824,10 @@
       <code>&lt;link&gt;</code> och <code>&lt;meta&gt;</code>-element
       (för resursreferenser respektive strängliteraler).
     </p>
+    </div>
 
-    <h2>Ordlista</h2>
+    <div class="section">
+    <h2>9. Ordlista</h2>
     <dl>
       <dt>Atom-förteckning</dt>
       <dd>
@@ -906,5 +943,6 @@
 	bemyndigandelagrum, och mycket mer).
       </dd>
     </dl>
+    </div>
   </body>
 </html>
