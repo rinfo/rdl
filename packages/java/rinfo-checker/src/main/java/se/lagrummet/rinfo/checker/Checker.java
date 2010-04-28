@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Entry;
+import org.apache.abdera.i18n.iri.IRI;
 
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.sail.SailRepository;
@@ -16,6 +17,7 @@ import org.openrdf.sail.memory.MemoryStore;
 import se.lagrummet.rinfo.store.depot.Depot;
 import se.lagrummet.rinfo.store.depot.FileDepot;
 import se.lagrummet.rinfo.store.depot.SourceContent;
+import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex;
 import se.lagrummet.rinfo.main.storage.FeedCollector;
 import se.lagrummet.rinfo.main.storage.StorageSession;
 import se.lagrummet.rinfo.main.storage.StorageCredentials;
@@ -130,6 +132,17 @@ public class Checker {
             }
             archiveCount++;
             return false;
+        }
+
+        public CompleteFeedEntryIdIndex getCompleteFeedEntryIdIndex() {
+            return new CompleteFeedEntryIdIndex() {
+                public Set<IRI> getEntryIdsForCompleteFeedId(IRI feedId) {
+                    return null;
+                }
+                public void storeEntryIdsForCompleteFeedId(IRI feedId, Set<IRI> entryIds) {
+                    ;
+                }
+            };
         }
 
     }
