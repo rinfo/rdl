@@ -36,6 +36,7 @@ class AbstractCollectSchedulerSpec extends Specification {
 
         when:
         collectScheduler.waitForCompletedCollect()
+        Thread.sleep 1
         then:
         fakeSource.items == collectScheduler.collectedItems
     }
@@ -124,7 +125,6 @@ class ManagedDummyScheduler extends AbstractCollectScheduler {
                 it.url == feedUrl
         }.items.each {
             collectedItems << it
-            println collectedItems
         }
         feedVisitCount += 1
         if (!feedsToWaitFor && lastInBatch
