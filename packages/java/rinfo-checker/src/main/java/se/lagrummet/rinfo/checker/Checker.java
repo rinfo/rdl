@@ -100,7 +100,7 @@ public class Checker {
                 Depot depot,
                 Collection<StorageHandler> storageHandlers,
                 CollectorLog collectorLog) {
-            super(credentials, depot, storageHandlers, collectorLog);
+            super(credentials, depot, storageHandlers, collectorLog.openSession());
         }
 
         public boolean storeEntry(Feed sourceFeed, Entry sourceEntry,
