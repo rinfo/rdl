@@ -67,9 +67,9 @@ class EntryRdfValidatorHandler implements StorageHandler {
             return
         }
         // TODO: supply entry uri to exclude "false matches"?
-        def computedUri = uriMinter.computeUri(repo)
-        if (!subjectUri.equals(computedUri)) {
-            throw new IdentifyerMismatchException(subjectUri, computedUri)
+        def computedUriStr = uriMinter.computeUri(repo)
+        if (!subjectUri.equals(computedUriStr)) {
+            throw new IdentifyerMismatchException(subjectUri, new URI(computedUriStr))
         }
     }
 
