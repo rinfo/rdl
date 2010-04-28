@@ -35,9 +35,9 @@ class AbstractCollectSchedulerSpec extends Specification {
         assert collectScheduler.triggerFeedCollect(fakeSource.url)
 
         when:
-        collectScheduler.waitForCompletedCollect()
+        def collectedItems = collectScheduler.completedCollect()
         then:
-        fakeSource.items == collectScheduler.collectedItems
+        fakeSource.items == collectedItems
     }
 
     def "should collect all feeds"() {
@@ -46,9 +46,9 @@ class AbstractCollectSchedulerSpec extends Specification {
         when:
         collectScheduler.startup()
         collectScheduler.collectAllFeeds()
-        collectScheduler.waitForCompletedCollect()
+        def collectedItems = collectScheduler.completedCollect()
         then:
-        SOURCE_FEEDS.collect { it.items }.flatten() == collectScheduler.collectedItems
+        SOURCE_FEEDS.collect { it.items }.flatten() == collectedItems
     }
 
     def "should not trigger when running scheduled"() {
@@ -142,9 +142,10 @@ class ManagedDummyScheduler extends AbstractCollectScheduler {
         return super.triggerFeedCollect(feedUrl)
     }
 
-    protected waitForCompletedCollect() {
+    protected def completedCollect() {
         reachedLastSemaphore.acquire()
         reachedLastSemaphore.release()
+        return collectedItems
     }
 
     protected pause() {
