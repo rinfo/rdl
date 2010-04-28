@@ -39,7 +39,9 @@ class EntryRdfValidatorHandler implements StorageHandler {
     }
 
     protected void loadContainerData(DepotEntry depotEntry) {
-        uriMinter = new URIMinter(EntryRdfReader.readRdf(depotEntry, true))
+        // TODO: use separate property..
+        uriMinter = new URIMinter(EntryRdfReader.readRdf(depotEntry, true),
+                containerEntryId.toString()+"/scheme#")
     }
 
     protected void validate(DepotEntry depotEntry) {
