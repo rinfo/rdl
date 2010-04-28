@@ -36,8 +36,8 @@ class AbstractCollectSchedulerSpec extends Specification {
 
         when:
         collectScheduler.waitForCompletedCollect()
-        Thread.sleep 1
         then:
+        Thread.sleep 1
         fakeSource.items == collectScheduler.collectedItems
     }
 
