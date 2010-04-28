@@ -123,10 +123,10 @@
       </xsl:if>
       <p class="comment"><xsl:apply-templates select="rdfs:comment"/></p>
       <dl class="tech">
-	<dt>URI:</dt>
-	<dd>
-	  <code><xsl:value-of select="@uri"/></code>
-	</dd>
+        <dt>URI:</dt>
+        <dd>
+          <code><xsl:value-of select="@uri"/></code>
+        </dd>
       </dl>
 
       <xsl:variable name="all-classrefs" select="./@uri | self:super-classes(.)/@uri"/>
@@ -231,13 +231,44 @@
           </xsl:for-each>
         </xsl:if>
         <xsl:if test="not($abstract)">
-	  <dl class="tech">
-	    <dt>URI:</dt>
-	    <dd>
-	      <code><xsl:value-of select="$property/@uri"/></code>
-	    </dd>
-	  </dl>
+          <dl class="tech">
+            <dt>URI:</dt>
+            <dd>
+              <code><xsl:value-of select="$property/@uri"/></code>
+            </dd>
+          </dl>
         </xsl:if>
+        <!-- TODO: look over if unwanted subprops are pruned by adding limiting ranges
+        <xsl:if test="$sub-props">
+          <p>
+            Mer specifika egenskaper:
+            <dl>
+              <xsl:for-each select="$sub-props">
+                <xsl:sort select="rdfs:label[@xml:lang=$lang]"/>
+                <xsl:choose>
+                  <xsl:when test="not(self:contains($all-proprefs, @uri))">
+                    <dt><xsl:apply-templates select="rdfs:label"/></dt>
+                    <dd>
+                      <xsl:apply-templates select="rdfs:comment"/>
+                      <xsl:variable name="range"
+                                    select="grit:get(rdfs:range)"/>
+                      <xsl:if test="$range">
+                        <xsl:text> </xsl:text>
+                        <em>(<xsl:apply-templates
+                                select="$range/rdfs:label[@xml:lang = $lang]"/>)</em>
+                      </xsl:if>
+                    </dd>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <dt><em><xsl:apply-templates select="rdfs:label"/></em></dt>
+                    <dd><em>(se specifik rad för denna egenskap i denna typ)</em></dd>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:for-each>
+            </dl>
+          </p>
+        </xsl:if>
+        -->
       </td>
       <td>
         <span class="cardinalityValue">

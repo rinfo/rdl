@@ -380,7 +380,57 @@ dl.tech dd {
 }
 
 table.border td {
-    border: solid 0.3pt #000000;
+    border: 0.3pt solid #000000;
     border-collapse: collapse;
     margin: 0;
 }
+
+/* uri/coin-scheme styles */
+
+.coinscheme #baseuri {
+    font-weight: bold;
+}
+
+.coinscheme .template {
+    border: 1px dashed #777;
+    padding: 0.6em 0.6em;
+    margin-bottom: 1.2em;
+}
+
+.uriTemplate, .fragmentPrefix {
+    font-size: 0.98em;
+    font-weight: bold;
+}
+
+table.variables {
+    border: none;
+    overflow: auto;
+}
+
+table.variables th {
+    font-weight: normal;
+    font-style: italic;
+}
+
+table.variables td {
+    padding: 0.2em 1em 0.2em 0em;
+}
+
+
+table.slugs {
+    border-spacing: 0;
+    font-size: 0.9em;
+}
+
+table.slugs td {
+    padding: 0.1em 0.2em 0.1em 0.1em;
+}
+
+table.slugs code.uri {
+    font-size: 0.6em;
+}
+
+table.slugs tr.even {
+    background-color: #e6e6e6;
+}
+
