@@ -2,6 +2,7 @@
 <rdf:RDF
    xmlns:dct="http://purl.org/dc/terms/"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
    xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
 >
   <VagledandeDomstolsavgorande
@@ -65,11 +66,35 @@
     <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
                 >2009-11-05</dct:issued>
     
-    <dct:subject xml:lang="sv">Mönsterrätt</dct:subject>
-    <dct:subject xml:lang="sv">Dubbelöverlåtelse</dct:subject>
-    <dct:subject xml:lang="sv">Formgivarrätt</dct:subject>
-    <dct:subject xml:lang="sv">Godtrosförvärv</dct:subject>
-    <dct:subject xml:lang="sv">Formgivning</dct:subject>
+    <!-- Ämnes/sökord för avgörandet. Eftersom det inte finns en
+         kontrollerad vokabulär med bestämda URI:er för de olika
+         begreppen använder vi anonyma resurser (bnodes) som vi
+         beskriver med rdfs:label -->
+    <dct:subject>
+      <rdf:Description>
+	<rdfs:label xml:lang="sv">Mönsterrätt</rdfs:label>
+      </rdf:Description>
+    </dct:subject>
+    <dct:subject>
+      <rdf:Description>
+	<rdfs:label xml:lang="sv">Dubbelöverlåtelse</rdfs:label>
+      </rdf:Description>
+    </dct:subject>
+    <dct:subject>
+      <rdf:Description>
+	<rdfs:label xml:lang="sv">Formgivarrätt</rdfs:label>
+      </rdf:Description>
+    </dct:subject>
+    <dct:subject>
+      <rdf:Description>
+	<rdfs:label xml:lang="sv">Godtrosförvärv</rdfs:label>
+      </rdf:Description>
+    </dct:subject>
+    <dct:subject>
+      <rdf:Description>
+	<rdfs:label xml:lang="sv">Formgivning</rdfs:label>
+      </rdf:Description>
+    </dct:subject>
 
   </VagledandeDomstolsavgorande>
 </rdf:RDF>

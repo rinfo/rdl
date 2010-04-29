@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:le="http://purl.org/atompub/link-extensions/1.0"
+      xml:lang="sv">
+  <!--
+     Denna postförteckning är uttryckt i Atom Syndication Format. Se 
+     http://tools.ietf.org/html/rfc4287 för en specifikation.
+  -->
+
+  <id>tag:rattsinfosok.dom.se,2010:rinfo:feed</id>
+  <!-- Viktig!
+
+    Elementet `id` anger en *persistent* identifierare (URI) för denna
+    datakälla.
+
+    Rent tekniskt spelar det ingen roll vad för slags URI som används
+    så länge denna inte ändras. Men i detta exempel används en TAG URI
+    (se http://tools.ietf.org/html/rfc4151). Sådana är praktiska i
+    feed-sammanhang, eftersom de inte är bundna till http-platsen för
+    dokument. Eftersom identifieraren ska vara persistent över tid kan
+    en HTTP-uri som inte längre leder någonstans vara vilseledande.
+
+  -->
+
+  <title>Vägledande avgöranden</title>
+  <!--
+    Anger någon slags titel på detta feed. Används inte till någonting av 
+    Rättsinformationssystemet. Men den kan var användbar för någon som tar del 
+    av denna källa via andra verktyg eller i andra sammanhang.
+  -->
+
+  <updated>2010-04-06T10:13:01Z</updated>
+  <!--
+    Ska ange tidssstämpel då något i detta feed-dokument
+    ändrats. Anges som W3C Date Time Format (se
+    http://tools.ietf.org/html/rfc4287#section-3.3).
+  -->
+
+  <author>
+    <!-- Viktig!
+
+      Anger kontaktinformation till ansvarig för publiceringen av denna 
+      datakälla.
+
+      Planen är att Rättsinformationssystemet ska använda denna information för 
+      att rapportera om eventuella felaktigheter har uppstått vid inhämtning av 
+      informationen.
+
+      Därför är det lämpligt att e-postadressen går till en funktionsbrevlåda 
+      istället för en enskild handläggare.
+
+      Namn och URL användsdäremot inte av Rättsinformationssystemet, men kan vara 
+      nyttig i andra sammanhang.
+    -->
+    <name>Domstolsverket</name>
+    <uri>http://www.domstol.se/</uri>
+    <email>rinfo@dom.se</email>
+  </author>
+
+  <link href="https://www.rattsinfosok.dom.se/lagrummet/index.atom" rel="self"/>
+  <!--
+    Anger den adress där detta feed-dokument ligger. Är inte strikt tekniskt
+    nödvändig, men underlättar för någon som t.ex. sparar ner dokumentet lokalt
+    utan att notera ursprungsplats.
+  -->
+
+  <link href="https://www.rattsinfosok.dom.se/lagrummet/archive/2010-01.atom" rel="prev-archive"/>
+  <!-- Viktig!
+
+    Anger plats för ett tidigare dokument i den sammanhängande kedjan av
+    publicerade feed-dokument över tid.
+
+    Se RFC 5005: Feed Paging and Archiving
+    (http://tools.ietf.org/html/rfc5005) och dokumentet
+    "Atom-insamling".
+
+    Rättsinformationssystemet ställer *höga* krav på att dessa är 
+    konsistenta, samt beständiga över tid så pass att det är garanterat att 
+    systemet har hunnit hämta in informationen.
+
+    (Exakta krav är inte fastställda, men livslängder på minst ett år är 
+    rimliga.)
+  -->
+
+  <entry>
+    <id>http://rinfo.lagrummet.se/publ/rf/nja/2009:68</id>
+    <!-- Viktig!
+
+      Rättsinformationssystemet betraktar id:t i entry för ett 
+      rättsinformationsdokument som angivande den officiella URI:n (den 
+      elektroniska identifieraren) för detta dokument. Den kommer att användas 
+      av alla system som hanterar poster i rättsinformationssystemet.
+
+      För att rättsinformationsdokument-URI:er ska bli korrekta har
+      rättsinformationssystemet en algoritm för att konstruera dessa.
+    -->
+    <updated>2010-04-09T00:00:00.000Z</updated>
+    <!-- Viktig!
+
+      Detta är den tidsstämpel som Rättsinformationssystemet använder för att 
+      avgöra om posten för ett rättsinformationsdokument har uppdaterats. Det 
+      är kritiskt att denna är korrekt angiven.
+    -->
+
+    <published>2010-04-09T00:00:00.000Z</published>
+    <!-- Viktig!
+
+      Denna tidsstämpel anger när posten officiellt publiceras i källan.
+
+      För merparten av dokument kommer denna att vara densamma som updated (se 
+      ovan), då förändringar av rättsinformationsdokument i huvudsak görs i 
+      form av nya rättsinformationsdokument (såsom rättelseblad och 
+      ändringsförfattningar). Enbart i undantagsfall ska poster uppdateras 
+      (eller tas bort) elektroniskt.
+    -->
+
+    <title>NJA 2009 s. 695</title>
+    <!-- Måste finnas enligt Atom-standarden.
+
+      Detta element används inte av Rättsinformationssystemet.
+      Vi rekommenderar ändå att något läsbart värde används för att andra 
+      verktyg ska kunna presentera läsbar information av detta feed. Utan värde 
+      kommer t.ex. många vanliga feed-läsare inte att kunna skapa en användbar 
+      presentation av feed:et.
+    -->
+
+    <summary>
+      Överföring av mönsterregistrering på grund av bättre rätt till formgivarrätt
+    </summary>
+    <!--
+      Måste enligt Atom-standarden finnas om elementet `content` refererar
+      innehåll med attributet `src`.
+
+      Detta element används inte av Rättsinformationssystemet.
+      Vi rekommenderar ändå att något läsbart värde används för att andra 
+      verktyg ska kunna presentera läsbar information av detta feed. Många 
+      feed-läsare visar innehållet i detta element.
+    -->
+
+    <content src="https://www.rattsinfosok.dom.se/lagrummet/filer/12044.pdf"
+             type="application/pdf"
+             le:md5="3c5fc4bdc3306ae6541e97b89dbf4d16"/>
+    <!-- Viktig!
+
+      En primär representation ska representera det faktiska 
+      rättsinformationsdokumentet på ett av Rättsinformationssystemet godkänt 
+      format.
+
+      Systemet tolererar avsaknad av en digital
+      dokumentrepresentation (se nedan), så länge RDF-data om dokumentet finns
+      tillgänglig.  -->
+    
+    <link rel="alternate" href="https://www.rattsinfosok.dom.se/lagrummet/rdf/12044-ref.rdf"
+          type="application/rdf+xml"
+          length="2249" le:md5="0d82be1dbfe4a9346ecbcdc0e7a68795"/>
+    <!-- Viktig!
+
+      Exakt en representation som innehåller serialiserad RDF måste finnas för 
+      att Rättsinformationssystemet ska acceptera inhämtning av ett 
+      rättsinformationsdokument. Det är denna RDF som utgör substansen i den 
+      beskrivningen och sammanlänkningen av rättsinformationen.
+
+      Länken till den fil som innehåller RDF för dokumentet ovan är påhittad.
+      Sättet som RDF-informationen skapas på är såklart valfritt. Det kan dock
+      vara bra att försöka hålla länken teknikoberoende för att göra det
+      möjligt att byta ut underliggande implementation i framtiden.
+    -->
+  </entry>
+
+  <entry>
+    <id>http://rinfo.lagrummet.se/publ/dom/hd/t170-08/2009-11-04</id>
+    <updated>2009-11-04T00:00:00.000Z</updated>
+    <published>2009-11-05T00:00:00.000Z</published>
+    <title>T 170-08</title>
+    <content/>
+    <!-- För själva avgörandet saknas idag en digital representation
+       av själva innehållet, varför content-elementet är tomt. Det
+       måste dock finnas med enligt Atom-standarden. Eftersom det är
+       tomt behövs heller inget summary-element.  -->
+    
+    <link rel="alternate" href="https://www.rattsinfosok.dom.se/lagrummet/rdf/12044-kort.rdf"
+             type="application/rdf+xml"
+             le:md5="617055907212406ce8d34545efb130ef"/>
+  </entry>
+
+  <entry>
+    <id>http://rinfo.lagrummet.se/publ/dom/hd/oe2034-09/2010-03-31</id>
+    <updated>2010-04-01T00:00:00.000Z</updated>
+    <published>2010-04-01T00:00:00.000Z</published>
+    <title>Ö 2034-09</title>
+    <content/>
+    <link rel="alternate" href="https://www.rattsinfosok.dom.se/lagrummet/rdf/12363-kort.rdf"
+             type="application/rdf+xml"
+             le:md5="617055907212406ce8d34545efb130ef"/>
+  </entry>
+
+
+</feed>

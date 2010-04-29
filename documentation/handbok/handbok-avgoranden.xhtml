@@ -84,7 +84,7 @@
 
       <p>
 	Rättsinformationsprojektet har definerat en begreppsmodell för
-	all rättsinformation som är uppbyggd genom ett antal olika
+	all rättsinformation som är uppbyggd av ett antal olika
 	dokumenttyper och egenskaper för dessa. En post i
 	rättsinformationssystemet utgörs ytterst av en samling
 	egenskaper om en specifik resurs, där dokumenttypen är en av
@@ -201,7 +201,7 @@
 	  <td>
 	    För varje enskilt lagrum som avgörandet hänvisar till 
 	    ska det finnas en <code>lagrum</code>-egenskap. Det ska
-	    anges i form av en hänvisningen till lagrummets URI där så
+	    anges i form av en hänvisning till lagrummets URI där så
 	    är möjligt. Se avsnitt 4 för närmare information.
 	  </td>
 	</tr>
@@ -240,7 +240,7 @@
 	    <code>dct:issued</code>
 	  </td>
 	  <td>
-	    Det datum då avgörandet gjordes tillgängligt i
+	    Det datum då avgörandet gjordes tillgängligt till
 	    rättsinformationssystemet. Detta är i allmänhet samma dag
 	    som avgörandedatumet, men kan också vara senare.
 	  </td>
@@ -251,7 +251,11 @@
 	  </td>
 	  <td>
 	    Ett nyckel-, sök- eller ämnesord som beskriver avgörandets
-	    innehåll. Flera sådana kan anges.
+	    innehåll. Flera sådana kan anges. Hänvisningen ska ske
+	    till en resurs (URI), men eftersom det i dagsläget inte
+	    finns en kontrollerad lista av termer med URI:er för de
+	    sökord som används kan man istället hänvisa till en anonym
+	    resurs - se avsnitt 4.5 och exemplen.
 	  </td>
 	</tr>
       </table>
@@ -328,15 +332,15 @@
 	<tr>
 	  <td><code>dct:identifier</code></td>
 	  <td>
-	    Formell beteckning för referatet, exv "NJA 2009:68"
+	    Beteckningen för referatet så som det vanligen hänvisas
+	    till i juridisk text, exv "NJA 2009 s. 695" eller "RÅ 2010
+	    ref. 12"
 	  </td>
 	</tr>	
 	<tr>
 	  <td><code>dct:bibliographicCitation</code></td>
 	  <td>
-	    Beteckningen för referatet så som det vanligen hänvisas
-	    till i juridisk text, exv "NJA 2009 s. 695" eller "RÅ 2010
-	    ref. 12"
+	    Alternativ beteckning för referatet, exv "NJA 2009:68"
 	  </td>
 	</tr>	
 	<tr>
@@ -616,11 +620,14 @@
 	ha ett konsekvent användande av sökord.
       </p>
       <p>
-	Dessa kan uttryckas som odefinerade <em>ämnesord</em> (se
-	dokumentet "Introduktion till rättsinformationssystemet - för
+	Dessa kan uttryckas som <em>ämnesord</em> (se dokumentet
+	"Introduktion till rättsinformationssystemet - för
 	implementatörer och tekniskt ansvariga") genom termen
-	<code>dct:subject</code> från DCMI Terms. Exempel på hur detta kan
-	göras finns i Bilaga 11 och 12.
+	<code>dct:subject</code> från DCMI Terms. Dock ska sådana
+	hänvisningar ske till en resurs (URI), och eftersom det idag
+	saknas en sådan lista av URI:er för de sökord som används kan
+	man istället göra en inexakt hänvisning (se nedan). Exempel
+	på hur detta kan göras finns i Bilaga 11 och 12.
       </p>
 
       <h3>4.5 Inexakta hänvisningar med anonyma resurser (BNodes)</h3>
@@ -790,7 +797,7 @@
     </div>
 
     <div class="appendix">
-      <h2>Bilaga 9: Kombinerad postförteckning (Atom) för VagledandeAvgorande och Referat</h2>
+      <h2>Bilaga 9: Kombinerad postförteckning (Atom) för VagledandeDomstolsavgorande och Rattsfallsreferat</h2>
       <div class="syntax">
         <code class="xml"><xi:include href="../../documentation/exempel/feeds/sources/vagledande-avgoranden/vagledande-avgoranden_source_feed.atom" parse="text"/></code>
       </div>
