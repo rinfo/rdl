@@ -408,7 +408,9 @@
          xml:lang="sv">
   <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2010:2">
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/bfs" />
-    <fsNummer>2010:2</fsNummer>
+    <arsutgava>2010</arsutgava>
+    <lopnummer>2</lopnummer>
+    <dct:identifier>BFS 2010:2</dct:identifier>
     <dct:title>Boverkets föreskrifter om ändring i verkets...</dct:title>
     <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
     >2010-01-19</beslutsdatum>
@@ -723,8 +725,7 @@
       expempelvis för att säga att dokumentet publicerats i
       författningssamlingen
       <code>http://rinfo.lagrummet.se/serie/fs/bfs</code> (alla
-      dokumentsamlingar som används har var sin unika URI) och att
-      det har författningssamlingsnummer "2007:14":
+      dokumentsamlingar som används har var sin unika URI), att det är utgivet under 2007, och att det har löpnummer 14:
     </p>
     <div class="syntax">
       <code class="xml"><![CDATA[
@@ -732,7 +733,8 @@
          xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
   <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:14"/>
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/bfs"/>
-    <fsNummer>2007:14</fsNummer>        
+    <arsutgava>2007</arsutgava>        
+    <lopnummer>2007</lopnummer>        
   </Myndighetsforeskrift>
 </rdf:RDF>
       ]]></code>
@@ -748,14 +750,18 @@
       ett dokument har en viss titel används en term ur denna
       vokabulär, med namespaceprefix <code>dct</code>.
     </p>
-    <p>Med <code>xml:lang</code>-attributet anges att denna egenskap
-    är uttryckt på svenska.</p>
+    <p>Med <code>xml:lang</code>-attributet anges att en av de
+    nedanstående egenskaperna är uttryckta på svenska (den andra,
+    identifieraren "BFS 2007:14" kan inte sägas vara på något särskilt
+    språk, och har alltså inget sådant attribut)</p>
+
     <div class="syntax">
       <code class="xml"><![CDATA[
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:dct="http://purl.org/dc/terms/"
          xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
   <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:14">
+    <dct:identifier>BFS 2007:14</dct:identifier>
     <dct:title xml:lang="sv">Boverkets föreskrifter om ändring i
       föreskrifterna och de allmänna råden (BFS 2007:4) om
       energideklaration för byggnader;
@@ -939,7 +945,7 @@
 	vokabulär (i dokumentationen allmänt kallas
 	"begreppsmodellen") för att beskriva egenskaper på svensk
 	rättsinformation (titel, utgivningsdatum,
-	författningssamlingsnummer, hänvisning till
+	årsutgåva, löpnummer, hänvisning till
 	bemyndigandelagrum, och mycket mer).
       </dd>
     </dl>
