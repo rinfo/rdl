@@ -29,44 +29,45 @@
 #     Rättshjälpsnämnden (RN)
 
 
-# TODO: uttrycka hur?
-<http://rinfo.lagrummet.se/serie/rff/>
-    rdfs:label "Rättsfallsförteckningar" .
+# TODO: hur beskriva denna dataset-resurs?
+<http://rinfo.lagrummet.se/serie/rf/>
+    rdfs:label "Rättsfallspublikationer" .
 
+# TODO: Rattsfallspublikation ok?
 
-<http://rinfo.lagrummet.se/serie/rff/nja> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rf/nja> a :Rattsfallspublikation;
     skos:altLabel "NJA"@sv;
     skos:prefLabel "Nytt Juridiskt Arkiv"@sv .
 
-<http://rinfo.lagrummet.se/serie/rff/rh> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rf/rh> a :Rattsfallspublikation;
     skos:altLabel "RH"@sv;
     skos:prefLabel "Rättsfall från hovrätterna"@sv .
 
-<http://rinfo.lagrummet.se/serie/rff/rk> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rf/rk> a :Rattsfallspublikation;
     skos:altLabel "RK"@sv;
     skos:prefLabel "Rättsfall från kammarrätterna"@sv .
 
-<http://rinfo.lagrummet.se/serie/rff/mod> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rf/mod> a :Rattsfallspublikation;
     skos:altLabel "MÖD"@sv;
     skos:prefLabel "Miljööverdomstolen"@sv .
 
-<http://rinfo.lagrummet.se/serie/rff/ra> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rf/ra> a :Rattsfallspublikation;
     skos:altLabel "RÅ"@sv;
     skos:prefLabel "Regeringsrättens årsbok"@sv .
 
-<http://rinfo.lagrummet.se/serie/rff/mig> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rf/mig> a :Rattsfallspublikation;
     skos:altLabel "MIG"@sv;
     skos:prefLabel "Migrationsöverdomstolen"@sv .
 
-<http://rinfo.lagrummet.se/serie/rff/ad> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rf/ad> a :Rattsfallspublikation;
     skos:altLabel "AD"@sv;
     skos:prefLabel "Arbetsdomstolen"@sv .
 
-<http://rinfo.lagrummet.se/serie/rff/md> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rf/md> a :Rattsfallspublikation;
     skos:altLabel "MD"@sv;
     skos:prefLabel "Marknadsdomstolen"@sv .
 
-<http://rinfo.lagrummet.se/serie/rff/fod> a :Rattsfallsforteckning;
+<http://rinfo.lagrummet.se/serie/rf/fod> a :Rattsfallspublikation;
     skos:altLabel "FÖD"@sv;
     skos:prefLabel "Försäkringsöverdomstolen"@sv .
 

@@ -8,7 +8,7 @@
   <Rattsfallsreferat
      rdf:about="http://rinfo.lagrummet.se/publ/rf/nja/2009:68">
     <owl:sameAs rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/2009/s_695"/>
-    <rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rff/nja"/>
+    <rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rf/nja"/>
     <arsutgava>2009</arsutgava>
     <lopnummer>68</lopnummer>
     <sidnummer>695</sidnummer>
