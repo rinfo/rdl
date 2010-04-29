@@ -108,7 +108,7 @@
         <xsl:param name="last" select="false()"/>
         <div>
             <xsl:attribute name="class">
-                <xsl:text>template</xsl:text>
+                <xsl:text>cointemplate</xsl:text>
                 <xsl:if test="$last"> last</xsl:if>
             </xsl:attribute>
             <xsl:if test="coin:uriTemplate">
@@ -135,7 +135,7 @@
                     <!-- TODO:IMPROVE: this sort expression is quite slow! -->
                     <xsl:sort select="count(str:tokenize(
                               substring-before(../coin:uriTemplate,
-                                    concat('{', self:varname(.), '}')), '{}'))"/>
+                                    concat(self:varname(.), '}')), '}'))"/>
                     <xsl:sort select="coin:variable"/>
                     <xsl:sort select="coin:property/@ref"/>
                     <tr>

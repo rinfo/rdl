@@ -131,13 +131,13 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/fs/vvfs> :abbrSlug "vvfs" .
 
 # Rättsfallsförteckningar
-<http://rinfo.lagrummet.se/serie/rff/nja> :abbrSlug "nja" .
-<http://rinfo.lagrummet.se/serie/rff/rh> :abbrSlug "rh" .
-<http://rinfo.lagrummet.se/serie/rff/rk> :abbrSlug "rk" .
-<http://rinfo.lagrummet.se/serie/rff/mod> :abbrSlug "mod" .
-<http://rinfo.lagrummet.se/serie/rff/ra> :abbrSlug "ra" .
-<http://rinfo.lagrummet.se/serie/rff/mig> :abbrSlug "mig" .
-<http://rinfo.lagrummet.se/serie/rff/ad> :abbrSlug "ad" .
-<http://rinfo.lagrummet.se/serie/rff/md> :abbrSlug "md" .
-<http://rinfo.lagrummet.se/serie/rff/fod> :abbrSlug "fod" .
+<http://rinfo.lagrummet.se/serie/rf/nja> :abbrSlug "nja" .
+<http://rinfo.lagrummet.se/serie/rf/rh> :abbrSlug "rh" .
+<http://rinfo.lagrummet.se/serie/rf/rk> :abbrSlug "rk" .
+<http://rinfo.lagrummet.se/serie/rf/mod> :abbrSlug "mod" .
+<http://rinfo.lagrummet.se/serie/rf/ra> :abbrSlug "ra" .
+<http://rinfo.lagrummet.se/serie/rf/mig> :abbrSlug "mig" .
+<http://rinfo.lagrummet.se/serie/rf/ad> :abbrSlug "ad" .
+<http://rinfo.lagrummet.se/serie/rf/md> :abbrSlug "md" .
+<http://rinfo.lagrummet.se/serie/rf/fod> :abbrSlug "fod" .
 

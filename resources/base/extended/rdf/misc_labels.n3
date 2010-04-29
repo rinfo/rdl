@@ -9,6 +9,9 @@ rdfs:Literal
 rdfs:Resource
     rdfs:label "Resurs"@sv; .
 
+rdf:type
+    rdfs:label "Typ"@sv; .
+
 rdfs:label
     rdfs:label "Etikett"@sv; .
 

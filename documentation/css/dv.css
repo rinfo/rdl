@@ -387,12 +387,12 @@ table.border td {
 
 /* uri/coin-scheme styles */
 
-.coinscheme #baseuri {
+#baseuri {
     font-weight: bold;
 }
 
-.coinscheme .template {
-    border: 1px dashed #777;
+.cointemplate {
+    border: 0.8pt dashed #777;
     padding: 0.6em 0.6em;
     margin-bottom: 1.2em;
 }

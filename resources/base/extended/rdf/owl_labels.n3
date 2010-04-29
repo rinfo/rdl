@@ -7,3 +7,6 @@ owl:sameAs a rdf:Property;
     rdfs:label "Samma som"@sv;
     rdfs:comment "Den egenskap som avgör att två givna individer är ekvivalenta."@sv .
 
+owl:Class
+    rdfs:label "Klass"@sv; .
+
