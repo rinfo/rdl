@@ -93,14 +93,20 @@
 	  <td class="predicate">rattsfallshanvisning</td>
 	  <td class="comment">
 	    Här måste en URI konstrueras från löptexten, exv "NJA 2006
-	    s. 36" =>
-	    "http://rinfo.lagrummet.se/ publ/rf/nja/2006s36". Mönstret
-	    för att göra detta är:
-	    http://rinfo.lagrummet.se/ publ/rf/[RattsfallsReferens],
-	    där publikationsbeteckningen transformeras så att det första
-	    mellanrummet byts ut mot ett "/", övriga mellanrum (samt
-	    punkt) tas bort, och alla bokstäver transformeras till
-	    gemener.
+	    s. 36" => "http://rinfo.lagrummet.se/
+	    publ/rf/nja/2006s36". Det enklaste mönstret för att göra
+	    detta är:
+	    http://rinfo.lagrummet.se/publ/rf/[RattsfallsReferens],
+	    där publikationsbeteckningen transformeras så att det
+	    första mellanrummet byts ut mot ett "/", övriga mellanrum
+	    (samt punkt) tas bort, och alla bokstäver transformeras
+	    till gemener. Det kan dock vara önskvärt att göra någon
+	    sorts indatakontroll och använda inexakta hänvisningar för
+	    sådana hänvisningar som faller utanför den vanliga
+	    mallen. Alternativt kan man i en mer avancerad modell
+	    istället parse:a hänvisningen, skapa en
+	    Rattsfallsreferat-struktur, och sen konstruera dess URI
+	    från samma regler som för de poster som ingår i systemet.
 	  </td>
 	</tr>
 	<tr>
@@ -161,7 +167,6 @@
 	  <td class="predicate">dct:issued</td>
 	</tr>
 	<tr>
-	  <td></td>
 	  <td>Avgorande.PublikationsBeteckning</td>
 	  <td class="predicate">dct:identifier</td>
 	</tr>
