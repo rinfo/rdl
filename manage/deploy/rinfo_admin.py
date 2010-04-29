@@ -17,6 +17,11 @@ def deploy_admin():
     rsync_project((env.admin_webroot), slashed(env.adminbuild),
             exclude=".*", delete=True)
 
+@roles('admin')
+def admin_all():
+    package_admin()
+    deploy_admin()
+
 def ping_main_with_admin():
     feed_url = "http://%s/feed/current" % env.roledefs['admin'][0]
     collector_url = "http://%s/collector/" % env.roledefs['main'][0]

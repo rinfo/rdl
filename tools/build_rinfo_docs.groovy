@@ -6,7 +6,8 @@
     // option), these need to be commented out.
     @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT'),
     @Grab('xml-apis:xml-apis:1.3.04'),
-    @Grab('xerces:xercesImpl:2.9.1'), //@Grab('xalan:xalan:2.7.1'),
+    @Grab('xerces:xercesImpl:2.9.1'),
+    @Grab('xalan:xalan:2.7.1'),
     @Grab('xalan:serializer:2.7.1')
     ])
 import docgen.Builder

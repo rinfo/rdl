@@ -1,44 +1,37 @@
-@Grab('se.lagrummet.rinfo:rinfo-service:1.0-SNAPSHOT')
-def _(){}
-
+@Grapes([
+    @Grab('net.sf.json-lib:json-lib:2.2.3:jdk15'),
+    @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT'),
+])
 import org.openrdf.repository.http.HTTPRepository
 import net.sf.json.JSONSerializer
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.base.rdf.sparqltree.SparqlTree
-import se.lagrummet.rinfo.service.dataview.SparqlTreeViewer
-import se.lagrummet.rinfo.service.dataview.BasicViewHandler
 
 
 if (args.length < 1 || args.length == 3) {
-    println "Usage: <REPO_SOURCE> <QUERY_PATH> [TEMPLATE_PATH LOCALE]"
+    println "Usage: <QUERY_PATH> <REPO_SOURCE..>"
     System.exit 1
 }
 
 
-def rdfSource = args[0]
-def queryPath = args[1]
+def queryPath = args[0]
+def rdfSource = args[1..args.length-1]
 
-def repo
+def repo = (rdfSource[0] == "rinfo")?
+    new HTTPRepository("http://localhost:8080/openrdf-sesame", "rinfo") :
+    RDFUtil.slurpRdf(rdfSource as String[])
 
-if (rdfSource == "rinfo")
-    // TODO: use config (as in service)
-    repo = new HTTPRepository("http://localhost:8080/openrdf-sesame", "rinfo")
-else
-    repo = RDFUtil.slurpRdf(rdfSource)
 
-if (args.length == 4) {
-    def viewPath = args[2]
-    def locale = args[3]
-    def viewer = new SparqlTreeViewer(repo, queryPath, viewPath)
-    println viewer.execute(
-            new BasicViewHandler(locale, [encoding: "utf-8"]))
-
-} else {
+try {
     def query = new File(queryPath).text
+    println "// Running.."
     def time = new Date()
-    def tree = SparqlTree.runQuery(repo, query)
+    def tree = new SparqlTree().runQuery(repo, query)
     def diff = (new Date().time - time.time) / 1000.0
     println "// SparqlTree done in ${diff} s."
     println JSONSerializer.toJSON(tree).toString(4)
+} finally {
+    repo.shutDown()
 }
+

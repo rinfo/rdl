@@ -29,7 +29,7 @@ FEED_META = [
     publicBaseUri: "http://rinfo.lagrummet.se"
 ]
 
-// FIXME: cumbersome to make it work locally now (when statically server under "/admin" )
+// FIXME: cumbersome to make it work locally now (when statically served under "/admin" )
 def feedPathConf(localBase="") {
     return [
         baseUrl: "${localBase}",
@@ -55,10 +55,11 @@ def main() {
     def base = opt.b ?: "../../resources/base/"
     def sources = opt.s ?: null
     def outdir = opt.o
+    def localBase = opt.l ?: ""
     assert outdir != null
 
     def items = collectItems(FEED_META.publicBaseUri, base, sources)
-    def coll = createAtomCollection(FEED_META, feedPathConf(opt.l ?: ""), items)
+    def coll = createAtomCollection(FEED_META, feedPathConf(localBase), items)
 
     def extMap = [
         "application/rdf+xml": "rdf",
@@ -118,8 +119,7 @@ def collectItems(baseUri, base, sources) {
 
     addItem datasetItem(baseUri, "sys/uri", [
             new File(base, "sys/uri/scheme.n3"),
-            new File(base, "sys/uri/symbol/org.n3"),
-            new File(base, "sys/uri/symbol/serie.n3")
+            new File(base, "sys/uri/slugs.n3")
         ])
 
     if (sources) {

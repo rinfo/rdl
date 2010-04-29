@@ -40,7 +40,11 @@ def repo = new SailRepository(inferred?
 repo.initialize()
 def conn = repo.getConnection()
 loadRdf(conn, args[1..args.length-1])
+println "// Running.."
+def time = new Date()
 def res = runQuery(conn, new File(args[0]).text, inferred)
+def diff = (new Date().time - time.time) / 1000.0
+println "// Query done in ${diff} s."
 println()
 while(res.hasNext()) {
     def row = res.next()
