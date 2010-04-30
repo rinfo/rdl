@@ -508,11 +508,12 @@
       </p>
       -->
       <div>
-        <h3>Regler förankrade i bas-segment</h3>
-        <p>Dessa regler anger hur segment kombineras med egenskaper på
-          dokumentet.
+        <h3>Fullständiga URI-mallar</h3>
+        <p>Dessa mallar beskriver de egenskaper som används för att konstruera
+            URI:er för dokument.
         </p>
-        <p>För listor på symboler för de resurser olika relationer anger, se <a
+        <p>För listor på symboler för de resurser som en del relationer
+            hänvisar till, se <a
             href="#bilaga_c">Bilaga C</a>.
         </p>
         <xi:include href="build:urischeme.xhtml" xpointer="bases"/>
@@ -537,7 +538,11 @@
       </div>
       -->
       <div>
-        <h3>Delar av dokument: fragmentidentifierare</h3>
+        <h3>Relativa mallar (baserade på URI för relaterad resurs)</h3>
+        <xi:include href="build:urischeme.xhtml" xpointer="containments"/>
+      </div>
+      <div>
+        <h3>Fragmentmallar (baserade på URI för relaterad resurs)</h3>
         <p>Delar av dokument identifieras med bestämda fragment. Dessa 
           konstrueras baserat på:
         </p>
@@ -552,8 +557,7 @@
         <p>De definierade fragmenttyperna och hur de ska konstrueras 
           definieras av följande mallar:
         </p>
-        <!-- <h2>Baserade på URI för relaterad resurs</h2> -->
-        <xi:include href="build:urischeme.xhtml" xpointer="containments"/>
+        <xi:include href="build:urischeme.xhtml" xpointer="fragments"/>
         <!--
         <dl>
           <dt>Paragraf på toppnivå</dt>

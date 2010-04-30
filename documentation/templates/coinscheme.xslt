@@ -55,7 +55,12 @@
             </div>
             <h3>Relativa mallar (baserade på URI för relaterad resurs)</h3>
             <div id="containments">
-                <xsl:apply-templates select="coin:template[coin:relToBase | coin:relFromBase]"/>
+                <xsl:apply-templates select="coin:template[boolean(coin:relToBase | coin:relFromBase)
+                                     and not(coin:fragmentPrefix)]"/>
+            </div>
+            <h3>Fragmentmallar (baserade på URI för relaterad resurs)</h3>
+            <div id="fragments">
+                <xsl:apply-templates select="coin:template[coin:fragmentPrefix]"/>
             </div>
             <h2>Symboluppsättningar</h2>
             <xsl:call-template name="slugsets"/>
