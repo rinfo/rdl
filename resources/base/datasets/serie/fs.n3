@@ -494,6 +494,13 @@
     rdfs:seeAlso <http://www.rtvv.se/se/blanketter/Om_verket/>;
     a :Forfattningssamling .
 
+<http://rinfo.lagrummet.se/serie/fs/saeifs>
+    skos:altLabel "SÄIFS"@sv;
+    skos:prefLabel "Sprängämnesinspektionens författningssamling"@sv;
+    # TODO: dct:publisher <msb?>;
+    rdfs:seeAlso <http://www2.msb.se/shopping/srv_itemlist____13768.aspx>;
+    a :Forfattningssamling .
+
 <http://rinfo.lagrummet.se/serie/fs/scb-fs>
     skos:altLabel "SCB-FS"@sv;
     skos:prefLabel "Statistiska centralbyråns författningssamling"@sv;

@@ -83,6 +83,10 @@
     a foaf:Organization;
     foaf:name "Institutet för tillväxtpolitiska studier"@sv .
 
+<http://rinfo.lagrummet.se/org/justitiekanslern>
+    a foaf:Organization;
+    foaf:name "Justitiekanslern"@sv .
+
 <http://rinfo.lagrummet.se/org/kammarkollegiet>
     a foaf:Organization;
     foaf:name "Kammarkollegiet"@sv .
