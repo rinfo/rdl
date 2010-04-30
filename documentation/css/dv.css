@@ -420,14 +420,19 @@ table.variables td {
 table.slugs {
     border-spacing: 0;
     font-size: 0.9em;
+    width: 100%;
+}
+
+table.slugs th.col-symbol {
+    width: 3.1em;
 }
 
 table.slugs td {
-    padding: 0.1em 0.2em 0.1em 0.1em;
+    padding: 0.1em 0.5em 0.1em 0.1em;
 }
 
 table.slugs code.uri {
-    font-size: 0.6em;
+    font-size: 0.9em;
 }
 
 table.slugs tr.even {

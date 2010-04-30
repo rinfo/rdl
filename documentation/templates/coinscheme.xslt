@@ -8,6 +8,8 @@
                 xmlns:coin="http://purl.org/court/def/2009/coin#"
                 xmlns:str="http://exslt.org/strings"
                 xmlns:func="http://exslt.org/functions"
+                xmlns:dyn="http://exslt.org/dynamic"
+                xmlns:set="http://exslt.org/sets"
                 xmlns:gr="http://purl.org/oort/impl/xslt/grit/lib/common#"
                 xmlns:self="file:."
                 xmlns="http://www.w3.org/1999/xhtml"
@@ -56,51 +58,7 @@
                 <xsl:apply-templates select="coin:template[coin:relToBase | coin:relFromBase]"/>
             </div>
             <h2>Symboluppsättningar</h2>
-            <div id="tokensets">
-                <!--
-                <xsl:for-each select="$r[a/coin:TokenSet and
-                            coin:scheme/@ref = current()/@uri]">
-                    <xsl:sort select="rdfs:label"/>
-                    <xsl:apply-templates select="."/>
-                </xsl:for-each>
-                -->
-                <table class="slugs" id="{generate-id(.)}">
-                    <!-- TODO: group by type/expected rel..
-                    <caption><xsl:apply-templates select="rdfs:label"/></caption>
-                    -->
-                    <tr>
-                        <th>Symbol</th>
-                        <th>Resurs</th>
-                        <th>Typ</th>
-                    </tr>
-                    <xsl:for-each select="coin:template/coin:component/coin:slugFrom">
-                        <xsl:sort select="@ref"/>
-                        <xsl:if test="not(preceding::*/@ref = @ref)">
-                            <xsl:variable name="term" select="gr:term(@ref)"/>
-                            <xsl:variable name="ns" select="substring-before(@ref, $term)"/>
-                            <xsl:for-each select="$r/*[namespace-uri()=$ns and local-name() = $term]">
-                                <xsl:sort select="../@uri"/>
-                                <tr>
-                                    <xsl:if test="position() mod 2 = 0">
-                                        <xsl:attribute name="class">even</xsl:attribute>
-                                    </xsl:if>
-                                    <td><xsl:apply-templates select="."/></td>
-                                    <td>
-                                        <xsl:for-each select="parent::*">
-                                            <xsl:apply-templates
-                                                select="skos:prefLabel | foaf:name | rdfs:label"/>
-                                        </xsl:for-each>
-                                        <div>
-                                            <code class="uri">&lt;<xsl:value-of select="../@uri"/>&gt;</code>
-                                        </div>
-                                    </td>
-                                    <td><xsl:apply-templates select="../a/*"/></td>
-                                </tr>
-                            </xsl:for-each>
-                        </xsl:if>
-                    </xsl:for-each>
-                </table>
-            </div>
+            <xsl:call-template name="slugsets"/>
         </div>
     </xsl:template>
 
@@ -159,29 +117,8 @@
         </div>
     </xsl:template>
 
-    <func:function name="self:varname">
-        <xsl:param name="e"/>
-        <func:result>
-            <xsl:choose>
-                <xsl:when test="$e/coin:variable">
-                    <xsl:value-of select="$e/coin:variable"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="gr:term($e/coin:property/@ref)"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </func:result>
-    </func:function>
-
-
-    <xsl:template match="coin:forType">
-        <p>
-            <em>Enbart för <xsl:apply-templates select="@ref"/></em>
-        </p>
-    </xsl:template>
-
     <xsl:template name="relative-template">
-        <!-- TODO: unused; but reuse for relative templates! -->
+        <!-- TODO: cleanup a bit? -->
         <div class="relative">
             <xsl:choose>
                 <xsl:when test="coin:uriTemplate">
@@ -221,6 +158,71 @@
         </div>
     </xsl:template>
 
+    <xsl:template name="slugsets">
+        <div id="slugsets">
+            <!--
+            <xsl:for-each select="$r[a/coin:TokenSet and
+                        coin:scheme/@ref = current()/@uri]">
+                <xsl:sort select="rdfs:label"/>
+                <xsl:apply-templates select="."/>
+            </xsl:for-each>
+            -->
+            <xsl:variable name="slugprop-refs"
+                          select="set:distinct(coin:template/coin:component/coin:slugFrom/@ref)"/>
+            <xsl:variable name="slugged-resources" select="$r[*[self:is-referenced(., $slugprop-refs)]]"/>
+            <xsl:variable name="slugged-type-refs"
+                          select="set:distinct(dyn:map($slugged-resources/a/*,
+                                                'concat(namespace-uri(.), local-name(.))'))"/>
+            <xsl:for-each select="$slugged-type-refs">
+                <table class="slugs" id="{gr:term(.)}">
+                    <caption>
+                        <xsl:text>Symboler av typen </xsl:text>
+                        <a href="{.}">
+                            <xsl:apply-templates select="$r[@uri = current()]/rdfs:label"/>
+                        </a>
+                    </caption>
+                    <tr>
+                        <th class="col-symbol">Symbol</th>
+                        <th class="col-resource">Resurs</th>
+                    </tr>
+                    <xsl:for-each select="$slugged-resources[a/*[gr:name-to-uri(.) = current()]]">
+                        <xsl:sort select="local-name(a/*)"/>
+                        <xsl:sort select="@uri"/>
+                        <tr>
+                            <xsl:if test="position() mod 2 = 0">
+                                <xsl:attribute name="class">even</xsl:attribute>
+                            </xsl:if>
+                            <td><xsl:apply-templates select="*[self:is-referenced(., $slugprop-refs)]"/></td>
+                            <td>
+                                <xsl:apply-templates
+                                    select="skos:prefLabel | foaf:name | rdfs:label"/>
+                                <div>
+                                    <code class="uri">&lt;<xsl:value-of select="@uri"/>&gt;</code>
+                                </div>
+                            </td>
+                            <!--
+                            <td><xsl:apply-templates select="a/*"/></td>
+                            -->
+                        </tr>
+                    </xsl:for-each>
+                </table>
+            </xsl:for-each>
+        </div>
+    </xsl:template>
+
+    <func:function name="self:is-referenced">
+        <xsl:param name="e"/>
+        <xsl:param name="refs"/>
+        <xsl:variable name="name" select="gr:name-to-uri($e)"/>
+        <func:result select="count($refs[. = $name]) > 0"/>
+    </func:function>
+
+    <xsl:template match="coin:forType">
+        <p>
+            <em>Enbart för <xsl:apply-templates select="@ref"/></em>
+        </p>
+    </xsl:template>
+
     <xsl:template match="a/*">
         <xsl:variable name="uri" select="gr:name-to-uri(.)"/>
         <xsl:variable name="label" select="key('rel', $uri)/rdfs:label"/>
@@ -256,5 +258,19 @@
     <xsl:template match="coin:base | coin:uriTemplate | coin:fragmentPrefix">
         <code class="{local-name(.)}"><xsl:apply-templates/></code>
     </xsl:template>
+
+    <func:function name="self:varname">
+        <xsl:param name="e"/>
+        <func:result>
+            <xsl:choose>
+                <xsl:when test="$e/coin:variable">
+                    <xsl:value-of select="$e/coin:variable"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="gr:term($e/coin:property/@ref)"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </func:result>
+    </func:function>
 
 </xsl:stylesheet>
