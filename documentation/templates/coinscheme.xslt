@@ -174,6 +174,7 @@
                           select="set:distinct(dyn:map($slugged-resources/a/*,
                                                 'concat(namespace-uri(.), local-name(.))'))"/>
             <xsl:for-each select="$slugged-type-refs">
+                <xsl:sort select="gr:term(.)"/>
                 <table class="slugs" id="{gr:term(.)}">
                     <caption>
                         <xsl:text>Symboler av typen </xsl:text>
