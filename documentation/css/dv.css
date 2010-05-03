@@ -5,10 +5,12 @@
 
 @page {
     size: A4;
-    margin: 3cm 1cm 3cm 1cm;
-
+    /* margin: 3cm 1cm 3cm 1cm; */
+    margin-top: 3.32cm;
+    margin-bottom: 2.5cm;
+    margin-left: 0;
+    margin-right: 0;
     font-weight: normal;
-    line-height: 120%;
     color: #000000;
 
     background-color: transparent;
@@ -46,10 +48,19 @@
     }
 }
 
+@media print {
+    a {
+	color: black;
+	text-decoration: none;
+	border-bottom: 0.3pt dotted black;
+    }
+}
+
 body {
     font-family: Garamond, "Times New Roman", serif;
     font-size: 12pt;
-    margin: 0 2.5cm 0 3cm;
+    margin-left: 4.4cm;
+    margin-right: 3.32cm;
 }
 
 div#header {
@@ -62,6 +73,20 @@ div#header img.logo {
     margin-left: 1cm;
 }
 
+div#toc {
+    page-break-after: always;
+    page-break-before: always;
+}
+
+div#frontpage {
+    padding-top: 4cm;
+    page-break-after: always;
+}
+
+div#frontpage h1 {
+    border-bottom: 0.5pt solid black;
+}
+    
 div.changes {
     margin-top: 1cm;
     margin-bottom: 1cm;
@@ -143,11 +168,6 @@ u {
 s,
 strike {
     text-decoration: line-through;
-}
-
-a {
-    text-decoration: underline;
-    color: blue;
 }
 
 ins {
@@ -363,8 +383,10 @@ div.appendix {
 div.alert {
     border: solid 1pt #f00;
     padding: 4pt 4pt 0 4pt;
+    /*
     margin-left: -1.5cm;
     margin-right: -1.5cm;
+    */
 }
 
 dl.tech {

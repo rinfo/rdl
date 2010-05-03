@@ -12,23 +12,40 @@
     </title>
   </head>
   <body>
-    <h1>Introduktion till rättsinformationssystemet</h1>
-    <h2>För implementatörer och tekniskt ansvariga</h2>
-
-    <p>
-      Denna text förklarar vad rättsinformationssystemet är, dess
-      relation till lagrummet.se och de existerande myndighetssidorna
-      med rättsinformation, samt vad rättsinformationsprojektet
-      innebär för dessa myndigheter. Det vänder sig till dig som är
-      teknisk projektledare eller i övrigt ansvarig för tekniken för
-      publicering av rättsinformationen på din myndighet.
-    </p>
-    <p>
-      Om du har några frågor med anledning av detta dokument eller
-      angående rättsinformationsprojektet i stort, kontakta gärna
-      projektledare Staffan Malmgren på staffan.malmgren@dom.se.
-    </p>
-
+    <div id="frontpage">
+      <h1>Introduktion till rättsinformationssystemet</h1>
+      <h2>För implementatörer och tekniskt ansvariga</h2>
+      <p>
+	Denna text förklarar vad rättsinformationssystemet är, dess
+	relation till lagrummet.se och de existerande myndighetssidorna
+	med rättsinformation, samt vad rättsinformationsprojektet
+	innebär för dessa myndigheter. Det vänder sig till dig som är
+	teknisk projektledare eller i övrigt ansvarig för tekniken för
+	publicering av rättsinformationen på din myndighet.
+      </p>
+      <p>
+	Om du har några frågor med anledning av detta dokument eller
+	angående rättsinformationsprojektet i stort, kontakta gärna
+	projektledare Staffan Malmgren på staffan.malmgren@dom.se.
+      </p>
+    </div>
+    
+    <div class="pagebreakbefore">
+      <div class="changes">
+	<table class="changes">
+	  <caption>Ändringar</caption>
+	  <tr>
+	    <th>Datum</th>
+	    <th>Ändring</th>
+	  </tr>
+	  <tr>
+	    <td>2010-05-03</td>
+	    <td>Smärre språkliga och formgivningsmässiga förändringar</td>
+	  </tr>
+	</table>
+      </div>
+    </div>
+    
     <div id="toc">
       <h2>Innehåll</h2>
       <ul/>
@@ -110,27 +127,23 @@
       -->
     </p>
     <p>
-      Den standard som används är Atom Syndication Format ( <a href=
-      "http://tools.ietf.org/html/rfc4287">IETF RFC 4287</a>). Med
-      denna upprättas en postförteckning över den information en
-      deltagande organisation avser inkludera i
-      rättsinformationssystemet.  Denna postförteckning gör det
-      möjligt för konsumenter av informationen att få reda på
-      förändringar i samlingen över tid (t.ex. nytillkommet material).
+      Den standard som används är Atom. Med denna upprättas en
+      postförteckning över den information en deltagande organisation
+      avser inkludera i rättsinformationssystemet.  Denna
+      postförteckning gör det möjligt för konsumenter av informationen
+      att få reda på förändringar i samlingen över tid
+      (t.ex. nytillkommet material).
     </p>
 
     <p>
       För myndigheter med stora mängder material (över 1000 dokument)
-      kan det vara lämpligt att inte ha hela postförteckningen i en
+      är det inte lämpligt med hela postförteckningen i en
       och samma Atom-fil. Istället kan man ha en Atom-fil för varje
       tidsperiod av en viss storlek (exempelvis ett år eller en månad)
       och låta nuvarande (aktuell) postförteckning peka på föregående
       periods postförteckning genom <code>&lt;link rel="prev-archive"
-      href="..."/&gt;</code>. Se vidare dokumentet
-      <em>Atom-insamling</em> och <a
-      href="http://tools.ietf.org/html/rfc5005">RFC 5005: Feed Paging
-      and Archiving</a>
-      
+      href="&hellip;"/&gt;</code>. Se vidare dokumentet
+      <em>Atom-insamling</em>.
     </p>
     
     <h3>2.2 URI:er som identifierare</h3>
@@ -148,13 +161,27 @@
       identifierar en resurs, inte talar om hur man kan hämta den.
     </p>
     <p>
-      I exemplen nedan kommer du att hitta referenser som
-      börjar med <code>http://rinfo.lagrummet.se</code>. Dessa
-      identifierare tillhandahålls antingen i sin helhet av
+      I exemplen nedan kommer du att hitta referenser som börjar med
+      <code>http://rinfo.lagrummet.se</code>. Dessa identifierare
+      tillhandahålls antingen i sin helhet av
       rättsinformationsprojektet (t.ex. för identifierare för
       myndigheter) eller så finns det en algoritm beskriven för hur de
-      skapas (t.ex. för föreskrifter). Se vidare <a
-      href="http://dev.lagrummet.se/dokumentation/system/uri-principer.pdf">URI-principer</a>.
+      skapas (t.ex. för föreskrifter). Se vidare dokumentet
+      <em>URI-principer</em>.
+    </p>
+    <p>
+      Det är viktigt att inte förväxla den URI som identifierar ett
+      dokument med den URL som talar om var dokumentet kan
+      hämtas. Alla identifierare i systemet inleds med
+      <code>http://rinfo.lagrummet.se</code> och är alltså under
+      rättinformationsprojektets kontroll. Myndigheterna kan inte
+      publicera något material själva direkt på dessa addresser.
+    </p>
+    <p>
+      Istället publiceras materialet på någon address under
+      myndighetens kontroll (på en HTTPS-URL). Postförteckningen talar
+      sedan om vilken faktiskt URL som innehåller det dokument som
+      svarar mot en viss URI-identifierare.
     </p>
 
     <h3>2.3 Nivå 1 och 2</h3>
@@ -181,6 +208,10 @@
       justeringar för att publicera enligt nivå 1 och vid ett
       senare tillfälle enligt nivå 2.
     </p>
+    <p>
+      Dock måste just myndighetsföreskrifter alltid publiceras även i
+      PDF/A, även i nivå 2.
+    </p>
 
     <h3>2.4 RDF som metadatamodell </h3>
     <p>
@@ -200,10 +231,6 @@
       RDFa. Det senare formatet är gjort för att kunna uttrycka
       dokumentdata och -metadata i samma fil.
     </p>
-    <p>
-      För en generell översyn över RDF,
-      se <a href="http://www.w3.org/TR/rdf-primer/">RDF Primer</a>.
-    </p>
 
     <h3>2.5 PDF/A för "ogenomskinliga" dokument (Nivå 1)</h3>
     <p>
@@ -222,8 +249,8 @@
       så att de kan läsas utan kompatibilitetsproblem under lång tid
       framöver. Detta innefattar bland annat att undvika inbäddat
       material (filmer, javascript, m.m.) och att inkludera alla
-      typsnitt som dokumentet använder sig av. Se mer under "Hur
-      skapar man dokument i PDF/A-formatet?"
+      typsnitt som dokumentet använder sig av i själva PDF-filen. Se
+      mer under "Hur skapar man dokument i PDF/A-formatet?"
     </p>
     <p>
       För att kunna återanvända och länka dokument på nya sätt räcker
@@ -235,10 +262,7 @@
       kanske man vill ha en bred teckenspalt, på en mobiltelefon en
       smalare, och på papper kanske två spalter bredvid varandra).
     </p>
-    <p>
-      Man kan därför betrakta PDF som ett "ogenomskinligt" format, som
-      inte möjliggör olika former av återanvändning.
-    </p>
+
     <h3>2.6 XHTML 1.1+RDFa för strukturerade dokument (Nivå 2)</h3>
     <p>
       I ett strukturerat dokument kan exempelvis enskilda kapitel och
@@ -252,16 +276,10 @@
       bara en önskad del av ett långt dokument.
     </p>
     <p>
-      Vi har valt att använda XHTML 1.1+RDFa. <a
-      href="http://www.w3.org/TR/xhtml1/">XHTML</a> är ett
-      väletablerat XML-baserat format med bra verktygsstöd för
-      generella typer av dokument. Det kan användas som basformat för
-      tryckta publikationer, antingen tillsammans med <a
-      href="http://www.w3.org/Style/CSS/current-work.html">CSS3</a>
-      (se särskilt <a href="http://www.w3.org/TR/css3-page/">Paged
-      Media</a> och <a
-      href="http://www.w3.org/TR/css3-gcpm/">Generated Content for
-      Paged Media</a>) eller <a
+      Vi har valt att använda XHTML+RDFa. XHTML är ett väletablerat
+      XML-baserat format med bra verktygsstöd för generella typer av
+      dokument. Det kan användas som basformat för tryckta
+      publikationer, antingen tillsammans med CSS3 eller <a
       href="http://www.w3.org/TR/xsl/">XSL-FO</a>. <a
       href="http://www.w3.org/TR/rdf-primer/">RDFa</a> är en utökning
       som gör det möjligt att uttrycka metadata enligt RDF-modellen
@@ -680,6 +698,31 @@
       Det går bra att kombinera dessa tre sätt i samma
       metadatapost.
     </p>
+    <h3>6.6 Hur sker validering?</h3>
+    <p>
+      Eftersom specifikationen bygger på etablerade standards finns
+      det också ett stort antal validerare som kan användas för att
+      kontrollera de skapade dokumenten. Vi rekommenderar följande
+      webbaserade verktyg:
+    </p>
+    <ul>
+      <li><a href="http://validator.w3.org/feed/">W3C:s
+      valideringsverktyg för Atom-formatet</a></li>
+      
+      <li><a href="http://www.w3.org/RDF/Validator/">W3C:s
+      valideringsverktyg för RDF</a></li>
+      
+      <li><a href="http://validator.w3.org/">W3C:s valideringsverktyg
+      för XHTML</a> (klarar även XHTML+RDFa, vilket andra validatorer
+      kan ha problem med)</li>
+    </ul>
+    <p>
+      Inom projektet har vi även tagit fram verktyget <a
+      href="http://checker.lagrummet.se/">Checker</a>, som
+      kontrollerar syntax och innehåll i det Atom-flöde som ska
+      användas som postförteckning.
+    </p>
+
     </div>
 
     <div class="section">
@@ -835,14 +878,33 @@
     <div class="section">
     <h2>9. Ordlista</h2>
     <dl>
+      <dt>Atom</dt>
+      <dd>
+	En standard för att publicera ett informationsflöde som
+	uppdateras över tid. Kallas formellt för Atom Syndication
+	Format och finns specificerat i <a
+	href="http://tools.ietf.org/html/rfc4287">IETF RFC 4287</a>.
+      </dd>
       <dt>Atom-förteckning</dt>
       <dd>
-        En förteckning av tillgängliga dokument, uttryckt i
-      XML-formatet Atom.</dd>
+        En förteckning av tillgängliga dokument, uttryckt i Atom.
+      </dd>
       <dt>Begreppsmodellen</dt>
       <dd>
 	Den vokabulär som rättsinformationsprojektet tagit fram för
 	att beskriva egenskaper på svensk rättsinformation.
+      </dd>
+      <dt>CSS3</dt>
+      <dd>
+	<a
+	href="http://www.w3.org/Style/CSS/current-work.html">Cascading
+	StyleSheets level 3</a>, en standard för att ange hur
+	strukturerad information ska presenteras grafiskt. Standarden
+	är uppdelad i moduler, varav särskilt <a
+	href="http://www.w3.org/TR/css3-page/">Paged Media</a> och <a
+	href="http://www.w3.org/TR/css3-gcpm/">Generated Content for
+	Paged Media</a> är användbara för att skapa tryckt material
+	från strukturerad data.
       </dd>
       <dt>DCMI Terms</dt>
       <dd>
@@ -948,6 +1010,15 @@
 	årsutgåva, löpnummer, hänvisning till
 	bemyndigandelagrum, och mycket mer).
       </dd>
+      <dt>XHTML</dt>
+      <dd>
+	En XML-baserad version av HTML-standarden (se <a
+	href="http://www.w3.org/TR/xhtml1/">http://www.w3.org/TR/xhtml1/</a>). Den
+	version som ska användas inom rättsinformationsprojektet är
+	XHTML+RDFa, som är XHTML 1.1 utökad med funktioner för att
+	kunna annotera informationen med RDF-metadata.
+      </dd>
+	
     </dl>
     </div>
   </body>

@@ -7,29 +7,8 @@
     <title>Utredningar m.m.</title>
   </head>
   <body>
-    <div class="alert">
-      <p>Observera att detta dokument inte är fastställt i alla delar
-      ännu. För publicering av dessa dokumenttyper på Nivå 1 bedömer
-      vi dock att inga större ändringar kommer att ske. Fler exempel
-      kommer att tillkomma.</p>
-    </div>
 
-    <div class="changes">
-      <table class="changes">
-	<caption>Ändringar</caption>
-	<tr>
-	  <th>Datum</th>
-	  <th>Ändring</th>
-	</tr>
-	<tr>
-	  <td>2010-02-23</td>
-	  <td>Nytt namn (var tidigare <em>Startpaket för
-	  publicering av kommittédirektiv i
-	  rättsinformationssystemet</em>) och utökat omfång.</td>
-	</tr>
-      </table>
-    </div>
-
+    <div id="frontpage">
     <h1>Handbok för publicering av utredningar m.m. i
     rättsinformationssystemet</h1>
     
@@ -51,8 +30,39 @@
       angående rättsinformationsprojektet i stort, kontakta gärna
       projektledare Staffan Malmgren på staffan.malmgren@dom.se.
     </p>
+    </div>
 
-    <h2>Dokument i lagstiftningskedjan</h2>
+    <div class="pagebreakbefore">
+      <div class="alert">
+	<p>Observera att detta dokument inte är fastställt i alla delar
+	  ännu. För publicering av dessa dokumenttyper på Nivå 1 bedömer
+	  vi dock att inga större ändringar kommer att ske. Fler exempel
+	  kommer att tillkomma.</p>
+      </div>
+
+      <div class="changes">
+	<table class="changes">
+	  <caption>Ändringar</caption>
+	  <tr>
+	    <th>Datum</th>
+	    <th>Ändring</th>
+	  </tr>
+	  <tr>
+	    <td>2010-02-23</td>
+	    <td>Nytt namn (var tidigare <em>Startpaket för
+		publicering av kommittédirektiv i
+		rättsinformationssystemet</em>) och utökat omfång.</td>
+	  </tr>
+	</table>
+      </div>
+    </div>
+
+    <div id="toc">
+      <h2>Innehåll</h2>
+      <ul/>
+    </div>
+
+    <h2>1. Dokument i lagstiftningskedjan</h2>
     <p>
       I lagstiftningskedjan produceras en rad olika dokument som på ett
       eller annat sätt leder fram till nya lagar. Detta inkluderar
@@ -71,9 +81,9 @@
       dokument i rättsinformationssystemet. Kontakta projektet för mer
       information om hur detta kan gå till.
     </p>
-      
+    
     <div class="appendix">
-      <h1>Bilaga 1: Modellbeskrivning för typen Komittedirektiv</h1>
+      <h2>Bilaga 1: Modellbeskrivning för typen Komittedirektiv</h2>
       <p>
 	Dessa egenskaper utgör en mininivå av information om ett
 	kommittédirektiv. Utöver dessa kan informationsansvarig
@@ -84,43 +94,43 @@
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 2: Modellbeskrivning för typen Forordningsmotiv</h1>
+      <h2>Bilaga 2: Modellbeskrivning för typen Forordningsmotiv</h2>
       <xi:include href="build:model.xhtml" xpointer="Forordningsmotiv"/>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 3: Modellbeskrivning för typen Proposition</h1>
+      <h2>Bilaga 3: Modellbeskrivning för typen Proposition</h2>
       <xi:include href="build:model.xhtml" xpointer="Proposition"/>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 4: Modellbeskrivning för typen Utredningsbetankande</h1>
+      <h2>Bilaga 4: Modellbeskrivning för typen Utredningsbetankande</h2>
       <xi:include href="build:model.xhtml" xpointer="Utredningsbetankande"/>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 5: Postförteckning (Atom) för kommittédirektiv</h1>
+      <h2>Bilaga 5: Postförteckning (Atom) för kommittédirektiv</h2>
       <div class="syntax">
 	<code class="xml"><xi:include href="../../documentation/exempel/feeds/sources/regeringskansliet/rk_source_feed_komdir.atom" parse="text"/></code>
       </div>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 6: Metadata (RDF) för kommittédirektiv (Dir. 2009:71)</h1>
+      <h2>Bilaga 6: Metadata (RDF) för kommittédirektiv (Dir. 2009:71)</h2>
       <div class="syntax">
 	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Direktiv/2009/dir-2009_71.rdf" parse="text"/></code>
       </div>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 7: Metadata (RDF) för tilläggsdirektiv (Dir. 2008:78)</h1>
+      <h2>Bilaga 7: Metadata (RDF) för tilläggsdirektiv (Dir. 2008:78)</h2>
       <div class="syntax">
 	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Direktiv/2008/dir-2008_78.rdf" parse="text"/></code>
       </div>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 8: Direktiv i fulltext (XHTML 1.1+RDFa, Dir. 2009:71)</h1>
+      <h2>Bilaga 8: Direktiv i fulltext (XHTML 1.1+RDFa, Dir. 2009:71)</h2>
       <p>Observera att radbrytningar och vissa justeringar av texten kan ha gjorts i syfte att öka läsbarheten i exemplet.</p>
       <div class="syntax">
 	<code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Direktiv/2009/dir-2009_71.xhtml" parse="text"/></code>

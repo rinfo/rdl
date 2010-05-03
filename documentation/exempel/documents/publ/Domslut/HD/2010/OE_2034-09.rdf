@@ -27,8 +27,10 @@
 
     <!-- dessa hänvisningar till notisfall (NJA 1951 C 58 resp NJA
     2007 N 72) använder URI:er med lite annat mönster -->
-    <rattsfallshanvisning rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/1951/not/C58"/>
-    <rattsfallshanvisning rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/2007/not/N72"/>
+    <rattsfallshanvisning
+       rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/1951/not/C_58"/>
+    <rattsfallshanvisning
+       rdf:resource="http://rinfo.lagrummet.se/publ/rf/nja/2007/not/N_72"/>
 
     <dct:title xml:lang="sv">
       Fråga om dispens från kravet att den som antas som ledamot av

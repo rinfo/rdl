@@ -9,82 +9,91 @@
     <title>Författningar</title>
   </head>
   <body>
-    <div class="alert">
-      <p>Observera att detta dokument inte är fastställt i alla delar
-      ännu. För publicering av författningar enligt nivå 1
-      (PDF-dokument + metadata) bedömer vi dock att inga större ändringar
-      kommer att ske.</p>
+    <div id="frontpage">    
+      <h1>
+	Handbok för publicering av författningar i rättsinformationssystemet
+      </h1>
+      <p>
+	Detta dokument är en handbok för den som ska införa publicering av
+	författningar i rättsinformationssystemet. Det vänder sig till
+	den som har det tekniska ansvaret för att implementera det
+	IT-stöd som krävs.
+      </p>
+      <p>
+	Detta dokument kompletteras av <em>Introduktion för
+	implementatörer och teknikansvariga</em>, som bör läsas innan
+	detta. Tillsammans bör dessa två dokument innehålla tillräckligt
+	underlag för att inleda ett införandeprojekt i
+	myndighetsorganisationen.
+      </p>
+      <p>
+	Det här dokumentet innehåller främst information om hur metadata
+	för olika typer av författningar ska utttryckas. Det vänder sig
+	både till den som ansvarar för elektronisk publicering av de de
+	lagar och förordningar som publiceras i SFS, och till den som
+	ansvarar för elektronisk publicering av de föreskrifter som
+	publiceras i en myndighets författningssamling.
+      </p>
+      <p>
+	Det omfattar endast författningarna i den form de kungörs, dvs
+	grund- och ändringsförfattningar. Det omfattar däremot inte
+	konsoliderade författningar, som behandlas i en separat handbok.
+      </p>
+      <p>
+	Om du har några frågor med anledning av detta dokument eller
+	angående rättsinformationsprojektet i stort, kontakta gärna
+	projektledare Staffan Malmgren på staffan.malmgren@dom.se.
+      </p>
+    </div>
+    <div class="pagebreakbefore">
+      <div class="alert">
+	<p>Observera att detta dokument inte är fastställt i alla delar
+	ännu. För publicering av författningar enligt nivå 1
+	(PDF-dokument + metadata) bedömer vi dock att inga större ändringar
+	kommer att ske.</p>
+      </div>
+      
+      <div class="changes">
+	<table class="changes">
+	  <caption>Ändringar</caption>
+	  <tr>
+	    <th>Datum</th>
+	    <th>Ändring</th>
+	  </tr>
+	  <tr>
+	    <td>2010-02-23</td>
+	    <td>Nytt namn (var tidigare <em>Startpaket för publicering
+	    av myndighetsföreskrifter i rättsinformationssystemet</em>)
+	    och något ändrat innehåll (omfattar nu även de författningar
+	    som publiceras i SFS). Mycket av materialet som tidigare
+	    fanns i detta dokument finns nu i <em>Introduktion för
+	    implementatörer och tekniskt ansvariga.</em></td>
+	  </tr>
+	  <tr>
+	    <td>2009-11-01</td>
+	    <td>Kompletterade exempel med
+	    egenskapen beslutadAv (som för de
+	    flesta är samma som
+	    dct:publisher) och justerade begrepp i RA-FS-exempel.</td>
+	  </tr>
+	  <tr>
+	    <td>2009-10-22</td>
+	    <td>Modifiering av information om
+	    bilagor och struktur för
+	    författningsreferenser (inkl.
+	    bemyndiganden)</td>
+	  </tr>
+	</table>
+      </div>
     </div>
 
-    <div class="changes">
-      <table class="changes">
-	<caption>Ändringar</caption>
-	<tr>
-	  <th>Datum</th>
-	  <th>Ändring</th>
-	</tr>
-	<tr>
-	  <td>2010-02-23</td>
-          <td>Nytt namn (var tidigare <em>Startpaket för publicering
-          av myndighetsföreskrifter i rättsinformationssystemet</em>)
-          och något ändrat innehåll (omfattar nu även de författningar
-          som publiceras i SFS). Mycket av materialet som tidigare
-          fanns i detta dokument finns nu i <em>Introduktion för
-          implementatörer och tekniskt ansvariga.</em></td>
-	</tr>
-	<tr>
-	  <td>2009-11-01</td>
-          <td>Kompletterade exempel med
-	  egenskapen beslutadAv (som för de
-	  flesta är samma som
-	  dct:publisher) och justerade begrepp i RA-FS-exempel.</td>
-	</tr>
-	<tr>
-	  <td>2009-10-22</td>
-          <td>Modifiering av information om
-	  bilagor och struktur för
-	  författningsreferenser (inkl.
-	  bemyndiganden)</td>
-	</tr>
-      </table>
+    <div id="toc">
+      <h2>Innehåll</h2>
+      <ul/>
     </div>
-
-    <h1>
-      Handbok för publicering av författningar i rättsinformationssystemet
-    </h1>
-    <p>
-      Detta dokument är en handbok för den som ska införa publicering av
-      författningar i rättsinformationssystemet. Det vänder sig till
-      den som har det tekniska ansvaret för att implementera det
-      IT-stöd som krävs.
-    </p>
-    <p>
-      Detta dokument kompletteras av <em>Introduktion för
-      implementatörer och teknikansvariga</em>, som bör läsas innan
-      detta. Tillsammans bör dessa två dokument innehålla tillräckligt
-      underlag för att inleda ett införandeprojekt i
-      myndighetsorganisationen.
-    </p>
-    <p>
-      Det här dokumentet innehåller främst information om hur metadata
-      för olika typer av författningar ska utttryckas. Det vänder sig
-      både till den som ansvarar för elektronisk publicering av de de
-      lagar och förordningar som publiceras i SFS, och till den som
-      ansvarar för elektronisk publicering av de föreskrifter som
-      publiceras i en myndighets författningssamling.
-    </p>
-    <p>
-      Det omfattar endast författningarna i den form de kungörs, dvs
-      grund- och ändringsförfattningar. Det omfattar däremot inte
-      konsoliderade författningar, som behandlas i en separat handbok.
-    </p>
-    <p>
-      Om du har några frågor med anledning av detta dokument eller
-      angående rättsinformationsprojektet i stort, kontakta gärna
-      projektledare Staffan Malmgren på staffan.malmgren@dom.se.
-    </p>
-
-    <h2>Olika typer av författningar</h2>
+    
+    <div class="section">
+    <h2>1. Olika typer av författningar</h2>
     <p>
       De olika dokumenttyperna som används inom
       rättsinformationssystemet är ordnade i en hierarki, där till
@@ -115,17 +124,19 @@
     </p>
 
     <!--
-    <h3>Lagar</h3>
+    <h3>1.1 Lagar</h3>
     <p><i>(information specifikt om lagar)</i></p>
 
-    <h3>Andra författningar i SFS</h3>
+    <h3>1.2 Andra författningar i SFS</h3>
     <p><i>(information specifikt om förordningar)</i></p>
 
-    <h3>Föreskrifter i andra författningssamlingar</h3>
+    <h3>1.3 Föreskrifter i andra författningssamlingar</h3>
     <p><i>(information specifikt om föreskrifter)</i></p>
     -->
-    
-    <h2>Nivå 2-beskrivningar av författningar</h2>
+    </div>
+
+    <div class="section">
+    <h2>2. Nivå 2-beskrivningar av författningar</h2>
     <!-- det här kanske ska ingå i intro-implementationer istället? -->
     <p>
       Inledningsvis kan det vara lämpligt att inleda med publicering
@@ -185,24 +196,25 @@
       I en senare upplaga av detta dokument kommer det ingå bilagor
       som exemplifierar dessa principer.
     </p>
-
+    </div>
+    
     <div class="appendix">
-      <h1>Bilaga 1: Modellbeskrivning för typen Lag</h1>
+      <h2>Bilaga 1: Modellbeskrivning för typen Lag</h2>
       <xi:include href="build:model.xhtml" xpointer="Lag"/>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 2: Modellbeskrivning för typen Forordning</h1>
+      <h2>Bilaga 2: Modellbeskrivning för typen Forordning</h2>
       <xi:include href="build:model.xhtml" xpointer="Forordning"/>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 3: Modellbeskrivning för typen Myndighetsforeskrift</h1>
+      <h2>Bilaga 3: Modellbeskrivning för typen Myndighetsforeskrift</h2>
       <xi:include href="build:model.xhtml" xpointer="Myndighetsforeskrift"/>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 4: Postförteckning (Atom) (Riksarkivet RA-FS)</h1>
+      <h2>Bilaga 4: Postförteckning (Atom) (Riksarkivet RA-FS)</h2>
       <p>
 	Detta exempel visar de element som måste eller bör ingå i en
 	postförteckning. Varje element är utförligt kommenterat för
@@ -214,7 +226,7 @@
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 5: Metadata (RDF) för grundförfattning (Riksarkivet RA-FS 2004:2)</h1>
+      <h2>Bilaga 5: Metadata (RDF) för grundförfattning (Riksarkivet RA-FS 2004:2)</h2>
       <p>
 	Detta är ett exempel på en grundförfattning. Observera att
 	den uttryckligen anger de ingående paragrafresurserna -- man kan
@@ -233,7 +245,7 @@
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 6: Metadata (RDF) för ändringsförfattning (Riksarkivet RA-FS 2006:6)</h1>
+      <h2>Bilaga 6: Metadata (RDF) för ändringsförfattning (Riksarkivet RA-FS 2006:6)</h2>
       <p>
 	Detta är ett exempel på en ändringsförfattning, vilket
 	framgår av egenskapen <code>andrar</code>. Det framgår vilken
@@ -251,7 +263,7 @@
 
     <!-- Tillför inget som inte framgår av Bilaga 4: Postförteckning i Atom (Riksarkivet) 
     <div class="appendix">
-      <h1>Bilaga: Postförteckning i Atom (Arbetsförmedlingen)</h1>
+      <h2>Bilaga: Postförteckning i Atom (Arbetsförmedlingen)</h2>
       <div class="syntax">
         <code class="xml"><xi:include href="../../documentation/exempel/feeds/sources/arbetsformedlingen/arbetsformedlingen_source_feed.atom" parse="text"/></code>
       </div>
@@ -259,7 +271,7 @@
     -->
     
     <div class="appendix">
-      <h1>Bilaga 7: Metadata (RDF) med ämnesord (Arbetsförmedlingen AFFS 2008:8)</h1>
+      <h2>Bilaga 7: Metadata (RDF) med ämnesord (Arbetsförmedlingen AFFS 2008:8)</h2>
       <p>
 	Här används <code>dces:subject</code> för att ange ett
 	ämnesord i fritext. Ett alternativ hade varit att hänvisa till
@@ -282,24 +294,24 @@
     </div>
     <!-- Tillför inget som inte framgår av bilaga 5 och 6 
     <div class="appendix">
-      <h1>Bilaga 8: Exempel på metadata i RDF ändringsföreskrift (Arbetsförmedlingen AMSFS 2007:28)</h1>
+      <h2>Bilaga 8: Exempel på metadata i RDF ändringsföreskrift (Arbetsförmedlingen AMSFS 2007:28)</h2>
       <div class="syntax">
         <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Forfattningar/AMSFS/2007/AMSFS-2007_28.rdf" parse="text"/></code>
       </div>
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 9: Exempel på metadata i RDF (Arbetsförmedlingen AMSFS 2007:2)</h1>
+      <h2>Bilaga 9: Exempel på metadata i RDF (Arbetsförmedlingen AMSFS 2007:2)</h2>
       <div class="syntax">
         <code class="xml"><xi:include href="../../documentation/exempel/documents/publ/Forfattningar/AMSFS/2007/AMSFS-2007_2.rdf" parse="text"/></code>
       </div>
     </div>
     -->
     <div class="appendix">
-      <h1>
+      <h2>
 	Bilaga 8: Metadata (RDF) med information om bilaga
 	(Livsmedelsverket LIVSFS 2006:22)
-      </h1>
+      </h2>
       <p>
 	Detta exempel visar hur man kan ange att en författning har en
 	bilaga.  Observera att RDF-informationen inte innehåller någon
@@ -314,7 +326,7 @@
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 9: Postförteckning (Atom) med information om bilaga (Livsmedelsverket LIVSFS)</h1>
+      <h2>Bilaga 9: Postförteckning (Atom) med information om bilaga (Livsmedelsverket LIVSFS)</h2>
       <p>
 	I denna postförteckning finns två link-element i det enda
 	entry-elementet. Det ena pekar ut själva dokumentet, det andra
@@ -330,7 +342,7 @@
     </div>
 
     <div class="appendix">
-      <h1>Bilaga 10: Ämnesordsförteckning i SKOS</h1>
+      <h2>Bilaga 10: Ämnesordsförteckning i SKOS</h2>
       <p>
 	Detta är ett grundläggande exempel. SKOS innehåller ett stort
 	antal möjligheter att beskriva samband, alternativa

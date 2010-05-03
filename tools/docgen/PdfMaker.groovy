@@ -34,7 +34,11 @@ class PdfMaker {
             fonts.each {
                 if (new File(it).exists()) {
                     renderer.fontResolver.addFont(it, true)
-                }
+                } else if (new File("C:\\WINDOWS\\FONTS\\" + it).exists()) {
+                    renderer.fontResolver.addFont("C:\\WINDOWS\\FONTS\\" + it, true)
+                } else {
+		    println "Not a font " + it
+		}
             }
         }
         return renderer
