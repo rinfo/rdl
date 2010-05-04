@@ -193,17 +193,17 @@
         coin:component [ coin:property dct:issued ]
     ], [
         coin:relFromBase rpubl:paragraf;
-        coin:fragmentPrefix "p_";
+        coin:fragmentTemplate "p_{paragrafnummer}";
         coin:component [ coin:property rpubl:paragrafnummer ]
     ], [
         coin:relFromBase rpubl:kapitel;
-        coin:fragmentPrefix "k_";
+        coin:fragmentTemplate "k_{kapitelnummer}";
         coin:component [ coin:property rpubl:kapitelnummer ]
     ], [
         coin:relFromBase rpubl:bilaga;
-        coin:fragmentPrefix "bilaga_";
+        coin:fragmentTemplate "bilaga_{repr}";
         # TODO: externally provided ordinal..
-        coin:component [ coin:property dct:title, rdfs:label ]
+        coin:component [ coin:variable "repr"; coin:property dct:title, rdfs:label ]
     ],
 
     # other (non core publication) resources

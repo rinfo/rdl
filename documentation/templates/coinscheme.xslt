@@ -56,11 +56,16 @@
             <h3>Relativa mallar (baserade på URI för relaterad resurs)</h3>
             <div id="containments">
                 <xsl:apply-templates select="coin:template[boolean(coin:relToBase | coin:relFromBase)
-                                     and not(coin:fragmentPrefix)]"/>
+                                     and not(coin:fragmentTemplate)]"/>
             </div>
             <h3>Fragmentmallar (baserade på URI för relaterad resurs)</h3>
             <div id="fragments">
-                <xsl:apply-templates select="coin:template[coin:fragmentPrefix]"/>
+                <xsl:for-each select="coin:template[coin:fragmentTemplate]">
+                    <xsl:sort select="coin:fragmentTemplate"/>
+                    <xsl:apply-templates select=".">
+                        <xsl:with-param name="last" select="position() = last()"/>
+                    </xsl:apply-templates>
+                </xsl:for-each>
             </div>
             <h2>Symboluppsättningar</h2>
             <xsl:call-template name="slugsets"/>
@@ -79,16 +84,12 @@
                     <xsl:apply-templates select="coin:uriTemplate"/>
                 </div>
             </xsl:if>
-            <xsl:if test="coin:fragmentPrefix">
+            <xsl:if test="coin:fragmentTemplate">
                 <p>
-                    <em>Fragment prefixat med:</em>
-                    <xsl:apply-templates select="coin:fragmentPrefix"/>
+                    <em>Fragment (<code>#</code>) på formen:</em>
+                    <xsl:apply-templates select="coin:fragmentTemplate"/>
                 </p>
             </xsl:if>
-            <xsl:if test="coin:relToBase or coin:relFromBase">
-                <xsl:call-template name="relative-template"/>
-            </xsl:if>
-            <xsl:apply-templates select="coin:forType"/>
             <table class="variables">
                 <tr>
                     <th>Variabel</th>
@@ -119,12 +120,17 @@
                     </tr>
                 </xsl:for-each>
             </table>
+            <xsl:apply-templates select="coin:forType"/>
+            <xsl:if test="coin:relToBase or coin:relFromBase">
+                <xsl:call-template name="relative-template"/>
+            </xsl:if>
         </div>
     </xsl:template>
 
     <xsl:template name="relative-template">
         <!-- TODO: cleanup a bit? -->
         <div class="relative">
+            <h4>Relativ relation</h4>
             <xsl:choose>
                 <xsl:when test="coin:uriTemplate">
                     <xsl:variable name="baseRelRange"
@@ -135,7 +141,8 @@
                         som underordnas en
                         <xsl:apply-templates select="$baseRelRange/@ref"/></em>
                     </p>
-                    <em>{
+                    <p class="rel-rule">
+                        {
                         <xsl:apply-templates select="$baseRelRange/@ref"/>
                         }
                         &#8592;
@@ -145,21 +152,24 @@
                             select="key('rel', coin:relToBase/@ref)/owl:inverseOf/rdfs:label |
                                     key('rel', coin:relToBase/@ref)/owl:inverseOf/@ref"/>
                         &#8594;
-                    </em>
+                        { <xsl:apply-templates select="coin:component/coin:property/@ref"/> }
+                    </p>
                 </xsl:when>
-                <xsl:when test="coin:fragmentPrefix">
-                    <em>{ Basresurs } &#8592;
+                <xsl:when test="coin:fragmentTemplate">
+                    <p class="rel-rule">{ Basresurs } &#8592;
                         <xsl:apply-templates
                             select="key('rel', coin:relFromBase/@ref)/owl:inverseOf/rdfs:label |
                                     key('rel', coin:relFromBase/@ref)/owl:inverseOf/@ref"/>
                         &#8596;
                         <xsl:apply-templates select="coin:relFromBase/@ref"/>
                         &#8594;
-                    </em>
-                    <xsl:apply-templates select="coin:fragmentPrefix"/>
+                        { <xsl:apply-templates select="coin:component/coin:property/@ref"/> }
+                    </p>
+                    <!--
+                    <xsl:apply-templates select="coin:fragmentTemplate"/>
+                    -->
                 </xsl:when>
             </xsl:choose>
-            <em>{ <xsl:apply-templates select="coin:component/coin:property/@ref"/> }</em>
         </div>
     </xsl:template>
 
@@ -261,7 +271,7 @@
         </a>
     </xsl:template>
 
-    <xsl:template match="coin:base | coin:uriTemplate | coin:fragmentPrefix">
+    <xsl:template match="coin:base | coin:uriTemplate | coin:fragmentTemplate">
         <code class="{local-name(.)}"><xsl:apply-templates/></code>
     </xsl:template>
 

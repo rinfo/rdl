@@ -230,7 +230,7 @@ public class URIMinter {
             if (base == null)
                 return null;
             if (uriTemplate == null) {
-                return null; // TODO: one value, fragment etc..
+                return null; // TODO: one value, fragmentTemplate etc..
             }
             String expanded = uriTemplate;
             expanded = expanded.replace("{base}", base);
