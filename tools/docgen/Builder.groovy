@@ -127,7 +127,7 @@ class Builder {
                 ["${resourceDir}/base/model",
                     "${resourceDir}/base/extended/rdf",
                     "${resourceDir}/external/rdf"],
-                ["${resourceDir}/external/xslt/rdfxml-grit.xslt",
+                ["${resourceDir}/external/xslt/grit/rdfxml-grit.xslt",
                     "${sourceDir}/templates/model-grit_to_xhtml.xslt"],
                 buildDir+"/model.xhtml")
 
@@ -136,7 +136,7 @@ class Builder {
                     "${resourceDir}/base/datasets/",
                     "${resourceDir}/base/model/rinfo_publ.n3",
                     "${resourceDir}/base/extended/rdf/"],
-                ["${resourceDir}/external/xslt/rdfxml-grit.xslt",
+                ["${resourceDir}/external/xslt/grit/rdfxml-grit.xslt",
                     "${sourceDir}/templates/coinscheme.xslt"],
                 buildDir+"/urischeme.xhtml", false)
     }
