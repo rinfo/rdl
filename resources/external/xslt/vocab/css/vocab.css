@@ -1,0 +1,315 @@
+
+/* global styles */
+
+body {
+    background-color: #eee;
+    font-family: verdana, geneva, arial, sans-serif;
+    font-size: 84%;
+    line-height: 1.35;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-style: italic;
+}
+h1, h2, h3 {
+    color: #576;
+    background: transparent;
+}
+h1, h2 {
+    border-bottom: 1px solid gray;
+}
+h1 { font: 900 170% sans-serif; }
+h2 { font: 800 140% sans-serif; }
+h3 { font: 700 120% sans-serif }
+h4 { font: bold 100% sans-serif }
+h5 { font: italic 100% sans-serif }
+h6 { font: small-caps 100% sans-serif }
+
+pre {
+    background-color: #f3f3ff;
+    border: 1px #9999cc dotted;
+    color: #000000;
+    width: 90%;
+}
+
+ul {
+    margin: 0.5em 0 0.5em 2em;
+    padding: 0;
+}
+ul li {
+    margin: 0;
+    padding: 0;
+}
+
+dt {
+    font-weight: bold;
+}
+
+blockquote, q {
+    font-style: italic;
+}
+
+code {
+    font-size: 1.4em;
+}
+
+a {
+    text-decoration: none;
+    background: transparent;
+}
+
+a:link {
+    color: #067;
+}
+a:visited {
+    color: #067;
+}
+a:link:active, a:visited:active {
+    color: #C00;
+}
+a:link:hover, a:visited:hover {
+    background-color: #ffa;
+}
+
+code :link, code :visited { color: inherit; }
+
+table {
+    border-collapse: collapse;
+    border: solid #999999 1px;
+    font-size: 1em;
+}
+table thead {
+    border-bottom: solid #999999 2px;
+}
+table th, table td {
+    border-bottom: solid #999999 1px;
+    border-left: solid #999999 1px;
+    border-right: solid #999999 1px;
+    padding: 0.2em 0.4em;
+    vertical-align: top;
+}
+
+/* role/widget/structure styles */
+
+#main {
+    background-color: #fff;
+    border: 0.8pt solid gray;
+    border-bottom: none;
+    border-top: none;
+    /*
+    -moz-box-shadow: rgba(0, 0, 0, 0.4) 0 1em 16px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 1em 2em;
+    */
+    min-width: 49em;
+    margin: 0 auto;
+    padding: 2em 2em;
+    width: 84%;
+}
+
+#toc {
+    background-color: #eff;
+    border: 0.8pt dashed #777;
+    float: right;
+    font-size: 80%;
+    margin: 0 0 2em 2em;
+    padding: 0.2em 0.6em;
+}
+#toc h2 {
+    color: #333;
+    border: none;
+    margin: 0.2em 0;
+}
+#toc a {
+    color: #333;
+}
+#toc a:hover {
+    background-color: transparent;
+    color: #333;
+    text-decoration: underline;
+}
+
+.section {
+    clear: both;
+}
+
+.header {
+    position: relative;
+}
+.header a.tool {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.col-2 {
+    overflow: hidden;
+}
+.col-2 .col {
+    float: left;
+    width: 49%;
+}
+
+a.tool {
+    color: #777;
+    font-size: 0.8em;
+}
+
+/* domain styles */
+
+#hierarchy ul {
+    font-size: 0.8em;
+}
+#hierarchy ul ul {
+    font-size: 1em;
+}
+#hierarchy li {
+    list-style-type: none;
+}
+#hierarchy li li {
+    list-style-type: circle;
+}
+/**/
+#hierarchy li a {
+    background-color: #ffe;
+    border: 1px outset #eee;
+    -moz-box-shadow: rgba(0, 0, 0, 0.4) 2px 2px 4px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.4) 2px 2px 4px;
+    -moz-border-radius: 0.6em;
+    -webkit-border-radius: 0.6em;
+    display: inline-block;
+    padding: 0.1em 0.6em;
+    margin-bottom: 0.1em;
+    text-decoration: none;
+    /**/
+    -webkit-transition-duration: 0.01s;
+    -webkit-transition-property: font-size, background-color, margin, -webkit-box-shadow;
+    -webkit-transition-timing-function: ease-out;
+    /**/
+}
+#hierarchy li a:hover {
+    background-color: #ffa;
+    -moz-box-shadow: rgba(0, 0, 0, 0.6) 4px 4px 16px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.6) 4px 4px 16px;
+    font-size: 1.4em;
+    position: relative;
+    margin: -0.3em 0 0.0em 0;
+}
+#hierarchy ul.properties li a {
+    background-color: #fff;
+    -moz-border-radius: 2.4em;
+    -webkit-border-radius: 2.4em;
+}
+/**/
+
+#defs dl {
+    border: 0.8pt dashed #777;
+    background-color: #eff;
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: 0.4em 0.8em;
+}
+#defs dl dt {
+    display: block;
+    margin: 0 0.5em 0 0;
+}
+#defs dl dd {
+    display: block;
+    margin: 0;
+    padding-left: 2em;
+}
+#defs dl dd ul {
+    display: block;
+    list-style: none;
+    margin: 0 0 1em 0;
+    padding: 0;
+    overflow: auto; zoom: 1;
+}
+#defs dl dd ul li {
+    border-right: 0.8pt solid #777;
+    display: block;
+    float: left;
+    list-style: none;
+    padding-right: 0.6em;
+    margin: 0 0.6em 0 0;
+}
+#defs dl dd ul li:last-child {
+    border-right: none;
+    padding-right: 0;
+}
+
+div.def {
+    padding: 0.4em 1em;
+    border: 0.8pt solid #ccc;
+    -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 0.5em 1em;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 0.5em 1em;
+    margin-bottom: 2em;
+}
+div.def .header {
+    /*
+    border: 0.8pt dashed #777;
+    border-bottom: none;
+    */
+    margin: 0 -1em;
+    padding: 0.2em 0.8em;
+}
+div.def .header a.tool {
+    top: 0.8em;
+    right: 0.8em;
+}
+div.def .header h3 {
+    padding: 0.2em;
+    margin: 0.2em 0 0 -0.8pt;
+}
+div.def .footer {
+    text-align: right;
+}
+
+dl.termdef dd, dl.usage dd {
+    margin: 0 0 0.6em 3.5em;
+}
+
+dl.termdef dl {
+    margin: 0;
+    padding: 0;
+    overflow: auto; zoom: 1;
+}
+dl.termdef dl dt {
+    clear: left;
+    float: left;
+    margin: 0 0.8em 0 0;
+    padding: 0;
+}
+dl.termdef dl dd {
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+
+dl.termdef .raw {
+    background-color: #eee;
+    border: 1.3pt solid #ddd;
+    color: #555;
+    padding: 0 0.2em;
+}
+dl.termdef dd.raw {
+    border-top: none;
+    margin-top: -1.3pt;
+    padding-top: 1.3pt;
+}
+dl.termdef .raw .raw {
+    border: none;
+}
+
+div.def.class {
+    background-color: #fffff6;
+}
+div.def.class dl.termdef .raw {
+    background-color: #f1f1e9;
+    border-color: #e1e1d9;
+}
+

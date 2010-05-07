@@ -1,8 +1,10 @@
 from __future__ import with_statement
+import urlparse
 import urllib2
 import time
 import shutil
-from os import stat, path as p
+import os
+from os import path as p
 try:
     import json
 except ImportError:
@@ -26,13 +28,13 @@ def download(match=None, usemodtime=True):
         if groupname and groupname != name:
             continue
         print "[Group: %s]" % name
+        base = group.get('base')
         destdir = p.normpath(p.join(basedir, group.get('destination', "")))
         headers = (group.get('headers') or {}).items()
-        named = group.get('named') or {}
-        items = group.get('items') or ()
-        resources = ( [(url, p.join(destdir, name))
-                       for name, url in named.items()] +
-                      [(url, destdir) for url in items] )
+        download = group['download']
+        resources = [(urlparse.urljoin(base, url), p.join(destdir, dest))
+                     for url, dest in download.items()]
+
         for url, dest in resources:
             if match and match not in url:
                 continue
@@ -52,7 +54,7 @@ def _http_get(url, dest, usemodtime=True, headers=()):
             print "Destination exists, skipping."
             return
         modstamp = time.strftime("%a, %d %b %Y %H:%M:%S GMT",
-                time.gmtime(stat(dest).st_mtime))
+                time.gmtime(os.stat(dest).st_mtime))
         req.add_header('If-Modified-Since', modstamp)
     try:
         res = urllib2.urlopen(req)
