@@ -15,7 +15,7 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 extension-element-prefixes="func">
 
-    <xsl:import href="lib/grit/common.xslt"/>
+    <xsl:import href="../../resources/external/xslt/grit/lib/common.xslt"/>
 
     <xsl:template match="/graph">
         <html>
@@ -87,6 +87,7 @@
             <xsl:if test="coin:fragmentTemplate">
                 <p>
                     <em>Fragment (<code>#</code>) på formen:</em>
+                    <xsl:text> &#160; </xsl:text>
                     <xsl:apply-templates select="coin:fragmentTemplate"/>
                 </p>
             </xsl:if>

@@ -18,8 +18,10 @@
                 xmlns:dyn="http://exslt.org/dynamic"
                 xmlns:str="http://exslt.org/strings"
                 xmlns:self="tag:localhost,2010:exslt:self"
-                xmlns:grit="http://purl.org/oort/impl/xslt/grit/grit-util#"
+                xmlns:grit="http://purl.org/oort/impl/xslt/grit/lib/common#"
                 extension-element-prefixes="func">
+
+  <xsl:import href="../../resources/external/xslt/grit/lib/common.xslt"/>
 
   <xsl:param name="ontologyUri"
              >http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#</xsl:param>
@@ -77,7 +79,7 @@
   <!-- <xsl:template match="resource[a[rdfs:Class|owl:Class]]"> -->
     <xsl:variable name="class" select="."/>
     <xsl:variable name="abstract" select="protege:abstract = 'true'"/>
-    <div class="classInfo" about="{@uri}" id="{self:uri-term(@uri)}">
+    <div class="classInfo" about="{@uri}" id="{grit:term(@uri)}">
       <h2><xsl:apply-templates select="rdfs:label"/></h2>
       <xsl:variable name="superClassLinks">
         <xsl:for-each select="rdfs:subClassOf[grit:get(.)/rdfs:label/@xml:lang=$lang]">
@@ -88,7 +90,7 @@
             </xsl:if>
             <xsl:choose>
               <xsl:when test="grit:get(.)/rdfs:isDefinedBy/@ref = $class/rdfs:isDefinedBy/@ref">
-                <a href="#{self:uri-term(@ref)}">
+                <a href="#{grit:term(@ref)}">
                   <xsl:apply-templates select="$label"/>
                 </a>
               </xsl:when>
@@ -112,7 +114,7 @@
           <xsl:for-each select="$subclasses">
             <xsl:sort select="rdfs:label"/>
             <xsl:if test="position() != 1">, </xsl:if>
-            <a href="#{self:uri-term(@uri)}">
+            <a href="#{grit:term(@uri)}">
               <xsl:apply-templates select="rdfs:label"/>
             </a>
           </xsl:for-each>
@@ -219,7 +221,7 @@
                 <xsl:text>(Anges som: </xsl:text>
                 <xsl:choose>
                   <xsl:when test="starts-with($uri, $ontologyUri)">
-                    <a href="#{self:uri-term($uri)}"><xsl:apply-templates select="."/></a>
+                    <a href="#{grit:term($uri)}"><xsl:apply-templates select="."/></a>
                   </xsl:when>
                   <xsl:otherwise>
                     <xsl:apply-templates select="."/>
@@ -333,7 +335,7 @@
   </xsl:template>
 
   <xsl:template name="markup-example">
-    <xsl:variable name="term" select="self:uri-term(@uri)"/>
+    <xsl:variable name="term" select="grit:term(@uri)"/>
     <xsl:variable name="base" select="substring-before(@uri, $term)"/>
     <xsl:variable name="ns" select="document('')/*/namespace::*"/>
     <xsl:variable name="name">
@@ -421,32 +423,6 @@
     <xsl:param name="nodes"/>
     <xsl:param name="node"/>
     <func:result select="count($nodes[. = $node]) > 0"/>
-  </func:function>
-
-  <func:function name="self:uri-term">
-    <xsl:param name="uri"/>
-    <xsl:choose>
-      <xsl:when test="contains($uri, '#')">
-        <func:result select="substring-after($uri, '#')"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:for-each select="str:split($uri, '/')[position() = last()]">
-          <func:result select="current()"/>
-        </xsl:for-each>
-      </xsl:otherwise>
-    </xsl:choose>
-  </func:function>
-
-  <func:function name="grit:get">
-    <xsl:param name="e"/>
-    <xsl:choose>
-      <xsl:when test="$e/@ref">
-        <func:result select="$r[@uri = $e/@ref]"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <func:result select="$e"/>
-      </xsl:otherwise>
-    </xsl:choose>
   </func:function>
 
 </xsl:stylesheet>
