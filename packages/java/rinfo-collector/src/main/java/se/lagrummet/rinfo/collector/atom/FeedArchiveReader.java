@@ -27,18 +27,24 @@ public abstract class FeedArchiveReader {
     public static final String LINK_NEXT_ARCHIVE_REL = "next-archive";
     public static final String LINK_PREV_ARCHIVE_REL = "prev-archive";
 
-    HttpClient httpClient;
+    private HttpClient httpClient = new DefaultHttpClient();
 
+    /**
+     * Getter for an {@link HttpClient}. This defaults to
+     * {@link DefaultHttpClient} with no special settings.
+     */
     public final HttpClient getClient() {
         return httpClient;
     }
 
+    public void setClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
+
     /**
-     * Called before {@link readFeed}. By default this sets the HttpClient from
-     * {@link getClient} using {@createClient}.
+     * Called before {@link readFeed}.
      */
     public void initialize() {
-         this.httpClient = createClient();
     }
 
     /**
@@ -48,15 +54,7 @@ public abstract class FeedArchiveReader {
     }
 
     /**
-     * Overridable create method for an {@link HttpClient}. This defaults to
-     * {@link DefaultHttpClient} with no special settings.
-     */
-    public HttpClient createClient() {
-        return new DefaultHttpClient();
-    }
-
-    /**
-     * Utility method to use the HttpClient (via {@link createClient}) to open
+     * Utility method to use the HttpClient (from {@link getClient}) to open
      * an URL and get the entity content as an InputStream.
      *
      * @return InputStream, or null if the response didn't enclose an entity.
