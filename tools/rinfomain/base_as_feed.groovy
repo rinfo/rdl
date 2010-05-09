@@ -1,4 +1,7 @@
 
+@Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
+@Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT')
+
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.sax.SAXResult
@@ -20,14 +23,11 @@ import org.openrdf.model.impl.URIImpl
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.vocabulary.OWL
 
-@Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
-@Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT')
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 
 DCT = "http://purl.org/dc/terms/"
 VOID = "http://rdfs.org/ns/void#"
-//DCT_IDENTIFIER = new URIImpl(DCT+"identifier")
 DCT_HAS_PART = new URIImpl(DCT+"hasPart")
 VOID_DATASET = new URIImpl(VOID+"Dataset")
 
@@ -86,10 +86,7 @@ def main() {
         def f = new File(fpath)
         FU.forceMkdir(f.parentFile)
         f.withOutputStream {
-            // TODO: can't all data results directly write to it instead?
-            def ins = repr.data()
-            IOUtils.copy(ins, it)
-            ins.close()
+            repr.writeTo(it)
         }
     }
 }
@@ -107,16 +104,11 @@ def collectItems(baseUri, base, sources) {
         addItem modelItem(baseUri, it)
     }
 
-    // Won't work - uses external model URI as atom:id (collector won't store those)
-    //FU.iterateFiles(new File(base, "../external/rdf"),
-    //        ["rdfs", "owl"] as String[], true).each {
-    //    addItem modelItem(it)
-    //}
     addItem datasetItem(baseUri, "ext/models",
             FU.listFiles(new File(base, "../external/rdf"),
                 ["rdfs", "owl"] as String[], true))
 
-    // .. "ext/model_translations"?
+    // TODO: "ext/model_translations"?
     addItem datasetItem(baseUri, "ext/extended_modeldata",
             FU.listFiles(new File(base, "extended/rdf"),
                 ["n3"] as String[], true))
@@ -142,21 +134,14 @@ def collectItems(baseUri, base, sources) {
                 new File(base, "datasets/feeds.n3"))
     }
 
-    def vocabCssFile = new File("../../resources/external/xslt/vocab/css/vocab.css")
-    def mediaEnclosures = [
-            [ href: "/media/css/vocab.css",
-              data: { new FileInputStream(vocabCssFile) },
-              mediaType: "text/css" ]
-        ]
-    addItem( [
-            uri: "${baseUri}/media",
-            updated: new Date(vocabCssFile.lastModified()),
-            content: "Media-filer",
-            enclosures: mediaEnclosures
-        ])
+    addItem mediaItem("${baseUri}/media", "Media-filer", [
+                [ href: "/media/css/vocab.css",
+                    file: new File("${base}/../external/xslt/vocab/css/vocab.css"),
+                    mediaType: "text/css" ] ])
 
     return items
 }
+
 
 def simpleItem(baseUri, uriPath, File file) {
     def itemUri = baseUri+"/"+uriPath
@@ -164,12 +149,13 @@ def simpleItem(baseUri, uriPath, File file) {
         uri: itemUri,
         updated: new Date(file.lastModified()),
         content: [
-            data: managedRdfInputStream(file, null, false),
+            writeTo: createRdfWriter(file, null),
             mediaType: "application/rdf+xml"
         ],
         enclosures: null
     ]
 }
+
 
 def modelItem(baseUri, File file) {
     def repo = RDFUtil.createMemoryRepository()
@@ -189,16 +175,25 @@ def modelItem(baseUri, File file) {
         uri: modelUri as String,
         updated: new Date(file.lastModified()),
         content: [
-            data: managedRdfInputStream(file, repo),
+            writeTo: createRdfWriter(file, repo),
             mediaType: "application/rdf+xml"
         ],
         alternate: [
             [ href: htmlReprSlug,
-              data: { rdfVocabToXhtml(managedRdfInputStream(file, repo)()) },
+              writeTo: { rdfVocabToXhtml(repoToInStream(repo), it) },
               mediaType: "application/xhtml+xml" ]
         ]
     ]
 }
+
+def getModelUri(conn) {
+    def uri = null
+    RDFUtil.one(conn, null, RDF.TYPE, OWL.ONTOLOGY, true).each {
+        uri = it.subject
+    }
+    return uri
+}
+
 
 def datasetItem(baseUri, uriPath, List<File> files) {
     def itemUri = baseUri+"/"+uriPath
@@ -218,7 +213,7 @@ def datasetItem(baseUri, uriPath, List<File> files) {
         conn.add(itemRdfUri, DCT_HAS_PART, vf.createURI(baseUri+slug))
         enclosures << [
             href: slug,
-            data: managedRdfInputStream(file),
+            writeTo: createRdfWriter(file),
             mediaType: "application/rdf+xml"
         ]
         def fileDate = new Date(file.lastModified())
@@ -230,42 +225,72 @@ def datasetItem(baseUri, uriPath, List<File> files) {
     return [
         uri: itemUri,
         updated: youngestEnclDate,
-        content: [data: { repoToInStream(repo, true) },
+        content: [writeTo: { repoWriter(repo) },
                   mediaType: "application/rdf+xml"],
         enclosures: enclosures
     ]
 }
 
-def getModelUri(conn) {
-    def uri = null
-    RDFUtil.one(conn, null, RDF.TYPE, OWL.ONTOLOGY, true).each {
-        uri = it.subject
+
+def mediaItem(itemUri, content, mediaIitems) {
+    def youngestEnclDate = null
+    def enclosures = []
+    mediaIitems.each { item ->
+        enclosures << [
+            href: item.href,
+            writeTo: createFileWriter(item.file),
+            mediaType: item.mediaType
+        ]
+        def fileDate = new Date(item.file.lastModified())
+        if (!youngestEnclDate || fileDate > youngestEnclDate) {
+            youngestEnclDate = fileDate
+        }
     }
-    return uri
+    return [
+        uri: itemUri,
+        updated: youngestEnclDate,
+        content: "Media-filer",
+        //content: [writeTo: { it << "Media-filer" },
+        //          mediaType: "text/plain"],
+        enclosures: enclosures
+    ]
 }
+
+
+//======================================================================
 
 /**
  * Either uses the file as-is and closes the repo, or returns a lazy serializer..
  */
-Closure managedRdfInputStream(file, final repo=null, parse=false) {
-    if (parse || file.name.endsWith(".n3")) {
+Closure createRdfWriter(file, final repo=null) {
+    if (file.name.endsWith(".n3")) {
         if (repo == null) {
             repo = RDFUtil.createMemoryRepository()
             RDFUtil.loadDataFromFile(repo, file)
         }
-        // TODO: skip closure and serialize directly?
-        return {
-            def ins = repoToInStream(repo)
-            //repo.shutDown()
-            return ins
-        }
+        return repoWriter(repo)
     } else {
-        return { new FileInputStream(file) }
+        return createFileWriter(file)
     }
 }
 
-def repoToInStream(repo, pretty=true) {
+Closure repoWriter(repo, pretty=true) {
+    return {
+        RDFUtil.serialize(repo, RDFFormat.RDFXML.defaultMIMEType, it, true)
+        //repo.shutDown()
+    }
+}
+
+InputStream repoToInStream(repo, pretty=true) {
     return RDFUtil.toInputStream(repo, RDFFormat.RDFXML.defaultMIMEType, pretty)
+}
+
+Closure createFileWriter(file) {
+    return { outStream ->
+        file.withInputStream {
+            IOUtils.copy(it, outStream)
+        }
+    }
 }
 
 //======================================================================
@@ -273,6 +298,13 @@ def repoToInStream(repo, pretty=true) {
 SAX_F = javax.xml.parsers.SAXParserFactory.newInstance()
 SAX_F.setNamespaceAware(true)
 SAX_TF = (SAXTransformerFactory) TransformerFactory.newInstance()
+
+InputStream rdfVocabToXhtml(inputStream, outputStream) {
+    def reader = SAX_F.newSAXParser().getXMLReader()
+    reader.setContentHandler(
+            makeModelToXhtmlTransformerHandler(new StreamResult(outputStream)))
+    reader.parse(new InputSource(inputStream))
+}
 
 def makeModelToXhtmlTransformerHandler(result) {
     gritHandler = SAX_TF.newTransformerHandler(new StreamSource(GRIT_XSLT))
@@ -291,15 +323,6 @@ def makeModelToXhtmlTransformerHandler(result) {
     vocabHandler.setResult(new SAXResult(xhtmlHandler))
     xhtmlHandler.setResult(result)
     return gritHandler
-}
-
-InputStream rdfVocabToXhtml(inputStream) {
-    def reader = SAX_F.newSAXParser().getXMLReader()
-    return outputToInputStream {
-        reader.setContentHandler(
-                makeModelToXhtmlTransformerHandler(new StreamResult(it)))
-        reader.parse(new InputSource(inputStream))
-    }
 }
 
 //======================================================================
@@ -354,8 +377,8 @@ Map createAtomCollection(feedMeta, feedPathConf, items) {
     feed.sortEntriesByUpdated(true)
 
     collection[feedPathConf.feedPath] = [
-        data: {
-            return outputToInputStream { feed.writeTo("prettyxml", it) }
+        writeTo: {
+            feed.writeTo("prettyxml", it)
         },
         mediaType: "application/atom+xml"
     ]
@@ -364,12 +387,6 @@ Map createAtomCollection(feedMeta, feedPathConf, items) {
 
 def makeHref(publicBaseUri, baseUrl, uri, ext) {
     return uri.replace(publicBaseUri, baseUrl).replace('#', '')+"/"+ext
-}
-
-def outputToInputStream(Closure closure) {
-    def bos = new ByteArrayOutputStream()
-    try { closure(bos) } finally { bos.close() }
-    return new ByteArrayInputStream(bos.toByteArray())
 }
 
 //======================================================================

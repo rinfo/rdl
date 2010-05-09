@@ -53,7 +53,7 @@ def createServableSources(buildDir, publicServer, docsBase, feedBase) {
             feed.baseUri = ""
         }
 
-        //println "Feed <${it.name}>:"
+        println "Feed <${it.name}>:"
         def feedDirName = (feed.id =~ /tag:([^,]+),/)[0][1]
         def feedPath = feedDirName+"/current.atom"
         feedPaths << feedPath
@@ -64,21 +64,26 @@ def createServableSources(buildDir, publicServer, docsBase, feedBase) {
             if (it.rel =~ /.+-archive/)
                 it.discard()
         }
-        feed.entries.each {
-            def id = it.id as String
-            //println "Entry <${it.'a:id'}>:"
-            it.contentElement.with {
-                def logicalPath = contentFilePath(id, "${it.src}", "${it.mimeType}")
-                it.src = checkedEntryPath(it, it.src, feedDirName, logicalPath)
+        try {
+            feed.entries.each {
+                def id = it.id as String
+                println "Entry <${id}>:"
+                it.contentElement.with {
+                    def logicalPath = contentFilePath(id, "${it.src}", "${it.mimeType}")
+                    it.src = checkedEntryPath(it, it.src, feedDirName, logicalPath)
+                }
+                def enclCount = 1
+                it.links.each {
+                    def logicalPath = (it.rel == "alternate")?
+                            contentFilePath(id, "${it.href}", "${it.mimeType}") :
+                            enclosureFilePath(id, "${it.href}", "${it.mimeType}", enclCount++)
+                    it.href = checkedEntryPath(it, it.href, feedDirName, logicalPath)
+                }
+                println()
             }
-            def enclCount = 1
-            it.links.each {
-                def logicalPath = (it.rel == "alternate")?
-                        contentFilePath(id, "${it.href}", "${it.mimeType}") :
-                        enclosureFilePath(id, "${it.href}", "${it.mimeType}", enclCount++)
-                it.href = checkedEntryPath(it, it.href, feedDirName, logicalPath)
-            }
-            //println()
+        } catch (Exception e) {
+            System.err.println "Caught ${e}; skipping."
+            return
         }
         def newFeedFile = new File(buildDir+'/'+feedPath)
         ant.mkdir(dir:newFeedFile.parentFile)
@@ -123,7 +128,7 @@ def collectionAndPathFor(coll) {
         case ~/.+fs$/:
             return [coll.toUpperCase(), "Forfattningar/${coll.toUpperCase()}"]
         default:
-            throw new RuntimeException("No category for: ${collection}")
+            throw new RuntimeException("No category for: ${coll}")
     }
 }
 
