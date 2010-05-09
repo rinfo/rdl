@@ -33,8 +33,8 @@ Suggested changes in rinfo-main,-depot,-collector:
 
  - StorageSession (subclass?):
    - dummyDepot(Backend)
-     - in-mem *Backend*? (if so, depotEntry.getMetaFile -> getMetaInputStream/-Out..?)
-     - or no depot? write to "/dev/null" to make datachecks? pdf:s? check some?
+     - in-mem *Backend*?
+     - or no depot? write to "null steam" to make datachecks? pdf:s? check some?
   - def checkLog = new CheckDataCollectorLog
 
 */
