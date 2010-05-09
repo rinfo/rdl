@@ -17,7 +17,7 @@ class StorageSpeck extends Specification {
     Storage storage
 
     def setup() {
-        storage = new Storage(depot, collectorLog)
+        storage = new Storage(depot, collectorLog, null)
     }
 
     def "storage is created"() {

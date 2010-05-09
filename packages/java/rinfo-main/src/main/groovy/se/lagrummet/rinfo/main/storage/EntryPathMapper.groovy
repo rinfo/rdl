@@ -41,9 +41,11 @@ public class EntryPathMapper {
             def enclosureUri = atomLink.resolvedHref.toURI()
             def slug = computeEnclosureSlug(entryUri, enclosureUri)
             if (slug == null) {
-                def contentUri = atomEntry.getContentElement().getResolvedSrc().toURI()
+                def contentElem = atomEntry.getContentElement()
+                def contentPath = (contentElem.getSrc() != null)?
+                        contentElem.getResolvedSrc().toURI().getPath() : null
                 slug = inferEnclosureSlug(entryUri.getPath(),
-                        contentUri.getPath(), enclosureUri.getPath())
+                        contentPath, enclosureUri.getPath())
             }
             if (slug == null) {
                 throw new EntryPathMapperException(entryUri, enclosureUri)
@@ -63,6 +65,7 @@ public class EntryPathMapper {
 
     public String inferEnclosureSlug(
             String basePath, String contentPath, String enclosurePath) {
+        if (contentPath == null) contentPath = basePath
         def commonHrefBase = findCommonBase(enclosurePath, contentPath)
         if (commonHrefBase == null || commonHrefBase.equals(pathSep)) {
             return null // must share some base under root
@@ -81,11 +84,16 @@ public class EntryPathMapper {
     String findCommonBase(href1, href2) {
         def sb = new StringBuffer()
         int i = 0
+        // NOTE: must make sure base is all up to a pathSep!
+        int lastPathSep = 0
         while (i < href1.length() && i < href2.length() &&
                 href1.charAt(i) == href2.charAt(i)) {
             i++
+            if (href1.charAt(i) == pathSep) {
+                lastPathSep = i
+            }
         }
-        return href1.substring(0, i)
+        return href1.substring(0, lastPathSep+1)
     }
 
     String substringAfter(string, base) {

@@ -27,8 +27,6 @@ class StorageSessionSpeck extends Specification {
     def sourceUrl = new URL("http://example.org/feed/current")
     def entryId = new URI("http://example.org/entry/1")
 
-    List<File> tempfiles
-
     def setup() {
         setup: "required components"
         repo = new SailRepository(new MemoryStore())
@@ -42,28 +40,10 @@ class StorageSessionSpeck extends Specification {
         sourceEntry.setId(entryId.toString())
         sourceEntry.setUpdated(entryUpdated)
         sourceEntry.setPublished(entryUpdated)
-
-        and:
-        tempfiles = []
     }
 
     def cleanup() {
         session.close()
-        tempfiles.each { it.delete() }
-    }
-
-    private makeStorageSession(depot, depotSession, handlers, admin=false) {
-        depot.openSession() >> depotSession
-        def storage = new Storage(depot, new CollectorLog(repo))
-        storage.storageHandlers = handlers
-        storage.startup()
-        return storage.openSession(new StorageCredentials(admin))
-    }
-
-    private tempFile(suffix) {
-        def f = File.createTempFile("rinfomain", suffix)
-        tempfiles << f
-        return f
     }
 
     def "session credentials indicate admin rights"() {
@@ -92,10 +72,7 @@ class StorageSessionSpeck extends Specification {
 
         and: "mock depot creation and subsequent retrieval"
         DepotEntry depotEntry = Mock()
-        depotEntry.getId() >> entryId
-        depotEntry.getPublished() >> new Date()
-        depotEntry.getUpdated() >> new Date()
-        depotEntry.getMetaFile(_) >> tempFile("metafile")
+        mockupDepotEntry(depotEntry)
         def entries = [:]
         2 * depot.getEntry(entryId) >> { entries[entryId] }
         1 * depotSession.createEntry(entryId, _, _, _) >> {
@@ -125,10 +102,7 @@ class StorageSessionSpeck extends Specification {
 
         and: "mock depot retrieval and update"
         DepotEntry depotEntry = Mock()
-        depotEntry.getId() >> entryId
-        depotEntry.getUpdated() >> new Date()
-        depotEntry.getPublished() >> new Date()
-        depotEntry.getMetaFile(_) >> tempFile("metafile")
+        mockupDepotEntry(depotEntry)
         1 * depot.getEntry(entryId) >> depotEntry
         1 * depotSession.update(depotEntry, _, _, _)
 
@@ -189,4 +163,26 @@ class StorageSessionSpeck extends Specification {
         //session.logCollect(feed)
     }
 
+    private makeStorageSession(depot, depotSession, handlers, admin=false) {
+        depot.openSession() >> depotSession
+        def storage = new Storage(depot, new CollectorLog(repo), null)
+        storage.storageHandlers = handlers
+        storage.startup()
+        return storage.openSession(new StorageCredentials(admin))
+    }
+
+    private mockupDepotEntry(depotEntry) {
+        depotEntry.getId() >> entryId
+        depotEntry.getPublished() >> new Date()
+        depotEntry.getUpdated() >> new Date()
+        def metaBytes = [:]
+        depotEntry.getMetaOutputStream(_) >> { it
+            def bos = new ByteArrayOutputStream()
+            metaBytes[it] = bos
+            return bos
+        }
+        depotEntry.getMetaInputStream(_) >> { it
+            return new ByteArrayInputStream(metaBytes[it].toByteArray())
+        }
+    }
 }

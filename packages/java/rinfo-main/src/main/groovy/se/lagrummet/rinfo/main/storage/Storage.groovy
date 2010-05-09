@@ -1,18 +1,24 @@
 package se.lagrummet.rinfo.main.storage;
 
-import se.lagrummet.rinfo.store.depot.Depot;
 import org.openrdf.repository.Repository;
+
+import se.lagrummet.rinfo.store.depot.Depot;
+import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex;
 
 
 public class Storage {
 
     private Depot depot;
-    private CollectorLog collectorLog;
     private Collection<StorageHandler> storageHandlers;
+    private CollectorLog collectorLog;
+    private CompleteFeedEntryIdIndex completeFeedEntryIdIndex;
 
-    public Storage(Depot depot, CollectorLog collectorLog) {
+    public Storage(Depot depot,
+            CollectorLog collectorLog,
+            CompleteFeedEntryIdIndex completeFeedEntryIdIndex) {
         this.depot = depot;
         this.collectorLog = collectorLog;
+        this.completeFeedEntryIdIndex = completeFeedEntryIdIndex;
     }
 
     public Depot getDepot() { return depot; }
@@ -39,8 +45,8 @@ public class Storage {
     }
 
     public StorageSession openSession(StorageCredentials credentials) {
-        return new StorageSession(credentials,
-                depot, storageHandlers, collectorLog.openSession());
+        return new StorageSession(credentials, depot, storageHandlers,
+                collectorLog.openSession(), completeFeedEntryIdIndex);
     }
 
     public void shutdown() {

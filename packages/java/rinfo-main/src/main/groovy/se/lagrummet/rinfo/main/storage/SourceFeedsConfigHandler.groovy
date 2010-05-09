@@ -74,7 +74,7 @@ class SourceFeedsConfigHandler implements StorageHandler {
         if (!isConfigurationEntry(depotEntry)) {
             return
         }
-        collectScheduler.setSourceFeedUrls(null)
+        collectScheduler.setPublicSourceFeedUrls(null)
     }
 
     boolean isConfigurationEntry(DepotEntry depotEntry) {

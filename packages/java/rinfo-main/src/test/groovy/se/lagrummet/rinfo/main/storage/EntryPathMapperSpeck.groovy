@@ -41,6 +41,8 @@ class EntryPathMapperSpeck extends Specification {
             //        "/item/one/css/style.css", "text/css"),
             makeEntryLink("http://localhost/other/item/one/content.txt",
                     "http://localhost/other/item/one/file.txt",),
+            makeEntryLink(null, "http://localhost/item/one/file.txt"),
+            //makeEntryLink(null, "http://localhost/other/item/one/file.txt"),
         ]
         expectedSlug << [
             "/item/one/file.txt",
@@ -50,6 +52,8 @@ class EntryPathMapperSpeck extends Specification {
             //"/item/one/css/style.css",
             //"/item/one/css/style.css",
             "/item/one/file.txt",
+            "/item/one/file.txt",
+            //"/item/one/file.txt",
         ]
     }
 
@@ -75,20 +79,38 @@ class EntryPathMapperSpeck extends Specification {
     }
 
     def "should find common base of two paths"() {
+        expect:
+        epm.findCommonBase(enclosureHref, contentPath) == commonBase
+        where:
+        commonBase << [
+            "/admin/sys/uri/",
+            "/series/",
+        ]
+        contentPath << [
+            "/admin/sys/uri/rdf",
+            "/series/rdf",
+        ]
+        enclosureHref << [
+            "/admin/sys/uri/scheme.rdf",
+            "/series/roller",
+        ]
+    }
+
+    def "should substring after"() {
         when:
-        def contentPath = "/admin/sys/uri/rdf"
-        def enclosureHref = "/admin/sys/uri/scheme.rdf"
-        def commonHrefBase = epm.findCommonBase(enclosureHref, contentPath)
+        def base = "/admin/sys/uri/"
+        def path = "/admin/sys/uri/scheme.rdf"
         then:
-        commonHrefBase == "/admin/sys/uri/"
-        epm.substringAfter(contentPath, commonHrefBase) == "rdf"
-        epm.substringAfter(enclosureHref, commonHrefBase) == "scheme.rdf"
+        epm.substringAfter(path, base) == "scheme.rdf"
     }
 
     private Link makeEntryLink(src, href, named=null, mtype=null) {
         def entry = abdera.newEntry()
         entry.setId(entryId)
-        entry.setContent(new IRI(src), "text/plain")
+        if (src)
+            entry.setContent(new IRI(src), "text/plain")
+        else
+            entry.setContent("inline text")
         def link = entry.addLink(href)
         if (named) {
             if (mtype)

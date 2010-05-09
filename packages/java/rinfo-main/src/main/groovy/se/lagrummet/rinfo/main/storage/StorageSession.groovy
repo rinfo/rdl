@@ -18,28 +18,33 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.SourceContent
 import se.lagrummet.rinfo.store.depot.DuplicateDepotEntryException
 
+import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex;
+
 
 class StorageSession {
 
     private final Logger logger = LoggerFactory.getLogger(StorageSession)
 
-    public static final String VIA_META_FILE_NAME = "collector-via.entry"
+    public static final String VIA_META_RESOURCE = "collector-via.entry"
 
     StorageCredentials credentials
     Depot depot
-    DepotSession depotSession
-    CollectorLogSession logSession
     Collection<StorageHandler> storageHandlers =
             new ArrayList<StorageHandler>()
+    DepotSession depotSession
+    CollectorLogSession logSession
+    CompleteFeedEntryIdIndex completeFeedEntryIdIndex
 
     StorageSession(StorageCredentials credentials,
             Depot depot,
             Collection<StorageHandler> storageHandlers,
-            CollectorLogSession logSession) {
+            CollectorLogSession logSession,
+            CompleteFeedEntryIdIndex completeFeedEntryIdIndex) {
         this.credentials = credentials
         this.depot = depot
         this.storageHandlers = storageHandlers
         this.logSession = logSession
+        this.completeFeedEntryIdIndex = completeFeedEntryIdIndex
     }
 
     void close() {
@@ -155,15 +160,11 @@ class StorageSession {
     }
 
     static Entry getViaEntry(DepotEntry depotEntry) {
-        File viaEntryFile = depotEntry.getMetaFile(VIA_META_FILE_NAME)
+        InputStream viaEntryInStream = depotEntry.getMetaInputStream(VIA_META_RESOURCE)
         Entry viaEntry = null
-        InputStream viaEntryInStream = new FileInputStream(viaEntryFile)
         try {
             viaEntry = (Entry) Abdera.getInstance().getParser().parse(
                     viaEntryInStream).getRoot();
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException("Entry <"+depotEntry.getId() +
-                    "> is missing expected meta file <"+viaEntryFile+">.")
         } finally {
             viaEntryInStream.close()
         }
@@ -172,7 +173,6 @@ class StorageSession {
 
     static void setViaEntry(DepotEntry depotEntry,
             Feed sourceFeed, Entry sourceEntry) {
-        File viaEntryFile = depotEntry.getMetaFile(VIA_META_FILE_NAME)
         Entry viaEntry = sourceEntry.clone()
         // TODO:IMPROVE: remove tombstones; except del.id == depotEntry.id if deleted..
         // TODO: fail on missing sourceFeed.id..
@@ -180,7 +180,7 @@ class StorageSession {
         // TODO:IMPROVE: is this way of setting base URI enough?
         viaEntry.setBaseUri(viaEntry.getSource().getResolvedBaseUri())
         viaEntry.getSource().setBaseUri(null)
-        OutputStream viaEntryOutStream = new FileOutputStream(viaEntryFile)
+        OutputStream viaEntryOutStream = depotEntry.getMetaOutputStream(VIA_META_RESOURCE)
         try {
             viaEntry.writeTo(viaEntryOutStream)
         } finally {

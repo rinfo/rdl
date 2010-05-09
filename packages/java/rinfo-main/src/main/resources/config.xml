@@ -1,6 +1,6 @@
 <configuration>
-    <properties fileName="rinfo-main-common.properties"/>
     <override>
         <properties fileName="rinfo-main.properties"/>
+        <properties fileName="rinfo-main-common.properties"/>
     </override>
 </configuration>

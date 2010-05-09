@@ -20,10 +20,10 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
 
     Runnable batchCompletedCallback
 
-    private Storage storage
+    private FeedCollector feedCollector
 
-    FeedCollectScheduler(Storage storage) {
-        this.storage = storage
+    FeedCollectScheduler(FeedCollector feedCollector) {
+        this.feedCollector = feedCollector
         this.sourceFeedUrls = Collections.emptyList()
     }
 
@@ -53,9 +53,8 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     @Override
     protected void collectFeed(URL feedUrl, boolean lastInBatch) {
         def credentials = newStorageCredentials(feedUrl)
-        def session = storage.openSession(credentials)
-        FeedCollector.readFeed(session, feedUrl)
-        if (batchCompletedCallback != null) {
+        feedCollector.readFeed(feedUrl, credentials)
+        if (/* FIXME:? lastInBatch &&*/ batchCompletedCallback != null) {
             batchCompletedCallback.run()
         }
     }
