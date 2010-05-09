@@ -1,6 +1,7 @@
 package se.lagrummet.rinfo.store.depot;
 
-import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +28,10 @@ public interface DepotEntry {
     List<DepotContent> findContents(String forMediaType, String forLang);
     List<DepotContent> findEnclosures();
 
-    File getMetaFile(String fileName);
+    OutputStream getMetaOutputStream(String resourceName)
+        throws DepotWriteException;
+    InputStream getMetaInputStream(String resourceName)
+        throws DepotReadException;
 
     void create(Date createTime, List<SourceContent> sourceContents)
         throws DepotWriteException;

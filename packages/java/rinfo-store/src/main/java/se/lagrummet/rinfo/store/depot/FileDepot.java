@@ -29,8 +29,7 @@ public class FileDepot implements Depot {
         backend = new FileDepotBackend(this);
     }
 
-    public FileDepot(URI baseUri, File baseDir)
-            throws FileNotFoundException {
+    public FileDepot(URI baseUri, File baseDir) throws DepotWriteException {
         this();
         this.baseUri = baseUri;
         this.baseDir = baseDir;
@@ -55,12 +54,15 @@ public class FileDepot implements Depot {
     public Atomizer getAtomizer() { return atomizer; }
 
 
-    public void initialize() throws FileNotFoundException {
+    public void initialize() throws DepotWriteException {
         if (baseDir == null) {
             throw new IllegalStateException("baseDir has not been set.");
         }
-        if (!getBaseDir().exists()) {
-            baseDir.mkdir();
+        if (!baseDir.exists()) {
+            if (!baseDir.mkdirs()) {
+                throw new DepotWriteException(
+                        "Cannot create missing depot base directory: " + baseDir);
+            }
         }
         // TODO: checkConsistency();
         this.initialized = true;

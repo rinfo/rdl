@@ -106,6 +106,7 @@ class FileDepotTransactionTest extends Specification {
                 [ new SourceContent(tdu.exampleFile("icon.png"), null, null, "icon.png"),
                   new SourceContent(tdu.exampleFile("icon.png"), null, null, "images/icon.png") ]
             )
+        def storedModified = entry.lastModified()
         then:
         assert entry.hasHistory()
         entry.updated == updateTime
@@ -113,10 +114,15 @@ class FileDepotTransactionTest extends Specification {
         entry.findEnclosures().size() == 2
 
         when:
-        def storedModified = entry.lastModified()
-        entry.getMetaFile("TEST_META_FILE").setText("TEST")
+        def metaOut = entry.getMetaOutputStream("TEST_META_FILE")
+        metaOut << "TEST"
+        metaOut.close()
         then:
-        assert entry.getMetaFile("TEST_META_FILE").exists()
+        notThrown(DepotWriteException)
+        and:
+        def metaIn = entry.getMetaInputStream("TEST_META_FILE")
+        metaIn.text == "TEST"
+        metaIn.close()
 
         when:
         Thread.sleep(1000) // to get newer fs timestamps..
@@ -134,8 +140,10 @@ class FileDepotTransactionTest extends Specification {
         entry.findEnclosures().size() == 1
         updateTime < entry.updated
         storedModified < entry.lastModified()
-        !entry.getMetaFile("TEST_META_FILE").exists()
+        and:
         assert entry.hasHistory()
+        and:
+        entry.getMetaInputStream("TEST_META_FILE") == null
 
         when:
         entry.rollback()
@@ -145,7 +153,10 @@ class FileDepotTransactionTest extends Specification {
         entry.findContents().size() == 2
         entry.lastModified() == storedModified
         entry.findEnclosures().size() == 2
-        assert entry.getMetaFile("TEST_META_FILE").exists()
+        and:
+        metaIn = entry.getMetaInputStream("TEST_META_FILE")
+        metaIn.text == "TEST"
+        metaIn.close()
         // TODO:IMPROVE: verify path of enclosures..
     }
 

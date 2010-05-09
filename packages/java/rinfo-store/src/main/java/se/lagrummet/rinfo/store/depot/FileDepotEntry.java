@@ -257,13 +257,41 @@ public class FileDepotEntry implements DepotEntry {
     }
 
     /**
-     * A generic metadata file for usage specific needs. Can be used e.g.
-     * to store additional information about creation source etc.
+     * Create a generic metadata resource for usage specific needs. Can be used
+     * e.g. to store additional information about creation source.
      */
-    public File getMetaFile(String fileName) {
-        return new File(getMetaDir(), fileName);
+    public OutputStream getMetaOutputStream(String resourceName)
+            throws DepotWriteException {
+        if (!genericMetaDir.exists()) {
+            if (!genericMetaDir.mkdir()) {
+                throw new DepotWriteException(
+                        "Cannot create entry meta directory: " + genericMetaDir);
+            }
+        }
+        try {
+            return new FileOutputStream(new File(genericMetaDir, resourceName));
+        } catch (FileNotFoundException e) {
+            throw new DepotWriteException(e);
+        }
     }
 
+    /**
+     * Get a generic metadata stream if it has been previously created with
+     * {@link getMetaOutputStream}.
+     * @return An InputStream for the resource, or null if it doesn't exist.
+     */
+    public InputStream getMetaInputStream(String resourceName)
+            throws DepotReadException {
+        File metaFile = new File(genericMetaDir, resourceName);
+        if (!metaFile.exists()) {
+            return null;
+        }
+        try {
+            return new FileInputStream(metaFile);
+        } catch (FileNotFoundException e) {
+            throw new DepotReadException(e);
+        }
+    }
 
     protected String computeEntryUriPath() throws URISyntaxException {
         URI uri = getId();
@@ -322,13 +350,6 @@ public class FileDepotEntry implements DepotEntry {
         return new File(entryContentDir, LOCKED_FILE_NAME);
     }
 
-    protected File getMetaDir() {
-        if (!genericMetaDir.exists()) {
-            genericMetaDir.mkdir();
-        }
-        return genericMetaDir;
-    }
-
     /* TODO:? To call when modified (to re-read props from manifest..)
     protected void reset() { manifest = null; entryUriPath = null; }
     */
@@ -354,7 +375,10 @@ public class FileDepotEntry implements DepotEntry {
                 // TODO:? if entry is deleted, spec. that it can be recreated.
                 throw new DuplicateDepotEntryException(this);
             }
-            entryContentDir.mkdir();
+            if (!entryContentDir.mkdir()) {
+                throw new DepotWriteException(
+                        "Cannot create entry content directory: " + entryContentDir);
+            }
             lock();
 
             Entry manifest = Abdera.getInstance().newEntry();
@@ -588,7 +612,8 @@ public class FileDepotEntry implements DepotEntry {
     }
 
 
-    protected void rollOffToHistory() throws DepotIndexException, IOException {
+    protected void rollOffToHistory() throws DepotIndexException,
+            DepotWriteException, IOException {
         rollOffToDir(newHistoryDir());
     }
 
@@ -596,7 +621,8 @@ public class FileDepotEntry implements DepotEntry {
      * Moves the current content (including manifest and enclosures) to the
      * given directory.
      */
-    protected void rollOffToDir(File destDir) throws IOException {
+    protected void rollOffToDir(File destDir)
+            throws DepotWriteException, IOException {
         // NOTE: this means existing content not in the update is removed.
         //      - *including enclosures*
 
@@ -645,7 +671,8 @@ public class FileDepotEntry implements DepotEntry {
         return foundSubEntry;
     }
 
-    protected void restoreFromRollOff(File rolledOffDir) throws IOException {
+    protected void restoreFromRollOff(File rolledOffDir) throws DepotWriteException,
+            IOException {
         FileUtils.moveFileToDirectory(new File(rolledOffDir, MANIFEST_FILE_NAME),
                 entryContentDir, false);
 
@@ -698,10 +725,13 @@ public class FileDepotEntry implements DepotEntry {
         return dir;
     }
 
-    protected File getMovedEnclosuresDir(File destDir) {
+    protected File getMovedEnclosuresDir(File destDir) throws DepotWriteException {
         File enclosuresDir = new File(destDir, MOVED_ENCLOSURES_DIR_NAME);
         if (!enclosuresDir.exists()) {
-            enclosuresDir.mkdir();
+            if (!enclosuresDir.mkdir()) {
+                throw new DepotWriteException(
+                        "Cannot create moved enclosure directory: " + enclosuresDir);
+            }
         }
         return enclosuresDir;
     }

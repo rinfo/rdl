@@ -85,7 +85,10 @@ public class FileDepotSession implements DepotSession {
         File feedDir = new File(
                 depot.baseDir, depot.atomizer.getFeedPath());
         if (!feedDir.exists()) {
-            feedDir.mkdir();
+            if (!feedDir.mkdir()) {
+                throw new DepotWriteException(
+                        "Cannot create entry content directory: " + feedDir);
+            }
         }
         DepotEntryBatch entryBatch = makeEntryBatch();
 
