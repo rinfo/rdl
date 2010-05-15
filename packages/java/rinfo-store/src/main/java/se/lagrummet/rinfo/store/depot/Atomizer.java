@@ -169,12 +169,17 @@ public class Atomizer {
     }
 
     public String getFeedSkeletonPath() { return feedSkeletonPath; }
-    void setFeedSkeletonPath(String feedSkeletonPath) throws IOException {
+    public void setFeedSkeletonPath(String feedSkeletonPath) throws IOException {
         this.feedSkeletonPath = feedSkeletonPath;
         if (feedSkeletonPath != null && !feedSkeletonPath.equals("")) {
-            feedSkeleton = (Feed) Abdera.getInstance().getParser().parse(
-                    ConfigurationUtils.locate(feedSkeletonPath).openStream()
-                ).getRoot();
+            InputStream ins =
+                ConfigurationUtils.locate(feedSkeletonPath).openStream();
+            try {
+                feedSkeleton = (Feed)
+                    Abdera.getInstance().getParser().parse(ins).getRoot();
+            } finally {
+                ins.close();
+            }
         }
     }
 
@@ -254,16 +259,20 @@ public class Atomizer {
 
     public Feed getFeed(String uriPath) throws IOException {
         File feedFile = depot.backend.getFeedFile(uriPath);
+        Feed feed = null;
         try {
             InputStream inStream = new FileInputStream(feedFile);
-            Feed feed = (Feed) Abdera.getInstance().getParser().parse(
-                    inStream).getRoot();
-            feed.complete();
-            inStream.close();
-            return feed;
+            try {
+                feed = (Feed) Abdera.getInstance().getParser().parse(
+                        inStream).getRoot();
+                feed.complete();
+            } finally {
+                inStream.close();
+            }
         } catch (FileNotFoundException e) {
             return null;
         }
+        return feed;
     }
 
     public Feed getPrevArchiveAsFeed(Feed feed) throws IOException {
@@ -308,12 +317,15 @@ public class Atomizer {
             FileUtils.forceMkdir(feedDir);
         }
         OutputStream outStream = new FileOutputStream(feedFile);
-        if (prettyXml) {
-            feed.writeTo("prettyxml", outStream);
-        } else {
-            feed.writeTo(outStream);
+        try {
+            if (prettyXml) {
+                feed.writeTo("prettyxml", outStream);
+            } else {
+                feed.writeTo(outStream);
+            }
+        } finally {
+            outStream.close();
         }
-        outStream.close();
     }
 
     protected void indexEntry(Feed feed, FileDepotEntry depotEntry)
