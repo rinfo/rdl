@@ -31,13 +31,13 @@ public class FileDepotEntry implements DepotEntry {
     public static final String MOVED_ENCLOSURES_DIR_NAME = "enclosures";
     public static final String ROLLOFF_DIR_NAME = "TEMP_ROLLOFF";
 
-    protected static IOFileFilter NON_ENTRY_DIR_FILTER =  new AbstractFileFilter() {
+    protected static final IOFileFilter NON_ENTRY_DIR_FILTER =  new AbstractFileFilter() {
         public boolean accept(File it) {
             return !isEntryDir(it.getParentFile()) && !it.isHidden();
         }
     };
 
-    protected static FileFilter PUBLIC_FILE_FILTER = new FileFilter() {
+    protected static final FileFilter PUBLIC_FILE_FILTER = new FileFilter() {
         public boolean accept(File it) {
             return !it.isHidden() && !it.getName().equals(ENTRY_CONTENT_DIR_NAME);
         }
@@ -321,8 +321,11 @@ public class FileDepotEntry implements DepotEntry {
     protected void saveManifest(Entry manifest) throws DepotWriteException {
         try {
             OutputStream outStream = new FileOutputStream(getManifestFile());
-            manifest.writeTo(outStream);
-            outStream.close();
+            try {
+                manifest.writeTo(outStream);
+            } finally {
+                outStream.close();
+            }
         } catch (IOException e) {
             throw new DepotWriteException(e);
         }
@@ -457,7 +460,7 @@ public class FileDepotEntry implements DepotEntry {
             if (isDeleted()) {
                 throw new DeletedDepotEntryException(this);
             }
-            getDeletedMarkerFile().createNewFile();
+            createMarkerFile(getDeletedMarkerFile());
             Entry manifest = getEntryManifest();
             manifest.setUpdated(deleteTime);
 
@@ -479,19 +482,15 @@ public class FileDepotEntry implements DepotEntry {
 
 
     public void lock() throws DepotWriteException {
-        try {
-            getLockedMarkerFile().createNewFile();
-        } catch (IOException e) {
-            throw new DepotWriteException(e);
-        }
+        createMarkerFile(getLockedMarkerFile());
     }
 
-    public void unlock() {
-        getLockedMarkerFile().delete();
+    public void unlock() throws DepotWriteException {
+        removeMarkerFile(getLockedMarkerFile());
     }
 
 
-    // TODO: these (rollback/restorePrevious/wipeout) modify *in place*
+    // TODO:? these (rollback/restorePrevious/wipeout) modify *in place*
     // and must not have been indexed!
 
     public boolean hasHistory() {
@@ -509,7 +508,8 @@ public class FileDepotEntry implements DepotEntry {
 
     public void wipeout() throws DepotWriteException, DepotIndexException {
         try {
-            lock();
+            if (!isLocked())
+                lock();
             rollOffToHistory();
             FileUtils.deleteDirectory(entryContentDir);
             FilePathUtil.removeEmptyTrail(
@@ -522,7 +522,8 @@ public class FileDepotEntry implements DepotEntry {
     protected void restorePrevious()
             throws DepotWriteException, DepotIndexException {
         try {
-            lock();
+            if (!isLocked())
+                lock();
             File rollOffDir = newRollOffDir();
             rollOffToDir(rollOffDir);
             // TODO:IMPROVE: use a "HistoryEntry" and "update" from that?
@@ -734,6 +735,24 @@ public class FileDepotEntry implements DepotEntry {
             }
         }
         return enclosuresDir;
+    }
+
+    protected void createMarkerFile(File markerFile) throws DepotWriteException {
+        try {
+            if (!markerFile.createNewFile()) {
+                throw new DepotWriteException(
+                        "Cannot create entry marker file " + markerFile);
+            }
+        } catch (IOException e) {
+            throw new DepotWriteException(e);
+        }
+    }
+
+    protected void removeMarkerFile(File markerFile) throws DepotWriteException {
+        if (!markerFile.delete()) {
+            throw new DepotWriteException(
+                    "Cannot remove entry marker file " + markerFile);
+        }
     }
 
 }

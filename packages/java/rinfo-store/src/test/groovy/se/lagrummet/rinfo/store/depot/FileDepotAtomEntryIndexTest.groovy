@@ -18,8 +18,7 @@ class FileDepotAtomEntryIndexTest extends Specification {
         when:
         def entry = depot.getEntry("/publ/1901/100")
         then:
-        entry.findContents(depot.pathHandler.
-                hintForMediaType("application/atom+xml;type=entry")).size() == 0
+        entry.findContents("application/atom+xml;type=entry").size() == 0
 
         when:
         depot.atomizer.generateAtomEntryContent(entry)

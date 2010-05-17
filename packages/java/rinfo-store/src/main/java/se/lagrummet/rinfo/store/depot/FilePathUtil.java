@@ -38,7 +38,9 @@ public class FilePathUtil {
             if (dir.list().length != 0) {
                 break;
             }
-            dir.delete();
+            if (!dir.delete()) {
+                throw new IOException("Failed to delete directory " + dir);
+            }
             dir = dir.getParentFile();
         }
     }

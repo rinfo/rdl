@@ -23,19 +23,19 @@ public class DatePathUtil {
     public static final String SEC_NAME_REGEX = "^T\\d{2}_\\d{2}_\\d{2}Z$";
 
 
-    public static FileFilter YEAR_DIR_FILTER = new FileFilter() {
+    public static final FileFilter YEAR_DIR_FILTER = new FileFilter() {
         public boolean accept(File it) {
             return it.isDirectory() && it.getName().matches(YEAR_NAME_REGEX);
         }
     };
 
-    public static FileFilter DAY_DIR_FILTER = new FileFilter() {
+    public static final FileFilter DAY_DIR_FILTER = new FileFilter() {
         public boolean accept(File it) {
             return it.isDirectory() && it.getName().matches(DAY_NAME_REGEX);
         }
     };
 
-    public static FileFilter SEC_DIR_FILTER = new FileFilter() {
+    public static final FileFilter SEC_DIR_FILTER = new FileFilter() {
         public boolean accept(File it) {
             return it.isDirectory() && it.getName().matches(SEC_NAME_REGEX);
         }

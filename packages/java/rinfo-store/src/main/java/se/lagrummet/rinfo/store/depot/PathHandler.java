@@ -2,6 +2,8 @@ package se.lagrummet.rinfo.store.depot;
 
 import java.util.Map;
 
+import java.net.FileNameMap;
+
 
 public interface PathHandler {
 
@@ -16,6 +18,18 @@ public interface PathHandler {
      * bidirectional map(s).
      */
     void setNamedMediaTypes(Map<String, String> namedMediaTypes);
+
+    /**
+     * A companion file name map used to compute a media type from the
+     * (extension of) a resource name (or path). Used by computeMediaType to
+     * provide full read support for getting media types from names. In
+     * comparison, namedMediaTypes are intended for specific control of
+     * canonical names (and are not explictly tied to the extension of a
+     * resource name).
+     */
+    FileNameMap getFileNameMap();
+
+    void setFileNameMap(FileNameMap fileNameMap);
 
     ParsedPath parseUriPath(String uriPath);
 

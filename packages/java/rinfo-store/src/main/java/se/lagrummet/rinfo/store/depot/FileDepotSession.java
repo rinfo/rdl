@@ -130,7 +130,7 @@ public class FileDepotSession implements DepotSession {
         }
     }
 
-    protected void commitPending() {
+    protected void commitPending() throws DepotWriteException {
         if (pending != null) {
             if (batch == null) {
                 batch = makeEntryBatch();

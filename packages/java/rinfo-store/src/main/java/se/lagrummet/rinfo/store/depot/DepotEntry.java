@@ -52,7 +52,7 @@ public interface DepotEntry {
         throws DeletedDepotEntryException, DepotIndexException, DepotWriteException;
 
     void lock() throws DepotWriteException;
-    void unlock();
+    void unlock() throws DepotWriteException;
     void rollback() throws DepotWriteException;
     boolean hasHistory();
     void wipeout() throws DepotWriteException, DepotIndexException;

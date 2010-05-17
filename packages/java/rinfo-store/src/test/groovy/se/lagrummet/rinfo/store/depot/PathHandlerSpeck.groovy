@@ -81,8 +81,8 @@ class PathHandlerSpeck extends Specification {
         [computed, mediaType] << [
             [pathHandler.computeMediaType("some.pdf"), "application/pdf"],
             [pathHandler.computeMediaType("some.png"), "image/png"],
-            //[pathHandler.computeMediaType("some.css"), "text/css"],
-            //[pathHandler.computeMediaType("some.js"), "text/javascript"],
+            [pathHandler.computeMediaType("some.css"), "text/css"],
+            [pathHandler.computeMediaType("some.js"), "application/javascript"],
         ]
     }
 

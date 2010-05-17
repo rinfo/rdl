@@ -1,6 +1,10 @@
 package se.lagrummet.rinfo.store.depot;
 
+import java.io.InputStream;
+import java.io.IOException;
+
 import java.net.URLConnection;
+import java.net.FileNameMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,11 +14,13 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections.BidiMap;
 import org.apache.commons.collections.bidimap.TreeBidiMap;
 
+import org.apache.commons.configuration.ConfigurationUtils;
+
 
 public class DefaultPathHandler implements PathHandler {
 
-    static final Pattern URI_PATTERN = Pattern.compile(
-            "(/([^/]+)\\S*?)(?:/([^/,]+)(?:,([a-z]{2}))?)?");
+    static final String DEFAULT_MIME_TYPES_PATH = "mime.types";
+    //static final String DEFAULT_NAMED_MEDIA_TYPES_PATH = "named-media-types.properties";
 
     static final Map<String, String> DEFAULT_NAMED_MEDIA_TYPES =
             new HashMap<String, String>();
@@ -28,11 +34,29 @@ public class DefaultPathHandler implements PathHandler {
         DEFAULT_NAMED_MEDIA_TYPES.put("pdf", "application/pdf");
     };
 
-    private TreeBidiMap namedMediaTypes =
-            new TreeBidiMap();
+    private FileNameMap fileNameMap;
+
+    private TreeBidiMap namedMediaTypes = new TreeBidiMap();
+
+    static final Pattern URI_PATTERN = Pattern.compile(
+            "(/([^/]+)\\S*?)(?:/([^/,]+)(?:,([a-z]{2}))?)?");
 
     public DefaultPathHandler() {
+        try {
+            fileNameMap = createMimeTypesMap(DEFAULT_MIME_TYPES_PATH);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        // TODO: parse from DEFAULT_NAMED_MEDIA_TYPES_PATH
         setNamedMediaTypes(DEFAULT_NAMED_MEDIA_TYPES);
+    }
+
+    public FileNameMap getFileNameMap() {
+        return fileNameMap;
+    }
+
+    public void setFileNameMap(FileNameMap fileNameMap) {
+        this.fileNameMap = fileNameMap;
     }
 
     public Map<String, String> getNamedMediaTypes() {
@@ -110,20 +134,33 @@ public class DefaultPathHandler implements PathHandler {
     }
 
     public String computeMediaType(String path) {
-        // FIXME: Knows *very* little! Make configurable..
-        // To reconfig: System.setProperty("content.types.user.table",
-        // configuredContentTypesPath"), then store the FileNameMap..
-        String mtype = URLConnection.getFileNameMap().getContentTypeFor(path);
-        // TODO: this is too simple. Unify or only via some fileExtensionUtil..
-        if (mtype==null) {
-            String[] dotSplit = path.split("\\.");
+        String mtype = fileNameMap.getContentTypeFor(path);
+        if (mtype != null) {
+            return mtype;
+        } else {
+            // TODO:? really fall back to namedMediaTypes?
+            int dotIndex = path.lastIndexOf('.');
+            if (dotIndex == -1)
+                return null;
+            String ext = path.substring(dotIndex+1);
             try {
-                mtype = mediaTypeForHint( dotSplit[dotSplit.length-1] );
+                return mediaTypeForHint(ext);
             } catch (UnknownMediaTypeException e) {
-                ; // pass
+                ;
             }
         }
-        return mtype;
+        return null;
     }
 
+    public FileNameMap createMimeTypesMap(String mimeTypesPath) throws IOException {
+        MimeTypesMap mimeTypesMap = new MimeTypesMap();
+        InputStream ins =
+            ConfigurationUtils.locate(mimeTypesPath).openStream();
+        try {
+            mimeTypesMap.parse(ins);
+        } finally {
+            ins.close();
+        }
+        return mimeTypesMap;
+    }
 }

@@ -93,7 +93,7 @@ public class FileDepot implements Depot {
     public List<DepotContent> findEntryContents(String uriPath)
             throws DepotReadException {
         ParsedPath parsedPath = pathHandler.parseUriPath(uriPath);
-        if (parsedPath==null || parsedPath.equals("")) {
+        if (parsedPath==null) {
             return null;
         }
         return findEntryContents(parsedPath);
