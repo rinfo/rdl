@@ -190,7 +190,7 @@
 
     <link rel="alternate" href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2006-6"
           type="application/rdf+xml"
-          length="2317" le:md5="e4e242a358b72405fdbf5ba8bc044b1a"/>
+          length="2398" le:md5="ec2c4fab215dfa281279ac5ca253b50f"/>
     <!-- Viktig!
 
       Exakt en representation som innehåller serialiserad RDF måste finnas för 
@@ -220,7 +220,7 @@
     <link rel="alternate"
           href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
           type="application/rdf+xml"
-          length="2414" le:md5="8051c695ef087fcc1183e51694c9c8c1"/>
+          length="2493" le:md5="af7e5154dc653296506564d0b038697c"/>
   </entry>
 
 </feed>

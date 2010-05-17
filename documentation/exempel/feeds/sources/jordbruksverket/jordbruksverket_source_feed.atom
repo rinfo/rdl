@@ -31,7 +31,7 @@
 		<!-- länk till metadataposten (påhittad i detta exempel) -->
 		<link rel="alternate" href="https://www.jordbruksverket.se/dokument/juridik/2009/SJVFS-2009_44.rdf"
 			type="application/rdf+xml"
-			length="2880" le:md5="c7d50f4ca1931b20a329e847b3978562"/>
+			length="2956" le:md5="094afba69afa1d0f2867f498bd86f0e0"/>
 	</entry>
 
 	<entry>
@@ -48,6 +48,6 @@
 		<!-- länken till var man kan hämta metadataposten (påhittad)-->
 		<link rel="alternate" href="https://www.jordbruksverket.se/dokument/juridik/2009/SJVFS-2009_26.rdf"
 			type="application/rdf+xml"
-			length="3060" le:md5="0fe8504dd8e5fd8e6c668744a17fee55"/>
+			length="3136" le:md5="953ad5035d143381aba346d4e6d502aa"/>
 	</entry>
 </feed>

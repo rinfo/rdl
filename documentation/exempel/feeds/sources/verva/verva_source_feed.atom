@@ -42,7 +42,7 @@
     <content type="application/pdf" src="/publ/vervafs/2007/2/data.pdf"
              le:md5="a2c705219d41b8bb2340dea4d635b3ad"/>
     <link rel="alternate" href="/publ/vervafs/2007/2/data.rdf" type="application/rdf+xml"
-          length="3042" le:md5="415817c8ff6cee95fea95c0a150ca541"/>
+          length="3111" le:md5="3592ad457b1abd90f6074bf411fc0aa0"/>
     <!--
     <link rel="alternate" href="/publ/vervafs/2007/2/data.xhtml" hreflang="sv" type="application/xhtml+xml"
           length="12345" le:md5="7b7fc831c784e78926aec193ff8d399b"/>
@@ -63,7 +63,7 @@
     <content type="application/pdf" src="/publ/vervafs/2007/1/data.pdf"
              le:md5="c7d1e46c87388ae926d02d4fd8e51754"/>
     <link rel="alternate" href="/publ/vervafs/2007/1/data.rdf" type="application/rdf+xml"
-          length="2135" le:md5="1b45ba1e5f9a0d93b08e0587d2feaadf"/>
+          length="2216" le:md5="37eb83dc9a1ab2ed795b4d052d40f87e"/>
     <!--
     <link rel="alternate" href="/publ/vervafs/2007/1/data.xhtml" hreflang="sv" type="application/xhtml+xml"
           length="12345" le:md5="db2ab4bb25c4bd825604023f019ec033"/>

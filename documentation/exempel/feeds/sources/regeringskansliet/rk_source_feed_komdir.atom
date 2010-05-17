@@ -140,7 +140,7 @@
 
         <content src="http://www.sou.gov.se/kommittedirektiv/2009/dir2009_71.xhtml"
             type="application/xhtml+xml"
-            le:md5="5aeac6634ce3f8b717c88e94b8a77955"/>
+            le:md5="47527fb26a401eec8e51ecfc7f17b89c"/>
         <!-- Viktig!
 
         En primär representation ska representera det faktiska 
@@ -152,7 +152,7 @@
         <link rel="alternate"
             href="http://www.sou.gov.se/kommittedirektiv/2009/dir2009_71.rdf"
             type="application/rdf+xml"
-            length="2326" le:md5="c9dad2e744c38d2ec94717d1955593ce"/>
+            length="2405" le:md5="024a8688a8d53e401f93700471f02886"/>
         <!-- Viktig!
 
         Exakt en representation som innehåller serialiserad RDF måste finnas för 

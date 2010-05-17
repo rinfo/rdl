@@ -185,7 +185,7 @@
 
     <link rel="alternate" href="https://www.arbetsformedlingen.se/regelbok/showrdf?doc=2008-8"
           type="application/rdf+xml"
-          length="1891" le:md5="fd2528f6086b334d5c08d1f31c71e30e"/>
+          length="1962" le:md5="0516b3937e75b84186fd87ebf5c18a6b"/>
     <!-- Viktig!
 
       Exakt en representation som innehåller serialiserad RDF måste finnas för 
@@ -215,7 +215,7 @@
     <link rel="alternate"
           href="https://www.arbetsformedlingen.se/regelbok/showrdf?doc=2007-28"
           type="application/rdf+xml"
-          length="1572" le:md5="b42d02896d3160faa6943b8b4913586d"/>
+          length="1646" le:md5="aead260391513a229b86af23d83ea9d5"/>
   </entry>
 
   <entry>
@@ -230,7 +230,7 @@
     <link rel="alternate"
           href="https://www.arbetsformedlingen.se/regelbok/showrdf?doc=2007-2"
           type="application/rdf+xml"
-          length="1648" le:md5="8d8a59953aec847a68796a8e5c513861"/>
+          length="1721" le:md5="32a92f2cc4d5224a5bdc116089a3e0b1"/>
   </entry>
 
 </feed>
