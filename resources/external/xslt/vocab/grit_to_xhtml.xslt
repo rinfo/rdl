@@ -180,7 +180,7 @@
           <h2>Reference</h2>
           <a class="tool" href="#main">[top]</a>
         </div>
-        <table>
+        <table class="reference">
           <tr>
             <th>Term Name</th>
             <th>Type</th>
@@ -191,10 +191,10 @@
             <xsl:sort select="rdfs:label"/>
             <xsl:sort select="@uri"/>
             <tr>
-              <td>
+              <td class="ref">
                 <xsl:apply-templates mode="ref" select="."/>
               </td>
-              <td>
+              <td class="type">
                 <xsl:call-template name="type-ref"/>
               </td>
               <td><xsl:apply-templates select="rdfs:comment"/></td>

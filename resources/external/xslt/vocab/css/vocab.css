@@ -111,7 +111,7 @@ table th, table td {
 
 #toc {
     background-color: #eff;
-    border: 0.8pt dashed #777;
+    border: 0.8pt dotted #777;
     float: right;
     font-size: 80%;
     margin: 0 0 2em 2em;
@@ -206,7 +206,7 @@ a.tool {
 /**/
 
 #defs dl {
-    border: 0.8pt dashed #777;
+    border: 0.8pt dotted #777;
     background-color: #eff;
     display: block;
     list-style: none;
@@ -251,7 +251,7 @@ div.def {
 }
 div.def .header {
     /*
-    border: 0.8pt dashed #777;
+    border: 0.8pt dotted #777;
     border-bottom: none;
     */
     margin: 0 -1em;
@@ -311,5 +311,15 @@ div.def.class {
 div.def.class dl.termdef .raw {
     background-color: #f1f1e9;
     border-color: #e1e1d9;
+}
+
+table.reference th {
+    background-color: #eee;
+}
+table.reference td.ref {
+    background-color: #eff;
+}
+table.reference td.type {
+    background-color: #fffff6;
 }
 
