@@ -3,7 +3,7 @@ package se.lagrummet.rinfo.store.depot
 import spock.lang.*
 
 
-class PathHandlerSpeck extends Specification {
+class PathHandlerSpec extends Specification {
 
     @Shared pathHandler = new DefaultPathHandler()
 

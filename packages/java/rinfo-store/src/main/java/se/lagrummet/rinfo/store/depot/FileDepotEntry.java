@@ -487,6 +487,8 @@ public class FileDepotEntry implements DepotEntry {
         // Should delete wipe history immediately?
         wipeout();
         /*
+        // NOTE: this is a variant for keeping history (but incomplete; create
+        // will complain since entry path exists..)
         lock();
         File historyDir = rollOffToHistory();
         try {

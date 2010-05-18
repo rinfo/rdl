@@ -4,7 +4,7 @@ import spock.lang.*
 import org.apache.abdera.ext.history.FeedPagingHelper as FPH
 
 
-class DepotAtomIndexSpeck extends Specification {
+class DepotAtomIndexSpec extends Specification {
 
     @Shared Depot depot
     @Shared Atomizer atomizer
