@@ -15,8 +15,10 @@ import org.openrdf.repository.RepositoryConnection;
 public class RepositoryHandlerTest extends TestCase {
 
     static List<String> TEST_PROPERTIES_FILES = Arrays.asList(
-            "test-rdf-repo-native.properties",
-            "test-rdf-repo-http.properties");
+            "test-rdf-repo-native.properties");
+    // TODO: see integration tests note below.
+    //        "test-rdf-repo-native.properties",
+    //        "test-rdf-repo-http.properties");
 
     static String TEST_DATA_DIR = "target/sesame-test-data";
     static String TEST_REMOTE_SERVER_URL = "http://localhost:8080/openrdf-sesame";
@@ -42,13 +44,15 @@ public class RepositoryHandlerTest extends TestCase {
         testAddDelete(createLocalRepositoryHandler("native", null));
     }
 
-    public void testRemoteSesameMemory() throws Exception {
-        testAddDelete(createRemoteRepositoryHandler("memory", null));
-    }
+    // TODO: as separate integration tests, or start a sesame server in-process
+    //
+    //public void testRemoteSesameMemory() throws Exception {
+    //    testAddDelete(createRemoteRepositoryHandler("memory", null));
+    //}
 
-    public void testRemoteSesameNative() throws Exception {
-        testAddDelete(createRemoteRepositoryHandler("native", null));
-    }
+    //public void testRemoteSesameNative() throws Exception {
+    //    testAddDelete(createRemoteRepositoryHandler("native", null));
+    //}
 
     public void testConfiguredViaProperties() throws Exception {
         for (String propsFilePath : TEST_PROPERTIES_FILES) {
