@@ -7,7 +7,7 @@ import se.lagrummet.rinfo.store.depot.DepotContent
 import se.lagrummet.rinfo.store.depot.DepotEntry
 
 
-class SourceFeedsConfigurationSpeck extends Specification {
+class SourceFeedsConfigurationSpec extends Specification {
 
     def sourceFeedsEntryId = new URI("http://example.org/sources")
     def sourceFeedUrls = [

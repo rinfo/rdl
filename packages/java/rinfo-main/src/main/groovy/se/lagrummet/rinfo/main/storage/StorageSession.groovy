@@ -147,10 +147,15 @@ class StorageSession {
     }
 
     void deleteEntry(Feed sourceFeed, URI entryId, Date sourceDeletedDate) {
-        DepotEntry depotEntry = depot.getEntry(entryId)
+        DepotEntry depotEntry = depot.getEntryOrDeletedEntry(entryId)
+        // TODO:? could this mean we have an error causing loss of collector metadata?
         if (depotEntry == null) {
-            // TODO: means we have lost collector metadata?
             logger.warn("Could not delete entry, missing <${entryId}>.")
+            return
+        }
+        if (depotEntry.isDeleted()) {
+            logger.warn("Not deleting already deleted entry <${entryId}>.")
+            return
         }
         logger.info("Deleting entry <${entryId}>.")
         // TODO:? saveDeletionMetaInfo? (smart deletion detect; e.g. feed + tombstone)

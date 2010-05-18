@@ -13,7 +13,7 @@ import se.lagrummet.rinfo.main.storage.StorageSession
 import static se.lagrummet.rinfo.main.storage.EntryPathMapper.DCT_IS_FORMAT_OF
 
 
-class EntryPathMapperSpeck extends Specification {
+class EntryPathMapperSpec extends Specification {
 
     static abdera = Abdera.instance
     @Shared epm = new EntryPathMapper(new DefaultPathHandler())

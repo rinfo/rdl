@@ -28,7 +28,7 @@ import se.lagrummet.rinfo.main.storage.log.DeletedEntryEvent
 import se.lagrummet.rinfo.main.storage.log.ErrorEvent
 
 
-class CollectorLogSpeck extends Specification {
+class CollectorLogSpec extends Specification {
 
     @Shared CollectorLog collectorLog
     CollectorLogSession logSession

@@ -9,7 +9,7 @@ import se.lagrummet.rinfo.main.storage.FeedCollectScheduler
 import se.lagrummet.rinfo.main.storage.Storage
 
 
-class ComponentsSpeck extends Specification {
+class ComponentsSpec extends Specification {
 
     def "should fail on bad config"() {
         when:

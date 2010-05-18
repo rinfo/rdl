@@ -16,7 +16,7 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.DepotEntryBatch
 
 
-class StorageSessionSpeck extends Specification {
+class StorageSessionSpec extends Specification {
 
     StorageSession session
 
@@ -74,7 +74,7 @@ class StorageSessionSpeck extends Specification {
         DepotEntry depotEntry = Mock()
         mockupDepotEntry(depotEntry)
         def entries = [:]
-        2 * depot.getEntry(entryId) >> { entries[entryId] }
+        2 * depot.getEntryOrDeletedEntry(entryId) >> { entries[entryId] }
         1 * depotSession.createEntry(entryId, _, _, _) >> {
             entries[entryId] = depotEntry
             return depotEntry
@@ -103,7 +103,7 @@ class StorageSessionSpeck extends Specification {
         and: "mock depot retrieval and update"
         DepotEntry depotEntry = Mock()
         mockupDepotEntry(depotEntry)
-        1 * depot.getEntry(entryId) >> depotEntry
+        1 * depot.getEntryOrDeletedEntry(entryId) >> depotEntry
         1 * depotSession.update(depotEntry, _, _, _)
 
         and: "create existing meta-info for entry"
@@ -137,7 +137,7 @@ class StorageSessionSpeck extends Specification {
         def deletedDate = new Date()
         depotEntry.getId() >> entryId
         depotEntry.getUpdated() >> deletedDate
-        1 * depot.getEntry(entryId) >> depotEntry
+        1 * depot.getEntryOrDeletedEntry(entryId) >> depotEntry
         1 * depotSession.delete(depotEntry, _)
 
         when: "an existing entry is written"

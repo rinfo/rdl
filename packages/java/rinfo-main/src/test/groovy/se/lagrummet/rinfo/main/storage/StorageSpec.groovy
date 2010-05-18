@@ -8,7 +8,7 @@ import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.memory.MemoryStore
 
 
-class StorageSpeck extends Specification {
+class StorageSpec extends Specification {
 
     Depot depot = Mock()
     CollectorLog collectorLog = Mock()

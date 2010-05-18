@@ -3,7 +3,7 @@ package se.lagrummet.rinfo.main.storage
 import spock.lang.*
 
 
-class FeedCollectorSpeck extends Specification {
+class FeedCollectorSpec extends Specification {
 
     def "should collect new since last"() {
     }

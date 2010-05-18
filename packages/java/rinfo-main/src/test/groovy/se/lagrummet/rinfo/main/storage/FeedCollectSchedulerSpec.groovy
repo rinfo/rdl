@@ -3,7 +3,7 @@ package se.lagrummet.rinfo.main.storage
 import spock.lang.*
 
 
-class FeedCollectSchedulerSpeck extends Specification {
+class FeedCollectSchedulerSpec extends Specification {
 
     def "collect scheduler should add adminFeedUrl to sourceFeedUrls"() {
         setup:
