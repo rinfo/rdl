@@ -34,5 +34,5 @@ Running as war::
 
 Manually pinging rinfo-main to collect from a test source::
 
-    $ curl --data "feed=http://localhost:8280/admin/feed/current" http://localhost:8180/collector
+    $ curl --data "feed=http://localhost:8280/feed/current" http://localhost:8180/collector
 

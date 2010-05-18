@@ -67,11 +67,13 @@ class StorageSession {
     }
 
     boolean hasCollected(Entry sourceEntry) {
-        return hasCollected(sourceEntry, depot.getEntry(sourceEntry.getId().toURI()))
+        return hasCollected(sourceEntry,
+                depot.getEntryOrDeletedEntry(sourceEntry.getId().toURI()))
     }
 
     boolean hasCollected(Entry sourceEntry, DepotEntry depotEntry) {
-        return (depotEntry != null && sourceIsNotAnUpdate(sourceEntry, depotEntry))
+        return (depotEntry != null && !depotEntry.isDeleted() &&
+                sourceIsNotAnUpdate(sourceEntry, depotEntry))
     }
 
     boolean storeEntry(Feed sourceFeed, Entry sourceEntry,
@@ -79,7 +81,7 @@ class StorageSession {
 
         URI entryId = sourceEntry.getId().toURI()
         logger.info("Examining entry <${entryId}>..")
-        DepotEntry depotEntry = depot.getEntry(entryId)
+        DepotEntry depotEntry = depot.getEntryOrDeletedEntry(entryId)
 
         // NOTE: Needed since even if hasCollected is true (via stopOnEntry),
         // there may be several entries with the same timestamp.
@@ -91,7 +93,11 @@ class StorageSession {
             return true
         }
 
-        boolean doCreate = (depotEntry == null)
+        boolean doCreate = (depotEntry == null || depotEntry.isDeleted())
+        if (depotEntry != null && depotEntry.isDeleted()) {
+            depotEntry.resurrect()
+        }
+
         Date timestamp = new Date()
         try {
             if (doCreate) {
@@ -102,8 +108,8 @@ class StorageSession {
                 // NOTE: If source has been collected but appears as newly published:
                 if (!(sourceEntry.getUpdated() > sourceEntry.getPublished())) {
                     logger.error("Collected entry <"+sourceEntry.getId() +
-                            " exists as <"+entryId +
-                            "> but does not appear as updated:" +
+                            "> exists as <"+entryId +
+                            "> but does not appear as updated. Source:" +
                             sourceEntry)
                     throw new DuplicateDepotEntryException(depotEntry);
                 }
@@ -161,6 +167,8 @@ class StorageSession {
 
     static Entry getViaEntry(DepotEntry depotEntry) {
         InputStream viaEntryInStream = depotEntry.getMetaInputStream(VIA_META_RESOURCE)
+        if (viaEntryInStream == null)
+            return null
         Entry viaEntry = null
         try {
             viaEntry = (Entry) Abdera.getInstance().getParser().parse(
