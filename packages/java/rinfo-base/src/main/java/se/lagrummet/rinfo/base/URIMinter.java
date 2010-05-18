@@ -233,7 +233,7 @@ public class URIMinter {
                 return null; // TODO: one value, fragmentTemplate etc..
             }
             String expanded = uriTemplate;
-            expanded = expanded.replace("{base}", base);
+            expanded = expanded.replace("{+base}", base);
             for (Map.Entry<String,String> entry : matches.entrySet()) {
                 String var = "{"+entry.getKey()+"}";
                 String value = scheme.translateValue(entry.getValue());
