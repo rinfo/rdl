@@ -56,7 +56,6 @@ def createServableSources(buildDir, publicServer, docsBase, feedBase) {
         println "Feed <${it.name}>:"
         def feedDirName = (feed.id =~ /tag:([^,]+),/)[0][1]
         def feedPath = feedDirName+"/current.atom"
-        feedPaths << feedPath
 
         feed.links.each {
             if (it.rel == "self")
@@ -88,6 +87,7 @@ def createServableSources(buildDir, publicServer, docsBase, feedBase) {
         def newFeedFile = new File(buildDir+'/'+feedPath)
         ant.mkdir(dir:newFeedFile.parentFile)
         newFeedFile.withWriter feed.&writeTo
+        feedPaths << feedPath
     }
 
     def f = new File(buildDir+"/sys/sources.rdf")
@@ -125,6 +125,11 @@ def collectionAndPathFor(coll) {
             return ["Ds", "Forarbeten/Ds"]
         case 'vervafs':
             return ["VervaFS", "Forfattningar/VervaFS"]
+        case 'nja':
+            return ["NJA", "Referat/NJA"]
+        // TODO:
+        //case 'konsolidering':
+        //    return ["KonsolideradeForfattningar"]
         case ~/.+fs$/:
             return [coll.toUpperCase(), "Forfattningar/${coll.toUpperCase()}"]
         default:
