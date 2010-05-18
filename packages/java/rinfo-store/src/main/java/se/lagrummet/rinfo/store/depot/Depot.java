@@ -21,6 +21,9 @@ public interface Depot {
     DepotEntry getEntry(URI entryUri) throws DepotReadException;
     DepotEntry getEntry(String uriPath) throws DepotReadException;
 
+    DepotEntry getEntryOrDeletedEntry(URI entryUri) throws LockedDepotEntryException;
+    DepotEntry getEntryOrDeletedEntry(String uriPath) throws LockedDepotEntryException;
+
     boolean hasEntry(URI entryUri);
     boolean hasEntry(String uriPath);
     boolean hasFeedView(String uriPath);

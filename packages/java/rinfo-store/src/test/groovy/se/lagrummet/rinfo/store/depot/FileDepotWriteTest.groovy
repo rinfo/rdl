@@ -269,12 +269,54 @@ class FileDepotWriteTest extends Specification {
         def entry = depot.getEntry(id)
         session.delete(entry, deleteTime)
         session.close()
-        entry = depot.backend.getUncheckedDepotEntry(id.path)
         then:
+        entry = depot.getEntryOrDeletedEntry(id.path)
         !entry.isLocked()
         entry.findContents("application/pdf").size() == 0
         entry.updated == deleteTime
         assert entry.isDeleted()
+
+        when:
+        entry = depot.getEntry(id)
+        then:
+        thrown(DeletedDepotEntryException)
+    }
+
+    def "should be able ro resurrect deleted entry"() {
+        given: "a deleted entry"
+        def id = new URI("http://example.org/publ/DEL/deleted_2")
+        def session = depot.openSession()
+        session.createEntry(id, nextDate(), [
+                new SourceContent(tdu.exampleEntryFile("content-en.pdf"),
+                        "application/pdf", "en"),
+            ])
+        session.close()
+        session = depot.openSession()
+        def deleteTime = nextDate()
+        def entry = depot.getEntry(id)
+        session.delete(entry, deleteTime)
+        session.close()
+
+        when: "entry is unconditionally retrieved"
+        entry = depot.getEntryOrDeletedEntry(id.path)
+        then: "it has a deleted state"
+        assert entry.isDeleted()
+
+        when: "a deleted entry is resurrected"
+        entry.resurrect()
+        def newCreateDate = nextDate()
+        session = depot.openSession()
+        session.createEntry(id, newCreateDate, [
+                new SourceContent(tdu.exampleEntryFile("content-en.pdf"),
+                        "application/pdf", "en"),
+            ])
+        session.close()
+        then: "it appears as new"
+        session = depot.openSession()
+        entry = depot.getEntry(id)
+        !entry.isDeleted()
+        entry.published == newCreateDate
+        entry.updated == newCreateDate
     }
 
     def "should create entry and check md5 and length"() {

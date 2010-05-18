@@ -54,7 +54,7 @@ public interface DepotEntry {
     void lock() throws DepotWriteException;
     void unlock() throws DepotWriteException;
     void rollback() throws DepotWriteException;
-    boolean hasHistory();
-    void wipeout() throws DepotWriteException, DepotIndexException;
+
+    void resurrect() throws DepotWriteException;
 
 }

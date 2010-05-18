@@ -354,7 +354,7 @@ public class FileDepotEntry implements DepotEntry {
     }
 
     /* TODO:? To call when modified (to re-read props from manifest..)
-    protected void reset() { manifest = null; entryUriPath = null; }
+    protected void resetState() { manifest = null; entryUriPath = null; }
     */
 
 
@@ -419,8 +419,8 @@ public class FileDepotEntry implements DepotEntry {
             List<SourceContent> sourceContents,
             List<SourceContent> sourceEnclosures) throws DepotWriteException {
         try {
-            boolean selfLocked = !isLocked();
-            if (selfLocked) {
+            boolean locallyLocked = !isLocked();
+            if (locallyLocked) {
                 lock();
             }
             rollOffToHistory();
@@ -441,7 +441,7 @@ public class FileDepotEntry implements DepotEntry {
             setPrimaryContent(manifest, sourceContents);
             saveManifest(manifest);
 
-            if (selfLocked) {
+            if (locallyLocked) {
                 unlock();
             }
         } catch (IOException e) {
@@ -452,34 +452,27 @@ public class FileDepotEntry implements DepotEntry {
     public void delete(Date deleteTime)
             throws DeletedDepotEntryException,
                    DepotIndexException, DepotWriteException {
-        boolean selfLocked = !isLocked();
-        try {
-            if (selfLocked) {
-                lock();
-            }
-            if (isDeleted()) {
-                throw new DeletedDepotEntryException(this);
-            }
-            createMarkerFile(getDeletedMarkerFile());
-            Entry manifest = getEntryManifest();
-            manifest.setUpdated(deleteTime);
+        if (isDeleted()) {
+            throw new DeletedDepotEntryException(this);
+        }
+        boolean locallyLocked = !isLocked();
+        if (locallyLocked) {
+            lock();
+        }
+        // TODO:? wipe content and enclosures?
+        // - but keep generated content.entry? (as meta-file?)
+        // .. (opt. move away..? zip?)
+        rollOffToHistory();
 
-            // TODO: wipe content and enclosures
-            // - but keep generated content.entry? (as meta-file?)
-            // .. (opt. move away..? zip?)
-            rollOffToHistory();
+        createMarkerFile(getDeletedMarkerFile());
 
-            saveManifest(manifest);
-            if (selfLocked) {
-                unlock();
-            }
-        } catch (IOException e) {
-            throw new DepotWriteException(e);
+        Entry manifest = getEntryManifest();
+        manifest.setUpdated(deleteTime);
+        saveManifest(manifest);
+        if (locallyLocked) {
+            unlock();
         }
     }
-
-    // TODO:IMPROVE: resurrect()? (clears deleted state + (partial) create)
-
 
     public void lock() throws DepotWriteException {
         createMarkerFile(getLockedMarkerFile());
@@ -489,14 +482,24 @@ public class FileDepotEntry implements DepotEntry {
         removeMarkerFile(getLockedMarkerFile());
     }
 
-
-    // TODO:? these (rollback/restorePrevious/wipeout) modify *in place*
-    // and must not have been indexed!
-
-    public boolean hasHistory() {
-        return getUpdated().compareTo(getPublished()) > 0 &&
-            DatePathUtil.youngestEntryHistoryDir(entryContentDir) != null;
+    public void resurrect() throws DepotWriteException {
+        // TODO:? this removes *all* history. What are the requirements?
+        // Should delete wipe history immediately?
+        wipeout();
+        /*
+        lock();
+        File historyDir = rollOffToHistory();
+        try {
+            FileUtils.moveFileToDirectory(getDeletedMarkerFile(), historyDir, false);
+        } catch (IOException e) {
+            throw new DepotWriteException(e);
+        }
+        unlock();
+        */
     }
+
+
+    // IMPORTANT: these modify *in place*, thus any indexing must occur after!
 
     public void rollback() throws DepotWriteException {
         if (hasHistory()) {
@@ -506,11 +509,14 @@ public class FileDepotEntry implements DepotEntry {
         }
     }
 
-    public void wipeout() throws DepotWriteException, DepotIndexException {
+    protected boolean hasHistory() {
+        return getUpdated().compareTo(getPublished()) > 0 &&
+            DatePathUtil.youngestEntryHistoryDir(entryContentDir) != null;
+    }
+
+
+    protected void wipeout() throws DepotWriteException {
         try {
-            if (!isLocked())
-                lock();
-            rollOffToHistory();
             FileUtils.deleteDirectory(entryContentDir);
             FilePathUtil.removeEmptyTrail(
                     entryContentDir.getParentFile(), depot.getBaseDir());
@@ -613,9 +619,14 @@ public class FileDepotEntry implements DepotEntry {
     }
 
 
-    protected void rollOffToHistory() throws DepotIndexException,
-            DepotWriteException, IOException {
-        rollOffToDir(newHistoryDir());
+    protected File rollOffToHistory() throws DepotWriteException {
+        try {
+            File historyDir = newHistoryDir();
+            rollOffToDir(historyDir);
+            return historyDir;
+        } catch (IOException e) {
+            throw new DepotWriteException(e);
+        }
     }
 
     /**

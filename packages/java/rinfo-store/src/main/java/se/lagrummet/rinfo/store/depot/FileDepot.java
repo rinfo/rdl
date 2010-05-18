@@ -137,6 +137,21 @@ public class FileDepot implements Depot {
         return depotEntry;
     }
 
+    public DepotEntry getEntryOrDeletedEntry(URI entryUri)
+            throws LockedDepotEntryException {
+        assertWithinBaseUri(entryUri);
+        return getEntryOrDeletedEntry(entryUri.getPath());
+    }
+
+    public DepotEntry getEntryOrDeletedEntry(String uriPath)
+            throws LockedDepotEntryException {
+        DepotEntry depotEntry = backend.getUncheckedDepotEntry(uriPath);
+        if (depotEntry != null) {
+            depotEntry.assertIsNotLocked();
+        }
+        return depotEntry;
+    }
+
     public boolean hasEntry(URI entryUri) {
         assertWithinBaseUri(entryUri);
         return hasEntry(entryUri.getPath());
