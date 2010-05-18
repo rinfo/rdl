@@ -4,7 +4,7 @@ package se.lagrummet.rinfo.base.rdf.sparqltree
 import spock.lang.*
 
 
-class SparqlTreeTest  extends Specification {
+class SparqlTreeSpec extends Specification {
 
     SparqlTree rqTree
 

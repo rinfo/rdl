@@ -14,7 +14,7 @@ import org.openrdf.model.vocabulary.RDFS
 import spock.lang.*
 
 
-class RDFUtilTest extends Specification {
+class RDFUtilSpec extends Specification {
 
     def "should create date time"() {
         when:
