@@ -10,28 +10,39 @@
 @prefix protege: <http://protege.stanford.edu/plugins/owl/protege#> .
 @prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
 #=======================================================================
-#
-# TODO:
-# 1. Se över klasshierarkin.
-# 2. Se minCardinality_fix_* nedan.
-# 3. Om Restriction är cardinality/maxCardinality 1 och Property->domain är tydlig:
-#       => ändra Property till FunctionalProperty och ta bort Restriction.
-# 4. Definiera domain på övriga Property.
 
+##
+# TODO:
+# 1. Ta bort resterande minCardinality 0
+# 2. Om Restriction är maxCardinality 1 och Property->domain är tydlig:
+#       => ändra Property till FunctionalProperty och ta bort Restriction.
+# 3. Definiera domain på övriga Property.
+# 4. Utöka med:
+#   - license
+#   - issued
+#   - publisher / homepage (creator?)
+#   - changes (seeAlso <changes.rdf>?)
+#   - extras (suggestedPrefix, pluralLabel...)
+# 5. Se övriga TODO:s nedan.
+
+
+##
 # Ontology
 #-----------------------------------------------------------------------
 
 : a owl:Ontology;
     dct:title "Svenska rättsinformationssystemets dokumentmodell"@sv;
-    dct:description """En begreppsmodell som beskriver de dokumenttyper och
-                    andra relaterade ting, inklusive egenskaper, som ingår i det svenska
-                    rättsinformationssystemet."""@sv;
+    dct:description """En begreppsmodell som beskriver de dokumenttyper,
+                    egenskaper och andra relaterade ting som ingår i det
+                    svenska rättsinformationssystemet."""@sv;
     dct:created "2006-12-05"^^xsd:date;
-    dct:updated "2010-04-26"^^xsd:date;
-    owl:versionInfo "0.5";
-    owl:imports dct:, skos:, foaf: . # TODO:? does imports imply too much?
+    dct:updated "2010-05-19"^^xsd:date;
+    owl:versionInfo "0.6";
+    owl:imports dct:, skos:, foaf: . # TODO:? does "imports" imply too much?
 
-# Grund
+
+##
+# Bas
 #-----------------------------------------------------------------------
 
 :Rattsinformationsdokument a owl:Class;
@@ -42,7 +53,7 @@
     protege:abstract "true";
     rdfs:subClassOf
         # Alla dokument har inte dct:title (exv :Rattsfallsreferat,
-        # som däremot har subklassen :referatrubrik)
+        # som däremot har subegenskapen :referatrubrik)
         [ a owl:Restriction;
             owl:onProperty dct:title;
             owl:allValuesFrom rdfs:Literal;
@@ -53,30 +64,10 @@
             owl:cardinality 1;
         ],
         [ a owl:Restriction;
-            owl:onProperty dct:description;
-            owl:allValuesFrom rdfs:Literal;
-            owl:minCardinality 0;
-        ],
-        [ a owl:Restriction;
-            owl:onProperty dct:references;
-            owl:allValuesFrom rdfs:Resource;
-            owl:minCardinality 0;
-        ],
-        #TODO:minCardinality_fix_1: pointless Restriction; just.. rdfs:seeAlso dct:subject?
-        [ a owl:Restriction;
-            owl:onProperty dct:subject;
-            owl:minCardinality 0;
-        ],
-        [ a owl:Restriction;
             owl:onProperty dct:publisher;
             owl:allValuesFrom foaf:Agent;
             owl:maxCardinality 1;
             rdfs:comment "Utgivande organisation (inte fysisk person)";
-        ],
-        #TODO:see:minCardinality_fix_2
-        [ a owl:Restriction;
-            owl:onProperty :bilaga;
-            owl:minCardinality 0;
         ],
         [ a owl:Restriction;
             owl:onProperty dct:identifier;
@@ -91,8 +82,8 @@
 :bilaga a owl:ObjectProperty;
     rdfs:subPropertyOf dct:hasPart;
     rdfs:label "Bilaga"@sv;
-    #TODO:minCardinality_fix_2: rdfs:domain :Rattsinformationsdokument;
-    rdfs:comment "En generell bilaga till dokumentet."@sv;
+    rdfs:comment "En generell bilaga till ett rättsinformationsdokument."@sv;
+    rdfs:domain :Rattsinformationsdokument;
     owl:inverseOf :bilagaTill;
     rdfs:isDefinedBy : .
 
@@ -141,6 +132,7 @@
     rdfs:comment """En generell hänvisning till en plats i någon publikation (exempelvis "1899:bih. 40 s. 3", "1913 B 418.", "1978 2:37"). Ska endast användas om de mer specifika hänvisningsegenskaperna :arsutgava, :sidnummer, :lopnummer etc inte är tillgängliga. Ska inkludera årtal om sådant finns, men inte publikationsidentifierare (såsom "SFS", "NJA" eller "RÅ")"""@sv;
     rdfs:isDefinedBy : .
 
+
 ##
 # Publikationssamlingar/förteckningar/serier
 #-----------------------------------------------------------------------
@@ -152,7 +144,7 @@
     rdfs:isDefinedBy : .
 
 # TODO: ISSN-nummer..
-# - definiera! Koppla prism:issn ?
+# - definiera! Anv. prism:issn (eller hellre bibo:issn)?
 # - Åtminstone instanser av :Utredningsserie (Ds, SOU) har ett ISSN-nummer..
 # - hur relatera ISSN-nummer för den Forfattningssamling som författningssamlingsreferenser tillhör?
 #   Se: <http://nurture.nature.com/rss/modules/mod_prism.html>
@@ -212,6 +204,10 @@
             owl:onProperty :utkomFranTryck;
             owl:maxCardinality 1
         ],
+        [ a owl:Restriction;
+            owl:onProperty :overgangsbestammelse;
+            owl:maxCardinality 1
+        ],
         #TODO:see:minCardinality_fix_3
         [ a owl:Restriction;
             owl:onProperty :kapitel;
@@ -261,6 +257,7 @@
     rdfs:range :Paragraf;
     owl:inverseOf [ rdfs:label "Paragraf i"@sv ]; .
 
+#---------------------------------------
 
 :Kapitel a owl:Class;
     rdfs:isDefinedBy : ;
@@ -281,6 +278,7 @@
     rdfs:range rdfs:Literal;
     rdfs:comment "Det symboliska numret för ett kapitel i en svensk lag."@sv; .
 
+#---------------------------------------
 
 :Paragraf a owl:Class;
     rdfs:isDefinedBy : ;
@@ -297,41 +295,6 @@
 
 
 #---------------------------------------
-# Lösa författningsreferenser
-#
-
-:Forfattningsreferens a owl:Class;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Författningsreferens"@sv;
-    rdfs:comment """En referens till en del av en författning. Referensen är
-    inprecis i det att den som skapar referensen kan avse ett annat
-    paragrafinnehåll än det som existerar i grundförfattningen (t.ex. den
-    version som senare påförts i en ändringsförfattning)."""@sv;
-    rdfs:subClassOf
-        [ a owl:Restriction;
-            owl:onProperty :angerGrundforfattning;
-            owl:cardinality 1
-        ] .
-
-:angerGrundforfattning a owl:ObjectProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Anger grundförfattning"@sv;
-    rdfs:domain :Forfattningsreferens;
-    rdfs:range :Forfattning; .
-
-:angerKapitelnummer a owl:DatatypeProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Anger kapitelnummer"@sv;
-    rdfs:seeAlso :kapitelnummer;
-    rdfs:domain :Forfattningsreferens;
-    rdfs:range rdfs:Literal; .
-
-:angerParagrafnummer a owl:DatatypeProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Anger paragrafnummer"@sv;
-    rdfs:seeAlso :paragrafnummer;
-    rdfs:domain :Forfattningsreferens;
-    rdfs:range rdfs:Literal; .
 
 :Forfattning a owl:Class;
     rdfs:isDefinedBy : ;
@@ -343,43 +306,6 @@
         [ a owl:Restriction;
             owl:onProperty :beslutadAv;
             owl:minCardinality 1
-        ],
-        #TODO:see:minCardinality_fix_2 for all of these, i.e. rdfs:domain
-        [ a owl:Restriction;
-            owl:onProperty :beslutande;
-            owl:minCardinality 0
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :foredragande;
-            owl:minCardinality 0
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :bemyndigande;
-            owl:minCardinality 0
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :andrar;
-            owl:minCardinality 0
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :upphaver;
-            owl:minCardinality 0
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :forarbete;
-            owl:minCardinality 0
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :genomforDirektiv;
-            owl:minCardinality 0
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :ikrafttradanderegel;
-            owl:minCardinality 0
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :overgangsbestammelse;
-            owl:maxCardinality 1
         ] .
 
 
@@ -393,39 +319,36 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Beslutande"@sv;
     rdfs:comment "Referens till beslutande (signent/undertecknare) av dokumentet."@sv;
+    rdfs:domain :FSDokument;
     rdfs:range foaf:Person; .
 
 :foredragande a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Föredragande"@sv;
     rdfs:comment "Referens till dokumentets föredragande (kontrasignent)."@sv;
+    rdfs:domain :FSDokument;
     rdfs:range foaf:Person; .
 
 :bemyndigande a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Bemyndigande"@sv;
     rdfs:comment "Referens till en bemyndigande rättsgrund som rättsregeldokumentet grundar sig på."@sv;
+    rdfs:domain :FSDokument;
     owl:inverseOf [ rdfs:label "Bemyndigar"@sv ]; .
 
 :genomforDirektiv a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Genomför direktiv"@sv;
     rdfs:comment "Referens till EU-direktiv som helt eller delvis genomförs med denna författning."@sv;
+    rdfs:domain :FSDokument;
     owl:inverseOf [ rdfs:label "Genomförs av"@sv ]; .
 
 :andrar a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Ändrar"@sv;
     rdfs:comment "Referens till något som ändras, t.ex. en förordning eller en del därav (såsom rubrik, kapitel, lagparagraf)."@sv;
-    owl:inverseOf [ rdfs:label "Ändras av"@sv ]; .
-
-:omtryckAv a owl:ObjectProperty;
-    rdfs:isDefinedBy : ;
     rdfs:domain :FSDokument;
-    rdfs:range :FSDokument;
-    rdfs:label "Omtryck av"@sv;
-    rdfs:comment "Referens till vad omtrycket avser, t.ex. en förordning."@sv;
-    owl:inverseOf [ rdfs:label "Har omtryck"@sv ]; .
+    owl:inverseOf [ rdfs:label "Ändras av"@sv ]; .
 
 :ersatter a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
@@ -484,7 +407,7 @@
     rdfs:range rdfs:Literal; .
 
 :ikrafttradandelagrum a owl:ObjectProperty;
-    rdfs:subPropertyOf :ikrafttradanderegel, :lagrum;
+    rdfs:subPropertyOf :ikrafttradanderegel;
     rdfs:label "Ikraftträdandelagrum"@sv;
     rdfs:comment "Hänvisning till lagrum (promulgationslag) som anger när och hur författningen träder ikraft."@sv;
     owl:inverseOf [ rdfs:label "Bestämmer ikraftträdande för"@sv ];
@@ -494,6 +417,7 @@
     rdfs:label "Övergångsbestämmelse"@sv;
     rdfs:comment "Information om övergångsbestämmelser."@sv;
     protege:abstract "true";
+    rdfs:domain :FSDokument;
     rdfs:isDefinedBy : .
 
 :overgangsbestammelsehanvisning a owl:ObjectProperty;
@@ -512,6 +436,7 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Beslutsdatum"@sv;
     rdfs:comment "Datum då innehållet i dokumentet beslutades."@sv;
+    #TODO:? rdfs:domain [ owl:unionOf (...) ]; # se anv. i Restriction:s
     rdfs:range xsd:date; .
 
 # Enligt JuDep 070906 är dessa ekvivalenta.
@@ -521,7 +446,16 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Utfärdandedatum"@sv;
     rdfs:comment "Datum då författningen utfärdades. Motsvarar beslutsdatum."@sv;
+    #TODO:? rdfs:domain [ owl:unionOf (...) ]; # se anv. i Restriction:s
     rdfs:range xsd:date; .
+
+:omtryckAv a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:domain :FSDokument;
+    rdfs:range :FSDokument;
+    rdfs:label "Omtryck av"@sv;
+    rdfs:comment "Referens till vad omtrycket avser, t.ex. en förordning."@sv;
+    owl:inverseOf [ rdfs:label "Har omtryck"@sv ]; .
 
 
 #---------------------------------------
@@ -605,16 +539,7 @@
             owl:cardinality 1
         ] .
 
-
-
 #---------------------------------------
-# TODO: fler gamla begrepp (som är rdfs:subClassOf :FSDokument); t.ex.:
-#   Cirkulär, Kungörelse, Stadga, Bihang..
-#   - vilken supertyp respektive typ ha?
-#       - kan vara rdfs:subClassOf :Forfattning? eller bara :FSDokument (om alls?)
-#    rdfs:comment "Övriga typer av dokument utgivna i någon författningssamling."@sv;
-#   - har dessa :utfardandedatum? några/vilka/alla?
-#
 
 :Brev a owl:DeprecatedClass;
     rdfs:isDefinedBy : ;
@@ -626,6 +551,15 @@
             owl:onProperty :utfardandedatum;
             owl:cardinality 1
         ] .
+
+#---------------------------------------
+# TODO: fler gamla begrepp (som är rdfs:subClassOf :FSDokument); t.ex.:
+#   Kungörelse, Stadga, Bihang..
+#   - vilken supertyp respektive typ ha?
+#       - kan vara rdfs:subClassOf :Forfattning? eller bara :FSDokument (om alls?)
+#    rdfs:comment "Övriga typer av dokument utgivna i någon författningssamling."@sv;
+#   - har dessa :utfardandedatum? några/vilka/alla?
+#
 
 
 #---------------------------------------
@@ -647,6 +581,45 @@
 
 
 #---------------------------------------
+# Lösa författningsreferenser
+
+:Forfattningsreferens a owl:Class;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Författningsreferens"@sv;
+    rdfs:comment """En referens till en del av en författning. Referensen är
+    inprecis i det att den som skapar referensen kan avse ett annat
+    paragrafinnehåll än det som existerar i grundförfattningen (t.ex. den
+    version som senare påförts i en ändringsförfattning)."""@sv;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :angerGrundforfattning;
+            owl:cardinality 1
+        ] .
+
+:angerGrundforfattning a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Anger grundförfattning"@sv;
+    rdfs:domain :Forfattningsreferens;
+    rdfs:range :Forfattning; .
+
+:angerKapitelnummer a owl:DatatypeProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Anger kapitelnummer"@sv;
+    rdfs:seeAlso :kapitelnummer;
+    rdfs:domain :Forfattningsreferens;
+    rdfs:range rdfs:Literal; .
+
+:angerParagrafnummer a owl:DatatypeProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Anger paragrafnummer"@sv;
+    rdfs:seeAlso :paragrafnummer;
+    rdfs:domain :Forfattningsreferens;
+    rdfs:range rdfs:Literal; .
+
+
+##
+# "Nära nog" författningssamlingsdokument..
+#-----------------------------------------------------------------------
 
 :KonsolideradGrundforfattning a owl:Class;
     rdfs:isDefinedBy : ;
@@ -662,10 +635,12 @@
             owl:onProperty :konsolideringsunderlag;
             owl:minCardinality 2
         ],
+        #TODO:see:minCardinality_fix_3
         [ a owl:Restriction;
             owl:onProperty :kapitel;
             owl:minCardinality 0
         ],
+        #TODO:see:minCardinality_fix_3
         [ a owl:Restriction;
             owl:onProperty :paragraf;
             owl:minCardinality 0
@@ -689,6 +664,7 @@
                     dokument."""@sv; .
 
 #---------------------------------------
+
 :Rattelseblad a owl:Class;
     rdfs:isDefinedBy : ;
     rdfs:label "Rättelseblad"@sv;
@@ -703,6 +679,7 @@
 
 :rattelsebeskrivning a rdf:Property;
     rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf dct:description;
     rdfs:label "Rättelsebeskrivning"@sv;
     rdfs:comment "En beskrivning av innehållet i ett rättelseblad."@sv;
     rdfs:domain :Rattelseblad; .
@@ -720,10 +697,11 @@
 # Förarbeten
 #-----------------------------------------------------------------------
 
-:Forordningsmotiv a owl:Class;
+:Forarbete a owl:Class;
     rdfs:isDefinedBy : ;
-    rdfs:label "Förordningsmotiv"@sv;
-    rdfs:comment "Ett förarbete till en förordning, publicerad i serien Regeringens förordningsmotiv. Anger bakgrund och hur ändamålet ska tolkas."@sv;
+    rdfs:label "Förarbete"@sv;
+    rdfs:comment "Förarbeten är ett samlingsnamn för till exempel utredningar, propositioner och betänkanden som tas fram innan riksdagen beslutar om en ny lag."@sv;
+    protege:abstract "true";
     rdfs:subClassOf :Rattsinformationsdokument;
     rdfs:subClassOf
         [ a owl:Restriction;
@@ -738,122 +716,34 @@
             owl:onProperty :beslutsdatum;
             owl:cardinality 1
         ] .
-
-# TODO: dokumentera meningen med denna!
-:forordningsmotivTill a owl:ObjectProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Förordningsmotiv till"@sv;
-    rdfs:domain :Forordningsmotiv;
-    rdfs:comment ""@sv; .
-
-
-#---------------------------------------
-:Proposition a owl:Class;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Proposition"@sv;
-    rdfs:comment """En proposition till riksdagen, vanligtvis gällande en lagändring."""@sv;
-    rdfs:subClassOf :Rattsinformationsdokument;
-    rdfs:subClassOf
-        [ a owl:Restriction;
-            owl:onProperty :arsutgava;
-            owl:maxCardinality 1
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :lopnummer;
-            owl:maxCardinality 1
-        ],
-        #TODO:see:minCardinality_fix_3
-        [ a owl:Restriction;
-            owl:onProperty :utgarFran;
-            owl:minCardinality 0
-        ],
-        #TODO:see:minCardinality_fix_3
-        [ a owl:Restriction;
-            owl:onProperty :foreslarAndringAv;
-            owl:minCardinality 0
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :beslutsdatum;
-            owl:cardinality 1
-        ] .
-
-
-#---------------------------------------
-
-:Utredningsbetankande a owl:Class;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Utredningsbetänkande"@sv;
-    rdfs:comment "Ett utredningsbetänkande, vanligen utgivet i Departementsserien (Ds) eller i serien Statens offentliga utredningar (SOU)."@sv;
-    rdfs:subClassOf :Rattsinformationsdokument;
-    rdfs:subClassOf
-        [ a owl:Restriction;
-            owl:onProperty :utgarFran;
-            owl:cardinality 1
-        ],
-        #TODO:see:minCardinality_fix_3
-        [ a owl:Restriction;
-            owl:onProperty :foreslarAndringAv;
-            owl:minCardinality 0
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :arsutgava;
-            owl:maxCardinality 1
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :lopnummer;
-            owl:maxCardinality 1
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :utrSerie;
-            owl:cardinality 1
-        ] .
-
-
-:utrSerie a owl:ObjectProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:subPropertyOf :publikationssamling;
-    rdfs:label "Utredningsserie"@sv;
-    rdfs:comment """Serie där utredningen/motivet publiceras. T.ex. Ds, SOU, FM."""@sv;
-    rdfs:range :Utredningsserie; .
-
-:utgarFran a owl:ObjectProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:subPropertyOf dct:references;
-    rdfs:label "Utgår från"@sv;
-    rdfs:comment """Utgår från ett dokument tidigare i lagstiftningskedjan."""@sv;
-    owl:inverseOf [ rdfs:label "Är utgångspunkt för"@sv ]; .
 
 :foreslarAndringAv a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
     rdfs:subPropertyOf dct:references;
     rdfs:label "Föreslår ändring av"@sv;
     rdfs:comment "Den författning som aktuellt dokument föreslår ändring av."@sv;
+    rdfs:domain :Forarbete;
     rdfs:range :Forfattning;
     owl:inverseOf [ rdfs:label "Föreslås att ändras av"@sv ]; .
 
+:utgarFran a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf dct:references;
+    rdfs:label "Utgår från"@sv;
+    rdfs:comment """Utgår från ett förarbete tidigare i lagstiftningskedjan."""@sv;
+    rdfs:domain :Forarbete;
+    rdfs:range :Forarbete;
+    owl:inverseOf [ rdfs:label "Är utgångspunkt för"@sv ]; .
 
-##
-# Kommittédokument
-#-----------------------------------------------------------------------
+
+#---------------------------------------
 
 :Kommittedirektiv a owl:Class;
     rdfs:isDefinedBy : ;
     rdfs:label "Kommittédirektiv"@sv;
     rdfs:comment "Ett kommittédirektiv."@sv;
-    rdfs:subClassOf :Rattsinformationsdokument;
+    rdfs:subClassOf :Forarbete;
     rdfs:subClassOf
-        [ a owl:Restriction;
-            owl:onProperty :arsutgava;
-            owl:maxCardinality 1
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :lopnummer;
-            owl:maxCardinality 1
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :beslutsdatum;
-            owl:cardinality 1
-        ],
         [ a owl:Restriction;
             owl:onProperty :departement;
             owl:cardinality 1
@@ -889,8 +779,117 @@
     rdfs:comment """Anger relation till departement."""@sv;
     rdfs:range foaf:Organization; .
 
+
+#---------------------------------------
+
+:Forordningsmotiv a owl:Class;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Förordningsmotiv"@sv;
+    rdfs:comment "Ett förarbete till en förordning, publicerad i serien Regeringens förordningsmotiv. Anger bakgrund och hur ändamålet ska tolkas."@sv;
+    rdfs:subClassOf :Forarbete; .
+
+
+#---------------------------------------
+
+:Utredningsbetankande a owl:Class;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Utredningsbetänkande"@sv;
+    rdfs:comment "Ett utredningsbetänkande, vanligen utgivet i Departementsserien (Ds) eller i serien Statens offentliga utredningar (SOU)."@sv;
+    rdfs:subClassOf :Forarbete;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :utgarFran;
+            owl:allValuesFrom :Kommittedirektiv
+        ],
+        [ a owl:Restriction;
+            owl:onProperty :utrSerie;
+            owl:cardinality 1
+        ] .
+
+:utrSerie a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf :publikationssamling;
+    rdfs:label "Utredningsserie"@sv;
+    rdfs:comment """Serie där utredningen publiceras. T.ex. Ds, SOU."""@sv;
+    rdfs:domain :Utredningsbetankande;
+    rdfs:range :Utredningsserie; .
+
+
+#---------------------------------------
+
+:Proposition a owl:Class;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Proposition"@sv;
+    rdfs:comment """En proposition till riksdagen, vanligtvis gällande en lagändring."""@sv;
+    rdfs:subClassOf :Forarbete;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :utgarFran;
+            owl:allValuesFrom :Utredningsbetankande
+        ]; .
+
+
 ##
-# Domstolsdokument
+# Avgöranden (praxisdokument)
+#-----------------------------------------------------------------------
+
+:VagledandeAvgorande a owl:Class;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Vägledande avgörande"@sv;
+    rdfs:comment "Avgöranden från högre domstolar och vissa myndigheter där avgörandet är gjort i sista instans."@sv;
+    protege:abstract "true";
+    rdfs:subClassOf :Rattsinformationsdokument;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :avgorandedatum;
+            owl:cardinality 1
+        ]; .
+
+:avgorandedatum a owl:DatatypeProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Avgörandedatum"@sv;
+    rdfs:comment "Det datum ett beslut eller domslut avkunnades."@sv;
+    rdfs:domain :VagledandeAvgorande;
+    rdfs:range xsd:date; .
+
+:lagrum a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Lagrum"@sv;
+    rdfs:comment "Hänvisning till något lagrum i SFS eller annan författningssamling som detta avgörande stödjer sig på."@sv;
+    rdfs:domain :VagledandeAvgorande;
+    owl:inverseOf [ rdfs:label "Är lagrum för"@sv ];
+    .
+
+:rattsfallshanvisning a owl:ObjectProperty;
+    rdfs:label "Rättsfallshänvisning"@sv;
+    rdfs:comment "Hänvisning i aktuellt avgörande till något rättsfall som har beaktats."@sv;
+    rdfs:domain :VagledandeAvgorande;
+    rdfs:isDefinedBy : .
+
+
+#---------------------------------------
+
+:VagledandeMyndighetsavgorande a owl:Class;
+    rdfs:subClassOf :VagledandeAvgorande;
+    rdfs:label "Vägledande myndighetsavgörande"@sv;
+    rdfs:comment "Ett dokument som uttrycker ett vägledande avgörande i förvaltningsärenden från central statlig myndighet."@sv;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :diarienummer;
+            owl:cardinality 1
+        ];
+    rdfs:isDefinedBy : .
+
+
+:diarienummer a owl:DatatypeProperty;
+    rdfs:label "Diarienummer"@sv;
+    rdfs:comment "Diarienummer för ett ärende."@sv;
+    rdfs:domain :VagledandeMyndighetsavgorande;
+    rdfs:isDefinedBy : .
+
+
+##
+# Domstolsdokument (praxisdokument)
 #-----------------------------------------------------------------------
 
 :VagledandeDomstolsavgorande a owl:Class;
@@ -910,20 +909,18 @@
         [ a owl:Restriction;
             owl:onProperty :domstolsavdelning;
             owl:maxCardinality 1
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :rattsfallshanvisning;
-            owl:minCardinality 0
         ] .
 
 :malnummer a owl:DatatypeProperty;
     rdfs:label "Målnummer"@sv;
     rdfs:comment "Det målnummer som domstolen tilldelat målet vid anhängiggörandet."@sv;
+    rdfs:domain :VagledandeDomstolsavgorande;
     rdfs:isDefinedBy : .
 
 :domsnummer a owl:DatatypeProperty;
     rdfs:label "Domsnummer"@sv;
     rdfs:comment "Det domsnummer som domstolen tilldelat målet vid anhängiggörandet."@sv;
+    rdfs:domain :VagledandeDomstolsavgorande;
     rdfs:isDefinedBy : .
 
 :domstolsavdelning a owl:DatatypeProperty;
@@ -932,23 +929,16 @@
     rdfs:domain :VagledandeDomstolsavgorande;
     rdfs:isDefinedBy : .
 
-:rattsfallshanvisning a owl:ObjectProperty;
-    rdfs:label "Rättsfallshänvisning"@sv;
-    rdfs:comment "Hänvisning i aktuellt avgörande till något rättsfall som har beaktats."@sv;
-    rdfs:isDefinedBy : .
 
 #---------------------------------------
 
-:Rattsfallsreferat a owl:Class;
+:Rattsfallsrapport a owl:Class;
     rdfs:isDefinedBy : ;
-    rdfs:label "Rättsfallsreferat"@sv;
-    rdfs:comment "Ett referat av ett eller flera domslut inklusive tidigare domslut i instanskedjan."@sv;
+    protege:abstract "true";
+    rdfs:label "Rättsfallsrapport"@sv;
+    rdfs:comment "Rapporteringar/sammanfattningar av rättsfall."@sv;
     rdfs:subClassOf :Rattsinformationsdokument;
     rdfs:subClassOf
-        [ a owl:Restriction;
-            owl:onProperty :referatAvDomstolsavgorande;
-            owl:minCardinality 1
-        ],
         [ a owl:Restriction;
             owl:onProperty :rattsfallspublikation;
             owl:cardinality 1
@@ -958,11 +948,39 @@
             owl:maxCardinality 1
         ],
         [ a owl:Restriction;
-            owl:onProperty :referatserie;
+            owl:onProperty :lopnummer;
             owl:maxCardinality 1
+        ] .
+
+:rattsfallspublikation a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf :publikationssamling;
+    rdfs:label "Rättsfallspublikation"@sv;
+    rdfs:comment "Den publikation som rättsfallet publiceras i."@sv;
+    rdfs:domain :Rattsfallsrapport;
+    rdfs:range :Rattsfallspublikation .
+
+:referatAvDomstolsavgorande a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Referat av domstolsavgörande"@sv;
+    rdfs:comment "Ett domstolsavgörande som detta är ett referat av."@sv;
+    rdfs:domain :Rattsfallsrapport;
+    rdfs:range :VagledandeDomstolsavgorande .
+
+#---------------------------------------
+
+:Rattsfallsreferat a owl:Class;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Rättsfallsreferat"@sv;
+    rdfs:comment "Ett referat av ett eller flera domslut inklusive tidigare domslut i instanskedjan."@sv;
+    rdfs:subClassOf :Rattsfallsrapport;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :referatAvDomstolsavgorande;
+            owl:minCardinality 1
         ],
         [ a owl:Restriction;
-            owl:onProperty :lopnummer;
+            owl:onProperty :referatserie;
             owl:maxCardinality 1
         ],
         [ a owl:Restriction;
@@ -977,13 +995,7 @@
             owl:onProperty dct:bibliographicCitation;
             owl:maxCardinality 1;
             rdfs:comment """En hänvisning av den typ som förekommer i källförteckningar/bibliografier, exv "NJA 2009 s. 695"."""@sv
-        ],
-        [ a owl:Restriction;
-            owl:onProperty owl:sameAs;
-            owl:maxCardinality 1;
-            rdfs:comment "En alternativ URI (skapad utifrån sidnummer, endast för NJA-referat) för denna resurs"@sv 
-        ];
-    .
+        ] .
 
 :referatrubrik a rdf:Property;
     rdfs:isDefinedBy : ;
@@ -999,52 +1011,21 @@
     rdfs:label "Referatserie"@sv;
     rdfs:comment """Anger vilken referatserie som referatet eventuellt tillhör."""@sv;
     rdfs:range rdfs:Literal;
+    rdfs:domain :Rattsfallsreferat;
     rdfs:isDefinedBy : .
 
-# Dessa två properties används även av :Rattsfallsnotis nedan.
-:rattsfallspublikation a owl:ObjectProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:subPropertyOf :publikationssamling;
-    rdfs:label "Rättsfallspublikation"@sv;
-    rdfs:comment "Den publikation som rättsfallet publiceras i."@sv;
-    rdfs:range :Rattsfallspublikation .
-    
-:referatAvDomstolsavgorande a owl:ObjectProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Referat av domstolsavgörande"@sv;
-    rdfs:comment "Ett domstolsavgörande som detta är ett referat av."@sv;
-    rdfs:range :VagledandeDomstolsavgorande .
-
 #---------------------------------------
-# Rättsfallsnotis
 
 :Rattsfallsnotis a owl:Class;
     rdfs:isDefinedBy : ;
     rdfs:label "Rättsfallsnotis"@sv;
     rdfs:comment """En sammanfattning i notisform av ett domslut (ofta inklusive tidigare domslut i instanskedjan)."""@sv;
-    rdfs:subClassOf :Rattsinformationsdokument;
+    rdfs:subClassOf :Rattsfallsrapport;
     rdfs:subClassOf
-        [ a owl:Restriction;
-            owl:onProperty :referatAvDomstolsavgorande;
-            owl:minCardinality 0 # inte alltid möjligt att ange 
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :rattsfallspublikation;
-            owl:cardinality 1
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :arsutgava;
-            owl:maxCardinality 1
-        ],
         [ a owl:Restriction;
             owl:onProperty :notisserie;
             owl:maxCardinality 1
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :lopnummer;
-            owl:maxCardinality 1
-        ]
-    .
+        ]; .
 
 # I några rättsfallspublikationer har det under vissa perioder
 # publicerars notiser av *olika slag* -- NJA har använt notisserierna A,
@@ -1060,12 +1041,15 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Notisserie"@sv;
     rdfs:comment """Anger vilken notisserie som notisen eventuellt tillhör."""@sv;
+    rdfs:domain :Rattsfallsnotis;
     rdfs:range rdfs:Literal;
     rdfs:isDefinedBy : .
 
+
 ##
-# Övriga dokument # TODO: kategorisera som något av ovanstående?
+# Internationella rättsdokument/-egenskaper
 #-----------------------------------------------------------------------
+
 :InternationellOverenskommelse a owl:Class;
     rdfs:isDefinedBy : ;
     rdfs:label "Internationell överenskommelse"@sv;
@@ -1087,81 +1071,29 @@
         [ a owl:Restriction;
             owl:onProperty :lopnummer;
             owl:maxCardinality 1
-        ],
-        [ a owl:Restriction;
-            owl:onProperty dct:created;
-            owl:allValuesFrom xsd:date;
-            owl:cardinality 1
         ] .
 
 :giltigaSprak a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Giltiga språk"@sv;
     rdfs:label "Authoritative languages"@en;
+    rdfs:domain :InternationellOverenskommelse;
     rdfs:comment "De språk som de giltiga texterna i en konvention är skrivna på."@sv; .
 
 :ratificieringsdatum a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Ratificieringsdatum"@sv;
     rdfs:comment "Datum då Sveriges rike ratificerade den internationella överenskommelsen."@sv;
+    rdfs:domain :InternationellOverenskommelse;
     rdfs:range xsd:date; .
 
-#---------------------------------------
-
-:VagledandeAvgorande a owl:Class;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Vägledande avgörande"@sv;
-    rdfs:comment "Avgöranden från högre domstolar och vissa myndigheter där avgörandet är gjort i sista instans."@sv;
-    protege:abstract "true";
-    rdfs:subClassOf :Rattsinformationsdokument;
-    rdfs:subClassOf
-        [ a owl:Restriction;
-            owl:onProperty :avgorandedatum;
-            owl:cardinality 1
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :lagrum;
-            owl:minCardinality 0
-        ]
-    .
-
-
-:avgorandedatum a owl:DatatypeProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Avgörandedatum"@sv;
-    rdfs:comment "Det datum ett beslut eller domslut avkunnades."@sv;
-    rdfs:range xsd:date; .
-
-:lagrum a owl:ObjectProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Lagrum"@sv;
-    rdfs:comment "Hänvisning till något lagrum i SFS eller annan författningssamling."@sv;
-    owl:inverseOf [ rdfs:label "Är lagrum för"@sv ];
-    .
-
-#---------------------------------------
-
-:VagledandeMyndighetsavgorande a owl:Class;
-    rdfs:subClassOf :VagledandeAvgorande;
-    rdfs:label "Vägledande myndighetsavgörande"@sv;
-    rdfs:comment "Ett dokument som uttrycker ett vägledande avgörande i förvaltningsärenden från central statlig myndighet."@sv;
-    rdfs:subClassOf
-        [ a owl:Restriction;
-            owl:onProperty :diarienummer;
-            owl:cardinality 1
-        ];
-    rdfs:isDefinedBy : .
-
-
-:diarienummer a owl:DatatypeProperty;
-    rdfs:label "Diarienummer"@sv;
-    rdfs:comment "Diarienummer för ett ärende."@sv;
-    rdfs:isDefinedBy : .
 
 #---------------------------------------
 
 :celexNummer a owl:DatatypeProperty;
     rdfs:label "CELEX-nummer"@sv;
     rdfs:comment "Indentifierare för ett dokument som ingår i EUR-LEX, den europeiska rättsinformationsdatabasen."@sv;
+    #rdfs:domain foaf:Document;
     rdfs:isDefinedBy : .
+
 

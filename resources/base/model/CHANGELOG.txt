@@ -2,6 +2,16 @@
 CHANGELOG
 ########################################################################
 
+2010-05-19
+--------------------
+
+* Lade till ny basklass :Forarbete.
+* Lade till ny basklass :Rattsfallsrapport.
+* Utökade med fler rdfs:domain-angivelser.
+* Tog bort flertalet "owl:minCardinality 0" (till förmån för preciserande rdfs:domain-angivelser där det var tillämpligt).
+* :ikrafttradandelagrum ej längre en specialisering av :lagrum (den senare gäller enbart :VagledandeAvgorande).
+* Omstrukturerad och mer dokumenterad källkod.
+
 2010-04-07
 --------------------
 
