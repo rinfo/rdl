@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
+         xmlns:dct="http://purl.org/dct/terms/"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <Forordningsmotiv rdf:about="http://rinfo.lagrummet.se/publ/fm/2005:2">
+        <arsutgava>2005</arsutgava>
+        <lopnummer>2</lopnummer>
+        <dct:identifier>Fm 2005:2</dct:identifier>
+        <dct:title xml:lang="sv">Förordning om ändring i förordningen (1998:905) om miljökonsekvensbeskrivningar</dct:title>
+        <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
+        <utfardandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2005-05-12</utfardandedatum>
+        <foreslarAndringAv rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1998:905"/>
+        <dct:references rdf:resource="http://rinfo.lagrummet.se/ext/eur-lex/32001L0042"/>
+    </Forordningsmotiv>
+</rdf:RDF>
