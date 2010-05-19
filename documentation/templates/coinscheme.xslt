@@ -55,8 +55,13 @@
             </div>
             <h3>Relativa mallar (baserade på URI för relaterad resurs)</h3>
             <div id="containments">
-                <xsl:apply-templates select="coin:template[boolean(coin:relToBase | coin:relFromBase)
-                                     and not(coin:fragmentTemplate)]"/>
+                <xsl:for-each select="coin:template[boolean(coin:relToBase | coin:relFromBase)
+                              and not(coin:fragmentTemplate)]">
+                    <xsl:sort select="coin:uriTemplate"/>
+                    <xsl:apply-templates select=".">
+                        <xsl:with-param name="last" select="position() = last()"/>
+                    </xsl:apply-templates>
+                </xsl:for-each>
             </div>
             <h3>Fragmentmallar (baserade på URI för relaterad resurs)</h3>
             <div id="fragments">
@@ -137,10 +142,11 @@
                     <xsl:variable name="baseRelRange"
                                 select="key('rel', coin:relToBase/@ref)/rdfs:range"/>
                     <p>
-                        <em>En
+                        <em>
                             <xsl:apply-templates select="key('rel', coin:relToBase/@ref)/rdfs:domain/@ref"/>
-                        som underordnas en
-                        <xsl:apply-templates select="$baseRelRange/@ref"/></em>
+                            <xsl:text> som underordnas </xsl:text>
+                            <xsl:apply-templates select="$baseRelRange/@ref"/>
+                        </em>
                     </p>
                     <p class="rel-rule">
                         {
