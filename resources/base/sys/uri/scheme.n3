@@ -192,6 +192,11 @@
         coin:uriTemplate "{+base}/konsolidering/{issued}";
         coin:component [ coin:property dct:issued ]
     ], [
+        coin:relToBase rpubl:rattningAv;
+        # TODO: appendTemplate?
+        coin:uriTemplate "{+base}/rattelse/{issued}";
+        coin:component [ coin:property dct:issued ]
+    ], [
         coin:relFromBase rpubl:paragraf;
         coin:fragmentTemplate "p_{paragrafnummer}";
         coin:component [ coin:property rpubl:paragrafnummer ]

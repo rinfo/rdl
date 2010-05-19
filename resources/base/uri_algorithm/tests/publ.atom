@@ -134,18 +134,18 @@ g        </content>
         </content>
     </entry>
 
-    <!-- TODO: rattningAv
     <entry>
-        <id></id>
-        <summary></summary>
+        <id>http://rinfo.lagrummet.se/publ/sfs/1999:189/rattelse/1999-05-31</id>
+        <summary>Rättelseblad till förordning</summary>
         <content type="application/rdf+xml">
             <rpubl:Rattelseblad>
-                <rpubl:rattningAv rdf:resource=""/>
-                <rpubl:beslutsdatum></rpubl:beslutsdatum>
+                <rpubl:rattningAv rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1999:189"/>
+                <rpubl:rattelsebeskrivning xml:lang="sv">Obs! Detta rättelseblad ersätter tidigare utgivna SFS 1999:189. Rättelsen avser beloppet i 6 §.</rpubl:rattelsebeskrivning>
+                <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+                            >1999-05-31</dct:issued>
             </rpubl:Rattelseblad>
         </content>
     </entry>
-    -->
 
     <!-- konsoliderade författningar -->
     <entry>
