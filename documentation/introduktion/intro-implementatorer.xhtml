@@ -863,8 +863,34 @@
     rinfosystemet använder dessa. Ersättning för de förekomster av
     dct:description, dct:references och dct:subject som tidigare fanns
     i modellen (:Rattsinformationsdokument)
-      -->
-	 
+
+
+    == Borttagna, märkliga/missvisande modellregler ==
+
+    * Från :Rattsinformationsdokument:
+        [ a owl:Restriction;
+            owl:onProperty dct:description;
+            owl:allValuesFrom rdfs:Literal;
+            owl:minCardinality 0;
+        ],
+        [ a owl:Restriction;
+            owl:onProperty dct:references;
+            owl:allValuesFrom rdfs:Resource;
+            owl:minCardinality 0;
+        ],
+        [ a owl:Restriction;
+            owl:onProperty dct:subject;
+            owl:minCardinality 0;
+        ]
+
+    * Från :Rattsfallsreferat:
+        [ a owl:Restriction;
+            owl:onProperty owl:sameAs;
+            rdfs:comment "En alternativ URI (skapad utifrån sidnummer, endast för NJA-referat) för denna resurs"@sv 
+        ]
+
+    -->
+
     <div class="section">
     <h2>8. Nivå 2</h2>
     <p>
