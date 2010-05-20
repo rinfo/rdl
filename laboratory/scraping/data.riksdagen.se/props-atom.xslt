@@ -37,12 +37,8 @@
             <title><xsl:value-of select="titel"/></title>
             <summary><xsl:value-of select="undertitel"/></summary>
             <content type="application/rdf+xml" src="{dokumentstatus_url_xml}/rdf"/>
-            <!--
-            <content type="xml">
-                <xsl:copy-of select="."/>
-            </content>
-            -->
             <xsl:apply-templates select="*"/>
+            <!-- TODO: "attachment" anges bara i dokumentstatus-xml:en -->
         </entry>
     </xsl:template>
 
