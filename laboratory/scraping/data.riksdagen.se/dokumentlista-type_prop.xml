@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dokumentlista version="0.6.0.8.3784.27651" warning="traffar=8142" datum="2010-05-20 12:27:31" nasta_sida="http://data.riksdagen.se/dokumentlista/?rm=&amp;typ=prop&amp;d=&amp;ts=&amp;parti=&amp;iid=&amp;bet=&amp;org=&amp;kat=&amp;sz=10&amp;sort=c&amp;utformat=xml&amp;p=2" sida="1" sidor="815" traff_fran="1" traff_till="10" traffar="8142" debug="pQry=0ms gTa=125ms gHi=47ms rX=0ms " skapad="172ms"
+               xml:base="http://data.riksdagen.se/dokumentlista/?rm=&amp;typ=prop&amp;d=&amp;ts=&amp;parti=&amp;iid=&amp;bet=&amp;org=&amp;kat=&amp;sz=10&amp;sort=c&amp;utformat=xml">
+  <dokument>
+    <traff>1</traff>
+    <id>GX0382</id>
+    <rm>2009/10</rm>
+    <relaterat_id/>
+    <typ>prop</typ>
+    <subtyp>prop</subtyp>
+    <status>hämtad_2</status>
+    <beteckning>82</beteckning>
+    <tempbeteckning/>
+    <organ>M</organ>
+    <nummer>82</nummer>
+    <titel>Upphävande av förköpslagen</titel>
+    <undertitel/>
+    <datum>2010-01-07 00:00:00</datum>
+    <publicerad>2010-01-07 00:00:00</publicerad>
+    <kall_id/>
+    <dokumentformat>DokTextExtraktor</dokumentformat>
+    <dokument_url_text>http://data.riksdagen.se/dokument/GX0382/text</dokument_url_text>
+    <dokument_url_html>http://data.riksdagen.se/dokument/GX0382</dokument_url_html>
+    <dokumentstatus_url_xml>http://data.riksdagen.se/dokumentstatus/GX0382</dokumentstatus_url_xml>
+    <systemdatum>2010-02-02 14:33:29</systemdatum>
+  </dokument>
+  <dokument>
+    <traff>2</traff>
+    <id>GX0385</id>
+    <rm>2009/10</rm>
+    <relaterat_id/>
+    <typ>prop</typ>
+    <subtyp>prop</subtyp>
+    <status>hämtad_2</status>
+    <beteckning>85</beteckning>
+    <tempbeteckning/>
+    <organ>JU</organ>
+    <nummer>85</nummer>
+    <titel>Integritet och effektivitet i polisens brottsbekämpande verksamhet</titel>
+    <undertitel/>
+    <datum>2010-01-08 00:00:00</datum>
+    <publicerad>2010-01-08 00:00:00</publicerad>
+    <kall_id/>
+    <dokumentformat>DokTextExtraktor</dokumentformat>
+    <dokument_url_text>http://data.riksdagen.se/dokument/GX0385/text</dokument_url_text>
+    <dokument_url_html>http://data.riksdagen.se/dokument/GX0385</dokument_url_html>
+    <dokumentstatus_url_xml>http://data.riksdagen.se/dokumentstatus/GX0385</dokumentstatus_url_xml>
+    <systemdatum>2010-02-02 14:33:23</systemdatum>
+  </dokument>
+  <dokument>
+    <traff>3</traff>
+    <id>GX0383</id>
+    <rm>2009/10</rm>
+    <relaterat_id/>
+    <typ>prop</typ>
+    <subtyp>prop</subtyp>
+    <status>hämtad_2</status>
+    <beteckning>83</beteckning>
+    <tempbeteckning/>
+    <organ>S</organ>
+    <nummer>83</nummer>
+    <titel>Etisk bedömning av nya metoder i vården</titel>
+    <undertitel/>
+    <datum>2010-01-01 00:00:00</datum>
+    <publicerad>2010-01-01 00:00:00</publicerad>
+    <kall_id/>
+    <dokumentformat>DokTextExtraktor</dokumentformat>
+    <dokument_url_text>http://data.riksdagen.se/dokument/GX0383/text</dokument_url_text>
+    <dokument_url_html>http://data.riksdagen.se/dokument/GX0383</dokument_url_html>
+    <dokumentstatus_url_xml>http://data.riksdagen.se/dokumentstatus/GX0383</dokumentstatus_url_xml>
+    <systemdatum>2010-01-15 15:59:08</systemdatum>
+  </dokument>
+  <dokument>
+    <traff>4</traff>
+    <id>GX0388</id>
+    <rm>2009/10</rm>
+    <relaterat_id/>
+    <typ>prop</typ>
+    <subtyp>prop</subtyp>
+    <status>hämtad_2</status>
+    <beteckning>88</beteckning>
+    <tempbeteckning/>
+    <organ>S</organ>
+    <nummer>88</nummer>
+    <titel>Betalningsansvaret för underårigas avgifter inom hälso- och sjukvården och tandvården</titel>
+    <undertitel/>
+    <datum>2010-01-01 00:00:00</datum>
+    <publicerad>2010-01-01 00:00:00</publicerad>
+    <kall_id/>
+    <dokumentformat>DokTextExtraktor</dokumentformat>
+    <dokument_url_text>http://data.riksdagen.se/dokument/GX0388/text</dokument_url_text>
+    <dokument_url_html>http://data.riksdagen.se/dokument/GX0388</dokument_url_html>
+    <dokumentstatus_url_xml>http://data.riksdagen.se/dokumentstatus/GX0388</dokumentstatus_url_xml>
+    <systemdatum>2010-01-15 15:59:08</systemdatum>
+  </dokument>
+  <dokument>
+    <traff>5</traff>
+    <id>GX0386</id>
+    <rm>2009/10</rm>
+    <relaterat_id/>
+    <typ>prop</typ>
+    <subtyp>prop</subtyp>
+    <status>hämtad_2</status>
+    <beteckning>86</beteckning>
+    <tempbeteckning/>
+    <organ>JU</organ>
+    <nummer>86</nummer>
+    <titel>SIS II - en andra generation av Schengens informationssystem</titel>
+    <undertitel/>
+    <datum>2010-01-19 00:00:00</datum>
+    <publicerad>2010-01-19 00:00:00</publicerad>
+    <kall_id/>
+    <dokumentformat>DokTextExtraktor</dokumentformat>
+    <dokument_url_text>http://data.riksdagen.se/dokument/GX0386/text</dokument_url_text>
+    <dokument_url_html>http://data.riksdagen.se/dokument/GX0386</dokument_url_html>
+    <dokumentstatus_url_xml>http://data.riksdagen.se/dokumentstatus/GX0386</dokumentstatus_url_xml>
+    <systemdatum>2010-01-20 04:36:18</systemdatum>
+  </dokument>
+  <dokument>
+    <traff>6</traff>
+    <id>GX0391</id>
+    <rm>2009/10</rm>
+    <relaterat_id/>
+    <typ>prop</typ>
+    <subtyp>prop</subtyp>
+    <status>hämtad_2</status>
+    <beteckning>91</beteckning>
+    <tempbeteckning/>
+    <organ>FI</organ>
+    <nummer>91</nummer>
+    <titel>Förlängning av tillfälliga skatteanstånd</titel>
+    <undertitel/>
+    <datum>2010-01-21 00:00:00</datum>
+    <publicerad>2010-01-21 00:00:00</publicerad>
+    <kall_id/>
+    <dokumentformat>DokTextExtraktor</dokumentformat>
+    <dokument_url_text>http://data.riksdagen.se/dokument/GX0391/text</dokument_url_text>
+    <dokument_url_html>http://data.riksdagen.se/dokument/GX0391</dokument_url_html>
+    <dokumentstatus_url_xml>http://data.riksdagen.se/dokumentstatus/GX0391</dokumentstatus_url_xml>
+    <systemdatum>2010-01-21 17:29:29</systemdatum>
+  </dokument>
+  <dokument>
+    <traff>7</traff>
+    <id>GX0384</id>
+    <rm>2009/10</rm>
+    <relaterat_id/>
+    <typ>prop</typ>
+    <subtyp>prop</subtyp>
+    <status>hämtad_2</status>
+    <beteckning>84</beteckning>
+    <tempbeteckning/>
+    <organ>UD</organ>
+    <nummer>84</nummer>
+    <titel>Svenskt deltagande i Europeiska unionens marina insats utanför Somalias kust (Operation Atalanta)</titel>
+    <undertitel/>
+    <datum>2010-01-21 00:00:00</datum>
+    <publicerad>2010-01-21 00:00:00</publicerad>
+    <kall_id/>
+    <dokumentformat>DokTextExtraktor</dokumentformat>
+    <dokument_url_text>http://data.riksdagen.se/dokument/GX0384/text</dokument_url_text>
+    <dokument_url_html>http://data.riksdagen.se/dokument/GX0384</dokument_url_html>
+    <dokumentstatus_url_xml>http://data.riksdagen.se/dokumentstatus/GX0384</dokumentstatus_url_xml>
+    <systemdatum>2010-01-22 10:47:44</systemdatum>
+  </dokument>
+  <dokument>
+    <traff>8</traff>
+    <id>GX0394</id>
+    <rm>2009/10</rm>
+    <relaterat_id/>
+    <typ>prop</typ>
+    <subtyp>prop</subtyp>
+    <status>hämtad_2</status>
+    <beteckning>94</beteckning>
+    <tempbeteckning/>
+    <organ>FI</organ>
+    <nummer>94</nummer>
+    <titel>Övergångsvis dokumenthantering vid flyttningar under punktskatteuppskov</titel>
+    <undertitel/>
+    <datum>2010-02-04 00:00:00</datum>
+    <publicerad>2010-02-04 00:00:00</publicerad>
+    <kall_id/>
+    <dokumentformat>DokTextExtraktor</dokumentformat>
+    <dokument_url_text>http://data.riksdagen.se/dokument/GX0394/text</dokument_url_text>
+    <dokument_url_html>http://data.riksdagen.se/dokument/GX0394</dokument_url_html>
+    <dokumentstatus_url_xml>http://data.riksdagen.se/dokumentstatus/GX0394</dokumentstatus_url_xml>
+    <systemdatum>2010-02-04 14:40:11</systemdatum>
+  </dokument>
+  <dokument>
+    <traff>9</traff>
+    <id>GX0395</id>
+    <rm>2009/10</rm>
+    <relaterat_id/>
+    <typ>prop</typ>
+    <subtyp>prop</subtyp>
+    <status>hämtad_2</status>
+    <beteckning>95</beteckning>
+    <tempbeteckning/>
+    <organ>N</organ>
+    <nummer>95</nummer>
+    <titel>Luftfartens lagar</titel>
+    <undertitel/>
+    <datum>2010-02-08 00:00:00</datum>
+    <publicerad>2010-02-08 00:00:00</publicerad>
+    <kall_id/>
+    <dokumentformat>DokTextExtraktor</dokumentformat>
+    <dokument_url_text>http://data.riksdagen.se/dokument/GX0395/text</dokument_url_text>
+    <dokument_url_html>http://data.riksdagen.se/dokument/GX0395</dokument_url_html>
+    <dokumentstatus_url_xml>http://data.riksdagen.se/dokumentstatus/GX0395</dokumentstatus_url_xml>
+    <systemdatum>2010-02-08 17:22:14</systemdatum>
+  </dokument>
+  <dokument>
+    <traff>10</traff>
+    <id>GX0396</id>
+    <rm>2009/10</rm>
+    <relaterat_id/>
+    <typ>prop</typ>
+    <subtyp>prop</subtyp>
+    <status>hämtad_2</status>
+    <beteckning>96</beteckning>
+    <tempbeteckning/>
+    <organ>S</organ>
+    <nummer>96</nummer>
+    <titel>Vissa apoteksfrågor</titel>
+    <undertitel/>
+    <datum>2010-02-09 00:00:00</datum>
+    <publicerad>2010-02-09 00:00:00</publicerad>
+    <kall_id/>
+    <dokumentformat>DokTextExtraktor</dokumentformat>
+    <dokument_url_text>http://data.riksdagen.se/dokument/GX0396/text</dokument_url_text>
+    <dokument_url_html>http://data.riksdagen.se/dokument/GX0396</dokument_url_html>
+    <dokumentstatus_url_xml>http://data.riksdagen.se/dokumentstatus/GX0396</dokumentstatus_url_xml>
+    <systemdatum>2010-02-09 16:21:10</systemdatum>
+  </dokument>
+</dokumentlista>

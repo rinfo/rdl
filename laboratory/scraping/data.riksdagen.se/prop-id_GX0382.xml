@@ -1,0 +1,212 @@
+<?xml version="1.0"?>
+<dokumentstatus>
+  <dokument>
+    <hangar_id>2309080</hangar_id>
+    <dok_id>GX0382</dok_id>
+    <rm>2009/10</rm>
+    <beteckning>82</beteckning>
+    <typ>prop</typ>
+    <subtyp>prop</subtyp>
+    <tempbeteckning/>
+    <organ>M</organ>
+    <nummer>82</nummer>
+    <slutnummer>0</slutnummer>
+    <datum>2010-01-07 00:00:00</datum>
+    <publicerad>2010-01-07 00:00:00</publicerad>
+    <titel>Upph&#xE4;vande av f&#xF6;rk&#xF6;pslagen</titel>
+    <subtitel/>
+    <status>h&#xE4;mtad_2</status>
+    <dokument_url_text>http://data.riksdagen.se/dokument/GX0382/text</dokument_url_text>
+    <dokument_url_html>http://data.riksdagen.se/dokument/GX0382</dokument_url_html>
+    <dokumentstatus_url_xml>http://data.riksdagen.se/dokumentstatus/GX0382</dokumentstatus_url_xml>
+    <dokumentstatus_url_www>http://www.riksdagen.se/webbnav/?nid=3120&amp;dokid=GX0382</dokumentstatus_url_www>
+  </dokument>
+  <dokaktivitet>
+    <aktivitet>
+      <kod>MOT</kod>
+      <namn>Motionstid slutar</namn>
+      <datum>2010-02-02 00:00:00</datum>
+      <status>intr&#xE4;ffat</status>
+      <ordning>4</ordning>
+      <process>hanvisning</process>
+    </aktivitet>
+    <aktivitet>
+      <kod>H&#xC4;N</kod>
+      <namn>H&#xE4;nvisning</namn>
+      <datum>2010-01-19 00:00:00</datum>
+      <status>intr&#xE4;ffat</status>
+      <ordning>3</ordning>
+      <process>hanvisning</process>
+    </aktivitet>
+    <aktivitet>
+      <kod>H&#xC4;N</kod>
+      <namn>H&#xE4;nvisning</namn>
+      <datum>2010-01-19 00:00:00</datum>
+      <status>planerat</status>
+      <ordning>3</ordning>
+      <process>hanvisning</process>
+    </aktivitet>
+    <aktivitet>
+      <kod>B</kod>
+      <namn>Bordl&#xE4;ggning</namn>
+      <datum>2010-01-18 00:00:00</datum>
+      <status>intr&#xE4;ffat</status>
+      <ordning>2</ordning>
+      <process>hanvisning</process>
+    </aktivitet>
+    <aktivitet>
+      <kod>B</kod>
+      <namn>Bordl&#xE4;ggning</namn>
+      <datum>2010-01-18 00:00:00</datum>
+      <status>planerat</status>
+      <ordning>2</ordning>
+      <process>hanvisning</process>
+    </aktivitet>
+    <aktivitet>
+      <kod>INL</kod>
+      <namn>Inl&#xE4;mning</namn>
+      <datum>2010-01-08 00:00:00</datum>
+      <status>planerat</status>
+      <ordning>60</ordning>
+      <process>hantering</process>
+    </aktivitet>
+    <aktivitet>
+      <kod>REG</kod>
+      <namn>Registrering</namn>
+      <datum>2010-01-07 00:00:00</datum>
+      <status>intr&#xE4;ffat</status>
+      <ordning>70</ordning>
+      <process>hantering</process>
+    </aktivitet>
+    <aktivitet>
+      <kod>INL</kod>
+      <namn>Inl&#xE4;mning</namn>
+      <datum>2010-01-07 00:00:00</datum>
+      <status>intr&#xE4;ffat</status>
+      <ordning>60</ordning>
+      <process>hantering</process>
+    </aktivitet>
+    <aktivitet>
+      <kod>DEL</kod>
+      <namn>Utdelning</namn>
+      <datum>2010-01-07 00:00:00</datum>
+      <status>intr&#xE4;ffat</status>
+      <ordning>1</ordning>
+      <process>hanvisning</process>
+    </aktivitet>
+    <aktivitet>
+      <kod>AVI</kod>
+      <namn>Avisering</namn>
+      <datum>2009-09-15 00:00:00</datum>
+      <status>intr&#xE4;ffat</status>
+      <ordning>30</ordning>
+      <process>hantering</process>
+    </aktivitet>
+  </dokaktivitet>
+  <dokintressent>
+</dokintressent>
+  <dokforslag>
+    <forslag>
+      <nummer>0</nummer>
+      <beteckning>0</beteckning>
+      <lydelse>Riksdagen antar regeringens f&#xF6;rslag till</lydelse>
+      <lydelse2>1. lag om upph&#xE4;vande av f&#xF6;rk&#xF6;pslagen (1967:868),
+2. lag om &#xE4;ndring i jordabalken,
+3. lag om &#xE4;ndring i jordf&#xF6;rv&#xE4;rvslagen (1979:230).</lydelse2>
+      <utskottet> Bifall</utskottet>
+      <kammaren>Bifall</kammaren>
+      <behandlas_i>2009/10:CU18</behandlas_i>
+      <kammarbeslutstyp>R&#xF6;stning</kammarbeslutstyp>
+    </forslag>
+  </dokforslag>
+  <dokuppgift>
+    <uppgift>
+      <kod>inlamnatav</kod>
+      <namn>Inl&#xE4;mnat av</namn>
+      <text>Milj&#xF6;departementet</text>
+    </uppgift>
+  </dokuppgift>
+  <dokbilaga>
+    <bilaga>
+      <filnamn>prop_200910__82.pdf</filnamn>
+      <filstorlek>431976</filstorlek>
+      <filtyp>pdf</filtyp>
+      <fil_url>http://data.riksdagen.se/fil/34D8BAD3-66E0-4A53-A427-77E6BF0135CA</fil_url>
+    </bilaga>
+  </dokbilaga>
+  <dokreferens>
+    <referens>
+      <referenstyp>f&#xF6;ljdmotion</referenstyp>
+      <uppgift>av Carina Moberg m.fl. (s, v, mp)</uppgift>
+      <ref_dokid>GX02C8</ref_dokid>
+    </referens>
+  </dokreferens>
+  <dokkategori>
+    <kategori>
+      <status>test</status>
+      <skapat>automatiskt genererat</skapat>
+      <namn>p&#xE5;f&#xF6;ljd</namn>
+      <id>3878</id>
+      <relevans>54</relevans>
+      <domain_id>12</domain_id>
+      <domain_name>LAG OCH R&#xC4;TT</domain_name>
+      <thesaurus_id>1216</thesaurus_id>
+      <thesaurus_name>straffr&#xE4;tt</thesaurus_name>
+    </kategori>
+    <kategori>
+      <status>test</status>
+      <skapat>automatiskt genererat</skapat>
+      <namn>aktiebolag</namn>
+      <id>4190</id>
+      <relevans>54</relevans>
+      <domain_id>40</domain_id>
+      <domain_name>F&#xD6;RETAG OCH KONKURRENS</domain_name>
+      <thesaurus_id>4016</thesaurus_id>
+      <thesaurus_name>associationsformer</thesaurus_name>
+    </kategori>
+    <kategori>
+      <status>test</status>
+      <skapat>automatiskt genererat</skapat>
+      <namn>tystnadsplikt</namn>
+      <id>4000</id>
+      <relevans>54</relevans>
+      <domain_id>44</domain_id>
+      <domain_name>SYSSELS&#xC4;TTNING OCH ARBETE</domain_name>
+      <thesaurus_id>4426</thesaurus_id>
+      <thesaurus_name>arbetsmarknadsrelationer och arbetsr&#xE4;tt</thesaurus_name>
+    </kategori>
+    <kategori>
+      <status>test</status>
+      <skapat>automatiskt genererat</skapat>
+      <namn>lufttransport</namn>
+      <id>4505</id>
+      <relevans>53</relevans>
+      <domain_id>48</domain_id>
+      <domain_name>TRANSPORT</domain_name>
+      <thesaurus_id>4826</thesaurus_id>
+      <thesaurus_name>lufttransport och rymdtransport</thesaurus_name>
+    </kategori>
+    <kategori>
+      <status>test</status>
+      <skapat>automatiskt genererat</skapat>
+      <namn>allm&#xE4;n domstol</namn>
+      <id>1543</id>
+      <relevans>53</relevans>
+      <domain_id>12</domain_id>
+      <domain_name>LAG OCH R&#xC4;TT</domain_name>
+      <thesaurus_id>1226</thesaurus_id>
+      <thesaurus_name>r&#xE4;ttssystemets organisation</thesaurus_name>
+    </kategori>
+    <kategori>
+      <status>test</status>
+      <skapat>automatiskt genererat</skapat>
+      <namn>finansiellt instrument</namn>
+      <id>1459</id>
+      <relevans>53</relevans>
+      <domain_id>24</domain_id>
+      <domain_name>FINANSER</domain_name>
+      <thesaurus_id>2421</thesaurus_id>
+      <thesaurus_name>fri r&#xF6;rlighet f&#xF6;r kapital</thesaurus_name>
+    </kategori>
+  </dokkategori>
+</dokumentstatus>
