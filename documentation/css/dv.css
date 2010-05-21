@@ -343,8 +343,14 @@ table.docinfo tr td {
     margin: 0 0 0.5em 0;
 }
 
-.classInfo table td .warning {
+.classInfo table th .warning {
+    font-size: 0.8em;
     color: #f00;
+}
+
+.classInfo table th .note {
+    font-size: 0.8em;
+    color: #00f;
 }
 
 .classInfo table td dt {

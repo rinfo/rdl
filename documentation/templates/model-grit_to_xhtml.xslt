@@ -8,8 +8,6 @@
                 xmlns:skos="http://www.w3.org/2004/02/skos/core#"
                 xmlns:dct="http://purl.org/dc/terms/"
                 xmlns:foaf="http://xmlns.com/foaf/0.1/"
-                xmlns:bibo="http://purl.org/ontology/bibo/"
-                xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
                 xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
                 xmlns="http://www.w3.org/1999/xhtml"
                 exclude-result-prefixes="exslt func dyn str self grit"
@@ -21,6 +19,10 @@
                 xmlns:grit="http://purl.org/oort/impl/xslt/grit/lib/common#"
                 extension-element-prefixes="func">
 
+  <!-- TODO: Really hide things w/o annots in current $lang? See uses of $lang below. -->
+  <!-- TODO: Xalan messes up null-ns. At least where unionOf is used, it needs
+             "*/@ref" instead of the correct "li/@ref". -->
+
   <xsl:import href="../../resources/external/xslt/grit/lib/common.xslt"/>
 
   <xsl:param name="ontologyUri"
@@ -30,9 +32,6 @@
 
   <xsl:key name="rel" match="/graph/resource" use="@uri"/>
   <xsl:variable name="r" select="/graph/resource"/>
-
-  <!-- TODO: Really hide things w/o annots in current $lang? See uses of $lang below. -->
-
 
   <xsl:template match="/graph">
     <xsl:variable name="ontology" select="resource[@uri=$ontologyUri]"/>
@@ -141,7 +140,7 @@
                                               @xml:lang = $lang]]
                             | $all-properties[rdfs:label[@xml:lang = $lang]]"/>
 
-      <xsl:variable name="all-proprefs" select="$all-properties/@ref
+      <xsl:variable name="all-proprefs" select="$all-properties/@uri
                             | $all-restrictions/owl:onProperty/@ref"/>
 
       <xsl:if test="$properties-restrs">
@@ -166,13 +165,13 @@
                                     owl:onProperty/@ref = current()/owl:onProperty/@ref]"/>
                   </xsl:call-template>
                 </xsl:when>
-                <xsl:when test="not(preceding::*[a/owl:Restriction and
+                <xsl:when test="not($properties-restrs[a/owl:Restriction and
                                         owl:onProperty/@ref = current()/@uri])">
                   <xsl:call-template name="table-row">
                     <xsl:with-param name="property" select="."/>
                     <xsl:with-param name="all-proprefs" select="$all-proprefs"/>
                     <xsl:with-param name="all-classrefs" select="$all-classrefs"/>
-                    <xsl:with-param name="direct" select="rdfs:domain/@ref = $class/@uri"/>
+                    <xsl:with-param name="direct" select="rdfs:domain[@ref = $class/@uri or owl:unionOf[*/@ref = $class/@uri]]"/>
                   </xsl:call-template>
                 </xsl:when>
               </xsl:choose>
@@ -190,31 +189,48 @@
     <xsl:param name="restr" select="*[false()]"/>
     <xsl:param name="direct" select="true()"/>
     <xsl:variable name="abstract" select="$property/protege:abstract = 'true'"/>
-    <tr class="propdef">
-      <th about="{$property/@uri}">
-        <xsl:variable name="label" select="$property/rdfs:label"/>
-        <xsl:choose>
-          <xsl:when test="not($direct)">
-            <!-- TODO: only use css for inherited, not em! -->
-            <em class="inherited"><xsl:apply-templates select="$label"/></em>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:apply-templates select="$label"/>
-          </xsl:otherwise>
-        </xsl:choose>
-        <xsl:if test="$abstract">
-          <div class="warning">[abstrakt egenskap]</div>
-        </xsl:if>
-      </th>
-      <td>
-        <xsl:if test="$property/rdfs:comment">
-          <p><xsl:apply-templates select="$property/rdfs:comment"/></p>
-        </xsl:if>
-        <xsl:variable name="sub-props" select="$r[rdfs:subPropertyOf/@ref =
-                      $property/@uri and rdfs:label[@xml:lang=$lang] and
-                      self:domain-within(., $all-classrefs)]"/>
-        <xsl:if test="$restr">
-          <xsl:for-each select="self:computed-range($restr)/rdfs:label[@xml:lang = $lang]">
+    <xsl:variable name="sub-props" select="$r[rdfs:subPropertyOf/@ref =
+                  $property/@uri and rdfs:label[@xml:lang=$lang] and
+                  self:domain-within(., $all-classrefs)]"/>
+    <xsl:variable name="has-more-specific"
+                  select="count($sub-props[self:contains($all-proprefs, @uri)]) > 0"/>
+    <xsl:if test="true()"><!-- not($has-more-specific)">-->
+      <tr class="propdef">
+        <th about="{$property/@uri}">
+          <xsl:variable name="label" select="$property/rdfs:label"/>
+          <xsl:choose>
+            <xsl:when test="not($direct)">
+              <!-- TODO: only use css for inherited, not em! -->
+              <em class="inherited"><xsl:apply-templates select="$label"/></em>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:apply-templates select="$label"/>
+            </xsl:otherwise>
+          </xsl:choose>
+          <xsl:if test="$abstract">
+            <div class="warning">[abstrakt egenskap]</div>
+          </xsl:if>
+          <xsl:if test="$all-proprefs[. = $property/rdfs:subPropertyOf/@ref]">
+            <div class="note">
+              <xsl:text>(specifik variant av: </xsl:text>
+              <xsl:value-of select="grit:get($property/rdfs:subPropertyOf)/
+                                rdfs:label[@xml:lang=$lang]"/>
+              <xsl:text>)</xsl:text>
+            </div>
+          </xsl:if>
+          <!-- -->
+          <xsl:if test="$has-more-specific">
+            <div class="note">(se även mer specifik variant)</div>
+          </xsl:if>
+          <!-- -->
+        </th>
+        <td>
+          <xsl:if test="$property/rdfs:comment">
+            <p><xsl:apply-templates select="$property/rdfs:comment"/></p>
+          </xsl:if>
+          <xsl:variable name="ranges"
+                        select="self:computed-range($property, $restr)/rdfs:label[@xml:lang = $lang]"/>
+          <xsl:for-each select="$ranges">
             <xsl:variable name="uri" select="../@uri"/>
             <p>
               <em class="rangeType">
@@ -231,55 +247,58 @@
               </em>
             </p>
           </xsl:for-each>
-        </xsl:if>
-        <xsl:if test="not($abstract)">
-          <dl class="tech">
-            <dt>URI:</dt>
-            <dd>
-              <code><xsl:value-of select="$property/@uri"/></code>
-            </dd>
-          </dl>
-        </xsl:if>
-        <!-- TODO: look over if unwanted subprops are pruned by adding limiting ranges
-        <xsl:if test="$sub-props">
-          <p>
-            Mer specifika egenskaper:
-            <dl>
-              <xsl:for-each select="$sub-props">
-                <xsl:sort select="rdfs:label[@xml:lang=$lang]"/>
-                <xsl:choose>
-                  <xsl:when test="not(self:contains($all-proprefs, @uri))">
-                    <dt><xsl:apply-templates select="rdfs:label"/></dt>
-                    <dd>
-                      <xsl:apply-templates select="rdfs:comment"/>
-                      <xsl:variable name="range"
-                                    select="grit:get(rdfs:range)"/>
-                      <xsl:if test="$range">
-                        <xsl:text> </xsl:text>
-                        <em>(<xsl:apply-templates
-                                select="$range/rdfs:label[@xml:lang = $lang]"/>)</em>
-                      </xsl:if>
-                    </dd>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <dt><em><xsl:apply-templates select="rdfs:label"/></em></dt>
-                    <dd><em>(se specifik rad för denna egenskap i denna typ)</em></dd>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:for-each>
+          <xsl:if test="not($abstract)">
+            <dl class="tech">
+              <dt>URI:</dt>
+              <dd>
+                <code><xsl:value-of select="$property/@uri"/></code>
+              </dd>
             </dl>
-          </p>
-        </xsl:if>
-        -->
-      </td>
-      <td>
-        <span class="cardinalityValue">
-          <xsl:call-template name="cardinality-label">
-            <xsl:with-param name="restr" select="$restr"/>
-          </xsl:call-template>
-        </span>
-      </td>
-    </tr>
+          </xsl:if>
+          <!-- TODO: look over if unwanted subprops are pruned by adding limiting ranges -->
+          <xsl:if test="$sub-props">
+            <p>
+              Mer specifika egenskaper:
+              <dl>
+                <xsl:for-each select="$sub-props">
+                  <xsl:sort select="rdfs:label[@xml:lang=$lang]"/>
+                  <!-- -->
+                  <xsl:choose>
+                    <xsl:when test="$has-more-specific">
+                      <dt><em><xsl:apply-templates select="rdfs:label"/></em></dt>
+                      <dd><em class="note">(se separat beskrivning av denna egenskap)</em></dd>
+                    </xsl:when>
+                    <xsl:otherwise>
+                    <!-- -->
+                      <dt><xsl:apply-templates select="rdfs:label"/></dt>
+                      <dd>
+                        <xsl:apply-templates select="rdfs:comment"/>
+                        <xsl:variable name="range"
+                                      select="grit:get(rdfs:range)"/>
+                        <xsl:if test="$range">
+                          <xsl:text> </xsl:text>
+                          <em>(<xsl:apply-templates
+                                  select="$range/rdfs:label[@xml:lang = $lang]"/>)</em>
+                        </xsl:if>
+                      </dd>
+                    <!-- -->
+                    </xsl:otherwise>
+                  </xsl:choose>
+                  <!-- -->
+                </xsl:for-each>
+              </dl>
+            </p>
+          </xsl:if>
+        </td>
+        <td>
+          <span class="cardinalityValue">
+            <xsl:call-template name="cardinality-label">
+              <xsl:with-param name="restr" select="$restr"/>
+            </xsl:call-template>
+          </span>
+        </td>
+      </tr>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="*[@xml:lang]">
@@ -296,8 +315,8 @@
     <xsl:variable name="maxCardinality" select="$restr/owl:maxCardinality"/>
     <xsl:choose>
       <xsl:when test="$cardinality = 0">
-        <!-- TODO: isn't this "not allowed"? -->
-        <xsl:text>noll eller flera</xsl:text>
+        <!-- TODO:? is this "not allowed"? -->
+        <xsl:text>noll</xsl:text>
       </xsl:when>
       <xsl:when test="$cardinality = 1">
         <xsl:text>exakt en</xsl:text>
@@ -322,6 +341,9 @@
             <xsl:value-of select="$minCardinality"/>
           </xsl:otherwise>
         </xsl:choose>
+      </xsl:when>
+      <xsl:when test="$restr/owl:someValuesFrom">
+        <xsl:text>minst en</xsl:text>
       </xsl:when>
       <xsl:when test="not($maxCardinality)">
         <xsl:text>valfri</xsl:text>
@@ -382,7 +404,7 @@
   <func:function name="self:get-properties">
     <xsl:param name="r"/><!-- TODO: why does xalan need $r here but not in grit:get? -->
     <xsl:param name="class"/>
-    <func:result select="$r[rdfs:domain/@ref = $class/@uri] |
+    <func:result select="$r[rdfs:domain[@ref = $class/@uri or owl:unionOf[*/@ref = $class/@uri]]] |
                     dyn:map(self:super-classes($class), 'self:get-properties($r, .)')"/>
   </func:function>
 
@@ -399,18 +421,35 @@
   </func:function>
 
   <func:function name="self:computed-range">
+    <xsl:param name="property"/>
     <xsl:param name="restr"/>
-    <!-- TODO: really use someValuesFrom? (isn't it more like an "example range"?) -->
-    <xsl:variable name="classref" select="
-                  $restr/owl:allValuesFrom | $restr/owl:someValuesFrom |
-                  grit:get($restr/owl:onProperty)/rdfs:range"/>
-    <func:result select="grit:get($classref[1])"/>
+    <xsl:choose>
+      <xsl:when test="$restr/owl:allValuesFrom">
+        <func:result select="grit:get($restr/owl:allValuesFrom)"/>
+      </xsl:when>
+      <!-- TODO: really use someValuesFrom? (means "at least one of the type") -->
+      <xsl:when test="$restr/owl:someValuesFrom">
+        <func:result select="grit:get($restr/owl:someValuesFrom)"/>
+      </xsl:when>
+      <xsl:when test="grit:get($restr/owl:onProperty)/rdfs:range">
+        <func:result select="grit:get(grit:get($restr/owl:onProperty)/rdfs:range)"/>
+      </xsl:when>
+      <xsl:when test="$property/rdfs:range">
+        <func:result select="grit:get($property/rdfs:range)"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <func:result select="*[false()]"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </func:function>
 
   <func:function name="self:domain-within">
     <xsl:param name="node"/>
     <xsl:param name="classrefs"/>
-    <xsl:variable name="domains" select="$node/rdfs:domain | self:super-properties($node)/rdfs:domain"/>
+    <xsl:variable name="domains"
+                  select="$node/rdfs:domain[@ref] | $node/rdfs:domain/*[@ref] |
+                      self:super-properties($node)/rdfs:domain[@ref] |
+                      self:super-properties($node)/rdfs:domain/*[@ref]"/>
     <xsl:variable name="matched-domain">
       <xsl:for-each select="$domains">
         <xsl:if test="self:contains($classrefs, @ref)">TRUE</xsl:if>

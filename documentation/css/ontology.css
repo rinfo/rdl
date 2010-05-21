@@ -140,6 +140,17 @@ dt  {
 .warning {
     color: #f33;
 }
+th .warning {
+    font-size: 0.8em;
+}
+
+.note {
+    color: #00f;
+}
+th .note {
+    font-size: 0.8em;
+    color: #00f;
+}
 
 dl.tech {
     color: #000;
