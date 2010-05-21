@@ -21,7 +21,7 @@
         <html>
             <head>
                 <title>CoinScheme</title>
-                <link rel="stylesheet" type="text/css" href="dv.css" />
+                <link rel="stylesheet" type="text/css" href="css/dv.css" />
             </head>
             <body>
                 <xsl:apply-templates select="resource[a/coin:CoinScheme]"/>
