@@ -20,8 +20,6 @@
                 extension-element-prefixes="func">
 
   <!-- TODO: Really hide things w/o annots in current $lang? See uses of $lang below. -->
-  <!-- TODO: Xalan messes up null-ns. At least where unionOf is used, it needs
-             "*/@ref" instead of the correct "li/@ref". -->
 
   <xsl:import href="../../resources/external/xslt/grit/lib/common.xslt"/>
 
@@ -65,8 +63,10 @@
           <code><xsl:value-of select="@uri"/></code>
         </dd>
       </dl>
-      <xsl:for-each select="$r[a[rdfs:Class|owl:Class|owl:DeprecatedClass]
-                    and rdfs:isDefinedBy/@ref = current()/@uri]">
+      <xsl:variable name="classes" select="$r[a[rdfs:Class|owl:Class|owl:DeprecatedClass]
+                        and rdfs:isDefinedBy/@ref = current()/@uri]"/>
+      <!-- TODO: ToC -->
+      <xsl:for-each select="$classes">
         <xsl:sort select="rdfs:label"/>
         <xsl:apply-templates select="."/>
       </xsl:for-each>
@@ -171,7 +171,8 @@
                     <xsl:with-param name="property" select="."/>
                     <xsl:with-param name="all-proprefs" select="$all-proprefs"/>
                     <xsl:with-param name="all-classrefs" select="$all-classrefs"/>
-                    <xsl:with-param name="direct" select="rdfs:domain[@ref = $class/@uri or owl:unionOf[*/@ref = $class/@uri]]"/>
+                    <xsl:with-param name="direct"
+                                    select="rdfs:domain[@ref = $class/@uri or owl:unionOf[li/@ref = $class/@uri]]"/>
                   </xsl:call-template>
                 </xsl:when>
               </xsl:choose>
@@ -404,7 +405,7 @@
   <func:function name="self:get-properties">
     <xsl:param name="r"/><!-- TODO: why does xalan need $r here but not in grit:get? -->
     <xsl:param name="class"/>
-    <func:result select="$r[rdfs:domain[@ref = $class/@uri or owl:unionOf[*/@ref = $class/@uri]]] |
+    <func:result select="$r[rdfs:domain[@ref = $class/@uri or owl:unionOf[li/@ref = $class/@uri]]] |
                     dyn:map(self:super-classes($class), 'self:get-properties($r, .)')"/>
   </func:function>
 
