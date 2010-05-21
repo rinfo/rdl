@@ -13,17 +13,16 @@
 
 ##
 # TODO:
-# 1. Ta bort resterande minCardinality 0
-# 2. Om Restriction är maxCardinality 1 och Property->domain är tydlig:
+# 1. Om Restriction är maxCardinality 1 och Property->domain är tydlig:
 #       => ändra Property till FunctionalProperty och ta bort Restriction.
-# 3. Definiera domain på övriga Property.
-# 4. Utöka med:
+# 2. Definiera domain på övriga Property.
+# 3. Utöka med:
 #   - license
 #   - issued
 #   - publisher / homepage (creator?)
 #   - changes (seeAlso <changes.rdf>?)
 #   - extras (suggestedPrefix, pluralLabel...)
-# 5. Se övriga TODO:s nedan.
+# 4. Se övriga TODO:s nedan.
 
 
 ##
@@ -61,6 +60,7 @@
         ],
         [ a owl:Restriction;
             owl:onProperty dct:issued;
+            owl:allValuesFrom xsd:date;
             owl:cardinality 1;
         ],
         [ a owl:Restriction;
@@ -71,10 +71,10 @@
         ],
         [ a owl:Restriction;
             owl:onProperty dct:identifier;
-            owl:allValuesFrom rdfs:Literal;
-            owl:maxCardinality 1; # Alla resurser kommer inte ha en
-                                  # etablerad identifierare (exv
-                                  # vägledande avgöranden)
+            owl:someValuesFrom rdfs:Literal;
+            #owl:minCardinality 0;  # TODO: Alla resurser kommer inte ha en
+                                    # etablerad identifierare (exv vägledande
+                                    # avgöranden)
         ];
     rdfs:isDefinedBy : .
 
@@ -134,42 +134,6 @@
 
 
 ##
-# Publikationssamlingar/förteckningar/serier
-#-----------------------------------------------------------------------
-:Publikationssamling a owl:Class;
-    rdfs:subClassOf bibo:Collection;
-    rdfs:label "Publikationssamling"@sv;
-    rdfs:comment """Någon slags samling (förteckning, serie) över rättsinformationspublikationer."""@sv;
-    protege:abstract "true";
-    rdfs:isDefinedBy : .
-
-# TODO: ISSN-nummer..
-# - definiera! Anv. prism:issn (eller hellre bibo:issn)?
-# - Åtminstone instanser av :Utredningsserie (Ds, SOU) har ett ISSN-nummer..
-# - hur relatera ISSN-nummer för den Forfattningssamling som författningssamlingsreferenser tillhör?
-#   Se: <http://nurture.nature.com/rss/modules/mod_prism.html>
-#   och <ftp://ftp.rfc-editor.org/in-notes/rfc3044.txt>
-#   ::
-#       @prefix prism: <http://prismstandard.org/namespaces/1.2/basic/> .
-#       [] prism:issn <urn:ISSN:1046-8188> .
-
-:Utredningsserie a owl:Class;
-    rdfs:subClassOf :Publikationssamling;
-    rdfs:label "Utredningsserie"@sv;
-    rdfs:isDefinedBy : .
-
-:Forfattningssamling a owl:Class;
-    rdfs:subClassOf :Publikationssamling;
-    rdfs:label "Författningssamling"@sv;
-    rdfs:isDefinedBy : .
-
-:Rattsfallspublikation a owl:Class;
-    rdfs:subClassOf :Publikationssamling;
-    rdfs:label "Rättsfallspublikation"@sv;
-    rdfs:isDefinedBy : .
-
-
-##
 # Författningar
 #-----------------------------------------------------------------------
 
@@ -207,23 +171,8 @@
         [ a owl:Restriction;
             owl:onProperty :overgangsbestammelse;
             owl:maxCardinality 1
-        ],
-        #TODO:see:minCardinality_fix_3
-        [ a owl:Restriction;
-            owl:onProperty :kapitel;
-            owl:minCardinality 0
-        ],
-        #TODO:see:minCardinality_fix_3
-        [ a owl:Restriction;
-            owl:onProperty :paragraf;
-            owl:minCardinality 0
         ] .
 
-# Förekommer endast i SFS (såvitt har observerats)
-:bihangsnummer a owl:DatatypeProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Bihangsnummer"@sv;
-    rdfs:comment """Nummer på det bihang som dokumentet återfinns i. Exempelvis "40"."""@sv; .
 
 :forfattningssamling a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
@@ -239,81 +188,12 @@
     rdfs:comment "Datum då dokumentet utkom från trycket."@sv;
     rdfs:range xsd:date; .
 
-:kapitel a owl:ObjectProperty;
+# Förekommer endast i SFS (såvitt har observerats)
+:bihangsnummer a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
-    rdfs:subPropertyOf dct:hasPart;
-    rdfs:label "Kapitel"@sv;
-    #TODO:see:minCardinality_fix_3
-    rdfs:comment "Angivelse av i författningen ingående kapitel."@sv;
-    rdfs:range :Kapitel;
-    owl:inverseOf [ rdfs:label "Kapitel i"@sv ]; .
+    rdfs:label "Bihangsnummer"@sv;
+    rdfs:comment """Nummer på det bihang som dokumentet återfinns i. Exempelvis "40"."""@sv; .
 
-:paragraf a owl:ObjectProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:subPropertyOf dct:hasPart;
-    rdfs:label "Paragraf"@sv;
-    #TODO:minCardinality_fix_3: rdfs:domain [ owl:unionOf (:FSDokument, :KonsolideradGrundforfattning, :Kapitel) ]
-    rdfs:comment "Angivelse av i författningen ingående paragraf."@sv;
-    rdfs:range :Paragraf;
-    owl:inverseOf [ rdfs:label "Paragraf i"@sv ]; .
-
-#---------------------------------------
-
-:Kapitel a owl:Class;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Kapitel"@sv;
-    rdfs:comment "Ett kapitel i en svensk författning."@sv;
-    #TODO:see:minCardinality_fix_3
-    rdfs:subClassOf
-        [ a owl:Restriction;
-            owl:onProperty :paragraf;
-            owl:minCardinality 0
-        ] .
-
-
-:kapitelnummer a owl:DatatypeProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Kapitelnummer"@sv;
-    rdfs:domain :Kapitel;
-    rdfs:range rdfs:Literal;
-    rdfs:comment "Det symboliska numret för ett kapitel i en svensk lag."@sv; .
-
-#---------------------------------------
-
-:Paragraf a owl:Class;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Paragraf"@sv;
-    rdfs:comment "En paragraf i en svensk författning."@sv; .
-
-
-:paragrafnummer a owl:DatatypeProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Paragrafnummer"@sv;
-    rdfs:domain :Paragraf;
-    rdfs:range rdfs:Literal;
-    rdfs:comment "Det symboliska numret för en paragraf i en svensk lag."@sv; .
-
-
-#---------------------------------------
-
-:Forfattning a owl:Class;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Författning"@sv;
-    rdfs:comment "En författning utgiven i någon författningssamling."@sv;
-    protege:abstract "true";
-    rdfs:subClassOf :FSDokument;
-    rdfs:subClassOf
-        [ a owl:Restriction;
-            owl:onProperty :beslutadAv;
-            owl:minCardinality 1
-        ] .
-
-
-:beslutadAv a owl:ObjectProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Beslutad av"@sv;
-    rdfs:comment "Referens till officiell beslutstagare."@sv;
-    rdfs:range foaf:Agent .
 
 :beslutande a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
@@ -436,7 +316,8 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Beslutsdatum"@sv;
     rdfs:comment "Datum då innehållet i dokumentet beslutades."@sv;
-    #TODO:? rdfs:domain [ owl:unionOf (...) ]; # se anv. i Restriction:s
+    # TODO: se anv. i Restriction:s
+    rdfs:domain [ owl:unionOf (:Tillkannagivande :Cirkular :Myndighetsforeskrift :Forarbete) ];
     rdfs:range xsd:date; .
 
 # Enligt JuDep 070906 är dessa ekvivalenta.
@@ -446,7 +327,8 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Utfärdandedatum"@sv;
     rdfs:comment "Datum då författningen utfärdades. Motsvarar beslutsdatum."@sv;
-    #TODO:? rdfs:domain [ owl:unionOf (...) ]; # se anv. i Restriction:s
+    # TODO: se anv. i Restriction:s
+    rdfs:domain [ owl:unionOf (:Lag :Forordning :Brev) ];
     rdfs:range xsd:date; .
 
 :omtryckAv a owl:ObjectProperty;
@@ -456,6 +338,29 @@
     rdfs:label "Omtryck av"@sv;
     rdfs:comment "Referens till vad omtrycket avser, t.ex. en förordning."@sv;
     owl:inverseOf [ rdfs:label "Har omtryck"@sv ]; .
+
+
+#---------------------------------------
+
+:Forfattning a owl:Class;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Författning"@sv;
+    rdfs:comment "En författning utgiven i någon författningssamling."@sv;
+    protege:abstract "true";
+    rdfs:subClassOf :FSDokument;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :beslutadAv;
+            owl:minCardinality 1
+        ] .
+
+
+:beslutadAv a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Beslutad av"@sv;
+    rdfs:comment "Referens till officiell beslutstagare."@sv;
+    rdfs:domain :Forfattning;
+    rdfs:range foaf:Agent .
 
 
 #---------------------------------------
@@ -511,6 +416,24 @@
 
 #---------------------------------------
 
+:Myndighetsforeskrift a owl:Class;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Myndighetsföreskrift"@sv;
+    rdfs:comment "En föreskrift utgiven i någon författningssamling."@sv;
+    rdfs:subClassOf :Forfattning;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :bemyndigande;
+            owl:minCardinality 1
+        ],
+        [ a owl:Restriction;
+            owl:onProperty :beslutsdatum;
+            owl:cardinality 1
+        ] .
+
+
+#---------------------------------------
+
 :Tillkannagivande a owl:Class;
     rdfs:isDefinedBy : ;
     rdfs:label "Tillkännagivande"@sv;
@@ -539,6 +462,7 @@
             owl:cardinality 1
         ] .
 
+
 #---------------------------------------
 
 :Brev a owl:DeprecatedClass;
@@ -552,6 +476,7 @@
             owl:cardinality 1
         ] .
 
+
 #---------------------------------------
 # TODO: fler gamla begrepp (som är rdfs:subClassOf :FSDokument); t.ex.:
 #   Kungörelse, Stadga, Bihang..
@@ -560,61 +485,6 @@
 #    rdfs:comment "Övriga typer av dokument utgivna i någon författningssamling."@sv;
 #   - har dessa :utfardandedatum? några/vilka/alla?
 #
-
-
-#---------------------------------------
-
-:Myndighetsforeskrift a owl:Class;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Myndighetsföreskrift"@sv;
-    rdfs:comment "En föreskrift utgiven i någon författningssamling."@sv;
-    rdfs:subClassOf :Forfattning;
-    rdfs:subClassOf
-        [ a owl:Restriction;
-            owl:onProperty :bemyndigande;
-            owl:minCardinality 1
-        ],
-        [ a owl:Restriction;
-            owl:onProperty :beslutsdatum;
-            owl:cardinality 1
-        ] .
-
-
-#---------------------------------------
-# Lösa författningsreferenser
-
-:Forfattningsreferens a owl:Class;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Författningsreferens"@sv;
-    rdfs:comment """En referens till en del av en författning. Referensen är
-    inprecis i det att den som skapar referensen kan avse ett annat
-    paragrafinnehåll än det som existerar i grundförfattningen (t.ex. den
-    version som senare påförts i en ändringsförfattning)."""@sv;
-    rdfs:subClassOf
-        [ a owl:Restriction;
-            owl:onProperty :angerGrundforfattning;
-            owl:cardinality 1
-        ] .
-
-:angerGrundforfattning a owl:ObjectProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Anger grundförfattning"@sv;
-    rdfs:domain :Forfattningsreferens;
-    rdfs:range :Forfattning; .
-
-:angerKapitelnummer a owl:DatatypeProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Anger kapitelnummer"@sv;
-    rdfs:seeAlso :kapitelnummer;
-    rdfs:domain :Forfattningsreferens;
-    rdfs:range rdfs:Literal; .
-
-:angerParagrafnummer a owl:DatatypeProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Anger paragrafnummer"@sv;
-    rdfs:seeAlso :paragrafnummer;
-    rdfs:domain :Forfattningsreferens;
-    rdfs:range rdfs:Literal; .
 
 
 ##
@@ -634,16 +504,6 @@
         [ a owl:Restriction;
             owl:onProperty :konsolideringsunderlag;
             owl:minCardinality 2
-        ],
-        #TODO:see:minCardinality_fix_3
-        [ a owl:Restriction;
-            owl:onProperty :kapitel;
-            owl:minCardinality 0
-        ],
-        #TODO:see:minCardinality_fix_3
-        [ a owl:Restriction;
-            owl:onProperty :paragraf;
-            owl:minCardinality 0
         ] .
 
 
@@ -662,6 +522,7 @@
                     som ingått i konsolideringsunderlaget. Kan t.ex. utgå från en
                     tidigare konsoliderad version. Samling med referenser till
                     dokument."""@sv; .
+
 
 #---------------------------------------
 
@@ -1095,5 +956,124 @@
     rdfs:comment "Indentifierare för ett dokument som ingår i EUR-LEX, den europeiska rättsinformationsdatabasen."@sv;
     #rdfs:domain foaf:Document;
     rdfs:isDefinedBy : .
+
+
+##
+# Publikationssamlingar/förteckningar/serier
+#-----------------------------------------------------------------------
+:Publikationssamling a owl:Class;
+    rdfs:subClassOf bibo:Collection;
+    rdfs:label "Publikationssamling"@sv;
+    rdfs:comment """Någon slags samling (förteckning, serie) över rättsinformationspublikationer."""@sv;
+    protege:abstract "true";
+    rdfs:isDefinedBy : .
+
+# TODO: ISSN-nummer..
+# - definiera! Anv. prism:issn (eller hellre bibo:issn)?
+# - Åtminstone instanser av :Utredningsserie (Ds, SOU) har ett ISSN-nummer..
+# - hur relatera ISSN-nummer för den Forfattningssamling som författningssamlingsreferenser tillhör?
+#   Se: <http://nurture.nature.com/rss/modules/mod_prism.html>
+#   och <ftp://ftp.rfc-editor.org/in-notes/rfc3044.txt>
+#   ::
+#       @prefix prism: <http://prismstandard.org/namespaces/1.2/basic/> .
+#       [] prism:issn <urn:ISSN:1046-8188> .
+
+:Utredningsserie a owl:Class;
+    rdfs:subClassOf :Publikationssamling;
+    rdfs:label "Utredningsserie"@sv;
+    rdfs:isDefinedBy : .
+
+:Forfattningssamling a owl:Class;
+    rdfs:subClassOf :Publikationssamling;
+    rdfs:label "Författningssamling"@sv;
+    rdfs:isDefinedBy : .
+
+:Rattsfallspublikation a owl:Class;
+    rdfs:subClassOf :Publikationssamling;
+    rdfs:label "Rättsfallspublikation"@sv;
+    rdfs:isDefinedBy : .
+
+
+##
+# Delar av dokument
+#-----------------------------------------------------------------------
+
+:Kapitel a owl:Class;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Kapitel"@sv;
+    rdfs:comment "Ett kapitel i en svensk författning."@sv; .
+
+:kapitelnummer a owl:DatatypeProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Kapitelnummer"@sv;
+    rdfs:domain :Kapitel;
+    rdfs:range rdfs:Literal;
+    rdfs:comment "Det symboliska numret för ett kapitel i en svensk lag."@sv; .
+
+:Paragraf a owl:Class;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Paragraf"@sv;
+    rdfs:comment "En paragraf i en svensk författning."@sv; .
+
+:paragrafnummer a owl:DatatypeProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Paragrafnummer"@sv;
+    rdfs:domain :Paragraf;
+    rdfs:range rdfs:Literal;
+    rdfs:comment "Det symboliska numret för en paragraf i en svensk lag."@sv; .
+
+:kapitel a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf dct:hasPart;
+    rdfs:label "Kapitel"@sv;
+    rdfs:comment "Angivelse av i författningen ingående kapitel."@sv;
+    rdfs:domain [ owl:unionOf (:FSDokument :KonsolideradGrundforfattning) ];
+    rdfs:range :Kapitel;
+    owl:inverseOf [ rdfs:label "Kapitel i"@sv ]; .
+
+:paragraf a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf dct:hasPart;
+    rdfs:label "Paragraf"@sv;
+    rdfs:domain [ owl:unionOf (:FSDokument :KonsolideradGrundforfattning :Kapitel) ];
+    rdfs:comment "Angivelse av i författningen ingående paragraf."@sv;
+    rdfs:range :Paragraf;
+    owl:inverseOf [ rdfs:label "Paragraf i"@sv ]; .
+
+
+#---------------------------------------
+
+:Forfattningsreferens a owl:Class;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Författningsreferens"@sv;
+    rdfs:comment """En referens till en del av en författning. Referensen är
+    inprecis i det att den som skapar referensen kan avse ett annat
+    paragrafinnehåll än det som existerar i grundförfattningen (t.ex. den
+    version som senare påförts i en ändringsförfattning)."""@sv;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :angerGrundforfattning;
+            owl:cardinality 1
+        ] .
+
+:angerGrundforfattning a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Anger grundförfattning"@sv;
+    rdfs:domain :Forfattningsreferens;
+    rdfs:range :Forfattning; .
+
+:angerKapitelnummer a owl:DatatypeProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Anger kapitelnummer"@sv;
+    rdfs:seeAlso :kapitelnummer;
+    rdfs:domain :Forfattningsreferens;
+    rdfs:range rdfs:Literal; .
+
+:angerParagrafnummer a owl:DatatypeProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Anger paragrafnummer"@sv;
+    rdfs:seeAlso :paragrafnummer;
+    rdfs:domain :Forfattningsreferens;
+    rdfs:range rdfs:Literal; .
 
 

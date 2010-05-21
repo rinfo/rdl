@@ -2,6 +2,14 @@
 CHANGELOG
 ########################################################################
 
+2010-05-21
+--------------------
+
+* Lade till dct:issued owl:allValuesFrom xsd:date för :Rattsinformationsdokument.
+* Ändrade Restriction (gällande :Rattsinformationsdokument) för dct:identifier till owl:someValuesFrom rdfs:Literal (istället för owl:minCardinality 0).
+* Lade till rdfs:domain som owl:unionOf för :kapitel och :paragraf, och tog bort (resterande) "owl:minCardinality 0"-restrictions på dessa egenskaper för typerna i dessa unioner.
+* * Lade till rdfs:domain som owl:unionOf för :beslutsdatum och :utfardandedatum .
+
 2010-05-19
 --------------------
 
@@ -25,7 +33,7 @@ CHANGELOG
 2010-03-24
 --------------------
 
-* Lade till owl:restriction för :referatrubrik på :Rattsfallsreferat
+* Lade till owl:Restriction för :referatrubrik på :Rattsfallsreferat
 
 2010-03-05
 --------------------
@@ -77,32 +85,27 @@ CHANGELOG
 2009-04-17
 --------------------
 
-* Tog bort seeAlso från Rattsinformationsdokument. Bör vara med i exempel, men
-dokumentet definieras inte av denna egenskap.
+* Tog bort seeAlso från Rattsinformationsdokument. Bör vara med i exempel, men dokumentet definieras inte av denna egenskap.
 
 
 2009-03-10
 --------------------
 
-* Ändrade kardinalitet för dct:title i Rattsinformationsdokument till 1. Lade
-till referatrubrik för att särskilja referatens mer utförliga rubriker från
-title. 
+* Ändrade kardinalitet för dct:title i Rattsinformationsdokument till 1. Lade till referatrubrik för att särskilja referatens mer utförliga rubriker från title.
 
 
 
 2009-03-09
 --------------------
 
-* Ändrade kardinalitet för beslutande och föredragande till 0 för
-författningar. efter möte med JuDep. Personinformationen anses ointressant.
+* Ändrade kardinalitet för beslutande och föredragande till 0 för författningar. efter möte med JuDep. Personinformationen anses ointressant.
 
 
 
 2008-11-10
 --------------------
 
-* Strök föreslagen egenskap "utfärdare". Vi behåller dct:publisher för detta
-  ändamål.
+* Strök föreslagen egenskap "utfärdare". Vi behåller dct:publisher för detta ändamål.
 
 * Ändrade bas-segmentet för modell-URI:er till "ns". Döpte om publikationsmodellens segmentnamn (löv) till "publ".
 
@@ -112,7 +115,7 @@ författningar. efter möte med JuDep. Personinformationen anses ointressant.
 --------------------
 
 * Bytte ut all användning av legacy-namespace
-  <http://purl.org/dc/elements/1.1/> ("DC") till <http://purl.org/dc/terms/>
-  ("DCT").
+  <http://purl.org/dc/elements/1.1/> ("DC") till <http://purl.org/dc/terms/> ("DCT").
 
   Se `<http://www.dublincore.org/documents/2008/01/14/dcmi-terms/>`_.
+
