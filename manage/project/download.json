@@ -27,6 +27,7 @@
             "grit/rdfxml-grit.xslt": "grit/rdfxml-grit.xslt",
             "grit/lib/common.xslt": "grit/lib/common.xslt",
             "vocab/grit_to_xhtml.xslt": "vocab/grit_to_xhtml.xslt",
+            "vocab/labels.xml": "vocab/labels.xml",
             "vocab/css/vocab.css": "vocab/css/vocab.css"
         }
     }
