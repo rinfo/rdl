@@ -38,7 +38,7 @@
     * Design Issues:
         - evaluate the usefulness of current solution for datatyped literals (@fmt)
 
-    * Less important:
+    * Non-critical:
 
         - @xml:base: to resolve about, resource and ID against
             - currently no or uniform use of relative uri:s is assumed
@@ -49,11 +49,11 @@
             - currently assumes uses of ID are isolated
 
         - interpreted rdf:li, @rdf:_* (rdf:Seq, rdf:Bag, rdf:Alt)..
-        - handle non-sugared rdf:List..
 
     * Improve:
-        - topresources algorithm.. (about and nodeID via //*, *[not(...)] top-level bnodes)
-        - optional support for $lang-filter (remove all lang literals with different lang)
+        - current non-sugared rdf:List (rdf:first, rdf:next) algorithm
+        - current topresources algorithm.. (about and nodeID via //*, *[not(...)] top-level bnodes)
+        - add optional support for $lang-filter (remove all lang literals with different lang)
 
     -->
 
@@ -169,9 +169,16 @@
     </xsl:template>
 
     <xsl:template name="resourcebody">
-        <xsl:variable name="elemtype" select="self::*[not(self::rdf:Description)]"/>
-        <xsl:apply-templates mode="type" select="$elemtype | rdf:type"/>
-        <xsl:apply-templates mode="property" select="@*|*"/>
+        <xsl:choose>
+            <xsl:when test="self::rdf:List/rdf:first | self::rdf:Description/rdf:first">
+                <xsl:apply-templates mode="rdflist" select="rdf:first"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="elemtype" select="self::*[not(self::rdf:Description)]"/>
+                <xsl:apply-templates mode="type" select="$elemtype | rdf:type"/>
+                <xsl:apply-templates mode="property" select="@*|*"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <xsl:template mode="property" match="*|@*">
@@ -194,6 +201,9 @@
                             </xsl:choose>
                         </li>
                     </xsl:for-each>
+                </xsl:when>
+                <xsl:when test="rdf:List/rdf:first | rdf:Description/rdf:first">
+                    <xsl:apply-templates mode="rdflist" select="*/rdf:first"/>
                 </xsl:when>
                 <xsl:when test="*/@rdf:about">
                     <xsl:attribute name="ref">
@@ -277,6 +287,26 @@
                   @rdf:parseType | @rdf:datatype"/>
 
     <xsl:template mode="property" match="rdf:type"></xsl:template>
+
+    <xsl:template mode="rdflist" match="rdf:List/rdf:first | rdf:Description/rdf:first">
+        <li>
+            <xsl:choose>
+                <xsl:when test="@rdf:resource">
+                    <xsl:attribute name="ref">
+                        <xsl:call-template name="normalize-uri">
+                            <xsl:with-param name="uri" select="@rdf:resource"/>
+                        </xsl:call-template>
+                    </xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:for-each select="*">
+                        <xsl:call-template name="resourcebody"/>
+                    </xsl:for-each>
+                </xsl:otherwise>
+            </xsl:choose>
+        </li>
+        <xsl:apply-templates select="../rdf:rest/*/rdf:first" mode="rdflist"/>
+    </xsl:template>
 
     <xsl:template mode="type" match="*">
         <!--<a uri="{concat(namespace-uri(.), local-name(.))}">-->
