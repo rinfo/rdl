@@ -1,0 +1,48 @@
+<labels>
+  <label name="vocabspec" xml:lang="en">Vocabulary Specification</label>
+  <label name="vocabspec" xml:lang="sv">Vokabulärspecification</label>
+  <label name="table-of-contents" xml:lang="en">Table of Contents</label>
+  <label name="table-of-contents" xml:lang="sv">Innehållsförteckning</label>
+  <label name="vocabulary" xml:lang="en">Vocabulary</label>
+  <label name="vocabulary" xml:lang="sv">Vokabulär</label>
+  <label name="hierarchy" xml:lang="en">Hierarchy</label>
+  <label name="hierarchy" xml:lang="sv">Hierarki</label>
+  <label name="classes" xml:lang="en">Classes</label>
+  <label name="classes" xml:lang="sv">Klasser</label>
+  <label name="properties" xml:lang="en">Properties</label>
+  <label name="properties" xml:lang="sv">Egenskaper</label>
+  <label name="reference" xml:lang="en">Reference</label>
+  <label name="reference" xml:lang="sv">Referens</label>
+  <label name="license" xml:lang="en">License</label>
+  <label name="license" xml:lang="sv">Licens</label>
+  <label name="changes" xml:lang="en">Changes</label>
+  <label name="changes" xml:lang="sv">Ändringar</label>
+  <label name="namespace-uri" xml:lang="en">Namespace URI</label>
+  <label name="namespace-uri" xml:lang="sv">Namnrymds-URI</label>
+  <label name="definitions" xml:lang="en">Definitions</label>
+  <label name="definitions" xml:lang="sv">Definitioner</label>
+  <label name="classes-lc" xml:lang="en">classes</label>
+  <label name="classes-lc" xml:lang="sv">klasser</label>
+  <label name="properties-lc" xml:lang="en">properties</label>
+  <label name="properties-lc" xml:lang="sv">egenskaper</label>
+  <label name="hierarchy" xml:lang="en">Hierarchy</label>
+  <label name="hierarchy" xml:lang="sv">Hierarki</label>
+  <label name="term" xml:lang="en">Term</label>
+  <label name="term" xml:lang="sv">Term</label>
+  <label name="type" xml:lang="en">Type</label>
+  <label name="type" xml:lang="sv">Typ</label>
+  <label name="definition" xml:lang="en">Definition</label>
+  <label name="definition" xml:lang="sv">Definition</label>
+  <label name="class" xml:lang="en">Class</label>
+  <label name="class" xml:lang="sv">Klass</label>
+  <label name="property" xml:lang="en">Property</label>
+  <label name="property" xml:lang="sv">Egenskap</label>
+  <label name="domain-of" xml:lang="en">Domain of the properties</label>
+  <label name="domain-of" xml:lang="sv">Domän för egenskaperna</label>
+  <label name="has subclasses" xml:lang="en">Has subclasses</label>
+  <label name="has subclasses" xml:lang="sv">Har subklasserna</label>
+  <label name="range-of" xml:lang="en">In range of (properties linking to this type)</label>
+  <label name="range-of" xml:lang="sv">Inom omfånget av (egenskaper som länkar till denna typ)</label>
+  <label name="subproperties" xml:lang="en">Has subproperties</label>
+  <label name="subproperties" xml:lang="sv">Har subegenskaperna</label>
+</labels>

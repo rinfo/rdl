@@ -269,46 +269,46 @@ div.def .footer {
     text-align: right;
 }
 
-dl.termdef dd, dl.usage dd {
+dl.termdefs dd, dl.usage dd {
     margin: 0 0 0.6em 3.5em;
 }
 
-dl.termdef dl {
+dl.termdefs dl {
     margin: 0;
     padding: 0;
     overflow: auto; zoom: 1;
 }
-dl.termdef dl dt {
+dl.termdefs dl dt {
     clear: left;
     float: left;
     margin: 0 0.8em 0 0;
     padding: 0;
 }
-dl.termdef dl dd {
+dl.termdefs dl dd {
     float: left;
     margin: 0;
     padding: 0;
 }
 
-dl.termdef .raw {
+dl.termdefs .raw {
     background-color: #eee;
     border: 1.3pt solid #ddd;
     color: #555;
     padding: 0 0.2em;
 }
-dl.termdef dd.raw {
+dl.termdefs dd.raw {
     border-top: none;
     margin-top: -1.3pt;
     padding-top: 1.3pt;
 }
-dl.termdef .raw .raw {
+dl.termdefs .raw .raw {
     border: none;
 }
 
 div.def.class {
     background-color: #fffff6;
 }
-div.def.class dl.termdef .raw {
+div.def.class dl.termdefs .raw {
     background-color: #f1f1e9;
     border-color: #e1e1d9;
 }

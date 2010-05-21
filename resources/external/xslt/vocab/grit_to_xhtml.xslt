@@ -12,16 +12,26 @@
 
   <xsl:import href="../grit/lib/common.xslt"/>
 
+  <xsl:param name="default-lang">en</xsl:param>
   <xsl:param name="lang">
     <xsl:choose>
       <xsl:when test="//*/@xml:lang">
         <xsl:value-of select="//*/@xml:lang[1]"/>
       </xsl:when>
-      <xsl:otherwise>en</xsl:otherwise>
+      <xsl:otherwise>
+          <xsl:value-of select="$default-lang"/>
+      </xsl:otherwise>
     </xsl:choose>
   </xsl:param>
+  <xsl:param name="localized" select="true()"/>
+  <xsl:param name="labels-url" select="'labels.xml'"/>
   <xsl:param name="mediabase">.</xsl:param>
   <xsl:param name="vocab-uri" select="$r[a/owl:Ontology][1]/@uri"/>
+
+  <xsl:variable name="l" select="document($labels-url)/labels/label[
+                not($localized) or not(../label/@xml:lang = $lang)
+                  and @xml:lang = $default-lang
+                or @xml:lang = $lang]"/>
 
   <xsl:variable name="vocab" select="$r[@uri = $vocab-uri]"/>
 
@@ -32,7 +42,8 @@
     <html lang="{$lang}" xml:lang="{$lang}">
       <xsl:variable name="title">
         <xsl:apply-templates mode="label" select="$vocab"/>
-        <xsl:text>| Vocabulary Specification</xsl:text>
+        <xsl:text> | </xsl:text>
+        <xsl:value-of select="$l[@name='vocabspec']"/>
       </xsl:variable>
       <head>
         <title><xsl:value-of select="$title"/></title>
@@ -62,15 +73,15 @@
       <h1><xsl:apply-templates mode="label" select="."/></h1>
 
       <div id="toc" role="navigation">
-        <h2>Table of Contents</h2>
+          <h2><xsl:value-of select="$l[@name='table-of-contents']"/></h2>
         <ul>
-          <li><a href="#details">Vocabulary</a></li>
-          <li><a href="#hierarchy">Hierarchy</a></li>
-          <li><a href="#classes">Classes</a></li>
-          <li><a href="#properties">Properties</a></li>
-          <li><a href="#reference">Reference</a></li>
-          <li><a href="#license">License</a></li>
-          <li><a href="#changes">Changes</a></li>
+          <li><a href="#details"><xsl:value-of select="$l[@name='vocabulary']"/></a></li>
+          <li><a href="#hierarchy"><xsl:value-of select="$l[@name='hierarchy']"/></a></li>
+          <li><a href="#classes"><xsl:value-of select="$l[@name='classes']"/></a></li>
+          <li><a href="#properties"><xsl:value-of select="$l[@name='properties']"/></a></li>
+          <li><a href="#reference"><xsl:value-of select="$l[@name='reference']"/></a></li>
+          <li><a href="#license"><xsl:value-of select="$l[@name='license']"/></a></li>
+          <li><a href="#changes"><xsl:value-of select="$l[@name='changes']"/></a></li>
         </ul>
       </div>
 
@@ -79,10 +90,10 @@
       </p>
 
       <div id="details" class="section">
-        <h2>Vocabulary</h2>
-        <xsl:call-template name="termdef">
+          <h2><xsl:value-of select="$l[@name='vocabulary']"/></h2>
+        <xsl:call-template name="termdefs">
           <xsl:with-param name="pre">
-            <dt>Namespace URI</dt>
+              <dt><xsl:value-of select="$l[@name='namespace-uri']"/></dt>
             <dd>
               <a href="{@uri}">
                 <code><xsl:value-of select="@uri"/></code>
@@ -91,9 +102,13 @@
           </xsl:with-param>
         </xsl:call-template>
         <div id="defs" role="navigation">
-          <h3>Definitions</h3>
+            <h3><xsl:value-of select="$l[@name='definitions']"/></h3>
           <dl>
-            <dt><xsl:value-of select="count($classes)"/> classes</dt>
+              <dt>
+                <xsl:value-of select="count($classes)"/>
+                <xsl:text> </xsl:text>
+                <xsl:value-of select="$l[@name='classes-lc']"/>
+              </dt>
             <dd>
               <ul>
                 <xsl:for-each select="$classes">
@@ -105,7 +120,11 @@
                 </xsl:for-each>
               </ul>
             </dd>
-            <dt><xsl:value-of select="count($properties)"/> properties</dt>
+            <dt>
+              <xsl:value-of select="count($properties)"/>
+              <xsl:text> </xsl:text>
+              <xsl:value-of select="$l[@name='properties-lc']"/>
+            </dt>
             <dd>
               <ul>
                 <xsl:for-each select="$properties">
@@ -123,11 +142,11 @@
 
       <div id="hierarchy" class="col-2 section">
         <div class="header">
-          <h2>Hierarchy</h2>
+          <h2><xsl:value-of select="$l[@name='hierarchy']"/></h2>
           <a class="tool" href="#main">[top]</a>
         </div>
         <div class="col">
-          <h3>Classes</h3>
+          <h3><xsl:value-of select="$l[@name='classes']"/></h3>
           <ul class="classes">
             <xsl:for-each select="$classes[
                           not( gr:get(rdfs:subClassOf)/rdfs:isDefinedBy/@ref =
@@ -145,7 +164,7 @@
           </ul>
         </div>
         <div class="col">
-          <h3>Properties</h3>
+          <h3><xsl:value-of select="$l[@name='properties']"/></h3>
           <ul class="properties">
             <xsl:for-each select="$properties[
                           not( gr:get(rdfs:subPropertyOf)/rdfs:isDefinedBy/@ref =
@@ -166,25 +185,25 @@
 
       <xsl:call-template name="defs">
         <xsl:with-param name="id" select="'classes'"/>
-        <xsl:with-param name="label">Classes</xsl:with-param>
+        <xsl:with-param name="label"><xsl:value-of select="$l[@name='classes']"/></xsl:with-param>
         <xsl:with-param name="defs" select="$classes"/>
       </xsl:call-template>
       <xsl:call-template name="defs">
         <xsl:with-param name="id" select="'properties'"/>
-        <xsl:with-param name="label">Properties</xsl:with-param>
+        <xsl:with-param name="label"><xsl:value-of select="$l[@name='properties']"/></xsl:with-param>
         <xsl:with-param name="defs" select="$properties"/>
       </xsl:call-template>
 
       <div id="reference" class="section">
         <div class="header">
-          <h2>Reference</h2>
+          <h2><xsl:value-of select="$l[@name='reference']"/></h2>
           <a class="tool" href="#main">[top]</a>
         </div>
         <table class="reference">
           <tr>
-            <th>Term Name</th>
-            <th>Type</th>
-            <th>Definition</th>
+            <th><xsl:value-of select="$l[@name='term']"/></th>
+            <th><xsl:value-of select="$l[@name='type']"/></th>
+            <th><xsl:value-of select="$l[@name='definition']"/></th>
           </tr>
           <xsl:for-each select="$defs">
             <xsl:sort select="local-name(a/*)"/>
@@ -205,7 +224,7 @@
 
       <div id="license">
         <div class="header">
-          <h2>License</h2>
+          <h2><xsl:value-of select="$l[@name='license']"/></h2>
           <a class="tool" href="#main">[top]</a>
         </div>
           <!-- TODO -->TBD
@@ -213,7 +232,7 @@
 
       <div id="changes">
         <div class="header">
-          <h2>Changes</h2>
+          <h2><xsl:value-of select="$l[@name='changes']"/></h2>
           <a class="tool" href="#main">[top]</a>
         </div>
           <!-- TODO -->TBD
@@ -263,15 +282,17 @@
   <xsl:template mode="def" match="*[a/*[contains(local-name(), 'Class')]]">
     <xsl:call-template name="def">
       <xsl:with-param name="htclass">def class</xsl:with-param>
-      <xsl:with-param name="prelabel">Class: </xsl:with-param>
+      <xsl:with-param name="prelabel"><xsl:value-of select="$l[@name='class']"/>: </xsl:with-param>
       <xsl:with-param name="content">
         <xsl:variable name="subclasses" select="$r[rdfs:subClassOf/@ref = current()/@uri]"/>
-        <xsl:variable name="domainof" select="$r[rdfs:domain/@ref = current()/@uri]"/>
-        <xsl:variable name="rangeof" select="$r[rdfs:range/@ref = current()/@uri]"/>
+        <xsl:variable name="domainof" select="$r[rdfs:domain[@ref = current()/@uri
+                                             or owl:unionOf[li/@ref = current()/@uri] ] ]"/>
+        <xsl:variable name="rangeof" select="$r[rdfs:range[@ref = current()/@uri
+                                             or owl:unionOf[li/@ref = current()/@uri] ] ]"/>
         <xsl:if test="$subclasses | $domainof | $rangeof">
           <dl class="usage">
             <xsl:if test="$domainof">
-              <dt>Domain of the properties:</dt>
+              <dt><xsl:value-of select="$l[@name='domain-of']"/>:</dt>
               <dd>
                 <ul>
                   <xsl:for-each select="$domainof">
@@ -283,7 +304,7 @@
               </dd>
             </xsl:if>
             <xsl:if test="$subclasses">
-              <dt>Has subclasses:</dt>
+              <dt><xsl:value-of select="$l[@name='has subclasses']"/>:</dt>
               <dd>
                 <xsl:for-each select="$subclasses">
                   <xsl:if test="position() != 1">, </xsl:if>
@@ -292,7 +313,7 @@
               </dd>
             </xsl:if>
             <xsl:if test="$rangeof">
-              <dt>In range of (properties linking to this type):</dt>
+              <dt><xsl:value-of select="$l[@name='range-of']"/>:</dt>
               <dd>
                 <xsl:for-each select="$rangeof">
                   <xsl:if test="position() != 1">, </xsl:if>
@@ -309,13 +330,13 @@
   <xsl:template mode="def" match="*[a/*[contains(local-name(), 'Property')]]">
     <xsl:call-template name="def">
       <xsl:with-param name="htclass">def property</xsl:with-param>
-      <xsl:with-param name="prelabel">Property: </xsl:with-param>
+      <xsl:with-param name="prelabel"><xsl:value-of select="$l[@name='property']"/>: </xsl:with-param>
       <xsl:with-param name="content">
         <xsl:variable name="subproperties" select="$r[rdfs:subPropertyOf/@ref = current()/@uri]"/>
         <xsl:if test="$subproperties">
           <dl class="usage">
             <xsl:if test="$subproperties">
-              <dt>Has subproperties:</dt>
+              <dt><xsl:value-of select="$l[@name='subproperties']"/>:</dt>
               <dd>
                 <xsl:for-each select="$subproperties">
                   <xsl:if test="position() != 1">, </xsl:if>
@@ -345,7 +366,7 @@
       <p>
         <xsl:apply-templates select="rdfs:comment"/>
       </p>
-      <xsl:call-template name="termdef">
+      <xsl:call-template name="termdefs">
         <xsl:with-param name="pre">
           <dt>URI</dt>
           <dd>
@@ -362,10 +383,10 @@
     </div>
   </xsl:template>
 
-  <xsl:template name="termdef">
+  <xsl:template name="termdefs">
     <xsl:param name="pre"/>
     <xsl:param name="post"/>
-    <dl class="termdef">
+    <dl class="termdefs">
       <xsl:copy-of select="$pre"/>
       <xsl:for-each select="*">
         <xsl:sort select="name()"/>
@@ -376,6 +397,20 @@
       <xsl:copy-of select="$post"/>
     </dl>
   </xsl:template>
+
+  <xsl:template mode="termdef" match="a">
+    <dt class="raw">rdf:type</dt>
+    <dd class="raw">
+      <xsl:for-each select="*">
+        <xsl:if test="position() != 1">, </xsl:if>
+        <xsl:call-template name="meta-ref"/>
+      </xsl:for-each>
+    </dd>
+  </xsl:template>
+
+  <!-- TODO: these used to be "richer forms of termdef" items. It might be nice
+       to have two panels for a "def" block, one new with "richdef":s like
+       these, and a "source" view with the current termdef list.
 
   <xsl:template mode="termdef" match="a">
     <dt>Type</dt>
@@ -412,9 +447,19 @@
     <dd><xsl:apply-templates select="."/></dd>
   </xsl:template>
 
+  -->
+
   <xsl:template mode="termdef" match="*">
     <dt class="raw">
-      <xsl:call-template name="meta-ref"/>
+      <xsl:choose>
+        <xsl:when test="self::li">
+          <xsl:value-of select="position()"/>
+          <xsl:text>.</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="meta-ref"/>
+        </xsl:otherwise>
+      </xsl:choose>
     </dt>
     <dd class="raw">
       <xsl:choose>
@@ -427,6 +472,9 @@
           <xsl:apply-templates select="."/>
         </xsl:otherwise>
       </xsl:choose>
+      <xsl:if test="self::li and position() != last()">
+        <xsl:text>, </xsl:text>
+      </xsl:if>
     </dd>
   </xsl:template>
 
