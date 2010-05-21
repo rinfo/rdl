@@ -74,7 +74,8 @@ def main() {
     def extMap = [
         "application/rdf+xml": "rdf",
         "application/xhtml+xml": "xhtml",
-        "application/atom+xml": "atom"
+        "application/atom+xml": "atom",
+        "text/html": "html",
     ]
     coll.each { href, repr ->
         def fpath = outdir+href
@@ -181,7 +182,7 @@ def modelItem(baseUri, File file) {
         alternate: [
             [ href: htmlReprSlug,
               writeTo: { rdfVocabToXhtml(repoToInStream(repo), it) },
-              mediaType: "application/xhtml+xml" ]
+              mediaType: "text/html" ]
         ]
     ]
 }
