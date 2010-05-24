@@ -65,7 +65,17 @@
       </dl>
       <xsl:variable name="classes" select="$r[a[rdfs:Class|owl:Class|owl:DeprecatedClass]
                         and rdfs:isDefinedBy/@ref = current()/@uri]"/>
-      <!-- TODO: ToC -->
+      <div id="toc">
+        <h2>Innehåll</h2>
+        <ul>
+          <xsl:for-each select="$classes">
+            <xsl:sort select="rdfs:label"/>
+            <ul>
+              <a href="#{grit:term(@uri)}"><xsl:value-of select="rdfs:label"/></a>
+            </ul>
+          </xsl:for-each>
+        </ul>
+      </div>
       <xsl:for-each select="$classes">
         <xsl:sort select="rdfs:label"/>
         <xsl:apply-templates select="."/>
