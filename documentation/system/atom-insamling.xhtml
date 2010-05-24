@@ -764,9 +764,9 @@
         Dessa flöden representeras av ett sammanhållet Atom-dokument. Mängden 
         poster i sådana bör vara "rimligt liten", förslagsvis under tusentalet 
         som mjukt gränsvärde. En hantering av sådana skulle kräva att alla 
-        entries från en given källa ska kunna sökas ut av systemet, och vid en 
+        poster från en given källa ska kunna sökas ut av systemet, och vid en 
         inhämtning skulle alla de som inte finns listade i det kompletta 
-        feed:et betraktas som raderade och tas bort ur det lokala lagret.
+        flödet betraktas som raderade och tas bort ur det lokala lagret.
       </p>
     </div>
 
@@ -954,9 +954,9 @@
           En metod för att samla in poster från sådana arkiv är att:
         </p>
         <ol>
-          <li>följ "subscription"-feed:et och "prev-archive",
+          <li>följ "subscription"-flödet och "prev-archive",
           </li>
-          <li>för varje sida: sortera entries (och <i>tombstones</i>) på 
+          <li>för varje sida: sortera poster (och <i>raderingar</i>) på 
             "updated" i fallande ordning, d.v.s. yngst (största tidstämpeln) 
             först,
           </li>
@@ -979,7 +979,7 @@
           <li>Inhämtad data sparas ner i kronologisk ordning, så att ingen slags 
             fel leder till "luckor" i tidsordningen (detta så att återupptagen 
             inhämtning kan lita på att lokalt inhämtat entry inte "skuggar" äldre, 
-            ännu ej sedda entries).
+            ännu ej sedda poster).
           </li>
           <li>Inga onödiga inhämtningar av redan uppdaterade poster sker. (Detta 
             är viktigt eftersom gamla poster inte behöver länka till historiska 
