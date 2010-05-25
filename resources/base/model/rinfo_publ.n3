@@ -124,13 +124,15 @@
     rdfs:range rdfs:Literal;
     rdfs:isDefinedBy : .
 
+
 # En fallback-egenskap om vi inte kan ange årsutgåva,
 # löpnummer/sidnummer etc.
-:platsangivelse a owl:DatatypeProperty;
-    rdfs:isDefinedBy : ;
-    rdfs:label "Platsangivelse"@sv;
-    rdfs:comment """En generell hänvisning till en plats i någon publikation (exempelvis "1899:bih. 40 s. 3", "1913 B 418.", "1978 2:37"). Ska endast användas om de mer specifika hänvisningsegenskaperna :arsutgava, :sidnummer, :lopnummer etc inte är tillgängliga. Ska inkludera årtal om sådant finns, men inte publikationsidentifierare (såsom "SFS", "NJA" eller "RÅ")"""@sv;
-    rdfs:isDefinedBy : .
+# Vi avvvaktar med att introducera :platsangivelse tills reellt behov uppstår.
+#:platsangivelse a owl:DatatypeProperty;
+#    rdfs:isDefinedBy : ;
+#    rdfs:label "Platsangivelse"@sv;
+#    rdfs:comment """En generell hänvisning till en plats i någon publikation (exempelvis "1899:bih. 40 s. 3", "1913 B 418.", "1978 2:37"). Ska endast användas om de mer specifika hänvisningsegenskaperna :arsutgava, :sidnummer, :lopnummer etc inte är tillgängliga. Ska inkludera årtal om sådant finns, men inte publikationsidentifierare (såsom "SFS", "NJA" eller "RÅ")"""@sv;
+#    rdfs:isDefinedBy : .
 
 
 ##

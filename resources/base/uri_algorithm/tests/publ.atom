@@ -34,18 +34,20 @@
         </content>
     </entry>
 
+    <!-- NOTE: Vi avvvaktar med att introducera :platsangivelse tills reellt behov uppstår.
     <entry>
-      <!-- Vi vet inte hur den avslutande "2" ska tolkas -->
+      <!- - Vi vet inte hur den avslutande "2" ska tolkas - ->
         <id>http://rinfo.lagrummet.se/publ/sfs/1736:0123_2</id>
         <summary>Äldre lag (handelsbalken) i svensk författningsamling (SFS), med identifierare delvis konstruerad ur publikationshänvisning</summary>
         <content type="application/rdf+xml">
             <rpubl:Forordning>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
-                <!-- <rpubl:fsNummer>1736:0123 2</rpubl:fsNummer> -->
+                <!- - <rpubl:fsNummer>1736:0123 2</rpubl:fsNummer> - ->
                 <rpubl:platsangivelse>1736:0123 2</rpubl:platsangivelse>
             </rpubl:Forordning>
         </content>
     </entry>
+    -->
 
     <entry>
         <id>http://rinfo.lagrummet.se/publ/sfs/1851:55_s_4</id>
@@ -90,18 +92,19 @@ g        </content>
 
 
     <!-- Se exempel från <http://www.arbetsgivarverket.se/t/PublicationList____271.aspx> -->
+    <!-- NOTE: Vi avvvaktar med att introducera :platsangivelse tills reellt behov uppstår.
     <entry>
         <id>http://rinfo.lagrummet.se/publ/agvfs/2002:3_b_3</id>
         <summary>Myndighetsföreskrift vars författningssamlingsnummer innehåller siffror, mellanslag och bokstäver</summary>
         <content type="application/rdf+xml">
             <rpubl:Myndighetsforeskrift>
                 <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/agvfs"/>
-                <!-- <rpubl:fsNummer>2002:3 B 3</rpubl:fsNummer> -->
+                <!- - <rpubl:fsNummer>2002:3 B 3</rpubl:fsNummer> - ->
                 <rpubl:platsangivelse>2002:3 B 3</rpubl:platsangivelse>
             </rpubl:Myndighetsforeskrift>
         </content>
     </entry>
-
+    -->
 
 
     <!-- Se exempel från <http://www5.f.lst.se/publikationer/forfattningar/ovrigaforeskrifter/ar/ovrigaforeskrifter1971.4.e689910bace3401a800031.html> -->
