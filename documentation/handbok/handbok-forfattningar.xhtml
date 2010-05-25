@@ -60,6 +60,17 @@
 	    <th>Datum</th>
 	    <th>Ändring</th>
 	  </tr>
+
+	  <tr>
+	    <td>2010-05-24</td>
+	    <td>
+              Egenskaperna <code>dct:identifier</code>, <code>arsutgava</code>
+              och <code>lopnummer</code> ersätter den tidigare
+              egenskapen <code>fsNummer</code>. Smärre språkliga och
+              formgivningsmässiga förändringar.
+            </td>
+          </tr>
+
 	  <tr>
 	    <td>2010-02-23</td>
 	    <td>Nytt namn (var tidigare <em>Startpaket för publicering
@@ -93,10 +104,18 @@
     </div>
     
     <div class="section">
-    <h2>1. Olika typer av författningar</h2>
+    <h2>1. Olika dokumenttyper</h2>
+
     <p>
-      De olika dokumenttyperna som används inom
-      rättsinformationssystemet är ordnade i en hierarki, där till
+      Rättsinformationsprojektet har definerat en begreppsmodell för
+      all rättsinformation som är uppbyggd av ett antal olika
+      dokumenttyper och egenskaper för dessa. En post i
+      rättsinformationssystemet utgörs ytterst av en samling
+      egenskaper om en specifik resurs, där dokumenttypen är en av
+      egenskaperna.
+    </p>
+    <p>
+      De olika dokumenttyperna är ordnade i en hierarki, där till
       exempel dokumenttyperna <code>Lag</code>,
       <code>Forordning</code> och <code>Myndighetsforeskrift</code>
       alla är en specifik form av den mer generella dokumenttypen
@@ -106,10 +125,11 @@
       Dessa dokumenttyper har av denna anledning ett stort antal
       liknande egenskaper, exempelvis <code>beslutadAv</code>,
       <code>arsutgava</code>, <code>lopnummer</code>,
-      <code>Författningssamling</code>, <code>dct:identifier</code>
+      <code>forfattningssamling</code>, <code>dct:identifier</code>
       och <code>dct:title</code>. De kan också innehålla likande
       resurser (av typerna <code>Kapitel</code>, <code>Paragraf</code>
-      och <code>Bilaga</code>).
+      och <code>Bilaga</code>). De viktigaste egenskaperna beskrivs
+      nedan, men de finns även beskrivna i bilaga 1-3.
     </p>
     <p>
       De skiljer sig också delvis från varandra, exempelvis hänvisar
@@ -119,7 +139,7 @@
       <code>Lag</code> alltid hänvisar till några resurser av typen
       <code>Forarbete</code> genom hänvisningstypen
       <code>forarbete</code> (notera skillnaden i stora/små bokstäver
-      -- resurstyper inleds alltid med stor bokstav, medan egenskaper
+      &mdash; resurstyper inleds alltid med stor bokstav, medan egenskaper
       såsom hänvisningstyper inleds med liten bokstav).
     </p>
 
@@ -136,7 +156,164 @@
     </div>
 
     <div class="section">
-    <h2>2. Nivå 2-beskrivningar av författningar</h2>
+      <h2>2. Egenskaper</h2>
+      <p>
+        Utöver dokumenttypen kan man alltså ange en rad egenskaper. I
+      bilaga 1-3 finns en mer uttömmande lista av
+      egenskaper. Observera dock att man kan ange egenskaper utöver de
+      som listas där, exempelvis <code>dct:subject</code>. Nedan
+      presenteras de som skall eller bör tas med.
+      </p>
+      <table class="border">
+	<tr>
+	  <td>
+	    <code>bemyndigande</code>
+	  </td>
+	  <td>
+	    <i>(Anges endast
+	    för <code>Myndighetsforeskrift</code>.)</i> Ska ange en
+	    hänvisning till ett lagrum som utgör bemyndigande för att
+	    utfärda föreskriften. Om utgivandet stöjder sig på flera
+	    olika lagrum ska det finnas
+	    en <code>bemyndigande</code>-hänvisning för vart och ett
+	    av dessa. Hänvisningen ska ske genom en hänvisning till
+	    en <code>Forfattningsreferens</code>-resurs, se exemplen i
+	    bilaga 5-8.
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <code>beslutadAv</code>
+	  </td>
+	  <td>
+            En hänvisning till den myndighet som beslutat om
+            föreskriften, i form av en URI. Rättsinformationsprojektet
+            tillhandahåller en lista på URI:er för myndigheter.
+	  </td>
+	</tr>
+        <!--
+           Kommer någon verkligen vilja uttrycka dessa?
+	<tr>
+	  <td>
+	    <code>beslutande</code>
+	  </td>
+	  <td>
+            Person
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <code>föredragande</code>
+	  </td>
+	  <td>
+	    Person.
+	  </td>
+	</tr>
+        -->
+	<tr>
+	  <td>
+	    <code>forarbete</code>
+	  </td>
+	  <td>
+            Anger en hänvisning till ett förarbete för
+            författningen. Dokument av typen <code>Lag</code> ska ha
+            förarbeteshänvisningar (vanligtvis till föregående
+            proposition &mdash; dock behöver hänvisningar till
+            utskottsbetänkande och riksdagsskrivelse inte tas med, då
+            dessa dokumenttyper ligger utanför
+            rättsinformationsprojektet). Dokument av
+            typerna <code>Forordning</code>
+            och <code>Myndighetsforeskrift</code> kan ha
+            förarbeteshänvisningar, men det är sällsynt. Hänvisningen
+            ska ske i form av en URI. Se dokumentet URI-principer för
+            mer information om hur dessa konstrueras.
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <code>arsutgava</code>
+	  </td>
+	  <td>
+            Den årsutgåva av författningssamlingen som författningen
+            ingår. Uttrycks som ett fyrasiffrigt årtal.
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <code>lopnummer</code>
+	  </td>
+	  <td>
+            Det ordningsnummer som författningen fått inom årsutgåvan.
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <code>sidnummer</code>
+	  </td>
+	  <td>
+            Den sida på viken författningen publicerats. Denna
+            egenskap används i praktiken endast för mycket gamla
+            författningar i SFS.
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <code>bihangsnummer</code>
+	  </td>
+	  <td>
+            Det bihang i vilket författningen publicerats. Denna
+            egenskap används i praktiken endast för mycket gamla
+            författningar i SFS.
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <code>dct:identifier</code>
+	  </td>
+	  <td>
+	    Beteckning för författningen så som det vanligen hänvisas
+	    till i juridisk text, exv "SFS 1999:175" eller "RA-FS
+	    2004:2".
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <code>dct:title</code>
+	  </td>
+	  <td>
+            Författningens rubrik.
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <code>dct:subject</code>
+	  </td>
+	  <td>
+            <em>(Not: Denna egenskap finns inte med i begreppsmodellen,
+	    men den kan och bör användas om informationen finns).</em>
+
+	    Ett nyckel-, sök- eller ämnesord som beskriver
+	    författningens innehåll. Flera sådana kan
+	    anges. Hänvisningen ska ske till en resurs (URI), men
+	    eftersom det i dagsläget inte finns en kontrollerad lista
+	    av termer med URI:er för de sökord som används kan man
+	    istället hänvisa till en anonym resurs.
+	  </td>
+	</tr>
+      </table>
+    </div>
+    
+    <div class="section">
+      <h2>URI:er</h2>
+      <p>
+	Genomgående används i rättsinformationssystemet URI:er som
+	identifierare för dokument och andra resurser. För alla typer
+	av författningar används samma mönster.
+      </p>
+    </div>
+
+    <div class="section">
+    <h2>3. Nivå 2-beskrivningar av författningar</h2>
     <!-- det här kanske ska ingå i intro-implementationer istället? -->
     <p>
       Inledningsvis kan det vara lämpligt att inleda med publicering
@@ -155,7 +332,7 @@
     <p>
       Genom att använda nästlade
       <code>&lt;div&gt;</code>-element kan en författnings hierarkiska
-      struktur representeras -- en <code>&lt;div&gt;</code> som
+      struktur representeras &mdash; en <code>&lt;div&gt;</code> som
       representerar ett kapitel innehåller en eller flera
       <code>&lt;div&gt;</code> som representerar paragrafer, som
       vartoch en innehåller en <code>&lt;p&gt;</code> som
@@ -177,13 +354,13 @@
     <p>
       I övrigt bör man förlita sig på hur XHTML-elementen är
       definerade. Man bör vara så semantisk som möjligt och exemeplvis
-      använda <code>&lt;h1&gt;</code> --
+      använda <code>&lt;h1&gt;</code> &mdash;
       <code>&lt;h6&gt;</code>-elementen för rubriker snarare än
-      <code>&lt;div class="underrubrik"&lt;</code> -- men man bör inte
+      <code>&lt;div class="underrubrik"&gt;</code> &mdash; men man bör inte
       använda semantik som man inte har täckning för. Om man ska
       uttrycka ett avsnitt i en författning där kursiv text har
-      använts så bör man använda <code>&gt;i&lt;</code> och inte
-      <code>&gt;em&lt;</code> såvida man inte vet att syftet med
+      använts så bör man använda <code>&lt;i&gt;</code> och inte
+      <code>&lt;em&gt;</code> såvida man inte vet att syftet med
       kursiveringen var just att uttrycka emfas (ofta används kursiv
       text för att ange en definition av en term, vilket inte är samma
       sak som emfas).
@@ -229,7 +406,7 @@
       <h2>Bilaga 5: Metadata (RDF) för grundförfattning (Riksarkivet RA-FS 2004:2)</h2>
       <p>
 	Detta är ett exempel på en grundförfattning. Observera att
-	den uttryckligen anger de ingående paragrafresurserna -- man kan
+	den uttryckligen anger de ingående paragrafresurserna &mdash; man kan
 	från det nedanstående läsa ut att författningen innehåller sju
 	olika paragrafer.
       </p>
@@ -274,15 +451,16 @@
       <h2>Bilaga 7: Metadata (RDF) med ämnesord (Arbetsförmedlingen AFFS 2008:8)</h2>
       <p>
 	Här används <code>dces:subject</code> för att ange ett
-	ämnesord i fritext. Ett alternativ hade varit att hänvisa till
-	en URI för ett visst begrepp, om det finns en SKOS-vokabulär
-	som är lämplig att använda. Se <em>Introduktion till
+	ämnesord i fritext. Ett alternativ hade varit att
+	använda <code>dct:subject</code> för att hänvisa till en URI
+	för ett visst begrepp, om det finns en SKOS-vokabulär som är
+	lämplig att använda. Se <em>Introduktion till
 	rättsinformationssystemet</em> för mer information om hur man
 	kan uttrycka ämnesord.
       </p>
       <p>
 	Exemplet visar också att man kan lägga till vilka egenskaper
-	som helst till sin metadata -- här har termen
+	som helst till sin metadata &mdash; här har termen
 	<code>homepage</code> från <a
 	href="http://xmlns.com/foaf/spec/">FOAF-vokabulären</a>
 	använts för att visa på vilken webbsida mer information om

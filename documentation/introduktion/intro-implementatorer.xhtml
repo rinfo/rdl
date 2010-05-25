@@ -39,8 +39,13 @@
 	    <th>Ändring</th>
 	  </tr>
 	  <tr>
-	    <td>2010-05-03</td>
-	    <td>Smärre språkliga och formgivningsmässiga förändringar</td>
+	    <td>2010-05-24</td>
+	    <td>
+              Exemplen använder nu <code>dct:identifier</code>
+	      istället för <code>fsNummer</code>. Nytt avsnitt om hur
+	      man använder egenskaper utanför begreppsmodellen. Smärre
+	      språkliga och formgivningsmässiga förändringar.
+            </td>
 	  </tr>
 	</table>
       </div>
@@ -858,41 +863,88 @@
     </p>
     </div>
 
-    <!-- TODO: Lägg till ett avsnitt om hur man kan använda
-    dct:subject, owl:sameAs och andra standardtermer, och hur
-    rinfosystemet använder dessa. Ersättning för de förekomster av
-    dct:description, dct:references och dct:subject som tidigare fanns
-    i modellen (:Rattsinformationsdokument)
+    <div class="section">
+    <h2>8. Hur man använder egenskaper utanför begreppsmodellen.</h2>
 
+    <p>
+      En av anledningarna till att rättsinformationsprojektet valt att
+      använda RDF som datamodell är att denna modell kan utökas på ett
+      decentraliserat sätt. I de befintliga system som myndigheterna
+      använder för att lagra rättsinformation finns kanske data som
+      inte alls har någon motsvarighet i den begreppsmodell som
+      projektet tagit fram (såsom ämnesord eller hänvisningar från
+      föreskrifter till allmänna råd). Sådan informationen kan vara
+      värdefull även om den inte finns med i begreppsmodellen. Både
+      det centrala rättsinformationssystemet, eller någon som vill
+      återanvända informationen, kan ha nytta av den.
+    </p>
+    
+    <p>
+      Rättsinformationsprojektet rekommenderar därför att man försöker
+      uttrycka den all information som man har tillgänlig, genom att
+      använda etablerade eller egna RDF-vokabulärer. Vi rekommenderar
+      att man i första hand försöker beskriva sina egenskaper med DCMI
+      Terms-vokabulären (<code>dct</code>), men
+      även <a href="http://xmlns.com/foaf/spec/">FOAF</a>,
+      <a href="http://bibliontology.com/specification">bibo</a>,
+      <a href="http://www.w3.org/TR/rdf-schema/">RDF schema</a>
+      och <a href="http://www.w3.org/TR/owl-features/">OWL</a>
+      innehåller användbara egenskaper.
+    </p>
+    <p>
+      Nedan finns några exempel på vanligt förekommande egenskaper hos
+      dokument och förslag på med vilka egenskaper de kan uttryckas i
+      RDF.
+    </p>
+    
+    <dl>
+      <dt>Beskrivningar</dt>
+      <dd>
+        För allmänna beskrivningar av dokument
+        kan <code>dct:description</code> användas. För mer regelrätta
+        summeringar kan istället <code>dct:abstract</code> användas.
+      </dd>
 
-    == Borttagna, märkliga/missvisande modellregler ==
+      <dt>Allmänna hänvisningar</dt>
+      <dd>
+        Begreppsmodellen beskriver många typer av specifika
+        hänvisningar mellan dokument, exempelvis hur en lag hänvisar
+        till förarbeten som ligger till grund för lagen, eller hur ett
+        rättsfall hänvisar till ett lagrum som domskälen stödjer sig
+        på. Men om man har någon typ av hänvisning mellan två dokument
+        som inte återfinns i begreppsmodellen kan man använda den mer
+        allmänna egenskapen <code>dct:references</code> för att
+        beskriva denna hänvisning.
+      </dd>
+      <dt>Ämnesord eller kategorier</dt>
+      <dd>
+        Det är vanligt att myndigheter klassificerar sina dokument
+        genom olika typer av ämnesord. En sådan klassificering kan
+        uttryckas med egenskapen <code>dct:subject</code>. Se även
+        avsnitt 6.5.
+      </dd>
+      <dt>Webbsidor</dt>
+      <dd>
+        Om en myndighet på sin webbplats har en informationssida om
+        någon viss rättsinformationsresurs (exempelvis information om
+        en viss lag) kan man använda
+        egenskapen <code>foaf:homepage</code>. Observera att
+        informationssidan då enbart ska handla om resursen.
+      </dd>
+      <dt>Ekvivalenta resurser</dt>
+      <dd>
+        I vissa sammanhang kan man vilja uttrycka att två olika URI:er
+        båda refererar till samma sak. För dessa kan man använda
+        <code>owl:sameAs</code>. Ett exempel är de två olika typer av
+        URI:er som finns för rättsfallsreferat i NJA (se avsnitt 3.2 i
+        <em>Handbok för avgöranden</em>).
+      </dd>
+    </dl>
+    </div>
 
-    * Från :Rattsinformationsdokument:
-        [ a owl:Restriction;
-            owl:onProperty dct:description;
-            owl:allValuesFrom rdfs:Literal;
-            owl:minCardinality 0;
-        ],
-        [ a owl:Restriction;
-            owl:onProperty dct:references;
-            owl:allValuesFrom rdfs:Resource;
-            owl:minCardinality 0;
-        ],
-        [ a owl:Restriction;
-            owl:onProperty dct:subject;
-            owl:minCardinality 0;
-        ]
-
-    * Från :Rattsfallsreferat:
-        [ a owl:Restriction;
-            owl:onProperty owl:sameAs;
-            rdfs:comment "En alternativ URI (skapad utifrån sidnummer, endast för NJA-referat) för denna resurs"@sv 
-        ]
-
-    -->
 
     <div class="section">
-    <h2>8. Nivå 2</h2>
+    <h2>9. Nivå 2</h2>
     <p>
       För publicering enligt Nivå 2 ska <a
       href="http://www.w3.org/TR/rdfa-syntax/">XHTML 1.1+RDFa</a>
@@ -909,7 +961,7 @@
     </div>
 
     <div class="section">
-    <h2>9. Ordlista</h2>
+    <h2>10. Ordlista</h2>
     <dl>
       <dt>Atom</dt>
       <dd>
