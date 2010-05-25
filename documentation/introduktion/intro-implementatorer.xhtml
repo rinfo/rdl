@@ -41,10 +41,12 @@
 	  <tr>
 	    <td>2010-05-24</td>
 	    <td>
-              Exemplen använder nu <code>dct:identifier</code>
-	      istället för <code>fsNummer</code>. Nytt avsnitt om hur
-	      man använder egenskaper utanför begreppsmodellen. Smärre
-	      språkliga och formgivningsmässiga förändringar.
+              Exemplen använder
+              nu egenskaperna <code>dct:identifier</code>, <code>arsutgava</code>
+              och <code>lopnummer</code> istället
+              för <code>fsNummer</code>. Nytt avsnitt om hur man
+              använder egenskaper utanför begreppsmodellen. Smärre
+              språkliga och formgivningsmässiga förändringar.
             </td>
 	  </tr>
 	</table>
@@ -763,7 +765,9 @@
       <code class="xml"><![CDATA[
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
-  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:14"/>
+  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:14">
+    [...]
+  </Myndighetsforeskrift>  
 </rdf:RDF>
 
       ]]></code>
@@ -782,7 +786,8 @@
   <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:14"/>
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/bfs"/>
     <arsutgava>2007</arsutgava>        
-    <lopnummer>2007</lopnummer>        
+    <lopnummer>14</lopnummer>        
+    [...]
   </Myndighetsforeskrift>
 </rdf:RDF>
       ]]></code>
@@ -814,6 +819,7 @@
       föreskrifterna och de allmänna råden (BFS 2007:4) om
       energideklaration för byggnader;
     </dct:title>
+    [...]
   </Myndighetsforeskrift>
 </rdf:RDF>
       ]]></code>
@@ -840,6 +846,7 @@
         <angerParagrafnummer>6</angerParagrafnummer>
       </Forfattningsreferens>
     </bemyndigande>
+    [...]
   </Myndighetsforeskrift>
 </rdf:RDF>
       ]]></code>

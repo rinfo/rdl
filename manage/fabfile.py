@@ -11,7 +11,8 @@ from fabric.api import env
 
 env.project = 'rinfo'
 
-env.projectroot = p.normpath(p.join(p.dirname(__file__), '..'))
+# env.projectroot = p.normpath(p.join(p.dirname(__file__), '..'))
+env.projectroot = '..'
 
 env.toolsdir = "%(projectroot)s/tools"%env
 env.builddir = "%(projectroot)s/_build"%env
