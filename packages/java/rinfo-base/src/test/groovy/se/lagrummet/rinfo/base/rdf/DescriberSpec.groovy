@@ -74,16 +74,16 @@ class DescriberSpec extends Specification {
         p.addRel("foaf:depiction", o)
 
         then: "subject and object are found via the added relation"
-        describer.subjects("foaf:depiction", o) == [s]
-        describer.objects(s, "foaf:depiction") == [o]
+        describer.subjectDescriptions("foaf:depiction", o).collect { it.about } == [s]
+        describer.objectDescriptions(s, "foaf:depiction").collect { it.about } == [o]
 
         and: "any reference finds them"
-        describer.subjects(null, o) == [s]
-        describer.objects(s, null) == [o]
+        describer.subjectDescriptions(null, o).collect { it.about } == [s]
+        describer.objectDescriptions(s, null).collect { it.about } == [o]
 
         and: "there is only one of each"
-        describer.subjects(null, null) == [s]
-        describer.objects(null, null) == [o]
+        describer.subjectDescriptions(null, null).collect { it.about } == [s]
+        describer.objectDescriptions(null, null).collect { it.about } == [o]
     }
 
     def newDescriber() {
@@ -91,4 +91,5 @@ class DescriberSpec extends Specification {
             setPrefix('foaf', "http://xmlns.com/foaf/0.1/").
             setPrefix('cv', "http://purl.org/captsolo/resume-rdf/0.2/cv#")
     }
+
 }
