@@ -13,11 +13,12 @@ import org.apache.commons.io.FileUtils;
 public class FileDepotSession implements DepotSession {
 
     private FileDepot depot;
-    private DepotEntryBatch batch;
     private DepotEntry pending;
+    private AtomIndexer atomIndexer;
 
     public FileDepotSession(FileDepot depot) {
         this.depot = depot;
+        atomIndexer = newAtomIndexer();
     }
 
     public Depot getDepot() { return depot; }
@@ -48,7 +49,6 @@ public class FileDepotSession implements DepotSession {
         DepotEntry entry = depot.backend.newBlankEntry(uriPath);
         pending = entry;
         entry.create(created, contents, enclosures, false);
-        onEntryModified(entry);
         return entry;
     }
 
@@ -66,7 +66,6 @@ public class FileDepotSession implements DepotSession {
         pending = entry;
         entry.lock();
         entry.update(updated, contents, enclosures);
-        onEntryModified(entry);
     }
 
     public void delete(DepotEntry entry, Date deleted)
@@ -76,69 +75,43 @@ public class FileDepotSession implements DepotSession {
         pending = entry;
         entry.lock();
         entry.delete(deleted);
-        onEntryModified(entry);
     }
 
 
     public void generateIndex() throws DepotWriteException {
-        // TODO: move to backend
-        File feedDir = new File(
-                depot.baseDir, depot.atomizer.getFeedPath());
-        if (!feedDir.exists()) {
-            if (!feedDir.mkdir()) {
-                throw new DepotWriteException(
-                        "Cannot create entry content directory: " + feedDir);
-            }
-        }
-        DepotEntryBatch entryBatch = makeEntryBatch();
-
+        depot.backend.cleanFeedDir();
+        DepotEntryBatch entryBatch = new DepotEntryBatch(depot);
         for (Iterator<DepotEntry> iter = depot.backend.iterateEntries(
                     depot.atomizer.getIncludeHistorical(),
                     depot.atomizer.getIncludeDeleted() );
                 iter.hasNext(); ) {
             entryBatch.add(iter.next());
         }
-        try {
-            FileUtils.cleanDirectory(feedDir);
-        } catch (IOException e) {
-            throw new DepotWriteException(e);
+        AtomIndexer localIndexer = newAtomIndexer();
+        for (DepotEntry entry : entryBatch) {
+            localIndexer.indexEntry(entry);
         }
-        indexEntries(entryBatch);
+        localIndexer.close();
     }
 
-    void indexEntries(DepotEntryBatch entryBatch)
-            throws DepotWriteException {
-        try {
-            depot.atomizer.indexEntries(entryBatch);
-        } catch (IOException e) {
-            throw new DepotWriteException(e);
-        }
-    }
-
-    DepotEntryBatch makeEntryBatch() {
-        return new DepotEntryBatch(depot);
-    }
-
-
-    //== Session state management for index-on-write ==
 
     public void close() throws DepotWriteException {
-        commitPending();
-        if (batch != null) {
-            indexEntries(batch);
-            batch = null;
+        try {
+            commitPending();
+        } finally {
+            atomIndexer.close();
         }
     }
 
     protected void commitPending() throws DepotWriteException {
         if (pending != null) {
-            if (batch == null) {
-                batch = makeEntryBatch();
+            try {
+                onChanged(pending);
+                pending.unlock();
+            } catch (DepotWriteException e) {
+                rollbackPending();
+                throw e;
             }
-            // TODO: use a stable indexing, e.g. addOrdered which incrementally
-            // writes to text index (instead of last-call indexEntries above.)
-            batch.add(pending);
-            pending.unlock();
         }
     }
 
@@ -151,16 +124,12 @@ public class FileDepotSession implements DepotSession {
         pending = null;
     }
 
-    protected void onEntryModified(DepotEntry entry)
-            throws DepotWriteException {
-        try {
-            depot.atomizer.generateAtomEntryContent(entry);
-        } catch (IOException e) {
-            throw new DepotWriteException(e);
-        }
-        // TODO:? update latest feed index file (may create new file and modify
-        // next-to-last (add next-archive)?)! Since any modifying means
-        // a new updated depotEntry in the feeds..
+    protected void onChanged(DepotEntry entry) throws DepotWriteException {
+        atomIndexer.indexEntry(entry);
+    }
+
+    protected AtomIndexer newAtomIndexer() {
+        return new AtomIndexer(depot.atomizer, depot.backend);
     }
 
 }

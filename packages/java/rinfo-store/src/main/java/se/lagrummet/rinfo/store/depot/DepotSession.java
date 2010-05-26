@@ -32,9 +32,4 @@ public interface DepotSession {
     public void close() throws DepotWriteException;
     public void rollbackPending() throws DepotWriteException;
 
-    //void indexEntries(DepotEntryBatch entryBatch)
-    //        throws DepotWriteException;
-
-    //DepotEntryBatch makeEntryBatch();
-
 }

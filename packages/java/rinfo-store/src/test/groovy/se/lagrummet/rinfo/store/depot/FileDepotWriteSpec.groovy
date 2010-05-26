@@ -14,7 +14,7 @@ class FileDepotWriteSpec extends Specification {
 
     def setup() {
         // TODO: mock cleaner interface, assert incoming!
-        depot.atomizer = Mock(Atomizer)
+        //depot.atomizer = Mock(Atomizer)
     }
 
     @Shared currentDate =  new Date()

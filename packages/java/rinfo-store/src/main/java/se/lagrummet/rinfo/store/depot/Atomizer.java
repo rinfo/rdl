@@ -3,7 +3,6 @@ package se.lagrummet.rinfo.store.depot;
 import java.util.*;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,11 +10,7 @@ import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.commons.configuration.ConfigurationUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
 
 import org.apache.abdera.Abdera;
@@ -30,12 +25,14 @@ import org.apache.abdera.ext.history.FeedPagingHelper;
 import org.apache.abdera.ext.sharing.SharingHelper;
 
 
+/**
+ * A configurable tool for generating Atom content for DepotEntry objects,
+ * including creating archive feeds and inserting updates and deletes.
+ */
 public class Atomizer {
 
-    // TODO:? Get from (or use in?) depot(.pathHandler)?
+    // TODO:? Get from pathHandler?
     public static final String ATOM_ENTRY_MEDIA_TYPE = "application/atom+xml;type=entry";
-
-    // TODO:IMPROVE: depend on base and use base.atom.AtomEntryDeleteUtil?
 
     public static final QName ENTRY_EXT_GDATA_DELETED = new QName(
             "http://schemas.google.com/g/2005", "deleted", "gd");
@@ -49,27 +46,6 @@ public class Atomizer {
     public static final String TOMBSTONE_WHEN = "when";
 
     public static final int DEFAULT_FEED_BATCH_SIZE = 25;
-
-
-    private final Logger logger = LoggerFactory.getLogger(Atomizer.class);
-
-    /* TODO: factor out dep to depot?
-       .. minimal path- and write operations
-
-        depot.getPathHandler().makeNegotiatedUriPath(...)
-
-        depot.backend.getFeedFile(uriPath)
-
-       .. Better:
-        - have depot contain:
-            - pathHandler (swappable or just configurable?)
-            - Backend interface:
-                handles all read and write operations, including toFilePath(logicalPath)
-            - Indexer interface: the "pure algorithm" (lazy if backend is db?)
-                .. DepotWriter to do all create+update (state with currentFeed etc)?
-            - Atomizer: left to do syntax only
-    */
-    private FileDepot depot;
 
     private String feedPath;
 
@@ -88,17 +64,18 @@ public class Atomizer {
     private String feedSkeletonPath;
     private Feed feedSkeleton;
 
+    private PathHandler pathHandler;
 
     public Atomizer() {
     }
 
-    public Atomizer(FileDepot depot) {
-        setDepot(depot);
+    public Atomizer(PathHandler pathHandler) {
+        setPathHandler(pathHandler);
     }
 
-    public FileDepot getDepot() { return depot; }
-    public void setDepot(FileDepot depot) {
-        this.depot = depot;
+    public PathHandler getPathHandler() { return pathHandler; }
+    public void setPathHandler(PathHandler pathHandler) {
+        this.pathHandler = pathHandler;
     }
 
     public String getFeedPath() { return feedPath; }
@@ -192,102 +169,32 @@ public class Atomizer {
 
     //== Feed Specifics ==
 
-    // TODO: test algorithm in isolation! (refactor?)
-    // .. perhaps with overridden indexEntry, getFeed, writeFeed..?
-    public void indexEntries(DepotEntryBatch entryBatch)
-            throws DepotWriteException, IOException {
-        // TODO:? create a LOCKED file in the feed dir
-
-        String subscriptionPath = getSubscriptionPath();
-
-        Feed currFeed = getFeed(subscriptionPath);
-        if (currFeed == null) {
-            currFeed = newFeed(subscriptionPath);
-        }
-        Feed youngestArchFeed = getPrevArchiveAsFeed(currFeed);
-
-        int batchCount = currFeed.getEntries().size();
-        Date currentDate = null;
-        if (batchCount > 0) {
-            currentDate = currFeed.getEntries().get(0).getUpdated();
-        }
-
-        for (DepotEntry depotEntry : entryBatch) {
-            batchCount++;
-
-            Date nextDate = depotEntry.getUpdated();
-            if (currentDate != null) {
-                if (nextDate.compareTo(currentDate) < 0) {
-                    throw new DepotIndexException(
-                            "New entry to index must be younger than previous." +
-                            " Entry with id <"+depotEntry.getId()+"> was updated at ["
-                            +nextDate+"], previous entry at ["+currentDate+"].");
-                }
-            }
-            currentDate = nextDate;
-
-            if (batchCount > getFeedBatchSize()) { // save as archive
-                FeedPagingHelper.setArchive(currFeed, true);
-                String archPath = pathToArchiveFeed(depotEntry.getUpdated()); // youngest entry..
-                currFeed.getSelfLink().setHref(archPath);
-                FeedPagingHelper.setCurrent(currFeed, subscriptionPath);
-                if (youngestArchFeed!=null) {
-                    FeedPagingHelper.setNextArchive(youngestArchFeed,
-                            uriPathFromFeed(currFeed));
-                    writeFeed(youngestArchFeed); // re-write..
-                }
-                writeFeed(currFeed);
-                youngestArchFeed = currFeed;
-                currFeed = newFeed(subscriptionPath);
-                batchCount = 1; // current item ends up in the new feed
-            }
-
-            if (youngestArchFeed!=null) {
-                FeedPagingHelper.setPreviousArchive(currFeed,
-                        uriPathFromFeed(youngestArchFeed));
-            }
-
-            logger.info("Indexing entry: <"+depotEntry.getId()+"> ["+depotEntry.getUpdated()+"]");
-
-            indexEntry(currFeed, (FileDepotEntry) depotEntry);
-
-        }
-        writeFeed(currFeed); // as subscription feed
-
-        // TODO:? remove LOCKED (see above)
+    public void setArchive(Feed feed, boolean isArchive) {
+        FeedPagingHelper.setArchive(feed, isArchive);
     }
 
-    public Feed getFeed(String uriPath) throws IOException {
-        File feedFile = depot.backend.getFeedFile(uriPath);
-        Feed feed = null;
-        try {
-            InputStream inStream = new FileInputStream(feedFile);
-            try {
-                feed = (Feed) Abdera.getInstance().getParser().parse(
-                        inStream).getRoot();
-                feed.complete();
-            } finally {
-                inStream.close();
-            }
-        } catch (FileNotFoundException e) {
-            return null;
-        }
-        return feed;
+    public void setNextArchive(Feed feed, String path) {
+        FeedPagingHelper.setNextArchive(feed, path);
     }
 
-    public Feed getPrevArchiveAsFeed(Feed feed) throws IOException {
-        IRI prev = FeedPagingHelper.getPreviousArchive(feed);
-        if (prev == null) {
-            return null;
-        }
-        return getFeed(prev.toString());
+    public IRI getPreviousArchive(Feed feed) {
+        return FeedPagingHelper.getPreviousArchive(feed);
+    }
+
+    public void setPreviousArchive(Feed feed, String path) {
+        FeedPagingHelper.setPreviousArchive(feed, path);
+    }
+
+    public void setCurrentFeedHref(Feed feed, String path) {
+        FeedPagingHelper.setCurrent(feed, path);
     }
 
     public String uriPathFromFeed(Feed feed) {
         return feed.getSelfLink().getHref().toString();
     }
 
-    protected Feed newFeed(String uriPath) {
+
+    public Feed newFeed(String uriPath) {
         Feed feed;
         if (feedSkeleton != null) {
             feed = (Feed) feedSkeleton.clone();
@@ -299,37 +206,9 @@ public class Atomizer {
         return feed;
     }
 
-    /* TODO: to use for e.g. "emptying" deleted entries.
-        Search in feed folder by date, time; opt. offset (if many of same in
-        same instant?).
-    protected Feed findFeedForDateTime(Date date) {
-        .. findFeedForDateTime(pathToArchiveFeed(date))
-        return null;
-    }
-    */
 
-    protected void writeFeed(Feed feed) throws IOException, FileNotFoundException {
-        String uriPath = uriPathFromFeed(feed);
-        logger.info("Writing feed: <"+uriPath+">");
-        File feedFile = depot.backend.getFeedFile(uriPath);
-        File feedDir = feedFile.getParentFile();
-        if (!feedDir.exists()) {
-            FileUtils.forceMkdir(feedDir);
-        }
-        OutputStream outStream = new FileOutputStream(feedFile);
-        try {
-            if (prettyXml) {
-                feed.writeTo("prettyxml", outStream);
-            } else {
-                feed.writeTo(outStream);
-            }
-        } finally {
-            outStream.close();
-        }
-    }
-
-    protected void indexEntry(Feed feed, FileDepotEntry depotEntry)
-            throws IOException, FileNotFoundException {
+    public void addEntryToFeed(DepotEntry depotEntry, Feed feed)
+            throws IOException {
         if (depotEntry.isDeleted()) {
             if (useTombstones) {
                 Element delElem = feed.addExtension(FEED_EXT_TOMBSTONE);
@@ -339,16 +218,12 @@ public class Atomizer {
                         TOMBSTONE_WHEN,
                         new AtomDate(depotEntry.getUpdated()).getValue());
             }
-            /* TODO:IMPROVE:
-                Dry out, unless generating new (when we know all, incl. deleteds..)
-                If so, historical entries must know if their current is deleted!
-            dryOutHistoricalEntries(depotEntry)
-            */
         }
         // NOTE: Test to ensure this insert is only done if atomEntry represents
         //  a deletion in itself (and not only feed-level tombstone markers).
         if (!depotEntry.isDeleted() || isUsingEntriesAsTombstones()) {
-            Entry atomEntry = generateAtomEntryContent(depotEntry, false);
+            // NOTE: has to have been previously written!
+            Entry atomEntry = createAtomEntry(depotEntry);
             atomEntry.setSource(null);
             feed.insertEntry(atomEntry);
         }
@@ -357,38 +232,7 @@ public class Atomizer {
 
     //== Entry Specifics ==
 
-    public Entry generateAtomEntryContent(DepotEntry depotEntry)
-            throws IOException {
-        return generateAtomEntryContent((FileDepotEntry) depotEntry, true);
-    }
-
-    public Entry generateAtomEntryContent(FileDepotEntry depotEntry, boolean force)
-            throws IOException {
-        File entryFile = depotEntry.newContentFile(ATOM_ENTRY_MEDIA_TYPE);
-        if (!force &&
-            entryFile.isFile() &&
-            entryFile.lastModified() > depotEntry.lastModified()) {
-            InputStream inStream = new FileInputStream(entryFile);
-            Entry entry = (Entry) Abdera.getInstance().getParser().parse(
-                    inStream).getRoot();
-            entry.complete();
-            inStream.close();
-            return entry;
-        }
-        Entry atomEntry = createAtomEntry(depotEntry);
-        OutputStream outStream = new FileOutputStream(entryFile);
-        if (prettyXml) {
-            atomEntry.writeTo("prettyxml", outStream);
-        } else {
-            atomEntry.writeTo(outStream);
-        }
-        outStream.close();
-        return atomEntry;
-    }
-
-    protected Entry createAtomEntry(DepotEntry depotEntry)
-            throws IOException, FileNotFoundException {
-
+    protected Entry createAtomEntry(DepotEntry depotEntry) throws IOException {
         Entry atomEntry = Abdera.getInstance().newEntry();
         if (useLinkExtensionsMd5) {
             atomEntry.declareNS(
@@ -420,7 +264,7 @@ public class Atomizer {
         atomEntry.setSummary("");//getId().toString()
 
         if (useEntrySelfLink) {
-            String selfUriPath = depot.getPathHandler().makeNegotiatedUriPath(
+            String selfUriPath = pathHandler.makeNegotiatedUriPath(
                     depotEntry.getEntryUriPath(), ATOM_ENTRY_MEDIA_TYPE);
             atomEntry.addLink(selfUriPath, "self");
         }
@@ -443,7 +287,7 @@ public class Atomizer {
     }
 
     protected void addContents(DepotEntry depotEntry, Entry atomEntry)
-            throws IOException, FileNotFoundException {
+            throws IOException {
         boolean contentIsSet = false;
         for (DepotContent content : depotEntry.findContents()) {
             if (content.getMediaType().equals(ATOM_ENTRY_MEDIA_TYPE)) {

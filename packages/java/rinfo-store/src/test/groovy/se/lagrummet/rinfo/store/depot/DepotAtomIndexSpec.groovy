@@ -9,22 +9,44 @@ class DepotAtomIndexSpec extends Specification {
     @Shared Depot depot
     @Shared Atomizer atomizer
     @Shared def tdu = new TempDepotUtil()
+
     def setupSpeck() {
         depot = tdu.createTempDepot()
         atomizer = depot.atomizer
         atomizer.feedBatchSize = 2
     }
-    def cleanupSpeck() { tdu.deleteTempDepot() }
+
+    def cleanupSpeck() {
+        tdu.deleteTempDepot()
+    }
+
+    def "should generate atom entry"() {
+        when:
+        def entry = depot.getEntry("/publ/1901/100")
+        then:
+        entry.findContents("application/atom+xml;type=entry").size() == 0
+
+        when:
+        depot.openSession().newAtomIndexer().indexEntry(entry)
+        def atomContent = entry.findContents("application/atom+xml;type=entry")[0]
+        then:
+        assert atomContent.file.isFile()
+        // TODO: specify content, alternatives, enclosures, size, md5(?)
+    }
+
+    // TODO: shouldGenerateAtomEntryWhenIndexingNewEntry / or WhenCreating?
+    // TODO: shouldGenerateAtomEntryWhenModified
 
     def "a pre-filled depot is indexed"() {
 
         when: "an index has been built"
         def session = depot.openSession()
+        def indexer = session.atomIndexer
         session.generateIndex()
         session.close()
 
         then: "a subscription feed should be available"
-        def current = atomizer.getFeed(atomizer.subscriptionPath)
+        def current = indexer.getFeed(atomizer.subscriptionPath)
         current != null
 
         and: "archives should be chained and cut by batch size"
@@ -36,14 +58,14 @@ class DepotAtomIndexSpec extends Specification {
         def currentLink = current.selfLink.href
         storeIds current
 
-        def prev1 = atomizer.getPrevArchiveAsFeed(current)
+        def prev1 = indexer.getPrevArchiveAsFeed(current)
         FPH.isArchive(prev1) == true
         FPH.getCurrent(prev1) == currentLink
         FPH.getNextArchive(prev1) == null
         prev1.entries.size() == 2
         storeIds prev1
 
-        def prev2 = atomizer.getPrevArchiveAsFeed(prev1)
+        def prev2 = indexer.getPrevArchiveAsFeed(prev1)
         FPH.isArchive(prev2) == true
         FPH.getCurrent(prev2) == currentLink
         FPH.getNextArchive(prev2) as String == atomizer.uriPathFromFeed(prev1)
@@ -66,6 +88,7 @@ class DepotAtomIndexSpec extends Specification {
 
         when: "a batch is indexed"
         def session = depot.openSession()
+        def indexer = session.atomIndexer
 
         def newEntryUri = new URI("http://example.org/publ/NEW/1")
         def createTime = new Date()
@@ -78,7 +101,7 @@ class DepotAtomIndexSpec extends Specification {
         session.close()
 
         then: "entry should have been inserted in new subscription feed"
-        def current = depot.atomizer.getFeed(atomizer.subscriptionPath)
+        def current = indexer.getFeed(atomizer.subscriptionPath)
         current.entries.size() == 1
         def atomEntry = current.entries[0]
         atomEntry.id.toURI() == newEntryUri
@@ -86,7 +109,7 @@ class DepotAtomIndexSpec extends Specification {
 
         and: "archives should be identified by exclusive youngest entry date"
         def datePath = DatePathUtil.toFeedArchivePath(current.entries[-1].updated)
-        def prev = depot.atomizer.getPrevArchiveAsFeed(current)
+        def prev = indexer.getPrevArchiveAsFeed(current)
         prev.selfLink.href =~ "${depot.atomizer.feedPath}/${datePath}\$"
 
     }

@@ -25,7 +25,7 @@ public class FileDepot implements Depot {
 
     public FileDepot() {
         pathHandler = new DefaultPathHandler();
-        atomizer = new Atomizer(this);
+        atomizer = new Atomizer(pathHandler);
         backend = new FileDepotBackend(this);
     }
 

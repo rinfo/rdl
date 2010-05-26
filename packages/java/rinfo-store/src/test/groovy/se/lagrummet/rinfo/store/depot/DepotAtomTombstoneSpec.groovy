@@ -6,30 +6,12 @@ import org.apache.abdera.model.AtomDate
 import spock.lang.*
 
 
-class FileDepotAtomEntryIndexSpec extends Specification {
+class DepotAtomTombstoneSpec extends Specification {
 
     @Shared Depot depot
     @Shared def tdu = new TempDepotUtil()
     def setupSpeck() { depot = tdu.createTempDepot() }
     def cleanupSpeck() { tdu.deleteTempDepot() }
-
-    // TODO: split into "should trigger indexer" and actual atom fmt inspection?
-    def "should generate atom entry"() {
-        when:
-        def entry = depot.getEntry("/publ/1901/100")
-        then:
-        entry.findContents("application/atom+xml;type=entry").size() == 0
-
-        when:
-        depot.atomizer.generateAtomEntryContent(entry)
-        def atomContent = entry.findContents("application/atom+xml;type=entry")[0]
-        then:
-        assert atomContent.file.isFile()
-        // TODO: specify content, alternatives, enclosures, size, md5(?)
-    }
-
-    // TODO: shouldGenerateAtomEntryWhenIndexingNewEntry / or WhenCreating?
-    // TODO: shouldGenerateAtomEntryWhenModified
 
     def "should, if configured, use entries as tombstones"() {
         when:
@@ -91,7 +73,7 @@ class FileDepotAtomEntryIndexSpec extends Specification {
 
     private newFeedWithIndexedEntry(atomizer, entry) {
         def feed = Abdera.getInstance().newFeed()
-        atomizer.indexEntry(feed, entry)
+        atomizer.addEntryToFeed(entry, feed)
         return feed
     }
 

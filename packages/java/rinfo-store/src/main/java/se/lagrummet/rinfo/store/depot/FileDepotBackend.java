@@ -78,7 +78,6 @@ public class FileDepotBackend {
         return new File(depot.getBaseDir(), toFilePath(uriPath));
     }
 
-    // TODO: rename to getIndexFile
     protected File getFeedFile(String uriPath) {
         return new File(depot.getBaseDir(), toFilePath(uriPath) + indexSuffix);
     }
@@ -106,6 +105,23 @@ public class FileDepotBackend {
             }
         }
         return sb.toString();
+    }
+
+    protected void cleanFeedDir() throws DepotWriteException {
+        File feedDir = new File(
+                depot.baseDir, depot.atomizer.getFeedPath());
+        if (!feedDir.exists()) {
+            if (!feedDir.mkdir()) {
+                throw new DepotWriteException(
+                        "Cannot create entry content directory: " + feedDir);
+            }
+        } else {
+            try {
+                FileUtils.cleanDirectory(feedDir);
+            } catch (IOException e) {
+                throw new DepotWriteException(e);
+            }
+        }
     }
 
 }

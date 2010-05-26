@@ -3,7 +3,7 @@ package se.lagrummet.rinfo.store.depot;
 import java.util.*;
 
 
-public class DepotEntryBatch extends AbstractCollection<DepotEntry> {
+class DepotEntryBatch extends AbstractCollection<DepotEntry> {
 
     FileDepot depot;
     private TreeSet<EntryRef> ascDateSortedEntryRefs;
