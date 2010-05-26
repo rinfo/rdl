@@ -3,7 +3,7 @@ package se.lagrummet.rinfo.store.depot
 import spock.lang.*
 
 
-class FileDepotWriteTest extends Specification {
+class FileDepotWriteSpec extends Specification {
 
     @Shared Depot depot
     @Shared def tdu = new TempDepotUtil()

@@ -10,7 +10,7 @@ import org.apache.abdera.model.Feed
 import spock.lang.*
 
 
-class AtomizerTest extends Specification {
+class AtomizerSpec extends Specification {
 
     def atomizer = new Atomizer()
 

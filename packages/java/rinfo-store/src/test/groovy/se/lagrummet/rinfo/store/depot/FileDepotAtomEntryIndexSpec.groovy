@@ -6,7 +6,7 @@ import org.apache.abdera.model.AtomDate
 import spock.lang.*
 
 
-class FileDepotAtomEntryIndexTest extends Specification {
+class FileDepotAtomEntryIndexSpec extends Specification {
 
     @Shared Depot depot
     @Shared def tdu = new TempDepotUtil()

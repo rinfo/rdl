@@ -3,7 +3,7 @@ package se.lagrummet.rinfo.store.depot
 import spock.lang.*
 
 
-class FileDepotBatchTest extends Specification {
+class FileDepotBatchSpec extends Specification {
 
     @Shared FileDepot depot
     @Shared DepotEntryBatch batch

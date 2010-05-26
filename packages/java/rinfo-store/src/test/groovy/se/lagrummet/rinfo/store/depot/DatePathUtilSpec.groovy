@@ -3,7 +3,7 @@ package se.lagrummet.rinfo.store.depot
 import spock.lang.*
 
 
-class DatePathUtilTest extends Specification {
+class DatePathUtilSpec extends Specification {
 
     def "turns dates into entry history paths"() {
         when:

@@ -3,7 +3,7 @@ package se.lagrummet.rinfo.store.depot
 import spock.lang.*
 
 
-class FileDepotReadTest extends Specification {
+class FileDepotReadSpec extends Specification {
 
     @Shared Depot depot = DepotUtil.depotFromConfig(
                 "src/test/resources/rinfo-depot.properties")
