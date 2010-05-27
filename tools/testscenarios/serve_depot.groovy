@@ -11,7 +11,7 @@ try {
     depotDir = new File(args[0])
     port = args[1] as int
 } catch (IndexOutOfBoundsException e) {
-    println "Usage: <depot-dir>"
+    println "Usage: DEPOT_DIR PORT"
     System.exit 0
 }
 

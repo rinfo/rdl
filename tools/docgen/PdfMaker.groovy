@@ -6,6 +6,8 @@ import org.xhtmlrenderer.pdf.ITextRenderer
 
 class PdfMaker {
 
+    // "/Library/Fonts/Microsoft/Garamond"
+    // "/Library/Fonts/Microsoft/Trebuchet MS"
     static DEFAULT_FONTS = [
             "gara.ttf", "garait.ttf", "garabd.ttf",
             "trebuc.ttf", "trebucit.ttf", "trebucbi.ttf", "trebucbd.ttf"

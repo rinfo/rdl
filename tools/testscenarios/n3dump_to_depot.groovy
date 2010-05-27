@@ -13,6 +13,7 @@ Eats memory; prepare by:
 import static org.apache.commons.lang.StringUtils.replaceOnce
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.vocabulary.XMLSchema
+import org.apache.abdera.Abdera
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.store.depot.*
 
@@ -145,7 +146,10 @@ def baseUri = new URI(RINFO)
 depot = new FileDepot(baseUri, depotDir)
 depot.atomizer.feedPath = "/feed"
 depot.atomizer.feedBatchSize = 100
-//depot.atomizer.feedSkeletonPath = "feed_skeleton.atom"
+
+def feed = Abdera.instance.newFeed()
+feed.id = "tag:localhost,2010:rinfo:test:${depotDir.name}"
+depot.atomizer.feedSkeleton = feed
 
 def allLines = new File(rdfSource).readLines()
 allLines.sort()
