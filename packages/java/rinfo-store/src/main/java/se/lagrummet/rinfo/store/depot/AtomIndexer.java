@@ -56,12 +56,10 @@ public class AtomIndexer {
     }
 
     public void close() throws DepotWriteException {
-        writeFeed(currentFeed); // as subscription feed
+        //writeFeed(currentFeed); // as subscription feed
     }
 
     protected void indexEntry(DepotEntry depotEntry) throws DepotWriteException {
-        // TODO: use a stable indexing, e.g. incrementally write to text index,
-        // instead of last writeFeed-on-close above.
 
         Date nextDate = depotEntry.getUpdated();
         if (currentDate != null) {
@@ -101,13 +99,24 @@ public class AtomIndexer {
         logger.info("Indexing entry: <"+depotEntry.getId()+"> ["+depotEntry.getUpdated()+"]");
         try {
             Entry atomEntry = atomizer.addEntryToFeed(depotEntry, currentFeed);
-            if (atomizer.getFeedSkeleton() != null) {
-                atomEntry.setSource(atomizer.getFeedSkeleton());
+            if (atomEntry != null) {
+                atomEntry = (Entry) atomEntry.clone();
+                if (atomizer.getFeedSkeleton() != null) {
+                    atomEntry.setSource(atomizer.getFeedSkeleton());
+                }
             }
             writeAtomEntry(depotEntry, atomEntry);
         } catch (IOException e) {
             throw new DepotWriteException(e);
         }
+
+        // Save the entire feed every time an entry modification has been recorded.
+        // TODO: determine if this is "good enough".
+        // If so, remove this same call from the close operation(?).
+        // .. One small improvement would be to save a "temp current" until
+        // roll-off or close, to keep the current feed readable longer even
+        // during lots of incoming indexEntry invocations.
+        writeFeed(currentFeed); // as subscription feed
 
         /* TODO:IMPROVE:
             Dry out, unless generating new (when we know all, incl. deleteds..)
