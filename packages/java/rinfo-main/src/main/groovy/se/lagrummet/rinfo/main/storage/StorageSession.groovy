@@ -43,27 +43,24 @@ class StorageSession {
         this.credentials = credentials
         this.depot = depot
         this.storageHandlers = storageHandlers
+        this.depotSession = depot.openSession()
         this.logSession = logSession
         this.completeFeedEntryIdIndex = completeFeedEntryIdIndex
     }
 
     void close() {
-        if (depotSession != null) {
+        try {
             depotSession.close()
+        } finally {
+            logSession.close()
         }
-        logSession.close()
     }
 
     void beginPage(URL pageUrl, Feed feed) {
         logSession.logFeedPageVisit(pageUrl, feed)
-        depotSession = depot.openSession()
     }
 
     void endPage(URL pageUrl) {
-        if (depotSession != null) {
-            depotSession.close()
-            depotSession = null
-        }
     }
 
     boolean hasCollected(Entry sourceEntry) {

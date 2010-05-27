@@ -13,7 +13,6 @@ import org.apache.abdera.i18n.iri.IRI
 import se.lagrummet.rinfo.store.depot.Depot
 import se.lagrummet.rinfo.store.depot.DepotSession
 import se.lagrummet.rinfo.store.depot.DepotEntry
-import se.lagrummet.rinfo.store.depot.DepotEntryBatch
 
 
 class StorageSessionSpec extends Specification {

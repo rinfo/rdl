@@ -3,6 +3,7 @@ package se.lagrummet.rinfo.main.storage
 import spock.lang.*
 
 import se.lagrummet.rinfo.store.depot.Depot
+import se.lagrummet.rinfo.store.depot.DepotSession
 import org.openrdf.repository.Repository
 import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.memory.MemoryStore
@@ -18,6 +19,7 @@ class StorageSpec extends Specification {
 
     def setup() {
         storage = new Storage(depot, collectorLog, null)
+        depot.openSession >> Mock(DepotSession)
     }
 
     def "storage is created"() {
