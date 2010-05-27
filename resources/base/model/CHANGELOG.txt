@@ -2,6 +2,12 @@
 CHANGELOG
 ########################################################################
 
+2010-05-25
+--------------------
+
+* Tog bort egenskapen :platsangivelse (kan komma att återinföras om reeellt behov uppstår).
+* Snävade av owl:Restriction på dct:publisher till foaf:Organization (och tog bort kommentar för densamma).
+
 2010-05-21
 --------------------
 

@@ -61,13 +61,12 @@
         [ a owl:Restriction;
             owl:onProperty dct:issued;
             owl:allValuesFrom xsd:date;
-            owl:cardinality 1;
+            owl:cardinality 1
         ],
         [ a owl:Restriction;
             owl:onProperty dct:publisher;
-            owl:allValuesFrom foaf:Agent;
-            owl:maxCardinality 1;
-            rdfs:comment "Utgivande organisation (inte fysisk person)";
+            owl:allValuesFrom foaf:Organization;
+            owl:maxCardinality 1
         ],
         [ a owl:Restriction;
             owl:onProperty dct:identifier;
