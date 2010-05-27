@@ -91,6 +91,7 @@ public class FileDepotSession implements DepotSession {
             try {
                 onChanged(pending);
                 pending.unlock();
+                pending = null;
             } catch (DepotWriteException e) {
                 rollbackPending();
                 throw e;
