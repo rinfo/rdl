@@ -27,7 +27,7 @@ class DepotAtomIndexSpec extends Specification {
         entry.findContents("application/atom+xml;type=entry").size() == 0
 
         when:
-        depot.openSession().newAtomIndexer().indexEntry(entry)
+        new AtomIndexer(depot.atomizer, depot.backend).indexEntry(entry)
         def atomContent = entry.findContents("application/atom+xml;type=entry")[0]
         then:
         assert atomContent.file.isFile()
@@ -40,10 +40,8 @@ class DepotAtomIndexSpec extends Specification {
     def "a pre-filled depot is indexed"() {
 
         when: "an index has been built"
-        def session = depot.openSession()
-        def indexer = session.atomIndexer
-        session.generateIndex()
-        session.close()
+        depot.generateIndex()
+        def indexer = new AtomIndexer(depot.atomizer, depot.backend)
 
         then: "a subscription feed should be available"
         def current = indexer.getFeed(atomizer.subscriptionPath)

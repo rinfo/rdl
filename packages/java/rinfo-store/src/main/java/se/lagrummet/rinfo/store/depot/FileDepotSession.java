@@ -16,9 +16,9 @@ public class FileDepotSession implements DepotSession {
     private DepotEntry pending;
     private AtomIndexer atomIndexer;
 
-    public FileDepotSession(FileDepot depot) {
+    public FileDepotSession(FileDepot depot) throws DepotReadException {
         this.depot = depot;
-        atomIndexer = newAtomIndexer();
+        atomIndexer = new AtomIndexer(depot.atomizer, depot.backend);
     }
 
     public Depot getDepot() { return depot; }
@@ -78,23 +78,6 @@ public class FileDepotSession implements DepotSession {
     }
 
 
-    public void generateIndex() throws DepotWriteException {
-        depot.backend.cleanFeedDir();
-        DepotEntryBatch entryBatch = new DepotEntryBatch(depot);
-        for (Iterator<DepotEntry> iter = depot.backend.iterateEntries(
-                    depot.atomizer.getIncludeHistorical(),
-                    depot.atomizer.getIncludeDeleted() );
-                iter.hasNext(); ) {
-            entryBatch.add(iter.next());
-        }
-        AtomIndexer localIndexer = newAtomIndexer();
-        for (DepotEntry entry : entryBatch) {
-            localIndexer.indexEntry(entry);
-        }
-        localIndexer.close();
-    }
-
-
     public void close() throws DepotWriteException {
         try {
             commitPending();
@@ -127,9 +110,4 @@ public class FileDepotSession implements DepotSession {
     protected void onChanged(DepotEntry entry) throws DepotWriteException {
         atomIndexer.indexEntry(entry);
     }
-
-    protected AtomIndexer newAtomIndexer() {
-        return new AtomIndexer(depot.atomizer, depot.backend);
-    }
-
 }

@@ -26,117 +26,101 @@ public class AtomIndexer {
     private Atomizer atomizer;
     private FileDepotBackend backend;
 
-    private DepotEntryBatch entryBatch;
-    //private Feed currentFeed;
-    //private Date currentDate;
-    //private int batchCount = 0;
-    //private Feed youngestArchFeed;
+    // The index algorithm state
+    private String subscriptionPath;
+    private Feed currentFeed;
+    private int batchCount = 0;
+    private Date currentDate;
+    private Feed youngestArchFeed;
 
     private final Logger logger = LoggerFactory.getLogger(AtomIndexer.class);
 
 
-    public AtomIndexer(Atomizer atomizer, FileDepotBackend backend) {
+    public AtomIndexer(Atomizer atomizer, FileDepotBackend backend)
+            throws DepotReadException {
         this.atomizer = atomizer;
         this.backend = backend;
-    }
 
-    public void close() throws DepotWriteException {
-        if (entryBatch == null)
-            return;
-        try {
-            indexEntries(entryBatch);
-        } catch (IOException e) {
-            throw new DepotWriteException(e);
-        }
-        entryBatch = null;
-    }
-
-    protected void indexEntry(DepotEntry entry) throws DepotWriteException {
-        if (entryBatch == null) {
-            entryBatch = new DepotEntryBatch((FileDepot) entry.getDepot());
-        }
-        // TODO: use a stable indexing, e.g. addOrdered which incrementally
-        // writes to text index (instead of last-call indexEntries above.)
-        entryBatch.add(entry);
-        try {
-            Entry atomEntry = atomizer.createAtomEntry(entry);
-            writeAtomEntry((FileDepotEntry) entry, atomEntry);
-        } catch (IOException e) {
-            throw new DepotWriteException(e);
-        }
-    }
-
-
-    protected void indexEntries(DepotEntryBatch entryBatch)
-            throws DepotWriteException, IOException {
-
-        String subscriptionPath = atomizer.getSubscriptionPath();
-
-        Feed currentFeed = getFeed(subscriptionPath);
+        // initialize index algorithm state
+        subscriptionPath = atomizer.getSubscriptionPath();
+        currentFeed = getFeed(subscriptionPath);
         if (currentFeed == null) {
             currentFeed = atomizer.newFeed(subscriptionPath);
         }
-
-        Feed youngestArchFeed = getPrevArchiveAsFeed(currentFeed);
-
-        int batchCount = currentFeed.getEntries().size();
-
-        Date currentDate = null;
+        batchCount = currentFeed.getEntries().size();
+        currentDate = null;
         if (batchCount > 0) {
             currentDate = currentFeed.getEntries().get(0).getUpdated();
         }
+        youngestArchFeed = getPrevArchiveAsFeed(currentFeed);
+    }
 
-        for (DepotEntry depotEntry : entryBatch) {
-            batchCount++;
-
-            Date nextDate = depotEntry.getUpdated();
-            if (currentDate != null) {
-                if (nextDate.compareTo(currentDate) < 0) {
-                    throw new DepotIndexException(
-                            "New entry to index must be younger than previous." +
-                            " Entry with id <"+depotEntry.getId()+"> was updated at ["
-                            +nextDate+"], previous entry at ["+currentDate+"].");
-                }
-            }
-            currentDate = nextDate;
-
-            if (batchCount > atomizer.getFeedBatchSize()) { // save as archive
-                atomizer.setArchive(currentFeed, true);
-                // path based on date of youngest entry..
-                String archPath = atomizer.pathToArchiveFeed(depotEntry.getUpdated());
-                currentFeed.getSelfLink().setHref(archPath);
-                atomizer.setCurrentFeedHref(currentFeed, subscriptionPath);
-                if (youngestArchFeed != null) {
-                    atomizer.setNextArchive(youngestArchFeed,
-                            atomizer.uriPathFromFeed(currentFeed));
-                    writeFeed(youngestArchFeed); // re-write..
-                }
-                writeFeed(currentFeed);
-                youngestArchFeed = currentFeed;
-                currentFeed = atomizer.newFeed(subscriptionPath);
-                batchCount = 1; // current item ends up in the new feed
-            }
-
-            if (youngestArchFeed != null) {
-                atomizer.setPreviousArchive(currentFeed,
-                        atomizer.uriPathFromFeed(youngestArchFeed));
-            }
-
-            logger.info("Indexing entry: <"+depotEntry.getId()+"> ["+depotEntry.getUpdated()+"]");
-
-            atomizer.addEntryToFeed(depotEntry, currentFeed);
-            /* TODO:IMPROVE:
-                Dry out, unless generating new (when we know all, incl. deleteds..)
-                If so, historical entries must know if their current is deleted!
-            dryOutHistoricalEntries(depotEntry)
-            */
-
-        }
+    public void close() throws DepotWriteException {
         writeFeed(currentFeed); // as subscription feed
     }
 
-    protected Feed getFeed(String uriPath) throws IOException {
+    protected void indexEntry(DepotEntry depotEntry) throws DepotWriteException {
+        // TODO: use a stable indexing, e.g. incrementally write to text index,
+        // instead of last writeFeed-on-close above.
+
+        Date nextDate = depotEntry.getUpdated();
+        if (currentDate != null) {
+            if (nextDate.compareTo(currentDate) < 0) {
+                throw new DepotIndexException(
+                        "New entry to index must be younger than previous." +
+                        " Entry with id <"+depotEntry.getId()+"> was updated at ["
+                        +nextDate+"], previous entry at ["+currentDate+"].");
+            }
+        }
+        currentDate = nextDate;
+
+        batchCount++;
+        if (batchCount > atomizer.getFeedBatchSize()) {
+            // save as archive
+            atomizer.setArchive(currentFeed, true);
+            // path based on date of youngest entry..
+            String archPath = atomizer.pathToArchiveFeed(depotEntry.getUpdated());
+            currentFeed.getSelfLink().setHref(archPath);
+            atomizer.setCurrentFeedHref(currentFeed, subscriptionPath);
+            if (youngestArchFeed != null) {
+                atomizer.setNextArchive(youngestArchFeed,
+                        atomizer.uriPathFromFeed(currentFeed));
+                writeFeed(youngestArchFeed); // (re-)write prev archive
+            }
+            writeFeed(currentFeed); // becomes the *archive*
+            youngestArchFeed = currentFeed;
+            currentFeed = atomizer.newFeed(subscriptionPath);
+            batchCount = 1; // current item ends up in the new feed
+        }
+
+        if (youngestArchFeed != null) {
+            atomizer.setPreviousArchive(currentFeed,
+                    atomizer.uriPathFromFeed(youngestArchFeed));
+        }
+
+        logger.info("Indexing entry: <"+depotEntry.getId()+"> ["+depotEntry.getUpdated()+"]");
+        try {
+            Entry atomEntry = atomizer.addEntryToFeed(depotEntry, currentFeed);
+            if (atomizer.getFeedSkeleton() != null) {
+                atomEntry.setSource(atomizer.getFeedSkeleton());
+            }
+            writeAtomEntry(depotEntry, atomEntry);
+        } catch (IOException e) {
+            throw new DepotWriteException(e);
+        }
+
+        /* TODO:IMPROVE:
+            Dry out, unless generating new (when we know all, incl. deleteds..)
+            If so, historical entries must know if their current is deleted!
+        dryOutHistoricalEntries(depotEntry)
+        */
+    }
+
+
+    protected Feed getFeed(String uriPath) throws DepotReadException {
         File feedFile = backend.getFeedFile(uriPath);
+        if (!feedFile.isFile())
+            return null;
         Feed feed = null;
         try {
             InputStream inStream = new FileInputStream(feedFile);
@@ -147,13 +131,13 @@ public class AtomIndexer {
             } finally {
                 inStream.close();
             }
-        } catch (FileNotFoundException e) {
-            return null;
+        } catch (IOException e) {
+            throw new DepotReadException(e);
         }
         return feed;
     }
 
-    protected Feed getPrevArchiveAsFeed(Feed feed) throws IOException {
+    protected Feed getPrevArchiveAsFeed(Feed feed) throws DepotReadException {
         IRI prev = atomizer.getPreviousArchive(feed);
         if (prev == null) {
             return null;
@@ -194,10 +178,11 @@ public class AtomIndexer {
         }
     }
 
-    protected void writeAtomEntry(FileDepotEntry depotEntry, Entry atomEntry)
+    protected void writeAtomEntry(DepotEntry depotEntry, Entry atomEntry)
             throws DepotWriteException {
         try {
-            File entryFile = depotEntry.newContentFile(atomizer.ATOM_ENTRY_MEDIA_TYPE);
+            File entryFile = ((FileDepotEntry)depotEntry).
+                    newContentFile(atomizer.ATOM_ENTRY_MEDIA_TYPE);
             OutputStream outStream = new FileOutputStream(entryFile);
             if (atomizer.getPrettyXml()) {
                 atomEntry.writeTo("prettyxml", outStream);

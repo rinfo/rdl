@@ -207,8 +207,9 @@ public class Atomizer {
     }
 
 
-    public void addEntryToFeed(DepotEntry depotEntry, Feed feed)
+    public Entry addEntryToFeed(DepotEntry depotEntry, Feed feed)
             throws IOException {
+        Entry atomEntry = null;
         if (depotEntry.isDeleted()) {
             if (useTombstones) {
                 Element delElem = feed.addExtension(FEED_EXT_TOMBSTONE);
@@ -218,15 +219,16 @@ public class Atomizer {
                         TOMBSTONE_WHEN,
                         new AtomDate(depotEntry.getUpdated()).getValue());
             }
+            //atomEntry = delElem; // TODO: use proposed atomdeleted repr?
         }
         // NOTE: Test to ensure this insert is only done if atomEntry represents
         //  a deletion in itself (and not only feed-level tombstone markers).
         if (!depotEntry.isDeleted() || isUsingEntriesAsTombstones()) {
-            // NOTE: has to have been previously written!
-            Entry atomEntry = createAtomEntry(depotEntry);
-            atomEntry.setSource(null);
+            atomEntry = createAtomEntry(depotEntry);
+            //atomEntry.setSource(null);
             feed.insertEntry(atomEntry);
         }
+        return atomEntry;
     }
 
 
@@ -244,10 +246,6 @@ public class Atomizer {
         Date publDate = depotEntry.getPublished();
         if (publDate!=null) {
             atomEntry.setPublished(publDate);
-        }
-
-        if (feedSkeleton != null) {
-            atomEntry.setSource(feedSkeleton);
         }
 
         if (useFeedSync) {

@@ -68,7 +68,7 @@ public class FileDepot implements Depot {
         this.initialized = true;
     }
 
-    public DepotSession openSession() {
+    public DepotSession openSession() throws DepotReadException {
         if (!initialized) {
             throw new IllegalStateException("initialize() has not run.");
         }
@@ -179,6 +179,23 @@ public class FileDepot implements Depot {
             boolean includeHistorical, boolean includeDeleted) {
         return backend.iterateEntries(
                 includeHistorical, includeDeleted);
+    }
+
+
+    public void generateIndex() throws DepotReadException, DepotWriteException {
+        backend.cleanFeedDir();
+        DepotEntryBatch entryBatch = new DepotEntryBatch(this);
+        for (Iterator<DepotEntry> iter = backend.iterateEntries(
+                    atomizer.getIncludeHistorical(),
+                    atomizer.getIncludeDeleted() );
+                iter.hasNext(); ) {
+            entryBatch.add(iter.next());
+        }
+        AtomIndexer atomIndexer = new AtomIndexer(atomizer, backend);
+        for (DepotEntry entry : entryBatch) {
+            atomIndexer.indexEntry(entry);
+        }
+        atomIndexer.close();
     }
 
 

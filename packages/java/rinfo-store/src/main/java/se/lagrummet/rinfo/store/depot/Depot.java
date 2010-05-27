@@ -28,12 +28,14 @@ public interface Depot {
     boolean hasEntry(String uriPath);
     boolean hasFeedView(String uriPath);
 
+    DepotContent getContent(String uriPath);
+
+    public DepotSession openSession() throws DepotReadException;
+
+    public void generateIndex() throws DepotReadException, DepotWriteException;
+
     Iterator iterateEntries();
     Iterator iterateEntries(boolean includeHistorical);
     Iterator iterateEntries(boolean includeHistorical, boolean includeDeleted);
-
-    DepotContent getContent(String uriPath);
-
-    public DepotSession openSession();
 
 }

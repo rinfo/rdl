@@ -27,8 +27,6 @@ public interface DepotSession {
             throws DeletedDepotEntryException,
                    DepotReadException, DepotWriteException;
 
-    void generateIndex() throws DepotWriteException;
-
     public void close() throws DepotWriteException;
     public void rollbackPending() throws DepotWriteException;
 
