@@ -346,7 +346,7 @@
 :Forfattning a owl:Class;
     rdfs:isDefinedBy : ;
     rdfs:label "Författning"@sv;
-    rdfs:comment "En författning utgiven i någon författningssamling."@sv;
+    rdfs:comment "En text som innehåller generella, bindande rättsregler (såsom lag, förordning eller föreskrift)  utgiven i någon författningssamling."@sv;
     protege:abstract "true";
     rdfs:subClassOf :FSDokument;
     rdfs:subClassOf
@@ -982,16 +982,19 @@
 :Utredningsserie a owl:Class;
     rdfs:subClassOf :Publikationssamling;
     rdfs:label "Utredningsserie"@sv;
+    rdfs:comment "En serie av de rapporter som tillsatta utredningar har skrivit, som en del av lagstiftningsarbetet."@sv;
     rdfs:isDefinedBy : .
 
 :Forfattningssamling a owl:Class;
     rdfs:subClassOf :Publikationssamling;
     rdfs:label "Författningssamling"@sv;
+    rdfs:comment "En samling av lagar, förordningar eller föreskrifter, dvs texter som innehåller generella, bindande rättsregler."@sv;
     rdfs:isDefinedBy : .
 
 :Rattsfallspublikation a owl:Class;
     rdfs:subClassOf :Publikationssamling;
     rdfs:label "Rättsfallspublikation"@sv;
+    rdfs:comment "En ramling av rättsfallsreferat, vanligen knuten till en viss domsol eller en viss typ av domstolar."@sv;
     rdfs:isDefinedBy : .
 
 
