@@ -67,7 +67,7 @@ Now you are ready to start up:
     $ TEST_SERVER=http://localhost:8280
     $ groovy map_feeds_docs.groovy ../../documentation/ $TEST_SRC_DIR $TEST_SERVER
     $ groovy base_as_feed.groovy -b ../../resources/base/ -l "/admin" -s $TEST_SRC_DIR -o $TEST_SRC_DIR
-    $ groovy serve_folder.groovy $TEST_SRC_DIR
+    $ groovy serve_folder.groovy $TEST_SRC_DIR
 
 * Local instance of the RInfo system:
 
