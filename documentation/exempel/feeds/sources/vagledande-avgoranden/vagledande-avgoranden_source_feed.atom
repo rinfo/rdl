@@ -180,7 +180,7 @@
     
     <link rel="alternate" href="https://www.rattsinfosok.dom.se/lagrummet/rdf/12044-kort.rdf"
              type="application/rdf+xml"
-             le:md5="617055907212406ce8d34545efb130ef"/>
+             length="4022" le:md5="617055907212406ce8d34545efb130ef"/>
   </entry>
 
   <entry>
@@ -191,7 +191,7 @@
     <content/>
     <link rel="alternate" href="https://www.rattsinfosok.dom.se/lagrummet/rdf/12363-kort.rdf"
              type="application/rdf+xml"
-             le:md5="617055907212406ce8d34545efb130ef"/>
+             length="2589" le:md5="617055907212406ce8d34545efb130ef"/>
   </entry>
 
 
