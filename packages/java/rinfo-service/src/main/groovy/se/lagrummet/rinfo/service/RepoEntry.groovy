@@ -165,14 +165,14 @@ class RepoEntry {
 
     protected void processContents() {
         def contentElem = entry.contentElement
-        def contentUrl = loader.unescapeColon(contentElem.resolvedSrc.toString())
+        def contentUrl = contentElem.resolvedSrc.toString()
         def contentMediaType = contentElem.mimeType.toString()
 
         loadData(contentUrl, contentMediaType)
         addAtomEntryMetadata(contentUrl, AWOL_CONTENT, contentMediaType)
 
         for (link in entry.links) {
-            def urlPath = loader.unescapeColon(link.resolvedHref.toString())
+            def urlPath = link.resolvedHref.toString()
             def mediaType = link.getMimeType().toString()
             if ("alternate".equals(link.rel) || "enclosure".equals(link.rel)) {
                 loadData(urlPath, mediaType)

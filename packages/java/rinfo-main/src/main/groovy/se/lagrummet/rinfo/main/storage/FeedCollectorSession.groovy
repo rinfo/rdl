@@ -164,7 +164,6 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
     protected SourceContent createSourceContent(urlPath,
             mediaType, lang, slug=null,
             md5hex=null, length=-1) {
-        urlPath = unescapeColon(urlPath)
         def srcContent = new RemoteSourceContent(
                 this, urlPath, mediaType, lang, slug)
         if (md5hex != null) {
