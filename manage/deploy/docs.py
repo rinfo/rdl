@@ -1,9 +1,9 @@
 from __future__ import with_statement
 from fabric.api import env, local, roles
 from fabric.contrib.project import rsync_project
-from util import slashed
+from util import slashed, cygpath
 from targetenvs import _needs_targetenv
-
+import sys
 
 def build_docs():
     local("cd %(toolsdir)s &&"
@@ -12,6 +12,10 @@ def build_docs():
 @roles('doc')
 def deploy_docs():
     _needs_targetenv()
-    rsync_project(env.docs_webroot, slashed(env.docbuild),
+    if sys.platform == 'win32':
+        build_path = cygpath(slashed(env.docbuild))
+    else:
+        build_path = slashed(env.docbuild)
+    rsync_project(env.docs_webroot, build_path,
             exclude=".*", delete=True)
 
