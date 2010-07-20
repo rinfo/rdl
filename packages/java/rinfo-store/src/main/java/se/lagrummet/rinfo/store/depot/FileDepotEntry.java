@@ -33,13 +33,17 @@ public class FileDepotEntry implements DepotEntry {
 
     protected static final IOFileFilter NON_ENTRY_DIR_FILTER =  new AbstractFileFilter() {
         public boolean accept(File it) {
-            return !isEntryDir(it.getParentFile()) && !it.isHidden();
+            return !isEntryDir(it.getParentFile()) &&
+                !it.isHidden() &&
+                !it.getName().startsWith(".");
         }
     };
 
     protected static final FileFilter PUBLIC_FILE_FILTER = new FileFilter() {
         public boolean accept(File it) {
-            return !it.isHidden() && !it.getName().equals(ENTRY_CONTENT_DIR_NAME);
+            return !it.isHidden() &&
+                !it.getName().startsWith(".") &&
+                !it.getName().equals(ENTRY_CONTENT_DIR_NAME);
         }
     };
 
