@@ -69,11 +69,15 @@ Now you are ready to start up:
     $ groovy base_as_feed.groovy -b ../../resources/base/ -l "/admin" -s $TEST_SRC_DIR -o $TEST_SRC_DIR
     $ groovy serve_folder.groovy $TEST_SRC_DIR
 
+    Verify that the correct information is served at http://localhost:8280/feed/current
+
 * Local instance of the RInfo system:
 
   rinfo-main
-      collects from the sources defined for development mode (a base/admin
-      prototype feed and example suppliers) and supplies the main data feed.
+      collects from the sources defined for development mode (a
+      base/admin prototype feed and example suppliers) and supplies
+      the main data feed. Instructions on how to run this application
+      using Jetty can be found in packages/java/rinfo-main/README.txt
 
   rinfo-service
       feeds from rinfo-main into the sesame RDF repo, making data available for
