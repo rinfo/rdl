@@ -1,0 +1,36 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix protege: <http://protege.stanford.edu/plugins/owl/protege#> .
+@prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
+
+@prefix conf: <http://richard.cyganiak.de/2007/pubby/config.rdf#> .
+@prefix meta: <http://example.org/metadata#> .
+
+# Config for Pubby, a frontend web app for SPARQL endpoints
+# See: <http://www4.wiwiss.fu-berlin.de/pubby/>
+
+<> a conf:Configuration;
+    conf:projectName "RInfo Pubby Demo";
+    conf:projectHomepage <http://rinfo.lagrummet.se/>;
+    conf:webBase <http://localhost:8080/pubby-rinfo/>;
+    conf:usePrefixesFrom <>;
+    conf:defaultLanguage "sv";
+    conf:indexResource <http://rinfo.lagrummet.se/publ/sfs/1999:175>;
+    conf:labelProperty dct:identifier, dct:title, foaf:name, rdfs:label, skos:altLabel, skos:prefLabel;
+    conf:dataset [
+        #conf:sparqlEndpoint <http://localhost:8080/openrdf-sesame/repositories/rinfo?infer=false>;
+        conf:sparqlEndpoint <http://localhost:8080/openrdf-sesame/repositories/rinfo>;
+        #conf:sparqlDefaultGraph <http://dbpedia.org>;
+        conf:datasetBase <http://rinfo.lagrummet.se/>;
+        #conf:webResourcePrefix "resource/";
+        conf:fixUnescapedCharacters "(),'!$&*+;=@";
+    ];
+
+    .
+
