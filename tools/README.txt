@@ -77,3 +77,14 @@ Example:
 
     $ groovy <path-to-script>
 
+
+Building the PDF documents
+========================================================================
+To build the PDF documents, use the build_rinfo_docs.groovy script
+(This can also be done using the fabric command "build_docs", see
+../manage/README.txt). 
+
+The stylesheets used for PDF generation requires that font files for
+Garamond and Trebuchet MS are present. The needed files are
+"gara.ttf", "garait.ttf", "garabd.ttf", "trebuc.ttf", "trebucit.ttf",
+"trebucbi.ttf" and "trebucbd.ttf". Place these files in the same directory as the build_rinfo_docs.groovy script.

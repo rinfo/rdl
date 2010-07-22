@@ -34,13 +34,8 @@ class PdfMaker {
         def renderer = new ITextRenderer()
         if (fonts) {
             fonts.each {
-                if (new File(it).exists()) {
-                    renderer.fontResolver.addFont(it, true)
-                } else if (new File("C:\\WINDOWS\\FONTS\\" + it).exists()) {
-                    renderer.fontResolver.addFont("C:\\WINDOWS\\FONTS\\" + it, true)
-                } else {
-		    println "Not a font " + it
-		}
+                assert new File(it).exists(), 'Font file '+it+' not present'
+                renderer.fontResolver.addFont(it, true)
             }
         }
         return renderer
