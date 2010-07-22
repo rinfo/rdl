@@ -722,10 +722,24 @@
     owl:inverseOf [ rdfs:label "Är lagrum för"@sv ];
     .
 
+:praxishanvisning a owl:ObjectProperty;
+    rdfs:label "Praxishänvisning"@sv;
+    rdfs:comment "Hänvisning till praxis på ett område, uttryckt genom något beslut."@sv;
+    rdfs:domain :VagledandeAvgorande;
+    rdfs:isDefinedBy : .
+    
 :rattsfallshanvisning a owl:ObjectProperty;
     rdfs:label "Rättsfallshänvisning"@sv;
     rdfs:comment "Hänvisning i aktuellt avgörande till något rättsfall som har beaktats."@sv;
-    rdfs:domain :VagledandeAvgorande;
+    rdfs:subPropertyOf :praxishanvisning;
+    rdfs:range :VagledandeDomstolsavgorande;
+    rdfs:isDefinedBy : .
+
+:avgorandehanvisning a owl:ObjectProperty;
+    rdfs:label "Avgörandehänvisning"@sv;
+    rdfs:comment "Hänvisning i aktuellt avgörande till något myndighetsavgörande som har beaktats."@sv;
+    rdfs:subPropertyOf :praxishanvisning;
+    rdfs:range :VagledandeMyndighetsavgorande;
     rdfs:isDefinedBy : .
 
 
