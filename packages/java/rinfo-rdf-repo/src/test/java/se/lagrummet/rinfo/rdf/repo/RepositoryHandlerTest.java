@@ -102,14 +102,14 @@ public class RepositoryHandlerTest extends TestCase {
 
     private RepositoryHandler createLocalRepositoryHandler(
             String storeType, String inferenceType) throws Exception  {
-        return new LocalRepositoryHandler(
-                TEST_REPO_ID, storeType, inferenceType, TEST_DATA_DIR);
+        return new LocalRepositoryHandler(TEST_DATA_DIR, TEST_REPO_ID,
+                storeType, inferenceType);
     }
 
     private RepositoryHandler createRemoteRepositoryHandler(
             String storeType, String inferenceType) throws Exception  {
-        return new RemoteRepositoryHandler(
-                TEST_REPO_ID, storeType, inferenceType, TEST_REMOTE_SERVER_URL);
+        return new RemoteRepositoryHandler(TEST_REMOTE_SERVER_URL, TEST_REPO_ID,
+                storeType, inferenceType);
     }
 
 }

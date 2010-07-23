@@ -17,14 +17,14 @@ public abstract class RepositoryHandler {
     String storeType;
     String inferenceType;
 
-    public RepositoryHandler(String repoId, String storeType,
-            String inferenceType) throws Exception {
+    protected RepositoryHandler(String repoId,
+            String storeType, String inferenceType) throws Exception {
 
+        if (storeType.equals("native") && StringUtils.isEmpty(repoId)) {
+            throw new Exception("Missing property 'repoId'.");
+        }
         if (StringUtils.isEmpty(storeType)) {
             throw new Exception("Missing property 'storeType'.");
-        }
-        if (storeType.equals("native") && StringUtils.isEmpty(repoId)) {
-            throw new Exception("Missing property 'repositoryId'.");
         }
 
         this.repoId = repoId;

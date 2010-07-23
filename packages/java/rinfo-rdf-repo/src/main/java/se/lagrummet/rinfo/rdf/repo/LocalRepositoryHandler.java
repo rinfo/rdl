@@ -14,21 +14,21 @@ import org.openrdf.sail.memory.MemoryStore;
 import org.openrdf.sail.nativerdf.NativeStore;
 
 
-public class LocalRepositoryHandler extends RepositoryHandler {
+/*
+ *  NOTE: Local repositories are not handled by a RepositoryManager to
+ *  enable what seems to be an easier way to connect to other triple stores
+ *  using a SAIL connection, in contrast to the SailImplConfig used by a
+ *  RepositoryManager. If possible though, a LocalRepositoryManager could
+ *  be used for a more consistent implementation.
+ */
 
-    /*
-     *  NOTE: Local repositories are not handled by a RepositoryManager to
-     *  enable what seems to be an easier way to connect to other triple stores
-     *  using a SAIL connection, in contrast to the SailImplConfig used by a
-     *  RepositoryManager. If possible though, a LocalRepositoryManager could
-     *  be used for a more consistent implementation.
-     */
+public class LocalRepositoryHandler extends RepositoryHandler {
 
     private String dataDir;
     private Repository localRepository;
 
-    public LocalRepositoryHandler(String repoId, String storeType,
-            String inferenceType, String dataDir) throws Exception {
+    public LocalRepositoryHandler(String dataDir, String repoId,
+            String storeType, String inferenceType) throws Exception {
         super(repoId, storeType, inferenceType);
         this.dataDir = dataDir;
         if (storeType.equals("native") && StringUtils.isEmpty(dataDir)) {
@@ -48,6 +48,8 @@ public class LocalRepositoryHandler extends RepositoryHandler {
             sail = new MemoryStore();
         } else if (storeType.equals("native")) {
             sail = new NativeStore(new File(dataDir + "/" + repoId));
+        } else {
+            throw new Exception("Unsupported store type: " + storeType);
         }
 
         if ("rdfs".equals(inferenceType)) {

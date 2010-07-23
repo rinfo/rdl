@@ -1,17 +1,11 @@
 package se.lagrummet.rinfo.rdf.repo;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 
 
 public class RepositoryHandlerFactory {
-
-    public static final List<String> SUPPORTED_STORE_TYPES = Arrays.asList(
-            "memory", "native" /*, "mysql", "pgsql", "mulgara", "virtuoso" */);
 
     /**
      * Create a new RepositoryHandler from the provided configuration.
@@ -21,20 +15,16 @@ public class RepositoryHandlerFactory {
         String inferenceType = config.getString("inferenceType");
         String storeType = config.getString("storeType").toLowerCase();
 
-        if (!SUPPORTED_STORE_TYPES.contains(storeType)) {
-            throw new ConfigurationException("Unsupported triple store: ["+storeType+"]");
-        }
-
         String serverUrl = config.getString("remote.serverUrl");
         if (!StringUtils.isEmpty(serverUrl)) {
-            return new RemoteRepositoryHandler(
-                    repoId, storeType, inferenceType, serverUrl);
+            return new RemoteRepositoryHandler(serverUrl, repoId,
+                    storeType, inferenceType);
         }
 
         String dataDir = config.getString("native.dataDir");
         if (!StringUtils.isEmpty(dataDir)) {
-            return new LocalRepositoryHandler(
-                    repoId, storeType, inferenceType, dataDir);
+            return new LocalRepositoryHandler(dataDir, repoId,
+                    storeType, inferenceType);
         }
 
         throw new ConfigurationException(

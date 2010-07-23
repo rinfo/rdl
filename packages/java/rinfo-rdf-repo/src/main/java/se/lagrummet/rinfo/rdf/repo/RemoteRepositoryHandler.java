@@ -23,8 +23,8 @@ public class RemoteRepositoryHandler extends RepositoryHandler {
     private RemoteRepositoryManager remoteRepositoryManager;
     private Repository remoteRepository;
 
-    public RemoteRepositoryHandler(String repoId, String storeType,
-            String inferenceType, String serverUrl) throws Exception {
+    public RemoteRepositoryHandler(String serverUrl, String repoId,
+            String storeType, String inferenceType) throws Exception {
         super(repoId, storeType, inferenceType);
         this.serverUrl = serverUrl;
     }
@@ -54,7 +54,7 @@ public class RemoteRepositoryHandler extends RepositoryHandler {
         } else if (storeType.equals("native")) {
             storeConfig = new NativeStoreConfig();
         } else {
-            throw new Exception("Unsupported repository storeType: " + storeType);
+            throw new Exception("Unsupported store type: " + storeType);
         }
 
         if ("rdfs".equals(inferenceType)) {
