@@ -226,7 +226,7 @@ def datasetItem(baseUri, uriPath, List<File> files) {
     return [
         uri: itemUri,
         updated: youngestEnclDate,
-        content: [writeTo: { repoWriter(repo) },
+        content: [writeTo: repoWriter(repo),
                   mediaType: "application/rdf+xml"],
         enclosures: enclosures
     ]
