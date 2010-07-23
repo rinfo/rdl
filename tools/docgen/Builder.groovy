@@ -39,11 +39,18 @@ class Builder {
             "system/**.xhtml"
         ]
 
+    def fontDir = "fonts"
+    def fontFiles = [
+            "gara.ttf", "garait.ttf", "garabd.ttf",
+            "trebuc.ttf", "trebucit.ttf", "trebucbi.ttf", "trebucbd.ttf"
+    ]
+
     String resourceDir
     String sourceDir
     String buildDir
     Map systemIdMap
     Map customProtocols
+    PdfMaker pdfMaker
 
     Builder(resourceDir, sourceDir, buildDir) {
         this.resourceDir = resourceDir
@@ -56,6 +63,9 @@ class Builder {
         customProtocols = [
             "build": buildDir
         ]
+
+        def fonts = fontFiles.collect { new File(fontDir, it).path }
+        pdfMaker = new PdfMaker(fonts)
     }
 
     void build(renderPatterns=DEFAULT_RENDER_PATTERNS,
@@ -153,7 +163,7 @@ class Builder {
         }
     }
 
-    static writeXhtml(doc, outFile) {
+    void writeXhtml(doc, outFile) {
         def t = TransformerFactory.newInstance().newTransformer()
         [   (OutputKeys.METHOD): "xml",
             (OutputKeys.OMIT_XML_DECLARATION): "yes",
@@ -165,8 +175,8 @@ class Builder {
         }
     }
 
-    static writePdf(doc, outFile) {
-        new PdfMaker().renderAsPdf(doc, outFile)
+    void writePdf(doc, outFile) {
+        pdfMaker.renderAsPdf(doc, outFile)
     }
 
     static relRoot(String base, File file) {

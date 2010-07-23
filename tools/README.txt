@@ -80,13 +80,38 @@ Example:
 
 Building the PDF documents
 ========================================================================
-To build the PDF documents, use the build_rinfo_docs.groovy script
-(This can also be done using the fabric command "build_docs", see
-../manage/README.txt). 
 
-The stylesheets used for PDF generation requires that font files for
-Garamond and Trebuchet MS are present. The needed files are
+To build the PDF documents, use the build_rinfo_docs.groovy script (This can
+also be done using the fabric command "build_docs", see ../manage/README.txt).
+
+The stylesheets used for PDF generation requires that font files for Garamond
+and Trebuchet MS are present. The needed files are:
+
 "gara.ttf", "garait.ttf", "garabd.ttf", "trebuc.ttf", "trebucit.ttf",
-"trebucbi.ttf" and "trebucbd.ttf". Place these files in the same
-directory as the build_rinfo_docs.groovy script.
+"trebucbi.ttf" and "trebucbd.ttf".
+
+Place these files in the same directory as the ``build_rinfo_docs.groovy``
+script.
+
+Obtaining the Fonts
+------------------------------------------------------------------------
+
+Windows
+~~~~~~~~~~
+
+Copy the fonts named above from "C:\WINDOWS\FONTS\"
+
+Mac OS X
+~~~~~~~~
+
+Trebuchet is generally available as TTF. Copy these::
+
+    cp "/Library/Fonts/Trebuchet MS.ttf" fonts/trebuc.ttf
+    cp "/Library/Fonts/Trebuchet MS Bold.ttf" fonts/trebucbd.ttf
+    cp "/Library/Fonts/Trebuchet MS Italic.ttf" fonts/trebucit.ttf
+    cp "/Library/Fonts/Trebuchet MS Bold Italic.ttf" fonts/trebucbi.ttf
+
+Garamond may only be available as a "Font Suitcase" (and the PDF generator
+requires standalone TTF files). If so, obain the font from someone with an
+appropriate license for it.
 
