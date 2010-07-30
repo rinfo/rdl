@@ -23,9 +23,15 @@
     a foaf:Organization;
     foaf:name "Arbetsmiljöverket"@sv .
 
+# Ersattes av Trafikverket 2010-04-01
 <http://rinfo.lagrummet.se/org/banverket>
     a foaf:Organization;
     foaf:name "Banverket"@sv .
+
+# Ger bara ut allmänna råd (frivilligt mtrl), inga föreskrifter
+<http://rinfo.lagrummet.se/org/bokfoeringsnaemnden>
+    a foaf:Organization;
+    foaf:name "Bokföringsnämnden"@sv .
 
 <http://rinfo.lagrummet.se/org/bolagsverket>
     a foaf:Organization;
@@ -34,6 +40,10 @@
 <http://rinfo.lagrummet.se/org/boverket>
     a foaf:Organization;
     foaf:name "Boverket"@sv .
+
+<http://rinfo.lagrummet.se/org/brottsoffermyndigheten>
+    a foaf:Organization;
+    foaf:name "Brottsoffermyndigheten"@sv .
 
 <http://rinfo.lagrummet.se/org/centrala_studiestoedsnaemnden>
     a foaf:Organization;
@@ -79,12 +89,16 @@
     a foaf:Organization;
     foaf:name "Inspektionen för arbetslöshetsförsäkringen"@sv .
 
+# Ersatt av Myndigheten för tillväxtpolitiska utvärderingar och
+# analyser 2009-03-31 (oklart om denna tagit över
+# författningssamlingen)
 <http://rinfo.lagrummet.se/org/institutet_foer_tillvaextpolitiska_studier>
     a foaf:Organization;
     foaf:name "Institutet för tillväxtpolitiska studier"@sv .
-
+    
 <http://rinfo.lagrummet.se/org/justitiekanslern>
     a foaf:Organization;
+    skos:altLabel "JK"@sv;
     foaf:name "Justitiekanslern"@sv .
 
 <http://rinfo.lagrummet.se/org/kammarkollegiet>
@@ -107,6 +121,11 @@
     a foaf:Organization;
     foaf:name "Konsumentverket"@sv .
 
+# tidigare kriminalvårdsverket
+<http://rinfo.lagrummet.se/org/kriminalvaarden>
+    a foaf:Organization;
+    foaf:name "Kriminalvården"@sv .
+    
 <http://rinfo.lagrummet.se/org/kronofogdemyndigheten>
     a foaf:Organization;
     foaf:name "Kronofogdemyndigheten"@sv .
@@ -131,9 +150,21 @@
     a foaf:Organization;
     foaf:name "Migrationsverket"@sv .
 
+<http://rinfo.lagrummet.se/org/myndigheten_foer_radio_och_tv>
+    a foaf:Organization;
+    foaf:name "Myndigheten för radio och tv"@sv .
+
 <http://rinfo.lagrummet.se/org/myndigheten_foer_samhaellsskydd_och_beredskap>
     a foaf:Organization;
     foaf:name "Myndigheten för samhällsskydd och beredskap"@sv .
+
+<http://rinfo.lagrummet.se/org/myndigheten_foer_tillvaextpolitiska_utvaerderingar_och_analyser>
+    a foaf:Organization;
+    foaf:name "Myndigheten för tillväxtpolitiska utvärderingar och analyser"@sv .
+    
+<http://rinfo.lagrummet.se/org/myndigheten_foer_yrkeshoegskolan>
+    a foaf:Organization;
+    foaf:name "Myndigheten för yrkeshögskolan"@sv .
 
 <http://rinfo.lagrummet.se/org/naturvaardsverket>
     a foaf:Organization;
@@ -143,10 +174,15 @@
     a foaf:Organization;
     foaf:name "Patent- och registreringsverket"@sv .
 
+<http://rinfo.lagrummet.se/org/pensionsmyndigheten>
+    a foaf:Organization;
+    foaf:name "Pensionsmyndigheten"@sv .       
+    
 <http://rinfo.lagrummet.se/org/post-_och_telestyrelsen>
     a foaf:Organization;
     foaf:name "Post- och telestyrelsen"@sv .
 
+# Ersatt av Myndigheten för radio och tv 2010-08-01
 <http://rinfo.lagrummet.se/org/radio-_och_tv-verket>
     a foaf:Organization;
     foaf:name "Radio- och TV-verket"@sv .
@@ -158,6 +194,11 @@
 <http://rinfo.lagrummet.se/org/riksarkivet>
     a foaf:Organization;
     foaf:name "Riksarkivet"@sv .
+
+<http://rinfo.lagrummet.se/org/riksdagens_ombudsmaen>
+    a foaf:Organization;
+    skos:altLabel "JO"@sv ;
+    foaf:name "Riksdagens ombudsmän"@sv .
 
 <http://rinfo.lagrummet.se/org/riksgaeldskontoret>
     a foaf:Organization;
@@ -227,9 +268,17 @@
     a foaf:Organization;
     foaf:name "Tandvårds- och läkemedelsförmånsverket"@sv .
 
+<http://rinfo.lagrummet.se/org/tillvaextverket>
+    a foaf:Organization;
+    foaf:name "Tillväxtverket"@sv .
+
 <http://rinfo.lagrummet.se/org/totalfoersvarets_pliktverk>
     a foaf:Organization;
     foaf:name "Totalförsvarets pliktverk"@sv .
+
+<http://rinfo.lagrummet.se/org/trafikverket>
+    a foaf:Organization;
+    foaf:name "Trafikverket"@sv .
 
 <http://rinfo.lagrummet.se/org/transportstyrelsen>
     a foaf:Organization;
@@ -251,6 +300,7 @@
     rdfs:comment "Nedlagd sedan 2008-12-31."@sv;
     skos:altLabel "Verva"@sv .
 
+# Ersatt av tillväxtverket sedan 2009-03-31 (har delvis tagit över författningssamlingen)
 <http://rinfo.lagrummet.se/org/verket_foer_naeringslivsutveckling>
     a foaf:Organization;
     foaf:name "Verket för näringslivsutveckling"@sv .
@@ -266,3 +316,13 @@
 <http://rinfo.lagrummet.se/org/aaklagarmyndigheten>
     a foaf:Organization;
     foaf:name "Åklagarmyndigheten"@sv .
+
+<http://rinfo.lagrummet.se/org/oeverklagandenaemnden_foer_hoegskolan>
+    a foaf:Organization;
+    foaf:name "Överklagandenämnden för högskolan"@sv .
+
+<http://rinfo.lagrummet.se/org/oeverklagandenaemnden_foer_studiestod>
+    a foaf:Organization;
+    foaf:name "Överklagandenämnden för studiestöd"@sv .
+
+    

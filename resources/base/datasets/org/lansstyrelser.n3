@@ -1,0 +1,90 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<http://rinfo.lagrummet.se/org/lansstyrelsen_blekinge_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Blekinge län"@sv .
+
+<http://rinfo.lagrummet.se/org/lansstyrelsen_dalarnas_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Dalarnas län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_gotlands_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Gotlands län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_gaevleborgs_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Gävleborgs län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_hallands_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Hallands län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_jaemtlands_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Jämtlands län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_joenkoepings_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Jönköpings län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_kalmars_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Kalmars län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_kronobergs_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Kronobergs län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_norrbottens_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Norrbottens län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_skaane_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Skåne län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_stockholms_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Stockholms län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_soedermanlands_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Södermanlands län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_uppsala_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Uppsala län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_vaermlands_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Värmlands län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_vaesterbottens_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Västerbottens län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_vaesternorrlands_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Västernorrlands län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_vaestmanlands_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Västmanlands län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_vaestra_goetalands_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Västra Götalands län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_oerebro_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Örebro län"@sv .
+    
+<http://rinfo.lagrummet.se/org/lansstyrelsen_oestergoetlands_laen>
+    a foaf:Organization;
+    foaf:name "Länsstyrelsen Östergötlands län"@sv .
+    
+
