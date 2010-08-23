@@ -736,33 +736,47 @@
     </div>
 
     <div class="section">
-    <h2>7. Hur man använder begreppsmodellen</h2>
+    <h2>7. Hur man använder sammanställningen av begreppsmodellen</h2>
 
     <p>
-      Begreppsmodellen har ett avsnitt för varje dokumenttyp, som kan
-      läsas fristående (det är anledningen till att det är mycket
-      upprepningar mellan avsnitten). För varje dokumenttyp finns en
-      lista med egenskaper. Varje sådan egenskap presenteras med ett
-      namn, en beskrivning och en URI. Det är URI:n som identifierar
-      egenskapen -- både namnet och beskrivningen är bara hjälp att
-      förstå vad egenskapen betyder.
+      Själva begreppsmodellen är en maskinläsbar fil som uttrycker
+      vilka dokumenttyper och egenskaper som finns, och hur de kan och
+      ska kombineras. Den är uttryckt i formatet N3, och använder
+      RDF-vokabulärerna RDFS och OWL för att formellt definera
+      relationer och beroenden mellan klasser och egenskaper.
     </p>
     <p>
-      För att i en RDF-fil uttrycka att ett visst dokument är av typen
-      <code>Myndighetsforeskrift</code> använder man URIn
+      Eftersom denna modell är svårläst för andra än maskiner (och
+      människor som förstod det förra stycket) så finns det även en <a
+      href="http://dev.lagrummet.se/dokumentation/model.pdf">sammanställning
+      av begreppsmodellen i PDF-form</a>, som är mer
+      lättläst. Sammanställningen har ett avsnitt för varje
+      dokumenttyp, där varje avsnitt kan läsas fristående (vilket
+      är anledningen till att det är mycket upprepningar). För varje
+      dokumenttyp finns en lista med egenskaper. Varje sådan egenskap
+      presenteras med ett namn, en beskrivning och en URI. Det är
+      URI:n som identifierar egenskapen -- både namnet och
+      beskrivningen är bara hjälp att förstå vad egenskapen
+      betyder. Även själva dokumenttypen identifieras av en URI.
+    </p>
+    <p>
+      För varje dokumenttyps avsnitt anges typ-URI:n först.  För
+      att i en RDF-fil uttrycka att ett visst dokument är av typen
+      <code>Myndighetsforeskrift</code> använder man alltså URIn
       <code>http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#Myndighetsforeskrift</code>. Eftersom
-      detta är så långt och otympligt används vanligen <a
-      href="http://www.w3.org/TR/REC-xml-names/">XML
-      Namespaces</a>. Eftersom prefixet
+      detta är långt och därmed otympligt används vanligen <a
+      href="http://www.w3.org/TR/REC-xml-names/">XML Namespaces</a>
+      för att förkorta denna. Eftersom prefixet
       <code>http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#</code> är
-      mest frekvent använt så brukar det vara default namespace.
+      mest frekvent använt så brukar det vara s.k. <em>default namespace</em>.
     </p>
     <p>
-      Sammantaget ger detta att man, för att säga att ett dokument
-      med
-      URI <code>http://rinfo.lagrummet.se/publ/bfs/2007:14</code> är
-      av
-      typen <code>http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#Myndighetsforeskrift</code>, skriver följande:
+      Sammantaget: för att ange att man beskriver en
+      myndighetsföreskrift, dvs. att ett dokument med URI
+      <code>http://rinfo.lagrummet.se/publ/bfs/2007:14</code> är av
+      typen
+      <code>http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#Myndighetsforeskrift</code>,
+      så skriver man följande i sin RDF-fil:
     </p>
     <div class="syntax">
       <code class="xml"><![CDATA[
@@ -776,11 +790,9 @@
       ]]></code>
     </div>
     <p>
-      På liknande sätt uttrycker man egenskaper hos ett dokument,
-      expempelvis för att säga att dokumentet publicerats i
-      författningssamlingen
-      <code>http://rinfo.lagrummet.se/serie/fs/bfs</code> (alla
-      dokumentsamlingar som används har var sin unika URI), att det är utgivet under 2007, och att det har löpnummer 14:
+      På liknande sätt uttrycker man dokumentets egenskaper. För att
+      ange att dokumentet publicerats i
+      författningssamlingen BFS (som har URI:n <code>http://rinfo.lagrummet.se/serie/fs/bfs</code>), att det är utgivet under 2007, och att det har löpnummer 14:
     </p>
     <div class="syntax">
       <code class="xml"><![CDATA[
@@ -795,41 +807,52 @@
 </rdf:RDF>
       ]]></code>
     </div>
+
     <p>
-      Inte alla egenskaper har URI:er som inleds med
-      <code>http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#</code>. Modellen
-      återanvänder även vokabulären <a
-      href="http://dublincore.org/documents/dcmi-terms/#terms-title">DCMI
-      Metadata Terms</a> (allmänt kallad "Dublin Core"), vars
-      egenskaper inleds med
-      <code>http://purl.org/dc/terms/</code>. För att uttrycka att
-      ett dokument har en viss titel används en term ur denna
-      vokabulär, med namespaceprefix <code>dct</code>.
+      Varje egenskap kan vara av en viss typ. Det finns två huvudtyper
+      av egenskaper: resurser respektive literaler. En resurs är
+      någonting som man kan hänvisa till, och som har en URI (i regel,
+      men se nedan om anonyma resurser). En literal är ett värde,
+      exempelvis en textsträng eller en siffra.
     </p>
-    <p>Med <code>xml:lang</code>-attributet anges att en av de
-    nedanstående egenskaperna är uttryckta på svenska (den andra,
-    identifieraren "BFS 2007:14" kan inte sägas vara på något särskilt
-    språk, och har alltså inget sådant attribut)</p>
-
-    <div class="syntax">
-      <code class="xml"><![CDATA[
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:dct="http://purl.org/dc/terms/"
-         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
-  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:14">
-    <dct:identifier>BFS 2007:14</dct:identifier>
-    <dct:title xml:lang="sv">Boverkets föreskrifter om ändring i
-      föreskrifterna och de allmänna råden (BFS 2007:4) om
-      energideklaration för byggnader;
-    </dct:title>
-    [...]
-  </Myndighetsforeskrift>
-</rdf:RDF>
-      ]]></code>
-    </div>
-
     <p>
-      Slutligen kan vissa egenskaper hänvisa till anonyma resurser, så kallade blank nodes (BNodes). Ett exempel på det är bemyndigandehänvisningar. En bemyndigandehänvisning är en sådan annonym resurs (av typen Forfattningsreferens), dvs som saknar en URI, men ändå kan ha egna egenskaper. Exempel:
+      Vanligtvis är en resurs något som är fristående från själva
+      dokumentet (exempelvis författningssamlingen BFS), medan en
+      literal är något som hör till dokumentet (exv utfärdandedatumet
+      "1976-09-02" eller titeln "Författningssamlingsförordning").
+    </p>
+    <p>
+      I det ovanstående exemplet anger <code>forfattningssamling</code>
+      en resurs och <code>arsutgava</code> samt <code>lopnummer</code>
+      literaler. En resurs anges alltså med ett
+      <code>rdf:resource</code>-attribut, medan en literal anges som
+      själva elementinnehållet.
+    </p>
+    <p>
+      Ska då en viss egenskap anges som en resurs eller en literal?  I
+      sammanställningen av begreppsmodellen kan man läsa ut svaret om
+      det finns ett "Anges som"-fält. Om detta är
+      Författningssamlingsdokument, Författning, Kapitel, Paragraf,
+      Förarbete, Komittédirektiv, Utredningsserie,
+      Författningssamling, Person eller Organisation så ska en resurs
+      anges. Om det är Text eller Datum så ska en literal anges.
+    </p>
+    <p>
+      Annars ska man som huvudregel ange en resurs om det är möjligt,
+      dvs om man kan konstruera en URI till den sak man vill hänvisa
+      till. Det är därför man ska ange författningssamling med en URI,
+      inte bara textliteralen "BFS". I dokumentet <a
+      href="http://dev.lagrummet.se/dokumentation/system/uri-principer.pdf">URI-principer</a>
+      finns regler för hur detta görs, tillsammans med ett stort antal
+      exempel samt listor på URI:er för författningssamlingar,
+      myndigheter och liknande.
+    </p>
+    <p>
+      Slutligen kan vissa egenskaper hänvisa till anonyma resurser, så
+      kallade blank nodes (BNodes). Ett exempel på det är
+      bemyndigandehänvisningar. En bemyndigandehänvisning är en sådan
+      anonym resurs (av typen <code>Forfattningsreferens</code>), dvs
+      som saknar en URI, men ändå kan ha egna egenskaper. Exempel:
     </p>
     <div class="syntax">
       <code class="xml"><![CDATA[
@@ -854,16 +877,65 @@
 </rdf:RDF>
       ]]></code>
     </div>
+    
+    <p>
+      Inte alla egenskaper har URI:er som inleds med
+      <code>http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#</code>. Modellen
+      återanvänder även vokabulären <a
+      href="http://dublincore.org/documents/dcmi-terms/#terms-title">DCMI
+      Metadata Terms</a> (allmänt kallad "Dublin Core"), vars
+      egenskaper inleds med
+      <code>http://purl.org/dc/terms/</code>. För att uttrycka att
+      ett dokument har en viss titel används en term ur denna
+      vokabulär, med namespaceprefix <code>dct</code>.
+    </p>
+    <p>
+      Med <code>xml:lang</code>-attributet anges att en av de
+      nedanstående egenskaperna är uttryckta på svenska (den andra,
+      identifieraren "BFS 2007:14" kan inte sägas vara på något
+      särskilt språk, och har alltså inget sådant attribut)
+    </p>
+
+    <div class="syntax">
+      <code class="xml"><![CDATA[
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dct="http://purl.org/dc/terms/"
+         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+  <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:14">
+    <dct:identifier>BFS 2007:14</dct:identifier>
+    <dct:title xml:lang="sv">Boverkets föreskrifter om ändring i
+      föreskrifterna och de allmänna råden (BFS 2007:4) om
+      energideklaration för byggnader;
+    </dct:title>
+    [...]
+  </Myndighetsforeskrift>
+</rdf:RDF>
+      ]]></code>
+    </div>
+
     <p>
       Utöver dessa egenskaper kan myndigheten välja att inkludera
       information som är specifik för den egna verksamheten (t.ex.
-      ämnesklassificering mm). För mer information och exempel på
-      hur det går till, kontakta projektet.
+      ämnesklassificering mm). Se kapitel 8 för mer information om detta.
       <!-- kolla exv AMSFS som använder foaf:homepage -->
     </p>
     <p>
-      I kolumen "förekomst" nedan avser "noll eller flera" valfria
-      egenskaper.
+      För varje egenskap finns det i sammanställningen en angivelse
+      för "Förekomst" som kan ha olika värden ("exakt en", "valfri",
+      "minst en", "max 1" osv).
+    </p>
+    <p>
+      Dessa ska ses som förklarande riktlinjer, inte något lägsta
+      krav. Egenskapen "Lagrum" anges som "valfri", men det ska inte
+      tolkas som att det generellt är valfritt att ta med
+      lagrumshänvisningar. Om texten i ett vägledande beslut gör en
+      hänvisning till ett lagrum så ska denna hänvisning också
+      uttryckas i metadatan. Men om det inte finns några
+      lagrumshänvisningar i texten så kan det förstås inte finnas det
+      i metadatat heller. Det handlar om att när det i dokumenttexten
+      finns information som människor kan läsa ut, så ska denna så
+      långt som möjligt även vara med i metadatan.  I kolumen
+      "förekomst" nedan avser "noll eller flera" valfria egenskaper.
     </p>
     <p>
       För vidare information om hur man uttrycker RDF-data i
