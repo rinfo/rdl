@@ -33,7 +33,7 @@ class CollectorLogSpec extends Specification {
     @Shared CollectorLog collectorLog
     CollectorLogSession logSession
 
-    def setupSpeck() {
+    def setupSpec() {
         def repo = new SailRepository(new MemoryStore())
         collectorLog = new CollectorLog(repo)
     }
@@ -46,7 +46,7 @@ class CollectorLogSpec extends Specification {
         logSession.close()
     }
 
-    def cleanupSpeck() {
+    def cleanupSpec() {
         collectorLog.shutdown()
     }
 

@@ -10,8 +10,8 @@ class DepotAtomTombstoneSpec extends Specification {
 
     @Shared Depot depot
     @Shared def tdu = new TempDepotUtil()
-    def setupSpeck() { depot = tdu.createTempDepot() }
-    def cleanupSpeck() { tdu.deleteTempDepot() }
+    def setupSpec() { depot = tdu.createTempDepot() }
+    def cleanupSpec() { tdu.deleteTempDepot() }
 
     def "should, if configured, use entries as tombstones"() {
         when:

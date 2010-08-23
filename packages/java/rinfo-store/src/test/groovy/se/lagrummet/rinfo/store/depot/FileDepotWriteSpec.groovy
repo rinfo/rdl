@@ -7,10 +7,10 @@ class FileDepotWriteSpec extends Specification {
 
     @Shared Depot depot
     @Shared def tdu = new TempDepotUtil()
-    def setupSpeck() {
+    def setupSpec() {
         depot = tdu.createTempDepot()
     }
-    def cleanupSpeck() { tdu.deleteTempDepot() }
+    def cleanupSpec() { tdu.deleteTempDepot() }
 
     def setup() {
         // TODO: mock cleaner interface, assert incoming!

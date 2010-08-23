@@ -10,13 +10,13 @@ class DepotAtomIndexSpec extends Specification {
     @Shared Atomizer atomizer
     @Shared def tdu = new TempDepotUtil()
 
-    def setupSpeck() {
+    def setupSpec() {
         depot = tdu.createTempDepot()
         atomizer = depot.atomizer
         atomizer.feedBatchSize = 2
     }
 
-    def cleanupSpeck() {
+    def cleanupSpec() {
         tdu.deleteTempDepot()
     }
 
