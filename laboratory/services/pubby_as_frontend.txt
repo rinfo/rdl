@@ -1,0 +1,22 @@
+
+Pubby är ett generiskt webbgränssnitt som kan användas ovanpå en
+SPARQL-endpoint för att se egenskaperna för och bläddra mellan resurser på ett
+enkelt sätt.
+
+Det är en generell och teknik-(RDF-)nära lösing som inte går att specialiseras
+nämnvärt, och är således inte särskilt lämpat för att skapa en skräddarsydd
+webbupplevelse för en specifik domän. Dock är det ett bra sätt att demonstrera
+och undersöka utseendet och sammanlänkningen mellan RDF-resurser (förutsatt att
+de är indexerade i den underliggande SPARQL-databasen).
+
+Se <http://www4.wiwiss.fu-berlin.de/pubby/> för mer information och nedladdning.
+
+För att snabbt komma igång med Pubby ovanpå en lokal instans av RInfo::
+
+    $ wget http://www4.wiwiss.fu-berlin.de/pubby/download/pubby-0.3.1.zip
+    $ unzip pubby-0.3.1.zip
+    $ cd pubby
+    $ cp -r webapp $TOMCAT_HOME/webapps/pubby-rinfo
+    $ cp $RINFO_REPO/laboratory/services/pubby-config-rinfo.n3 $TOMCAT_HOME/webapps/pubby-rinfo/WEB-INF/config.n3
+    $ $TOMCAT_HOME/bin/startup.sh
+
