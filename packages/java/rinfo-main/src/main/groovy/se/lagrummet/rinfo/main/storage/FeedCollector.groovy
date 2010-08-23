@@ -32,7 +32,7 @@ public class FeedCollector {
         }
     }
 
-    protected openSession(StorageCredentials credentials) {
+    public openSession(StorageCredentials credentials) {
         def storageSession = storage.openSession(credentials)
         return new FeedCollectorSession(createClient(), storageSession)
     }
@@ -42,7 +42,11 @@ public class FeedCollector {
     //  - set timeout (default is infinite!)
     //  - Configure to use SSL (https) and verify cert.!
     //  -? httpClient.setHttpRequestRetryHandler(...)
-    protected HttpClient createClient() {
+    public HttpClient createClient() {
+        return FeedCollector.createDefaultClient()
+    }
+
+    public static HttpClient createDefaultClient() {
         HttpParams params = new BasicHttpParams()
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1)
         ConnManagerParams.setMaxTotalConnections(params, 100)

@@ -6,6 +6,8 @@ import java.util.*;
 
 import org.apache.commons.io.FileUtils;
 
+import org.apache.http.client.HttpClient;
+
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.i18n.iri.IRI;
@@ -17,12 +19,15 @@ import org.openrdf.sail.memory.MemoryStore;
 import se.lagrummet.rinfo.store.depot.Depot;
 import se.lagrummet.rinfo.store.depot.FileDepot;
 import se.lagrummet.rinfo.store.depot.SourceContent;
+
 import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex;
 import se.lagrummet.rinfo.main.storage.FeedCollector;
+import se.lagrummet.rinfo.main.storage.FeedCollectorSession;
 import se.lagrummet.rinfo.main.storage.StorageSession;
 import se.lagrummet.rinfo.main.storage.StorageCredentials;
 import se.lagrummet.rinfo.main.storage.StorageHandler;
 import se.lagrummet.rinfo.main.storage.CollectorLog;
+import se.lagrummet.rinfo.main.storage.CollectorLogSession;
 
 
 public class Checker {
@@ -61,13 +66,14 @@ public class Checker {
 
     public Repository checkFeed(URL feedUrl, boolean adminSource) throws Exception {
         CollectorLog coLog = new CollectorLog(logRepo);
+        StorageCredentials credentials = new StorageCredentials(adminSource);
         LaxStorageSession storageSession = new LaxStorageSession(
-                new StorageCredentials(adminSource),
-                depot, handlers, coLog);
+                credentials, depot, handlers, coLog.openSession());
         storageSession.setMaxEntries(maxEntries);
-        FeedCollector collector = new OneFeedCollector(storageSession);
-        collector.readFeed(feedUrl);
-        collector.shutdown();
+        FeedCollectorSession collectSession = new OneFeedCollectorSession(
+                FeedCollector.createDefaultClient(), storageSession);
+        collectSession.readFeed(feedUrl);
+        collectSession.shutdown();
         return logRepo;
     }
 
@@ -90,7 +96,28 @@ public class Checker {
     }
 
 
-    public class LaxStorageSession extends StorageSession {
+    public static class OneFeedCollectorSession extends FeedCollectorSession {
+
+        int archiveCount = 0;
+
+        public OneFeedCollectorSession(HttpClient httpClient,
+                StorageSession storageSession) {
+            super(httpClient, storageSession);
+        }
+
+        public boolean hasVisitedArchivePage(URL pageUrl) {
+            // not visited current; true for anything else
+            if (archiveCount >= 1) {
+                return true;
+            }
+            archiveCount++;
+            return false;
+        }
+
+    }
+
+
+    public static class LaxStorageSession extends StorageSession {
 
         private int maxEntries = -1;
         public int getMaxEntries() { return maxEntries; }
@@ -101,8 +128,9 @@ public class Checker {
         public LaxStorageSession(StorageCredentials credentials,
                 Depot depot,
                 Collection<StorageHandler> storageHandlers,
-                CollectorLog collectorLog) {
-            super(credentials, depot, storageHandlers, collectorLog.openSession());
+                CollectorLogSession collectorLogSession) {
+            super(credentials, depot, storageHandlers, collectorLogSession,
+                    new NoopFeedEntryIdIndex());
         }
 
         public boolean storeEntry(Feed sourceFeed, Entry sourceEntry,
@@ -117,34 +145,15 @@ public class Checker {
         }
     }
 
-    public class OneFeedCollector extends FeedCollector {
 
-        int archiveCount = 0;
-
-        public OneFeedCollector(StorageSession storageSession) {
-            super(storageSession);
+    public static class NoopFeedEntryIdIndex implements CompleteFeedEntryIdIndex {
+        public Set<IRI> getEntryIdsForCompleteFeedId(IRI feedId) {
+            return null;
         }
-
-        public boolean hasVisitedArchivePage(URL pageUrl) {
-            // not visited current; true for anything else
-            if (archiveCount >= 1) {
-                return true;
-            }
-            archiveCount++;
-            return false;
+        public void storeEntryIdsForCompleteFeedId(IRI feedId, Set<IRI> entryIds) {
+            ;
         }
-
-        public CompleteFeedEntryIdIndex getCompleteFeedEntryIdIndex() {
-            return new CompleteFeedEntryIdIndex() {
-                public Set<IRI> getEntryIdsForCompleteFeedId(IRI feedId) {
-                    return null;
-                }
-                public void storeEntryIdsForCompleteFeedId(IRI feedId, Set<IRI> entryIds) {
-                    ;
-                }
-            };
-        }
-
     }
+
 
 }

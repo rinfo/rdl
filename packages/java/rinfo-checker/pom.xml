@@ -52,7 +52,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>find-specks</goal>
+              <goal>find-specs</goal>
             </goals>
           </execution>
         </executions>
@@ -67,7 +67,7 @@
             <configuration>
               <tasks>
                 <copy todir="${project.build.outputDirectory}/xslt">
-                  <fileset file="${basedir}/../../../resources/external/xslt/rdfxml-grit.xslt"/>
+                  <fileset file="${basedir}/../../../resources/external/xslt/grit/rdfxml-grit.xslt"/>
                 </copy>
               </tasks>
             </configuration>
