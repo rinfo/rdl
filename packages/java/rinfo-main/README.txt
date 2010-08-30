@@ -28,9 +28,11 @@ Running as war::
 
     $ mvn clean compile war:war jetty:run-war -Djetty.port=8180 -Dmaven.test.skip=true
 
-, or::
+, or (TODO: doesn't work yet)::
 
     $ mvn -Djetty.port=8180 jetty:run
+
+Goto http://localhost:8180/feed/current to verify that the server was started without errors. The page should be a valid, none empty Atom feed.
 
 Main configuration properties can be found in src/main/resources/rinfo-main/src/main/resources/rinf-main-common.properties. Specific overrides for particular environments can be found under src/environments/. In particular, rinfo-main needs access to an admin feed. Follow the instructions in ../../../manage/running_rinfo_locally.txt to set up and serve such a feed.
 
