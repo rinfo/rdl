@@ -71,7 +71,7 @@ Now you are ready to start up:
     $ cd tools/rinfomain/
     $ TEST_SRC_DIR=/opt/_workapps/rinfo/testsources/www # any empty dir you want
     $ TEST_SERVER=http://localhost:8280
-    $ ./maps_feeds_and_base.sh
+    $ ./map_feeds_and_base.sh $TEST_SRC_DIR $TEST_SERVER
     $ groovy serve_folder.groovy $TEST_SRC_DIR
 
     Verify that the correct information is served at http://localhost:8280/feed/current
