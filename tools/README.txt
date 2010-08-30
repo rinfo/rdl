@@ -29,12 +29,9 @@ Then add, directly after ``ivysettings/settings``, the following directive::
 
     <caches useOrigin="true"/>
 
-And, in ``/ivysettings/resolvers/chain``, after the first ``filesystem``, add::
+And, in ``/ivysettings/resolvers/chain``, before the first ``filesystem``, add::
 
-    <filesystem name="local-maven2" m2compatible="true">
-        <ivy pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision].pom"/>
-        <artifact pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
-    </filesystem>
+    <ibiblio name="local" root="file:${user.home}/.m2/repository/" m2compatible="true"/>
 
 The path in the root property above should match the location for your local
 maven repository. You may have changed that from the default home directory.
