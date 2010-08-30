@@ -15,8 +15,14 @@ machine during development. To do this from scratch, you need:
 
 To use the various instrumental tools used you also need:
 
-* Groovy 1.7+
-* Python 2.5+ (for acceptance spec testing and deployment)
+Groovy 1.7.4+
+    See ``../tools/README.txt``.
+
+Python 2.5+
+
+    - For management (such as deployment): see ``README.txt``.
+    - For acceptance spec testing: see ``../documentation/spec/README.txt``
+      (NOTE: these are peripheral right now, so you can skip this part).
 
 
 Setting up the environment
@@ -65,8 +71,7 @@ Now you are ready to start up:
     $ cd tools/rinfomain/
     $ TEST_SRC_DIR=/opt/_workapps/rinfo/testsources/www # any empty dir you want
     $ TEST_SERVER=http://localhost:8280
-    $ groovy map_feeds_docs.groovy ../../documentation/ $TEST_SRC_DIR $TEST_SERVER
-    $ groovy base_as_feed.groovy -b ../../resources/base/ -l "/admin" -s $TEST_SRC_DIR -o $TEST_SRC_DIR
+    $ ./maps_feeds_and_base.sh
     $ groovy serve_folder.groovy $TEST_SRC_DIR
 
     Verify that the correct information is served at http://localhost:8280/feed/current
@@ -74,14 +79,14 @@ Now you are ready to start up:
 * Local instance of the RInfo system:
 
   rinfo-main
-      collects from the sources defined for development mode (a
-      base/admin prototype feed and example suppliers) and supplies
-      the main data feed. Instructions on how to run this application
-      using Jetty can be found in packages/java/rinfo-main/README.txt
+      Collects from the sources defined for development mode (a base/admin
+      prototype feed and example suppliers) and supplies the main data feed.
+      Instructions on how to run this application using Jetty can be found in:
+      ``../packages/java/rinfo-main/README.txt``.
 
   rinfo-service
-      feeds from rinfo-main into the sesame RDF repo, making data available for
-      its data views.
+      Collects from rinfo-main into the sesame RDF repo, making data available
+      for its data views.
 
 
 In Depth
