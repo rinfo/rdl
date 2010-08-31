@@ -240,9 +240,9 @@ class RepoEntry {
         def eventItem = findYearItemFor(property, year)
         if (eventItem == null) {
             eventItem = vf.createBNode()
-            conn.add(eventItem, RDF.TYPE, SCOVO_ITEM)
-            conn.add(eventItem, TL_AT_YEAR, year)
-            conn.add(eventItem, SCOVO_DIMENSION, property)
+            conn.add(eventItem, RDF.TYPE, SCOVO_ITEM, timeStatsCtx)
+            conn.add(eventItem, TL_AT_YEAR, year, timeStatsCtx)
+            conn.add(eventItem, SCOVO_DIMENSION, property, timeStatsCtx)
         }
         return eventItem
     }
