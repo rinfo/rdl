@@ -19,7 +19,7 @@ To use the various instrumental tools used you also need:
 
   - See ``../tools/README.txt``.
 
-* Python 2.5+ - ≤http://www.python.org/download/>
+* Python 2.5+ - <http://www.python.org/download/>
 
   - For management (such as deployment): see ``README.txt``.
   - For acceptance spec testing: see ``../documentation/spec/README.txt``

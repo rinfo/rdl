@@ -11,14 +11,16 @@ some services for that.
 Maven Usage
 ========================================================================
 
-Running as war::
+Running the webapp::
 
-    $ mvn clean compile war:war jetty:run-war -Djetty.port=8181 -Dmaven.test.skip=true
+    $ mvn jetty:run -Djetty.port=8181
 
-In development mode, rinfo-main doesn't ping rinfo-service after collection. To
-do this manually, call e.g.::
+Configuration & Runtime
+========================================================================
 
-Manually pinging rinfo-service to collect from rinfo-main::
+In development mode, rinfo-main doesn't ping rinfo-service after collection.
+
+To ping manually (telling rinfo-service to collect from rinfo-main)::
 
     $ curl --data "feed=http://localhost:8180/feed/current" http://localhost:8181/collector
 

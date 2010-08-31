@@ -151,9 +151,11 @@
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
         <configuration>
-          <webApp>${basedir}/target/${artifactId}-${environment}.war</webApp>
           <scanIntervalSeconds>10</scanIntervalSeconds>
-          <contextPath>/</contextPath>
+          <webAppConfig>
+            <contextPath>/</contextPath>
+            <extraClasspath>${basedir}/src/environments/${environment}</extraClasspath>
+          </webAppConfig>
         </configuration>
       </plugin>
 
