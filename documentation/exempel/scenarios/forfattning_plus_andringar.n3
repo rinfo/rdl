@@ -1,0 +1,44 @@
+@prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://rinfo.lagrummet.se/publ/sfs/1337:1> a :Forordning;
+    dct:identifier "RA-FS 1337:1";
+    dct:title """Förordning om någonting;"""@sv;
+    :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/sfs>;
+    :arsutgava "1337";
+    :lopnummer "1";
+    dct:publisher <http://rinfo.lagrummet.se/org/riksarkivet>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/riksarkivet>;
+    :beslutsdatum "1337-01-01"^^xsd:date;
+    :ikrafttradandedatum "1337-01-02"^^xsd:date;
+    :utkomFranTryck "1337-01-02"^^xsd:date;
+    :paragraf <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_1>,
+            <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_2>,
+            <http://rinfo.lagrummet.se/publ/sfs/1338:1#p_3>,
+            <http://rinfo.lagrummet.se/publ/sfs/1338:1#p_4> .
+<http://rinfo.lagrummet.se/publ/sfs/1337:1#p_1> :paragrafnummer "1" .
+<http://rinfo.lagrummet.se/publ/sfs/1337:1#p_2> :paragrafnummer "2" .
+<http://rinfo.lagrummet.se/publ/sfs/1337:1#p_3> :paragrafnummer "3" .
+<http://rinfo.lagrummet.se/publ/sfs/1337:1#p_4> :paragrafnummer "4" .
+
+<http://rinfo.lagrummet.se/publ/sfs/1337:2> a :Forordning;
+    dct:identifier "RA-FS 1337:2";
+    dct:title """Förordning om ändring av förordning (SFS 1337:1) om någonting;"""@sv;
+    :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/sfs>;
+    :arsutgava "1337";
+    :lopnummer "2";
+    dct:publisher <http://rinfo.lagrummet.se/org/riksarkivet>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/riksarkivet>;
+    :beslutsdatum "1337-02-01"^^xsd:date;
+    :ikrafttradandedatum "1337-02-02"^^xsd:date;
+    :utkomFranTryck "1337-02-02"^^xsd:date;
+    :andrar <http://rinfo.lagrummet.se/publ/sfs/1337:2>;
+    :paragraf [ :paragrafnummer "2";
+            :ersatter [ a :Forfattningsreferens;
+                    :angerGrundforfattning <http://rinfo.lagrummet.se/publ/sfs/1337:1>;
+                    :angerParagrafnummer "2" ] ];
+    :paragraf [ :paragrafnummer "5";
+            :inforsI <http://rinfo.lagrummet.se/publ/sfs/1337:1>;
+            dct:isVersionOf <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_5> ] .
+
