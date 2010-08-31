@@ -58,11 +58,14 @@
   <xsl:template match="h:div[@id='toc']/h:ul[not(h:li)]">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:for-each select="/h:html/h:body/h:div[contains(@class, 'section') or contains(@class, 'appendix')]">
+      <xsl:for-each select="/h:html/h:body/h:div[contains(@class, 'section')
+                    or contains(@class, 'appendix')]">
         <xsl:variable name="div-id">
           <xsl:choose>
             <xsl:when test="@id"><xsl:value-of select="@id"/></xsl:when>
-            <xsl:otherwise>s_<xsl:value-of select="position()"/></xsl:otherwise>
+            <xsl:otherwise>
+              <xsl:text>s_</xsl:text>
+              <xsl:value-of select="position()"/></xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
         <li>
@@ -72,14 +75,14 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="h:div[contains(concat(' ',@class, ' '), ' section ')]">
+  <xsl:template match="h:div[contains(@class, 'section') or contains(@class, 'appendix')]">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:if test="not(@id)">
         <xsl:attribute name="id">
           <xsl:text>s_</xsl:text>
           <xsl:value-of select="1 + count(preceding-sibling::h:div[
-                        contains(concat(' ',@class, ' '), ' section ')])"/>
+                        contains(@class, 'section') or contains(@class, 'appendix')])"/>
         </xsl:attribute>
       </xsl:if>
       <xsl:apply-templates select="@*|node()"/>
