@@ -17,8 +17,8 @@ SELECT DISTINCT * WHERE {
 
     ?doc a ?doc__1_type .
 
-    ?doc__1_entry foaf:primaryTopic ?doc;
-        a awol:Entry .
+    ?doc__1_entry foaf:primaryTopic ?doc; a awol:Entry .
+
     {
         ?doc__1_entry awol:content ?doc__1_entry__repr .
     } UNION {
@@ -26,32 +26,34 @@ SELECT DISTINCT * WHERE {
     }
     ?doc__1_entry__repr awol:type ?doc__1_entry__repr__1_mediaType .
 
-    OPTIONAL { ?doc__1_type rdfs:label ?doc__1_type__1_label }
-
     OPTIONAL { ?doc dct:title ?doc__1_title }
 
-    OPTIONAL {
-        ?doc dct:publisher ?doc__1_publisher .
-    }
+    OPTIONAL { ?doc__1_type rdfs:label ?doc__1_type__1_label }
+
+    OPTIONAL { ?doc dct:publisher ?doc__1_publisher }
+
+    ?doc dct:identifier ?doc__1_serieNummer . # TODO: adapt UI to this simpler form
+    # TODO: enum of ?doc ?prop ?value where ?prop in [
+    #    rpubl:arsutgava rpubl:lopnummer rpubl:sidnummer rpubl:bihangsnummer
+    #]? or *all*?
 
     {
-        ?doc
-            rpubl:fsNummer ?doc__1_serieNummer;
-            rpubl:forfattningssamling ?doc__1_serie .
+        ?doc rpubl:forfattningssamling ?doc__1_serie .
         ?doc__1_serie skos:altLabel ?doc__1_serie__1_label .
 
     } UNION {
         ?doc
             rpubl:utrSerie ?doc__1_serie;
-            rpubl:utrSerienummer ?doc__1_serieNummer .
         OPTIONAL { ?doc__1_serie skos:altLabel ?doc__1_serie__1_label }
 
     } UNION {
         ?doc # a rpubl:Rattsfallsreferat;
             rpubl:rattsfallspublikation ?doc__1_serie;
-            rpubl:publikationsordinal ?doc__1_serieNummer .
-        OPTIONAL { ?doc rpubl:referatrubrik ?doc__1_title }
         OPTIONAL { ?doc__1_serie skos:altLabel ?doc__1_serie__1_label }
+        OPTIONAL { ?doc rpubl:referatrubrik ?doc__1_title }
+        # + from optional above: arsutgava, lopnummer
+        #OPTIONAL { ?doc rpubl:notisserie ?doc__1_notisserie }
+        #OPTIONAL { ?doc rpubl:referatserie ?doc__1_referatserie }
 
     } UNION {
         ?doc a rpubl:KonsolideradGrundforfattning;
@@ -60,17 +62,12 @@ SELECT DISTINCT * WHERE {
             # TODO: shortLabel..
               skos:altLabel ?serieLabel;
             ];
-            rpubl:fsNummer ?serieNummer
           ];
-          rpubl:utfardandedatum ?doc__1_konsUtfardandedatum .
+          #rpubl:utfardandedatum ?doc__1_konsUtfardandedatum .
+          dct:issued ?doc__1_konsUtfardandedatum . # TODO: rename var
 
-    # TODO: see uri-minter for remaining..
-    } UNION {
-            # TODO: shortLabel (of typeLabel)
-        ?doc ?doc__1_rattsdokNrProperty ?doc__1_rattsdokNr .
-        ?doc__1_rattsdokNrProperty rdfs:subPropertyOf rpubl:rattsdokumentnummer .
+    #} UNION { # TODO: see uri-minter for remaining..
     }
-
 
     $if (path)$
         FILTER(?doc = <http://rinfo.lagrummet.se/publ/$path$>)
@@ -106,7 +103,6 @@ SELECT DISTINCT * WHERE {
         OPTIONAL {
 
             {
-
                 ?doc ?doc__daterel ?doc__daterel__value .
                 FILTER(datatype(?doc__daterel__value) = xsd:date)
                 ?doc__daterel rdfs:label ?doc__daterel__1_label .
