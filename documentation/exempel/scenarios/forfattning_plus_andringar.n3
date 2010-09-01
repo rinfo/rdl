@@ -1,39 +1,41 @@
 @prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
 
 <http://rinfo.lagrummet.se/publ/sfs/1337:1> a :Forordning;
-    dct:identifier "RA-FS 1337:1";
-    dct:title """Förordning om någonting;"""@sv;
+    dct:identifier "SFS 1337:1";
+    dct:title """Förordning om data (1337:1);"""@sv;
     :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/sfs>;
-    :arsutgava "1337";
-    :lopnummer "1";
-    dct:publisher <http://rinfo.lagrummet.se/org/riksarkivet>;
-    :beslutadAv <http://rinfo.lagrummet.se/org/riksarkivet>;
+    :arsutgava "1337"; :lopnummer "1";
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/regeringskansliet>;
     :beslutsdatum "1337-01-01"^^xsd:date;
     :ikrafttradandedatum "1337-01-02"^^xsd:date;
     :utkomFranTryck "1337-01-02"^^xsd:date;
     :paragraf <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_1>,
-            <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_2>,
-            <http://rinfo.lagrummet.se/publ/sfs/1338:1#p_3>,
-            <http://rinfo.lagrummet.se/publ/sfs/1338:1#p_4> .
+        <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_2>,
+        <http://rinfo.lagrummet.se/publ/sfs/1338:1#p_3>,
+        <http://rinfo.lagrummet.se/publ/sfs/1338:1#p_4> .
+
 <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_1> :paragrafnummer "1" .
 <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_2> :paragrafnummer "2" .
 <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_3> :paragrafnummer "3" .
 <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_4> :paragrafnummer "4" .
 
+
 <http://rinfo.lagrummet.se/publ/sfs/1337:2> a :Forordning;
-    dct:identifier "RA-FS 1337:2";
-    dct:title """Förordning om ändring av förordning (SFS 1337:1) om någonting;"""@sv;
+    dct:identifier "SFS 1337:2";
+    dct:title """Förordning om de första ändringarna av förordning (1337:1) om data;"""@sv;
     :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/sfs>;
-    :arsutgava "1337";
-    :lopnummer "2";
-    dct:publisher <http://rinfo.lagrummet.se/org/riksarkivet>;
-    :beslutadAv <http://rinfo.lagrummet.se/org/riksarkivet>;
+    :arsutgava "1337"; :lopnummer "2";
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/regeringskansliet>;
     :beslutsdatum "1337-02-01"^^xsd:date;
     :ikrafttradandedatum "1337-02-02"^^xsd:date;
     :utkomFranTryck "1337-02-02"^^xsd:date;
-    :andrar <http://rinfo.lagrummet.se/publ/sfs/1337:2>;
+    :andrar <http://rinfo.lagrummet.se/publ/sfs/1337:1>;
     :paragraf [ :paragrafnummer "2";
             :ersatter [ a :Forfattningsreferens;
                     :angerGrundforfattning <http://rinfo.lagrummet.se/publ/sfs/1337:1>;
@@ -41,4 +43,51 @@
     :paragraf [ :paragrafnummer "5";
             :inforsI <http://rinfo.lagrummet.se/publ/sfs/1337:1>;
             dct:isVersionOf <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_5> ] .
+
+
+<http://rinfo.lagrummet.se/publ/sfs/1337:3> a :Forordning;
+    dct:identifier "SFS 1337:3";
+    dct:title """Förordning om de andra ändringarna av förordning (1337:1) om data;"""@sv;
+    :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/sfs>;
+    :arsutgava "1337"; :lopnummer "3";
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/regeringskansliet>;
+    :beslutsdatum "1337-03-01"^^xsd:date;
+    :ikrafttradandedatum "1337-03-02"^^xsd:date;
+    :utkomFranTryck "1337-03-02"^^xsd:date;
+    :andrar <http://rinfo.lagrummet.se/publ/sfs/1337:1>;
+    :paragraf <http://rinfo.lagrummet.se/publ/sfs/1337:3#p_4> .
+
+<http://rinfo.lagrummet.se/publ/sfs/1337:3#p_4> a :Paragraf;
+    :paragrafnummer "4";
+    :andrar <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_4> .
+
+
+<http://rinfo.lagrummet.se/publ/sfs/1337:4> a :Forordning;
+    dct:identifier "SFS 1337:4";
+    dct:title """Förordning om de tredje ändringarna av förordning (SFS 1337:1) om data;"""@sv;
+    :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/sfs>;
+    :arsutgava "1337"; :lopnummer "4";
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/regeringskansliet>;
+    :beslutsdatum "1337-04-01"^^xsd:date;
+    :ikrafttradandedatum "1337-04-02"^^xsd:date;
+    :utkomFranTryck "1337-04-02"^^xsd:date;
+    :andrar <http://rinfo.lagrummet.se/publ/sfs/1337:1>;
+    :paragraf <http://rinfo.lagrummet.se/publ/sfs/1337:4#p_5> .
+
+<http://rinfo.lagrummet.se/publ/sfs/1337:4#p_5> a :Paragraf;
+    :paragrafnummer "5";
+    :andrar <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_5> .
+
+
+<http://rinfo.lagrummet.se/publ/sfs/1337:1/konsolidering/1337-05-01> a :KonsolideradGrundforfattning;
+    dct:identifier "SFS 1337:1 lydelse enligt SFS 1337:4"@sv;
+    dct:title """Förordning om data (1337:1);"""@sv;
+    dct:issued "1337-05-01"^^xsd:date;
+    :konsoliderar <http://rinfo.lagrummet.se/publ/sfs/1337:1>;
+    :konsolideringsunderlag <http://rinfo.lagrummet.se/publ/sfs/1337:2>,
+        <http://rinfo.lagrummet.se/publ/sfs/1337:3>,
+        <http://rinfo.lagrummet.se/publ/sfs/1337:4> .
+
 
