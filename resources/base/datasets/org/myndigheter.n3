@@ -325,4 +325,155 @@
     a foaf:Organization;
     foaf:name "Överklagandenämnden för studiestöd"@sv .
 
-    
+# Följande myndigheter har ingen egen författningssamling, men de har
+# rätt att publicera författningar i andras (dvs vara object i ett
+# :beslutadAv-påstående).
+
+# AGVFS
+<http://rinfo.lagrummet.se/org/statens_tjaenstepensionsverk>
+    a foaf:Organization;
+    foaf:name "Statens tjänstepensionsverk"@sv .
+
+# DVFS
+<http://rinfo.lagrummet.se/org/notarienaemnden>
+    a foaf:Organization;
+    foaf:name "Notarienämnden"@sv .
+
+# FFS
+<http://rinfo.lagrummet.se/org/fortifikationsverket>
+    a foaf:Organization;
+    foaf:name "Fortifikationsverket"@sv .
+
+<http://rinfo.lagrummet.se/org/totalfoersvarets_forskningsinstitut>
+    a foaf:Organization;
+    foaf:name "Totalförsvarets forskningsinstitut"@sv .
+
+<http://rinfo.lagrummet.se/org/foersvarets_materielverk>
+    a foaf:Organization;
+    foaf:name "Försvarets materielverk"@sv .
+
+# FKFS
+<http://rinfo.lagrummet.se/org/myndigheten_foer_internationella_adoptionsfraagor>
+    a foaf:Organization;
+    foaf:name "Myndigheten för internationella adoptionsfrågor"@sv .
+
+# KAMFS
+<http://rinfo.lagrummet.se/org/fastighetsmaeklarnaemnden>
+    a foaf:Organization;
+    foaf:name "Fastighetsmäklarnämnden"@sv .
+
+<http://rinfo.lagrummet.se/org/trafikanalys>
+    a foaf:Organization;
+    foaf:name "Trafikanalys"@sv .
+
+# KOVFS
+<http://rinfo.lagrummet.se/org/allmaennna_reklamationsnaemnden>
+    a foaf:Organization;
+    foaf:name "Allmännna reklamationsnämnden"@sv .
+
+# MSBFS
+<http://rinfo.lagrummet.se/org/riksvaerderingsnaemnden>
+    a foaf:Organization;
+    foaf:name "Riksvärderingsnämnden"@sv .
+
+# NFS
+<http://rinfo.lagrummet.se/org/kustbevakningen>
+    a foaf:Organization;
+    foaf:name "Kustbevakningen"@sv .
+
+# SJÖFS
+<http://rinfo.lagrummet.se/org/rederinaemnden>
+    a foaf:Organization;
+    foaf:name "Rederinämnden"@sv .
+
+# SOSFS
+<http://rinfo.lagrummet.se/org/raettsmedicinalverket>
+    a foaf:Organization;
+    foaf:name "Rättsmedicinalverket"@sv .
+
+<http://rinfo.lagrummet.se/org/smittskyddsinstitutet>
+    a foaf:Organization;
+    foaf:name "Smittskyddsinstitutet"@sv .
+
+<http://rinfo.lagrummet.se/org/myndigheten_foer_handikappolitisk_samordning>
+    a foaf:Organization;
+    foaf:name "Myndigheten för handikappolitisk samordning"@sv .
+
+# SJVFS
+<http://rinfo.lagrummet.se/org/centrala_foersoeksdjursnaemnden>
+    a foaf:Organization;
+    foaf:name "Centrala försöksdjursnämnden"@sv .
+
+# KRFS
+<http://rinfo.lagrummet.se/org/konstnaersnaemnden>
+    a foaf:Organization;
+    foaf:name "Konstnärsnämnden"@sv .
+
+<http://rinfo.lagrummet.se/org/kungl._biblioteket>
+    a foaf:Organization;
+    foaf:name "Kungl. biblioteket"@sv .
+
+<http://rinfo.lagrummet.se/org/presstoedsnaemnden>
+    a foaf:Organization;
+    foaf:name "Presstödsnämnden"@sv .
+
+<http://rinfo.lagrummet.se/org/riksantikvarieaembetet>
+    a foaf:Organization;
+    foaf:name "Riksantikvarieämbetet"@sv .
+
+<http://rinfo.lagrummet.se/org/nationalmuseum_med_prins_eugens_waldemarsudde>
+    a foaf:Organization;
+    foaf:name "Nationalmuseum med Prins Eugens Waldemarsudde"@sv .
+
+<http://rinfo.lagrummet.se/org/moderna_museet>
+    a foaf:Organization;
+    foaf:name "Moderna museet"@sv .
+
+<http://rinfo.lagrummet.se/org/styrelsen_foer_sveriges_foerfattarfond>
+    a foaf:Organization;
+    foaf:name "Styrelsen för Sveriges författarfond"@sv .
+
+<http://rinfo.lagrummet.se/org/talboks-_och_punktskriftsbiblioteket>
+    a foaf:Organization;
+    foaf:name "Talboks- och punktskriftsbiblioteket"@sv .
+
+# SCB-FS    
+<http://rinfo.lagrummet.se/org/konjunkturinstitutet>
+    a foaf:Organization;
+    foaf:name "Konjunkturinstitutet"@sv .
+
+<http://rinfo.lagrummet.se/org/medlingsinstitutet>
+    a foaf:Organization;
+    foaf:name "Medlingsinstitutet"@sv .
+
+# TVFS
+<http://rinfo.lagrummet.se/org/verket_foer_innovationssystem>
+    a foaf:Organization;
+    foaf:name "Verket för innovationssystem"@sv .
+
+<http://rinfo.lagrummet.se/org/raadet_foer_europeiska_socialfonden_i_sverige>
+    a foaf:Organization;
+    foaf:name "Rådet för Europeiska socialfonden i Sverige"@sv .
+
+# TRVFS
+<http://rinfo.lagrummet.se/org/statens_geotekniska_institut>
+    a foaf:Organization;
+    foaf:name "Statens geotekniska institut"@sv .
+
+<http://rinfo.lagrummet.se/org/statens_vaeg-_och_transportforskningsinstitut>
+    a foaf:Organization;
+    foaf:name "Statens väg- och transportforskningsinstitut"@sv .
+
+# TSFS
+<http://rinfo.lagrummet.se/org/luftfartsverket>
+    a foaf:Organization;
+    foaf:name "Luftfartsverket"@sv .
+
+<http://rinfo.lagrummet.se/org/sveriges_meterologiska_och_hydrologiska_institut>
+    a foaf:Organization;
+    foaf:name "Sveriges meterologiska och hydrologiska institut"@sv .
+
+# TFS
+<http://rinfo.lagrummet.se/org/inspektionen_foer_strategiska_produkter>
+    a foaf:Organization;
+    foaf:name "Inspektionen för strategiska produkter"@sv .
