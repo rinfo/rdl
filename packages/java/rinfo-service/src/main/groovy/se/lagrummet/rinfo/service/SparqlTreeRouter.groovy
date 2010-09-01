@@ -76,14 +76,14 @@ class SparqlTreeRouter extends Router {
         // complete list
         attach("/org", new RDataFinder(context,
                     repo, appData, tpltUtil,
-                    "sparqltrees/org/org-tree-rq",
+                    "sparqltrees/org/org_rq",
                     "sparqltrees/org/org_html"))
 
         // filtering + narrowing
         def browseFinder = new RDataFinder(context,
                 repo, appData, tpltUtil,
-                "sparqltrees/rdata/publ-list_all_params-rq",
-                "sparqltrees/rdata/publ_params_html") {
+                "sparqltrees/rdata/browse_rq",
+                "sparqltrees/rdata/browse_html") {
 
                 @Override
                 Map getQueryData(Request request) {
@@ -104,8 +104,8 @@ class SparqlTreeRouter extends Router {
         attach("/list/publ/{type}/{publisher}/{dateProperty}@{year}",
             new RDataFinder(context,
                 repo, appData, tpltUtil,
-                "sparqltrees/rdata/rpubl-tree-rq",
-                "sparqltrees/rdata/publ_list_html") {
+                "sparqltrees/rdata/list_rq",
+                "sparqltrees/rdata/list_html") {
 
                 @Override
                 Map getQueryData(Request request) {
@@ -128,8 +128,8 @@ class SparqlTreeRouter extends Router {
         attach("/publ/{path}",
             new RDataFinder(context,
                     repo, appData, tpltUtil,
-                    "sparqltrees/rdata/rpubl-tree-rq",
-                    "sparqltrees/rdata/publ_doc_html") {
+                    "sparqltrees/rdata/details_rq",
+                    "sparqltrees/rdata/doc_html") {
 
                 @Override
                 Map getQueryData(Request request) {
@@ -165,6 +165,7 @@ class RDataFinder extends Finder {
     TemplateUtil tpltUtil
     String queryTpltPath
     String viewTpltPath
+    boolean devMode = true
 
     RDataFinder(Context context, Repository repo,
             appData, tpltUtil, queryTpltPath, viewTpltPath) {
@@ -183,12 +184,48 @@ class RDataFinder extends Finder {
         return [:]
     }
 
+    @Override
+    Handler findTarget(Request request, Response response) {
+
+        return new Resource(getContext(), request, response) {
+            @Override
+            List<Variant> getVariants() {
+                return [
+                    new Variant(MediaType.TEXT_HTML),
+                    new Variant(MediaType.APPLICATION_JSON),
+                ]
+            }
+            @Override
+            Representation represent(Variant variant) {
+                if (isDevMode() && query.getFirst("showQuery")) {
+                    def rq = makeQuery(getQueryData(getRequest()))
+                    return toRepresentation(rq, MediaType.TEXT_PLAIN, null)
+                }
+                def tree = runQuery(getRequest())
+                if (tree == null)
+                    return null
+                if (variant.mediaType.equals(MediaType.APPLICATION_JSON))
+                    return toRepresentation(JSONSerializer.toJSON(tree).toString(4),
+                            MediaType.APPLICATION_JSON, tree.locale)
+                else
+                    return toRepresentation(makeHtmlView(tree),
+                            MediaType.TEXT_HTML, tree.locale)
+            }
+
+            private def toRepresentation(repr, mediaType, locale) {
+                return new StringRepresentation(repr, mediaType,
+                        new Language(locale), new CharacterSet("utf-8"))
+            }
+        }
+
+    }
+
     Map runQuery(Request request) {
         def locale = DEFAULT_LOCALE // or from Variant..
-        def dataRqTree = new RDataSparqlTree(appData, locale)
         def queryData = getQueryData(request)
         queryData["max_limit"] = DEFAULT_MAX_LIMIT
-        def query = tpltUtil.runTemplate(queryTpltPath, queryData)
+        def query = makeQuery(queryData)
+        def dataRqTree = new RDataSparqlTree(appData, locale)
         def tree = dataRqTree.runQuery(repo, query)
         if (queryData["path"] && !tree.any { k, v -> v } )
             return null
@@ -197,44 +234,12 @@ class RDataFinder extends Finder {
         return tree
     }
 
-    String makeHtmlView(Map tree) {
-        return tpltUtil.runTemplate(viewTpltPath, tree)
+    String makeQuery(Map queryData) {
+        return tpltUtil.runTemplate(queryTpltPath, queryData)
     }
 
-    @Override
-    Handler findTarget(Request request, Response response) {
-        return new Resource(getContext(), request, response) {
-
-            @Override
-            List<Variant> getVariants() {
-                return [
-                    new Variant(MediaType.TEXT_HTML),
-                    new Variant(MediaType.APPLICATION_JSON),
-                ]
-            }
-
-            @Override
-            Representation represent(Variant variant) {
-                def tree = runQuery(getRequest())
-                if (tree == null) {
-                    return null
-                }
-                if (variant.mediaType.equals(MediaType.APPLICATION_JSON)) {
-                    return toRepresentation(JSONSerializer.toJSON(tree).toString(4),
-                            MediaType.APPLICATION_JSON, tree.locale)
-                } else {
-                    return toRepresentation(makeHtmlView(tree),
-                            MediaType.TEXT_HTML, tree.locale)
-                }
-            }
-
-            def toRepresentation(repr, mediaType, locale) {
-                return new StringRepresentation(repr, mediaType,
-                        new Language(locale), new CharacterSet("utf-8"))
-            }
-
-        }
-
+    String makeHtmlView(Map tree) {
+        return tpltUtil.runTemplate(viewTpltPath, tree)
     }
 
 }
