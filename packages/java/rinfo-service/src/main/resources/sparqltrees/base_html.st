@@ -113,8 +113,5 @@
         </div>
       </div>
     </div>
-    <!-- Result of query:
-    $query$
-    -->
   </body>
 </html>
