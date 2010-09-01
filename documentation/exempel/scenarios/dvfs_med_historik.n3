@@ -1,0 +1,202 @@
+@prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://rinfo.lagrummet.se/publ/dvfs/2010:12> a :Forordning;
+     dct:identifier "DVFS 2010:12";
+     dct:title "Notarienämndens föreskrifter och allmänna råd för notaietjänstgöring vid Migrationsverket"@sv;
+     :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/dvfs>;
+     :arsutgava "2010"; :lopnummer "12";
+     dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+     :beslutadAv <http://rinfo.lagrummet.se/org/notarienaemnden>;
+     :beslutsdatum "2010-04-19"^^xsd:date;
+     :ikrafttradandedatum "2010-06-01"^^xsd:date;
+     :utkomFranTryck "2010-06-04"^^xsd:date;
+     dct:subject [ rdfs:label "Notarienämnden" ];
+    :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1076#p_11>;
+    :beslutande [ foaf:name "Håkan Nordling" ];
+    :foredragande [ foaf:name "Richard Ekstrand" ];
+    # :diarienummer har domain :VagledandeMyndighetsavgorande
+    # :diarienummer "13-2010";
+    :paragraf <http://rinfo.lagrummet.se/publ/dvfs/2010:12#p_1>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:12#p_2>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:12#p_3>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:12#p_4>.
+
+<http://rinfo.lagrummet.se/publ/dvfs/2010:12#p_1> :paragrafnummer "1" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:12#p_2> :paragrafnummer "2" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:12#p_3> :paragrafnummer "3" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:12#p_4> :paragrafnummer "4" .
+
+
+<http://rinfo.lagrummet.se/publ/dvfs/2010:11> a :Forordning;
+    dct:identifier "DVFS 2010:11";
+    dct:title "Notarienämndens föreskrifter och allmänna råd för notarietjänstgöring vid Allmänna reklamationsnämnden"@sv;
+    :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/dvfs>;
+    :arsutgava "2010"; :lopnummer "11";
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/notarienaemnden>;
+    :beslutsdatum "2010-04-19"^^xsd:date;
+    :ikrafttradandedatum "2010-06-01"^^xsd:date;
+    :utkomFranTryck "2010-06-04"^^xsd:date;
+    dct:subject [ rdfs:label "Notarienämnden" ];
+    :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1076#p_11>;
+    :beslutadAv [ foaf:name "Håkan Nordling" ];
+    :foredragande [ foaf:name "Richard Ekstrand" ];
+    # :diarienummer "12-2010";
+    :paragraf <http://rinfo.lagrummet.se/publ/dvfs/2010:11#p_1>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:11#p_2>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:11#p_3>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:11#p_4>.
+
+<http://rinfo.lagrummet.se/publ/dvfs/2010:11#p_1> :paragrafnummer "1" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:11#p_2> :paragrafnummer "2" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:11#p_3> :paragrafnummer "3" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:11#p_4> :paragrafnummer "4" .
+
+
+<http://rinfo.lagrummet.se/publ/dvfs/2010:10> a :Forordning;
+    dct:identifier "DVFS 2010:10";
+    dct:title "Notarienämndens föreskrifter och allmänna råd för notarietjänstgöring vid Justitiekanslern"@sv;
+    :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/dvfs>;
+    :arsutgava "2010"; :lopnummer "10";
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/notarienaemnden>;
+    :beslutsdatum "2010-04-19"^^xsd:date;
+    :ikrafttradandedatum "2010-06-01"^^xsd:date;
+    :utkomFranTryck "2010-06-04"^^xsd:date;
+    dct:subject [ rdfs:label "Notarienämnden" ];
+    :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1076#p_11>;
+    :beslutadAv [ foaf:name "Håkan Nordling" ];
+    :foredragande [ foaf:name "Richard Ekstrand" ];
+    # :diarienummer "11-2010";
+    :paragraf <http://rinfo.lagrummet.se/publ/dvfs/2010:10#p_1>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:10#p_2>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:10#p_3>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:10#p_4>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:10#p_5>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:10#p_6>.
+
+<http://rinfo.lagrummet.se/publ/dvfs/2010:10#p_1> :paragrafnummer "1" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:10#p_2> :paragrafnummer "2" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:10#p_3> :paragrafnummer "3" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:10#p_4> :paragrafnummer "4" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:10#p_4> :paragrafnummer "5" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:10#p_4> :paragrafnummer "6" .
+
+
+<http://rinfo.lagrummet.se/publ/dvfs/2010:9> a :Forordning;
+    dct:identifier "DVFS 2010:9";
+    dct:title "Notarienämndens föreskrifter och allmänna råd för notarietjänstgöring vid Kronofogdemyndigheten"@sv;
+    :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/dvfs>;
+    :arsutgava "2010"; :lopnummer "9";
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/notarienaemnden>;
+    :beslutsdatum "2010-04-19"^^xsd:date;
+    :ikrafttradandedatum "2010-06-01"^^xsd:date;
+    :utkomFranTryck "2010-06-04"^^xsd:date;
+    dct:subject [ rdfs:label "Notarienämnden" ];
+    :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1076#p_11>;
+    :beslutadAv [ foaf:name "Håkan Nordling" ];
+    :foredragande [ foaf:name "Richard Ekstrand" ];
+    # :diarienummer "10-2010";
+    :paragraf <http://rinfo.lagrummet.se/publ/dvfs/2010:9#p_1>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:9#p_2>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:9#p_3>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:9#p_4>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:9#p_5>.
+
+<http://rinfo.lagrummet.se/publ/dvfs/2010:9#p_1> :paragrafnummer "1" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:9#p_2> :paragrafnummer "2" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:9#p_3> :paragrafnummer "3" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:9#p_4> :paragrafnummer "4" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:9#p_5> :paragrafnummer "5" .
+
+
+<http://rinfo.lagrummet.se/publ/dvfs/2010:8> a :Forordning;
+    dct:identifier "DVFS 2010:8";
+    dct:title "Notarienämndens föreskrifter och allmänna råd för notarietjänstgöring vid förvaltningsrätt"@sv;
+    :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/dvfs>;
+    :arsutgava "2010"; :lopnummer "8";
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/notarienaemnden>;
+    :beslutsdatum "2010-04-19"^^xsd:date;
+    :ikrafttradandedatum "2010-06-01"^^xsd:date;
+    :utkomFranTryck "2010-06-04"^^xsd:date;
+    dct:subject [ rdfs:label "Notarienämnden" ];
+    :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1076#p_11>;
+    :beslutadAv [ foaf:name "Håkan Nordling" ];
+    :foredragande [ foaf:name "Richard Ekstrand" ];
+    # :diarienummer "9-2010";
+    :paragraf <http://rinfo.lagrummet.se/publ/dvfs/2010:8#p_1>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:8#p_2>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:8#p_3>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:8#p_4>.
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:8#p_5>.
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:8#p_6>.
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:8#p_7>.
+
+<http://rinfo.lagrummet.se/publ/dvfs/2010:8#p_1> :paragrafnummer "1" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:8#p_2> :paragrafnummer "2" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:8#p_3> :paragrafnummer "3" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:8#p_4> :paragrafnummer "4" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:8#p_5> :paragrafnummer "5" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:8#p_6> :paragrafnummer "6" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:8#p_7> :paragrafnummer "7" .
+
+
+<http://rinfo.lagrummet.se/publ/dvfs/2010:7> a :Forordning;
+    dct:identifier "DVFS 2010:7";
+    dct:title "Notarienämndens föreskrifter och allmänna råd för notarietjänstgöring vid tingsrätt"@sv;
+    :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/dvfs>;
+    :arsutgava "2010"; :lopnummer "7";
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/notarienaemnden>;
+    :beslutsdatum "2010-04-19"^^xsd:date;
+    :ikrafttradandedatum "2010-06-01"^^xsd:date;
+    :utkomFranTryck "2010-06-04"^^xsd:date;
+    dct:subject [ rdfs:label "Notarienämnden" ];
+    :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1076#p_11>;
+    :beslutadAv [ foaf:name "Håkan Nordling" ];
+    :foredragande [ foaf:name "Richard Ekstrand" ];
+    # :diarienummer "8-2010";
+    :paragraf <http://rinfo.lagrummet.se/publ/dvfs/2010:7#p_1>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:7#p_2>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:7#p_3>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:7#p_4>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:7#p_5>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:7#p_6>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:7#p_7>.
+
+<http://rinfo.lagrummet.se/publ/dvfs/2010:7#p_1> :paragrafnummer "1" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:7#p_2> :paragrafnummer "2" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:7#p_3> :paragrafnummer "3" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:7#p_4> :paragrafnummer "4" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:7#p_5> :paragrafnummer "5" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:7#p_6> :paragrafnummer "6" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:7#p_7> :paragrafnummer "7" .
+
+<http://rinfo.lagrummet.se/publ/dvfs/2010:6> a :Forordning;
+    dct:identifier "DVFS 2010:6";
+    dct:title "Notarienämndens föreskrifter och allmänna råd för förlängning av notarietjänstgöring"@sv;
+    :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/dvfs>;
+    :arsutgava "2010"; :lopnummer "6";
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/notarienaemnden>;
+    :beslutsdatum "2010-04-19"^^xsd:date;
+    :ikrafttradandedatum "2010-06-01"^^xsd:date;
+    :utkomFranTryck "2010-06-04"^^xsd:date;
+    dct:subject [ rdfs:label "Notarienämnden" ];
+    :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1076#p_11>;
+    :beslutadAv [ foaf:name "Håkan Nordling" ];
+    :foredragande [ foaf:name "Richard Ekstrand" ];
+    # :diarienummer "8-2010";
+    :paragraf <http://rinfo.lagrummet.se/publ/dvfs/2010:6#p_1>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:6#p_2>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2010:6#p_3>.
+
+<http://rinfo.lagrummet.se/publ/dvfs/2010:6#p_1> :paragrafnummer "1" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:6#p_2> :paragrafnummer "2" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:6#p_3> :paragrafnummer "3" .
