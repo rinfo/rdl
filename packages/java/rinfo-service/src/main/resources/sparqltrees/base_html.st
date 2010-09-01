@@ -86,7 +86,7 @@
           </div>
 
           <div id="content" class="tpl-page">
-            <h1>$title$</h1>
+            <h1>$if (heading)$ $heading$ $else$ $title$ $endif$</h1>
             <div id="main">
               $main$
             </div>

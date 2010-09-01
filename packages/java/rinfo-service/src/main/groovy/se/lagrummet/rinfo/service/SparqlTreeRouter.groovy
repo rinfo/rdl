@@ -55,7 +55,8 @@ class SparqlTreeRouter extends Router {
         "mediaTypes": [
             "application/rdf+xml": "RDF-data",
             "application/pdf": "PDF-dokument"
-        ]
+        ],
+        "defaultSparqlLimit": 4096
     ]
 
     SparqlTreeRouter(Context context, Repository repo) {
@@ -82,8 +83,8 @@ class SparqlTreeRouter extends Router {
         // filtering + narrowing
         def browseFinder = new RDataFinder(context,
                 repo, appData, tpltUtil,
-                "sparqltrees/rdata/browse_rq",
-                "sparqltrees/rdata/browse_html") {
+                "sparqltrees/publ/browse_rq",
+                "sparqltrees/publ/browse_html") {
 
                 @Override
                 Map getQueryData(Request request) {
@@ -104,8 +105,8 @@ class SparqlTreeRouter extends Router {
         attach("/list/publ/{type}/{publisher}/{dateProperty}@{year}",
             new RDataFinder(context,
                 repo, appData, tpltUtil,
-                "sparqltrees/rdata/list_rq",
-                "sparqltrees/rdata/list_html") {
+                "sparqltrees/publ/list_rq",
+                "sparqltrees/publ/list_html") {
 
                 @Override
                 Map getQueryData(Request request) {
@@ -128,8 +129,8 @@ class SparqlTreeRouter extends Router {
         attach("/publ/{path}",
             new RDataFinder(context,
                     repo, appData, tpltUtil,
-                    "sparqltrees/rdata/details_rq",
-                    "sparqltrees/rdata/doc_html") {
+                    "sparqltrees/publ/details_rq",
+                    "sparqltrees/publ/doc_html") {
 
                 @Override
                 Map getQueryData(Request request) {
@@ -140,10 +141,7 @@ class SparqlTreeRouter extends Router {
                             path = path.substring(0, path.length()-(ext.length()+1))
                         }
                     }
-                    return [
-                        "path": path,
-                        'details': true,
-                    ]
+                    return [ "path": path ]
                 }
 
             }
@@ -158,7 +156,6 @@ class SparqlTreeRouter extends Router {
 class RDataFinder extends Finder {
 
     static final DEFAULT_LOCALE = "sv"
-    static final DEFAULT_MAX_LIMIT = 4096
 
     Repository repo
     Map appData
@@ -223,7 +220,6 @@ class RDataFinder extends Finder {
     Map runQuery(Request request) {
         def locale = DEFAULT_LOCALE // or from Variant..
         def queryData = getQueryData(request)
-        queryData["max_limit"] = DEFAULT_MAX_LIMIT
         def query = makeQuery(queryData)
         def dataRqTree = new RDataSparqlTree(appData, locale)
         def tree = dataRqTree.runQuery(repo, query)

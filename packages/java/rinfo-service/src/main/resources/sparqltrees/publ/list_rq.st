@@ -1,4 +1,4 @@
-$sparqltrees/rdata/base_rq(
+$sparqltrees/publ/base_rq(
     query_body={
 
         ?doc ?doc__daterel ?doc__daterel__value .

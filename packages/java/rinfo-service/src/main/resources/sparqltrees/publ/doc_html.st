@@ -1,9 +1,10 @@
 $sparqltrees/base_html(
-    title={ $first(doc).title$ },
+    title={ $first(doc).identifier$ },
+    heading={ $first(doc).title$ },
     main={
         $doc:{
         <div class="doc">
-            <h2>$it.serie.label$ $it.serieNummer$</h2>
+            <h2>$it.identifier$</h2>
             <p><em>$it.type.label$</em></p>
             <p><code>$it.resource_uri$</code></p>
             <table class="docmeta">
@@ -11,6 +12,14 @@ $sparqltrees/base_html(
                     <th>Utgivare</th>
                     <td>$it.publisher.name$</td>
                 </tr>
+                $if (it.serie)$
+                    <tr>
+                        <th>Utgiven i</th>
+                        <td>
+                            <a href="$it.serie.rdata_url$">$it.serie.label$</a>
+                        </td>
+                    </tr>
+                $endif$
                 $it.daterel:{
                     <tr>
                         <th>
@@ -57,8 +66,8 @@ $sparqltrees/base_html(
                             <ul>
                             $it.subject:{
                                 <li>
-                                    <a href="$it.rdata_url$">$if (it.label)$
-                                            $it.label$
+                                    <a href="$it.rdata_url$">$if (it.repr)$
+                                            $it.repr$
                                         $else$
                                             <code>$it.resource_uri$</code>
                                         $endif$
@@ -93,7 +102,11 @@ $sparqltrees/base_html(
                             <ul>
                             $it.subject:{
                                 <li>
-                                    <a href="$it.rdata_url$">$it.resource_uri$</a>
+                                    <a href="$it.rdata_url$">$if (it.repr)$
+                                            $it.repr$
+                                        $else$
+                                            <code>$it.resource_uri$</code>
+                                        $endif$</a>
                                 </li>
                             }$
                             </ul>

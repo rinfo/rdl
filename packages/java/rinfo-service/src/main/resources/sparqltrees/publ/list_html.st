@@ -7,8 +7,8 @@ $sparqltrees/base_html(
             $doc:{
             <li>
                 <h2><a href="$it.rdata_url$">$it.title$</a></h2>
-                <h3>$it.serie.label$ $it.serieNummer$</h3>
-                <div><code>$it.resource_uri$</code></div>
+                <h3>$it.identifier$</h3>
+                <div><code>&lt;$it.resource_uri$&gt;</code></div>
             </li>
             }$
         </ul>
