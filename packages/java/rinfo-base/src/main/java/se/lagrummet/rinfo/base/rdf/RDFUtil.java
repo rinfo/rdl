@@ -48,6 +48,9 @@ public class RDFUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(RDFUtil.class);
 
+    public static final String TURTLE = "application/x-turtle";
+    public static final String RDF_XML = "application/rdf+xml";
+
 
     // Repo-level operations
 
