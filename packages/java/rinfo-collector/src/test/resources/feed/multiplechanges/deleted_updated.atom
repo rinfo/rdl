@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:at="http://purl.org/atompub/tombstones/1.0">
+
+    <updated>2000-01-01T00:00:04.000Z</updated>
+
+    <at:deleted-entry ref="http://example.org/doc/1" when="2000-01-01T00:00:03Z"/>
+
+    <entry>
+        <id>http://example.org/doc/1</id>
+        <updated>2000-01-01T00:00:04Z</updated>
+        <published>2008-10-01T00:00:01Z</published>
+        <title type="text"/><content type="text"/>
+    </entry>
+
+    <entry>
+        <id>http://example.org/doc/1</id>
+        <updated>2000-01-01T00:00:02Z</updated>
+        <published>2008-10-01T00:00:01Z</published>
+        <title type="text"/><content type="text"/>
+    </entry>
+
+    <entry>
+        <id>http://example.org/doc/1</id>
+        <updated>2000-01-01T00:00:01Z</updated>
+        <published>2008-10-01T00:00:01Z</published>
+        <title type="text"/><content type="text"/>
+    </entry>
+
+</feed>

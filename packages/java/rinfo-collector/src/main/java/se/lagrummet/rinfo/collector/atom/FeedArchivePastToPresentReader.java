@@ -71,12 +71,15 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                     List<Entry> effectiveEntries = new ArrayList<Entry>();
                     for (Entry entry: feed.getEntries()) {
                         IRI entryId = entry.getId();
-                        if (deletedMap.containsKey(entryId)) {
-                            // FIXME:? only if deleted is youngest(!), right?
-                            // else, delete then re-add, or ignore delete?
-                            continue;
-                        }
                         Date entryUpdated = entry.getUpdated();
+                        if (deletedMap.containsKey(entryId)) {
+                            if (isYoungerThan(deletedMap.get(entryId).getDate(), entryUpdated)) {
+                                // TODO:? only if deleted is youngest, not same-age?
+                                // Also, ignore deleted as now, or do delete and re-add?
+                                deletedMap.remove(entryId);
+                                continue;
+                            }
+                        }
                         AtomDate youngestAtomDate = entryModificationMap.get(
                                 entryId);
                         boolean notSeenOrYoungestOfSeen =

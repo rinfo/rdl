@@ -33,14 +33,10 @@ class FeedArchivePastToPresentReaderSpec extends Specification {
         then:
         reader.visitedPages == [new URL("${baseUrl}/arch1.atom"), feedUrl]
         and:
-        reader.visitedEntries.collect {
-            "${it.id} ${it.updatedElement.getString()}" as String
-        } == [
-            "http://example.org/entry:1 2000-01-01T00:00:01.000Z",
-            // not: "http://example.org/entry:2 2000-01-01T00:00:02.000Z",
-            "http://example.org/entry:3 2000-01-01T00:00:03.000Z",
-            "http://example.org/entry:2 2000-01-01T00:01:00.000Z",
-        ]
+        reader.effectiveEntries.size() == 3
+        reader.entryRow(0) == "<http://example.org/entry:1> @ 2000-01-01T00:00:01.000Z"
+        reader.entryRow(1) == "<http://example.org/entry:3> @ 2000-01-01T00:00:03.000Z"
+        reader.entryRow(2) == "<http://example.org/entry:2> @ 2000-01-01T00:01:00.000Z"
     }
 
     def "should stop on processed entry"() {
@@ -51,7 +47,7 @@ class FeedArchivePastToPresentReaderSpec extends Specification {
         reader.readFeed(feedUrl)
         then:
         reader.visitedPages.size() == 1
-        reader.visitedEntries.size() == 1
+        reader.effectiveEntries.size() == 1
     }
 
     def "should stop on visited archive"() {
@@ -69,21 +65,25 @@ class FeedArchivePastToPresentReaderSpec extends Specification {
                              updated:"2000-01-01T00:00:00.000Z"])
         reader.readFeed(new URL("${baseUrl}/entries_with_updated_dups.atom"))
         then:
-        reader.visitedEntries.size() == 2
+        reader.effectiveEntries.size() == 2
     }
 
-    /* TODO: high-level, more meaningful specs(s) than "put uri if.." below
-        - shouldReportResurrectedEntry:
-            an older delete mustn't supress a younged updated
-            - given continuous feed events:
-                - Entry(id="123", published=1)
-                - Entry(id="123", updated=2)
-                - Entry(id="123", deleted=3)
-                - Entry(id="123", updated=4)
-            - should report:
-                - Entry(id="123", deleted=3)
-                - Entry(id="123", updated=4)
-    */
+    def "an older delete mustn't supress a younger updated"() {
+        setup:
+        def reader = new CollectReader()
+        when:
+        reader.readFeed(new URL("${baseUrl}/deleted_updated.atom"))
+        then:
+        reader.deleteds.size() == 0
+        and:
+        reader.effectiveEntries.size() == 1
+        reader.entryRow(0) == "<http://example.org/doc/1> @ 2000-01-01T00:00:04.000Z"
+    }
+
+    // TODO: more high-level, more meaningful specs(s) than "put uri if.." below
+    //def "should report resurrected entry"() {
+    //}
+
     def "should put uri if new or date is youngest"() {
         setup:
         def map = [:]
@@ -123,7 +123,8 @@ class FeedArchivePastToPresentReaderSpec extends Specification {
 class CollectReader extends FeedArchivePastToPresentReader {
 
     def visitedPages = []
-    def visitedEntries = []
+    def effectiveEntries = []
+    def deleteds = []
     def knownEntry
     def knownArchive
 
@@ -131,19 +132,25 @@ class CollectReader extends FeedArchivePastToPresentReader {
     void processFeedPageInOrder(URL pageUrl, Feed feed,
             List<Entry> effectiveEntries, Map<IRI, AtomDate> deleteds) {
         visitedPages << pageUrl
-        for (entry in effectiveEntries) {
-            visitedEntries << entry
-        }
+        for (entry in effectiveEntries) this.effectiveEntries << entry
+        for (deleted in deleteds.entrySet()) this.deleteds << deleted
     }
 
+    @Override
     boolean stopOnEntry(Entry entry) {
         if (!knownEntry) return false
         return (entry.id.toString() == knownEntry.id &&
                 entry.updatedElement.getString() == knownEntry.updated)
     }
 
+    @Override
     boolean hasVisitedArchivePage(URL pageUrl) {
         return pageUrl.toString() == knownArchive
+    }
+
+    String entryRow(int index) {
+        def entry = effectiveEntries[index]
+        return "<${entry.id}> @ ${entry.updatedElement.string}" as String
     }
 
 }
