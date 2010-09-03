@@ -16,6 +16,6 @@ def serveDirectory(port, wwwDir) {
 }
 
 def wwwDir = args[0]
-def port = args.length > 1? args[1] : 8280
+def port = args.length > 1? args[1] as Integer : 8280
 serveDirectory(port, new File(wwwDir).toURI().toString())
 
