@@ -106,8 +106,11 @@ $sparqltrees/publ/base_rq(
                 FILTER(!(?doc__rev = foaf:primaryTopic &&
                         ?doc__rev__subject__1_type = awol:Entry))
                 OPTIONAL {
-                    ?doc__rev owl:inverseOf ?doc__rev__1_inverse .
-                    ?doc__rev__1_inverse rdfs:label ?doc__rev__1_inverse__1_label .
+                    ?doc__rev rdfs:label ?doc__rev__1_label .
+                    OPTIONAL {
+                        ?doc__rev owl:inverseOf ?doc__rev__1_inverse .
+                        ?doc__rev__1_inverse rdfs:label ?doc__rev__1_inverse__1_label .
+                    }
                 }
 
             }

@@ -23,11 +23,7 @@ $sparqltrees/base_html(
                 $it.daterel:{
                     <tr>
                         <th>
-                            $if (it.label)$
-                                $it.label$
-                            $else$
-                                <code>$it.uri_term$</code>
-                            $endif$
+                            $if (it.label)$ $it.label$ $else$<code>$it.uri_term$</code>$endif$
                         </th>
                         <td>$it.value$</td>
                     </tr>
@@ -62,7 +58,9 @@ $sparqltrees/base_html(
                 <ul class="relations">
                     $it.rel:{
                         <li>
-                            <span class="rel">$it.label$</span>:
+                            <span class="rel">$if (it.label)$
+                                    $it.label$ $else$<code>$it.uri_term$</code>
+                                $endif$ </span>:
                             <ul>
                             $it.subject:{
                                 <li>
@@ -91,13 +89,13 @@ $sparqltrees/base_html(
                     $it.rev:{
                         <li>
                             <span class="rel">$if (it.inverse)$
-                                $if (it.inverse.label)$
-                                    $it.inverse.label$
-                                $else$
-                                    <code>$it.inverse.uri_term$</code>
+                                $if (it.inverse.label)$ $it.inverse.label$
+                                $else$ <code>$it.inverse.uri_term$</code>
                                 $endif$
                             $else$
-                                <em>Via <code>$it.uri_term$</code></em>
+                            <em>Via $if (it.label)$ $it.label$
+                                $else$ <code>$it.uri_term$</code>
+                                $endif$</em>
                             $endif$</span>:
                             <ul>
                             $it.subject:{
