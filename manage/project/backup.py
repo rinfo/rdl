@@ -17,7 +17,8 @@ def configure():
     env.trac_hotcopy_dir = "%(project_bak)s/trac/trac.hotcopy"%env
     env.source_svn = "%(svn_base)s/%(project)s"%env
     env.dump_file = "%(project_bak)s/svn/svn.dump"%env
-    env.bakfile = "rinfo-backups.tgz"
+    env.bak_file = "rinfo-backups.tgz"
+    env.bak_path = "%(bak_base)s/%(bak_file)s"%env
 
 def _get_svn_host():
     for l in local("svn info --xml").splitlines():
@@ -61,10 +62,15 @@ def bak_admin_log():
 
 def bak():
     "Create backups of all project data."
-
+    
     bak_trac()
     bak_svn()
     bak_admin_log()
+    
+    if exists(env.bak_path):
+        _budo("rm %(bak_path)s"%env)
+    
+    _budo("tar czvf %(bak_path)s %(project_bak)s/"%env)
 
 def download_bak(todir='/tmp'):
     "Download packed tgz of backup data."
@@ -73,8 +79,7 @@ def download_bak(todir='/tmp'):
             default=todir, validate=r'.*[^/]')
     if not os.path.exists(env.todir):
         abort("Local directory %(todir)s does not exist."%env)
-    run("tar czvf %(bakfile)s %(project_bak)s/"%env)
-    get("rinfo-backups.tgz", "%(todir)s/%(bakfile)s"%env)
+    get(env.bak_path, "%(todir)s/%(bak_file)s"%env)
 
 def _budo(cmd): sudo(cmd, user=env.bakuser)
 
