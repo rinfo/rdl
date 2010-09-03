@@ -1,20 +1,12 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
-      xmlns:at="http://purl.org/atompub/tombstones/1.0"
-      xmlns:gd="http://schemas.google.com/g/2005">
+      xmlns:at="http://purl.org/atompub/tombstones/1.0">
 
-    <updated>2008-10-10T20:30:48.000Z</updated>
+    <updated>2008-10-10T21:30:48.000Z</updated>
     <link href="/index.atom" rel="self"/>
 
     <at:deleted-entry ref="http://example.org/things/3"
-                      when="2008-10-10T20:30:48.000Z"/>
-
-    <entry>
-        <id>http://example.org/things/3</id>
-        <updated>2008-10-10T20:30:48.000Z</updated>
-        <title type="text"/>
-        <content type="text"/>
-    </entry>
+                      when="2008-10-10T21:30:48.000Z"/>
 
     <entry>
         <id>http://example.org/things/3</id>

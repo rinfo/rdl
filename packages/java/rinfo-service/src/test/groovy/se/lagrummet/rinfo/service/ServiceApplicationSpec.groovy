@@ -99,11 +99,9 @@ class ServiceApplicationSpec extends Specification {
 
     int countContexts() {
         def conn = repositoryHandler.repository.connection
-        def res = conn.contextIDs
-        def i = res.asList().size()
-        res.close()
+        int count = RepoInfo.countContexts(conn)
         conn.close()
-        return i
+        return count
     }
 
 }

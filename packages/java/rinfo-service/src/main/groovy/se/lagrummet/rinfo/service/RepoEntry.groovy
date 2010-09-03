@@ -59,6 +59,8 @@ class RepoEntry {
         EVENT_PRODUCT = vf.createURI(EVENT_NS, "product")
     }
 
+    static final CONTEXT_SUFFIX = "/entry#context"
+
     // TODO: try to parse RDFa as well
     def loadableRdfMimeTypes = ["application/rdf+xml"]
 
@@ -124,7 +126,7 @@ class RepoEntry {
     Resource getContext() {
         if (newContext == null) {
             // TODO:? Ok to mint uri like this?
-            newContext = vf.createURI(id.toString() + "/entry#context")
+            newContext = vf.createURI(id.toString() + CONTEXT_SUFFIX)
         }
         return newContext
     }

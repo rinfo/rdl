@@ -1,39 +1,15 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
-      xmlns:at="http://purl.org/atompub/tombstones/1.0"
-      xmlns:gd="http://schemas.google.com/g/2005"
-      xmlns:sx="http://feedsync.org/2007/feedsync">
+      xmlns:at="http://purl.org/atompub/tombstones/1.0">
 
     <updated>2008-10-10T22:30:48.000Z</updated>
     <link href="/index.atom" rel="self"/>
 
-    <entry>
-        <id>http://example.org/things/1</id>
-        <updated>2008-10-10T22:30:42.000Z</updated>
-        <title type="text"></title>
-        <content type="application/rdf+xml" src="/thing_1-updated_1.rdf"/>
-        <sx:sync id="thing_1_2008-10-10T22:30:42.000Z" updates="1" deleted="true" noconflicts="false">
-            <sx:history sequence="1" when="2008-10-10T22:30:40.000Z" by="msher" />
-        </sx:sync>
-    </entry>
+    <at:deleted-entry ref="http://example.org/things/1" when="2008-10-10T22:30:42.000Z"/>
 
-    <entry>
-        <gd:deleted/>
-        <id>http://example.org/things/2</id>
-        <updated>2008-10-10T21:30:44.000Z</updated>
-        <title type="text"></title>
-        <content type="application/rdf+xml" src="/thing_2.rdf"/>
-    </entry>
+    <at:deleted-entry ref="http://example.org/things/2" when="2008-10-10T21:30:44.000Z"/>
 
-    <at:deleted-entry ref="http://example.org/things/3"
-                      when="2008-10-10T20:30:48.000Z"/>
-
-    <entry>
-        <id>http://example.org/things/3</id>
-        <updated>2008-10-10T20:30:48.000Z</updated>
-        <title type="text"/>
-        <content type="text"/>
-    </entry>
+    <at:deleted-entry ref="http://example.org/things/3" when="2008-10-10T20:30:48.000Z"/>
 
     <entry>
         <id>http://example.org/things/3</id>

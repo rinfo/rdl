@@ -44,12 +44,7 @@ class SesameLoaderSpec extends Specification {
         def thing = {
             repo.valueFactory.createURI("http://example.org/things/$it")
         }
-        def countContexts = {
-            def res = conn.contextIDs
-            def i = res.asList().size()
-            res.close()
-            return i
-        }
+        def countContexts = { RepoInfo.countContexts(conn) }
         and:
         assert countContexts() == 0
 
