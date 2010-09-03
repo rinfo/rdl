@@ -46,34 +46,34 @@ class SesameLoaderSpec extends Specification {
         }
         def countContexts = { RepoInfo.countContexts(conn) }
         and:
-        assert countContexts() == 0
+        countContexts() == 0
 
         when:
         loader.readFeed(url("${baseUrl}/1-init.atom"))
         then:
         countContexts() == 2
-        assert conn.hasStatement(thing(1), RDFS.LABEL, lit("Thing 1"), false)
-        assert conn.hasStatement(thing(2), RDFS.LABEL, lit("Thing 2"), false)
+        conn.hasStatement(thing(1), RDFS.LABEL, lit("Thing 1"), false)
+        conn.hasStatement(thing(2), RDFS.LABEL, lit("Thing 2"), false)
 
         // No changes
         when:
         loader.readFeed(url("${baseUrl}/1-init.atom"))
         then:
         countContexts() == 2
-        assert conn.hasStatement(thing(1), RDFS.LABEL, lit("Thing 1"), false)
+        conn.hasStatement(thing(1), RDFS.LABEL, lit("Thing 1"), false)
 
         when:
         loader.readFeed(url("${baseUrl}/2-updated_t1.atom"))
         then:
         countContexts() == 2
-        assert conn.hasStatement(thing(1), RDFS.LABEL, 
+        conn.hasStatement(thing(1), RDFS.LABEL, 
                         lit("Updated thing 1"), false)
 
         when:
         loader.readFeed(url("${baseUrl}/3-added_t3.atom"))
         then:
         countContexts() == 3
-        assert conn.hasStatement(thing(3), RDFS.LABEL, lit("Thing 3"), false)
+        conn.hasStatement(thing(3), RDFS.LABEL, lit("Thing 3"), false)
 
         when:
         loader.readFeed(url("${baseUrl}/4-deleted_t3.atom"))

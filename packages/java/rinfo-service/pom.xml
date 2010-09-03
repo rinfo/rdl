@@ -200,11 +200,11 @@
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
         <configuration>
-          <scanIntervalSeconds>10</scanIntervalSeconds>
           <webAppConfig>
             <contextPath>/</contextPath>
             <extraClasspath>${basedir}/src/environments/${environment}</extraClasspath>
           </webAppConfig>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
         </configuration>
       </plugin>
 
