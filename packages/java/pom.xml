@@ -374,12 +374,8 @@
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>1.7.1</version>
+        <version>1.7.4</version>
         <exclusions>
-          <exclusion>
-            <groupId>org.fusesource.jansi</groupId>
-            <artifactId>jansi</artifactId>
-          </exclusion>
           <!-- exclude gossip (as long as we use another slf4j impl.) -->
           <exclusion>
             <groupId>org.sonatype.gossip</groupId>
@@ -486,13 +482,7 @@
             <dependency>
               <groupId>org.codehaus.groovy</groupId>
               <artifactId>groovy-all</artifactId>
-              <version>1.7.1</version>
-              <exclusions>
-                <exclusion>
-                  <groupId>org.fusesource.jansi</groupId>
-                  <artifactId>jansi</artifactId>
-                </exclusion>
-              </exclusions>
+              <version>1.7.4</version>
             </dependency>
           </dependencies>
         </plugin>
