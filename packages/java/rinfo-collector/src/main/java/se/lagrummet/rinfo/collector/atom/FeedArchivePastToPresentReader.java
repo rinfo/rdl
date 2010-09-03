@@ -76,8 +76,9 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                             if (isYoungerThan(deletedMap.get(entryId).getDate(), entryUpdated)) {
                                 // TODO:? only if deleted is youngest, not same-age?
                                 // Also, ignore deleted as now, or do delete and re-add?
-                                deletedMap.remove(entryId);
                                 continue;
+                            } else {
+                                deletedMap.remove(entryId);
                             }
                         }
                         AtomDate youngestAtomDate = entryModificationMap.get(

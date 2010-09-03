@@ -68,6 +68,19 @@ class FeedArchivePastToPresentReaderSpec extends Specification {
         reader.effectiveEntries.size() == 2
     }
 
+    def "should note deletes younger than updated"() {
+        setup:
+        def reader = new CollectReader()
+        when:
+        reader.readFeed(new URL("${baseUrl}/updated_deleted.atom"))
+        then:
+        reader.deleteds.size() == 1
+        reader.deletedRow(0) == "<http://example.org/doc/2> @ 2000-01-01T00:00:03.000Z"
+        and:
+        reader.effectiveEntries.size() == 1
+        reader.entryRow(0) == "<http://example.org/doc/1> @ 2000-01-01T00:00:01.000Z"
+    }
+
     def "an older delete mustn't supress a younger updated"() {
         setup:
         def reader = new CollectReader()
@@ -151,6 +164,11 @@ class CollectReader extends FeedArchivePastToPresentReader {
     String entryRow(int index) {
         def entry = effectiveEntries[index]
         return "<${entry.id}> @ ${entry.updatedElement.string}" as String
+    }
+
+    String deletedRow(int index) {
+        def deleted = deleteds[index]
+        return "<${deleted.key}> @ ${deleted.value}" as String
     }
 
 }
