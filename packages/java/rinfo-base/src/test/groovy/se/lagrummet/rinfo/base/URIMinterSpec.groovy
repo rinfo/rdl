@@ -1,9 +1,5 @@
 package se.lagrummet.rinfo.base
 
-import org.junit.Test
-import org.junit.BeforeClass
-import static org.junit.Assert.*
-
 import org.openrdf.rio.RDFFormat
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
@@ -30,8 +26,6 @@ class URIMinterSpec extends Specification {
     }
 
     def "should mint urifrom stream"() {
-        given:
-        def sourceStream = null
         when:
         def feed = DOMBuilder.parse(new FileReader(testFeedPath)).documentElement
         then:
