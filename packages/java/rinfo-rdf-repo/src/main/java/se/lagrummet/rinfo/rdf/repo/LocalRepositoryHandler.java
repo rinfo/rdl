@@ -47,7 +47,7 @@ public class LocalRepositoryHandler extends RepositoryHandler {
         if (storeType.equals("memory")) {
             sail = new MemoryStore();
         } else if (storeType.equals("native")) {
-            sail = new NativeStore(new File(dataDir + "/" + repoId));
+            sail = new NativeStore(new File(dataDir + File.separator + repoId));
         } else {
             throw new Exception("Unsupported store type: " + storeType);
         }
