@@ -1,6 +1,5 @@
 package se.lagrummet.rinfo.service
 
-import org.junit.*
 import static org.junit.Assert.*
 
 import org.apache.commons.configuration.PropertiesConfiguration
@@ -11,7 +10,6 @@ import org.restlet.data.MediaType
 import org.restlet.data.Method
 import org.restlet.data.Protocol
 import org.restlet.data.Request
-import org.restlet.data.Response
 import org.restlet.data.Status
 import org.restlet./*routing.*/VirtualHost
 
@@ -19,14 +17,13 @@ import org.openrdf.repository.Repository
 import org.openrdf.repository.RepositoryConnection
 import org.openrdf.repository.event.RepositoryListener;
 import se.lagrummet.rinfo.service.util.FeedApplication
-import se.lagrummet.rinfo.service.util.RepoListener
 import se.lagrummet.rinfo.service.util.RepoConnectionListener
+import spock.lang.Specification
 
 /**
  * Test for verifying ServiceApplication's handling of multiple connections.
- *
  */
-class ServiceApplicationConnectionTest {
+class ServiceApplicationConnectionSpec extends Specification {
 
     static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service-test.properties"
 
@@ -35,8 +32,7 @@ class ServiceApplicationConnectionTest {
     static repoListener
     static component
 
-    @BeforeClass
-    static void setupClass() {
+    def setupSpec() {
         def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
         def serviceAppPort = config.getInt("test.serviceAppPort")
         def feedAppPort = config.getInt("test.feedAppPort")
@@ -77,29 +73,29 @@ class ServiceApplicationConnectionTest {
         }
     }
 
-    @AfterClass
-    static void tearDownClass() {
+    def cleanupSpec() {
         component.stop()
     }
 
-    @Test
-    void testServiceApplicationConnection() {
+    def testServiceApplicationConnection() {
         def request = new Request(Method.GET, serviceAppUrl + "/status")
         def client = new Client(Protocol.HTTP)
         def response = client.handle(request)
-        assertEquals Status.SUCCESS_OK , response.status
+        
+        expect:
+        response.status == Status.SUCCESS_OK
     }
 
-    @Test
-    void testFeedApplicationConnection() {
+    def testFeedApplicationConnection() {
         def request = new Request(Method.GET, feedAppUrl + "/1-init.atom")
         def client = new Client(Protocol.HTTP)
         def response = client.handle(request)
-        assertEquals Status.SUCCESS_OK , response.status
+        
+        expect:
+        response.status == Status.SUCCESS_OK
     }
 
-    @Test
-    void testConcurrentCalls() {
+    def testConcurrentCalls() {
         repoListener.noofConnections = 0
         repoListener.isConcurrent = false
 
@@ -120,7 +116,8 @@ class ServiceApplicationConnectionTest {
         // read feed seems to wait indefinitely for closed feed.
         Thread.sleep(3000)
 
-        assertFalse "Concurrent connections to repository.", repoListener.isConcurrent
+        expect:
+        !repoListener.isConcurrent
     }
 }
 
@@ -136,6 +133,7 @@ class RListener extends RepoConnectionListener implements RepositoryListener {
     void setDataDir(Repository repo, File dataDir) { }
     void shutDown(Repository repo) { }
 
+    @Override
     void getConnection(Repository repo, RepositoryConnection conn) {
         noofConnections++
         isConcurrent = isConcurrent | noofConnections > 1
