@@ -7,6 +7,8 @@ The acceptance tests are run with Robot Framework
 
     $ sudo easy_install robotframework # or use installer for windows
     $ sudo easy_install http://robotframework-restlibrary.googlecode.com/svn/trunk#egg=RestLibrary-dev
+       $ If the previous command fails you may have to follow the 
+         installation instructions on http://robotframework-restlibrary.googlecode.com
     $ sudo easy_install lxml
     $ easy_install httplib2 # optional
 
