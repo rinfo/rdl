@@ -66,8 +66,13 @@
       <artifactId>sesame-sail-nativerdf</artifactId>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -78,6 +83,31 @@
     <finalName>${artifactId}-${version}</finalName>
 
     <plugins>
+
+      <plugin>
+        <groupId>org.codehaus.gmaven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.spockframework</groupId>
+        <artifactId>spock-maven</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>find-specs</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
