@@ -7,7 +7,7 @@ Prerequisites
 
 The RInfo project is managed using Fabric:
 
-    http://www.nongnu.org/fab/
+    http://www.fabfile.org/
 
 On systems where python-setuptools is bundled (hence having the
 ``easy_install`` command), it can be installed by::
@@ -48,3 +48,9 @@ want to deploy them to your own local development environment)
 
 This sends a "ping" request to the rinfo-main server, causing it to
 reload the admin data.
+
+Development Environment
+========================================================================
+
+For continuous integration see ``project/ci/README.txt``.
+
