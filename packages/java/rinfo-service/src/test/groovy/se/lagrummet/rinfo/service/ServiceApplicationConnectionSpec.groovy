@@ -1,7 +1,5 @@
 package se.lagrummet.rinfo.service
 
-import static org.junit.Assert.*
-
 import org.apache.commons.configuration.PropertiesConfiguration
 
 import org.restlet.Client
@@ -96,6 +94,7 @@ class ServiceApplicationConnectionSpec extends Specification {
     }
 
     def testConcurrentCalls() {
+        when:
         repoListener.noofConnections = 0
         repoListener.isConcurrent = false
 
@@ -104,13 +103,18 @@ class ServiceApplicationConnectionSpec extends Specification {
         request.setEntity(param, MediaType.MULTIPART_FORM_DATA)
         def client = new Client(Protocol.HTTP)
         def response = client.handle(request)
-        assertEquals Status.SUCCESS_OK , response.status
-
+        
+        then:
+        response.status == Status.SUCCESS_OK
+        
+        when:
         request = new Request(Method.POST, "${serviceAppUrl}/collector")
         param = "feed=${feedAppUrl}/2-updated_t1.atom"
         request.setEntity(param, MediaType.MULTIPART_FORM_DATA)
         response = client.handle(request)
-        assertEquals Status.SUCCESS_OK , response.status
+        
+        then:
+        response.status == Status.SUCCESS_OK
 
         // TODO: Allow time for collect to finish. Causes deadlock otherwise,
         // read feed seems to wait indefinitely for closed feed.
