@@ -1,10 +1,23 @@
-/*
-Works with sources from <http://trac.lagen.nu/wiki/DataSets>:
-    - https://lagen.nu/sfs/parsed/rdf.nt
-    - https://lagen.nu/dv/parsed/rdf.nt
-Eats memory; prepare by:
-    export JAVA_OPTS="-Xms512Mb -Xmx1024Mb"
-*/
+/**
+ * Generate Atom Depots with RDF posts per document from nt data dumps of
+ * lagen.nu scrapes.
+ *
+ * Works with sources from <http://trac.lagen.nu/wiki/DataSets>:
+ *
+ *  - <https://lagen.nu/sfs/parsed/rdf.nt>
+ *  - <https://lagen.nu/dv/parsed/rdf.nt>
+ *
+ * When developing, extract some test data:
+ *
+ *  $ grep '&lt;http://rinfo.lagrummet.se/publ/sfs/1736' lagennu-sfs.nt &gt; lagennu-sfs-snippet.nt
+ * And run:
+ *
+ *  $ groovy n3dump_to_depot.groovy lagennu-sfs-snippet.nt sfs-depot -debug
+ *
+ * IMPORTANT: Eats memory; prepare by:
+ *
+ *  $ export JAVA_OPTS="-Xms512Mb -Xmx1024Mb"
+ */
 
 @Grapes([
     @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT'),
@@ -18,11 +31,76 @@ import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.store.depot.*
 
 
+def createDepotFromTriples(URI baseUri, File rdfSource, File depotDir, debug=false) {
+    def uriTripleGroups = groupTriplesByLeadingUri(rdfSource)
+
+    depot = new FileDepot(baseUri, depotDir)
+    depot.atomizer.feedPath = "/feed"
+    depot.atomizer.feedBatchSize = 100
+    def feed = Abdera.instance.newFeed()
+    feed.id = "tag:localhost,2010:rinfo:test:${depotDir.name}"
+    depot.atomizer.feedSkeleton = feed
+
+    def session = depot.openSession()
+    try {
+        uriTripleGroups.each { key, lines ->
+            def results = convertLagenNuTripleGroups(key, lines)
+            results.each { uri, ntStr ->
+                def docRepo = ntStringtoRepo(ntStr)
+                if (debug) {
+                    println "# DEBUG - RDF for <${uri}>:"
+                    RDFUtil.serialize(docRepo, RDFUtil.TURTLE,
+                            new BufferedOutputStream(System.out) { void close() { println() } },
+                            true)
+                } else {
+                    createEntry(session, new URI(uri), docRepo)
+                }
+                docRepo.shutDown()
+            }
+        }
+    } finally {
+        session.close()
+    }
+}
+
+def groupTriplesByLeadingUri(triplesFile) {
+    def allLines = new TreeSet()
+    triplesFile.eachLine {
+        if (!ignoreSourceLine(it))
+            allLines << it
+    }
+    return allLines.groupBy {
+        def m = (it =~ /^<([^>#]+)(#[^>]+)?>/);
+        if (m[0]) m[0][1]
+    }
+}
+
+def ntStringtoRepo(ntStr) {
+    def repo = RDFUtil.createMemoryRepository()
+    RDFUtil.loadDataFromStream(repo,
+            new ByteArrayInputStream(ntStr.getBytes("utf-8")), "", "text/plain")
+    return repo
+}
+
+def createEntry(session, uri, docRepo) {
+    def RDFXML_MEDIA_TYPE = "application/rdf+xml"
+    def inStream = RDFUtil.toInputStream(docRepo, RDFXML_MEDIA_TYPE, true)
+    try {
+        def rdfContent = new SourceContent(inStream, RDFXML_MEDIA_TYPE)
+        println "Creating entry <$uri>"
+        session.createEntry(uri, new Date(), [rdfContent])
+    } finally {
+        inStream.close()
+    }
+}
+
+
 RINFO = "http://rinfo.lagrummet.se/"
 RPUBL  = "${RINFO}ns/2008/11/rinfo/publ#"
 LEGACY_PUBL = "${RINFO}taxo/2007/09/rinfo/pub#"
 LAGENNNU = "http://lagen.nu/terms#"
 DCT = "http://purl.org/dc/terms/"
+XSD = "http://www.w3.org/2001/XMLSchema#"
 
 GRUNDLAG_NUMBERS = [
     '1974:152', // regeringsform
@@ -32,19 +110,30 @@ GRUNDLAG_NUMBERS = [
 ]
 
 
-def convertLagenNuNTLines(URI uri, List<String> lines) {
+def ignoreSourceLine(l) {
+    return l =~ /#.*S\d+>/ ||
+        l.contains("<${LAGENNNU}senastHamtad>") ||
+        l.contains("<${LAGENNNU}patchdescription>") ||
+        l.contains('> ""') ||
+        l.contains('<${DCT}references>')
+        // TODO: ok att bara skippa f.n.?
+        //- ta bort eller fixa references-"framåtpekningar", t.ex.::
+        //<http://rinfo.lagrummet.se/publ/sfs/1962:381#L1988:881N11> .\+references> <http://rinfo.lagrummet.se/publ/sfs/1998:674> .
+}
+
+
+
+def convertLagenNuTripleGroups(String key, List<String> lines) {
+    uri = fixUri(key)
+    def results = [:]
+
     def newLines = rewriteLagenNuNTLines(lines)
+    newLines = flipPartOfTriples(newLines)
 
-    def typeTripleIndex = newLines.findIndexOf { it.startsWith("<${uri}> <${RDF.TYPE}> ") }
 
-    // retype:
-    if (GRUNDLAG_NUMBERS.find(uri.toString().&endsWith)) {
-        newLines[typeTripleIndex] = "<${uri}> <${RDF.TYPE}> <${RPUBL}Grundlag> ."
+    def typeTriplePosition = newLines.findIndexOf { it.startsWith("<${uri}> <${RDF.TYPE}> ") }
 
-    } else if (isLaw(newLines)) {
-        newLines[typeTripleIndex] = "<${uri}> <${RDF.TYPE}> <${RPUBL}Lag> ."
-
-    } else if (typeTripleIndex == -1) {
+    if (typeTriplePosition == -1) {
         newLines += [
             "<${uri}> <${RDF.TYPE}> <${RPUBL}Forordning> .",
             "<${uri}> <${RPUBL}forfattningssamling> <${RINFO}serie/fs/sfs> .",
@@ -52,8 +141,39 @@ def convertLagenNuNTLines(URI uri, List<String> lines) {
         ]
     }
 
-    // only for type:
-    if (newLines[typeTripleIndex].endsWith("<${RPUBL}Rattsfallsreferat> .")) {
+    if (newLines[typeTriplePosition].endsWith("<${RPUBL}KonsolideradGrundforfattning> .")) {
+        def konsLines = null
+        def konsTypeTriple = newLines[typeTriplePosition]
+
+        // retype:
+        if (GRUNDLAG_NUMBERS.find(uri.&endsWith)) {
+            newLines[typeTriplePosition] = "<${uri}> <${RDF.TYPE}> <${RPUBL}Grundlag> ."
+        } else if (isLaw(newLines)) {
+            newLines[typeTriplePosition] = "<${uri}> <${RDF.TYPE}> <${RPUBL}Lag> ."
+        } else {
+            newLines[typeTriplePosition] = "<${uri}> <${RDF.TYPE}> <${RPUBL}Forordning> ."
+        }
+
+        (konsLines, newLines) = newLines.split {
+            it.find("<${RPUBL}konsoliderar>") ||
+                    it.find("<${RPUBL}konsolideringsunderlag>")
+        }
+        def lastKons = konsLines[-1]
+        konsLines << konsTypeTriple
+        // TODO: find some real value for issued of the "konsolidering"..
+        def issued = "${(lastKons =~ /(\d+):\d+>/)[0][1]}-12-31"
+        def konsUri = "${uri}/konsolidering/${issued}"
+        konsLines += newLines.findAll { it =~ "<${DCT}title>" }
+        konsLines = konsLines.collect {
+            replaceOnce(it, uri, konsUri)
+        }
+        def identifier = "SFS ${(uri =~ /(\d+:[^:]+)$/)[0][1]} i lydelse enligt SFS ${(lastKons =~ /(\d+:\d+)>/)[0][1]}"
+        konsLines << "<${konsUri}> <${DCT}identifier> \"${identifier}\"."
+        konsLines << "<${konsUri}> <${DCT}issued> \"${issued}\"^^<${XSD}date> ."
+
+        results[konsUri] = konsLines.join("\n")
+
+    } else if (newLines[typeTriplePosition].endsWith("<${RPUBL}Rattsfallsreferat> .")) {
         newLines = newLines.collect {
             def s = replaceOnce(it, "<${DCT}description>", "<${RPUBL}referatrubrik>")
             // TODO: is "issued" good enough?
@@ -64,45 +184,73 @@ def convertLagenNuNTLines(URI uri, List<String> lines) {
         }
     }
 
-    return newLines
+
+    // TODO: document-level change ref:
+    //- finns:
+    //    dokument (ersatter|upphaver) dokument|kapitel|paragraf
+    //    dokument inforsI dokument|kapitel|paragraf # <- obs; gäller då *del* som inforsI
+    extra = []
+    newLines.each {
+        //(it =~ /> <.+?(?:ersatter|upphaver)> <([^#]+)#[^>]+> \./)?.each { m, o ->
+        (it =~ "<${uri}> <${RPUBL}(?:ersatter|upphaver|inforsI)> <([^#]+)#[^>]+>")?.each { m, o ->
+            extra << "<${uri}> <${RPUBL}andrar> <${o}> ."
+        }
+    }
+    newLines += extra
+
+
+    results[uri] = newLines.join("\n")
+
+    return results
 }
 
+
 def rewriteLagenNuNTLines(lines) {
-    return lines.findAll {
-        !( it.find("<${LAGENNNU}senastHamtad>") ||
-            it.find("<${LEGACY_PUBL}konsoliderar>") ||
-            it.find("<${LEGACY_PUBL}konsolideringsunderlag>") ||
-            it.find('relation> ""')
-        )
-    }.collect {
+    return lines.collect {
         // TODO:? are org refs always correct?
-        def s = replaceOnce(it, "<http://lagen.nu/org/2008/", "<${RINFO}org/")
+        def line = replaceOnce(it, "<http://lagen.nu/org/2008/", "<${RINFO}org/")
 
-        s = replaceOnce(s, "<${RINFO}ref/sfs>", "<${RINFO}serie/fs/sfs>")
-        s = replaceOnce(s, "<${RINFO}ref/fs", "<${RINFO}serie/fs")
-        s = replaceOnce(s, "<${RINFO}ref/rff", "<${RINFO}serie/rff")
+        line = replaceOnce(line, "<${RINFO}ref/sfs>", "<${RINFO}serie/fs/sfs>")
+        line = replaceOnce(line, "<${RINFO}ref/fs", "<${RINFO}serie/fs")
+        line = replaceOnce(line, "<${RINFO}ref/rff", "<${RINFO}serie/rff")
 
-        s = replaceOnce(s, "<${LAGENNNU}paragrafnummer>", "<${RPUBL}paragrafnummer>")
-        s = replaceOnce(s, "<${LEGACY_PUBL}forfattningsamling>", "<${RPUBL}forfattningssamling>")
-        s = replaceOnce(s,
-                "<${LEGACY_PUBL}KonsolideradGrundforfattning>", "<${RPUBL}Forordning>")
-        s = replaceOnce(s, "<${LEGACY_PUBL}", "<${RPUBL}")
-        s = s.replaceAll(/("\d{4}-\d{2}-\d{2}")(@\w+)?/, '$1'+"^^<${XMLSchema.NAMESPACE}date>")
+        line = replaceOnce(line, "<${LAGENNNU}paragrafnummer>", "<${RPUBL}paragrafnummer>")
+        line = replaceOnce(line, "<${LEGACY_PUBL}forfattningsamling>", "<${RPUBL}forfattningssamling>")
+        line = replaceOnce(line, "<${LEGACY_PUBL}fsNummer> \"", "<${RPUBL}identifier> \"SFS ")
 
-        s = s.replaceAll(/#K(\d+)P/, '#k_$1-p_')
-        s = replaceOnce(s, "#K", "#k_")
-        s = replaceOnce(s, "#P", "#p_")
 
-        s = fixUri(s)
-        return s
+        line = replaceOnce(line, "<${LEGACY_PUBL}", "<${RPUBL}")
+        line = line.replaceAll(/("\d{4}-\d{2}-\d{2}")(@\w+)?/, '$1'+"^^<${XMLSchema.NAMESPACE}date>")
+
+        line = line.replaceAll(/#K(\d+)P/, '#k_$1-p_')
+        line = line.replaceAll(/#K(\d+)/, '#k_$1')
+        line = line.replaceAll(/#P(\d+)/, '#p_$1')
+
+        line = fixUri(line)
+        return line
     }
 }
 
-def fixUri(uri) {
-    uri = replaceOnce(uri, "${RINFO}publ/rattsfall/", "${RINFO}publ/rf/")
-    uri = uri.replaceAll(/${RINFO}publ\/rf\/(\w+)\/(\d+?)s(\d+)\b/, "${RINFO}publ/rf/"+'$1/$2/s_$3')
-    return uri
+
+def flipPartOfTriples(lines) {
+    return lines.collect {
+        def partOfTriple = /(<[^>]+>) <${DCT}isPartOf> (<[^>]+>) \./
+        if (!(it =~ partOfTriple))
+            return it
+        else if (it =~ /[#-]p_\d+>/)
+            return it.replaceAll(partOfTriple, '$2 '+"<${RPUBL}paragraf>"+' $1 .')
+        else if (it =~ /#k_\d+>/)
+            return it.replaceAll(partOfTriple, '$2 '+"<${RPUBL}kapitel>"+' $1 .')
+    }
 }
+
+
+def fixUri(line) {
+    line = replaceOnce(line, "${RINFO}publ/rattsfall/", "${RINFO}publ/rf/")
+    line = line.replaceAll(/${RINFO}publ\/rf\/(\w+)\/(\d+?)s(\d+)\b/, "${RINFO}publ/rf/"+'$1/$2/s_$3')
+    return line
+}
+
 
 def isLaw(lines) {
     def titleTriple = lines.find { it =~ "title>" }
@@ -115,62 +263,13 @@ def isLaw(lines) {
 }
 
 
-RDFXML_MEDIA_TYPE = "application/rdf+xml"
+/*=============================== main ===============================*/
 
-def createEntry(session, uri, nt) {
-    def repo = RDFUtil.createMemoryRepository()
-    RDFUtil.loadDataFromStream(repo,
-            new ByteArrayInputStream(nt.getBytes("utf-8")),
-            "", "text/plain")
-    def inStream = RDFUtil.toInputStream(repo, RDFXML_MEDIA_TYPE, true)
-    try {
-        def rdfContent = new SourceContent(inStream, RDFXML_MEDIA_TYPE)
-        println "Creating entry <$uri>"
-        session.createEntry(uri, new Date(), [rdfContent])
-    } finally {
-        inStream.close()
-    }
-}
-
-def rdfSource
-def depotDir
 try {
-    rdfSource = args[0]
-    depotDir = new File(args[1])
+    createDepotFromTriples(new URI(RINFO), new File(args[0]), new File(args[1]),
+            "-debug" in args)
 } catch (IndexOutOfBoundsException e) {
     println "Usage: <rdf-source> <depot-dir>"
     System.exit 0
-}
-
-def baseUri = new URI(RINFO)
-depot = new FileDepot(baseUri, depotDir)
-depot.atomizer.feedPath = "/feed"
-depot.atomizer.feedBatchSize = 100
-
-def feed = Abdera.instance.newFeed()
-feed.id = "tag:localhost,2010:rinfo:test:${depotDir.name}"
-depot.atomizer.feedSkeleton = feed
-
-def allLines = new File(rdfSource).readLines()
-allLines.sort()
-def grouped = allLines.groupBy {
-    def m = (it =~ /^<([^>#]+)(#[^>]+)?>/);
-    if (m[0]) m[0][1]
-}
-
-def session = depot.openSession()
-try {
-    grouped.each { key, lines ->
-        def uri = new URI(fixUri(key))
-        def newNtLines = convertLagenNuNTLines(uri, lines)
-        def ntStr = newNtLines.join("\n")
-        if (false) {
-            println "DEBUG for <${uri}>:"; println ntStr; System.exit 0
-        } else {
-            createEntry(session, uri, ntStr)
-        }
-    }
-} finally {
-    session.close()
 }
 
