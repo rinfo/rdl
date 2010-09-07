@@ -10,9 +10,9 @@ env.adminbuild = sep.join((env.builddir,'rinfo-admin'))
 
 def package_admin():
     """Package the admin feed files from resources/base"""
-    local("cd %(toolsdir)s/rinfomain &&"
-        "groovy base_as_feed.groovy -b ../../resources/base/"
-            " -o %(adminbuild)s"%env)
+    local("cd %(toolsdir)s/rinfomain && "
+        "groovy base_as_feed.groovy -b ../../resources/base/ "
+            "-o %(adminbuild)s"%env)
 
 @roles('admin')
 def deploy_admin():
@@ -25,8 +25,7 @@ def deploy_admin():
         build_path = cygpath(slashed(env.adminbuild))
     else:
         build_path = slashed(env.adminbuild)
-    rsync_project((env.admin_webroot), build_path,
-            exclude=".*", delete=True)
+    rsync_project((env.admin_webroot), build_path, exclude=".*", delete=True)
 
 @roles('admin')
 def admin_all():
@@ -40,5 +39,4 @@ def ping_main_with_admin():
     feed_url = "http://%s/feed/current" % env.roledefs['admin'][0]
     collector_url = "http://%s/collector/" % env.roledefs['main'][0]
     print local("curl --data 'feed=%(feed_url)s' %(collector_url)s"%vars())
-
 
