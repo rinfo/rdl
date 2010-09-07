@@ -5,11 +5,26 @@ from fabric.api import *
 
 
 targetenvs = []
-def _targetenv(f): targetenvs.append(f); return f
+
+def _targetenv(f):
+    """
+    Decorator function that makes sure that the list targetenvs contains all 
+    available target environments. It does so by adding the decorated function 
+    to the targetenvs list which is used by the _needs_targetenv function. 
+    """
+    targetenvs.append(f)
+    return f
 
 def _needs_targetenv():
-    require('target', 'roledefs', 'dist_dir', 'tomcat',
-            provided_by=targetenvs)
+    """
+    Makes sure that the env dictionary contains a certain set of keys. These 
+    keys are provided by one of the targetenv functions (decorated with 
+    @_targetenv). Targets calling this function i.e. 'package_main' requires 
+    a target and are executed like this:
+    
+        fab <some_targetenv_target> package_main
+    """
+    require('target', 'roledefs', 'dist_dir', 'tomcat', provided_by=targetenvs)
 
 @_targetenv
 def tg_dev_unix():
@@ -18,6 +33,7 @@ def tg_dev_unix():
     env.target = "dev-unix"
     # Machines:
     env.roledefs = {
+        'admin': ['localhost'],
         'main': ['localhost'],
         'service': ['localhost'],
         'examples': ['localhost'],
@@ -28,6 +44,7 @@ def tg_dev_unix():
     env.dist_dir = '/opt/_workapps/rinfo/rinfo_dist'
     env.rinfo_dir = '/opt/_workapps/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/_workapps/rinfo/aduna'
+    env.admin_webroot = "/opt/_workapps/rinfo/admin"
     # Tomcat
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env

@@ -27,7 +27,6 @@ To find out which commands are available, run:
 
     $ fab -l
 
-
 To build, deploy and make rinfo-main load the admin data:
 
     $ fab package_admin
@@ -37,12 +36,11 @@ based on the RDF files located in resources/base. This contains the
 model (ontology), uri patterns, URIs for organizations and other
 resources.
 
-    $ fab tg_prod package_admin
+    $ fab tg_prod deploy_admin
 
 This rsync's the resulting directory hierarchy to the correct place in
 the production environment (substitute tg_dev_unix for tg_prod if you
 want to deploy them to your own local development environment)
-
 
     $ fab tg_prod ping_main_with_admin
 
