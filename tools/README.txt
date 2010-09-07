@@ -70,6 +70,8 @@ Building the PDF documents
 
 To build the PDF documents, use the build_rinfo_docs.groovy script (This can
 also be done using the fabric command "build_docs", see ../manage/README.txt).
+The documentation will be created in the directory ../_build relative to the 
+tools directory.
 
 The stylesheets used for PDF generation requires that font files for Garamond
 and Trebuchet MS are present. The needed files are:
@@ -102,3 +104,8 @@ Garamond may only be available as a "Font Suitcase" (and the PDF generator
 requires standalone TTF files). If so, obain the font from someone with an
 appropriate license for it.
 
+For testing purposes you may use Times instead of Garamond::
+
+    cp "/Library/Fonts/Times New Roman.ttf" fonts/gara.ttf
+    cp "/Library/Fonts/Times New Roman Bold.ttf" fonts/garabd.ttf
+    cp "/Library/Fonts/Times New Roman Italic.ttf" fonts/garait.ttf
