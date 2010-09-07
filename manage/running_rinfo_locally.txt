@@ -61,7 +61,7 @@ Install the shared rinfo packages to your local maven repo by::
 
 Now you are ready to start up:
 
-* Integration test data:
+* Create and serve integration test data:
 
   example-store
       serving some example data.
@@ -72,14 +72,12 @@ Now you are ready to start up:
   These can be served by running::
 
     $ cd tools/rinfomain/
-    $ TEST_SRC_DIR=/opt/_workapps/rinfo/testsources/www # any empty dir you want
-    $ TEST_SERVER=http://localhost:8280
-    $ ./map_feeds_and_base.sh $TEST_SRC_DIR $TEST_SERVER
-    $ groovy serve_folder.groovy $TEST_SRC_DIR
+    $ ./map_feeds_and_base.sh
+    $ groovy serve_folder.groovy
 
   Verify that information is served at http://localhost:8280/feed/current
 
-* Local instance of the RInfo system:
+* Start local instance of the RInfo system:
 
   rinfo-main
       Collects from the sources defined for development mode (a base/admin
@@ -89,7 +87,9 @@ Now you are ready to start up:
 
   rinfo-service
       Collects from rinfo-main into the sesame RDF repo, making data available
-      for its data views.
+      for its data views. Instructions on how to run this application using 
+      Jetty can be found in: ``../packages/java/rinfo-service/README.txt``.
+      
 
 
 In Depth

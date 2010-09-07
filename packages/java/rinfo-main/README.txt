@@ -29,8 +29,8 @@ Running the webapp::
     $ mvn jetty:run -Djetty.port=8180
 
 Go to <http://localhost:8180/feed/current> to verify that the server was
-started without errors. (The page should be a valid, non-empty Atom feed if a
-source (e.g. the admin feed) has been collected.)
+started without errors. The page should be a valid, non-empty Atom feed if a
+source (e.g. the admin feed) has been collected.
 
 Configuration & Runtime
 ========================================================================

@@ -13,8 +13,8 @@ Core libraries:
 * rinfo-store/README.txt
 * rinfo-collector/README.txt
 * rinfo-base/README.txt
-* rinfo-rdf-repo/
-* rinfo-sesame-http/
+* rinfo-rdf-repo/README.txt
+* rinfo-sesame-http/README.txt
 
 RInfo applications:
 
@@ -59,12 +59,14 @@ Maven Usage
 
 Testing::
 
-    # .. in <some-package>
-    # All:
+The commands should be run in the same directory as the pom.xml resides 
+for a module or application.
+
+    # Run all tests:
     $ mvn clean test
-    # One:
+    # Run one test:
     $ mvn test -Dtest=se.lagrummet.rinfo.store.depot.FileDepotWriteTest
-    # By pattern matching:
+    # Run tests by pattern matching:
     $ mvn test -Dtest=FileDepot*Test
 
 Code coverage from tests::

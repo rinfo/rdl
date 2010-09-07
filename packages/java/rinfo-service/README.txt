@@ -15,6 +15,9 @@ Running the webapp::
 
     $ mvn jetty:run -Djetty.port=8181
 
+Go to <http://localhost:8181/rdata/org> to verify that the server was 
+started OK.
+
 Configuration & Runtime
 ========================================================================
 

@@ -7,6 +7,10 @@ import groovy.xml.StreamingMarkupBuilder
 import org.apache.commons.io.FileUtils
 import org.apache.commons.codec.digest.DigestUtils
 
+/*
+ * This script processes example data, as can be seen in the documentation directory, 
+ * into a format that can be served for consumption by the RInfo Main application.
+ */
 
 @Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
 def createServableSources(buildDir, publicServer, docsBase, feedBase) {
