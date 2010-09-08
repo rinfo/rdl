@@ -522,7 +522,8 @@
     rdfs:comment """Information om vilka dokument, inklusive ursprungsdokumentet,
                     som ingått i konsolideringsunderlaget. Kan t.ex. utgå från en
                     tidigare konsoliderad version. Samling med referenser till
-                    dokument."""@sv; .
+                    dokument."""@sv;
+    owl:inverseOf [ rdfs:label "Konsolideringsunderlag för"@sv ]; .
 
 
 #---------------------------------------
