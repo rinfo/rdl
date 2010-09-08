@@ -57,6 +57,7 @@ def main() {
     cli.s 'sources', args:1
     cli.o 'outdir', args:1
     cli.l 'localBase', args:1
+    cli.nocomplete 'do not mark Atom feed as complete'
     def opt = cli.parse(args)
     if (opt.h) {
         cli.usage(); System.exit 0
@@ -66,10 +67,11 @@ def main() {
     def sources = opt.s ?: null
     def outdir = opt.o ?: "../../_build/rinfo-admin"
     def localBase = opt.l ?: ""
+    def markComplete = !opt.nocomplete
     assert outdir != null
 
     def items = collectItems(FEED_META.publicBaseUri, base, sources)
-    def coll = createAtomCollection(FEED_META, feedPathConf(localBase), items)
+    def coll = createAtomCollection(FEED_META, feedPathConf(localBase), items, markComplete)
 
     def extMap = [
         "application/rdf+xml": "rdf",
@@ -328,13 +330,14 @@ def makeModelToXhtmlTransformerHandler(result) {
 
 //======================================================================
 
-Map createAtomCollection(feedMeta, feedPathConf, items) {
+Map createAtomCollection(feedMeta, feedPathConf, items, markComplete=true) {
     def collection = [:]
 
     def feed = Abdera.instance.newFeed()
     feed.id = feedMeta.feedUri
     feed.setTitle(feedMeta.feedTitle)
-    FeedPagingHelper.setComplete(feed, true)
+    if (markComplete)
+        FeedPagingHelper.setComplete(feed, true)
     def youngestUpdated = null
 
     for (item in items) {
