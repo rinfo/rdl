@@ -115,7 +115,7 @@ def ignoreSourceLine(l) {
         l.contains("<${LAGENNNU}senastHamtad>") ||
         l.contains("<${LAGENNNU}patchdescription>") ||
         l.contains('> ""') ||
-        l.contains('<${DCT}references>')
+        l.contains("<${DCT}references>")
         // TODO: ok att bara skippa f.n.?
         //- ta bort eller fixa references-"framåtpekningar", t.ex.::
         //<http://rinfo.lagrummet.se/publ/sfs/1962:381#L1988:881N11> .\+references> <http://rinfo.lagrummet.se/publ/sfs/1998:674> .
@@ -145,7 +145,7 @@ def convertLagenNuTripleGroups(String key, List<String> lines) {
         def konsLines = null
         def konsTypeTriple = newLines[typeTriplePosition]
 
-        // retype:
+        // retype: // TODO: only works if given "lag" is given as KonsolideradGrundforfattning
         if (GRUNDLAG_NUMBERS.find(uri.&endsWith)) {
             newLines[typeTriplePosition] = "<${uri}> <${RDF.TYPE}> <${RPUBL}Grundlag> ."
         } else if (isLaw(newLines)) {
@@ -158,16 +158,22 @@ def convertLagenNuTripleGroups(String key, List<String> lines) {
             it.find("<${RPUBL}konsoliderar>") ||
                     it.find("<${RPUBL}konsolideringsunderlag>")
         }
-        def lastKons = konsLines[-1]
+        def konsUnderLag = konsLines.collect {
+                it =~ "<${RPUBL}konsolideringsunderlag> <(.+)>" }.collect {
+                        if (it) it[0][1] }.findAll { it }.sort()
+        def lastKons = konsUnderLag[-1]
         konsLines << konsTypeTriple
         // TODO: find some real value for issued of the "konsolidering"..
-        def issued = "${(lastKons =~ /(\d+):\d+>/)[0][1]}-12-31"
+        def issued = "${(lastKons =~ /(\d+):[^>]+/)[0][1]}-12-31"
         def konsUri = "${uri}/konsolidering/${issued}"
-        konsLines += newLines.findAll { it =~ "<${DCT}title>" }
+        konsLines += newLines.findAll {
+            it.contains("<${DCT}title>") ||
+                    it.contains("<${DCT}publisher>")
+        }
         konsLines = konsLines.collect {
             replaceOnce(it, uri, konsUri)
         }
-        def identifier = "SFS ${(uri =~ /(\d+:[^:]+)$/)[0][1]} i lydelse enligt SFS ${(lastKons =~ /(\d+:\d+)>/)[0][1]}"
+        def identifier = "SFS ${(uri =~ /(\d+:[^:]+)$/)[0][1]} i lydelse enligt SFS ${(lastKons =~ /(\d+:[^>]+)/)[0][1]}"
         konsLines << "<${konsUri}> <${DCT}identifier> \"${identifier}\"."
         konsLines << "<${konsUri}> <${DCT}issued> \"${issued}\"^^<${XSD}date> ."
 
@@ -216,7 +222,7 @@ def rewriteLagenNuNTLines(lines) {
 
         line = replaceOnce(line, "<${LAGENNNU}paragrafnummer>", "<${RPUBL}paragrafnummer>")
         line = replaceOnce(line, "<${LEGACY_PUBL}forfattningsamling>", "<${RPUBL}forfattningssamling>")
-        line = replaceOnce(line, "<${LEGACY_PUBL}fsNummer> \"", "<${RPUBL}identifier> \"SFS ")
+        line = replaceOnce(line, "<${LEGACY_PUBL}fsNummer> \"", "<${DCT}identifier> \"SFS ")
 
 
         line = replaceOnce(line, "<${LEGACY_PUBL}", "<${RPUBL}")
@@ -237,11 +243,14 @@ def flipPartOfTriples(lines) {
         def partOfTriple = /(<[^>]+>) <${DCT}isPartOf> (<[^>]+>) \./
         if (!(it =~ partOfTriple))
             return it
-        else if (it =~ /[#-]p_\d+>/)
+        else if (it =~ /[#-]p_[^-]+>/)
             return it.replaceAll(partOfTriple, '$2 '+"<${RPUBL}paragraf>"+' $1 .')
-        else if (it =~ /#k_\d+>/)
+        else if (it =~ /#k_[^-]+>/)
             return it.replaceAll(partOfTriple, '$2 '+"<${RPUBL}kapitel>"+' $1 .')
-    }
+        else
+            //println "DEBUG: couldn't flip: ${it}"
+            null
+    }.findAll { it }
 }
 
 
