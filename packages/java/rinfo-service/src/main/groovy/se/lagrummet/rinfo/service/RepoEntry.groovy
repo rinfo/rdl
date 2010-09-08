@@ -167,6 +167,8 @@ class RepoEntry {
 
     protected void processContents() {
         def contentElem = entry.contentElement
+        if (contentElem.resolvedSrc == null)
+            return // TODO:? handle embedded if ok mimeType? And/or warn if no data?
         def contentUrl = contentElem.resolvedSrc.toString()
         def contentMediaType = contentElem.mimeType.toString()
 
