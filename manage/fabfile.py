@@ -35,7 +35,7 @@ env.timestamp = datetime.datetime.utcnow().strftime('%Y_%m_%d_%H-%M-%S')
 env.datestamp = datetime.datetime.utcnow().strftime('%Y-%m-%d')
 
 # env.roledefs defines available roles but the actual host lists for a certain 
-# role is environment dependent ans set up by the targets defined in 
+# role is environment dependent and set up by the targets defined in 
 # targetenvs.py (see i.e. tg_dev_unix)
 env.roledefs = {
     'doc': None,
