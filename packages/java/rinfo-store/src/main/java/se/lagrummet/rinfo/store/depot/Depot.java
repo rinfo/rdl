@@ -30,9 +30,10 @@ public interface Depot {
 
     DepotContent getContent(String uriPath);
 
-    public DepotSession openSession() throws DepotReadException;
+    DepotSession openSession() throws DepotReadException;
 
-    public void generateIndex() throws DepotReadException, DepotWriteException;
+    void generateIndex() throws DepotReadException, DepotWriteException;
+    void checkConsistency() throws DepotReadException;
 
     Iterator iterateEntries();
     Iterator iterateEntries(boolean includeHistorical);

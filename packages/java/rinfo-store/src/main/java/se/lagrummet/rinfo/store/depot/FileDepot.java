@@ -64,7 +64,7 @@ public class FileDepot implements Depot {
                         "Cannot create missing depot base directory: " + baseDir);
             }
         }
-        // TODO: checkConsistency();
+        // TODO:? checkConsistency();
         this.initialized = true;
     }
 
@@ -185,7 +185,7 @@ public class FileDepot implements Depot {
     public void generateIndex() throws DepotReadException, DepotWriteException {
         backend.cleanFeedDir();
         DepotEntryBatch entryBatch = new DepotEntryBatch(this);
-        for (Iterator<DepotEntry> iter = backend.iterateEntries(
+        for (Iterator<DepotEntry> iter = iterateEntries(
                     atomizer.getIncludeHistorical(),
                     atomizer.getIncludeDeleted() );
                 iter.hasNext(); ) {
@@ -199,13 +199,18 @@ public class FileDepot implements Depot {
     }
 
 
-    /* TODO: checkConsistency() ?
-        - ensures no locks (in entries)
-        - atomizer.checkConsistency()
-            - ensures no locks (in feed dir)
+    public void checkConsistency() throws DepotReadException {
+        for (Iterator<DepotEntry> iter = iterateEntries();
+                iter.hasNext(); ) {
+            DepotEntry entry = iter.next();
+            entry.assertIsNotLocked();
+        }
+        /* TODO:?
+        - atomIndexer.checkConsistency()
             - ensures feeds chain as expected
             - opt. ensures all entries are properly indexed
-    */
+        */
+    }
 
 
     boolean withinBaseUri(URI uri) {
