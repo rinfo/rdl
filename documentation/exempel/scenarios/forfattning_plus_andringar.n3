@@ -16,8 +16,8 @@
     :utkomFranTryck "1337-01-02"^^xsd:date;
     :paragraf <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_1>,
         <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_2>,
-        <http://rinfo.lagrummet.se/publ/sfs/1338:1#p_3>,
-        <http://rinfo.lagrummet.se/publ/sfs/1338:1#p_4> .
+        <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_3>,
+        <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_4> .
 
 <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_1> :paragrafnummer "1" .
 <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_2> :paragrafnummer "2" .
@@ -37,9 +37,11 @@
     :utkomFranTryck "1337-02-02"^^xsd:date;
     :andrar <http://rinfo.lagrummet.se/publ/sfs/1337:1>;
     :paragraf [ :paragrafnummer "2";
-            :ersatter [ a :Forfattningsreferens;
-                    :angerGrundforfattning <http://rinfo.lagrummet.se/publ/sfs/1337:1>;
-                    :angerParagrafnummer "2" ] ];
+            :ersatter <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_2>
+            #:ersatter [ a :Forfattningsreferens;
+            #        :angerGrundforfattning <http://rinfo.lagrummet.se/publ/sfs/1337:1>;
+            #        :angerParagrafnummer "2" ]
+                ];
     :paragraf [ :paragrafnummer "5";
             :inforsI <http://rinfo.lagrummet.se/publ/sfs/1337:1>;
             dct:isVersionOf <http://rinfo.lagrummet.se/publ/sfs/1337:1#p_5> ] .

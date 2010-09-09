@@ -1,0 +1,73 @@
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
+
+
+SELECT * WHERE {
+
+    FILTER(?doc = <http://rinfo.lagrummet.se/publ/sfs/1337:1>)
+
+    ?doc a ?doc__type .
+    ?doc dct:identifier ?doc__1_identifier .
+
+    OPTIONAL {
+        ?doc__andrasAv :andrar ?doc;
+            :ikrafttradandedatum ?doc__andrasAv__1_ikrafttradandedatum;
+            dct:identifier ?doc__andrasAv__1_identifier .
+    }
+    OPTIONAL {
+        ?doc__konsoliderasAv :konsoliderar ?doc;
+            dct:issued ?doc__konsoliderasAv__1_utgiven;
+            dct:identifier ?doc__konsoliderasAv__1_identifier .
+        OPTIONAL {
+            ?doc__konsoliderasAv
+                :konsolideringsunderlag ?doc__konsoliderasAv__konsolideringsunderlag .
+        }
+    }
+    OPTIONAL {
+        ?doc__upphavsAv :upphaver ?doc;
+            :ikrafttradandedatum  ?doc__upphavsAv__ikrafttradandedatum;
+            dct:identifier ?doc__upphavsAv__1_identifier .
+    }
+
+    OPTIONAL {
+        # TODO: paragraf inforsI kapitel
+        ?doc__infort :inforsI ?doc .
+        {
+            ?doc__infort__1_paragrafI :paragraf ?doc__infort .
+            ?doc__infort :paragrafnummer ?doc__infort__1_paragrafnummer .
+            OPTIONAL {
+                ?doc__infort__1_paragrafI__1_kapitelI :kapitel ?doc__infort__1_paragrafI .
+            }
+            OPTIONAL {
+                ?doc__infort__1_paragrafI dct:identifier ?doc__infort__1_paragrafI__1_identifier .
+            }
+        } UNION {
+            ?doc__infort__1_kapitelI :kapitel ?doc__infort .
+            ?doc__infort :kapitelnummer ?doc__infort__1_kapitelnummer .
+            ?doc__infort__1_kapitelI dct:identifier ?doc__infort__1_kapitelI__1_identifier .
+        }
+    }
+
+    # TODO: delIAndringsdok andrar|upphaver delIDok
+
+    OPTIONAL {
+        ?doc :paragraf ?doc__paragrafer .
+        ?doc__paragrafer :paragrafnummer ?doc__paragrafer__paragrafnummer .
+        OPTIONAL {
+            ?doc__paragrafer__ersattsAv
+                :ersatter ?doc__paragrafer .
+            ?doc__paragrafer__ersattsAv__1_paragrafI :paragraf ?doc__paragrafer__ersattsAv;
+                dct:identifier ?doc__paragrafer__ersattsAv__1_paragrafI__1_identifier .
+
+        }
+        OPTIONAL {
+            ?doc :kapitel ?doc__kapitel .
+            ?doc__kapitel :kapitelnummer ?doc__kapitel__kapitelnummer .
+            ?doc__kapitel :paragraf ?doc__kapitel__paragrafer .
+            ?doc__kapitel__paragrafer :paragrafnummer ?doc__kapitel__paragrafer__paragrafnummer .
+            # TODO: select same change descriptions as for top level ?doc__paragrafer
+            # .. and/or use UNION with same parameter (?doc__paragrafer)
+        }
+    }
+
+}
