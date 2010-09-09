@@ -53,7 +53,9 @@ public class Atomizer {
     private boolean includeDeleted = true;
     private boolean includeHistorical = false;
     private boolean useEntrySelfLink = true;
-    private boolean useLinkExtensionsMd5 = true;
+    private String[] linkChecksumAlgorithms = new String[] { "md5" };
+    private boolean readLegacyMd5LinkExtension = true;
+    private boolean writeLegacyMd5LinkExtension = false;
     private boolean useTombstones = true;
     private boolean useFeedSync = true;
     private boolean useGdataDeleted = true;
@@ -116,9 +118,19 @@ public class Atomizer {
         this.useEntrySelfLink = useEntrySelfLink;
     }
 
-    public boolean getUseLinkExtensionsMd5() { return useLinkExtensionsMd5; }
-    public void setUseLinkExtensionsMd5(boolean useLinkExtensionsMd5) {
-        this.useLinkExtensionsMd5 = useLinkExtensionsMd5;
+    public String[] getLinkChecksumAlgorithms() { return linkChecksumAlgorithms; }
+    public void setLinkChecksumAlgorithms(String[] linkChecksumAlgorithms) {
+        this.linkChecksumAlgorithms = linkChecksumAlgorithms;
+    }
+
+    public boolean getReadLegacyMd5LinkExtension() { return readLegacyMd5LinkExtension; }
+    public void setReadLegacyMd5LinkExtension(boolean readLegacyMd5LinkExtension) {
+        this.readLegacyMd5LinkExtension = readLegacyMd5LinkExtension;
+    }
+
+    public boolean getWriteLegacyMd5LinkExtension() { return writeLegacyMd5LinkExtension; }
+    public void setWriteLegacyMd5LinkExtension(boolean writeLegacyMd5LinkExtension) {
+        this.writeLegacyMd5LinkExtension = writeLegacyMd5LinkExtension;
     }
 
     public boolean getUseTombstones() { return useTombstones; }
@@ -140,6 +152,7 @@ public class Atomizer {
     public void setPrettyXml(boolean prettyXml) {
         this.prettyXml = prettyXml;
     }
+
 
     public boolean isUsingEntriesAsTombstones() {
         return getUseFeedSync() || getUseGdataDeleted();
@@ -234,9 +247,39 @@ public class Atomizer {
 
     //== Entry Specifics ==
 
+    public Map<String,String> getChecksums(Element element) {
+        Map<String,String> checksums = new HashMap<String,String>();
+        String hashValues = element.getAttributeValue("hash");
+        if (hashValues == null)
+            return checksums;
+        String[] typesAndValues = hashValues.split("\\s");
+        for (String typeAndValue : typesAndValues) {
+            String[] typeValuePair = typeAndValue.split(":", 2);
+            if (typeValuePair.length != 2)
+                continue;
+            checksums.put(typeValuePair[0], typeValuePair[1]);
+        }
+        if (readLegacyMd5LinkExtension && !checksums.containsKey("md5")) {
+            checksums.put("md5", element.getAttributeValue(LINK_EXT_MD5));
+        }
+        return checksums;
+    }
+
+    public void setChecksum(Element element, String checksumType, String value) {
+        if (writeLegacyMd5LinkExtension) {
+            if (!"md5".equals(checksumType))
+                throw new UnsupportedOperationException(
+                        "Only 'md5' is supported for legacy MD5 link extension.");
+            element.setAttributeValue(LINK_EXT_MD5, value);
+            //return; // TODO:? always also add new hash attr in this legacy mode?
+        }
+        element.setAttributeValue("hash", checksumType + ":" + value);
+    }
+
+
     protected Entry createAtomEntry(DepotEntry depotEntry) throws IOException {
         Entry atomEntry = Abdera.getInstance().newEntry();
-        if (useLinkExtensionsMd5) {
+        if (writeLegacyMd5LinkExtension) {
             atomEntry.declareNS(
                     LINK_EXT_MD5.getNamespaceURI(), LINK_EXT_MD5.getPrefix());
         }
@@ -310,8 +353,8 @@ public class Atomizer {
                         content.getLang(),
                         content.getFile().length());
             }
-            if (useLinkExtensionsMd5) {
-                ref.setAttributeValue(LINK_EXT_MD5, content.getMd5Hex());
+            for (String algo : linkChecksumAlgorithms) {
+                setChecksum(ref, algo, content.getMd5Hex());
             }
         }
     }
@@ -325,8 +368,8 @@ public class Atomizer {
                     null, // title
                     enclContent.getLang(),
                     enclContent.getFile().length());
-            if (useLinkExtensionsMd5) {
-                link.setAttributeValue(LINK_EXT_MD5, enclContent.getMd5Hex());
+            for (String algo : linkChecksumAlgorithms) {
+                setChecksum(link, algo, enclContent.getMd5Hex());
             }
         }
     }

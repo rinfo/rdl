@@ -40,6 +40,8 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
     StorageSession storageSession
     EntryPathMapper entryPathMapper
 
+    private Atomizer atomizer = new Atomizer()
+
     /**
      * Important: this class is not thread safe. Create a new instance for each
      * collect session.
@@ -135,7 +137,7 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
             def mediaType = link.mimeType.toString()
             def lang = link.hrefLang
             long len = link.getLength()
-            def md5hex = link.getAttributeValue(Atomizer.LINK_EXT_MD5)
+            def md5hex = atomizer.getChecksums(link)["md5"]
             if (link.rel == "alternate") {
                 contents.add(createSourceContent(
                         urlPath, mediaType, lang, null, md5hex, len))
@@ -156,7 +158,7 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
         def contentUrlPath = contentElem.getResolvedSrc().toString()
         def contentMimeType = contentElem.getMimeType().toString()
         def contentLang = contentElem.getLanguage()
-        def contentMd5hex = contentElem.getAttributeValue(Atomizer.LINK_EXT_MD5)
+        def contentMd5hex = atomizer.getChecksums(contentElem)["md5"]
         return createSourceContent(
                 contentUrlPath, contentMimeType, contentLang, null, contentMd5hex)
     }

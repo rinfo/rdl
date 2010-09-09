@@ -1,10 +1,8 @@
 package se.lagrummet.rinfo.store.depot
 
-import org.apache.commons.configuration.PropertiesConfiguration
 
-import org.apache.abdera.model.*
-import org.apache.abdera.i18n.iri.IRI
 import org.apache.abdera.Abdera
+import org.apache.abdera.i18n.iri.IRI
 import org.apache.abdera.model.Feed
 
 import spock.lang.*
@@ -33,6 +31,24 @@ class AtomizerSpec extends Specification {
         then:
         atomizer.feedSkeletonPath == null
         atomizer.feedSkeleton == feed
+    }
+
+    def "should get and set checksums"() {
+        given:
+        def entry = Abdera.instance.newEntry()
+        entry.setContent(new IRI("http://localhost/text/1"), "text/plain")
+        def elem = entry.contentElement
+        def md5sum = "d41d8cd98f00b204e9800998ecf8427e"
+
+        expect:
+        atomizer.getChecksums(elem).size() == 0
+
+        when:
+        atomizer.setChecksum(elem, "md5", md5sum)
+        then:
+        def checksums = atomizer.getChecksums(elem)
+        checksums.size() == 1
+        checksums["md5"] == md5sum
     }
 
 }
