@@ -17,14 +17,28 @@ Configured to use (declared dependency + config): log4j
 Maven Usage
 ========================================================================
 
-Environments (see usage of "environment" in pom.xml)::
+Testing
+-------
+
+Running specific integration tests only::
+
+    $ mvn -Dtest=NONE -DfailIfNoTests=false -Dit.test=MainApplicationIT verify
+
+
+Environments
+------------
+
+(Also see the usage of "environment" in pom.xml)::
 
     # Use inferred environment (default or e.g. by OS):
     $ mvn <...>
     # Use config in src/environments/prod/:
     $ mvn -Pprod <...>
 
-Running the webapp::
+Running
+-------
+
+The webapp::
 
     $ mvn jetty:run -Djetty.port=8180
 
@@ -35,11 +49,11 @@ source (e.g. the admin feed) has been collected.
 Configuration & Runtime
 ========================================================================
 
-Main configuration properties can be found in:
+Main configuration properties can be found in::
 
     src/main/resources/rinfo-main-common.properties
 
-Specific overrides for particular environments can be found under:
+Specific overrides for particular environments can be found under::
 
     src/environments/
 

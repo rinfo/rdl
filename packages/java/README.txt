@@ -57,10 +57,11 @@ Basic usage within application sub-packages::
 Maven Usage
 ========================================================================
 
-Testing::
+Testing
+-------
 
-The commands should be run in the same directory as the pom.xml resides 
-for a module or application.
+The commands should be run in the directory where the pom.xml resides for a
+module or application.::
 
     # Run all tests:
     $ mvn clean test
@@ -73,7 +74,10 @@ Code coverage from tests::
 
     $ mvn cobertura:cobertura
 
-Running classes::
+Running classes directly
+------------------------
+
+::
 
     # .. in rinfo-store/
     $ mvn exec:java -Dexec.mainClass=se.lagrummet.rinfo.store.depot.FileDepotCmdTool -Dexec.args="<path-to-depot.properties> index"
