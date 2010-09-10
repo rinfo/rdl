@@ -112,15 +112,44 @@
       </plugin>
 
       <plugin>
-        <groupId>org.spockframework</groupId>
-        <artifactId>spock-maven</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*Spec.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
         <executions>
           <execution>
+            <id>integration-test</id>
             <goals>
-              <goal>find-specs</goal>
+              <goal>integration-test</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>verify</id>
+            <goals>
+              <goal>verify</goal>
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <configuration>
+          <scanIntervalSeconds>10</scanIntervalSeconds>
+          <webAppConfig>
+            <contextPath>/</contextPath>
+            <extraClasspath>${basedir}/src/environments/${environment}</extraClasspath>
+          </webAppConfig>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -138,18 +167,6 @@
               </includes>
             </resource>
           </webResources>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <configuration>
-          <scanIntervalSeconds>10</scanIntervalSeconds>
-          <webAppConfig>
-            <contextPath>/</contextPath>
-            <extraClasspath>${basedir}/src/environments/${environment}</extraClasspath>
-          </webAppConfig>
         </configuration>
       </plugin>
 
