@@ -146,6 +146,7 @@ public class Components {
         depot.setIndexer(atomizer)
         */
         depot.initialize()
+        depot.checkConsistency()
         return depot
     }
 
