@@ -46,7 +46,7 @@
     a foaf:Organization;
     foaf:name "Kammarrätten i Stockholm"@sv .
 
-<http://rinfo.lagrummet.se/org/kammarraetten_i_goteborg>
+<http://rinfo.lagrummet.se/org/kammarraetten_i_goeteborg>
     a foaf:Organization;
     foaf:name "Kammarrätten i Göteborg"@sv .
 
