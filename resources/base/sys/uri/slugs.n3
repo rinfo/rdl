@@ -23,7 +23,7 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/org/miljoeoeverdomstolen> :abbrSlug "mod" .
 <http://rinfo.lagrummet.se/org/regeringsraetten> :abbrSlug "regr" .
 <http://rinfo.lagrummet.se/org/kammarraetten_i_stockholm> :abbrSlug "kst" .
-<http://rinfo.lagrummet.se/org/kammarraetten_i_goteborg> :abbrSlug "kgg" .
+<http://rinfo.lagrummet.se/org/kammarraetten_i_goeteborg> :abbrSlug "kgg" .
 <http://rinfo.lagrummet.se/org/kammarraetten_i_sundsvall> :abbrSlug "ksu" .
 <http://rinfo.lagrummet.se/org/kammarraetten_i_joenkoeping> :abbrSlug "kjo" .
 <http://rinfo.lagrummet.se/org/migrationsoeverdomstolen> :abbrSlug "mig" .
