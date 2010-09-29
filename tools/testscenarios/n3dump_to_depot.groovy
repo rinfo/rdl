@@ -17,6 +17,12 @@
  * IMPORTANT: Eats memory; prepare by:
  *
  *  $ export JAVA_OPTS="-Xms512Mb -Xmx1024Mb"
+ *
+ * TODO:
+ * - see markers in the code below.
+ * - It might be possible to leverage R2R
+ *   <http://www4.wiwiss.fu-berlin.de/bizer/r2r/> for this (although it may
+ *   still lack some specific needs).
  */
 
 @Grapes([
@@ -257,6 +263,7 @@ def flipPartOfTriples(lines) {
 def fixUri(line) {
     line = replaceOnce(line, "${RINFO}publ/rattsfall/", "${RINFO}publ/rf/")
     line = line.replaceAll(/${RINFO}publ\/rf\/(\w+)\/(\d+?)s(\d+)\b/, "${RINFO}publ/rf/"+'$1/$2/s_$3')
+    // TODO: change e.g. </publ/sfs/1893:37_s.1> to </publ/sfs/1893:37_s_1>
     return line
 }
 
