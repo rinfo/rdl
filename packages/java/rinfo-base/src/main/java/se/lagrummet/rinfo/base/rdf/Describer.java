@@ -23,11 +23,16 @@ public class Describer {
     ValueFactory vf;
 
     Map<String, String> prefixes = new HashMap<String, String>();
-    boolean addNS = true;
+    boolean storePrefixes = true;
     boolean inferred = false;
 
     public Describer(RepositoryConnection conn) {
+        this(conn, true);
+    }
+
+    public Describer(RepositoryConnection conn, boolean storePrefixes) {
         this.conn = conn;
+        this.storePrefixes = storePrefixes;
         this.vf = conn.getValueFactory();
         setPrefix("rdf", RDF.NAMESPACE);
         setPrefix("rdfs", RDFS.NAMESPACE);
@@ -35,12 +40,20 @@ public class Describer {
         setPrefix("xsd", XMLSchema.NAMESPACE);
     }
 
+    public void close() {
+        try {
+            conn.close();
+        } catch (RepositoryException e) {
+            throw new DescriptionException(e);
+        }
+    }
+
     public String getPrefix(String prefix) {
         return prefixes.get(prefix);
     }
     public Describer setPrefix(String prefix, String uri) {
         prefixes.put(prefix, uri);
-        if (addNS) {
+        if (storePrefixes) {
             try {
                 conn.setNamespace(prefix, uri);
             } catch (RepositoryException e) {
@@ -65,24 +78,28 @@ public class Describer {
         return new Description(this, ref);
     }
 
-    public List<Description> subjectDescriptions(String pCurie, String oUri) {
+    public List<Description> subjects(String pCurie, String oUri) {
         List<Description> things = new ArrayList<Description>();
-        for (Object ref : subjects(pCurie, oUri)) {
+        for (Object ref : subjectValues(pCurie, oUri)) {
             things.add(newDescription((String) ref));
         }
         return things;
     }
 
-    public List<Description> objectDescriptions(String sUri, String pCurie) {
+    public List<Description> objects(String sUri, String pCurie) {
         List<Description> things = new ArrayList<Description>();
-        for (Object ref : objects(sUri, pCurie)) {
+        for (Object ref : objectValues(sUri, pCurie)) {
             things.add(newDescription((String) ref));
         }
         return things;
     }
 
+    public List<Description> ofType(String typeCurie) {
+        return subjects("rdf:type", expandCurie(typeCurie));
+    }
 
-    public List<Object> subjects(String pCurie, String oUri) {
+
+    public List<Object> subjectValues(String pCurie, String oUri) {
         org.openrdf.model.URI p = (pCurie != null)?
                 (org.openrdf.model.URI) toRef(expandCurie(pCurie)) : null;
         Value o = (oUri != null)? toRef(oUri) : null;
@@ -99,7 +116,7 @@ public class Describer {
         }
     }
 
-    public List<Object> objects(String sUri, String pCurie) {
+    public List<Object> objectValues(String sUri, String pCurie) {
         Resource s = (sUri != null)? toRef(sUri) : null;
         org.openrdf.model.URI p = (pCurie != null)?
                 (org.openrdf.model.URI) toRef(expandCurie(pCurie)) : null;

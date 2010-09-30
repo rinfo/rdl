@@ -31,13 +31,13 @@ public class Description {
     }
 
     public RDFLiteral getLiteral(String curie) {
-        List<Object> values = getObjects(curie);
+        List<Object> values = getObjectValues(curie);
         return (values.size() != 0)? (RDFLiteral) values.get(0) : null;
     }
 
-    // TODO: consolidate with describer.objects and make getValues/getLiterals/getUris...
-    public List<Object> getObjects(String curie) {
-        return describer.objects(about, curie);
+    // TODO: consolidate with describer.objectValues and make getValues/getLiterals/getUris...
+    public List<Object> getObjectValues(String curie) {
+        return describer.objectValues(about, curie);
     }
 
     public String getUri(String curie) {
@@ -50,7 +50,7 @@ public class Description {
         return (descriptions.size() > 0)? descriptions.get(0) : null;
     }
     public List<Description> getRels(String curie) {
-        return describer.objectDescriptions(about, curie);
+        return describer.objects(about, curie);
     }
     //public Description getRel(Description desc) {
     //}
@@ -62,7 +62,7 @@ public class Description {
         return (descriptions.size() > 0)? descriptions.get(0) : null;
     }
     public List<Description> getRevs(String curie) {
-        return describer.subjectDescriptions(curie, about);
+        return describer.subjects(curie, about);
     }
     //List<Description> getRev(Description desc) {
     //}
@@ -74,7 +74,7 @@ public class Description {
         return (Description) ((types.size() > 0)? types.get(0) : null);
     }
     public List<Description> getTypes() {
-        return describer.objectDescriptions(about, "rdf:type");
+        return describer.objects(about, "rdf:type");
     }
 
 

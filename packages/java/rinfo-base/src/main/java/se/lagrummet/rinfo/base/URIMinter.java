@@ -89,7 +89,7 @@ public class URIMinter {
             Map<String, List<String>> resultMap =
                     new HashMap<String, List<String>>();
             Describer describer = newDescriber(conn);
-            for (Description desc : describer.subjectDescriptions(null, null)) {
+            for (Description desc : describer.subjects(null, null)) {
                 List<String> uris = scheme.coinUris(desc);
                 if (uris != null) {
                     resultMap.put(desc.getAbout(), uris);
@@ -270,7 +270,7 @@ public class URIMinter {
                     tplt.scheme.slugMappings.put(slugFrom, slugMap);
                 }
                 for (Description slugged : desc.getDescriber().
-                        subjectDescriptions(slugFrom, null)) {
+                        subjects(slugFrom, null)) {
                     slugMap.put(slugged.getAbout(), slugged.getValue(slugFrom));
                 }
             }

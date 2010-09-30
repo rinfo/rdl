@@ -1,5 +1,6 @@
 package se.lagrummet.rinfo.base.rdf
 
+import org.openrdf.repository.RepositoryConnection
 import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.memory.MemoryStore
 
@@ -63,6 +64,21 @@ class DescriberSpec extends Specification {
                 ["http://example.com/about#", "http://example.net/about#"]
     }
 
+    def "should find all by type"() {
+        given:
+        def describer = newDescriber()
+        def personUris = [
+            "$ORG_URI/persons/some_body#person_1",
+            "$ORG_URI/persons/some_body#person_2"
+        ]
+        when:
+        personUris.each {
+            describer.newDescription(it).addType("foaf:Person")
+        }
+        then:
+        describer.ofType("foaf:Person").collect { it.about }.sort() ==  personUris
+    }
+
     def "should find subjects and objects"() {
         given:
         def describer = newDescriber()
@@ -74,16 +90,37 @@ class DescriberSpec extends Specification {
         p.addRel("foaf:depiction", o)
 
         then: "subject and object are found via the added relation"
-        describer.subjectDescriptions("foaf:depiction", o).collect { it.about } == [s]
-        describer.objectDescriptions(s, "foaf:depiction").collect { it.about } == [o]
+        describer.subjects("foaf:depiction", o).collect { it.about } == [s]
+        describer.objects(s, "foaf:depiction").collect { it.about } == [o]
 
         and: "any reference finds them"
-        describer.subjectDescriptions(null, o).collect { it.about } == [s]
-        describer.objectDescriptions(s, null).collect { it.about } == [o]
+        describer.subjects(null, o).collect { it.about } == [s]
+        describer.objects(s, null).collect { it.about } == [o]
 
         and: "there is only one of each"
-        describer.subjectDescriptions(null, null).collect { it.about } == [s]
-        describer.objectDescriptions(null, null).collect { it.about } == [o]
+        describer.subjects(null, null).collect { it.about } == [s]
+        describer.objects(null, null).collect { it.about } == [o]
+    }
+
+    def "should store prefixes if configured"() {
+        given:
+        RepositoryConnection conn = Mock()
+        def describer = new Describer(conn)
+        def FOAF = "http://xmlns.com/foaf/0.1/"
+        when:
+        describer.setPrefix('foaf', FOAF)
+        then:
+        1 * conn.setNamespace('foaf', FOAF)
+    }
+
+    def "should close underlying connection"() {
+        given:
+        RepositoryConnection conn = Mock()
+        def describer = new Describer(conn)
+        when:
+        describer.close()
+        then:
+        1 * conn.close()
     }
 
     def newDescriber() {
