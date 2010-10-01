@@ -1,5 +1,9 @@
 package se.lagrummet.rinfo.base.rdf;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import java.util.*;
 
 import org.openrdf.repository.RepositoryConnection;
@@ -74,8 +78,21 @@ public class Describer {
         }
     }
 
+    public Description newDescription() {
+        return newDescription(null);
+    }
+
     public Description newDescription(String ref) {
+        if (ref == null) {
+            ref = fromRef(blankRef());
+        }
         return new Description(this, ref);
+    }
+
+    public Description newDescription(String ref, String typeCurie) {
+        Description description = newDescription(ref);
+        description.addType(typeCurie);
+        return description;
     }
 
     public List<Description> subjects(String pCurie, String oUri) {
@@ -155,8 +172,41 @@ public class Describer {
             return ref.stringValue();
     }
 
-    Value toLiteral(String value) {
-        return vf.createLiteral(value);
+    Value toLiteral(Object value) {
+        if (value instanceof Boolean) {
+            return vf.createLiteral((Boolean) value);
+        } else if (value instanceof Byte) {
+            return vf.createLiteral((Byte) value);
+        } else if (value instanceof Double) {
+            return vf.createLiteral((Double) value);
+        } else if (value instanceof Float) {
+            return vf.createLiteral((Float) value);
+        } else if (value instanceof Integer) {
+            return vf.createLiteral((Integer) value);
+        } else if (value instanceof Long) {
+            return vf.createLiteral((Long) value);
+        } else if (value instanceof Short) {
+            return vf.createLiteral((Short) value);
+        } else {
+            if (value instanceof Date) {
+                GregorianCalendar gregCal = new GregorianCalendar(
+                        TimeZone.getTimeZone("GMT"));
+                gregCal.setTime((Date) value);
+                value = gregCal;
+            }
+            if (value instanceof GregorianCalendar) {
+                try {
+                    value = DatatypeFactory.newInstance().newXMLGregorianCalendar(
+                            (GregorianCalendar) value);
+                } catch (DatatypeConfigurationException e) {
+                    throw new DescriptionException(e);
+                }
+            }
+            if (value instanceof XMLGregorianCalendar) {
+                return vf.createLiteral((XMLGregorianCalendar) value);
+            }
+        }
+        return vf.createLiteral(value.toString());
     }
 
     Value toLiteral(String value, String langOrDatatype) {
@@ -187,7 +237,7 @@ public class Describer {
         return fromRef(ref);
     }
 
-    void addLiteral(String about, String curie, String value) {
+    void addLiteral(String about, String curie, Object value) {
         add(toRef(about), curieToRef(curie), toLiteral(value));
     }
 
@@ -198,6 +248,23 @@ public class Describer {
     void add(Resource s, Value p, Value o) {
         try {
             conn.add(s, (org.openrdf.model.URI)p, o);
+        } catch (RepositoryException e) {
+            throw new DescriptionException(e);
+        }
+    }
+
+
+    void remove(String s, String curie) {
+        remove(toRef(s), curieToRef(curie), null);
+    }
+
+    void remove(String s, String curie, Object value) {
+        remove(toRef(s), curieToRef(curie), toLiteral(value));
+    }
+
+    void remove(Resource s, Value p, Value o) {
+        try {
+            conn.remove(s, (org.openrdf.model.URI)p, o);
         } catch (RepositoryException e) {
             throw new DescriptionException(e);
         }

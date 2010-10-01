@@ -30,6 +30,11 @@ public class Description {
         return (literal != null)? literal.toString() : null;
     }
 
+    public Object getNative(String curie) {
+        RDFLiteral literal = getLiteral(curie);
+        return (literal != null)? literal.toNativeValue() : null;
+    }
+
     public RDFLiteral getLiteral(String curie) {
         List<Object> values = getObjectValues(curie);
         return (values.size() != 0)? (RDFLiteral) values.get(0) : null;
@@ -78,7 +83,7 @@ public class Description {
     }
 
 
-    public void addValue(String curie, String value) {
+    public void addValue(String curie, Object value) {
         describer.addLiteral(about, curie, value);
     }
     public void addValue(String curie, String value, String langOrDatatype) {
@@ -102,6 +107,10 @@ public class Description {
     public Description addRev(String curie, String uri) {
         describer.addRel(uri, curie, about);
         return describer.newDescription(uri);
+    }
+
+    public void remove(String curie) {
+        describer.remove(about, curie);
     }
 
     public void addType(String typeCurie) {

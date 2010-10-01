@@ -102,6 +102,74 @@ class DescriberSpec extends Specification {
         describer.objects(null, null).collect { it.about } == [o]
     }
 
+    def "should created typed description"() {
+        given:
+        def describer = newDescriber()
+        when:
+        def p = describer.newDescription(null, "foaf:Person")
+        then:
+        p.type.about == "http://xmlns.com/foaf/0.1/Person"
+    }
+
+    def "should create blank description"() {
+        given:
+        def describer = newDescriber()
+        when:
+        def blank = describer.newDescription()
+        then:
+        blank.about.startsWith("_:")
+    }
+
+    def "should read primitive values"() {
+        given:
+        def describer = newDescriber()
+        def p = describer.newDescription()
+        p.addValue("foaf:age", value)
+        expect:
+        p.getLiteral("foaf:age").datatype == describer.expandCurie(datatype)
+        where:
+        value       | datatype
+        true        | "xsd:boolean"
+        12          | "xsd:int"
+        1.2f        | "xsd:float"
+        new Date()  | "xsd:dateTime"
+    }
+
+    def "should expose native values"() {
+        given:
+        def describer = newDescriber()
+        def p = describer.newDescription()
+        when:
+        p.addValue("foaf:birthday", "1968-01-01T00:00:00Z", "xsd:dateTime")
+        p.addValue("foaf:age", "42", "xsd:int")
+        then:
+        p.getNative("foaf:birthday") == new Date(-63158400000)
+        p.getNative("foaf:age") == 42
+    }
+
+    def "should remove statements"() {
+        given:
+        def describer = newDescriber()
+        def p = describer.newDescription()
+        p.addValue("foaf:name", "Some Body")
+        p.addRel("foaf:depiction", "$ORG_URI/img/some_body.png")
+
+        expect:
+        p.getValue("foaf:name")
+        p.getRel("foaf:depiction")
+
+        when:
+        p.remove("foaf:name")
+        then:
+        p.getValue("foaf:name") == null
+
+        when:
+        p.remove("foaf:depiction")
+        then:
+        p.getRel("foaf:depiction") == null
+
+    }
+
     def "should store prefixes if configured"() {
         given:
         RepositoryConnection conn = Mock()

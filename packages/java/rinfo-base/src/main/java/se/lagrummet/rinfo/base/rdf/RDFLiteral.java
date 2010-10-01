@@ -2,6 +2,8 @@ package se.lagrummet.rinfo.base.rdf;
 
 import java.util.*;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.openrdf.model.Literal;
 import org.openrdf.model.vocabulary.XMLSchema;
 
@@ -19,7 +21,8 @@ class RDFLiteral {
     }
 
     public String getDatatype() {
-        return literal.getDatatype().stringValue();
+        org.openrdf.model.URI datatype = literal.getDatatype();
+        return (datatype != null)? datatype.stringValue() : null;
     }
 
     public String getLang() {
@@ -43,14 +46,16 @@ class RDFLiteral {
                 return literal.longValue();
             else if (dt.equals(XMLSchema.SHORT))
                 return literal.shortValue();
-            // TODO: to Date..
             else if (dt.equals(XMLSchema.DATE))
-                return literal.calendarValue();
+                return toDate(literal.calendarValue());
             else if (dt.equals(XMLSchema.DATETIME))
-                return literal.calendarValue();
-            //return literal;
+                return toDate(literal.calendarValue());
         }
         return literal.stringValue();
+    }
+
+    Date toDate(XMLGregorianCalendar xmlGCal) {
+        return xmlGCal.toGregorianCalendar().getTime();
     }
 
 }
