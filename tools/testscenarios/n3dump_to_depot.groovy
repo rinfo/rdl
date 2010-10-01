@@ -236,7 +236,7 @@ def rewriteLagenNuNTLines(lines) {
 
 
         line = replaceOnce(line, "<${LEGACY_PUBL}", "<${RPUBL}")
-        line = line.replaceAll(/("\d{4}-\d{2}-\d{2}")(@\w+)?/, '$1'+"^^<${XMLSchema.NAMESPACE}date>")
+        line = line.replaceAll(/("\d{4}-\d{2}-\d{2}")[^\^].*/, '$1'+"^^<${XMLSchema.NAMESPACE}date> .")
 
         line = line.replaceAll(/#K(\d+)P/, '#k_$1-p_')
         line = line.replaceAll(/#K(\d+)/, '#k_$1')
