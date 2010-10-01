@@ -27,8 +27,7 @@ class CollectorHandler extends Handler {
         // TODO: verify source of request (or only via loadScheduler.sourceFeedUrls)?
         // TODO: error handling.. (report and/or (public) log)
 
-        def collectScheduler = (FeedCollectScheduler) context.getAttributes().get(
-                MainApplication.COLLECTOR_RUNNER_CONTEXT_KEY)
+        def collectScheduler = ContextAccess.getCollectScheduler(context)
 
         // TODO: pubsubhubbub:
         // if ("publish".equals(POST["hub.mode"]) { ... POST["hub.url"] }

@@ -1,26 +1,15 @@
 package se.lagrummet.rinfo.main.storage
 
-import java.net.URISyntaxException
-
-import javax.xml.namespace.QName
-import javax.xml.datatype.DatatypeFactory
-import javax.xml.datatype.DatatypeConfigurationException
-import javax.xml.datatype.XMLGregorianCalendar
-
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex
 
 import org.apache.abdera.model.Entry
 import org.apache.abdera.model.Feed
+import org.apache.abdera.ext.history.FeedPagingHelper
 
-import org.openrdf.model.ValueFactory
-import org.openrdf.model.URI
-import org.openrdf.model.impl.URIImpl
-import org.openrdf.repository.Repository
 import org.openrdf.repository.RepositoryConnection
 
-import org.openrdf.elmo.ElmoManager
-
-import se.lagrummet.rinfo.base.rdf.RDFUtil
+import se.lagrummet.rinfo.base.rdf.Describer
+import se.lagrummet.rinfo.base.rdf.Description
 
 import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.SourceContent
@@ -36,150 +25,158 @@ import se.lagrummet.rinfo.main.storage.log.*
  */
 class CollectorLogSession {
 
-    private ElmoManager manager
+    Describer describer
 
     private String systemBaseUri
-    private URI entryIsPartOfRdfUri
+    private String entryDatasetUri
 
-    private CollectEvent collectEvent
-    private FeedEvent currentFeedEvent // TODO: don't keep; use it's uri..
+    private Description collectDesc
+    private String currentFeedUri
 
 
-    CollectorLogSession(CollectorLog collectorLog, ElmoManager manager) {
+    CollectorLogSession(CollectorLog collectorLog, RepositoryConnection conn) {
         this.systemBaseUri = collectorLog.getSystemBaseUri()
-        this.entryIsPartOfRdfUri = new URIImpl(collectorLog.getEntryDatasetUri())
-        this.manager = manager
+        this.entryDatasetUri = collectorLog.getEntryDatasetUri()
+        this.describer = newDescriber(conn)
         def collectStartTime = new Date()
-        collectEvent = manager.create(
-                createCollectUri(collectStartTime), CollectEvent)
-        collectEvent.setStart(createXmlGrCal(collectStartTime))
+        collectDesc = describer.newDescription(
+                createCollectUri(collectStartTime), "rc:Collect")
+        collectDesc.addValue("tl:start", dateTime(collectStartTime))
     }
-
-    public ElmoManager getManager() { return manager; }
 
     void close() {
-        manager.close()
+        describer.close()
     }
 
-    void logFeedPageVisit(URL pageUrl, Feed sourceFeed) {
-        def feedUrl = sourceFeed.getSelfLinkResolvedHref() ?: pageUrl
-        def feedId = sourceFeed.id.toURI()
-        def feedTimeCal = createXmlGrCal(sourceFeed.getUpdated())
-        def feedEvent = manager.create(
-                createCollectedFeedUri(feedId, feedTimeCal, pageUrl), FeedEvent)
-        feedEvent.setId(feedId)
-        feedEvent.setUpdated(feedTimeCal)
-        feedEvent.setSelf(new URIImpl(feedUrl.toString()))
-        collectEvent.getViaFeeds().add(feedEvent)
-        // TODO: log isArchive, source, ETag/Modified-Since ...?
-        // TODO: log methods also receive sourceFeed, out rdf should only maintain
-        // the same URI ref, not store all feed statements...
-        currentFeedEvent = feedEvent
-        completeLogEvent()
+
+    void logFeedPageVisit(URL pageUrl, Feed feed) {
+        def feedUrl = feed.getSelfLinkResolvedHref() ?: pageUrl
+        def feedId = feed.id.toURI()
+        def feedUpdated = feed.getUpdated()
+
+        def feedDesc = describer.newDescription(
+                createCollectedFeedUri(feedId, feedUpdated, pageUrl), "awol:Feed")
+
+        feedDesc.addValue("awol:id", feedId)
+        feedDesc.addValue("awol:updated", feedUpdated)
+        collectDesc.addRel("iana:via", feedDesc.about)
+        feedDesc.addRel("iana:self", feedUrl.toString())
+
+        if (FeedPagingHelper.isComplete(feed))
+            feedDesc.addType("ax:CompleteFeed")
+        if (FeedPagingHelper.isArchive(feed))
+            feedDesc.addType("ax:ArchiveFeed")
+
+        if (FeedPagingHelper.getCurrent(feed) != null)
+            feedDesc.addRel("iana:current", FeedPagingHelper.getCurrent(feed).toString())
+        if (FeedPagingHelper.getPreviousArchive(feed) != null)
+            feedDesc.addRel("iana:prev-archive", FeedPagingHelper.getPreviousArchive(feed).toString())
+        if (FeedPagingHelper.getNextArchive(feed) != null)
+            feedDesc.addRel("iana:next-archive", FeedPagingHelper.getNextArchive(feed).toString())
+
+        // TODO: log HTTP headers for ETag/Modified-Since ...?
+        currentFeedUri = feedDesc.about
+        updateCollectInfo()
     }
 
-    void logUpdatedEntry(Feed sourceFeed, Entry sourceEntry,
+    void logUpdatedEntry(Feed sourceFeed, Entry sourceEntry, DepotEntry depotEntry) {
+        def sourceEntryDesc = makeSourceEntryDesc(sourceEntry)
+        def entryDesc = describer.newDescription(null, "awol:Entry")
+        entryDesc.addValue("awol:published", dateTime(depotEntry.getPublished()))
+        entryDesc.addValue("awol:updated", dateTime(depotEntry.getUpdated()))
+        entryDesc.addRel("rx:primarySubject", sourceEntry.getId().toString())
+        entryDesc.addRel("dct:isPartOf", entryDatasetUri)
+        entryDesc.addRel("iana:via", sourceEntryDesc.about)
+        updateCollectInfo()
+    }
+
+    void logDeletedEntry(Feed sourceFeed, URI sourceEntryId, Date sourceEntryDeleted,
             DepotEntry depotEntry) {
-        def sourceEntryEvent = createSourceEntryEvent(sourceEntry)
-        def entryEvent = manager.create(EntryEvent)
-        entryEvent.setPublished(createXmlGrCal(depotEntry.getPublished()))
-        entryEvent.setUpdated(createXmlGrCal(depotEntry.getUpdated()))
-        entryEvent.setPrimarySubject(new URIImpl(sourceEntry.getId().toString()))
-        entryEvent.setIsPartOf(entryIsPartOfRdfUri)
-        entryEvent.setViaEntry(sourceEntryEvent)
-        completeLogEvent()
+        def deleted = describer.newDescription(null, "ov:DeletedEntry")
+        // TODO: record sourceEntryDeleted:
+        //def sourceDeletedEntryDesc = makeSourceDeletedEntryDesc(sourceEntryDeleted)
+        //deleted.addRel("iana:via", sourceDeletedEntryDesc.about)
+        deleted.addRel("rx:primarySubject", sourceEntryId.toString())
+        deleted.addValue("tl:at", dateTime(depotEntry.getUpdated()))
+        deleted.addRel("dct:isPartOf", entryDatasetUri)
+        deleted.addRel("iana:via", currentFeedUri)
+        updateCollectInfo()
     }
 
-    void logDeletedEntry(Feed sourceFeed,
-            java.net.URI sourceEntryId,
-            Date sourceEntryDeleted,
-            DepotEntry depotEntry) {
-        def deleted = manager.create(DeletedEntryEvent)
-        deleted.setPrimarySubject(new URIImpl(sourceEntryId.toString()))
-        // TODO: record sourceEntryDeleted in viaDeletedEntryEvent?
-        deleted.setAt(createXmlGrCal(depotEntry.getUpdated()))
-        deleted.setIsPartOf(entryIsPartOfRdfUri)
-        deleted.setViaFeed(currentFeedEvent)
-        completeLogEvent()
-    }
-
-    void logError(Exception error, Date timestamp,
-            Feed sourceFeed, Entry sourceEntry) {
-        ErrorEvent errorEvent = null
+    void logError(Exception error, Date timestamp, Feed sourceFeed, Entry sourceEntry) {
+        Description errorDesc = null
         if (error instanceof SourceCheckException) {
             if (error.failedCheck == SourceContent.Check.MD5) {
-                errorEvent = manager.create(ChecksumErrorEvent)
+                errorDesc = describer.newDescription(null, "rc:ChecksumError")
                 // FIXME: now, we need to handle checks per source
                 // in *collector*, not in SourceContent
                 def src = (RemoteSourceContent) error.sourceContent
-                errorEvent.setDocument(src.urlPath)
+                errorDesc.addValue("rc:document", src.urlPath)
                 //def documentInfo = "type=${src.mediaType};lang=${src.lang};slug=${src.enclosedUriPath}"
-                errorEvent.setGivenMd5(error.givenValue)
-                errorEvent.setComputedMd5(error.realValue)
+                errorDesc.addValue("rc:givenMd5", error.givenValue)
+                errorDesc.addValue("rc:computedMd5", error.realValue)
             }
             // TODO: length
         } else if (error instanceof IdentifyerMismatchException) {
-            errorEvent = manager.create(IdentifyerErrorEvent)
-            errorEvent.setGivenUri(error.givenUri)
-            errorEvent.setComputedUri(error.computedUri)
+            errorDesc = describer.newDescription(null, "rc:IdentifyerError")
+            errorDesc.addValue("rc:givenUri", error.givenUri)
+            errorDesc.addValue("rc:computedUri", error.computedUri)
         }
-        if (errorEvent == null) {
-            errorEvent = manager.create(ErrorEvent)
-            errorEvent.setValue(error.getMessage())
+        if (errorDesc == null) {
+            errorDesc = describer.newDescription(null, "rc:Error")
+            errorDesc.addValue("rdf:value", error.getMessage() ?: "[empty error message]")
         }
-        errorEvent.setAt(createXmlGrCal(new Date()))
-        def sourceEntryEvent = createSourceEntryEvent(sourceEntry)
-        errorEvent.setViaEntry(sourceEntryEvent)
+        errorDesc.addValue("tl:at", dateTime(new Date()))
+        def sourceEntryDesc = makeSourceEntryDesc(sourceEntry)
+        errorDesc.addValue("iana:via", sourceEntryDesc)
     }
 
-    private EntryEvent createSourceEntryEvent(sourceEntry) {
-        def sourceEntryEvent = manager.create(EntryEvent)
-        sourceEntryEvent.setId(sourceEntry.getId().toURI())
-        sourceEntryEvent.setUpdated(createXmlGrCal(sourceEntry.getUpdated()))
+    private Description makeSourceEntryDesc(sourceEntry) {
+        def sourceEntryDesc = describer.newDescription(null, "awol:Entry")
+        sourceEntryDesc.addValue("awol:id", sourceEntry.getId().toURI())
+        sourceEntryDesc.addValue("awol:updated", dateTime(sourceEntry.getUpdated()))
         // TODO: setSourceRef(createCollectedFeedUri(sourceFeed)) for serializ.
-        sourceEntryEvent.setSource(currentFeedEvent)
-        return sourceEntryEvent
-    }
-
-    // TODO: polish these {{{
-    XMLGregorianCalendar createXmlGrCal(Date time) {
-        GregorianCalendar grCal = new GregorianCalendar(
-                TimeZone.getTimeZone("GMT"));
-        grCal.setTime(time);
-        return DatatypeFactory.newInstance().newXMLGregorianCalendar(grCal);
-    }
-
-    QName createCollectUri(date) {
-        return new QName(systemBaseUri, "event/collect/${date}")
-    }
-
-    QName createCollectedFeedUri(id, updated, url) {
-        def token = md5Hex(id.toString()+'@'+updated.toString()+'/'+url.toString())
-        return new QName(systemBaseUri, "collect/${token}")
-    }
-
-    URI qnameToURI(QName qname) {
-        return new URIImpl(qname.getNamespaceURI() + qname.getLocalPart())
+        sourceEntryDesc.addValue("awol:source", currentFeedUri)
+        return sourceEntryDesc
     }
 
     // TODO: (optional) save *each* log method RDF to file
     // - requires init to make a dir for current collect
-    void completeLogEvent() {
-        collectEvent.setEnd(createXmlGrCal(new Date()))
-        /*
-        def repo = manager.repository
-        def conn = repo.connection
-        def ns = conn.&setNamespace
-        ns("xsd", "http://www.w3.org/2001/XMLSchema#")
-        ns("dct", "http://purl.org/dc/terms/")
-        ns("awol", "http://bblfish.net/work/atom-owl/2006-06-06/#")
-        ns("iana", "http://www.iana.org/assignments/relation/")
-        ns("tl", "http://purl.org/NET/c4dm/timeline.owl#")
-        ns("rc", "http://rinfo.lagrummet.se/ns/2008/10/collector#")
-        conn.close()
-        RDFUtil.serialize(repo, "application/rdf+xml", System.out)
-        */
+    void updateCollectInfo() {
+        collectDesc.remove("tl:end")
+        collectDesc.addValue("tl:end", dateTime(new Date()))
     }
-    // }}}
+
+
+    String createCollectUri(Date date) {
+        String w3cDate = describer.toLiteral(dateTime(date)).stringValue()
+        return "${systemBaseUri}log/collect/${w3cDate}"
+    }
+
+    String createCollectedFeedUri(id, Date updated, url) {
+        String w3cDate = describer.toLiteral(dateTime(updated)).stringValue()
+        def token = md5Hex(id.toString() + '@'+w3cDate + '/' + url.toString())
+        return "${systemBaseUri}log/collect/${token}"
+    }
+
+    GregorianCalendar dateTime(Date time) {
+        GregorianCalendar grCal = new GregorianCalendar(
+                TimeZone.getTimeZone("GMT"));
+        grCal.setTime(time);
+        return grCal;
+    }
+
+    protected Describer newDescriber(conn) {
+        def desc = new Describer(conn, true)
+        return desc.setPrefix("dct", "http://purl.org/dc/terms/").
+            //setPrefix("prv", "http://purl.org/net/provenance/ns#")
+            setPrefix("awol", "http://bblfish.net/work/atom-owl/2006-06-06/#").
+            setPrefix("iana", "http://www.iana.org/assignments/relation/").
+            setPrefix("tl", "http://purl.org/NET/c4dm/timeline.owl#").
+            setPrefix("rx", "http://www.w3.org/2008/09/rx#").
+            setPrefix("ax", "http://buzzword.org.uk/rdf/atomix#").
+            setPrefix("ov", "http://open.vocab.org/terms/").
+            setPrefix("rc", "http://rinfo.lagrummet.se/ns/2008/10/collector#")
+    }
 
 }

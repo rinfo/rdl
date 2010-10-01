@@ -20,8 +20,6 @@ import se.lagrummet.rinfo.store.supply.DepotFinder
 class MainApplication extends Application {
 
     public static final String CONFIG_FILE_NAME = "config.xml"
-    public static final String COLLECTOR_RUNNER_CONTEXT_KEY =
-            "rinfo.main.collector.restlet.context"
 
     Components components
 
@@ -29,8 +27,8 @@ class MainApplication extends Application {
         super(context)
         def configBuilder = new DefaultConfigurationBuilder(CONFIG_FILE_NAME)
         components = new Components(configBuilder.getConfiguration())
-        getContext().getAttributes().putIfAbsent(
-                COLLECTOR_RUNNER_CONTEXT_KEY, components.getCollectScheduler())
+        ContextAccess.setCollectScheduler(getContext(), components.getCollectScheduler())
+        ContextAccess.setCollectorLog(getContext(), components.getCollectorLog())
     }
 
     @Override
@@ -38,6 +36,8 @@ class MainApplication extends Application {
         def router = new Router(getContext())
         router.attach("/collector",
                 new Finder(getContext(), CollectorHandler))
+        router.attach("/system/log/",
+                new Finder(getContext(), CollectorLogResource))
         router.attachDefault(
                 new DepotFinder(getContext(), components.getStorage().getDepot()))
         return router
