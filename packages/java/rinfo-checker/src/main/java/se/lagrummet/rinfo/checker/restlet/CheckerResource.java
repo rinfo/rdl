@@ -17,13 +17,9 @@ import javax.xml.transform.stream.StreamSource;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLFilter;
 
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
-
 import org.openrdf.repository.Repository;
 
 import org.restlet.*;
-import org.restlet.data.Protocol;
 import org.restlet.data.*;
 import org.restlet.resource.InputRepresentation;
 import org.restlet.resource.Representation;
