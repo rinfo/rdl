@@ -83,8 +83,12 @@ def groupTriplesByLeadingUri(triplesFile) {
 
 def ntStringtoRepo(ntStr) {
     def repo = RDFUtil.createMemoryRepository()
-    RDFUtil.loadDataFromStream(repo,
-            new ByteArrayInputStream(ntStr.getBytes("utf-8")), "", "text/plain")
+    try {
+        RDFUtil.loadDataFromStream(repo,
+                new ByteArrayInputStream(ntStr.getBytes("utf-8")), "", "text/plain")
+    } catch (Exception e) {
+        throw new RuntimeException("Error when making RDF of string: " + ntStr, e);
+    }
     return repo
 }
 
