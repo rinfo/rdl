@@ -39,11 +39,16 @@ class CollectorLogResource extends Resource {
             Feed feed = Abdera.getInstance().newFeed()
             try {
                 for (collect in logSession.describer.ofType("rc:Collect")) {
-                    //if (collect.getRel("iana:self").equals(collect.getRel("iana:current")))
                     Entry entry = feed.addEntry()
                     entry.setUpdated(collect.getNative("tl:end"))
                     entry.setPublished(collect.getNative("tl:start"))
-                    entry.setId(collect.getAbout())//.replace(' ', '+'))
+                    entry.setId(collect.getAbout())
+                    entry.setTitle(collect.getAbout() + "@" + collect.getValue("tl:end"))
+                    for (via in collect.getRels("iana:via")) {
+                        //if (via.getRel("iana:self").equals(via.getRel("iana:current")))
+                        entry.addLink(via.getAbout(),
+                                "enclosure", "application/rdf+xml", null, null, -1)
+                    }
                 }
             } finally {
                 logSession.close()

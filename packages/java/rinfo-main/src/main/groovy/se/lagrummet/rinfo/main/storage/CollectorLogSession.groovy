@@ -38,10 +38,6 @@ class CollectorLogSession {
         this.systemBaseUri = collectorLog.getSystemBaseUri()
         this.entryDatasetUri = collectorLog.getEntryDatasetUri()
         this.describer = newDescriber(conn)
-        def collectStartTime = new Date()
-        collectDesc = describer.newDescription(
-                createCollectUri(collectStartTime), "rc:Collect")
-        collectDesc.addValue("tl:start", dateTime(collectStartTime))
     }
 
     void close() {
@@ -50,6 +46,13 @@ class CollectorLogSession {
 
 
     void logFeedPageVisit(URL pageUrl, Feed feed) {
+        if (collectDesc == null) {
+            def collectStartTime = new Date()
+            collectDesc = describer.newDescription(
+                    createCollectUri(collectStartTime), "rc:Collect")
+            collectDesc.addValue("tl:start", dateTime(collectStartTime))
+        }
+
         def feedUrl = feed.getSelfLinkResolvedHref() ?: pageUrl
         def feedId = feed.id.toURI()
         def feedUpdated = feed.getUpdated()
@@ -57,9 +60,10 @@ class CollectorLogSession {
         def feedDesc = describer.newDescription(
                 createCollectedFeedUri(feedId, feedUpdated, pageUrl), "awol:Feed")
 
+        collectDesc.addRel("iana:via", feedDesc.about)
+
         feedDesc.addValue("awol:id", feedId)
         feedDesc.addValue("awol:updated", feedUpdated)
-        collectDesc.addRel("iana:via", feedDesc.about)
         feedDesc.addRel("iana:self", feedUrl.toString())
 
         if (FeedPagingHelper.isComplete(feed))
