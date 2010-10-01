@@ -51,6 +51,7 @@ env.roledefs = {
 from targetenvs import *
 from sysconf import *
 from servertools import *
+from deploy.demodata import *
 from deploy.rinfo_main import *
 from deploy.rinfo_admin import *
 from deploy.rinfo_service import *
