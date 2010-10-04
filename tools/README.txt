@@ -14,8 +14,14 @@ Running Groovy outside of Maven
 Option A: Use Groovy's Grape With Local Maven Repo
 ------------------------------------------------------------------------
 
-Groovy's dependency mechanism (using ``@Grab``) annotations can be used with
-your local Maven repository. To do this, locate the file:
+Groovy's dependency mechanism (using ``@Grab`` annotations) can be used with
+your local Maven repository.
+
+The instructions below should make your locally installed dependencies
+locatable (provided that you have ``mvn install``:ed your packages; see
+<packages/java/README.txt>).
+
+To do this, locate the file:
 
     <$HOME/.groovy/grapeConfig.xml>
 
@@ -29,15 +35,27 @@ Then add, directly after ``ivysettings/settings``, the following directive::
 
     <caches useOrigin="true"/>
 
-And, in ``/ivysettings/resolvers/chain``, before the first ``filesystem``, add::
+And, in ``/ivysettings/resolvers/chain``, (before or after the first ``filesystem``), add::
 
+    <filesystem name="local-maven2" m2compatible="true">
+        <ivy pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision].pom"/>
+        <artifact pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
+    </filesystem>
+
+
+**NOTE**: there is a simpler declaration for using your local maven repo (which
+is described in the link above). However, this **does not take updated
+SNAPSHOTs into consideration**::
+
+    <!-- Don't use this; it does not take updated SNAPSHOTs into consideration.
     <ibiblio name="local" root="file:${user.home}/.m2/repository/" m2compatible="true"/>
+    -->
 
-The path in the root property above should match the location for your local
-maven repository. You may have changed that from the default home directory.
+(The path expressed as ``${user.home}/.m2/repository/`` above *should* match
+the location for your local maven repository. You may have changed that from
+the default home directory.)
 
-That should make all Maven dependencies locatable (provided that you have ``mvn
-install``:ed your packages; see <packages/java/README.txt>).
+That's it!
 
 
 Option B: Use A Pathing Jar
@@ -88,7 +106,7 @@ Obtaining the Fonts
 Windows
 ~~~~~~~~~~
 
-Copy the fonts named above from "C:\WINDOWS\FONTS\"
+Copy the fonts named above from ``C:\WINDOWS\FONTS\``
 
 Mac OS X
 ~~~~~~~~
@@ -109,3 +127,4 @@ For testing purposes you may use Times instead of Garamond::
     cp "/Library/Fonts/Times New Roman.ttf" fonts/gara.ttf
     cp "/Library/Fonts/Times New Roman Bold.ttf" fonts/garabd.ttf
     cp "/Library/Fonts/Times New Roman Italic.ttf" fonts/garait.ttf
+
