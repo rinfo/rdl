@@ -10,12 +10,11 @@ import org.openrdf.repository.RepositoryConnection
 
 import se.lagrummet.rinfo.base.rdf.Describer
 import se.lagrummet.rinfo.base.rdf.Description
+import se.lagrummet.rinfo.base.rdf.RDFLiteral
 
 import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.SourceContent
 import se.lagrummet.rinfo.store.depot.SourceCheckException
-
-import se.lagrummet.rinfo.main.storage.log.*
 
 
 /**
@@ -25,46 +24,44 @@ import se.lagrummet.rinfo.main.storage.log.*
  */
 class CollectorLogSession {
 
-    Describer describer
-
-    private String systemBaseUri
+    private String collectedLogsBaseUri
     private String entryDatasetUri
+    private RepositoryConnection conn
 
+    // TODO: wrap in CurrentState..
+    Describer describer
     private Description collectDesc
     private String currentFeedUri
 
 
     CollectorLogSession(CollectorLog collectorLog, RepositoryConnection conn) {
-        this.systemBaseUri = collectorLog.getSystemBaseUri()
+        this.collectedLogsBaseUri = collectorLog.getSystemBaseUri() + "log/collect"
         this.entryDatasetUri = collectorLog.getEntryDatasetUri()
-        this.describer = newDescriber(conn)
+        this.conn = conn
     }
 
     void close() {
-        describer.close()
+        conn.close()
     }
 
-
     void logFeedPageVisit(URL pageUrl, Feed feed) {
+        def feedId = feed.id.toString()
+
         if (collectDesc == null) {
-            def collectStartTime = new Date()
-            collectDesc = describer.newDescription(
-                    createCollectUri(collectStartTime), "rc:Collect")
-            collectDesc.addValue("tl:start", dateTime(collectStartTime))
+            initializeCollect(feedId)
         }
 
-        def feedUrl = feed.getSelfLinkResolvedHref() ?: pageUrl
-        def feedId = feed.id.toURI()
+        def feedUrl = (feed.getSelfLinkResolvedHref() ?: pageUrl).toString()
         def feedUpdated = feed.getUpdated()
 
         def feedDesc = describer.newDescription(
-                createCollectedFeedUri(feedId, feedUpdated, pageUrl), "awol:Feed")
+                createCollectedFeedUri(feedId, feedUpdated, pageUrl.toString()), "awol:Feed")
 
         collectDesc.addRel("iana:via", feedDesc.about)
 
         feedDesc.addValue("awol:id", feedId)
         feedDesc.addValue("awol:updated", feedUpdated)
-        feedDesc.addRel("iana:self", feedUrl.toString())
+        feedDesc.addRel("iana:self", feedUrl)
 
         if (FeedPagingHelper.isComplete(feed))
             feedDesc.addType("ax:CompleteFeed")
@@ -80,8 +77,40 @@ class CollectorLogSession {
 
         // TODO: log HTTP headers for ETag/Modified-Since ...?
         currentFeedUri = feedDesc.about
+
         updateCollectInfo()
     }
+
+    void initializeCollect(String feedId) {
+        // TODO:? resdesign to save collect and *each page* results as RDF to file
+        // - requires init to make a dir for current collect
+
+        def desc = newDescriber(false)
+        // wipe old (collectContextUri AND related feedPageCtxts)..
+        def deletedOldCollect = false
+        for (feedAbout in desc.subjectUrisByValue("awol:id", feedId)) {
+            if (!deletedOldCollect) {
+                for (oldCollectUri in desc.subjectUris("iana:via", feedAbout)) {
+                    conn.clear(desc.toRef(oldCollectUri))
+                    deletedOldCollect = true
+                    break
+                }
+            }
+            // TODO: feeds are not yet in own contexts
+            //conn.clear(desc.toRef(feedAbout))
+        }
+        def startTime = new Date()
+        def collectUri = createCollectUri(feedId, startTime)
+        describer = newDescriber(collectUri)
+        collectDesc = describer.newDescription(collectUri, "rc:Collect")
+        collectDesc.addValue("tl:start", dateTime(startTime))
+    }
+
+    void updateCollectInfo() {
+        collectDesc.remove("tl:end")
+        collectDesc.addValue("tl:end", dateTime(new Date()))
+    }
+
 
     void logUpdatedEntry(Feed sourceFeed, Entry sourceEntry, DepotEntry depotEntry) {
         def sourceEntryDesc = makeSourceEntryDesc(sourceEntry)
@@ -110,10 +139,10 @@ class CollectorLogSession {
     void logError(Exception error, Date timestamp, Feed sourceFeed, Entry sourceEntry) {
         Description errorDesc = null
         if (error instanceof SourceCheckException) {
+            // TODO: we should change current check procedure per source
+            // to *collector*, (from current use in SourceContent)
             if (error.failedCheck == SourceContent.Check.MD5) {
                 errorDesc = describer.newDescription(null, "rc:ChecksumError")
-                // FIXME: now, we need to handle checks per source
-                // in *collector*, not in SourceContent
                 def src = (RemoteSourceContent) error.sourceContent
                 errorDesc.addValue("rc:document", src.urlPath)
                 //def documentInfo = "type=${src.mediaType};lang=${src.lang};slug=${src.enclosedUriPath}"
@@ -139,39 +168,33 @@ class CollectorLogSession {
         def sourceEntryDesc = describer.newDescription(null, "awol:Entry")
         sourceEntryDesc.addValue("awol:id", sourceEntry.getId().toURI())
         sourceEntryDesc.addValue("awol:updated", dateTime(sourceEntry.getUpdated()))
-        // TODO: setSourceRef(createCollectedFeedUri(sourceFeed)) for serializ.
-        sourceEntryDesc.addValue("awol:source", currentFeedUri)
+        sourceEntryDesc.addRel("awol:source", currentFeedUri)
         return sourceEntryDesc
     }
 
-    // TODO: (optional) save *each* log method RDF to file
-    // - requires init to make a dir for current collect
-    void updateCollectInfo() {
-        collectDesc.remove("tl:end")
-        collectDesc.addValue("tl:end", dateTime(new Date()))
+
+    String createCollectUri(String feedId, Date date) {
+        def timestamp = RDFLiteral.parseValue(dateTime(date)).toString()
+        def token = md5Hex(feedId + '@' + timestamp)
+        return "${collectedLogsBaseUri}/${token}"
     }
 
-
-    String createCollectUri(Date date) {
-        String w3cDate = describer.toLiteral(dateTime(date)).stringValue()
-        return "${systemBaseUri}log/collect/${w3cDate}"
-    }
-
-    String createCollectedFeedUri(id, Date updated, url) {
-        String w3cDate = describer.toLiteral(dateTime(updated)).stringValue()
-        def token = md5Hex(id.toString() + '@'+w3cDate + '/' + url.toString())
-        return "${systemBaseUri}log/collect/${token}"
+    String createCollectedFeedUri(String feedId, Date updated, String url) {
+        def timestamp = RDFLiteral.parseValue(dateTime(updated)).toString()
+        def token = md5Hex(feedId + '@'+timestamp + '/' + url)
+        return "${collectedLogsBaseUri}/feed/${token}"
     }
 
     GregorianCalendar dateTime(Date time) {
-        GregorianCalendar grCal = new GregorianCalendar(
-                TimeZone.getTimeZone("GMT"));
-        grCal.setTime(time);
-        return grCal;
+        return RDFLiteral.toGCal(time, "GMT");
     }
 
-    protected Describer newDescriber(conn) {
-        def desc = new Describer(conn, true)
+    protected Describer newDescriber(String... contexts) {
+        return newDescriber(true, contexts)
+    }
+
+    protected Describer newDescriber(boolean storePrefixes, String... contexts) {
+        def desc = new Describer(conn, storePrefixes, contexts)
         return desc.setPrefix("dct", "http://purl.org/dc/terms/").
             //setPrefix("prv", "http://purl.org/net/provenance/ns#")
             setPrefix("awol", "http://bblfish.net/work/atom-owl/2006-06-06/#").

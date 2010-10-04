@@ -13,6 +13,7 @@ import org.restlet.data.Request
 import org.restlet.data.Response
 import org.restlet./*resource.*/Finder
 import org.restlet./*routing.*/Router
+import static org.restlet.util.Template.MODE_EQUALS
 
 import se.lagrummet.rinfo.store.supply.DepotFinder
 
@@ -37,7 +38,11 @@ class MainApplication extends Application {
         router.attach("/collector",
                 new Finder(getContext(), CollectorHandler))
         router.attach("/system/log/",
-                new Finder(getContext(), CollectorLogResource))
+                new Finder(getContext(), LogListResource)).setMatchingMode(MODE_EQUALS)
+        router.attach("/system/log/collect/{feedIdAtDateTime}",
+                new Finder(getContext(), CollectResource))
+        //router.attach("/system/log/collect/feed/{feedPageUrlAtDateTime}",
+        //        new Finder(getContext(), CollectedFeedPageResource))
         router.attachDefault(
                 new DepotFinder(getContext(), components.getStorage().getDepot()))
         return router
