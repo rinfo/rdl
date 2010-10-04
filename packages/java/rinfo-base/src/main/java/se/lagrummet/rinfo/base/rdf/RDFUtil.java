@@ -154,13 +154,13 @@ public class RDFUtil {
     }
 
     public static void serialize(Repository repo, String mediaType,
-            OutputStream outStream)
+            OutputStream outStream, Resource... contexts)
             throws RDFHandlerException, RepositoryException, IOException {
-        serialize(repo, mediaType, outStream, false);
+        serialize(repo, mediaType, outStream, false, contexts);
     }
 
     public static void serialize(Repository repo, String mediaType,
-            OutputStream outStream, boolean pretty)
+            OutputStream outStream, boolean pretty, Resource... contexts)
             throws RDFHandlerException, RepositoryException, IOException {
         RDFFormat format = RDFFormat.forMIMEType(mediaType);
         RDFWriter writer = null;
@@ -174,7 +174,7 @@ public class RDFUtil {
         try {
             RepositoryConnection conn = repo.getConnection();
             try {
-                conn.exportStatements(null, null, null, false, writer);
+                conn.export(writer, contexts);
             } finally {
                 conn.close();
             }
@@ -185,17 +185,18 @@ public class RDFUtil {
         }
     }
 
-    public static InputStream toInputStream(Repository repo, String mediaType)
+    public static InputStream toInputStream(Repository repo, String mediaType,
+            Resource... contexts)
             throws IOException, RepositoryException, RDFHandlerException {
         return toInputStream(repo, mediaType, false);
     }
 
     public static InputStream toInputStream(Repository repo, String mediaType,
-            boolean pretty)
+            boolean pretty, Resource... contexts)
             throws IOException, RepositoryException, RDFHandlerException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
-            serialize(repo, mediaType, outStream, pretty);
+            serialize(repo, mediaType, outStream, pretty, contexts);
         } finally {
             outStream.close();
         }

@@ -1,9 +1,5 @@
 package se.lagrummet.rinfo.base.rdf;
 
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import java.util.*;
 
 import org.openrdf.repository.RepositoryConnection;
@@ -25,19 +21,24 @@ public class Describer {
 
     RepositoryConnection conn;
     ValueFactory vf;
+    Resource[] contextRefs;
 
     Map<String, String> prefixes = new HashMap<String, String>();
-    boolean storePrefixes = true;
+    boolean storePrefixes = false;
     boolean inferred = false;
 
-    public Describer(RepositoryConnection conn) {
-        this(conn, true);
+    public Describer(RepositoryConnection conn, String... contexts) {
+        this(conn, false, contexts);
     }
 
-    public Describer(RepositoryConnection conn, boolean storePrefixes) {
+    public Describer(RepositoryConnection conn, boolean storePrefixes, String... contexts) {
         this.conn = conn;
         this.storePrefixes = storePrefixes;
         this.vf = conn.getValueFactory();
+        this.contextRefs = new Resource[contexts.length];
+        for (int i=0; i < contexts.length; i++) {
+            this.contextRefs[i] = toRef(contexts[i]);
+        }
         setPrefix("rdf", RDF.NAMESPACE);
         setPrefix("rdfs", RDFS.NAMESPACE);
         setPrefix("owl", OWL.NAMESPACE);
@@ -53,7 +54,11 @@ public class Describer {
     }
 
     public String getPrefix(String prefix) {
-        return prefixes.get(prefix);
+        String uri = prefixes.get(prefix);
+        if (uri == null) {
+            throw new NullPointerException("Undefined prefix: " + prefix);
+        }
+        return uri;
     }
     public Describer setPrefix(String prefix, String uri) {
         prefixes.put(prefix, uri);
@@ -97,7 +102,7 @@ public class Describer {
 
     public List<Description> subjects(String pCurie, String oUri) {
         List<Description> things = new ArrayList<Description>();
-        for (Object ref : subjectValues(pCurie, oUri)) {
+        for (Object ref : subjectUris(pCurie, oUri)) {
             things.add(newDescription((String) ref));
         }
         return things;
@@ -105,7 +110,7 @@ public class Describer {
 
     public List<Description> objects(String sUri, String pCurie) {
         List<Description> things = new ArrayList<Description>();
-        for (Object ref : objectValues(sUri, pCurie)) {
+        for (Object ref : objectUris(sUri, pCurie)) {
             things.add(newDescription((String) ref));
         }
         return things;
@@ -116,12 +121,22 @@ public class Describer {
     }
 
 
-    public List<Object> subjectValues(String pCurie, String oUri) {
+    public List<Object> subjectUris(String pCurie, String oUri) {
+        Value o = (oUri != null)? toRef(oUri) : null;
+        return subjectUrisByObject(pCurie, o);
+    }
+
+    public List<Object> subjectUrisByValue(String pCurie, Object value) {
+        Value o = (value != null)? toLiteral(value) : null;
+        return subjectUrisByObject(pCurie, o);
+    }
+
+    protected List<Object> subjectUrisByObject(String pCurie, Value o) {
         org.openrdf.model.URI p = (pCurie != null)?
                 (org.openrdf.model.URI) toRef(expandCurie(pCurie)) : null;
-        Value o = (oUri != null)? toRef(oUri) : null;
         try {
-            RepositoryResult<Statement> stmts = conn.getStatements(null, p, o, inferred);
+            RepositoryResult<Statement> stmts = conn.getStatements(null, p, o,
+                    inferred, contextRefs);
             List<Object> values = new ArrayList<Object>();
             while (stmts.hasNext()) {
                 values.add(castValue(stmts.next().getSubject()));
@@ -133,12 +148,14 @@ public class Describer {
         }
     }
 
-    public List<Object> objectValues(String sUri, String pCurie) {
+
+    public List<Object> objectUris(String sUri, String pCurie) {
         Resource s = (sUri != null)? toRef(sUri) : null;
         org.openrdf.model.URI p = (pCurie != null)?
                 (org.openrdf.model.URI) toRef(expandCurie(pCurie)) : null;
         try {
-            RepositoryResult<Statement> stmts = conn.getStatements(s, p, null, inferred);
+            RepositoryResult<Statement> stmts = conn.getStatements(s, p, null,
+                    inferred, contextRefs);
             List<Object> values = new ArrayList<Object>();
             while (stmts.hasNext()) {
                 values.add(castValue(stmts.next().getObject()));
@@ -172,44 +189,11 @@ public class Describer {
             return ref.stringValue();
     }
 
-    Value toLiteral(Object value) {
-        if (value instanceof Boolean) {
-            return vf.createLiteral((Boolean) value);
-        } else if (value instanceof Byte) {
-            return vf.createLiteral((Byte) value);
-        } else if (value instanceof Double) {
-            return vf.createLiteral((Double) value);
-        } else if (value instanceof Float) {
-            return vf.createLiteral((Float) value);
-        } else if (value instanceof Integer) {
-            return vf.createLiteral((Integer) value);
-        } else if (value instanceof Long) {
-            return vf.createLiteral((Long) value);
-        } else if (value instanceof Short) {
-            return vf.createLiteral((Short) value);
-        } else {
-            if (value instanceof Date) {
-                GregorianCalendar gregCal = new GregorianCalendar(
-                        TimeZone.getTimeZone("GMT"));
-                gregCal.setTime((Date) value);
-                value = gregCal;
-            }
-            if (value instanceof GregorianCalendar) {
-                try {
-                    value = DatatypeFactory.newInstance().newXMLGregorianCalendar(
-                            (GregorianCalendar) value);
-                } catch (DatatypeConfigurationException e) {
-                    throw new DescriptionException(e);
-                }
-            }
-            if (value instanceof XMLGregorianCalendar) {
-                return vf.createLiteral((XMLGregorianCalendar) value);
-            }
-        }
-        return vf.createLiteral(value.toString());
+    Literal toLiteral(Object value) {
+        return RDFLiteral.toRDFApiLiteral(vf, value);
     }
 
-    Value toLiteral(String value, String langOrDatatype) {
+    Literal toLiteral(String value, String langOrDatatype) {
         if (langOrDatatype.startsWith("@"))
             return vf.createLiteral(value, langOrDatatype.substring(1));
         else
@@ -247,7 +231,7 @@ public class Describer {
 
     void add(Resource s, Value p, Value o) {
         try {
-            conn.add(s, (org.openrdf.model.URI)p, o);
+            conn.add(s, (org.openrdf.model.URI)p, o, contextRefs);
         } catch (RepositoryException e) {
             throw new DescriptionException(e);
         }
@@ -264,7 +248,7 @@ public class Describer {
 
     void remove(Resource s, Value p, Value o) {
         try {
-            conn.remove(s, (org.openrdf.model.URI)p, o);
+            conn.remove(s, (org.openrdf.model.URI)p, o, contextRefs);
         } catch (RepositoryException e) {
             throw new DescriptionException(e);
         }

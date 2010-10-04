@@ -40,9 +40,9 @@ public class Description {
         return (values.size() != 0)? (RDFLiteral) values.get(0) : null;
     }
 
-    // TODO: consolidate with describer.objectValues and make getValues/getLiterals/getUris...
+    // TODO: consolidate with describer.objectUris and make getValues/getLiterals/getUris...
     public List<Object> getObjectValues(String curie) {
-        return describer.objectValues(about, curie);
+        return describer.objectUris(about, curie);
     }
 
     public String getUri(String curie) {

@@ -30,16 +30,16 @@ class DescriberSpec extends Specification {
         def describer = newDescriber()
 
         when: "we make a lot of statements"
-        def p = describer.newDescription("$ORG_URI/persons/some_body#person")
+        def p = describer.newDescription("${ORG_URI}/persons/some_body#person")
         p.addType("foaf:Person")
         p.addValue("foaf:name", "Some Body")
         p.addValue("foaf:firstName", "Some")
         p.addValue("foaf:surname", "Body")
-        p.addRel("foaf:homepage", "$ORG_URI/persons/some_body")
+        p.addRel("foaf:homepage", "${ORG_URI}/persons/some_body")
         p.addValue("rdfs:comment", "I am somebody.", "@en")
-        def img = p.addRel("foaf:depiction", "$ORG_URI/img/some_body.png")
+        def img = p.addRel("foaf:depiction", "${ORG_URI}/img/some_body.png")
         img.addType("foaf:Image")
-        img.addRel("foaf:thumbnail", "$ORG_URI/img/some_body-64x64.png")
+        img.addRel("foaf:thumbnail", "${ORG_URI}/img/some_body-64x64.png")
         def cv = p.addRev("cv:aboutPerson")
         cv.addType("cv:CV")
         def work1 = cv.addRel("cv:hasWorkHistory")
@@ -51,7 +51,7 @@ class DescriberSpec extends Specification {
         //
         //def writer = new org.openrdf.rio.rdfxml.util.RDFXMLPrettyWriter(System.out)
         //def writer = new org.openrdf.rio.n3.N3Writer(System.out)
-        //conn.exportStatements(null, null, null, false, writer)
+        //conn.export(writer)
 
         then: "we can find the added data"
         p.about == "http://example.org/persons/some_body#person"
@@ -68,8 +68,8 @@ class DescriberSpec extends Specification {
         given:
         def describer = newDescriber()
         def personUris = [
-            "$ORG_URI/persons/some_body#person_1",
-            "$ORG_URI/persons/some_body#person_2"
+            "${ORG_URI}/persons/some_body#person_1",
+            "${ORG_URI}/persons/some_body#person_2"
         ]
         when:
         personUris.each {
@@ -82,14 +82,13 @@ class DescriberSpec extends Specification {
     def "should find subjects and objects"() {
         given:
         def describer = newDescriber()
-        def s = "$ORG_URI/persons/some_body#person"
-        def o = "$ORG_URI/img/some_body.png"
+        def s = "${ORG_URI}/persons/some_body#person"
+        def o = "${ORG_URI}/img/some_body.png"
 
-        when: "a relation is added"
-        def p = describer.newDescription(s)
-        p.addRel("foaf:depiction", o)
+        and: "a relation"
+        describer.newDescription(s).addRel("foaf:depiction", o)
 
-        then: "subject and object are found via the added relation"
+        expect: "subject and object are found via the added relation"
         describer.subjects("foaf:depiction", o).collect { it.about } == [s]
         describer.objects(s, "foaf:depiction").collect { it.about } == [o]
 
@@ -100,6 +99,19 @@ class DescriberSpec extends Specification {
         and: "there is only one of each"
         describer.subjects(null, null).collect { it.about } == [s]
         describer.objects(null, null).collect { it.about } == [o]
+    }
+
+    def "should find subject URIs by value"() {
+        given:
+        def describer = newDescriber()
+        def s = "${ORG_URI}/persons/some_body#person"
+        def prop = "foaf:name"
+        def v = "Some Body"
+        and:
+        describer.newDescription(s).addValue(prop, v)
+
+        expect:
+        describer.subjectUrisByValue(prop, v) == [s]
     }
 
     def "should created typed description"() {
@@ -152,7 +164,7 @@ class DescriberSpec extends Specification {
         def describer = newDescriber()
         def p = describer.newDescription()
         p.addValue("foaf:name", "Some Body")
-        p.addRel("foaf:depiction", "$ORG_URI/img/some_body.png")
+        p.addRel("foaf:depiction", "${ORG_URI}/img/some_body.png")
 
         expect:
         p.getValue("foaf:name")
@@ -170,15 +182,69 @@ class DescriberSpec extends Specification {
 
     }
 
+    def "should only work in provided contexts"() {
+        given:
+        def ctx1 = "http://example.org/ctx/1"
+        def ctx2 = "http://example.org/ctx/2"
+        def about = "${ORG_URI}/persons/some_body#person"
+        def name = "Some Body"
+        def descriptionIn = { uri, ctx -> newDescriber(ctx).newDescription(uri) }
+
+        when:
+        descriptionIn(about, ctx1).addValue("foaf:name", name)
+        then: "added data should be visible from this context"
+        descriptionIn(about, ctx1).getValue("foaf:name") == name
+        and: "not from any other context"
+        descriptionIn(about, ctx2).getValue("foaf:name") == null
+        and: "visible without given context"
+        newDescriber().newDescription(about).getValue("foaf:name") == name
+
+        when: "removing from other context"
+        descriptionIn(about, ctx2).remove("foaf:name")
+        then: "data should remain in first context"
+        descriptionIn(about, ctx1).getValue("foaf:name") == name
+
+        when: "removing from context"
+        descriptionIn(about, ctx1).remove("foaf:name")
+        then: "it is removed"
+        descriptionIn(about, ctx1).getValue("foaf:name") == null
+        and: "from everywhere"
+        newDescriber().newDescription(about).getValue("foaf:name") == null
+
+        when: "re-adding.."
+        descriptionIn(about, ctx1).addValue("foaf:name", name)
+        and: "removing without given context"
+        newDescriber().newDescription(about).remove("foaf:name")
+        then: "it is removed from all contexts"
+        newDescriber().newDescription(about).getValue("foaf:name") == null
+        and:
+        descriptionIn(about, ctx1).getValue("foaf:name") == null
+    }
+
+    def "should require defined prefixes on use"() {
+        given:
+        def describer = new Describer(conn)
+        def bnode = describer.newDescription(null)
+        when:
+        bnode.addValue("some:property", "value")
+        then:
+        thrown(DescriptionException)
+    }
+
     def "should store prefixes if configured"() {
         given:
         RepositoryConnection conn = Mock()
-        def describer = new Describer(conn)
         def FOAF = "http://xmlns.com/foaf/0.1/"
+
         when:
-        describer.setPrefix('foaf', FOAF)
+        new Describer(conn, true).setPrefix('foaf', FOAF)
         then:
         1 * conn.setNamespace('foaf', FOAF)
+
+        when:
+        new Describer(conn, false).setPrefix('foaf', FOAF)
+        then:
+        0 * conn.setNamespace('foaf', FOAF)
     }
 
     def "should close underlying connection"() {
@@ -191,8 +257,8 @@ class DescriberSpec extends Specification {
         1 * conn.close()
     }
 
-    def newDescriber() {
-        return new Describer(conn).
+    def newDescriber(String... contexts) {
+        return new Describer(conn, true, contexts).
             setPrefix('foaf', "http://xmlns.com/foaf/0.1/").
             setPrefix('cv', "http://purl.org/captsolo/resume-rdf/0.2/cv#")
     }
