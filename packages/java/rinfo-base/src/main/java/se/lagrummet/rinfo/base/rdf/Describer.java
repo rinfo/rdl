@@ -116,7 +116,7 @@ public class Describer {
         return things;
     }
 
-    public List<Description> ofType(String typeCurie) {
+    public List<Description> getByType(String typeCurie) {
         return subjects("rdf:type", expandCurie(typeCurie));
     }
 

@@ -76,7 +76,7 @@ class DescriberSpec extends Specification {
             describer.newDescription(it).addType("foaf:Person")
         }
         then:
-        describer.ofType("foaf:Person").collect { it.about }.sort() ==  personUris
+        describer.getByType("foaf:Person").collect { it.about }.sort() ==  personUris
     }
 
     def "should find subjects and objects"() {
