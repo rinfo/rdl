@@ -36,7 +36,7 @@ class LogListResource extends Resource {
 
             feed.setId(collectorLog.systemBaseUri + "log")
             try {
-                for (collect in logSession.newDescriber().ofType("rc:Collect")) {
+                for (collect in logSession.newDescriber().getByType("rc:Collect")) {
                     Entry entry = feed.insertEntry()
                     entry.setUpdated(collect.getNative("tl:end"))
                     entry.setPublished(collect.getNative("tl:start"))
