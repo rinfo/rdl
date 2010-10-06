@@ -89,31 +89,6 @@ def tg_integration():
     env.tomcat_user = 'tomcat6'
 
 @_targetenv
-def tg_stg():
-    """Set target env to: stg"""
-    # Name env:
-    env.target = "stg"
-    # Machines:
-    env.user = 'rinfo'
-    env.roledefs = {
-        'main': ['rinfo-main.statskontoret.se'],
-        'service': ['rinfo-service.statskontoret.se'],
-        'examples': ['rinfo-sources.statskontoret.se'],
-    }
-    # Filesystem paths
-    env.rinfo_main_store = "/opt/rinfo/store"
-    env.example_stores = "/opt/rinfo/depots"
-    env.dist_dir = 'rinfo_dist'
-    env.rinfo_dir = '/opt/rinfo' # TODO: remove if base is packaged in
-    env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
-    # Tomcat (SuSE):
-    env.tomcat = "/usr/share/tomcat6"
-    env.tomcat_webapps = "%(tomcat)s/webapps"%env
-    env.tomcat_start = 'dtomcat6 start'
-    env.tomcat_stop = 'dtomcat6 stop'
-    env.tomcat_user = 'tomcat6'
-
-@_targetenv
 def tg_prod():
     """Set target env to: prod"""
     # Name env:
