@@ -53,6 +53,16 @@ def tg_dev_unix():
     env.tomcat_user = "tomcat"
 
 @_targetenv
+def tg_demo():
+    """Set target env to: demo - Not pointing at the real demo environment yet!"""
+    env.target = "demo"
+    env.demo_data_root = "/tmp/demo/demodata"
+    env.roledefs = {}
+    env.hosts = ["localhost"]
+    env.tomcat = "/tmp/demo/tomcat"
+    env.dist_dir = "/tmp/demo/rinfo_dist"
+
+@_targetenv
 def tg_integration():
     """Set target env to: integration"""
     # Name env:

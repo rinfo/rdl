@@ -1,6 +1,8 @@
 from __future__ import with_statement
 from fabric.api import env, local, cd
 from fabric.contrib.files import *
+from fabric.contrib.project import rsync_project
+from targetenvs import _needs_targetenv
 
 
 env.java_opts = 'JAVA_OPTS="-Xms512Mb -Xmx1024Mb"'
@@ -20,7 +22,8 @@ def demo_data_to_depot_sfs():
     local("%(java_opts)s groovy %(test_data_tools)s/n3dump_to_depot.groovy %(test_data_dir)s/lagen-nu-sfs/lagennu-sfs.nt %(test_data_dir)s/sfs-depot"%env)
 
 def demo_data_upload_sfs():
-    print "Uploading demo data is not implemented yet"
+    _needs_targetenv()
+    rsync_project((env.demo_data_root), "%(test_data_dir)s/lagen-nu-sfs"%env, exclude=".*", delete=True)
 
 def demo_data_serve_sfs():
     print "Serving demo data is not implemented yet"
@@ -45,7 +48,8 @@ def demo_data_to_depot_dv():
     local("%(java_opts)s groovy %(test_data_tools)s/n3dump_to_depot.groovy %(test_data_dir)s/lagen-nu-dv/lagennu-dv.nt %(test_data_dir)s/dv-depot"%env)
 
 def demo_data_upload_dv():
-    print "Uploading demo data is not implemented yet"
+    _needs_targetenv()
+    rsync_project((env.demo_data_root), "%(test_data_dir)s/lagen-nu-dv"%env, exclude=".*", delete=True)
 
 def demo_data_serve_dv():
     print "Serving demo data is not implemented yet"
