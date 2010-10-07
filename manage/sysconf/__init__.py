@@ -41,6 +41,7 @@ def configure_server(sync="1"):
             if sudo("cp -vu init.d/tomcat /etc/init.d/"):
                 sudo("chmod 0755 /etc/init.d/tomcat")
                 sudo("update-rc.d tomcat defaults")
+
     with cd(etc_dir):
         if env.get('apache_jk_tomcat'):
             if sudo("cp -vu apache2/workers.properties /etc/apache2/"):
