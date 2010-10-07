@@ -15,29 +15,28 @@ riksdagen_se_datasets = ('prop', 'sou', 'ds')
 
 def demo_data_download(dataset):
     """Downloads a demo dataset from its source"""
+    _handles_dataset(dataset)
     _mkdir_keep_prev("%(test_data_dir)s/%(dataset)s-raw"%venv())
 
     with cd("%(test_data_dir)s/%(dataset)s-raw"%venv()):
         if dataset in lagen_nu_datasets:
             _download_lagen_nu_data(dataset)
-        else if dataset in riksdagen_se_datasets:
+        elif dataset in riksdagen_se_datasets:
             raise NotImplementedError
-        else:
-            raise ValueError("Dataset '%s' is not known to me"%dataset)
 
 def demo_data_to_depot(dataset):
     """Transforms the downloaded demo data to a depot"""
+    _handles_dataset(dataset)
     _mkdir_keep_prev("%(test_data_dir)s/%(dataset)s"%venv())
 
     if dataset in lagen_nu_datasets:
         _transform_lagen_nu_data(dataset)
-    else if dataset in riksdagen_se_datasets:
+    elif dataset in riksdagen_se_datasets:
         raise NotImplementedError
-    else:
-        raise ValueError("Dataset '%s' is not known to me"%dataset)
 
 def demo_data_upload(dataset):
     """Uploads the transformed demo data depot to the demo server"""
+    _handles_dataset(dataset)
     _needs_targetenv()
     rsync_project((env.demo_data_root), "%(test_data_dir)s/%(dataset)s"%venv(), exclude=".*", delete=True)
 
@@ -48,6 +47,7 @@ def demo_build_war(dataset):
 
 def demo_deploy_war(dataset):
     """Deploys an uploaded demo webapp"""
+    _handles_dataset(dataset)
     if not exists(env.dist_dir):
         run("mkdir %(dist_dir)s"%env)
     _deploy_war("%(java_packages)s/demodata-supply/target/%(dataset)s-demodata-supply.war"%venv(),
@@ -55,6 +55,7 @@ def demo_deploy_war(dataset):
 
 def demo_refresh(dataset):
     """Downloads, transforms, uploads, builds and deploys a webapp for serving a demo dataset"""
+    _handles_dataset(dataset)
     demo_data_download(dataset)
     demo_data_to_depot(dataset)
     demo_data_upload(dataset)
@@ -82,3 +83,7 @@ def _download_lagen_nu_data(dataset):
 
 def _transform_lagen_nu_data(dataset):
     local("%(java_opts)s groovy %(test_data_tools)s/n3dump_to_depot.groovy %(test_data_dir)s/%(dataset)s-raw/lagennu-%(dataset)s.nt %(test_data_dir)s/sfs"%venv())
+
+def _handles_dataset(dataset):
+    if not (dataset in lagen_nu_datasets or dataset in riksdagen_se_datasets):
+        raise ValueError("Dataset '%s' is not known to me"%dataset)
