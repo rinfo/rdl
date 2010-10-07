@@ -28,7 +28,7 @@ env.docbuild = sep.join((env.builddir,'documentation'))
 env.base_data = sep.join((env.builddir,'resources', 'base'))
 
 # env.java_packages = "%(projectroot)s/packages/java"%env
-env.java_packages = sep.join((env.builddir,'packages', 'java'))
+env.java_packages = sep.join((env.projectroot,'packages', 'java'))
 
 env.java_pkg_version = "1.0-SNAPSHOT"
 env.timestamp = datetime.datetime.utcnow().strftime('%Y_%m_%d_%H-%M-%S')
