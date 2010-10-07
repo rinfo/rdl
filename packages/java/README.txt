@@ -21,9 +21,9 @@ RInfo applications:
 * rinfo-main/README.txt
 * rinfo-service/README.txt
 
-Test application:
+Test application for serving demo data:
 
-* teststore-examples/README.txt
+* demodata-supply/README.txt
 
 
 Setup
