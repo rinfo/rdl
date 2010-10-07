@@ -64,7 +64,11 @@
               <rules>
                 <requireProperty>
                   <property>dataset</property>
-                  <message>The command line property 'dataset' must be set!</message>
+                  <message>The command line property 'dataset' must be set to the name of the subfolder of the demodata-root to serve!</message>
+                </requireProperty>
+                <requireProperty>
+                  <property>demodata-root</property>
+                  <message>The command line property 'demodata-root' must be set to the directory where datasets should be placed!</message>
                 </requireProperty>
               </rules>
               <fail>true</fail>

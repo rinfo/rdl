@@ -14,7 +14,7 @@
 # See: <http://httpd.apache.org/docs/2.0/mod/core.html#namevirtualhost>
 # See: <http://httpd.apache.org/docs/2.0/mod/mod_proxy.html#access>
 from __future__ import with_statement
-from os import path as p
+from os import path as p, sep
 from fabric.api import *
 from fabric.contrib.project import rsync_project
 from targetenvs import _needs_targetenv
@@ -70,17 +70,25 @@ def pull_etckeeper_repos():
 ##
 # Initial Setup
 
-def fetch_tomcat_dist():
-    _needs_targetenv()
+@runs_once
+def _prepare_initial_setup():
     workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
     mkdirpath(workdir_tomcat)
+
+    mkdirpath("%(mgr_workdir)s/install" % env)
+    put(sep.join((env.projectroot, 'manage', 'sysconf', 'install', '*.sh')), "%(mgr_workdir)s/install" % env)
+
+    return workdir_tomcat
+
+def fetch_tomcat_dist():
+    _needs_targetenv()
+    workdir_tomcat = _prepare_initial_setup()
     with cd(workdir_tomcat):
-        run("bash %(mgr_workdir)s/install/get-tomcat.sh %(tomcat_version)s" % env)
+        run("bash %(mgr_workdir)s/install/2_get-tomcat.sh %(tomcat_version)s" % env)
 
 def install_tomcat():
     _needs_targetenv()
-    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
-    mkdirpath(workdir_tomcat)
+    workdir_tomcat = _prepare_initial_setup()
     with cd(workdir_tomcat):
-        sudo("bash %(mgr_workdir)s/install/install-tomcat.sh %(tomcat_version)s" % env)
+        sudo("bash %(mgr_workdir)s/install/3_install-tomcat.sh %(tomcat_version)s" % env)
 

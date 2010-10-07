@@ -55,12 +55,29 @@ def tg_dev_unix():
 @_targetenv
 def tg_demo():
     """Set target env to: demo - Not pointing at the real demo environment yet!"""
+    # Name env:
     env.target = "demo"
-    env.demo_data_root = "/tmp/demo/demodata"
-    env.roledefs = {}
-    env.hosts = ["localhost"]
-    env.tomcat = "/tmp/demo/tomcat"
-    env.dist_dir = "/tmp/demo/rinfo_dist"
+    # Machines:
+    env.roledefs = {
+        'main': ['demo.lagrummet.se'],
+        'service': ['demo.lagrummet.se'],
+        'checker': ['demo.lagrummet.se'],
+        'doc': ['demo.lagrummet.se'],
+        'admin': ['demo.lagrummet.se'],
+    }
+    # Manage
+    env.mgr_workdir = "/Users/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Tomcat
+    env.custom_tomcat = True
+    env.tomcat_version = "6.0.29"
+    env.tomcat = "/opt/tomcat"
+    env.tomcat_webapps = "%(tomcat)s/webapps"%env
+    env.tomcat_start = "%(tomcat)s/bin/catalina.sh start"%env
+    env.tomcat_stop = "%(tomcat)s/bin/catalina.sh stop"%env
+    env.tomcat_user = 'tomcat'
 
 @_targetenv
 def tg_integration():
