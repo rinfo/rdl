@@ -4,6 +4,52 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
 
+# data for service (normally generated during collection) {{{
+
+@prefix awol: <http://bblfish.net/work/atom-owl/2006-06-06/#> .
+@prefix tl: <http://purl.org/NET/c4dm/timeline.owl#> .
+@prefix event: <http://purl.org/NET/c4dm/event.owl#> .
+@prefix scv: <http://purl.org/NET/scovo#> .
+
+
+<http://rinfo.lagrummet.se/publ/sfs/1337:1/entry#context> a awol:Entry;
+    foaf:primaryTopic <http://rinfo.lagrummet.se/publ/sfs/1337:1>;
+    awol:content <http://rinfo.lagrummet.se/publ/sfs/1337:1/rdf> .
+<http://rinfo.lagrummet.se/publ/sfs/1337:1/rdf> awol:type "application/rdf+xml" .
+
+<http://rinfo.lagrummet.se/publ/sfs/1337:2/entry#context> a awol:Entry;
+    foaf:primaryTopic <http://rinfo.lagrummet.se/publ/sfs/1337:2>;
+    awol:content <http://rinfo.lagrummet.se/publ/sfs/1337:2/rdf> .
+<http://rinfo.lagrummet.se/publ/sfs/1337:2/rdf> awol:type "application/rdf+xml" .
+
+<http://rinfo.lagrummet.se/publ/sfs/1337:3/entry#context> a awol:Entry;
+    foaf:primaryTopic <http://rinfo.lagrummet.se/publ/sfs/1337:3>;
+    awol:content <http://rinfo.lagrummet.se/publ/sfs/1337:3/rdf> .
+<http://rinfo.lagrummet.se/publ/sfs/1337:3/rdf> awol:type "application/rdf+xml" .
+
+<http://rinfo.lagrummet.se/publ/sfs/1337:4/entry#context> a awol:Entry;
+    foaf:primaryTopic <http://rinfo.lagrummet.se/publ/sfs/1337:4>;
+    awol:content <http://rinfo.lagrummet.se/publ/sfs/1337:4/rdf> .
+<http://rinfo.lagrummet.se/publ/sfs/1337:4/rdf> awol:type "application/rdf+xml" .
+
+<http://rinfo.lagrummet.se/publ/sfs/1337:1/konsolidering/1337-05-01/entry#context> a awol:Entry;
+    foaf:primaryTopic <http://rinfo.lagrummet.se/publ/sfs/1337:1/konsolidering/1337-05-01>;
+    awol:content <http://rinfo.lagrummet.se/publ/sfs/1337:1/konsolidering/1337-05-01/rdf> .
+<http://rinfo.lagrummet.se/publ/sfs/1337:1/konsolidering/1337-05-01/rdf> awol:type "application/rdf+xml" .
+
+[] tl:atYear "1337"; scv:dimension :beslutsdatum;
+    event:product <http://rinfo.lagrummet.se/publ/sfs/1337:1>,
+        <http://rinfo.lagrummet.se/publ/sfs/1337:2>,
+        <http://rinfo.lagrummet.se/publ/sfs/1337:3>,
+        <http://rinfo.lagrummet.se/publ/sfs/1337:4> .
+
+[] tl:atYear "1337"; scv:dimension dct:issued;
+    event:product <http://rinfo.lagrummet.se/publ/sfs/1337:1/konsolidering/1337-05-01> .
+
+# }}}
+
+
+
 <http://rinfo.lagrummet.se/publ/sfs/1337:1> a :Forordning;
     dct:identifier "SFS 1337:1";
     dct:title """Förordning om data (1337:1);"""@sv;
