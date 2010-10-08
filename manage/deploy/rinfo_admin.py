@@ -5,14 +5,21 @@ from targetenvs import _needs_targetenv
 from os import sep
 import sys
 
-#env.adminbuild = '%(builddir)s/rinfo-admin'%env
-env.adminbuild = sep.join((env.builddir,'rinfo-admin'))
 
-def package_admin():
-    """Package the admin feed files from resources/base"""
-    local("cd %(toolsdir)s/rinfomain && "
-        "groovy base_as_feed.groovy -b ../../resources/base/ "
-            "-o %(adminbuild)s"%env)
+env.adminbuild = sep.join((env.builddir, 'rinfo-admin'))
+
+
+def package_admin(dataset_sources=None):
+    """Package the admin feed files into a servable directory"""
+    sourceflag = "-s %s"%(dataset_sources) if dataset_sources else ""
+
+    # TODO: if dataset_sources: make sure adminbuild dir is not the default (to
+    # avoid deploying test sources to prod..)?
+    local(("cd %(toolsdir)s/rinfomain && " +
+            " groovy base_as_feed.groovy " +
+            " -b %(baseresources)s " +
+            sourceflag +
+            " -o %(adminbuild)s") % env)
 
 @roles('admin')
 def deploy_admin():
