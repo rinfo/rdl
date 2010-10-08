@@ -277,8 +277,9 @@ def isLaw(lines) {
     if (!titleTriple)
         return false
     def title = titleTriple.replaceFirst(/.+"([^"]+)"@sv\s*.$/, '$1')
+    // TODO: find (e.g.) "Personuppgiftslag (1998:204)" -> (title =~ /\w+lag\s+\(\d+:.+\)$/)[0]
     return (title.startsWith('Lag ') ||
-            (title.endsWith('lag') && !title.startsWith('Förordning')) ||
+            ((title =~ /\w+lag\s*(\(\d+:.+\))?$/) && !title.startsWith('Förordning')) ||
             title.endsWith('balk'))
 }
 
