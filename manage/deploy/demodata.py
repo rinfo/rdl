@@ -6,56 +6,67 @@ from targetenvs import _needs_targetenv
 from deploy import _deploy_war
 from util import venv
 
+
 env.java_opts = 'JAVA_OPTS="-Xms512Mb -Xmx1024Mb"'
-env.test_data_dir = "/opt/_workapps/rinfo/testdata"
+env.demodata_dir = "/opt/_workapps/rinfo/demodata"
 env.test_data_tools = "../tools/testscenarios"
+
 
 lagen_nu_datasets = ('sfs', 'dv')
 riksdagen_se_datasets = ('prop', 'sou', 'ds')
 
-def demo_data_download(dataset):
-    """Downloads a demo dataset from its source"""
-    _handles_dataset(dataset)
-    _mkdir_keep_prev("%(test_data_dir)s/%(dataset)s-raw"%venv())
+def _can_handle_dataset(dataset):
+    if not any(dataset in ds for ds in (lagen_nu_datasets, riksdagen_se_datasets)):
+        raise ValueError("Undefined dataset %r" % dataset)
 
-    with cd("%(test_data_dir)s/%(dataset)s-raw"%venv()):
+
+def demo_data_download(dataset):
+    """Downloads a demo dataset from its source."""
+    _can_handle_dataset(dataset)
+    _mkdir_keep_prev("%(demodata_dir)s/%(dataset)s-raw"%venv())
+    with cd("%(demodata_dir)s/%(dataset)s-raw"%venv()):
         if dataset in lagen_nu_datasets:
             _download_lagen_nu_data(dataset)
         elif dataset in riksdagen_se_datasets:
-            raise NotImplementedError
+            _download_riksdagen_data(dataset)
 
 def demo_data_to_depot(dataset):
-    """Transforms the downloaded demo data to a depot"""
-    _handles_dataset(dataset)
-    _mkdir_keep_prev("%(test_data_dir)s/%(dataset)s"%venv())
-
+    """Transforms the downloaded demo data to a depot."""
+    _can_handle_dataset(dataset)
+    _mkdir_keep_prev("%(demodata_dir)s/%(dataset)s"%venv())
     if dataset in lagen_nu_datasets:
         _transform_lagen_nu_data(dataset)
     elif dataset in riksdagen_se_datasets:
-        raise NotImplementedError
+        _transform_riksdagen_data(dataset)
+
 
 def demo_data_upload(dataset):
-    """Uploads the transformed demo data depot to the demo server"""
-    _handles_dataset(dataset)
+    """Uploads the transformed demo data depot to the demo server."""
+    _can_handle_dataset(dataset)
     _needs_targetenv()
-    rsync_project((env.demo_data_root), "%(test_data_dir)s/%(dataset)s"%venv(), exclude=".*", delete=True)
+    rsync_project((env.demo_data_root), "%(demodata_dir)s/%(dataset)s"%venv(), exclude=".*", delete=True)
+
 
 def demo_build_war(dataset):
-    """Builds a webapp capable of serving an uploaded demo data depot"""
+    """Builds a webapp capable of serving an uploaded demo data depot."""
     local("cd %(java_packages)s/demodata-supply && "
             "mvn -Ddataset=%(dataset)s -Ddemodata-root=%(demo_data_root)s clean package"%venv(), capture=False)
 
 def demo_deploy_war(dataset):
     """Deploys an uploaded demo webapp"""
-    _handles_dataset(dataset)
+    _can_handle_dataset(dataset)
     if not exists(env.dist_dir):
         run("mkdir %(dist_dir)s"%env)
     _deploy_war("%(java_packages)s/demodata-supply/target/%(dataset)s-demodata-supply.war"%venv(),
             "%(dataset)s-demodata-supply"%venv())
 
+
 def demo_refresh(dataset):
-    """Downloads, transforms, uploads, builds and deploys a webapp for serving a demo dataset"""
-    _handles_dataset(dataset)
+    """
+    Downloads, transforms, uploads, builds and deploys a webapp for serving a
+    demo dataset.
+    """
+    _can_handle_dataset(dataset)
     demo_data_download(dataset)
     demo_data_to_depot(dataset)
     demo_data_upload(dataset)
@@ -63,27 +74,28 @@ def demo_refresh(dataset):
     demo_deploy_war(dataset)
 
 
-#def serve_depot(depot=None, port=8180):
-#    depot = depot or "%s/lagen-nu/%s" % (env.test_data_dir, "sfs")
-#    local("groovy %s/serve_depot.groovy %s 8180" % (env.test_data_tools, depot))
-#     # Ping service:
-#    local('curl --data "feed=http://localhost:8180/feed/current" http://localhost:8181/collector')
-
 def _mkdir_keep_prev(dir_path):
     if exists("%s-prev"%dir_path):
         local("rm -rf %s-prev"%dir_path)
-
     if exists("%s"%dir_path):
         local("mv %s %s-prev"%(dir_path, dir_path))
-
     local("mkdir -p %s"%dir_path)
 
+
 def _download_lagen_nu_data(dataset):
-    local("curl https://lagen.nu/%s/parsed/rdf.nt -o lagennu-%s.nt"%(dataset,dataset))
+    local("curl https://lagen.nu/%(dataset)s/parsed/rdf.nt -o lagennu-%(dataset)s.nt" % vars())
 
 def _transform_lagen_nu_data(dataset):
-    local("%(java_opts)s groovy %(test_data_tools)s/n3dump_to_depot.groovy %(test_data_dir)s/%(dataset)s-raw/lagennu-%(dataset)s.nt %(test_data_dir)s/sfs"%venv())
+    local("%(java_opts)s groovy %(test_data_tools)s/n3dump_to_depot.groovy "
+            " %(demodata_dir)s/%(dataset)s-raw/lagennu-%(dataset)s.nt %(demodata_dir)s/sfs" % venv())
 
-def _handles_dataset(dataset):
-    if not (dataset in lagen_nu_datasets or dataset in riksdagen_se_datasets):
-        raise ValueError("Dataset '%s' is not known to me"%dataset)
+
+def _download_riksdagen_data(dataset):
+    local("groovy %(test_data_tools)s/fetch_data_riksdagen_se.groovy "
+            " %(demodata_dir)s/%(dataset)s-download %(dataset)s -f" % venv())
+
+def _transform_riksdagen_data(dataset):
+    local("groovy %(test_data_tools)s/depot_from_data_riksdagen_se.groovy "
+            " %(demodata_dir)s/%(dataset)s-download %(demodata_dir)s/%(dataset)s-depot" % venv())
+
+

@@ -39,3 +39,12 @@ def main_all(deps="1"):
     package_main(deps)
     deploy_main()
 
+##
+# Server Maintainance
+
+@roles('main')
+def clear_main_collect_log(force="0"):
+    raise NotImplementedError
+    # TODO: make **SURE** this is whay you really want to do!
+    #sudo("rm -rf %(rinfo_main_store)s/collector-log"%env, user=env.tomcat_user)
+
