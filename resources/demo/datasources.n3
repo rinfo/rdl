@@ -1,0 +1,34 @@
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix iana: <http://www.iana.org/assignments/relation/> .
+
+<tag:lagrummet.se,2009:rinfo> a void:Dataset;
+    dct:source
+        <tag:regeringen.se,2009:rinfo:dataset:sfs>,
+        <tag:regeringen.se,2009:rinfo:dataset:prop>,
+        <tag:regeringen.se,2009:rinfo:dataset:sou>,
+        <tag:regeringen.se,2009:rinfo:dataset:ds>,
+        <tag:dom.se,2009:rinfo:dataset:dv>;
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    iana:current <http://rinfo.lagrummet.se/feed/current> .
+
+<tag:regeringen.se,2009:rinfo:dataset:sfs> a void:Dataset;
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
+    iana:current <http://sfs.demo.lagrummet.se/feed/current> .
+
+<tag:regeringen.se,2009:rinfo:dataset:prop> a void:Dataset;
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
+    iana:current <http://prop.demo.lagrummet.se/feed/current> .
+
+<tag:regeringen.se,2009:rinfo:dataset:sou> a void:Dataset;
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
+    iana:current <http://sou.demo.lagrummet.se/feed/current> .
+
+<tag:regeringen.se,2009:rinfo:dataset:ds> a void:Dataset;
+    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
+    iana:current <http://ds.demo.lagrummet.se/feed/current> .
+
+<tag:dom.se,2009:rinfo:dataset:dv> a void:Dataset;
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    iana:current <http://dv.demo.lagrummet.se/feed/current> .
+
