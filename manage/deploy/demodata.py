@@ -5,11 +5,12 @@ from fabric.contrib.project import rsync_project
 from targetenvs import _needs_targetenv
 from deploy import _deploy_war
 from util import venv
+from os import path as p
 
 
 env.java_opts = 'JAVA_OPTS="-Xms512Mb -Xmx1024Mb"'
 env.demodata_dir = "/opt/_workapps/rinfo/demodata"
-env.test_data_tools = "../tools/testscenarios"
+env.test_data_tools = p.normpath(p.join(p.dirname(__file__), "..", "tools", "testscenarios"))
 
 
 lagen_nu_datasets = ('sfs', 'dv')
@@ -44,7 +45,7 @@ def demo_data_upload(dataset):
     """Uploads the transformed demo data depot to the demo server."""
     _can_handle_dataset(dataset)
     _needs_targetenv()
-    rsync_project((env.demo_data_root), "%(demodata_dir)s/%(dataset)s"%venv(), exclude=".*", delete=True)
+    rsync_project(env.demo_data_root, "%(demodata_dir)s/%(dataset)s"%venv(), exclude=".*", delete=True)
 
 
 def demo_build_war(dataset):
@@ -87,7 +88,7 @@ def _download_lagen_nu_data(dataset):
 
 def _transform_lagen_nu_data(dataset):
     local("%(java_opts)s groovy %(test_data_tools)s/n3dump_to_depot.groovy "
-            " %(demodata_dir)s/%(dataset)s-raw/lagennu-%(dataset)s.nt %(demodata_dir)s/sfs" % venv())
+            " %(demodata_dir)s/%(dataset)s-raw/lagennu-%(dataset)s.nt %(demodata_dir)s/%(dataset)s" % venv())
 
 
 def _download_riksdagen_data(dataset):

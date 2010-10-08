@@ -99,6 +99,7 @@ def tg_integration():
         'main': ['rinfo-main'],
         'service': ['rinfo-service'],
         'doc': ['rinfo-main'],
+        'demo': ['sfs-demo', 'dv-demo', 'prop-demo', 'sou-demo', 'ds-demo'],
     }
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -108,10 +109,14 @@ def tg_integration():
     env.example_stores = "/opt/rinfo/depots"
     env.rinfo_dir = '/opt/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
     # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
     env.apache_sites = {
+        'demo': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+        'main': ['default', 'admin'],
+        'service': ['service', 'checker'],
     }
     env.apache_jk_tomcat = True
     # Tomcat
@@ -119,8 +124,8 @@ def tg_integration():
     env.tomcat_version = "6.0.29"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
-    env.tomcat_start = '/etc/init.d/tomcat6 start'
-    env.tomcat_stop = '/etc/init.d/tomcat6 stop'
+    env.tomcat_start = '/etc/init.d/tomcat start'
+    env.tomcat_stop = '/etc/init.d/tomcat stop'
     env.tomcat_user = 'tomcat'
 
 @_targetenv

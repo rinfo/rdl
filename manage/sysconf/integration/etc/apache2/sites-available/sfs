@@ -1,0 +1,19 @@
+<VirtualHost *:80>
+    # ServerAdmin webmaster@lagrummet.se
+    ServerName sfs-demo
+
+    # Use trailing footer line under server-generated documents 
+    # (error messages, mod_proxy ftp directory listings, mod_info output, ...), 
+    # so that in a chain of proxies, it will be visible which of the chained 
+    # servers actually produced a returned error message.
+    ServerSignature On
+
+    <Proxy *>
+        Order allow,deny
+        Allow from all
+    </Proxy>
+
+    # Proxy everything, redirect in both directions
+    ProxyPass / http://localhost:8080/sfs-demodata-supply/
+    ProxyPassReverse / http://localhost:8080/sfs-demodata-supply/
+</VirtualHost>

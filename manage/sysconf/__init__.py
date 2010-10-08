@@ -32,19 +32,19 @@ def configure_server(sync="1"):
     if int(sync):
         sync_workdir()
 
-    etc_dir = "%(mgr_workdir)s/common/etc" % env
-    env_dir = "%(mgr_workdir)s/%(target)s" % env
+    common_etc_dir = "%(mgr_workdir)s/common/etc" % env
+    env_etc_dir = "%(mgr_workdir)s/%(target)s/etc" % env
 
     if env.get('custom_tomcat'):
         with cd("%(tomcat)s" % env):
             sudo("chown -R %(tomcat_user)s webapps temp logs work conf" % env)
             sudo("rm -rf webapps/*")
-        with cd(etc_dir):
+        with cd(common_etc_dir):
             if sudo("cp -vu init.d/tomcat /etc/init.d/"):
                 sudo("chmod 0755 /etc/init.d/tomcat")
                 sudo("update-rc.d tomcat defaults")
 
-    with cd(etc_dir):
+    with cd(common_etc_dir):
         if env.get('apache_jk_tomcat'):
             if sudo("cp -vu apache2/workers.properties /etc/apache2/"):
                 sudo("chown root:root /etc/apache2/workers.properties")
@@ -52,7 +52,7 @@ def configure_server(sync="1"):
                 sudo("chown root:root /etc/apache2/conf.d/jk.conf")
 #            sudo("cp -vu apache2/mods-available/proxy.conf /etc/apache2/mods-available/")
 
-    with cd(env_dir):
+    with cd(env_etc_dir):
         for role in env.roles:
             sites = env.get('apache_sites')
             if not sites or role not in sites: continue
