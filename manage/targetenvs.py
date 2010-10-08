@@ -79,6 +79,9 @@ def tg_demo():
     env.tomcat_stop = "%(tomcat)s/bin/catalina.sh stop"%env
     env.tomcat_user = 'tomcat'
 
+# Integration is a virtual environment that you could setup on your own computer
+# You need to put the following in your /etc/hosts file:
+# <IP-TO-VIRTUAL-MACHINE> rinfo-main rinfo-service
 @_targetenv
 def tg_integration():
     """Set target env to: integration"""
@@ -88,7 +91,6 @@ def tg_integration():
     env.roledefs = {
         'main': ['rinfo-main'],
         'service': ['rinfo-service'],
-        #'examples': ['rinfo-sources'],
         'doc': ['rinfo-main'],
     }
     # Filesystem paths
