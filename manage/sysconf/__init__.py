@@ -32,11 +32,13 @@ def configure_server(sync="1"):
     if int(sync):
         sync_workdir()
 
-    etc_dir = "%(mgr_workdir)s/etc/" % env
+    etc_dir = "%(mgr_workdir)s/common/etc" % env
+    env_dir = "%(mgr_workdir)s/%(target)s" % env
 
     if env.get('custom_tomcat'):
         with cd("%(tomcat)s" % env):
             sudo("chown -R %(tomcat_user)s webapps temp logs work conf" % env)
+            sudo("rm -rf webapps/*")
         with cd(etc_dir):
             if sudo("cp -vu init.d/tomcat /etc/init.d/"):
                 sudo("chmod 0755 /etc/init.d/tomcat")
@@ -48,8 +50,9 @@ def configure_server(sync="1"):
                 sudo("chown root:root /etc/apache2/workers.properties")
             if sudo("cp -vu apache2/conf.d/jk.conf /etc/apache2/conf.d/"):
                 sudo("chown root:root /etc/apache2/conf.d/jk.conf")
-            sudo("cp -vu apache2/mods-available/proxy.conf /etc/apache2/mods-available/")
+#            sudo("cp -vu apache2/mods-available/proxy.conf /etc/apache2/mods-available/")
 
+    with cd(env_dir):
         for role in env.roles:
             sites = env.get('apache_sites')
             if not sites or role not in sites: continue
@@ -59,8 +62,11 @@ def configure_server(sync="1"):
 
 @runs_once
 def sync_workdir():
+    common_conf_dir = p.join(SCRIPT_DIR, "common")
+    rsync_project(env.mgr_workdir, common_conf_dir,
+            exclude=".*", delete=True)
     local_conf_dir = p.join(SCRIPT_DIR, env.target)
-    rsync_project(slashed(env.mgr_workdir), slashed(local_conf_dir),
+    rsync_project(env.mgr_workdir, local_conf_dir,
             exclude=".*", delete=True)
 
 

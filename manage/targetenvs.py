@@ -70,6 +70,13 @@ def tg_demo():
     env.dist_dir = 'rinfo_dist'
     # Filesystem paths
     env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'demo': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+    }
+    env.apache_jk_tomcat = True
     # Tomcat
     env.custom_tomcat = True
     env.tomcat_version = "6.0.29"
@@ -93,19 +100,28 @@ def tg_integration():
         'service': ['rinfo-service'],
         'doc': ['rinfo-main'],
     }
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
     # Filesystem paths
     env.rinfo_main_store = "/opt/rinfo/store"
     env.example_stores = "/opt/rinfo/depots"
-    env.dist_dir = 'rinfo_dist'
     env.rinfo_dir = '/opt/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
-    env.docs_webroot = "/var/www/dokumentation/"
-    # Tomcat (Ubuntu)
-    env.tomcat = "/var/lib/tomcat6"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+    }
+    env.apache_jk_tomcat = True
+    # Tomcat
+    env.custom_tomcat = True
+    env.tomcat_version = "6.0.29"
+    env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
     env.tomcat_start = '/etc/init.d/tomcat6 start'
     env.tomcat_stop = '/etc/init.d/tomcat6 stop'
-    env.tomcat_user = 'tomcat6'
+    env.tomcat_user = 'tomcat'
 
 @_targetenv
 def tg_prod():
@@ -124,7 +140,7 @@ def tg_prod():
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
-    # System paths
+    # Filesystem paths
     env.rinfo_main_store = "/opt/rinfo/store"
     env.rinfo_dir = '/opt/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'

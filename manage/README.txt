@@ -47,6 +47,16 @@ want to deploy them to your own local development environment)
 This sends a "ping" request to the rinfo-main server, causing it to
 reload the admin data.
 
+Setting Up an Environment from Scratch
+========================================================================
+
+After installing a debian based linux distribution:
+
+   * Run scripts 0 and 1 in the sysconf/install directory
+   * Run the fabric tasks fetch_tomcat_dist and install_tomcat on the 
+     environment
+   * Run configure_server n the environment
+
 Development Environment
 ========================================================================
 
