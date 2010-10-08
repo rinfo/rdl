@@ -17,7 +17,6 @@ class Fetcher {
         while (nextLink) {
             def listDir = existDir(targetDir, "list-${i++}")
             fileToCreate(listDir, "index.xml") {
-                println "Fetching list <${nextLink}> to <${it.path}> ..."
                 download(nextLink, it)
                 def xml = new XmlSlurper().parse(it)
                 nextLink = xml.'@nasta_sida'.text()
@@ -34,14 +33,21 @@ class Fetcher {
 
     void downloadDocsFromList(File listFile) {
         def xml = new XmlSlurper().parse(listFile)
-        def i = 1
         xml.'dokument'.each { elem ->
             def docId = elem.'id'.text()
-            fileToCreate(listFile.parentFile, "${i++}-${docId}.xml") {
-                def docLink = elem.'dokumentstatus_url_xml'.text()
-                println "Fetching document <${docLink}> to <${it.path}> ..."
-                download(docLink, it)
+            def sysDate = elem.'systemdatum'.text()
+            def sysDateSlug = sysDate.replace(' ', 'T').replace(':', '_')
+            Closure getRepresentation = { tag, suffix ->
+                fileToCreate(listFile.parentFile, "${sysDateSlug}-${docId}.${suffix}") {
+                    def docLink = elem[tag].text()
+                    if (docLink) {
+                        download(docLink, it)
+                    }
+                }
             }
+            getRepresentation 'dokumentstatus_url_xml', 'xml'
+            getRepresentation 'dokument_url_html', 'html'
+            getRepresentation 'dokument_url_text', 'txt'
         }
     }
 
@@ -51,15 +57,16 @@ class Fetcher {
         dir
     }
 
-    protected void fileToCreate(File parent, String name, Closure block) {
+    protected void fileToCreate(File parent, String name, Closure handle) {
         def f = new File(parent, name)
         if (!f.exists() || f.file && force) {
-            block(f)
+            handle(f)
         }
     }
 
     protected void download(String link, File dest) {
-        // TODO: parallellize
+        println "Downloading <${link}> to <${dest}> ..."
+        // TODO: parallellize (gpars)?
         dest.withOutputStream { fos ->
             new URL(link).withInputStream { fos << it }
         }
@@ -68,7 +75,9 @@ class Fetcher {
 }
 
 
-def startLink(doctype='prop', size=400) {
+def KNOWN_DOCTYPES = ['prop', 'sou', 'ds']
+
+def startLink(doctype, size=400) {
     "http://data.riksdagen.se/dokumentlista/" +
         "?typ=${doctype}&sz=${size}&sort=c&utformat=xml"
 }
@@ -76,17 +85,19 @@ def startLink(doctype='prop', size=400) {
 
 def (flags, args) = args.split { it =~ /^-/ }
 if (args.size() < 1) {
-    println "Usage: <target-dir> [-l] [-d] [-f]"
+    println "Usage: TARGET_DIR [DOCTYPE] [-l] [-d] [-f]"
     System.exit 0
 }
 
 def fetcher = new Fetcher(targetDir: new File(args[0]), force: "-f" in flags)
 
-// TODO: doctype = args[1] ?: 'prop'
+def doctype = args[1] ?: KNOWN_DOCTYPES[0]
+assert doctype in KNOWN_DOCTYPES
+
 if ("-l" in flags)
-    fetcher.downloadLists(startLink())
+    fetcher.downloadLists(startLink(doctype))
 else if ("-d" in flags)
     fetcher.downloadDocs()
 else
-    fetcher.downloadData(startLink())
+    fetcher.downloadData(startLink(doctype))
 
