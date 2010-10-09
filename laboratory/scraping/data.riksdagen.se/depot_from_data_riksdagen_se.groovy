@@ -116,7 +116,7 @@ def eachSourceTimeline(File sourceDir, String suffix, Closure handle) {
 
 
 tFactory = TransformerFactory.newInstance()
-transformer = tFactory.newTransformer(new StreamSource(new File("prop-rdf.xslt")))
+transformer = tFactory.newTransformer(new StreamSource(new File("dokument-rdf.xslt")))
 
 def toRDFRepo(File file, String docId=null) {
     def outs = new ByteArrayOutputStream()
