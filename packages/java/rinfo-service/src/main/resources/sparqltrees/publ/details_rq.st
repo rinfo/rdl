@@ -5,10 +5,18 @@ $sparqltrees/publ/base_rq(
             ?doc__1_publisher foaf:name ?doc__1_publisher__1_name .
         }
 
-        # TODO: use more stuff below in view..
-        # .. + enum of ?doc ?prop ?value where ?prop in [
-        #        rpubl:arsutgava rpubl:lopnummer rpubl:sidnummer rpubl:bihangsnummer
-        #    ]? or all ?p ?o ?
+        OPTIONAL {
+            ?doc rpubl:departement ?doc__1_departement .
+            ?doc__1_departement foaf:name ?doc__1_departement__1_name .
+        }
+
+        OPTIONAL {
+            ?doc rpubl:arsutgava ?doc__1_arsutgava .
+            OPTIONAL { ?doc rpubl:lopnummer ?doc__1_lopnummer . }
+            OPTIONAL { ?doc rpubl:sidnummer ?doc__1_sidnummer . }
+            OPTIONAL { ?doc rpubl:bihangsnummer ?doc__1_bihangsnummer . }
+        }
+
         {
             ?doc rpubl:forfattningssamling ?doc__1_serie .
             ?doc__1_serie skos:altLabel ?doc__1_serie__1_label .
@@ -29,23 +37,65 @@ $sparqltrees/publ/base_rq(
 
         } UNION {
             ?doc a rpubl:KonsolideradGrundforfattning;
-            rpubl:konsoliderar [
-                rpubl:forfattningssamling [
-                # TODO: shortLabel..
-                skos:altLabel ?serieLabel;
+                rpubl:konsoliderar [
+                    rpubl:forfattningssamling [
+                    # TODO: shortLabel..
+                    skos:altLabel ?serieLabel;
+                    ];
                 ];
-            ];
-            #rpubl:utfardandedatum ?doc__1_konsUtfardandedatum .
-            dct:issued ?doc__1_konsUtfardandedatum . # TODO: rename var
+                #rpubl:utfardandedatum ?doc__1_konsUtfardandedatum .
+                dct:issued ?doc__1_konsUtfardandedatum . # TODO: rename var
 
-        #} UNION { # TODO: see uri-minter for remaining..
+        } UNION {
+            ?doc a rpubl:Proposition .
+
+        } UNION {
+            ?doc a rpubl:Utredningsbetankande;
+                rpubl:utrSerie ?doc__1_utrSerie .
+
+        #} UNION {
+            # TODO: see uri-minter for remaining; e.g. (sync with base_rq.st):
+            # Kommittedirektiv Forordningsmotiv
+            # Rattelseblad
+            # VagledandeMyndighetsavgorande + diarienummer
+            # VagledandeDomstolsavgorande + malnummer + avgorandedatum
+            # Rattsfallsreferat + referatserie
+            # Rattsfallsnotis + notisserie
+            # InternationellOverenskommelse
         }
 
         FILTER(?doc = <http://rinfo.lagrummet.se/publ/$path$>)
 
+        # TODO: test these:
+        OPTIONAL {
+            ?doc rpubl:kapitel ?doc__kapitel .
+                OPTIONAL {
+                    ?doc__kapitel rpubl:kapitelnummer ?doc__kapitel__1_nr .
+                }
+            OPTIONAL {
+                ?doc__kapitel rpubl:paragraf ?doc__kapitel__paragraf .
+                OPTIONAL {
+                    ?doc__kapitel__paragraf rpubl:paragrafnummer ?doc__kapitel__paragraf__1_nr .
+                }
+            }
+        }
+        OPTIONAL {
+            ?doc rpubl:paragraf ?doc__paragraf .
+            OPTIONAL {
+                ?doc__paragraf rpubl:paragrafnummer ?doc__paragraf__1_nr .
+            }
+        }
+        OPTIONAL {
+            ?doc rpubl:bilaga ?doc__bilaga .
+            OPTIONAL {
+                ?doc__bilaga dct:title ?doc__bilaga__1_title .
+            }
+        }
+
         OPTIONAL {
 
             {
+                # TODO: move outside of union (right?)
                 # Date properties and values
                 ?doc ?doc__daterel ?doc__daterel__value .
                 FILTER(datatype(?doc__daterel__value) = xsd:date)
