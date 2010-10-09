@@ -1,4 +1,12 @@
 #!/usr/bin/env groovy
+/*
+ * Converts raw data.riksdagen.se download into a Depot.
+ *
+ * IMPORTANT: Eats memory; prepare by:
+ *
+ *  $ export JAVA_OPTS="-Xms512Mb -Xmx1024Mb"
+ *
+ */
 
 @Grapes([
     @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT'),
@@ -31,28 +39,29 @@ void createDepotFromDataDump(File sourceDir, File depotDir, boolean debug=false)
     def depot = newDepot(depotDir)
     println "Creating depot in <${depotDir}>..."
     withDepotSession(depot) { session ->
-        //def currentList = [path:null, xml:null]
         eachSourceTimeline(sourceDir, '.html') { fileMap, timestamp, docId ->
             println "Converting files for <${fileMap.html}> (${docId})..."
             def repo
+            def gotFromList = false
             try {
                 repo = toRDFRepo(fileMap.xml)
-                def conn = repo.connection
+            } catch (Exception e1) {
+                System.err.println "Error 1 in conversion to RDF: ${e1}"
+                System.err.println "Trying index with doc id ${docId}..."
                 try {
-                    if (conn.empty) throw new RuntimeException("Empty RDF.")
-                } finally {
-                    conn.close()
+                    // NOTE: reparsing list xml for every doc is fast enough.
+                    repo = toRDFRepo(new File(fileMap.html.parentFile, "index.xml"), docId)
+                    gotFromList = true
+                } catch (Exception e2) {
+                    System.err.println "Error 2 in conversion to RDF: ${e2}"
+                    return
                 }
-            } catch (Exception e) {
-                System.err.println "Error in conversion to RDF: ${e}"
-                // TODO: if xml fails or is missing: use xml from list ("id-in-list", docId)
-                return
             }
             try {
-                //saveToEntry(session, repo, fileMap)
                 def describer = new Describer(repo.connection).
                         setPrefix('rpubl', "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#")
-                def uri = describer.getByType("rpubl:Proposition")[0].about
+                def uri = ["rpubl:Proposition", "rpubl:Utredningsbetankande"].collect(
+                        describer.&getByType).find { it }[0].about
                 describer.close()
                 def inStream = RDFUtil.toInputStream(repo, MediaType.RDF_XML, true)
                 def sources = [new SourceContent(inStream, MediaType.RDF_XML)]
@@ -60,7 +69,15 @@ void createDepotFromDataDump(File sourceDir, File depotDir, boolean debug=false)
                     sources << new SourceContent(fileMap.html, MediaType.HTML, LANG)
                 }
                 println "Storing in depot as <${uri}>..."
-                session.createEntry(new URI(uri), timestamp, sources)
+                // TODO: remove this when depot can handlewith lots of same tstamps?
+                // .. and instead use original 'systemdatum'.
+                timestamp = new Date()
+                if (depot.hasEntry(new URI(uri))) {
+                    println "Found entry with same URI! Skipping new entry..."
+                    // TODO: if (gotFromList) update?
+                } else {
+                    session.createEntry(new URI(uri), timestamp, sources)
+                }
             } finally {
                 repo.shutDown()
             }
@@ -74,7 +91,10 @@ def eachSourceTimeline(File sourceDir, String suffix, Closure handle) {
     def fileTimeIds = []
     sourceDir.eachFileRecurse(groovy.io.FileType.FILES) {
         if (it.name.endsWith(suffix) && !it.name.startsWith('index')) {
-            def fnmatch = (it.name =~ /^(.+?)-(\w+?)\.\w+?$/)
+            def fnmatch = (it.name =~ /^(.+?)-(\w+?)(:\w+)?\.\w+?$/)
+            if (!fnmatch) {
+                throw new RuntimeException("Unexpected file: <${it}>")
+            }
             def (_, dateRepr, docId) = fnmatch[0]
             def timestamp = Date.parse("yyyy-MM-dd'T'HH'_'mm'_'ss", dateRepr)
             fileTimeIds << [it, timestamp, docId]
@@ -98,9 +118,13 @@ def eachSourceTimeline(File sourceDir, String suffix, Closure handle) {
 tFactory = TransformerFactory.newInstance()
 transformer = tFactory.newTransformer(new StreamSource(new File("prop-rdf.xslt")))
 
-def toRDFRepo(File file) {
+def toRDFRepo(File file, String docId=null) {
     def outs = new ByteArrayOutputStream()
     try {
+        if (docId) {
+            transformer.setParameter("id-in-list", docId)
+        }
+        println "Transforming <${file.path}> to RDF..."
         transformer.transform(new StreamSource(file), new StreamResult(outs))
     } finally {
         outs.close()
@@ -110,11 +134,17 @@ def toRDFRepo(File file) {
     try {
         RDFUtil.loadDataFromStream(repo, ins, "", MediaType.RDF_XML)
     } catch (Exception e) {
-        println "Error in RDF from <${file.path}>:"
-        println new String(outs.toByteArray(), "utf-8")
+        System.err.println "Error in RDF from <${file.path}>:"
+        System.err.println new String(outs.toByteArray(), "utf-8")
         throw e
     } finally {
         ins.close()
+    }
+    def conn = repo.connection
+    try {
+        if (conn.empty) throw new RuntimeException("Empty RDF.")
+    } finally {
+        conn.close()
     }
     return repo
 }
@@ -144,9 +174,10 @@ void withDepotSession(Depot depot, Closure handle) {
     }
 }
 
-try {
-    createDepotFromDataDump(new File(args[0]), new File(args[1]))
-} catch (IndexOutOfBoundsException e) {
+
+if (args.length != 2) {
     println "Usage: SOURCE_DIR DEPOT_DIR"
+} else {
+    createDepotFromDataDump(new File(args[0]), new File(args[1]))
 }
 

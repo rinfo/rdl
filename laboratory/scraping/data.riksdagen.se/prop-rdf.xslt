@@ -99,7 +99,7 @@
     <dct:alternative><xsl:value-of select="."/></dct:alternative>
   </xsl:template>
   <xsl:template match="publicerad[text()]">
-    <rpubl:utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#xsd:date"><xsl:value-of select="substring-before(self:w3c-dt(.), 'T')"/></rpubl:utkomFranTryck>
+    <rpubl:utkomFranTryck rdf:datatype="http://www.w3.org/2001/XMLSchema#date"><xsl:value-of select="substring-before(self:w3c-dt(.), 'T')"/></rpubl:utkomFranTryck>
   </xsl:template>
 
   <xsl:template match="uppgift[kod='inlamnatav' and text != '']">
