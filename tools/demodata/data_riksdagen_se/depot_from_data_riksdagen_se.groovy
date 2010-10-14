@@ -115,8 +115,10 @@ def eachSourceTimeline(File sourceDir, String suffix, Closure handle) {
 }
 
 
+scriptFile = new File(this.class.protectionDomain.codeSource.location.toURI())
 tFactory = TransformerFactory.newInstance()
-transformer = tFactory.newTransformer(new StreamSource(new File("dokument-rdf.xslt")))
+transformer = tFactory.newTransformer(new StreamSource(
+            new File(scriptFile.parent, "dokument-rdf.xslt")))
 
 def toRDFRepo(File file, String docId=null) {
     def outs = new ByteArrayOutputStream()
