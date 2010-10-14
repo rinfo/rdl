@@ -1,37 +1,42 @@
+from os import sep
+import sys
 from fabric.api import env, local, roles
 from fabric.contrib.project import rsync_project
 from util import slashed, cygpath
 from targetenvs import _needs_targetenv
-from os import sep
-import sys
+from util import venv, fullpath
 
 
 env.adminbuild = sep.join((env.builddir, 'rinfo-admin'))
 
 
-def package_admin(dataset_sources=None):
-    """Package the admin feed files into a servable directory"""
-    sourceflag = "-s %s"%(dataset_sources) if dataset_sources else ""
-
-    # TODO: if dataset_sources: make sure adminbuild dir is not the default (to
-    # avoid deploying test sources to prod..)?
-    local(("cd %(toolsdir)s/rinfomain && " +
-            " groovy base_as_feed.groovy " +
-            " -b %(baseresources)s " +
-            sourceflag +
-            " -o %(adminbuild)s") % env)
+def package_admin(sources=None, outdir=None):
+    """
+    Package the admin feed files into a servable directory.
+    """
+    # make sure adminbuild dir is not the default (to avoid deploying
+    # experimental sources to prod)
+    if sources:
+        assert outdir and fullpath(outdir) != fullpath(env.adminbuild)
+        sources = fullpath(sources)
+        outdir = fullpath(outdir)
+    sourceopt = ("-s %s" % sources) if sources else ""
+    outdiropt ="-o %s" % (outdir or env.adminbuild)
+    local("cd %(toolsdir)s/rinfomain && groovy base_as_feed.groovy "
+            " -b %(baseresources)s %(sourceopt)s %(outdiropt)s" % venv())
 
 @roles('admin')
-def deploy_admin():
+def deploy_admin(builddir=None):
     """Deploy the admin feed"""
     _needs_targetenv()
+    builddir = builddir or env.adminbuild
     if sys.platform == 'win32':
         # There is no native rsync for windows, only the cygwin
         # version. We must convert the windows-style path of
-        # env.adminbuild to a cygwin-style equivalent
-        build_path = cygpath(slashed(env.adminbuild))
+        # builddir to a cygwin-style equivalent
+        build_path = cygpath(slashed(builddir))
     else:
-        build_path = slashed(env.adminbuild)
+        build_path = slashed(builddir)
     rsync_project((env.admin_webroot), build_path, exclude=".*", delete=True)
 
 @roles('admin')
