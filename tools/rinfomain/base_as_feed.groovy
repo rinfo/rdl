@@ -130,8 +130,10 @@ def collectItems(baseUri, base, sources) {
         ])
 
     if (sources) {
-        addItem simpleItem(baseUri, "sys/sources",
-                new File(sources, "sys/sources.rdf"))
+        def sourceFile = new File(sources)
+        if (sourceFile.directory)
+            sourceFile = new File(sourceFile, "sys/sources.rdf")
+        addItem simpleItem(baseUri, "sys/sources", sourceFile)
     } else {
         addItem simpleItem(baseUri, "sys/sources",
                 new File(base, "datasets/feeds.n3"))
