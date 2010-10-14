@@ -10,7 +10,7 @@ from os import path as p
 
 env.java_opts = 'JAVA_OPTS="-Xms512Mb -Xmx1024Mb"'
 env.demodata_dir = "/opt/_workapps/rinfo/demodata"
-env.test_data_tools = p.normpath(p.join(p.dirname(__file__), "..", "tools", "testscenarios"))
+env.demodata_tools = p.normpath(p.join(p.dirname(__file__), "..", "tools", "demodata"))
 
 
 lagen_nu_datasets = ('sfs', 'dv')
@@ -87,16 +87,16 @@ def _download_lagen_nu_data(dataset):
     local("curl https://lagen.nu/%(dataset)s/parsed/rdf.nt -o lagennu-%(dataset)s.nt" % vars())
 
 def _transform_lagen_nu_data(dataset):
-    local("%(java_opts)s groovy %(test_data_tools)s/n3dump_to_depot.groovy "
+    local("%(java_opts)s groovy %(demodata_tools)s/lagen_nu/n3dump_to_depot.groovy "
             " %(demodata_dir)s/%(dataset)s-raw/lagennu-%(dataset)s.nt %(demodata_dir)s/%(dataset)s" % venv())
 
 
 def _download_riksdagen_data(dataset):
-    local("groovy %(test_data_tools)s/fetch_data_riksdagen_se.groovy "
+    local("%(java_opts)s groovy %(demodata_tools)s/data_riksdagen_se/fetch_data_riksdagen_se.groovy "
             " %(demodata_dir)s/%(dataset)s-download %(dataset)s -f" % venv())
 
 def _transform_riksdagen_data(dataset):
-    local("groovy %(test_data_tools)s/depot_from_data_riksdagen_se.groovy "
+    local("groovy %(demodata_tools)s/data_riksdagen_se/depot_from_data_riksdagen_se.groovy "
             " %(demodata_dir)s/%(dataset)s-download %(demodata_dir)s/%(dataset)s-depot" % venv())
 
 
