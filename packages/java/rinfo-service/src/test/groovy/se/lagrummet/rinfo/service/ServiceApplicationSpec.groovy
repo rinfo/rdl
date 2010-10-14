@@ -90,10 +90,11 @@ class ServiceApplicationSpec extends Specification {
         request.setEntity(param, MediaType.MULTIPART_FORM_DATA)
         def client = new Client(Protocol.HTTP)
         def response = client.handle(request)
-        Thread.sleep(2000)
 
         then: "contexts will be created for each entry"
         response.status == Status.SUCCESS_OK
+        waitFor(8) { countContexts() == 2 }
+        and:
         countContexts() == 2
     }
 
@@ -102,6 +103,14 @@ class ServiceApplicationSpec extends Specification {
         int count = RepoInfo.countContexts(conn)
         conn.close()
         return count
+    }
+
+    void waitFor(int maxSeconds, Closure condition) {
+        maxSeconds.times {
+            if (condition())
+                return
+            Thread.sleep(1000)
+        }
     }
 
 }
