@@ -8,5 +8,8 @@ pushd /opt/
     ln -s apache-tomcat-${version} tomcat
 popd
 
+# Remove the unnecessary default applications
+rm -rf /opt/tomcat/webapps/*
+
 useradd tomcat -g nogroup -d /opt/tomcat/ -s /bin/false -p'*' -r
 

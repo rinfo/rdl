@@ -21,9 +21,11 @@ def _can_handle_dataset(dataset):
         raise ValueError("Undefined dataset %r" % dataset)
 
 
-def demo_data_download(dataset):
+def demo_data_download(dataset,force="0"):
     """Downloads a demo dataset from its source."""
     _can_handle_dataset(dataset)
+    if not int(force) and p.isdir("%(demodata_dir)s/%(dataset)s-raw" % venv()):
+        return
     _mkdir_keep_prev("%(demodata_dir)s/%(dataset)s-raw" % venv())
     with cd("%(demodata_dir)s/%(dataset)s-raw" % venv()):
         if dataset in lagen_nu_datasets:
@@ -34,6 +36,7 @@ def demo_data_download(dataset):
 def demo_data_to_depot(dataset):
     """Transforms the downloaded demo data to a depot."""
     _can_handle_dataset(dataset)
+    _mkdir_keep_prev("%(demodata_dir)s/%(dataset)s" % venv())
     if dataset in lagen_nu_datasets:
         _transform_lagen_nu_data(dataset)
     elif dataset in riksdagen_se_datasets:
@@ -44,7 +47,10 @@ def demo_data_upload(dataset):
     """Uploads the transformed demo data depot to the demo server."""
     _can_handle_dataset(dataset)
     _needs_targetenv()
-    rsync_project(env.demo_data_root, "%(demodata_dir)s/%(dataset)s-depot" % venv(), exclude=".*", delete=True)
+    if not exists(env.demo_data_root):
+       sudo("mkdir -p %(demo_data_root)s" % env)
+       sudo("chown %(user)s %(demo_data_root)s" % env)
+    rsync_project(env.demo_data_root, "%(demodata_dir)s/%(dataset)s" % venv(), exclude=".*", delete=True)
 
 
 def demo_build_war(dataset):
@@ -61,13 +67,13 @@ def demo_deploy_war(dataset):
             "%(dataset)s-demodata-supply" % venv())
 
 
-def demo_refresh(dataset):
+def demo_refresh(dataset,force="0"):
     """
     Downloads, transforms, uploads, builds and deploys a webapp for serving a
     demo dataset.
     """
     _can_handle_dataset(dataset)
-    demo_data_download(dataset)
+    demo_data_download(dataset,force)
     demo_data_to_depot(dataset)
     demo_data_upload(dataset)
     demo_build_war(dataset)
@@ -96,6 +102,6 @@ def _download_riksdagen_data(dataset):
 
 def _transform_riksdagen_data(dataset):
     local("groovy %(demodata_tools)s/data_riksdagen_se/depot_from_data_riksdagen_se.groovy "
-            " %(demodata_dir)s/%(dataset)s-raw %(demodata_dir)s/%(dataset)s-depot" % venv())
+            " %(demodata_dir)s/%(dataset)s-raw %(demodata_dir)s/%(dataset)s" % venv())
 
 

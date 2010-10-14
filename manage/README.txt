@@ -47,15 +47,64 @@ want to deploy them to your own local development environment)
 This sends a "ping" request to the rinfo-main server, causing it to
 reload the admin data.
 
-Setting Up an Environment from Scratch
+Setting Up the Integration Environment
 ========================================================================
 
-After installing a debian based linux distribution:
+The integration environment is supposed to be run as a virtual server 
+on your local computer. It can host all rinfo applications. In the 
+instructions below it is assumed that local commands are run while 
+standing in the directory rinfo-trunk/manage
 
-   * Run scripts 0 and 1 in the sysconf/install directory
-   * Run the fabric tasks fetch_tomcat_dist and install_tomcat on the 
-     environment
-   * Run configure_server n the environment
+   * Setup a virtual server using a debian based linux distribution
+   * Ensure that sudo is available (run: apt-get install sudo if not)
+   * Ensure that sshd is available (run: sudo apt-get install openssh-server if not)
+   * Ensure that you can ssh to the server password less
+   * Ensure that there is a package repository setup for sun-java6-jdk
+
+      * For Debian:
+         http://www.debian.org/doc/manuals/debian-java-faq/ch7.html ::
+         sudo vim /etc/apt/sources.list ::
+            deb <$HTTP-FTP...> $DIST main contrib non-free
+         sudo apt-get update
+
+      * For Ubuntu (10.04 Lucid):
+         sudo add-apt-repository "deb http://archive.canonical.com/ lucid partner"
+         sudo apt-get update
+
+   * Edit the hosts file on your local computer so that it contains:
+
+      <IP-OF-VIRTUAL-SERVER>  rinfo-main rinfo-service
+      <IP-OF-VIRTUAL-SERVER>  sfs-demo dv-demo prop-demo sou-demo ds-demo
+
+   * Run on your local computer::
+      fab tg_integration -R main install_dependencies fetch_tomcat_dist install_tomcat
+
+   * Run on your virtual server::
+      ~/mgr_work/install/4_install-jdk.sh
+
+   * Run on your local computer::
+      fab tg_integration -R main configure_server
+      fab tg_integration -R service configure_server
+      fab tg_integration -R demo configure_server
+   
+   * Run on your virtual server::
+      sudo /etc/init.d/apache2 graceful
+
+The virtual server should now be ready for the deployment of the 
+applications and the demo data.
+
+Deploy demo data from lagen.nu:
+
+   * Run on your local computer::
+      fab tg_integration -H dv-demo demo_refresh:dv
+      fab tg_integration -H sfs-demo demo_refresh:sfs
+
+Deploy demo data from riksdagen.se (very time consuming)
+
+   * Run on your local computer::
+      fab tg_integration -H prop-demo demo_refresh:prop
+      fab tg_integration -H sou-demo demo_refresh:sou
+      fab tg_integration -H ds-demo demo_refresh:ds
 
 Development Environment
 ========================================================================

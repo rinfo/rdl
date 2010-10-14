@@ -38,7 +38,6 @@ def configure_server(sync="1"):
     if env.get('custom_tomcat'):
         with cd("%(tomcat)s" % env):
             sudo("chown -R %(tomcat_user)s webapps temp logs work conf" % env)
-            sudo("rm -rf webapps/*")
         with cd(common_etc_dir):
             if sudo("cp -vu init.d/tomcat /etc/init.d/"):
                 sudo("chmod 0755 /etc/init.d/tomcat")
@@ -50,7 +49,6 @@ def configure_server(sync="1"):
                 sudo("chown root:root /etc/apache2/workers.properties")
             if sudo("cp -vu apache2/conf.d/jk.conf /etc/apache2/conf.d/"):
                 sudo("chown root:root /etc/apache2/conf.d/jk.conf")
-#            sudo("cp -vu apache2/mods-available/proxy.conf /etc/apache2/mods-available/")
 
     with cd(env_etc_dir):
         for role in env.roles:
@@ -78,23 +76,27 @@ def pull_etckeeper_repos():
 
 @runs_once
 def _prepare_initial_setup():
-    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
-    mkdirpath(workdir_tomcat)
-
     mkdirpath("%(mgr_workdir)s/install" % env)
     put(sep.join((env.projectroot, 'manage', 'sysconf', 'install', '*.sh')), "%(mgr_workdir)s/install" % env)
 
-    return workdir_tomcat
+    mkdirpath("%(mgr_workdir)s/tomcat_pkg" % env)
+
+def install_dependencies():
+    _needs_targetenv()
+    _prepare_initial_setup()
+    sudo("bash %(mgr_workdir)s/install/1_deps.sh" % env)
 
 def fetch_tomcat_dist():
     _needs_targetenv()
-    workdir_tomcat = _prepare_initial_setup()
+    _prepare_initial_setup()
+    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
     with cd(workdir_tomcat):
         run("bash %(mgr_workdir)s/install/2_get-tomcat.sh %(tomcat_version)s" % env)
 
 def install_tomcat():
     _needs_targetenv()
-    workdir_tomcat = _prepare_initial_setup()
+    _prepare_initial_setup()
+    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
     with cd(workdir_tomcat):
         sudo("bash %(mgr_workdir)s/install/3_install-tomcat.sh %(tomcat_version)s" % env)
 
