@@ -80,6 +80,18 @@ def demo_refresh(dataset,force="0"):
     demo_deploy_war(dataset)
 
 
+def full_demo_deploy():
+    from itertools import chain
+    for dataset in chain(lagen_nu_datasets, riksdagen_se_datasets):
+        # TODO:? env.role = dataset
+        demo_refresh(dataset)
+    # TODO:? env.role = 'admin'
+    adminbuild = p.join(env.demodata_dirs, rinfo-admin-demo)
+    sources = p.join(env.projectroot, "resources", "demo", "datasources.n3")
+    package_admin(sources, adminbuild)
+    deploy_admin(adminbuild)
+
+
 def _mkdir_keep_prev(dir_path):
     if p.isdir("%s-prev"%dir_path):
         local("rm -rf %s-prev"%dir_path)
