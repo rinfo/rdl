@@ -72,8 +72,7 @@ standing in the directory rinfo-trunk/manage
          sudo apt-get update
 
    * Edit the hosts file on your local computer so that it contains:
-
-      <IP-OF-VIRTUAL-SERVER>  rinfo-main rinfo-service
+      <IP-OF-VIRTUAL-SERVER>  rinfo-main rinfo-service rinfo-admin
       <IP-OF-VIRTUAL-SERVER>  sfs-demo dv-demo prop-demo sou-demo ds-demo
 
    * Run on your local computer::
@@ -99,12 +98,17 @@ Deploy demo data from lagen.nu:
       fab tg_integration -H dv-demo demo_refresh:dv
       fab tg_integration -H sfs-demo demo_refresh:sfs
 
-Deploy demo data from riksdagen.se (very time consuming)
+Deploy demo data from riksdagen.se (very time consuming):
 
    * Run on your local computer::
       fab tg_integration -H prop-demo demo_refresh:prop
       fab tg_integration -H sou-demo demo_refresh:sou
       fab tg_integration -H ds-demo demo_refresh:ds
+
+Deploy admin feed:
+
+   * Run on your local computer::
+      fab tg_integration -H rinfo-admin demo_admin
 
 Development Environment
 ========================================================================

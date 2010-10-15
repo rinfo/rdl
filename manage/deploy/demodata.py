@@ -4,6 +4,7 @@ from fabric.contrib.files import *
 from fabric.contrib.project import rsync_project
 from targetenvs import _needs_targetenv
 from deploy import _deploy_war
+from deploy.rinfo_admin import package_admin, deploy_admin
 from util import venv
 from os import path as p
 
@@ -79,18 +80,20 @@ def demo_refresh(dataset,force="0"):
     demo_build_war(dataset)
     demo_deploy_war(dataset)
 
+def demo_admin():
+    # TODO:? env.role = 'admin'
+    # TODO: When should the /var/www/admin directory be created and chowned?
+    adminbuild = p.join(env.demodata_dir, "rinfo-admin-demo")
+    sources = p.join(env.projectroot, "resources", "demo", "datasources.n3")
+    package_admin(sources, adminbuild)
+    deploy_admin(adminbuild)
 
 def full_demo_deploy():
     from itertools import chain
     for dataset in chain(lagen_nu_datasets, riksdagen_se_datasets):
         # TODO:? env.role = dataset
         demo_refresh(dataset)
-    # TODO:? env.role = 'admin'
-    adminbuild = p.join(env.demodata_dirs, rinfo-admin-demo)
-    sources = p.join(env.projectroot, "resources", "demo", "datasources.n3")
-    package_admin(sources, adminbuild)
-    deploy_admin(adminbuild)
-
+    demo_admin()
 
 def _mkdir_keep_prev(dir_path):
     if p.isdir("%s-prev"%dir_path):
@@ -113,7 +116,7 @@ def _download_riksdagen_data(dataset):
             " %(demodata_dir)s/%(dataset)s-raw %(dataset)s -f" % venv())
 
 def _transform_riksdagen_data(dataset):
-    local("groovy %(demodata_tools)s/data_riksdagen_se/depot_from_data_riksdagen_se.groovy "
+    local("%(java_opts)s groovy %(demodata_tools)s/data_riksdagen_se/depot_from_data_riksdagen_se.groovy "
             " %(demodata_dir)s/%(dataset)s-raw %(demodata_dir)s/%(dataset)s" % venv())
 
 

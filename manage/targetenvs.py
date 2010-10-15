@@ -99,6 +99,7 @@ def tg_integration():
         'main': ['rinfo-main'],
         'service': ['rinfo-service'],
         'doc': ['rinfo-main'],
+        'admin': ['rinfo-admin'],
         'demo': ['sfs-demo', 'dv-demo', 'prop-demo', 'sou-demo', 'ds-demo'],
     }
     # Manage
