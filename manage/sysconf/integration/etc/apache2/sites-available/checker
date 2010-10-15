@@ -2,6 +2,11 @@
     ServerName rinfo-checker
     ServerSignature On
 
+    <Proxy *>
+        Order allow,deny
+        Allow from all
+    </Proxy>
+
     ProxyPass / ajp://localhost:8009/rinfo-checker/
 
     ServerAdmin rinfo@lagrummet.se

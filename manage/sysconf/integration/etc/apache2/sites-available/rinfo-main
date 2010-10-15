@@ -1,5 +1,11 @@
 <VirtualHost *:80>
     ServerName rinfo-main
     ServerSignature On
+
+    <Proxy *>
+        Order allow,deny
+        Allow from all
+    </Proxy>
+
     ProxyPass / ajp://localhost:8009/rinfo-main/
 </VirtualHost>
