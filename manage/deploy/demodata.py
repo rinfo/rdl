@@ -84,7 +84,7 @@ def demo_admin():
     # TODO:? env.role = 'admin'
     # TODO: When should the /var/www/admin directory be created and chowned?
     adminbuild = p.join(env.demodata_dir, "rinfo-admin-demo")
-    sources = p.join(env.projectroot, "resources", "demo", "datasources.n3")
+    sources = p.join(env.projectroot, "resources", env.target, "datasources.n3")
     package_admin(sources, adminbuild)
     deploy_admin(adminbuild)
 
