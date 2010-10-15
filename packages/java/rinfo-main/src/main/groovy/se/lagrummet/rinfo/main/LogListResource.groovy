@@ -41,14 +41,21 @@ class LogListResource extends Resource {
                     entry.setUpdated(collect.getNative("tl:end"))
                     entry.setPublished(collect.getNative("tl:start"))
                     entry.setId(collect.getAbout())
-                    entry.setTitle(new URI(collect.getAbout()).getPath())
                     def link = entry.addLink(new URI(collect.getAbout()).getPath(),
                             "alternate", "application/rdf+xml", null, null, -1)
+                    def forFeedId = null
                     for (via in collect.getRels("iana:via")) {
                         //if (via.getRel("iana:self").equals(via.getRel("iana:current")))
+                        //    ... mark as "latest"
                         def enclosure = entry.addLink(new URI(via.getAbout()).getPath(),
                                 "enclosure", "application/rdf+xml", null, null, -1)
                         enclosure.setAttributeValue("modified", via.getValue("awol:updated"))
+                        if (forFeedId == null) {
+                            forFeedId = via.getValue("awol:id")
+                        }
+                    }
+                    if (forFeedId != null) {
+                        entry.setTitle(forFeedId)
                     }
                 }
             } finally {

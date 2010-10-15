@@ -14,6 +14,7 @@ import org.restlet.data.Response
 import org.restlet./*resource.*/Finder
 import org.restlet./*routing.*/Router
 import static org.restlet.util.Template.MODE_EQUALS
+import static org.restlet.util.Template.MODE_STARTS_WITH
 
 import se.lagrummet.rinfo.store.supply.DepotFinder
 
@@ -36,13 +37,11 @@ class MainApplication extends Application {
     synchronized Restlet createRoot() {
         def router = new Router(getContext())
         router.attach("/collector",
-                new Finder(getContext(), CollectorHandler))
+                new Finder(getContext(), CollectorHandler)).setMatchingMode(MODE_EQUALS)
         router.attach("/system/log/",
                 new Finder(getContext(), LogListResource)).setMatchingMode(MODE_EQUALS)
-        router.attach("/system/log/collect/{feedIdAtDateTime}",
-                new Finder(getContext(), CollectResource))
-        //router.attach("/system/log/collect/feed/{feedPageUrlAtDateTime}",
-        //        new Finder(getContext(), CollectedFeedPageResource))
+        router.attach("/system/log/collect/{contextPath}",
+                new Finder(getContext(), CollectResource)).setMatchingMode(MODE_STARTS_WITH)
         router.attachDefault(
                 new DepotFinder(getContext(), components.getStorage().getDepot()))
         return router

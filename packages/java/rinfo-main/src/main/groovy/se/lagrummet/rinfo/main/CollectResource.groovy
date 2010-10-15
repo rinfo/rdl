@@ -23,11 +23,11 @@ class CollectResource extends Resource {
     public CollectResource(Context context, Request request, Response response) {
         super(context, request, response)
         collectorLog = ContextAccess.getCollectorLog(context)
-        def feedIdAtDateTime = request.getAttributes().get("feedIdAtDateTime")
-        if (feedIdAtDateTime != null) {
+        def contextPath = request.getAttributes().get("contextPath")
+        if (contextPath != null) {
             collectContextUri = "http://rinfo.lagrummet.se" +
                     request.getResourceRef().getPath().toString()
-                    //"${collectorLog.systemBaseUri}log/collect/${feedIdAtDateTime}"
+                    //"${collectorLog.systemBaseUri}log/collect/${contextPath}"
             getVariants().add(new Variant(MediaType.APPLICATION_RDF_XML))
         }
     }

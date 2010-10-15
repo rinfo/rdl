@@ -68,7 +68,7 @@ class CollectorLogSpec extends Specification {
         when:
         logSession.logUpdatedEntry(sourceFeed, sourceEntry, depotEntry)
         then:
-        def entryDesc = logSession.describer.subjects(
+        def entryDesc = logSession.currentDescriber.subjects(
                 "rx:primarySubject", entryId).find {
                     it.getNative("awol:updated") == createTime
                 }

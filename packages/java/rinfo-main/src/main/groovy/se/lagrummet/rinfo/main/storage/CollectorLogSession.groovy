@@ -28,9 +28,9 @@ class CollectorLogSession {
     private String entryDatasetUri
     private RepositoryConnection conn
 
-    // TODO: wrap in CurrentState..
-    Describer describer
+    // TODO:IMPROVE: wrap in CurrentState..
     private Description collectDesc
+    Describer currentDescriber
     private String currentFeedUri
 
 
@@ -46,21 +46,20 @@ class CollectorLogSession {
 
     void logFeedPageVisit(URL pageUrl, Feed feed) {
         def feedId = feed.id.toString()
-
         if (collectDesc == null) {
             initializeCollect(feedId)
         }
 
-        def feedUrl = (feed.getSelfLinkResolvedHref() ?: pageUrl).toString()
         def feedUpdated = feed.getUpdated()
-
-        def feedDesc = describer.newDescription(
-                createCollectedFeedUri(feedId, feedUpdated, pageUrl.toString()), "awol:Feed")
+        def collectedFeedUri = createCollectedFeedUri(feedId, feedUpdated, pageUrl.toString())
+        currentDescriber = newDescriber(collectedFeedUri)
+        def feedDesc = currentDescriber.newDescription(collectedFeedUri, "awol:Feed")
 
         collectDesc.addRel("iana:via", feedDesc.about)
 
         feedDesc.addValue("awol:id", feedId)
         feedDesc.addValue("awol:updated", feedUpdated)
+        def feedUrl = (feed.getSelfLinkResolvedHref() ?: pageUrl).toString()
         feedDesc.addRel("iana:self", feedUrl)
 
         if (FeedPagingHelper.isComplete(feed))
@@ -96,13 +95,12 @@ class CollectorLogSession {
                     break
                 }
             }
-            // TODO: feeds are not yet in own contexts
-            //conn.clear(desc.toRef(feedAbout))
+            conn.clear(desc.toRef(feedAbout))
         }
         def startTime = new Date()
         def collectUri = createCollectUri(feedId, startTime)
-        describer = newDescriber(collectUri)
-        collectDesc = describer.newDescription(collectUri, "rc:Collect")
+        collectDesc = newDescriber(collectUri).newDescription(collectUri, "rc:Collect")
+        //collectDesc.addValue("rdfs:label", "Collect of <"+feedId+">")
         collectDesc.addValue("tl:start", dateTime(startTime))
     }
 
@@ -114,7 +112,7 @@ class CollectorLogSession {
 
     void logUpdatedEntry(Feed sourceFeed, Entry sourceEntry, DepotEntry depotEntry) {
         def sourceEntryDesc = makeSourceEntryDesc(sourceEntry)
-        def entryDesc = describer.newDescription(null, "awol:Entry")
+        def entryDesc = currentDescriber.newDescription(null, "awol:Entry")
         entryDesc.addValue("awol:published", dateTime(depotEntry.getPublished()))
         entryDesc.addValue("awol:updated", dateTime(depotEntry.getUpdated()))
         entryDesc.addRel("rx:primarySubject", sourceEntry.getId().toString())
@@ -125,7 +123,7 @@ class CollectorLogSession {
 
     void logDeletedEntry(Feed sourceFeed, URI sourceEntryId, Date sourceEntryDeleted,
             DepotEntry depotEntry) {
-        def deleted = describer.newDescription(null, "ov:DeletedEntry")
+        def deleted = currentDescriber.newDescription(null, "ov:DeletedEntry")
         // TODO: record sourceEntryDeleted:
         //def sourceDeletedEntryDesc = makeSourceDeletedEntryDesc(sourceEntryDeleted)
         //deleted.addRel("iana:via", sourceDeletedEntryDesc.about)
@@ -142,7 +140,7 @@ class CollectorLogSession {
             // TODO: we should change current check procedure per source
             // to *collector*, (from current use in SourceContent)
             if (error.failedCheck == SourceContent.Check.MD5) {
-                errorDesc = describer.newDescription(null, "rc:ChecksumError")
+                errorDesc = currentDescriber.newDescription(null, "rc:ChecksumError")
                 def src = (RemoteSourceContent) error.sourceContent
                 errorDesc.addValue("rc:document", src.urlPath)
                 //def documentInfo = "type=${src.mediaType};lang=${src.lang};slug=${src.enclosedUriPath}"
@@ -151,12 +149,12 @@ class CollectorLogSession {
             }
             // TODO: length
         } else if (error instanceof IdentifyerMismatchException) {
-            errorDesc = describer.newDescription(null, "rc:IdentifyerError")
+            errorDesc = currentDescriber.newDescription(null, "rc:IdentifyerError")
             errorDesc.addValue("rc:givenUri", error.givenUri)
             errorDesc.addValue("rc:computedUri", error.computedUri)
         }
         if (errorDesc == null) {
-            errorDesc = describer.newDescription(null, "rc:Error")
+            errorDesc = currentDescriber.newDescription(null, "rc:Error")
             errorDesc.addValue("rdf:value", error.getMessage() ?: "[empty error message]")
         }
         errorDesc.addValue("tl:at", dateTime(new Date()))
@@ -165,7 +163,7 @@ class CollectorLogSession {
     }
 
     private Description makeSourceEntryDesc(sourceEntry) {
-        def sourceEntryDesc = describer.newDescription(null, "awol:Entry")
+        def sourceEntryDesc = currentDescriber.newDescription(null, "awol:Entry")
         sourceEntryDesc.addValue("awol:id", sourceEntry.getId().toURI())
         sourceEntryDesc.addValue("awol:updated", dateTime(sourceEntry.getUpdated()))
         sourceEntryDesc.addRel("awol:source", currentFeedUri)
