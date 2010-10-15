@@ -26,7 +26,6 @@ def setup_main():
     if not exists(env.rinfo_main_store):
         sudo("mkdir %(rinfo_main_store)s"%env)
         sudo("chown -R %(tomcat_user)s %(rinfo_main_store)s"%env)
-    sudo("chown -R %(tomcat_user)s %(rinfo_dir)s"%env)
 
 @roles('main')
 def deploy_main():
