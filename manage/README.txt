@@ -50,16 +50,16 @@ reload the admin data.
 Setting Up the Integration Environment
 ========================================================================
 
-The integration environment is supposed to be run as a virtual server 
-on your local computer. It can host all rinfo applications. In the 
-instructions below it is assumed that local commands are run while 
+The integration environment is supposed to be run as a virtual server
+on your local computer. It can host all rinfo applications. In the
+instructions below it is assumed that local commands are run while
 standing in the directory rinfo-trunk/manage
 
    * Setup a virtual server using a debian based linux distribution
    * Ensure that sudo is available (run: apt-get install sudo if not)
    * Ensure that sshd is available (run: sudo apt-get install openssh-server if not)
-   * Ensure that you can ssh to the server password less
-   * Ensure that there is a package repository setup for sun-java6-jdk
+   * Ensure that you can ssh to the server preferably password less
+   * Ensure that there is a package repository setup that contains sun-java6-jdk
 
       * For Debian:
          http://www.debian.org/doc/manuals/debian-java-faq/ch7.html ::
@@ -85,11 +85,11 @@ standing in the directory rinfo-trunk/manage
       fab tg_integration -R main configure_server
       fab tg_integration -R service configure_server
       fab tg_integration -R demo configure_server
-   
+
    * Run on your virtual server::
       sudo /etc/init.d/apache2 graceful
 
-The virtual server should now be ready for the deployment of the 
+The virtual server should now be ready for the deployment of the
 applications and the demo data.
 
 Deploy demo data from lagen.nu:
@@ -109,6 +109,16 @@ Deploy admin feed:
 
    * Run on your local computer::
       fab tg_integration -H rinfo-admin demo_admin
+
+Deploy main:
+
+   * Run on your local computer::
+      fab tg_integration main_all
+
+Deploy service (not verified to work yet):
+
+   * Run on your local computer::
+      fab tg_integration service_all
 
 Development Environment
 ========================================================================
