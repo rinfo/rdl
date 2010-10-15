@@ -34,12 +34,12 @@ env.datestamp = datetime.datetime.utcnow().strftime('%Y-%m-%d')
 # role is environment dependent and set up by the targets defined in
 # targetenvs.py (see i.e. tg_dev_unix)
 env.roledefs = {
-    'doc': None,
-    'main': None,
-    'admin': None,
-    'service': None,
-    'checker': None,
-    'demo': None,
+    'doc': [],
+    'main': [],
+    'admin': [],
+    'service': [],
+    'checker': [],
+    'demo': [],
 }
 
 ##
