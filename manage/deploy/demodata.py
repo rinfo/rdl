@@ -9,7 +9,7 @@ from util import venv
 from os import path as p
 
 
-env.java_opts = 'JAVA_OPTS="-Xms512Mb -Xmx1024Mb"'
+env.java_opts = 'JAVA_OPTS="-Xms512m -Xmx1024m"'
 env.demodata_dir = "/opt/_workapps/rinfo/demodata"
 env.demodata_tools = p.join(env.projectroot, "tools", "demodata")
 
