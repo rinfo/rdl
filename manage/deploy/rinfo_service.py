@@ -55,7 +55,7 @@ def deploy_sesame():
     setup_service()
     package_sesame()
     for warname in ['openrdf-sesame', 'sesame-workbench']:
-        _deploy_war("%(local_sesame_dir)s/%(warname)s.war"%env, warname)
+        _deploy_war("%(local_sesame_dir)s/%(warname)s.war"%venv(), warname)
 
 ##
 # Manage repository
