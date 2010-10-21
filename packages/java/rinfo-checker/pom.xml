@@ -79,7 +79,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <warName>${artifactId}-${environment}</warName>
+          <warName>${project.artifactId}-${environment}</warName>
           <!--
           <webResources>
             <resource>
@@ -99,7 +99,7 @@
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
         <configuration>
-          <webApp>${basedir}/target/${artifactId}-${environment}.war</webApp>
+          <webApp>${basedir}/target/${project.artifactId}-${environment}.war</webApp>
           <scanIntervalSeconds>10</scanIntervalSeconds>
           <contextPath>/</contextPath>
         </configuration>

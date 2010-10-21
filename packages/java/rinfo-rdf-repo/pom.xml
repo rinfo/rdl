@@ -80,7 +80,7 @@
   <build>
     <defaultGoal>install</defaultGoal>
     <directory>${basedir}/target</directory>
-    <finalName>${artifactId}-${version}</finalName>
+    <finalName>${project.artifactId}-${project.version}</finalName>
 
     <plugins>
 

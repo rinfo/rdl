@@ -156,7 +156,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <warName>${artifactId}-${environment}</warName>
+          <warName>${project.artifactId}-${environment}</warName>
           <webResources>
             <resource>
               <filtering>false</filtering>
