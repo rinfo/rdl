@@ -71,6 +71,10 @@ standing in the directory rinfo-trunk/manage
          sudo add-apt-repository "deb http://archive.canonical.com/ lucid partner"
          sudo apt-get update
 
+      * For Ubuntu (10.10 Maverick):
+         sudo add-apt-repository "deb http://archive.canonical.com/ maverick partner"
+         sudo apt-get update
+
    * Edit the hosts file on your local computer so that it contains:
       <IP-OF-VIRTUAL-SERVER>  rinfo-main rinfo-service rinfo-admin
       <IP-OF-VIRTUAL-SERVER>  sfs-demo dv-demo prop-demo sou-demo ds-demo
