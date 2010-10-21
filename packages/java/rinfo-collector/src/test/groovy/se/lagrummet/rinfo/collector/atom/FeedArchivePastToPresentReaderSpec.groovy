@@ -14,7 +14,7 @@ class FeedArchivePastToPresentReaderSpec extends Specification {
     @Shared baseUrl
 
     def setupSpec() {
-        feedApp = new TestFeedApp("src/test/resources/feed/multiplechanges")
+        feedApp = new SimpleFeedApp("src/test/resources/feed/multiplechanges")
         baseUrl = "http://localhost:${feedApp.port}"
         feedApp.start()
     }

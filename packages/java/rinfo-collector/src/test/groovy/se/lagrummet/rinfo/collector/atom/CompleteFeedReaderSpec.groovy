@@ -14,7 +14,7 @@ class CompleteFeedReaderSpec extends Specification {
     @Shared baseUrl
 
     def setupSpec() {
-        feedApp = new TestFeedApp("src/test/resources/feed")
+        feedApp = new SimpleFeedApp("src/test/resources/feed")
         baseUrl = "http://localhost:${feedApp.port}"
         feedApp.start()
     }

@@ -6,14 +6,17 @@ import org.restlet.Restlet
 import org.restlet.data.Protocol
 import org.restlet./*resource.*/Directory
 
-
-class TestFeedApp {
+/**
+ * Simple Restlet application that can expose a feed. Used during testing by 
+ * the Spock specifications.
+ */
+class SimpleFeedApp {
 
     String rootPath
     int port
     Component component
 
-    TestFeedApp(rootPath, port=9991) {
+    SimpleFeedApp(rootPath, port=9991) {
         this.rootPath = rootPath
         this.port = port
     }
