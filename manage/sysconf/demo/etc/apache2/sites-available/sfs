@@ -13,6 +13,5 @@
         Allow from all
     </Proxy>
 
-    # Proxy everything, redirect in both directions
     ProxyPass / ajp://localhost:8009/sfs-demodata-supply/
 </VirtualHost>
