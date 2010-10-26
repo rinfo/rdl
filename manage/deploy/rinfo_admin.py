@@ -1,6 +1,7 @@
 from os import sep
 import sys
-from fabric.api import env, local, roles
+from fabric.api import *
+from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
 from util import slashed, cygpath
 from targetenvs import _needs_targetenv
@@ -9,6 +10,13 @@ from util import venv, fullpath
 
 env.adminbuild = sep.join((env.builddir, 'rinfo-admin'))
 
+
+@runs_once
+@roles('admin')
+def setup_admin():
+    if not exists(env.admin_webroot):
+       sudo("mkdir %(admin_webroot)s" % env)
+       sudo("chown %(user)s %(admin_webroot)s" % env)
 
 def package_admin(sources=None, outdir=None):
     """
@@ -27,7 +35,7 @@ def package_admin(sources=None, outdir=None):
 
 @roles('admin')
 def deploy_admin(builddir=None):
-    """Deploy the admin feed"""
+    """Deploy the admin feed."""
     _needs_targetenv()
     builddir = builddir or env.adminbuild
     if sys.platform == 'win32':
@@ -41,7 +49,7 @@ def deploy_admin(builddir=None):
 
 @roles('admin')
 def admin_all():
-    """Package and deploy the admin feed"""
+    """Package and deploy the admin feed."""
     package_admin()
     deploy_admin()
 

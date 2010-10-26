@@ -27,13 +27,18 @@ SCRIPT_DIR = p.dirname(__file__)
 ##
 # Continuous Maintenance
 
-@runs_once
 def configure_server(sync="1"):
     if int(sync):
-        sync_workdir()
+        _sync_workdir()
+    configure_app_container(0)
+    configure_sites(0)
+
+
+def configure_app_container(sync="1"):
+    if int(sync):
+        _sync_workdir()
 
     common_etc_dir = "%(mgr_workdir)s/common/etc" % env
-    env_etc_dir = "%(mgr_workdir)s/%(target)s/etc" % env
 
     if env.get('custom_tomcat'):
         with cd("%(tomcat)s" % env):
@@ -50,6 +55,12 @@ def configure_server(sync="1"):
             if sudo("cp -vu apache2/conf.d/jk.conf /etc/apache2/conf.d/"):
                 sudo("chown root:root /etc/apache2/conf.d/jk.conf")
 
+def configure_sites(sync="1"):
+    if int(sync):
+        _sync_workdir()
+
+    env_etc_dir = "%(mgr_workdir)s/%(target)s/etc" % env
+
     with cd(env_etc_dir):
         for role in env.roles:
             sites = env.get('apache_sites')
@@ -59,7 +70,7 @@ def configure_server(sync="1"):
                 sudo("a2ensite %s" % site)
 
 @runs_once
-def sync_workdir():
+def _sync_workdir():
     common_conf_dir = p.join(SCRIPT_DIR, "common")
     rsync_project(env.mgr_workdir, common_conf_dir,
             exclude=".*", delete=True)
@@ -67,9 +78,6 @@ def sync_workdir():
     rsync_project(env.mgr_workdir, local_conf_dir,
             exclude=".*", delete=True)
 
-
-def pull_etckeeper_repos():
-    pass
 
 ##
 # Initial Setup

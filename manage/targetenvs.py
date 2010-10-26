@@ -54,26 +54,30 @@ def tg_dev_unix():
 
 @_targetenv
 def tg_demo():
-    """Set target env to: demo - Not pointing at the real demo environment yet!"""
+    """Set target env to: demo"""
     # Name env:
     env.target = "demo"
     # Machines:
+    env.user = 'rinfo'
     env.roledefs = {
-        'main': ['demo.lagrummet.se'],
-        'service': ['demo.lagrummet.se'],
-        'checker': ['demo.lagrummet.se'],
-        'doc': ['demo.lagrummet.se'],
-        'admin': ['demo.lagrummet.se'],
+        'main': ['94.247.169.67'],
+        'service': ['94.247.169.67'],
+        'admin': ['94.247.169.67'],
+        'demo': ['94.247.169.67'],
     }
     # Manage
-    env.mgr_workdir = "/Users/%(user)s/mgr_work" % env
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
     # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
     env.demo_data_root = "/opt/rinfo/demo-depots"
     # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
     env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
         'demo': ['sfs', 'dv', 'prop', 'sou', 'ds'],
     }
     env.apache_jk_tomcat = True

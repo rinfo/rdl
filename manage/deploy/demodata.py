@@ -1,5 +1,5 @@
 from __future__ import with_statement
-from fabric.api import env, local, cd
+from fabric.api import env, local, cd, roles
 from fabric.contrib.files import *
 from fabric.contrib.project import rsync_project
 from targetenvs import _needs_targetenv
@@ -43,9 +43,9 @@ def demo_data_to_depot(dataset):
     elif dataset in riksdagen_se_datasets:
         _transform_riksdagen_data(dataset)
 
-
+@roles('demo')
 def demo_data_upload(dataset):
-    """Uploads the transformed demo data depot to the demo server."""
+    """Upload the transformed demo data depot to the demo server."""
     _can_handle_dataset(dataset)
     _needs_targetenv()
     if not exists(env.demo_data_root):
@@ -55,45 +55,53 @@ def demo_data_upload(dataset):
 
 
 def demo_build_war(dataset):
-    """Builds a webapp capable of serving an uploaded demo data depot."""
+    """Build a webapp capable of serving an uploaded demo data depot."""
     local("cd %(java_packages)s/demodata-supply && "
             "mvn -Ddataset=%(dataset)s -Ddemodata-root=%(demo_data_root)s clean package" % venv(), capture=False)
 
+@roles('demo')
 def demo_deploy_war(dataset):
-    """Deploys an uploaded demo webapp"""
+    """Deploy a demo webapp for the given uploaded dataset."""
     _can_handle_dataset(dataset)
     if not exists(env.dist_dir):
         run("mkdir %(dist_dir)s"%env)
     _deploy_war("%(java_packages)s/demodata-supply/target/%(dataset)s-demodata-supply.war" % venv(),
             "%(dataset)s-demodata-supply" % venv())
 
-
-def demo_refresh(dataset,force="0"):
-    """
-    Downloads, transforms, uploads, builds and deploys a webapp for serving a
-    demo dataset.
-    """
-    _can_handle_dataset(dataset)
-    demo_data_download(dataset,force)
-    demo_data_to_depot(dataset)
-    demo_data_upload(dataset)
+@roles('demo')
+def demo_war(dataset):
+    """Package and deploy a demo webapp for the given uploaded dataset."""
     demo_build_war(dataset)
     demo_deploy_war(dataset)
 
+def demo_refresh(dataset, force="0"):
+    """
+    Download, transform, upload, build and deploy a webapp for serving a demo
+    dataset.
+    """
+    _can_handle_dataset(dataset)
+    demo_data_download(dataset, force)
+    demo_data_to_depot(dataset)
+    demo_data_upload(dataset)
+    demo_war(dataset)
+
+
+@roles('admin')
 def demo_admin():
-    # TODO:? env.role = 'admin'
     # TODO: When should the /var/www/admin directory be created and chowned?
     adminbuild = p.join(env.demodata_dir, "rinfo-admin-demo")
     sources = p.join(env.projectroot, "resources", env.target, "datasources.n3")
     package_admin(sources, adminbuild)
     deploy_admin(adminbuild)
 
-def full_demo_deploy():
-    from itertools import chain
-    for dataset in chain(lagen_nu_datasets, riksdagen_se_datasets):
-        # TODO:? env.role = dataset
-        demo_refresh(dataset)
-    demo_admin()
+
+#def full_demo_deploy():
+#    from itertools import chain
+#    for dataset in chain(lagen_nu_datasets, riksdagen_se_datasets):
+#        # TODO:? env.role = dataset
+#        demo_refresh(dataset)
+#    demo_admin()
+
 
 def _mkdir_keep_prev(dir_path):
     if p.isdir("%s-prev"%dir_path):
