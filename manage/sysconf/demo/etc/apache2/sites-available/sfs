@@ -14,6 +14,5 @@
     </Proxy>
 
     # Proxy everything, redirect in both directions
-    ProxyPass / http://localhost:8080/sfs-demodata-supply/
-    ProxyPassReverse / http://localhost:8080/sfs-demodata-supply/
+    ProxyPass / ajp://localhost:8009/sfs-demodata-supply/
 </VirtualHost>
