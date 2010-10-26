@@ -88,7 +88,8 @@ def demo_refresh(dataset, force="0"):
 
 @roles('admin')
 def demo_admin():
-    # TODO: When should the /var/www/admin directory be created and chowned?
+    sudo("mkdir -p %(admin_webroot)s"%env)
+    sudo("chown %(user)s %(admin_webroot)s"%env)
     adminbuild = p.join(env.demodata_dir, "rinfo-admin-demo")
     sources = p.join(env.projectroot, "resources", env.target, "datasources.n3")
     package_admin(sources, adminbuild)

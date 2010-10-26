@@ -112,7 +112,7 @@ Deploy demo data from riksdagen.se (very time consuming):
 Deploy admin feed:
 
    * Run on your local computer::
-      fab tg_integration -H rinfo-admin demo_admin
+      fab tg_integration demo_admin
 
 Deploy main:
 
