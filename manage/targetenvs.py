@@ -70,6 +70,7 @@ def tg_demo():
     env.dist_dir = 'rinfo_dist'
     # Filesystem paths
     env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
     env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
     env.demo_data_root = "/opt/rinfo/demo-depots"
     # Apache
@@ -111,7 +112,6 @@ def tg_integration():
     env.dist_dir = 'rinfo_dist'
     # Filesystem paths
     env.rinfo_main_store = "/opt/rinfo/store"
-    env.example_stores = "/opt/rinfo/depots"
     env.rinfo_dir = '/opt/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
     env.demo_data_root = "/opt/rinfo/demo-depots"
