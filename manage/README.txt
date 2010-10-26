@@ -119,6 +119,22 @@ Deploy main:
    * Run on your local computer::
       fab tg_integration main_all
 
+Verify main:
+
+   * http://rinfo-main/feed/current
+      should contain a feed with models etc.
+
+   * http://rinfo-main/system/log/
+      should contain entries for each source that has been collected
+
+   You might need to ping main to collect data from the demo sources:
+
+      * fab tg_integration ping_main_collector:http\://dv-demo/feed/current
+      * fab tg_integration ping_main_collector:http\://sfs-demo/feed/current
+      * fab tg_integration ping_main_collector:http\://prop-demo/feed/current
+      * fab tg_integration ping_main_collector:http\://sou-demo/feed/current
+      * fab tg_integration ping_main_collector:http\://ds-demo/feed/current
+
 Deploy service (not verified to work yet):
 
    * Run on your local computer::
