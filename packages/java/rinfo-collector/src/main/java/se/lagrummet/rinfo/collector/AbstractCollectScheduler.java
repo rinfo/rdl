@@ -1,5 +1,6 @@
 package se.lagrummet.rinfo.collector;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,11 +35,14 @@ public abstract class AbstractCollectScheduler {
 
     private ExecutorService executorService;
 
-    private ConcurrentLinkedQueue<URL> feedQueue =
-        new ConcurrentLinkedQueue<URL>();
+    // NOTE: Why String not URL in these? Take a long, hard look at the javadoc
+    // for java.net.URL#equals!
 
-    private List<URL> feedInProcess =
-        Collections.synchronizedList(new ArrayList<URL>());
+    private ConcurrentLinkedQueue<String> feedQueue =
+        new ConcurrentLinkedQueue<String>();
+
+    private List<String> feedInProcess =
+        Collections.synchronizedList(new ArrayList<String>());
 
     public int getInitialDelay() {
         return initialDelay;
@@ -129,7 +133,7 @@ public abstract class AbstractCollectScheduler {
         if (feedQueue != null) {
             if (feedQueue.size() > 0) {
                 StringBuffer buf = new StringBuffer();
-                for (URL u : feedQueue) {
+                for (String u : feedQueue) {
                     buf.append("<"+u+">, ");
                 }
                 String feeds = buf.toString();
@@ -173,18 +177,22 @@ public abstract class AbstractCollectScheduler {
         if (!getSourceFeedUrls().contains(feedUrl)) {
             throw new NotAllowedSourceFeedException(
                     "Called triggerFeedCollect with disallowed " +
-                    "feed url: <"+feedUrl+">");
+                    "feed url: <"+ feedUrl +">");
         }
         return enqueueCollect(feedUrl);
     }
 
     private synchronized boolean enqueueCollect(final URL feedUrl) {
-        if (feedQueue.contains(feedUrl) || feedInProcess.contains(feedUrl)) {
-            logger.info("Feed <"+feedUrl+"> is already scheduled for collect.");
+        String feedUrlStr = feedUrl.toString();
+        if (feedQueue.contains(feedUrlStr)) {
+            logger.info("Feed <"+ feedUrlStr +"> is already scheduled for collect.");
+            return false;
+        } else if (feedInProcess.contains(feedUrlStr)) {
+            logger.info("Feed <"+ feedUrlStr +"> is already being collected.");
             return false;
         } else {
-            feedQueue.add(feedUrl);
-            logger.info("Scheduling collect of <"+feedUrl+">.");
+            feedQueue.add(feedUrlStr);
+            logger.info("Scheduling collect of <"+ feedUrlStr +">.");
             executorService.execute(
                     new Runnable() {
                         public void run() { executeCollect(); }
@@ -195,24 +203,26 @@ public abstract class AbstractCollectScheduler {
     }
 
     private void executeCollect() {
-        URL feedUrl = getNextFeed();
-        if (feedUrl != null) {
+        String feedUrlStr = getNextFeed();
+        if (feedUrlStr != null) {
             try {
-                collectFeed(feedUrl, true);
+                collectFeed(new URL(feedUrlStr), true);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
             } finally {
-                feedInProcess.remove(feedUrl);
+                feedInProcess.remove(feedUrlStr);
             }
-            logger.info("Completed collect of <"+feedUrl+">.");
+            logger.info("Completed collect of <"+ feedUrlStr +">.");
         }
     }
 
-    private synchronized URL getNextFeed() {
-        URL feedUrl = feedQueue.peek();
-        if (feedUrl != null) {
-            feedInProcess.add(feedUrl);
-            feedQueue.remove(feedUrl);
+    private synchronized String getNextFeed() {
+        String feedUrlStr = feedQueue.peek();
+        if (feedUrlStr != null) {
+            feedInProcess.add(feedUrlStr);
+            feedQueue.remove(feedUrlStr);
         }
-        return feedUrl;
+        return feedUrlStr;
     }
 
 }
