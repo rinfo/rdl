@@ -138,6 +138,7 @@ Verify main:
 Deploy service (not verified to work yet):
 
    * Run on your local computer::
+      fab tg_integration deploy_sesame
       fab tg_integration service_all
 
 Development Environment
