@@ -13,6 +13,7 @@ import org.restlet.data.Request
 import org.restlet.data.Response
 import org.restlet./*resource.*/Finder
 import org.restlet./*routing.*/Router
+import org.restlet.util.Variable
 import static org.restlet.util.Template.MODE_EQUALS
 import static org.restlet.util.Template.MODE_STARTS_WITH
 
@@ -40,8 +41,12 @@ class MainApplication extends Application {
                 new Finder(getContext(), CollectorHandler)).setMatchingMode(MODE_EQUALS)
         router.attach("/system/log/",
                 new Finder(getContext(), LogListResource)).setMatchingMode(MODE_EQUALS)
-        router.attach("/system/log/collect/{contextPath}",
-                new Finder(getContext(), CollectResource)).setMatchingMode(MODE_STARTS_WITH)
+
+        def tplt = router.attach("/system/log/collect/{contextPath}",
+                new Finder(getContext(), CollectResource)).getTemplate()
+        tplt.getVariables().put("contextPath", new Variable(Variable.TYPE_URI_PATH))
+        tplt.setMatchingMode(MODE_STARTS_WITH)
+
         router.attachDefault(
                 new DepotFinder(getContext(), components.getStorage().getDepot()))
         return router
