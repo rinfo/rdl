@@ -24,10 +24,12 @@ class CollectResource extends Resource {
         super(context, request, response)
         collectorLog = ContextAccess.getCollectorLog(context)
         def contextPath = request.getAttributes().get("contextPath")
+        logger.info("contextPath = <${contextPath}>")
         if (contextPath != null) {
-            collectContextUri = "http://rinfo.lagrummet.se" +
-                    request.getResourceRef().getPath().toString()
-                    //"${collectorLog.systemBaseUri}log/collect/${contextPath}"
+            collectContextUri = "${collectorLog.systemBaseUri}log/collect/${contextPath}"
+                    //"http://rinfo.lagrummet.se" +
+                    //request.getResourceRef().getPath().toString()
+                    //"/"+request.getResourceRef().getRelativeRef().getPath().toString()
             getVariants().add(new Variant(MediaType.APPLICATION_RDF_XML))
         }
     }
@@ -35,6 +37,7 @@ class CollectResource extends Resource {
     @Override
     public Representation represent(Variant variant) throws ResourceException {
         if (MediaType.APPLICATION_RDF_XML.equals(variant.getMediaType())) {
+            logger.info("Representing <${collectContextUri}> as RDF")
             def context = new org.openrdf.model.impl.URIImpl(collectContextUri)
             // TODO: return null if context is not found
             def ins = RDFUtil.toInputStream(collectorLog.repo,
