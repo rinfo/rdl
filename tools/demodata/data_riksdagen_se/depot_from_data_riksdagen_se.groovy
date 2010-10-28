@@ -56,6 +56,7 @@ void createDepotFromDataDump(File sourceDir, File depotDir, boolean debug=false)
                     System.err.println "Error 2 in conversion to RDF: ${e2}"
                     return
                 }
+                // TODO: extract rpubl:utgarFran using: /(SOU \d+:[^.]+?)\)?\s*\.{4,}/
             }
             try {
                 def describer = new Describer(repo.connection).
