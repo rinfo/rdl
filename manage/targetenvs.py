@@ -87,8 +87,8 @@ def tg_demo():
     env.tomcat_version = "6.0.29"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
-    env.tomcat_start = "%(tomcat)s/bin/catalina.sh start"%env
-    env.tomcat_stop = "%(tomcat)s/bin/catalina.sh stop"%env
+    env.tomcat_start = '/etc/init.d/tomcat start'
+    env.tomcat_stop = '/etc/init.d/tomcat stop'
     env.tomcat_user = 'tomcat'
 
 # Integration is a virtual environment that you could setup on your own computer

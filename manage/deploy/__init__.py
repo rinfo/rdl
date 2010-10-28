@@ -12,5 +12,6 @@ def _deploy_war(localwar, warname):
     sudo("%(tomcat_stop)s"%venv())
     sudo("rm -rf %(tomcat_webapps)s/%(warname)s/"%venv())
     sudo("mv %(dist_dir)s/%(warname)s.war %(tomcat_webapps)s/"%venv())
+    sudo("chown %(tomcat_user)s %(tomcat_webapps)s/%(warname)s.war"%venv())
     sudo("%(tomcat_start)s"%venv())
 

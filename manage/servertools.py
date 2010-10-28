@@ -30,7 +30,6 @@ def restart_all():
 
 def restart_tomcat():
     _needs_targetenv()
-    #/etc/init.d/tomcat restart
     sudo("%(tomcat_stop)s"%env)
     sudo("%(tomcat_start)s"%env)
 

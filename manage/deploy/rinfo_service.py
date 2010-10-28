@@ -13,7 +13,7 @@ def package_service(deps="1"):
     if int(deps): local_lib_rinfo_pkg()
     _needs_targetenv()
     local("cd %(java_packages)s/rinfo-service/ && "
-            "mvn -P%(target)s clean war:war"%env, capture=False)
+            "mvn -P%(target)s clean package war:war"%env, capture=False)
 
 ##
 # Server deploy
