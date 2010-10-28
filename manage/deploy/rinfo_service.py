@@ -26,6 +26,7 @@ def setup_service():
     if not exists(env.rinfo_dir): sudo("mkdir %(rinfo_dir)s"%env)
     if not exists(env.rinfo_rdf_repo_dir):
         sudo("mkdir %(rinfo_rdf_repo_dir)s"%env)
+    sudo("chown %(tomcat_user)s %(rinfo_rdf_repo_dir)s"%env)
 
 @roles('service')
 def deploy_service():
@@ -54,8 +55,23 @@ def package_sesame():
 def deploy_sesame():
     setup_service()
     package_sesame()
+    _patch_catalina_properties()
     for warname in ['openrdf-sesame', 'sesame-workbench']:
         _deploy_war("%(local_sesame_dir)s/%(warname)s.war"%venv(), warname)
+
+def _patch_catalina_properties():
+    # This will patch catalina.properties so that it contains the system 
+    # property that controls where sesame stores its data
+    sesame_data_dir_key = "info.aduna.platform.appdata.basedir"
+    catalina_properties_path = "%(tomcat)s/conf/catalina.properties" % env
+    with settings(warn_only=True):
+        if (sudo("grep '%(sesame_data_dir_key)s' %(catalina_properties_path)s" % venv())):
+            print "'%(sesame_data_dir_key)s' already present in %(catalina_properties_path)s" % venv()
+        else:
+            print "'%(sesame_data_dir_key)s' NOT found in %(catalina_properties_path)s" % venv()
+            print "Patching %(catalina_properties_path)s" % venv()
+            sudo("echo '# The data dir for Sesame used by rinfo-service' >> %(catalina_properties_path)s" % venv())
+            sudo("echo '%(sesame_data_dir_key)s=%(rinfo_rdf_repo_dir)s' >> %(catalina_properties_path)s" % venv())
 
 ##
 # Manage repository
