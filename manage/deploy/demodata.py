@@ -4,7 +4,7 @@ from fabric.contrib.files import *
 from fabric.contrib.project import rsync_project
 from targetenvs import _needs_targetenv
 from deploy import _deploy_war
-from deploy.rinfo_admin import package_admin, deploy_admin
+from deploy.rinfo_admin import setup_admin, package_admin, deploy_admin
 from util import venv
 from os import path as p
 
@@ -88,8 +88,7 @@ def demo_refresh(dataset, force="0"):
 
 @roles('admin')
 def demo_admin():
-    sudo("mkdir -p %(admin_webroot)s"%env)
-    sudo("chown %(user)s %(admin_webroot)s"%env)
+    setup_admin()
     adminbuild = p.join(env.demodata_dir, "rinfo-admin-demo")
     sources = p.join(env.projectroot, "resources", env.target, "datasources.n3")
     package_admin(sources, adminbuild)
