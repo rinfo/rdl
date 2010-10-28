@@ -38,7 +38,7 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
 
     public void setAdminFeedUrl(URL adminFeedUrl) {
         this.adminFeedUrl = adminFeedUrl
-        newSourceFeedUrls()
+        refreshSourceFeedUrls()
     }
 
     public Collection<URL> getPublicSourceFeedUrls() {
@@ -47,7 +47,7 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
 
     public void setPublicSourceFeedUrls(Collection<URL> publicSourceFeedUrls) {
         this.publicSourceFeedUrls = publicSourceFeedUrls
-        newSourceFeedUrls()
+        refreshSourceFeedUrls()
     }
 
     @Override
@@ -63,7 +63,7 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
         return new StorageCredentials(feedUrl.equals(adminFeedUrl))
     }
 
-    private void newSourceFeedUrls() {
+    private void refreshSourceFeedUrls() {
         boolean wasStarted = isStarted()
         if (wasStarted) {
             shutdown()
