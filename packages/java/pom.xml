@@ -600,9 +600,9 @@
       </properties>
     </profile>
     <profile>
-      <id>stg</id>
+      <id>demo</id>
       <properties>
-        <environment>stg</environment>
+        <environment>demo</environment>
       </properties>
     </profile>
     <profile>
