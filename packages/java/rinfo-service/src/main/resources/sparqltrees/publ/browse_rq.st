@@ -25,19 +25,36 @@ where {
         ?docType__publisher__eventItem
             tl:atYear ?docType__publisher__eventItem__1_year;
             scv:dimension ?docType__publisher__eventItem__1_property .
+
+        OPTIONAL {
+            ?docType__publisher__eventItem__1_property
+                rdfs:subPropertyOf ?_dimensionSuperProperty .
+        }
+
         {
-            ?docType__publisher__eventItem__1_property rdfs:domain ?docType .
+            ?_docProp rdfs:domain ?docType .
         } union {
             ?docType rdfs:subClassOf [
-                owl:onProperty ?docType__publisher__eventItem__1_property
+                owl:onProperty ?_docProp
             ] .
         } union {
             ?docType rdfs:subClassOf [
                 rdfs:subClassOf [
-                    owl:onProperty ?docType__publisher__eventItem__1_property
+                    owl:onProperty ?_docProp
+                ]
+            ] .
+        } union {
+            ?docType rdfs:subClassOf [
+                rdfs:subClassOf [
+                    rdfs:subClassOf [
+                        owl:onProperty ?_docProp
+                    ]
                 ]
             ] .
         }
+
+        FILTER( ?_docProp = ?docType__publisher__eventItem__1_property ||
+                ?_docProp = ?_dimensionSuperProperty )
 
         ?docType__publisher__eventItem
     $else$
