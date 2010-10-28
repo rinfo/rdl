@@ -22,6 +22,9 @@ where {
 
     $if (publisher)$
 
+        # TODO: this construct is flawed! Not all date properties (from which
+        # year is extracted) are explicitly linked to the relevant doctypes!
+
         ?docType__publisher__eventItem
             tl:atYear ?docType__publisher__eventItem__1_year;
             scv:dimension ?docType__publisher__eventItem__1_property .
