@@ -5,17 +5,12 @@ import org.slf4j.LoggerFactory
 import org.openrdf.model.Literal
 import org.openrdf.model.Namespace
 import org.openrdf.model.Resource
-import org.openrdf.model.Value
 import org.openrdf.model.ValueFactory
 import org.openrdf.model.impl.ValueFactoryImpl
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.vocabulary.XMLSchema
 import org.openrdf.repository.RepositoryConnection
 import org.openrdf.rio.RDFFormat
-import org.openrdf.query.BindingSet
-import org.openrdf.query.QueryLanguage
-import org.openrdf.query.TupleQuery
-import org.openrdf.query.TupleQueryResult
 
 import org.apache.abdera.model.Entry
 
@@ -32,19 +27,14 @@ class RepoEntry {
     static final IANA_ALTERNATE
     static final IANA_ENCLOSURE
     static final FOAF_PRIMARY_TOPIC
-    static final SCOVO_ITEM
-    static final SCOVO_DIMENSION
-    static final TL_AT_YEAR
-    static final EVENT_PRODUCT
 
     static {
-        ValueFactory vf = ValueFactoryImpl.getInstance()
+        def vf = ValueFactoryImpl.getInstance()
+
         def AWOL_NS = "http://bblfish.net/work/atom-owl/2006-06-06/#"
         def IANA_NS = "http://www.iana.org/assignments/relation/"
         def FOAF_NS = "http://xmlns.com/foaf/0.1/"
-        def SCOVO_NS = "http://purl.org/NET/scovo#"
-        def TL_NS = "http://purl.org/NET/c4dm/timeline.owl#"
-        def EVENT_NS = "http://purl.org/NET/c4dm/event.owl#"
+
         AWOL_ENTRY = vf.createURI(AWOL_NS, "Entry")
         AWOL_ID = vf.createURI(AWOL_NS, "id")
         AWOL_UPDATED = vf.createURI(AWOL_NS, "updated")
@@ -53,10 +43,6 @@ class RepoEntry {
         IANA_ALTERNATE = vf.createURI(IANA_NS, "alternate")
         IANA_ENCLOSURE = vf.createURI(IANA_NS, "enclosure")
         FOAF_PRIMARY_TOPIC = vf.createURI(FOAF_NS, "primaryTopic")
-        SCOVO_ITEM = vf.createURI(SCOVO_NS, "Item")
-        SCOVO_DIMENSION = vf.createURI(SCOVO_NS, "dimension")
-        TL_AT_YEAR = vf.createURI(TL_NS, "atYear")
-        EVENT_PRODUCT = vf.createURI(EVENT_NS, "product")
     }
 
     static final CONTEXT_SUFFIX = "/entry#context"
@@ -79,8 +65,6 @@ class RepoEntry {
     private Resource storedContext
     private Resource newContext
 
-    private def timeStatsCtx = [] as Resource[] // TODO
-
     private final logger = LoggerFactory.getLogger(RepoEntry)
 
     RepoEntry(SesameLoader loader, Entry entry) {
@@ -91,6 +75,7 @@ class RepoEntry {
     RepoEntry(SesameLoader loader, URI id, Date updated) {
         this.loader = loader
         this.conn = loader.conn
+        conn.setAutoCommit(false)
         this.id = id
         this.updated = updated
         this.vf = conn.getRepository().getValueFactory()
@@ -98,6 +83,14 @@ class RepoEntry {
         this.entryUri = vf.createURI(idStr)
         this.entryIdLiteral = vf.createLiteral(idStr, XMLSchema.ANYURI)
         this.entryUpdatedLiteral = RDFUtil.createDateTime(vf, updated)
+    }
+
+    Resource getContext() {
+        if (newContext == null) {
+            // TODO:? Ok to mint uri like this?
+            newContext = vf.createURI(id.toString() + CONTEXT_SUFFIX)
+        }
+        return newContext
     }
 
     Resource getStoredContext() {
@@ -123,32 +116,36 @@ class RepoEntry {
         return false
     }
 
-    Resource getContext() {
-        if (newContext == null) {
-            // TODO:? Ok to mint uri like this?
-            newContext = vf.createURI(id.toString() + CONTEXT_SUFFIX)
-        }
-        return newContext
-    }
-
     void create() {
-        if (getStoredContext() != null) {
-            // NOTE: clear, not remove, since we want to remember seen
-            // updates *and* deletes
-            // TODO: do we? Only if we want an analogue to the main timeline..?
-            clearContext()
+        try {
+            if (getStoredContext() != null) {
+                // NOTE: clear, not remove, since we want to remember seen
+                // updates *and* deletes
+                // TODO: do we? Only if we want an analogue to the main timeline..?
+                clearContext()
+            }
+            addContext()
+            processContents()
+            new EntryStats(this).addStatistics()
+        } catch (Exception e) {
+            conn.rollback()
+            throw e
         }
-        addContext()
-        processContents()
-        addYearDimension()
+        conn.commit()
     }
 
     void delete() {
-        // TODO: error if already deleted, or doesn't exist at all?
-        removeFromYearDimension()
-        clearContext()
-        // TODO:? just add the tombstone as a marker (for collect) like this?
-        //addContext()
+        // TODO: throw error if already deleted or missing?
+        try {
+            new EntryStats(this).removeStatistics()
+            clearContext()
+            // TODO:? add the tombstone as a marker (e.g. for isCollected during collect)?
+            //addTombstoneContext()
+        } catch (Exception e) {
+            conn.rollback()
+            throw e
+        }
+        conn.commit()
     }
 
     protected void addContext() {
@@ -201,7 +198,6 @@ class RepoEntry {
         logger.info("Loading RDF from <${url}>")
         def inStream = loader.getResponseAsInputStream(url)
         conn.add(inStream, url, RDFFormat.forMIMEType(mediaType), ctx)
-        conn.commit()
     }
 
     void addAtomEntryMetadata(String url, org.openrdf.model.URI rel, String mediaType) {
@@ -209,82 +205,6 @@ class RepoEntry {
         def resource = vf.createURI(url)
         conn.add(ctx, rel, resource, ctx)
         conn.add(resource, AWOL_TYPE, vf.createLiteral(mediaType), ctx)
-    }
-
-    protected void addYearDimension() {
-        def ctx = getContext()
-        def stmts = conn.getStatements(entryUri, null, null, false, ctx)
-        try {
-            while (stmts.hasNext()) {
-                def stmt = stmts.next()
-                if (!isDateOrDateTime(stmt.object))
-                    continue
-                Literal year = gYearFromDateTime((Literal)stmt.object)
-                Resource eventItem = findOrMakeYearItemFor(stmt.predicate, year)
-                conn.add(eventItem, EVENT_PRODUCT, entryUri, timeStatsCtx)
-            }
-        } finally {
-            stmts.close()
-        }
-    }
-
-    protected boolean isDateOrDateTime(Value value) {
-        if (!(value instanceof Literal))
-            return false
-        return XMLSchema.DATETIME.equals(((Literal) value).getDatatype()) ||
-                XMLSchema.DATE.equals(((Literal) value).getDatatype())
-    }
-
-    protected Literal gYearFromDateTime(Literal dateTime) {
-        String yearRepr = dateTime.calendarValue().getEonAndYear().toString()
-        Literal year = vf.createLiteral(yearRepr, XMLSchema.GYEAR)
-    }
-
-    protected Resource findOrMakeYearItemFor(property, year) {
-        def eventItem = findYearItemFor(property, year)
-        if (eventItem == null) {
-            eventItem = vf.createBNode()
-            conn.add(eventItem, RDF.TYPE, SCOVO_ITEM, timeStatsCtx)
-            conn.add(eventItem, TL_AT_YEAR, year, timeStatsCtx)
-            conn.add(eventItem, SCOVO_DIMENSION, property, timeStatsCtx)
-        }
-        return eventItem
-    }
-
-    protected Resource findYearItemFor(property, year) {
-        Resource eventItem = null
-        def yearItemQueryStr = ("SELECT ?eventItem WHERE { " +
-                "?eventItem " +
-                "    <http://purl.org/NET/c4dm/timeline.owl#atYear> ?year; " +
-                "    <http://purl.org/NET/scovo#dimension> ?property . " +
-                "} ")
-        TupleQuery yearItemQuery = conn.prepareTupleQuery(
-                QueryLanguage.SPARQL, yearItemQueryStr)
-        yearItemQuery.setBinding("property", property)
-        yearItemQuery.setBinding("year", year)
-        TupleQueryResult result = yearItemQuery.evaluate()
-        try {
-            while (result.hasNext()) {
-                BindingSet row = result.next()
-                eventItem = row.getValue("eventItem")
-                break
-            }
-        } finally {
-            result.close()
-        }
-        return eventItem
-    }
-
-    protected void removeFromYearDimension() {
-        def eventItemStmt = RDFUtil.one(conn, null, EVENT_PRODUCT, entryUri)
-        def eventItem = eventItemStmt ? eventItemStmt.getSubject() : null
-        if (!eventItem)
-            return
-        conn.remove(eventItemStmt, timeStatsCtx)
-        // NOTE: if no other products, remove all about eventItem
-        if (!conn.hasStatement(eventItem, EVENT_PRODUCT, null, false, timeStatsCtx)) {
-            conn.remove(eventItem, null, null, timeStatsCtx)
-        }
     }
 
 }
