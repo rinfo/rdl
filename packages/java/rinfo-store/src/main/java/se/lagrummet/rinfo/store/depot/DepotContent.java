@@ -1,8 +1,9 @@
 package se.lagrummet.rinfo.store.depot;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import org.apache.commons.io.FileUtils;
+import java.io.InputStream;
 import org.apache.commons.codec.digest.DigestUtils;
 
 
@@ -33,7 +34,14 @@ public class DepotContent {
     }
 
     public String getMd5Hex() throws IOException {
-        return DigestUtils.md5Hex(FileUtils.readFileToByteArray(file));
+        InputStream ins = new FileInputStream(file);
+        String md5hex = null;
+        try {
+            md5hex = DigestUtils.md5Hex(ins);
+        } finally {
+            ins.close();
+        }
+        return md5hex;
     }
 
     public String toString() {
