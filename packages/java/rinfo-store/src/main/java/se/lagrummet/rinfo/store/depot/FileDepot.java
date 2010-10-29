@@ -29,7 +29,7 @@ public class FileDepot implements Depot {
         backend = new FileDepotBackend(this);
     }
 
-    public FileDepot(URI baseUri, File baseDir) throws DepotWriteException {
+    public FileDepot(URI baseUri, File baseDir) throws DepotException {
         this();
         this.baseUri = baseUri;
         this.baseDir = baseDir;
@@ -54,7 +54,7 @@ public class FileDepot implements Depot {
     public Atomizer getAtomizer() { return atomizer; }
 
 
-    public void initialize() throws DepotWriteException {
+    public void initialize() throws DepotException {
         if (baseDir == null) {
             throw new IllegalStateException("baseDir has not been set.");
         }
@@ -64,7 +64,7 @@ public class FileDepot implements Depot {
                         "Cannot create missing depot base directory: " + baseDir);
             }
         }
-        // TODO:? checkConsistency();
+        // TODO:? always checkConsistency(); // may be a slow operation
         this.initialized = true;
     }
 

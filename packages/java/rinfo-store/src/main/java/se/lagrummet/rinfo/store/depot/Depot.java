@@ -14,7 +14,7 @@ public interface Depot {
 
     PathHandler getPathHandler();
 
-    //void initialize();
+    //void initialize() throws DepotException;
 
     List find(String uriPath) throws DepotReadException;
 

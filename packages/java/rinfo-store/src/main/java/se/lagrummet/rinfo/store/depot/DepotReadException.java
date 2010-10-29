@@ -1,6 +1,6 @@
 package se.lagrummet.rinfo.store.depot;
 
-public class DepotReadException extends Exception {
+public class DepotReadException extends DepotException {
 
     public DepotReadException(String msg) {
         super(msg);
