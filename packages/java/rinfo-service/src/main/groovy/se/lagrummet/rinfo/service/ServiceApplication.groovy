@@ -1,30 +1,21 @@
 package se.lagrummet.rinfo.service
 
-import org.slf4j.LoggerFactory
-import org.slf4j.Logger
-
 import org.restlet.Application
 import org.restlet.Context
 import org.restlet.Restlet
-import org.restlet.data.CharacterSet
 import org.restlet.data.MediaType
-import org.restlet.data.Method
-import org.restlet.data.Request
-import org.restlet.data.Response
+import org.restlet.Request
+import org.restlet.Response
 import org.restlet.data.Status
-import org.restlet.resource./*.representation.*/Representation
-import org.restlet.resource./*.representation.*/StringRepresentation
-import org.restlet.resource./*.representation.*/Variant
-import org.restlet./*resource.*/Directory
-import org.restlet./*resource.*/Finder
-import org.restlet./*resource.*/Handler
+import org.restlet.representation.Representation
+import org.restlet.representation.StringRepresentation
+import org.restlet.representation.Variant
+import org.restlet.resource.Directory
+import org.restlet.resource.Finder
+import org.restlet.resource.Handler
 import org.restlet.resource.Resource
-import org.restlet./*routing.*/Router
+import org.restlet.routing.Router
 
-import org.openrdf.repository.Repository
-
-import org.apache.commons.configuration.Configuration
-import org.apache.commons.configuration.ConfigurationException
 import org.apache.commons.configuration.PropertiesConfiguration
 
 import se.lagrummet.rinfo.collector.NotAllowedSourceFeedException
@@ -146,7 +137,7 @@ class StatusResource extends Resource {
         getVariants().add(new Variant(MediaType.TEXT_PLAIN))
     }
     @Override
-    public Representation getRepresentation(Variant variant) {
+    public Representation represent(Variant variant) {
         def representation = new StringRepresentation("OK", MediaType.TEXT_PLAIN)
         return representation
     }

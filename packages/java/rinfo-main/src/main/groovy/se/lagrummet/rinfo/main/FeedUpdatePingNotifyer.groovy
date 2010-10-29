@@ -4,7 +4,7 @@ import org.restlet.Client
 import org.restlet.data.MediaType
 import org.restlet.data.Method
 import org.restlet.data.Protocol
-import org.restlet.data.Request
+import org.restlet.Request
 
 
 class FeedUpdatePingNotifyer implements Runnable {

@@ -5,26 +5,16 @@ import org.restlet.Context
 import org.restlet.data.CharacterSet
 import org.restlet.data.Language
 import org.restlet.data.MediaType
-import org.restlet.data.Method
-import org.restlet.data.Request
-import org.restlet.data.Response
-import org.restlet.data.Status
-import org.restlet.resource./*.representation.*/InputRepresentation
-import org.restlet.resource./*.representation.*/StringRepresentation
-import org.restlet.resource./*.representation.*/Representation
-import org.restlet.resource./*.representation.*/Variant
-import org.restlet./*resource.*/Finder
-import org.restlet./*resource.*/Handler
+import org.restlet.Request
+import org.restlet.Response
+import org.restlet.representation.StringRepresentation
+import org.restlet.representation.Representation
+import org.restlet.representation.Variant
+import org.restlet.resource.Finder
+import org.restlet.resource.Handler
 import org.restlet.resource.Resource
-import org.restlet./*routing.*/Router
-import org.restlet.util.Template
-import org.restlet.util.Variable
-
-import javax.xml.transform.Templates
-import javax.xml.transform.stream.StreamResult
-import javax.xml.transform.stream.StreamSource
-
-import org.apache.commons.configuration.ConfigurationUtils
+import org.restlet.routing.Router
+import org.restlet.routing.Variable
 
 import org.openrdf.repository.Repository
 

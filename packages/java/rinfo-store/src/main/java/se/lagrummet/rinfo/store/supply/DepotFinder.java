@@ -1,17 +1,20 @@
 package se.lagrummet.rinfo.store.supply;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.*;
 
 import org.restlet.Context;
 import org.restlet.data.Language;
 import org.restlet.data.MediaType;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
+import org.restlet.Request;
+import org.restlet.Response;
+import org.restlet.data.Reference;
 import org.restlet.data.Status;
-import org.restlet.resource./*.representation.*/FileRepresentation;
-import org.restlet.resource./*.representation.*/Variant;
-import org.restlet./*resource.*/Finder;
-import org.restlet./*resource.*/Handler;
+import org.restlet.representation.FileRepresentation;
+import org.restlet.representation.Variant;
+import org.restlet.resource.Finder;
+import org.restlet.resource.Handler;
 import org.restlet.resource.Resource;
 
 import se.lagrummet.rinfo.store.depot.DeletedDepotEntryException;
@@ -93,7 +96,7 @@ public class DepotFinder extends Finder {
                 content.getFile(), MediaType.valueOf(content.getMediaType()));
         //fileRep.setModificationDate(entry.getEntryManifest().getUpdated());
         fileRep.setModificationDate(new Date(content.getFile().lastModified()));
-        fileRep.setIdentifier(content.getDepotUriPath());
+        fileRep.setLocationRef(new Reference(depot.getBaseUri().resolve(content.getDepotUriPath())));
         if (content.getLang() != null) {
             List<Language> languages = new ArrayList<Language>();
             languages.add(Language.valueOf(content.getLang()));

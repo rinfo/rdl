@@ -61,14 +61,14 @@
               <li class="open">
                 <a href="$basePath$" class="open">Rättsinformation</a>
                 <ul class="submenu">
-                  <li><a href="$basePath$/browse/publ/">Dokumenttyp per utgivare och år</a></li>
+                  <li><a href="$basePath$/browse/publ">Dokumenttyp per utgivare och år</a></li>
                   <!--
                   <li><a href="/filter/forfattningar/">Författningar</a></li>
                   <li><a href="/filter/forarbeten/">Förarbeten</a></li>
                   <li><a href="/filter/rattspraxis/">Rättspraxis</a></li>
                   <li><a href="/filter/internationellt/">Internationellt material</a></li>
                   -->
-                  <li><a href="$basePath$/org/">Alla rättskällor</a></li>
+                  <li><a href="$basePath$/org">Alla rättskällor</a></li>
                 </ul>
               </li>
               <!--

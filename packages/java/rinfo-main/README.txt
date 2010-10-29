@@ -40,7 +40,7 @@ Running
 
 The webapp::
 
-    $ mvn jetty:run -Djetty.port=8180
+    $ mvn jetty:run
 
 Go to <http://localhost:8180/feed/current> to verify that the server was
 started without errors. The page should be a valid, non-empty Atom feed if a

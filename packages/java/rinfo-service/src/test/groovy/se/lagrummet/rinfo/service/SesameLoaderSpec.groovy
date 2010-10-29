@@ -2,7 +2,7 @@ package se.lagrummet.rinfo.service
 
 import org.restlet.*
 import org.restlet.data.Protocol
-import org.restlet./*resource.*/Directory
+import org.restlet.resource.Directory
 
 import org.openrdf.model.vocabulary.RDFS
 import org.openrdf.repository.sail.SailRepository

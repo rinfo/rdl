@@ -9,9 +9,9 @@ import org.restlet.Component
 import org.restlet.data.MediaType
 import org.restlet.data.Method
 import org.restlet.data.Protocol
-import org.restlet.data.Request
+import org.restlet.Request
 import org.restlet.data.Status
-import org.restlet./*routing.*/VirtualHost
+import org.restlet.routing.VirtualHost
 
 import se.lagrummet.rinfo.rdf.repo.RepositoryHandler
 import se.lagrummet.rinfo.service.util.FeedApplication

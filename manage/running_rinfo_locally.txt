@@ -75,7 +75,8 @@ Now you are ready to start up:
     $ ./map_feeds_and_base.sh
     $ groovy serve_folder.groovy
 
-  Verify that information is served at http://localhost:8280/feed/current
+  Go to <http://localhost:8280/feed/current> to verify that it contains a 
+  valid feed.
 
 * Start local instance of the RInfo system:
 

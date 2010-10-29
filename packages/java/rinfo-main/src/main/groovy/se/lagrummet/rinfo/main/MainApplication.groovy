@@ -1,21 +1,16 @@
 package se.lagrummet.rinfo.main
 
-import org.apache.commons.configuration.Configuration
-import org.apache.commons.configuration.ConfigurationException
-import org.apache.commons.configuration.ConfigurationBuilder
 import org.apache.commons.configuration.DefaultConfigurationBuilder
 
 import org.restlet.Application
 import org.restlet.Context
 import org.restlet.Restlet
-import org.restlet.data.Method
-import org.restlet.data.Request
-import org.restlet.data.Response
-import org.restlet./*resource.*/Finder
-import org.restlet./*routing.*/Router
-import org.restlet.util.Variable
-import static org.restlet.util.Template.MODE_EQUALS
-import static org.restlet.util.Template.MODE_STARTS_WITH
+import org.restlet.resource.Finder
+import org.restlet.routing.Router
+import org.restlet.routing.Variable
+
+import static org.restlet.routing.Template.MODE_EQUALS
+import static org.restlet.routing.Template.MODE_STARTS_WITH
 
 import se.lagrummet.rinfo.store.supply.DepotFinder
 

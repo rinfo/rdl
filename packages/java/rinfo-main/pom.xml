@@ -145,6 +145,11 @@
         <artifactId>maven-jetty-plugin</artifactId>
         <configuration>
           <scanIntervalSeconds>10</scanIntervalSeconds>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+              <port>8180</port>
+            </connector>
+          </connectors>
           <webAppConfig>
             <contextPath>/</contextPath>
             <extraClasspath>${basedir}/src/environments/${environment}</extraClasspath>

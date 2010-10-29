@@ -2,7 +2,7 @@ package se.lagrummet.rinfo.main
 
 import org.restlet.data.MediaType
 import org.restlet.data.Status
-import org.restlet./*resource.*/Handler
+import org.restlet.resource.Handler
 
 import se.lagrummet.rinfo.collector.NotAllowedSourceFeedException
 
