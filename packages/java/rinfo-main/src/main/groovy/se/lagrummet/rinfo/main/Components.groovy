@@ -6,6 +6,9 @@ import org.apache.commons.configuration.ConfigurationMap
 import org.apache.commons.configuration.ConfigurationException
 import org.apache.commons.lang.StringUtils
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 import org.openrdf.repository.Repository
 import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.nativerdf.NativeStore
@@ -13,6 +16,7 @@ import org.openrdf.sail.nativerdf.NativeStore
 import se.lagrummet.rinfo.store.depot.BeanUtilsURIConverter
 import se.lagrummet.rinfo.store.depot.Depot
 import se.lagrummet.rinfo.store.depot.FileDepot
+import se.lagrummet.rinfo.store.depot.LockedDepotEntryException
 
 import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex
 import se.lagrummet.rinfo.collector.atom.fs.CompleteFeedEntryIdIndexFSImpl
@@ -73,6 +77,8 @@ public class Components {
     static {
         BeanUtilsURIConverter.registerIfNoURIConverterIsRegistered()
     }
+
+    private final Logger logger = LoggerFactory.getLogger(Components.class)
 
     public Components(Configuration config) {
         this.config = config
@@ -163,7 +169,18 @@ public class Components {
         depot.setIndexer(atomizer)
         */
         depot.initialize()
-        depot.checkConsistency()
+        // TODO:? fix only one, or should depot have a findLockedEntries?
+        try {
+            depot.checkConsistency()
+        } catch (LockedDepotEntryException e) {
+            // TODO:IMPROVE: This unconditionally expects that the
+            // locked entry has not been indexed (which it should not have
+            // been, if lock occurred during collect). But how about:
+            //if (!e.lockedEntry.isIndexed())
+            logger.info("Found locked depot entry: <${e.lockedEntry}>. " +
+                    "Rolling it back.")
+            e.lockedEntry.rollback();
+        }
         return depot
     }
 
