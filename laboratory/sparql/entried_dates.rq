@@ -1,0 +1,23 @@
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+prefix dct: <http://purl.org/dc/terms/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
+
+select distinct ?type ?publisher ?date {
+
+  ?entry foaf:primaryTopic [
+        a ?type;
+        dct:publisher ?publisher;
+        ?dateprop ?date;
+    ] .
+  #?dateprop rdfs:range xsd:date . # NOTE: quicker but may miss some
+  filter(
+    datatype(?date) = xsd:date &&
+    #str(?date) >= "1999-01-01" && str(?date) < "2000-01-01"
+  )
+
+
+}
+order by desc(?date)
+limit 500

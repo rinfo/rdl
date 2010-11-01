@@ -38,6 +38,8 @@
 <http://rinfo.lagrummet.se/publ/sfs/1337:1/konsolidering/1337-05-01/rdf> awol:type "application/rdf+xml" .
 
 [] tl:atYear "1337"; scv:dimension :beslutsdatum;
+    #scv:dimension [ owl:onProperty rpubl:beslutsdatum;
+    #        owl:someValuesFrom "1337"^^xsd:gYear ];
     event:product <http://rinfo.lagrummet.se/publ/sfs/1337:1>,
         <http://rinfo.lagrummet.se/publ/sfs/1337:2>,
         <http://rinfo.lagrummet.se/publ/sfs/1337:3>,

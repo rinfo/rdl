@@ -1,0 +1,25 @@
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+prefix dct: <http://purl.org/dc/terms/>
+prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
+
+select distinct
+    ?docType
+    ?docType__label
+    ?docType__publisher
+    ?docType__publisher__1_name
+    ?docType__publisher__1_alt
+{
+
+    ?entry foaf:primaryTopic [
+            a ?docType;
+            dct:publisher ?docType__publisher;
+            #dct:issued ?date;
+            #rpubl:utfardandedatum ?docType__date;
+        ] .
+    ?docType rdfs:label ?docType__label .
+    ?docType__publisher foaf:name ?docType__publisher__1_name .
+    optional { ?docType__publisher skos:altLabel ?docType__publisher__1_alt }
+
+}

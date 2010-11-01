@@ -1,0 +1,12 @@
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+prefix awol: <http://bblfish.net/work/atom-owl/2006-06-06/#>
+
+select distinct ?entry ?doc ?type ?publisher ?updated {
+
+    ?entry foaf:primaryTopic ?doc;
+        awol:updated ?updated .
+    ?doc a ?type .
+
+}
+order by desc(?updated)
+limit 500 offset 8000
