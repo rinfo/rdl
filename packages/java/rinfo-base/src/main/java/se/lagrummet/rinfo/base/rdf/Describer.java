@@ -19,11 +19,17 @@ import org.openrdf.model.vocabulary.XMLSchema;
 
 public class Describer {
 
+    public static String RDF_NS = RDF.NAMESPACE;
+    public static String RDFS_NS = RDFS.NAMESPACE;
+    public static String OWL_NS = OWL.NAMESPACE;
+    public static String XSD_NS = XMLSchema.NAMESPACE;
+
     RepositoryConnection conn;
     ValueFactory vf;
     Resource[] contextRefs;
 
     Map<String, String> prefixes = new HashMap<String, String>();
+    Map<String, String> uriPrefixMap;
     boolean storePrefixes = false;
     boolean inferred = false;
 
@@ -39,10 +45,14 @@ public class Describer {
         for (int i=0; i < contexts.length; i++) {
             this.contextRefs[i] = toRef(contexts[i]);
         }
-        setPrefix("rdf", RDF.NAMESPACE);
-        setPrefix("rdfs", RDFS.NAMESPACE);
-        setPrefix("owl", OWL.NAMESPACE);
-        setPrefix("xsd", XMLSchema.NAMESPACE);
+        setPrefix("rdf", RDF_NS);
+        setPrefix("rdfs", RDFS_NS);
+        setPrefix("owl", OWL_NS);
+        setPrefix("xsd", XSD_NS);
+    }
+
+    public RepositoryConnection getConnection() {
+        return conn;
     }
 
     public void close() {
@@ -87,17 +97,27 @@ public class Describer {
         return newDescription(null);
     }
 
-    public Description newDescription(String ref) {
-        if (ref == null) {
-            ref = fromRef(blankRef());
+    public Description newDescription(String about) {
+        if (about == null) {
+            about = fromRef(blankRef());
         }
-        return new Description(this, ref);
+        return new Description(this, about);
     }
 
-    public Description newDescription(String ref, String typeCurie) {
-        Description description = newDescription(ref);
+    public Description newDescription(String about, String typeCurie) {
+        Description description = newDescription(about);
         description.addType(typeCurie);
         return description;
+    }
+
+    public Description findDescription(String about) {
+        try {
+            if (!conn.hasStatement(toRef(about), null, null, inferred, contextRefs))
+                return null;
+            return newDescription(about);
+        } catch (RepositoryException e) {
+            throw new DescriptionException(e);
+        }
     }
 
     public List<Description> subjects(String pCurie, String oUri) {
@@ -110,7 +130,7 @@ public class Describer {
 
     public List<Description> objects(String sUri, String pCurie) {
         List<Description> things = new ArrayList<Description>();
-        for (Object ref : objectUris(sUri, pCurie)) {
+        for (Object ref : objectValues(sUri, pCurie)) {
             things.add(newDescription((String) ref));
         }
         return things;
@@ -126,7 +146,7 @@ public class Describer {
         return subjectUrisByObject(pCurie, o);
     }
 
-    public List<Object> subjectUrisByValue(String pCurie, Object value) {
+    public List<Object> subjectUrisByLiteral(String pCurie, Object value) {
         Value o = (value != null)? toLiteral(value) : null;
         return subjectUrisByObject(pCurie, o);
     }
@@ -149,7 +169,7 @@ public class Describer {
     }
 
 
-    public List<Object> objectUris(String sUri, String pCurie) {
+    public List<Object> objectValues(String sUri, String pCurie) {
         Resource s = (sUri != null)? toRef(sUri) : null;
         org.openrdf.model.URI p = (pCurie != null)?
                 (org.openrdf.model.URI) toRef(expandCurie(pCurie)) : null;
@@ -258,6 +278,40 @@ public class Describer {
     Object castValue(Value value) {
         return (value instanceof Literal)?
                 fromLiteral((Literal)value) : fromRef((Resource)value);
+    }
+
+
+    public String toCurie(String uri) {
+        if (uriPrefixMap == null) {
+            uriPrefixMap = new HashMap<String, String>();
+            for (Map.Entry<String, String> entry : prefixes.entrySet()) {
+                uriPrefixMap.put(entry.getValue(), entry.getKey());
+            }
+        }
+        int lastDelimIdx = findLastDelimIdx(uri);
+        if (lastDelimIdx == -1)
+            return null;
+        int offset = lastDelimIdx + 1;
+        String prefix = uriPrefixMap.get(uri.substring(0, offset));
+        if (prefix == null)
+            return null;
+        return prefix + ":" + uri.substring(offset, uri.length());
+    }
+
+    static String getUriTerm(String uri) {
+        int lastDelimIdx = findLastDelimIdx(uri);
+        if (lastDelimIdx == -1)
+            return null;
+        return uri.substring(lastDelimIdx + 1, uri.length());
+    }
+
+    private static int findLastDelimIdx(String uri) {
+        int lastDelimIdx = uri.lastIndexOf('#');
+        if (lastDelimIdx == -1)
+            lastDelimIdx = uri.lastIndexOf('/');
+        if (lastDelimIdx == -1)
+            lastDelimIdx = uri.lastIndexOf(':');
+        return lastDelimIdx;
     }
 
 }

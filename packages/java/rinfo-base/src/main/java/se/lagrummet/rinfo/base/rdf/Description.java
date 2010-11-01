@@ -25,7 +25,12 @@ public class Description {
         return describer.expandCurie(curie);
     }
 
-    public String getValue(String curie) {
+    public RDFLiteral getLiteral(String curie) {
+        List<Object> values = getObjectValues(curie);
+        return (values.size() != 0)? (RDFLiteral) values.get(0) : null;
+    }
+
+    public String getString(String curie) {
         RDFLiteral literal = getLiteral(curie);
         return (literal != null)? literal.toString() : null;
     }
@@ -35,17 +40,16 @@ public class Description {
         return (literal != null)? literal.toNativeValue() : null;
     }
 
-    public RDFLiteral getLiteral(String curie) {
-        List<Object> values = getObjectValues(curie);
-        return (values.size() != 0)? (RDFLiteral) values.get(0) : null;
-    }
-
-    // TODO: consolidate with describer.objectUris and make getValues/getLiterals/getUris...
+    // TODO: consolidate with describer.objectValues and make getValues/getLiterals/getUris...
     public List<Object> getObjectValues(String curie) {
-        return describer.objectUris(about, curie);
+        return describer.objectValues(about, curie);
     }
 
-    public String getUri(String curie) {
+    //public List<Object> getTriples() {
+    //    // TODO: class Triple { Triple(subject, property, object) {...} }
+    //}
+
+    public String getObjectUri(String curie) {
         Description rel = getRel(curie);
         return (rel != null)? rel.getAbout() : null;
     }
@@ -83,10 +87,10 @@ public class Description {
     }
 
 
-    public void addValue(String curie, Object value) {
+    public void addLiteral(String curie, Object value) {
         describer.addLiteral(about, curie, value);
     }
-    public void addValue(String curie, String value, String langOrDatatype) {
+    public void addLiteral(String curie, String value, String langOrDatatype) {
         describer.addLiteral(about, curie, value, langOrDatatype);
     }
     //public void addObject(String curie, Object value) {

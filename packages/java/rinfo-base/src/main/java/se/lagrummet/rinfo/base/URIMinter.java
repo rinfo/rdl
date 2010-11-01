@@ -109,8 +109,8 @@ public class URIMinter {
 
         CoinScheme(Description desc, Map<String, String> baseCharMap) {
             this.baseCharMap = baseCharMap;
-            base = desc.getValue("coin:base");
-            fragmentSeparator = desc.getValue("coin:fragmentSeparator");
+            base = desc.getString("coin:base");
+            fragmentSeparator = desc.getString("coin:fragmentSeparator");
             for (Description tdesc : desc.getRels("coin:template")) {
                 templates.add(new CoinTemplate(this, tdesc));
             }
@@ -123,7 +123,7 @@ public class URIMinter {
                         desc.expandCurie("coin:BaseCharTranslation")))
                     baseCharTranslation = true;
             }
-            String slugSpaceRepl = slugTransl.getValue("coin:spaceReplacement");
+            String slugSpaceRepl = slugTransl.getString("coin:spaceReplacement");
             if (slugSpaceRepl != null)
                 spaceRepl = slugSpaceRepl;
         }
@@ -175,10 +175,10 @@ public class URIMinter {
 
         CoinTemplate(CoinScheme scheme, Description desc) {
             this.scheme = scheme;
-            forType = desc.getUri("coin:forType");
-            uriTemplate = desc.getValue("coin:uriTemplate");
-            relToBase = desc.getUri("coin:relToBase");
-            relFromBase = desc.getUri("coin:relFromBase");
+            forType = desc.getObjectUri("coin:forType");
+            uriTemplate = desc.getString("coin:uriTemplate");
+            relToBase = desc.getObjectUri("coin:relToBase");
+            relFromBase = desc.getObjectUri("coin:relFromBase");
             for (Description cmp : desc.getRels("coin:component")) {
                 components.add(new CoinComponent(this, cmp));
             }
@@ -249,11 +249,11 @@ public class URIMinter {
 
         CoinComponent(CoinTemplate tplt, Description desc) {
             this.tplt = tplt;
-            property = desc.getUri("coin:property");
-            variable = desc.getValue("coin:variable");
+            property = desc.getObjectUri("coin:property");
+            variable = desc.getString("coin:variable");
             if (variable == null)
                 variable = getLeaf(property);
-            slugFrom = desc.getUri("coin:slugFrom");
+            slugFrom = desc.getObjectUri("coin:slugFrom");
             if (slugFrom != null) {
                 Map<String, String> slugMap = tplt.scheme.slugMappings.get(slugFrom);
                 if (slugMap == null) {
@@ -262,7 +262,7 @@ public class URIMinter {
                 }
                 for (Description slugged : desc.getDescriber().
                         subjects(slugFrom, null)) {
-                    slugMap.put(slugged.getAbout(), slugged.getValue(slugFrom));
+                    slugMap.put(slugged.getAbout(), slugged.getString(slugFrom));
                 }
             }
         }
@@ -272,7 +272,7 @@ public class URIMinter {
                 Description rel = desc.getRel(property);
                 if (rel == null)
                     return null;
-                String v = rel.getValue(slugFrom);
+                String v = rel.getString(slugFrom);
                 if (v != null)
                     return v;
                 Map<String, String> slugMap = tplt.scheme.slugMappings.get(slugFrom);
@@ -280,7 +280,7 @@ public class URIMinter {
                     return slugMap.get(rel.getAbout());
                 }
             } else {
-                return desc.getValue(property);
+                return desc.getString(property);
             }
             return null;
         }

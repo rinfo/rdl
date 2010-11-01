@@ -57,8 +57,8 @@ class CollectorLogSession {
 
         collectDesc.addRel("iana:via", feedDesc.about)
 
-        feedDesc.addValue("awol:id", feedId)
-        feedDesc.addValue("awol:updated", feedUpdated)
+        feedDesc.addLiteral("awol:id", feedId)
+        feedDesc.addLiteral("awol:updated", feedUpdated)
         def feedUrl = (feed.getSelfLinkResolvedHref() ?: pageUrl).toString()
         feedDesc.addRel("iana:self", feedUrl)
 
@@ -87,7 +87,7 @@ class CollectorLogSession {
         def desc = newDescriber(false)
         // wipe old (collectContextUri AND related feedPageCtxts)..
         def deletedOldCollect = false
-        for (feedAbout in desc.subjectUrisByValue("awol:id", feedId)) {
+        for (feedAbout in desc.subjectUrisByLiteral("awol:id", feedId)) {
             if (!deletedOldCollect) {
                 for (oldCollectUri in desc.subjectUris("iana:via", feedAbout)) {
                     conn.clear(desc.toRef(oldCollectUri))
@@ -100,21 +100,21 @@ class CollectorLogSession {
         def startTime = new Date()
         def collectUri = createCollectUri(feedId, startTime)
         collectDesc = newDescriber(collectUri).newDescription(collectUri, "rc:Collect")
-        //collectDesc.addValue("rdfs:label", "Collect of <"+feedId+">")
-        collectDesc.addValue("tl:start", dateTime(startTime))
+        //collectDesc.addLiteral("rdfs:label", "Collect of <"+feedId+">")
+        collectDesc.addLiteral("tl:start", dateTime(startTime))
     }
 
     void updateCollectInfo() {
         collectDesc.remove("tl:end")
-        collectDesc.addValue("tl:end", dateTime(new Date()))
+        collectDesc.addLiteral("tl:end", dateTime(new Date()))
     }
 
 
     void logUpdatedEntry(Feed sourceFeed, Entry sourceEntry, DepotEntry depotEntry) {
         def sourceEntryDesc = makeSourceEntryDesc(sourceEntry)
         def entryDesc = currentDescriber.newDescription(null, "awol:Entry")
-        entryDesc.addValue("awol:published", dateTime(depotEntry.getPublished()))
-        entryDesc.addValue("awol:updated", dateTime(depotEntry.getUpdated()))
+        entryDesc.addLiteral("awol:published", dateTime(depotEntry.getPublished()))
+        entryDesc.addLiteral("awol:updated", dateTime(depotEntry.getUpdated()))
         entryDesc.addRel("rx:primarySubject", sourceEntry.getId().toString())
         entryDesc.addRel("dct:isPartOf", entryDatasetUri)
         entryDesc.addRel("iana:via", sourceEntryDesc.about)
@@ -128,7 +128,7 @@ class CollectorLogSession {
         //def sourceDeletedEntryDesc = makeSourceDeletedEntryDesc(sourceEntryDeleted)
         //deleted.addRel("iana:via", sourceDeletedEntryDesc.about)
         deleted.addRel("rx:primarySubject", sourceEntryId.toString())
-        deleted.addValue("tl:at", dateTime(depotEntry.getUpdated()))
+        deleted.addLiteral("tl:at", dateTime(depotEntry.getUpdated()))
         deleted.addRel("dct:isPartOf", entryDatasetUri)
         deleted.addRel("iana:via", currentFeedUri)
         updateCollectInfo()
@@ -142,30 +142,30 @@ class CollectorLogSession {
             if (error.failedCheck == SourceContent.Check.MD5) {
                 errorDesc = currentDescriber.newDescription(null, "rc:ChecksumError")
                 def src = (RemoteSourceContent) error.sourceContent
-                errorDesc.addValue("rc:document", src.urlPath)
+                errorDesc.addLiteral("rc:document", src.urlPath)
                 //def documentInfo = "type=${src.mediaType};lang=${src.lang};slug=${src.enclosedUriPath}"
-                errorDesc.addValue("rc:givenMd5", error.givenValue)
-                errorDesc.addValue("rc:computedMd5", error.realValue)
+                errorDesc.addLiteral("rc:givenMd5", error.givenValue)
+                errorDesc.addLiteral("rc:computedMd5", error.realValue)
             }
             // TODO: length
         } else if (error instanceof IdentifyerMismatchException) {
             errorDesc = currentDescriber.newDescription(null, "rc:IdentifyerError")
-            errorDesc.addValue("rc:givenUri", error.givenUri)
-            errorDesc.addValue("rc:computedUri", error.computedUri)
+            errorDesc.addLiteral("rc:givenUri", error.givenUri)
+            errorDesc.addLiteral("rc:computedUri", error.computedUri)
         }
         if (errorDesc == null) {
             errorDesc = currentDescriber.newDescription(null, "rc:Error")
-            errorDesc.addValue("rdf:value", error.getMessage() ?: "[empty error message]")
+            errorDesc.addLiteral("rdf:value", error.getMessage() ?: "[empty error message]")
         }
-        errorDesc.addValue("tl:at", dateTime(new Date()))
+        errorDesc.addLiteral("tl:at", dateTime(new Date()))
         def sourceEntryDesc = makeSourceEntryDesc(sourceEntry)
-        errorDesc.addValue("iana:via", sourceEntryDesc)
+        errorDesc.addLiteral("iana:via", sourceEntryDesc)
     }
 
     private Description makeSourceEntryDesc(sourceEntry) {
         def sourceEntryDesc = currentDescriber.newDescription(null, "awol:Entry")
-        sourceEntryDesc.addValue("awol:id", sourceEntry.getId().toURI())
-        sourceEntryDesc.addValue("awol:updated", dateTime(sourceEntry.getUpdated()))
+        sourceEntryDesc.addLiteral("awol:id", sourceEntry.getId().toURI())
+        sourceEntryDesc.addLiteral("awol:updated", dateTime(sourceEntry.getUpdated()))
         sourceEntryDesc.addRel("awol:source", currentFeedUri)
         return sourceEntryDesc
     }
