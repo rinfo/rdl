@@ -49,9 +49,9 @@ class LogListResource extends Resource {
                         //    ... mark as "latest"
                         def enclosure = entry.addLink(new URI(via.getAbout()).getPath(),
                                 "enclosure", "application/rdf+xml", null, null, -1)
-                        enclosure.setAttributeValue("modified", via.getValue("awol:updated"))
+                        enclosure.setAttributeValue("modified", via.getString("awol:updated"))
                         if (forFeedId == null) {
-                            forFeedId = via.getValue("awol:id")
+                            forFeedId = via.getString("awol:id")
                         }
                     }
                     if (forFeedId != null) {
