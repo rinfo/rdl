@@ -6,7 +6,7 @@ $sparqltrees/base_html(
         <ul class="doclist">
             $doc:{
             <li>
-                <h2><a href="$it.rdata_url$">$it.title$</a></h2>
+                <h2><a href="$it.view_url$">$it.title$</a></h2>
                 <h3>$it.identifier$</h3>
                 <div><code>&lt;$it.resource_uri$&gt;</code></div>
             </li>

@@ -59,15 +59,20 @@ where {
         FILTER( ?_docProp = ?docType__publisher__eventItem__1_property ||
                 ?_docProp = ?_dimensionSuperProperty )
 
-        ?docType__publisher__eventItem
+        ?docType__publisher__eventItem event:product [
+                a ?docType;
+                dct:publisher ?docType__publisher
+            ] .
+
     $else$
-        []
+
+        [] foaf:primaryTopic [
+                a ?docType;
+                dct:publisher ?docType__publisher;
+            ] .
+
     $endif$
 
-    event:product [
-        a ?docType;
-        dct:publisher ?docType__publisher
-    ] .
     ?docType rdfs:label ?docType__label .
     ?docType__publisher foaf:name ?docType__publisher__1_name .
     optional { ?docType__publisher skos:altLabel ?docType__publisher__1_alt }

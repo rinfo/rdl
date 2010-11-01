@@ -16,7 +16,7 @@ $sparqltrees/base_html(
                     <tr>
                         <th>Utgiven i</th>
                         <td>
-                            <a href="$it.serie.rdata_url$">$it.serie.label$</a>
+                            <a href="$it.serie.view_url$">$it.serie.label$</a>
                         </td>
                     </tr>
                 $endif$
@@ -64,7 +64,7 @@ $sparqltrees/base_html(
                             <ul>
                             $it.subject:{
                                 <li>
-                                    <a href="$it.rdata_url$">$if (it.repr)$
+                                    <a href="$it.view_url$">$if (it.repr)$
                                             $it.repr$
                                         $else$
                                             <code>$it.resource_uri$</code>
@@ -100,7 +100,7 @@ $sparqltrees/base_html(
                             <ul>
                             $it.subject:{
                                 <li>
-                                    <a href="$it.rdata_url$">$if (it.repr)$
+                                    <a href="$it.view_url$">$if (it.repr)$
                                             $it.repr$
                                         $else$
                                             <code>$it.resource_uri$</code>
