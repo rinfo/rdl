@@ -76,8 +76,12 @@ public class DepotFinder extends Finder {
         // perhaps: new SupplyResource(results)
         Resource resource = new Resource(getContext(), request, response);
         List<Variant> reps = new ArrayList<Variant>();
+        Reference baseRef = request.getOriginalRef().getBaseRef();
+        if (baseRef == null) {
+            baseRef = request.getResourceRef().getBaseRef();
+        }
         for (DepotContent content : results) {
-            reps.add(makeRepresentation(content));
+            reps.add(makeRepresentation(baseRef, content));
         }
         resource.setVariants(reps);
         resource.setNegotiateContent(true);
@@ -91,12 +95,11 @@ public class DepotFinder extends Finder {
         return resource;
     }
 
-    private FileRepresentation makeRepresentation(DepotContent content) {
+    private FileRepresentation makeRepresentation(Reference baseRef, DepotContent content) {
         FileRepresentation fileRep = new FileRepresentation(
                 content.getFile(), MediaType.valueOf(content.getMediaType()));
-        //fileRep.setModificationDate(entry.getEntryManifest().getUpdated());
         fileRep.setModificationDate(new Date(content.getFile().lastModified()));
-        fileRep.setLocationRef(new Reference(depot.getBaseUri().resolve(content.getDepotUriPath())));
+        fileRep.setLocationRef(new Reference(baseRef, content.getDepotUriPath()));
         if (content.getLang() != null) {
             List<Language> languages = new ArrayList<Language>();
             languages.add(Language.valueOf(content.getLang()));
