@@ -128,19 +128,6 @@ public class Describer {
         return things;
     }
 
-    public List<Description> objects(String sUri, String pCurie) {
-        List<Description> things = new ArrayList<Description>();
-        for (Object ref : objectValues(sUri, pCurie)) {
-            things.add(newDescription((String) ref));
-        }
-        return things;
-    }
-
-    public List<Description> getByType(String typeCurie) {
-        return subjects("rdf:type", expandCurie(typeCurie));
-    }
-
-
     public List<Object> subjectUris(String pCurie, String oUri) {
         Value o = (oUri != null)? toRef(oUri) : null;
         return subjectUrisByObject(pCurie, o);
@@ -168,6 +155,18 @@ public class Describer {
         }
     }
 
+    public List<Description> getByType(String typeCurie) {
+        return subjects("rdf:type", expandCurie(typeCurie));
+    }
+
+
+    public List<Description> objects(String sUri, String pCurie) {
+        List<Description> things = new ArrayList<Description>();
+        for (Object ref : objectValues(sUri, pCurie)) {
+            things.add(newDescription((String) ref));
+        }
+        return things;
+    }
 
     public List<Object> objectValues(String sUri, String pCurie) {
         Resource s = (sUri != null)? toRef(sUri) : null;
@@ -179,6 +178,26 @@ public class Describer {
             List<Object> values = new ArrayList<Object>();
             while (stmts.hasNext()) {
                 values.add(castValue(stmts.next().getObject()));
+            }
+            stmts.close();
+            return values;
+        } catch (RepositoryException e) {
+            throw new DescriptionException(e);
+        }
+    }
+
+    public List<Triple> triples(String sUri) {
+        Resource s = toRef(sUri);
+        try {
+            RepositoryResult<Statement> stmts = conn.getStatements(s, null, null,
+                    inferred, contextRefs);
+            List<Triple> values = new ArrayList<Triple>();
+            while (stmts.hasNext()) {
+                Statement stmt = stmts.next();
+                Triple triple = new Triple(this, sUri,
+                        fromRef(stmt.getPredicate()),
+                        castValue(stmt.getObject()));
+                values.add(triple);
             }
             stmts.close();
             return values;

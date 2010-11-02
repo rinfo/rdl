@@ -11,9 +11,20 @@ import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.model.vocabulary.XMLSchema;
 
-class RDFLiteral {
+public class RDFLiteral {
 
     Literal literal;
+    public static final Set<String> CALENDAR_DATATYPES = new HashSet<String>();
+    static {
+        CALENDAR_DATATYPES.add(XMLSchema.DATETIME.toString());
+        CALENDAR_DATATYPES.add(XMLSchema.TIME.toString());
+        CALENDAR_DATATYPES.add(XMLSchema.DATE.toString());
+        CALENDAR_DATATYPES.add(XMLSchema.GYEARMONTH.toString());
+        CALENDAR_DATATYPES.add(XMLSchema.GMONTHDAY.toString());
+        CALENDAR_DATATYPES.add(XMLSchema.GYEAR.toString());
+        CALENDAR_DATATYPES.add(XMLSchema.GMONTH.toString());
+        CALENDAR_DATATYPES.add(XMLSchema.GDAY.toString());
+    }
 
     public RDFLiteral(Literal literal) {
         this.literal = literal;
@@ -49,12 +60,22 @@ class RDFLiteral {
                 return literal.longValue();
             else if (dt.equals(XMLSchema.SHORT))
                 return literal.shortValue();
-            else if (dt.equals(XMLSchema.DATE))
-                return toDate(literal.calendarValue());
-            else if (dt.equals(XMLSchema.DATETIME))
+            else if (CALENDAR_DATATYPES.contains(dt.toString()))
                 return toDate(literal.calendarValue());
         }
         return literal.stringValue();
+    }
+
+    public boolean isGCalType() {
+        return CALENDAR_DATATYPES.contains(getDatatype());
+    }
+
+    public XMLGregorianCalendar toXmlGCal() {
+        return literal.calendarValue();
+    }
+
+    public GregorianCalendar toGCal() {
+        return toXmlGCal().toGregorianCalendar();
     }
 
     Date toDate(XMLGregorianCalendar xmlGCal) {

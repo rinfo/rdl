@@ -45,9 +45,9 @@ public class Description {
         return describer.objectValues(about, curie);
     }
 
-    //public List<Object> getTriples() {
-    //    // TODO: class Triple { Triple(subject, property, object) {...} }
-    //}
+    public List<Triple> getTriples() {
+        return describer.triples(about);
+    }
 
     public String getObjectUri(String curie) {
         Description rel = getRel(curie);
