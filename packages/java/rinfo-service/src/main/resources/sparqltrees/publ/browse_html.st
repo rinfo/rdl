@@ -15,9 +15,10 @@ $sparqltrees/base_html(
                                 <a href="$basePath$/browse/publ/$docType.qname$/$publ.uri_term$"
                                    >$publ.name$</a>
                             </h3>
-                            $publ.eventItem:{
+                            $publ.time:{
                             <li>
-                                <a href="$basePath$/list/publ/$docType.qname$/$publ.uri_term$/$it.property.qname$@$it.year$">$it.year$</a>
+                            <a href="$basePath$/list/publ/$docType.qname$/$publ.uri_term$/$it.prop.qname$@$it.year$">$it.year$</a>
+                            ($it.prop.label$)
                             </li>
                             }$
                         </ul>

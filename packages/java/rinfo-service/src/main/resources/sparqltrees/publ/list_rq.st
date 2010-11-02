@@ -1,11 +1,14 @@
 $sparqltrees/publ/base_rq(
     query_body={
 
-        ?doc ?doc__daterel ?doc__daterel__value .
-        ?doc__daterel__eventItem
-            event:product ?doc;
-            scv:dimension ?doc__daterel;
-            tl:atYear ?doc__daterel__eventItem__1_atYear .
+        ?statItem
+            scv:dimension [
+                    owl:onProperty ?doc__daterel;
+                    tl:atYear ?doc__daterel__eventItem__1_atYear  ];
+            event:product ?doc .
+
+        ?doc ?doc__daterel ?doc__daterel__1_value .
+
         FILTER(
             $filter_parts:{
                 $if (it.typeSelector)$

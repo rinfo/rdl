@@ -12,8 +12,8 @@ import se.lagrummet.rinfo.base.rdf.Describer
 
 class RepoEntrySpec extends Specification {
 
-    static resourceUri = "http://example.org/thing/1"
-    static publisherUri = "http://example.org/publisher/1"
+    static resourceUri = "http://rinfo.lagrummet.se/publ/mfs/1234:56"
+    static publisherUri = "http://rinfo.lagrummet.se/org/myndighet_1"
     static updated = "2008-10-10T20:00:00.000Z"
 
     static entry = Abdera.instance.parser.parse(
@@ -26,16 +26,19 @@ class RepoEntrySpec extends Specification {
         </entry>""".getBytes("utf-8"))).root
 
     static rdfBytes = """
-        <owl:Thing rdf:about="${resourceUri}"
+        <rpubl:Myndighetsforeskrift rdf:about="${resourceUri}"
                 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-                xmlns:owl="http://www.w3.org/2002/07/owl#"
+                xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
                 xmlns:dct="http://purl.org/dc/terms/">
+            <dct:title xml:lang="en">Thing 1</dct:title>
             <dct:created rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
                         >2008-10-08</dct:created>
             <dct:publisher rdf:resource="${publisherUri}"/>
-        </owl:Thing>"""
+            <dct:relation rdf:resource="http://example.org/other"/>
+        </rpubl:Myndighetsforeskrift>"""
 
 
+    RepoEntry repoEntry
     Describer desc
 
     def setup() {
@@ -46,9 +49,9 @@ class RepoEntrySpec extends Specification {
         loader.getResponseAsInputStream(_) >> {
             new ByteArrayInputStream(rdfBytes.getBytes("utf-8"))
         }
-        RepoEntry repoEntry = new RepoEntry(loader, entry)
+        repoEntry = new RepoEntry(loader, entry)
+        desc = repoEntry.entryStats.doc.describer
         repoEntry.create()
-        desc = newDescriber(repoEntry.conn)
     }
 
     def "should add entry for resource"() {
@@ -56,29 +59,54 @@ class RepoEntrySpec extends Specification {
         def atomEntry = desc.subjects("foaf:primaryTopic", resourceUri)[0]
         expect:
         atomEntry.type.about == desc.expandCurie("awol:Entry")
-        atomEntry.getValue("awol:updated") == updated
+        atomEntry.getString("awol:updated") == updated
         atomEntry.getRel("awol:content").about == "${resourceUri}.rdf"
-        atomEntry.getRel("awol:content").getValue("awol:type") == "application/rdf+xml"
+        atomEntry.getRel("awol:content").getString("awol:type") == "application/rdf+xml"
     }
 
     def "should add statistics for resource"() {
         given:
-        def statItem = desc.getByType("scv:Item")[0]
+        def statsDesc = repoEntry.entryStats.desc
+        def statItem = statsDesc.getByType("scv:Item")[0]
 
+        /*
         expect:
         statItem.getRel("scv:dimension").about == desc.expandCurie("dct:created")
-        statItem.getValue("tl:atYear") == "2008"
+        statItem.getString("tl:atYear") == "2008"
+        */
+
+        def dimensions = statItem.getRels("scv:dimension")
+
+        expect:
+
+        dimensions.size() == 3
+
+        dimensions.find {
+            it.getObjectUri("owl:onProperty") == "http://purl.org/dc/terms/created"
+        }.getString("tl:atYear") == "2008"
+
+        dimensions.find {
+            it.getObjectUri("owl:onProperty") == statsDesc.expandCurie("rdf:type")
+        }.getRel("owl:hasValue").about == statsDesc.expandCurie("rpubl:Myndighetsforeskrift")
+
+        dimensions.find {
+            it.getObjectUri("owl:onProperty") == statsDesc.expandCurie("dct:publisher")
+        }.getRel("owl:hasValue").about == publisherUri
+
+        statItem.getNative("rdf:value") == 1
+        statItem.getRels("event:product").find { it.about == resourceUri }
     }
 
-    def newDescriber(conn, String... contexts) {
-        return new Describer(conn, false, contexts).
-            setPrefix("dct", "http://purl.org/dc/terms/").
-            setPrefix("awol", "http://bblfish.net/work/atom-owl/2006-06-06/#").
-            setPrefix("iana", "http://www.iana.org/assignments/relation/").
-            setPrefix("foaf", "http://xmlns.com/foaf/0.1/").
-            setPrefix("scv", "http://purl.org/NET/scovo#").
-            setPrefix("event", "http://purl.org/NET/c4dm/event.owl#").
-            setPrefix("tl", "http://purl.org/NET/c4dm/timeline.owl#")
+    def "should create dimension URI:s"() {
+        given:
+        def stats = repoEntry.entryStats
+        def toUri = { stats.desc.expandCurie(it) }
+
+        expect:
+        stats.createDimensionLocalUri(
+                toUri("dct:publisher"), toUri("rorg:regeringskansliet")) ==
+            "dct:publisher+rorg:regeringskansliet"
     }
+
 
 }

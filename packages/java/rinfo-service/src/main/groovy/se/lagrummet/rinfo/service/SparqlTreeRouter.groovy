@@ -32,9 +32,10 @@ class SparqlTreeRouter extends Router {
     static APP_DATA = [
         "encoding": "utf-8",
         "resourceBaseUrl": "http://rinfo.lagrummet.se/",
-        "basePath": "/rdata",
+        "basePath": "/view",
         "profile": [
             "prefix": [
+                "xsd": "http://www.w3.org/2001/XMLSchema#",
                 "rpubl": "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#",
                 "dct": "http://purl.org/dc/terms/",
             ],
@@ -61,18 +62,20 @@ class SparqlTreeRouter extends Router {
         templates.setRefreshInterval(0) // TODO: cache-control; make configurable
         def tpltUtil = new TemplateUtil(templates)
 
-        // TODO:IMPROVE:
-        // - nicer paths? But even "/rpubl/-/{path}" goes to "/rpubl/{path}"!
+        attachDefault(new StringTemplateFinder(context, tpltUtil, appData,
+                    "sparqltrees/index_html"))
 
         // complete list
-        attach("/org", new RDataFinder(context,
-                    repo, appData, tpltUtil,
+        attach("/org", new RDataFinder(context, tpltUtil, appData, repo,
                     "sparqltrees/org/org_rq",
                     "sparqltrees/org/org_html"))
 
+        // TODO:IMPROVE:
+        // - Nicer paths than "browse","list?
+        //   .. But even "/publ/-/{path}" goes to "/publ/{path}"!
+
         // filtering + narrowing
-        def browseFinder = new RDataFinder(context,
-                repo, appData, tpltUtil,
+        def browseFinder = new RDataFinder(context, tpltUtil, appData, repo,
                 "sparqltrees/publ/browse_rq",
                 "sparqltrees/publ/browse_html") {
 
@@ -93,8 +96,7 @@ class SparqlTreeRouter extends Router {
 
         // list of
         attach("/list/publ/{type}/{publisher}/{dateProperty}@{year}",
-            new RDataFinder(context,
-                repo, appData, tpltUtil,
+            new RDataFinder(context, tpltUtil, appData, repo,
                 "sparqltrees/publ/list_rq",
                 "sparqltrees/publ/list_html") {
 
@@ -117,8 +119,7 @@ class SparqlTreeRouter extends Router {
 
         // one
         attach("/publ/{path}",
-            new RDataFinder(context,
-                    repo, appData, tpltUtil,
+            new RDataFinder(context, tpltUtil, appData, repo,
                     "sparqltrees/publ/details_rq",
                     "sparqltrees/publ/doc_html") {
 
@@ -143,25 +144,75 @@ class SparqlTreeRouter extends Router {
 }
 
 
-class RDataFinder extends Finder {
+class StringTemplateFinder extends Finder {
 
     static final DEFAULT_LOCALE = "sv"
 
-    Repository repo
-    Map appData
     TemplateUtil tpltUtil
-    String queryTpltPath
+    Map appData
     String viewTpltPath
-    boolean devMode = true
 
-    RDataFinder(Context context, Repository repo,
-            appData, tpltUtil, queryTpltPath, viewTpltPath) {
+    StringTemplateFinder(Context context, TemplateUtil tpltUtil,
+            Map appData, String viewTpltPath) {
         super(context)
-        this.repo = repo
         this.appData = appData
         this.tpltUtil = tpltUtil
-        this.queryTpltPath = queryTpltPath
         this.viewTpltPath = viewTpltPath
+    }
+
+    @Override
+    Handler findTarget(Request request, Response response) {
+        return new Resource(getContext(), request, response) {
+
+            @Override
+            List<Variant> getVariants() {
+                return [ new Variant(MediaType.TEXT_HTML), ]
+            }
+
+            @Override
+            Representation represent(Variant variant) {
+                def locale = getLocale(variant)
+                def viewData = makeViewData(locale, [:])
+                return toRepresentation(makeHtmlView(viewData),
+                        MediaType.TEXT_HTML, locale)
+            }
+        }
+    }
+
+    String getLocale(Variant variant) {
+        return DEFAULT_LOCALE // TODO: from Variant (unless locale should be hardwired)
+    }
+
+    Map makeViewData(String locale, Map data) {
+        data.locale = locale
+        data.putAll(appData)
+        return data
+    }
+
+    String makeHtmlView(Map data) {
+        return tpltUtil.runTemplate(viewTpltPath, data)
+    }
+
+    Representation toRepresentation(repr, mediaType, locale) {
+        return new StringRepresentation(repr, mediaType,
+                new Language(locale), new CharacterSet("utf-8"))
+    }
+
+}
+
+
+class RDataFinder extends StringTemplateFinder {
+
+    Repository repo
+    String queryTpltPath
+    boolean devMode = true
+
+    RDataFinder(Context context, TemplateUtil tpltUtil,
+            Map appData, Repository repo,
+            String queryTpltPath, String viewTpltPath) {
+        super(context, tpltUtil, appData, viewTpltPath)
+        this.repo = repo
+        this.queryTpltPath = queryTpltPath
     }
 
     /**
@@ -175,6 +226,7 @@ class RDataFinder extends Finder {
     Handler findTarget(Request request, Response response) {
 
         return new Resource(getContext(), request, response) {
+
             @Override
             List<Variant> getVariants() {
                 return [
@@ -182,50 +234,42 @@ class RDataFinder extends Finder {
                     new Variant(MediaType.APPLICATION_JSON),
                 ]
             }
+
             @Override
             Representation represent(Variant variant) {
                 if (isDevMode() && query.getFirst("showQuery")) {
                     def rq = makeQuery(getQueryData(getRequest()))
                     return toRepresentation(rq, MediaType.TEXT_PLAIN, null)
                 }
-                def tree = runQuery(getRequest())
-                if (tree == null)
+                def locale = getLocale(variant)
+                def data = runQuery(locale, getQueryData(request))
+                if (data == null) {
                     return null
-                if (variant.mediaType.equals(MediaType.APPLICATION_JSON))
-                    return toRepresentation(JSONSerializer.toJSON(tree).toString(4),
-                            MediaType.APPLICATION_JSON, tree.locale)
-                else
-                    return toRepresentation(makeHtmlView(tree),
-                            MediaType.TEXT_HTML, tree.locale)
+                } else if (variant.mediaType.equals(MediaType.APPLICATION_JSON)) {
+                    return toRepresentation(JSONSerializer.toJSON(data).toString(4),
+                            MediaType.APPLICATION_JSON, locale)
+                } else {
+                    def viewData = makeViewData(locale, data)
+                    return toRepresentation(makeHtmlView(viewData),
+                            MediaType.TEXT_HTML, locale)
+                }
             }
 
-            private def toRepresentation(repr, mediaType, locale) {
-                return new StringRepresentation(repr, mediaType,
-                        new Language(locale), new CharacterSet("utf-8"))
-            }
         }
 
     }
 
-    Map runQuery(Request request) {
-        def locale = DEFAULT_LOCALE // or from Variant..
-        def queryData = getQueryData(request)
+    Map runQuery(String locale, Map queryData) {
         def query = makeQuery(queryData)
         def dataRqTree = new RDataSparqlTree(appData, locale)
-        def tree = dataRqTree.runQuery(repo, query)
-        if (queryData["path"] && !tree.any { k, v -> v } )
+        def data = dataRqTree.runQuery(repo, query)
+        if (queryData["path"] && !data.any { k, v -> v } )
             return null
-        tree.locale = locale
-        tree.putAll(appData)
-        return tree
+        return data
     }
 
     String makeQuery(Map queryData) {
         return tpltUtil.runTemplate(queryTpltPath, queryData)
-    }
-
-    String makeHtmlView(Map tree) {
-        return tpltUtil.runTemplate(viewTpltPath, tree)
     }
 
 }

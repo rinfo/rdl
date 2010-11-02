@@ -2,30 +2,41 @@ $sparqltrees/base_html(
     title={ $first(doc).identifier$ },
     heading={ $first(doc).title$ },
     main={
-        $doc:{
+        $doc:{doc|
         <div class="doc">
-            <h2>$it.identifier$</h2>
-            <p><em>$it.type.label$</em></p>
-            <p><code>$it.resource_uri$</code></p>
+            <h2>$doc.identifier$</h2>
+            <p>
+                <em><a href="$basePath$/browse/publ/$doc.type.qname$"
+                        >$doc.type.label$</a></em>
+            </p>
+            <p><code>$doc.resource_uri$</code></p>
             <table class="docmeta">
                 <tr>
                     <th>Utgivare</th>
-                    <td>$it.publisher.name$</td>
+                    <td>
+                        <a href="$basePath$/browse/publ/$doc.type.qname$/$doc.publisher.uri_term$"
+                            >$doc.publisher.name$</a>
+                    </td>
                 </tr>
-                $if (it.serie)$
+                $if (doc.serie)$
                     <tr>
                         <th>Utgiven i</th>
                         <td>
-                            <a href="$it.serie.view_url$">$it.serie.label$</a>
+                            $doc.serie.label$
+                            <!--
+                            <a href="$doc.serie.view_url$">$doc.serie.label$</a>
+                            -->
                         </td>
                     </tr>
                 $endif$
-                $it.daterel:{
+                $doc.daterel:{
                     <tr>
                         <th>
                             $if (it.label)$ $it.label$ $else$<code>$it.uri_term$</code>$endif$
                         </th>
-                        <td>$it.value$</td>
+                        <td>
+                            <a href="$basePath$/list/publ/$doc.type.qname$/$doc.publisher.uri_term$/$it.qname$@$it.value.year$">$it.value.year$</a>-$it.value.monthDay$
+                        </td>
                     </tr>
                 }$
                 $!<!-- TODO:
@@ -36,10 +47,10 @@ $sparqltrees/base_html(
                 -->!$
             </table>
 
-            $if (it.entry.repr)$
+            $if (doc.entry.repr)$
                 <h3>Finns på formaten</h3>
                 <ul class="representations">
-                    $it.entry.repr:{
+                    $doc.entry.repr:{
                         <li>
                             <a href="$it.resource_uri$">
                                 $if (mediaTypes.(it.mediaType))$
@@ -53,10 +64,10 @@ $sparqltrees/base_html(
                 </ul>
             $endif$
 
-            $if (it.rel)$
+            $if (doc.rel)$
                 <h2>Relationer</h2>
                 <ul class="relations">
-                    $it.rel:{
+                    $doc.rel:{
                         <li>
                             <span class="rel">$if (it.label)$
                                     $it.label$ $else$<code>$it.uri_term$</code>
@@ -81,12 +92,12 @@ $sparqltrees/base_html(
         }$
     },
     related={
-        $doc:{
+        $doc:{doc|
         <div class="panel">
-            $if (it.rev)$
+            $if (doc.rev)$
                 <h2>Andra dokument som relaterar till detta</h2>
                 <ul class="incoming">
-                    $it.rev:{
+                    $doc.rev:{
                         <li>
                             <span class="rel">$if (it.inverse)$
                                 $if (it.inverse.label)$ $it.inverse.label$

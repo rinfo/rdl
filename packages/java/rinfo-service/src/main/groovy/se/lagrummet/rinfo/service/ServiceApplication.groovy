@@ -2,10 +2,10 @@ package se.lagrummet.rinfo.service
 
 import org.restlet.Application
 import org.restlet.Context
-import org.restlet.Restlet
-import org.restlet.data.MediaType
 import org.restlet.Request
 import org.restlet.Response
+import org.restlet.Restlet
+import org.restlet.data.MediaType
 import org.restlet.data.Status
 import org.restlet.representation.Representation
 import org.restlet.representation.StringRepresentation
@@ -14,6 +14,7 @@ import org.restlet.resource.Directory
 import org.restlet.resource.Finder
 import org.restlet.resource.Handler
 import org.restlet.resource.Resource
+import org.restlet.routing.Redirector
 import org.restlet.routing.Router
 
 import org.apache.commons.configuration.PropertiesConfiguration
@@ -55,9 +56,11 @@ class ServiceApplication extends Application {
     @Override
     public synchronized Restlet createRoot() {
         def router = new Router(getContext())
+        router.attach("/",
+                new Redirector(getContext(), "{rh}/view", Redirector.MODE_CLIENT_SEE_OTHER))
         router.attach("/status", StatusResource)
         router.attach("/collector", new Finder(getContext(), RDFLoaderHandler))
-        router.attach("/rdata", new SparqlTreeRouter(
+        router.attach("/view", new SparqlTreeRouter(
                 getContext(), repositoryHandler.repository))
         if (mediaDirUrl) {
             router.attach("/css", new Directory(getContext(), mediaDirUrl+"css/"))

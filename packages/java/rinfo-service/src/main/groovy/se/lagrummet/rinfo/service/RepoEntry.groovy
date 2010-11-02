@@ -59,6 +59,7 @@ class RepoEntry {
     org.openrdf.model.URI entryUri
     Literal entryIdLiteral
     Literal entryUpdatedLiteral
+    EntryStats entryStats
 
     private Entry entry
 
@@ -83,6 +84,7 @@ class RepoEntry {
         this.entryUri = vf.createURI(idStr)
         this.entryIdLiteral = vf.createLiteral(idStr, XMLSchema.ANYURI)
         this.entryUpdatedLiteral = RDFUtil.createDateTime(vf, updated)
+        this.entryStats = new EntryStats(conn, idStr, getContext().stringValue())
     }
 
     Resource getContext() {
@@ -126,7 +128,9 @@ class RepoEntry {
             }
             addContext()
             processContents()
-            new EntryStats(this).addStatistics()
+            conn.commit() // TODO: either load into mem first, or do something
+                          // if addStatistics fails...
+            entryStats.addStatistics()
         } catch (Exception e) {
             conn.rollback()
             throw e
@@ -137,7 +141,7 @@ class RepoEntry {
     void delete() {
         // TODO: throw error if already deleted or missing?
         try {
-            new EntryStats(this).removeStatistics()
+            entryStats.removeStatistics()
             clearContext()
             // TODO:? add the tombstone as a marker (e.g. for isCollected during collect)?
             //addTombstoneContext()
@@ -164,13 +168,13 @@ class RepoEntry {
 
     protected void processContents() {
         def contentElem = entry.contentElement
-        if (contentElem.resolvedSrc == null)
+        if (contentElem == null || contentElem.resolvedSrc == null)
             return // TODO:? handle embedded if ok mimeType? And/or warn if no data?
         def contentUrl = contentElem.resolvedSrc.toString()
         def contentMediaType = contentElem.mimeType.toString()
 
         loadData(contentUrl, contentMediaType)
-        addAtomEntryMetadata(contentUrl, AWOL_CONTENT, contentMediaType)
+        addAtomEntryLinkMetadata(contentUrl, AWOL_CONTENT, contentMediaType)
 
         for (link in entry.links) {
             def urlPath = link.resolvedHref.toString()
@@ -187,7 +191,7 @@ class RepoEntry {
                 continue
                 //linkRel = vf.createURI(link.rel, base=IANA_NS)
             }
-            addAtomEntryMetadata(urlPath, linkRel, mediaType)
+            addAtomEntryLinkMetadata(urlPath, linkRel, mediaType)
         }
     }
 
@@ -200,7 +204,8 @@ class RepoEntry {
         conn.add(inStream, url, RDFFormat.forMIMEType(mediaType), ctx)
     }
 
-    void addAtomEntryMetadata(String url, org.openrdf.model.URI rel, String mediaType) {
+    void addAtomEntryLinkMetadata(String url,
+            org.openrdf.model.URI rel, String mediaType) {
         def ctx = getContext()
         def resource = vf.createURI(url)
         conn.add(ctx, rel, resource, ctx)

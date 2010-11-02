@@ -25,7 +25,14 @@ class RDataSparqlTree extends SparqlTree {
     Object completeNode(Object node, String key, Map parentNode) {
         // TODO: html-escape text (unless xmlliterals)
         if (isDatatypeNode(node)) {
-            return node[valueKey]
+            def value = node[valueKey]
+            if (node[datatypeKey] == appData.profile.prefix['xsd']+'date') {
+                node['year'] = value[0..value.indexOf("-")-1]
+                node['monthDay'] = value[value.indexOf("-")+1..-1]
+                node['value'] = value
+                return node
+            }
+            return value
         } else if (isLangNode(node)) {
             return node[localeKey]
         } else if (isResource(node)) {
@@ -41,7 +48,7 @@ class RDataSparqlTree extends SparqlTree {
                     //    case ~/publ\/.+/:
                     //    break
                     //}
-                    node['rdata_url'] = "/rdata/" + path
+                    node['view_url'] = appData.basePath + "/" + path
                 }
             }
         }

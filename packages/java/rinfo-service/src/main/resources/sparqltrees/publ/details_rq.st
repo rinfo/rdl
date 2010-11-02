@@ -97,8 +97,8 @@ $sparqltrees/publ/base_rq(
             {
                 # TODO: move outside of union (right?)
                 # Date properties and values
-                ?doc ?doc__daterel ?doc__daterel__value .
-                FILTER(datatype(?doc__daterel__value) = xsd:date)
+                ?doc ?doc__daterel ?doc__daterel__1_value .
+                FILTER(datatype(?doc__daterel__1_value) = xsd:date)
                 ?doc__daterel rdfs:label ?doc__daterel__1_label .
 
             } UNION {
@@ -146,7 +146,9 @@ $sparqltrees/publ/base_rq(
             } UNION {
                 # Other, incoming relations
 
-                ?doc__rev__subject ?doc__rev ?doc . FILTER(isURI(?doc__rev__subject))
+                ?doc__rev__subject ?doc__rev ?doc .
+                FILTER(isURI(?doc__rev__subject))
+                FILTER(?doc__rev != event:product)
                 OPTIONAL {
                     ?doc__rev__subject a ?doc__rev__subject__1_type .
                 }

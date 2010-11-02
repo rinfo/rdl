@@ -1,132 +1,154 @@
 package se.lagrummet.rinfo.service
 
-import org.openrdf.model.Literal
-import org.openrdf.model.Resource
-import org.openrdf.model.Value
-import org.openrdf.model.ValueFactory
-import org.openrdf.model.impl.ValueFactoryImpl
-import org.openrdf.model.vocabulary.RDF
-import org.openrdf.model.vocabulary.XMLSchema
 import org.openrdf.repository.RepositoryConnection
 
-import org.openrdf.query.BindingSet
-import org.openrdf.query.QueryLanguage
-import org.openrdf.query.TupleQuery
-import org.openrdf.query.TupleQueryResult
-
-//import static org.apache.commons.codec.digest.DigestUtils.md5Hex
+import se.lagrummet.rinfo.base.rdf.Describer
+import se.lagrummet.rinfo.base.rdf.Description
+import se.lagrummet.rinfo.base.rdf.RDFLiteral
 
 
 class EntryStats {
 
-    static final SCOVO_ITEM
-    static final SCOVO_DIMENSION
-    static final TL_AT_YEAR
-    static final EVENT_PRODUCT
-
-    static {
-        def vf = ValueFactoryImpl.getInstance()
-
-        def SCOVO_NS = "http://purl.org/NET/scovo#"
-        def TL_NS = "http://purl.org/NET/c4dm/timeline.owl#"
-        def EVENT_NS = "http://purl.org/NET/c4dm/event.owl#"
-
-        SCOVO_ITEM = vf.createURI(SCOVO_NS, "Item")
-        SCOVO_DIMENSION = vf.createURI(SCOVO_NS, "dimension")
-        TL_AT_YEAR = vf.createURI(TL_NS, "atYear")
-        EVENT_PRODUCT = vf.createURI(EVENT_NS, "product")
-    }
-
-    // TODO: tag:lagrummet.se,2010:stats#context
-    private def timeStatsCtx = [] as Resource[]
-
-    //["dct:contributor", "dct:creator", "dct:publisher", "dct:rightsHolder"]
-
     RepositoryConnection conn
-    Resource entryContext
-    org.openrdf.model.URI entryUri
-    ValueFactory vf
 
-    EntryStats(repoEntry/*resourceDesc, statsContext*/) {
-        this.conn = repoEntry.conn
-        this.entryContext = repoEntry.getContext()
-        this.entryUri = repoEntry.entryUri
-        this.vf = repoEntry.vf
+    def statsContext = "tag:lagrummet.se,2010:stats#context"
+    def statsItemBaseUri = "tag:lagrummet.se,2010:stats/item/"
+    def dimensionBaseUri = "tag:lagrummet.se,2010:stats/dim/"
+
+    def additionalMeasurements = ["http://purl.org/dc/terms/publisher",
+        "http://purl.org/dc/terms/creator"]
+
+    Description doc
+    Describer desc
+
+    EntryStats(RepositoryConnection conn, String docUri, String docContext) {
+        this.conn = conn
+        this.doc = newDocDescriber(docContext).newDescription(docUri)
+        this.desc = newStatsDescriber()
     }
 
-    void addStatistics() {
-        def stmts = conn.getStatements(entryUri, null, null, false, entryContext)
-        try {
-            while (stmts.hasNext()) {
-                def stmt = stmts.next()
-                if (!isDateOrDateTime(stmt.object))
-                    continue
-                Literal year = gYearFromDateTime((Literal)stmt.object)
-                Resource eventItem = findOrMakeYearItemFor(stmt.predicate, year)
-                conn.add(eventItem, EVENT_PRODUCT, entryUri, timeStatsCtx)
+    def addStatistics() {
+        def dimLocalUris = dimensionsFor(doc)
+        if (dimLocalUris.size() == 0)
+            return null
+        def statsItemUri = createStatsItemUri(dimLocalUris)
+        def statsItem = desc.findDescription(statsItemUri)
+        if (statsItem == null) {
+            statsItem = desc.newDescription(statsItemUri, "scv:Item")
+        }
+        for (dimLocalUri in dimLocalUris) {
+            statsItem.addRel("scv:dimension", dimensionBaseUri + dimLocalUri)
+        }
+        Integer count = statsItem.getNative("rdf:value")
+        if (count == null) count = 0
+        statsItem.remove("rdf:value")
+        statsItem.addLiteral("rdf:value", count + 1)
+        statsItem.addRel("event:product", doc.about)
+        return statsItem
+    }
+
+    def removeStatistics() {
+        // FIXME: implement!
+        //def statsItems = desc.subjects("event:product", doc.about)
+        //for (statsItem in statsItems) {
+        //    remove product
+        //    decrease value by 1
+        //    if (value == 0) {
+        //        remove dimensions if only ref:ed from statsItem(s) to be removed
+        //        remove statsItem
+        //    }
+        //}
+    }
+
+    def createStatsItemUri(SortedSet<String> dimLocalUris) {
+        return statsItemBaseUri + dimLocalUris.join("/")
+    }
+
+    def dimensionsFor(Description doc) {
+        def dimLocalUris = new TreeSet<String>()
+        for (triple in doc.getTriples()) {
+            def dimLocalUri = createDimensionLocalUri(triple.property, triple.object)
+            if (dimLocalUri != null) {
+                def dimUri = dimensionBaseUri + dimLocalUri
+                ensureDimension(dimUri, triple.property, triple.object)
+                dimLocalUris.add(dimLocalUri)
             }
-        } finally {
-            stmts.close()
         }
+        return dimLocalUris
     }
 
-    void removeStatistics() {
-        def eventItemStmt = RDFUtil.one(conn, null, EVENT_PRODUCT, entryUri)
-        def eventItem = eventItemStmt ? eventItemStmt.getSubject() : null
-        if (!eventItem)
-            return
-        conn.remove(eventItemStmt, timeStatsCtx)
-        // NOTE: if no other products, remove all about eventItem
-        if (!conn.hasStatement(eventItem, EVENT_PRODUCT, null, false, timeStatsCtx)) {
-            conn.remove(eventItem, null, null, timeStatsCtx)
+    def ensureDimension(dimUri, property, value) {
+        def dimension = desc.findDescription(dimUri)
+        if (dimension == null) {
+            dimension = desc.newDescription(dimUri, "scv:Dimension")
         }
-    }
-
-    protected boolean isDateOrDateTime(Value value) {
-        if (!(value instanceof Literal))
-            return false
-        return XMLSchema.DATETIME.equals(((Literal) value).getDatatype()) ||
-                XMLSchema.DATE.equals(((Literal) value).getDatatype())
-    }
-
-    protected Literal gYearFromDateTime(Literal dateTime) {
-        String yearRepr = dateTime.calendarValue().getEonAndYear().toString()
-        Literal year = vf.createLiteral(yearRepr, XMLSchema.GYEAR)
-    }
-
-    protected Resource findOrMakeYearItemFor(property, year) {
-        def eventItem = findYearItemFor(property, year)
-        if (eventItem == null) {
-            eventItem = vf.createBNode()
-            conn.add(eventItem, RDF.TYPE, SCOVO_ITEM, timeStatsCtx)
-            conn.add(eventItem, TL_AT_YEAR, year, timeStatsCtx)
-            conn.add(eventItem, SCOVO_DIMENSION, property, timeStatsCtx)
+        dimension.addRel("owl:onProperty", property)
+        def year = tryGetYear(value)
+        if (year != null) {
+            dimension.addLiteral("tl:atYear", year, "xsd:gYear")
+        } else if (value instanceof String) {
+            dimension.addRel("owl:hasValue", value)
         }
-        return eventItem
+        return dimension
     }
 
-    protected Resource findYearItemFor(property, year) {
-        Resource eventItem = null
-        def yearItemQueryStr = ("SELECT ?eventItem WHERE { " +
-                "?eventItem " +
-                "    <http://purl.org/NET/c4dm/timeline.owl#atYear> ?year; " +
-                "    <http://purl.org/NET/scovo#dimension> ?property . " +
-                "} ")
-        TupleQuery yearItemQuery = conn.prepareTupleQuery(
-                QueryLanguage.SPARQL, yearItemQueryStr)
-        yearItemQuery.setBinding("property", property)
-        yearItemQuery.setBinding("year", year)
-        TupleQueryResult result = yearItemQuery.evaluate()
-        try {
-            while (result.hasNext()) {
-                BindingSet row = result.next()
-                eventItem = row.getValue("eventItem")
-                break
+    def createDimensionLocalUri(property, value) {
+        def propCurie = desc.toCurie(property)
+        if (propCurie == null) {
+            return null
+        }
+        def year = tryGetYear(value)
+        if (year != null) {
+            return propCurie + "@" + year
+        } else if (value instanceof String) {
+            if (!property.equals(Describer.RDF_NS + "type") &&
+                !additionalMeasurements.contains(property)) {
+                return null
             }
-        } finally {
-            result.close()
+            def valueCurie = desc.toCurie(value)
+            if (valueCurie != null) {
+                return propCurie + "+" + valueCurie
+            }
+        } else {
+            return null
         }
-        return eventItem
     }
+
+    String tryGetYear(Object value) {
+        if (value instanceof RDFLiteral) {
+            if (value.isGCalType()) {
+                return value.toXmlGCal().getEonAndYear().toString()
+            }
+        }
+        return null
+    }
+
+    def newDocDescriber(String... contexts) {
+        return new Describer(conn, false, contexts).
+            setPrefix("dct", "http://purl.org/dc/terms/").
+            setPrefix("awol", "http://bblfish.net/work/atom-owl/2006-06-06/#").
+            setPrefix("iana", "http://www.iana.org/assignments/relation/").
+            setPrefix("foaf", "http://xmlns.com/foaf/0.1/")
+    }
+
+    def newStatsDescriber() {
+        return new Describer(conn, false, statsContext).
+            setPrefix("dct", "http://purl.org/dc/terms/").
+            setPrefix("scv", "http://purl.org/NET/scovo#").
+            setPrefix("event", "http://purl.org/NET/c4dm/event.owl#").
+            setPrefix("tl", "http://purl.org/NET/c4dm/timeline.owl#").
+            setPrefix("rpubl", "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#").
+            setPrefix("rorg", "http://rinfo.lagrummet.se/org/")
+    }
+
+    /*
+    class Dimension {
+        boolean timeDimension
+        String property
+        String valueRepr
+        Dimension() {
+        }
+    }
+    */
 
 }
