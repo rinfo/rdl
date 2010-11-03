@@ -9,8 +9,12 @@ import se.lagrummet.rinfo.base.URIMinter;
 import se.lagrummet.rinfo.main.storage.StorageHandler;
 import se.lagrummet.rinfo.main.storage.EntryRdfValidatorHandler;
 
-import org.restlet.*;
+import org.restlet.Application;
+import org.restlet.Component;
+import org.restlet.Restlet;
 import org.restlet.data.Protocol;
+import org.restlet.resource.Directory;
+import org.restlet.routing.Router;
 
 import se.lagrummet.rinfo.checker.Checker;
 
@@ -43,11 +47,17 @@ public class CheckerApplication extends Application {
     private String mediaDirUrl = "war:///media/";
     private List<StorageHandler> handlers = new ArrayList<StorageHandler>();
 
+    // domain-specific config
+    String systemBaseUri = "http://rinfo.lagrummet.se/system/";
+    String entryDatasetUri = "tag:lagrummet.se,2009:rinfo";
+
     @Override
     public Restlet createRoot() {
         try {
             initializeHandlers();
             getContext().getAttributes().putIfAbsent("handlers", handlers);
+            getContext().getAttributes().putIfAbsent("systemBaseUri", systemBaseUri);
+            getContext().getAttributes().putIfAbsent("entryDatasetUri", entryDatasetUri);
             Router router = new Router(getContext());
             router.attachDefault(CheckerResource.class);
             router.attach("/media", new Directory(getContext(), mediaDirUrl));
@@ -61,7 +71,7 @@ public class CheckerApplication extends Application {
         EntryRdfValidatorHandler uriMinterHandler = new EntryRdfValidatorHandler(
                 new URI("http://rinfo.lagrummet.se/sys/uri"), "/publ/");
         handlers.add(uriMinterHandler);
-        Checker adminChecker = new Checker();
+        Checker adminChecker = new Checker(systemBaseUri, entryDatasetUri);
         adminChecker.setHandlers(handlers);
         // TODO: read just the URIMinter config directly <http://rinfo.lagrummet.se/sys/uri>?
         URL adminFeedUrl = new URL("http://admin.lagrummet.se/feed/current.atom");

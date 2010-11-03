@@ -21,12 +21,12 @@ import org.openrdf.repository.Repository;
 
 import org.restlet.*;
 import org.restlet.data.*;
-import org.restlet.resource.InputRepresentation;
-import org.restlet.resource.Representation;
+import org.restlet.representation.InputRepresentation;
+import org.restlet.representation.Representation;
+import org.restlet.representation.StringRepresentation;
+import org.restlet.representation.Variant;
 import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
-import org.restlet.resource.StringRepresentation;
-import org.restlet.resource.Variant;
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil;
 
@@ -74,7 +74,11 @@ public class CheckerResource extends Resource {
             int maxEntries = !StringUtils.isEmpty(maxEntriesStr) ? Integer.parseInt(maxEntriesStr) : -1;
             List<StorageHandler> handlers =
                     (List<StorageHandler>) getContext().getAttributes().get("handlers");
-            Checker checker = new Checker();
+            String systemBaseUri =
+                (String) getContext().getAttributes().get("systemBaseUri");
+            String entryDatasetUri =
+                (String) getContext().getAttributes().get("entryDatasetUri");
+            Checker checker = new Checker(systemBaseUri, entryDatasetUri);
             checker.setMaxEntries(maxEntries);
             checker.setHandlers(handlers);
             try {
