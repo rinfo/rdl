@@ -3,11 +3,9 @@ package se.lagrummet.rinfo.main.storage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import org.apache.commons.configuration.ConfigurationUtils
-
 import org.openrdf.repository.Repository
 
-import se.lagrummet.rinfo.base.rdf.sparqltree.SparqlTree
+import se.lagrummet.rinfo.base.rdf.Describer
 import se.lagrummet.rinfo.store.depot.DepotEntry
 
 
@@ -18,11 +16,9 @@ class SourceFeedsConfigHandler implements StorageHandler {
     FeedCollectScheduler collectScheduler
 
     URI configurationEntryId
-    String sourceFeedsQuery
 
     public SourceFeedsConfigHandler(FeedCollectScheduler collectScheduler,
             URI configurationEntryId) {
-        sourceFeedsQuery = ConfigurationUtils.locate("rinfo_source_feeds.rq").text
         this.collectScheduler = collectScheduler
         this.configurationEntryId = configurationEntryId
     }
@@ -48,22 +44,18 @@ class SourceFeedsConfigHandler implements StorageHandler {
         }
         def feedUrls = new ArrayList<URL>()
         Repository repo = EntryRdfReader.readRdf(depotEntry)
-        // TODO:IMPROVE: configure, use raw sparql, and/or make this more failsafe.
-        /* or..: * /
-        walker.prefixes["dct"] = "..."
-        walker.prefixes["iana"] = "..."
-        walker.aboutURI("tag:lagrummet.se,2009:rinfo")
-        for (Object source = walker.pushRel("dct:source"); walker.popRel();) {
-            feedUrls.add(walker.rel("iana:current").asURI())
-        }
-        /* */
-        def tree = new SparqlTree().runQuery(repo, sourceFeedsQuery)
-        tree.rinfoset.each {
-            it.source.each {
-                feedUrls.add(new URL(it.feed['$uri']))
+        def conn = repo.getConnection()
+        try {
+            def desc = new Describer(conn).
+                    setPrefix("dct", "http://purl.org/dc/terms/").
+                    setPrefix("iana", "http://www.iana.org/assignments/relation/")
+            def dataset = desc.findDescription("tag:lagrummet.se,2009:rinfo")
+            for (source in dataset.getRels("dct:source")) {
+                feedUrls.add(new URL(source.getObjectUri("iana:current")))
             }
+        } finally {
+            conn.close()
         }
-        /**/
         logger.debug("Setting public source feed urls, from " +
                 configurationEntryId+", to: ${feedUrls}")
         collectScheduler.setPublicSourceFeedUrls(feedUrls)
