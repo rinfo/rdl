@@ -1,0 +1,14 @@
+prefix dct: <http://purl.org/dc/terms/>
+prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
+
+select * {
+
+    { ?doc ?p ?value }
+    filter(
+        (?p = dct:title ||
+         ?p = dct:identifier ||
+         ?p = dct:description) &&
+         regex(str(?value), "r.ttsinform.+f.rordning", "i")
+    )
+
+}
