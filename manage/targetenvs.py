@@ -60,10 +60,10 @@ def tg_demo():
     # Machines:
     env.user = 'rinfo'
     env.roledefs = {
-        'main': ['94.247.169.67'],
-        'service': ['94.247.169.67'],
-        'admin': ['94.247.169.67'],
-        'demo': ['94.247.169.67'],
+        'main': ['demo.lagrummet.se'],
+        'service': ['demo.lagrummet.se'],
+        'admin': ['demo.lagrummet.se'],
+        'demo': ['demo.lagrummet.se'],
     }
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -121,7 +121,8 @@ def tg_integration():
     env.apache_sites = {
         'demo': ['sfs', 'dv', 'prop', 'sou', 'ds'],
         'main': ['default', 'admin'],
-        'service': ['service', 'checker'],
+        'service': ['service'],
+        'checker': ['checker'],
     }
     env.apache_jk_tomcat = True
     # Tomcat
@@ -159,7 +160,8 @@ def tg_prod():
     env.docs_webroot = "/var/www/dokumentation"
     env.apache_sites = {
         'main': ['default', 'admin'],
-        'service': ['service', 'checker'],
+        'service': ['service'],
+        'checker': ['checker'],
     }
     env.apache_jk_tomcat = True
     # Tomcat
