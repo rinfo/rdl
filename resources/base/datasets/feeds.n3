@@ -1,4 +1,5 @@
 @prefix dct: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix void: <http://rdfs.org/ns/void#> .
 @prefix iana: <http://www.iana.org/assignments/relation/> .
 
@@ -17,6 +18,7 @@
         #<tag:verva.se,2007:rinfo>,
         <tag:boverket.se,2009:rinfo:feed>;
     dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    foaf:homepage <http://rinfo.lagrummet.se/>;
     iana:current <http://rinfo.lagrummet.se/feed/current> .
 
 <http://rinfo.lagrummet.se/feed/current> dct:format "application/atom+xml" .
