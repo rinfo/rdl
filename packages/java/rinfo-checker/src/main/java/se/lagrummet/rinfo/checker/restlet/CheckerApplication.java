@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import se.lagrummet.rinfo.base.rdf.GritTransformer;
+
 import se.lagrummet.rinfo.main.storage.StorageHandler;
 import se.lagrummet.rinfo.main.storage.EntryRdfValidatorHandler;
 
@@ -56,6 +58,10 @@ public class CheckerApplication extends Application {
             getContext().getAttributes().putIfAbsent("handlers", handlers);
             getContext().getAttributes().putIfAbsent("systemBaseUri", systemBaseUri);
             getContext().getAttributes().putIfAbsent("entryDatasetUri", entryDatasetUri);
+            // TODO: set mediabase param
+            GritTransformer logXhtmlTransformer = new GritTransformer(
+                    CheckerApplication.class.getResourceAsStream("/xslt/collector_log.xslt"));
+            getContext().getAttributes().putIfAbsent("logXhtmlTransformer", logXhtmlTransformer);
             Router router = new Router(getContext());
             router.attachDefault(CheckerResource.class);
             router.attach("/media", new Directory(getContext(), mediaDirUrl));
