@@ -6,7 +6,7 @@ PIDFILE=/var/run/$NAME.pid
 RUN_AS=hudson
 
 d_start() {
-    start-stop-daemon --start --quiet --background --make-pidfile --pidfile $PIDFILE --chuid $RUN_AS --exec /usr/bin/java -- -jar -Xmx128m /home/hudson/hudson.war --prefix=/hudson
+    start-stop-daemon --start --quiet --background --make-pidfile --pidfile $PIDFILE --chuid $RUN_AS --exec /usr/bin/java -- -jar -Xmx128m -Dmail.smtp.localhost=`hostname` /home/hudson/hudson.war --prefix=/hudson
 }
 
 d_stop() {
