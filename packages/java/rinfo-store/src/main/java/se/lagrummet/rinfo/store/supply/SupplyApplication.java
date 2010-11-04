@@ -30,7 +30,7 @@ public class SupplyApplication extends Application {
     }
 
     @Override
-    public synchronized Restlet createRoot() {
+    public synchronized Restlet createInboundRoot() {
         try {
             return new DepotFinder(getContext(), depot);
         } catch (Exception e) {

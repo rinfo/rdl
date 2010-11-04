@@ -4,8 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import se.lagrummet.rinfo.base.URIMinter;
-
 import se.lagrummet.rinfo.main.storage.StorageHandler;
 import se.lagrummet.rinfo.main.storage.EntryRdfValidatorHandler;
 
@@ -52,7 +50,7 @@ public class CheckerApplication extends Application {
     String entryDatasetUri = "tag:lagrummet.se,2009:rinfo";
 
     @Override
-    public Restlet createRoot() {
+    public Restlet createInboundRoot() {
         try {
             initializeHandlers();
             getContext().getAttributes().putIfAbsent("handlers", handlers);
@@ -86,7 +84,7 @@ public class CheckerApplication extends Application {
         int port = (args.length > 0)? Integer.parseInt(args[0]) : 8182;
         final String mediaDir = args[1];
         CheckerApplication checkerApp = new CheckerApplication();
-        checkerApp.mediaDirUrl = new File(mediaDir).toURL().toString();
+        checkerApp.mediaDirUrl = new File(mediaDir).toURI().toURL().toString();
         Component cmp = new Component();
         cmp.getServers().add(Protocol.HTTP, port);
         cmp.getClients().add(Protocol.FILE);
