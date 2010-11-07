@@ -1,15 +1,5 @@
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-                xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-                xmlns:dct="http://purl.org/dc/terms/"
-                xmlns:iana="http://www.iana.org/assignments/relation/"
-                xmlns:rx="http://www.w3.org/2008/09/rx#"
-                xmlns:awol="http://bblfish.net/work/atom-owl/2006-06-06/#"
-                xmlns:ax="http://buzzword.org.uk/rdf/atomix#"
-                xmlns:ov="http://open.vocab.org/terms/"
-                xmlns:tl="http://purl.org/NET/c4dm/timeline.owl#"
-                xmlns:rc="http://rinfo.lagrummet.se/ns/2008/10/collector#"
-                xmlns="http://www.w3.org/1999/xhtml"
+<!DOCTYPE xsl:stylesheet SYSTEM "collector_log.dtd">
+<xsl:stylesheet version="1.0"
                 extension-element-prefixes="date"
                 xmlns:date="http://exslt.org/dates-and-times"
                 exclude-result-prefixes="xsd dct iana rx awol tl rc">
@@ -21,19 +11,6 @@
 
   <xsl:output method="html" indent="yes" encoding="utf-8"/>
 
-
-    <xsl:template match="/graph">
-        <html>
-            <head>
-                <title>RInfo Checker: insamlingskontroll</title>
-                <link rel="stylesheet" type="text/css" href="{$mediabase}/collector_log.css" />
-            </head>
-            <body>
-              <h1>RInfo Checker: insamlingskontroll</h1>
-                <xsl:apply-templates select="resource[a/rc:Collect]"/>
-            </body>
-        </html>
-    </xsl:template>
 
     <xsl:template match="*[a/rc:Collect]">
       <div class="collect">

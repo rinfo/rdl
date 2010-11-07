@@ -1,0 +1,15 @@
+<!ATTLIST xsl:stylesheet
+    xmlns:xsl CDATA #FIXED "http://www.w3.org/1999/XSL/Transform"
+    xmlns:rdf CDATA #FIXED "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs CDATA #FIXED "http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd CDATA #FIXED "http://www.w3.org/2001/XMLSchema#"
+    xmlns:dct CDATA #FIXED "http://purl.org/dc/terms/"
+    xmlns:iana CDATA #FIXED "http://www.iana.org/assignments/relation/"
+    xmlns:rx CDATA #FIXED "http://www.w3.org/2008/09/rx#"
+    xmlns:awol CDATA #FIXED "http://bblfish.net/work/atom-owl/2006-06-06/#"
+    xmlns:ax CDATA #FIXED "http://buzzword.org.uk/rdf/atomix#"
+    xmlns:ov CDATA #FIXED "http://open.vocab.org/terms/"
+    xmlns:tl CDATA #FIXED "http://purl.org/NET/c4dm/timeline.owl#"
+    xmlns:rc CDATA #FIXED "http://rinfo.lagrummet.se/ns/2008/10/collector#"
+    xmlns CDATA #FIXED "http://www.w3.org/1999/xhtml"
+>

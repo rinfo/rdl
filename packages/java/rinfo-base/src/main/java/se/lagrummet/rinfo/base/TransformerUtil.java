@@ -21,16 +21,23 @@ public class TransformerUtil {
     static SAXTransformerFactory saxTf =
             (SAXTransformerFactory) TransformerFactory.newInstance();
 
-    public static Templates newTemplates(InputStream inputStream) throws Exception {
-        return saxTf.newTemplates(new StreamSource(inputStream));
+    public static Templates newTemplates(Class baseClass, String xsltPath)
+            throws Exception {
+        return newTemplates(baseClass.getResourceAsStream(xsltPath),
+                    baseClass.getResource(xsltPath).toExternalForm());
+    }
+
+    public static Templates newTemplates(InputStream inputStream,
+            String systemId) throws Exception {
+        return saxTf.newTemplates(new StreamSource(inputStream, systemId));
     }
 
     public static void writeXhtml(InputStream inputStream, Writer writer,
-            Templates... xslts) throws IOException {
+            Templates... templates) throws IOException {
         try {
             XMLFilter filter = null;
-            for (Templates xslt : xslts) {
-                XMLFilter nextFilter = saxTf.newXMLFilter(xslt);
+            for (Templates tplt : templates) {
+                XMLFilter nextFilter = saxTf.newXMLFilter(tplt);
                 if (filter != null) nextFilter.setParent(filter);
                 filter = nextFilter;
             }

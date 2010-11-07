@@ -1,6 +1,7 @@
 package se.lagrummet.rinfo.base.rdf;
 
 import java.io.*;
+import org.apache.commons.lang.ArrayUtils;
 
 import javax.xml.transform.Templates;
 import org.openrdf.repository.Repository;
@@ -9,14 +10,13 @@ import se.lagrummet.rinfo.base.TransformerUtil;
 
 public class GritTransformer {
 
-    Templates gritXslt;
-    Templates xslt;
+    Templates[] templates;
 
-    public GritTransformer(InputStream inputStream) {
+    public GritTransformer(Templates... templates) {
         try {
-            gritXslt = TransformerUtil.newTemplates(
-                    getClass().getResourceAsStream("/xslt/rdfxml-grit.xslt"));
-            xslt = TransformerUtil.newTemplates(inputStream);
+            Templates gritXslt = TransformerUtil.newTemplates(
+                    getClass(), "/xslt/rdfxml-grit.xslt");
+            this.templates = (Templates[]) ArrayUtils.add(templates, 0, gritXslt);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -24,7 +24,7 @@ public class GritTransformer {
 
     public void writeXhtml(InputStream inputStream, Writer writer)
             throws IOException {
-        TransformerUtil.writeXhtml(inputStream, writer, gritXslt, xslt);
+        TransformerUtil.writeXhtml(inputStream, writer, templates);
     }
 
 }

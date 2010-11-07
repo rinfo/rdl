@@ -14,6 +14,9 @@ import static org.restlet.routing.Template.MODE_STARTS_WITH
 
 import se.lagrummet.rinfo.store.supply.DepotFinder
 
+import static se.lagrummet.rinfo.base.TransformerUtil.newTemplates
+import se.lagrummet.rinfo.base.rdf.GritTransformer
+
 
 class MainApplication extends Application {
 
@@ -37,6 +40,8 @@ class MainApplication extends Application {
         router.attach("/system/log/",
                 new Finder(getContext(), LogListResource)).setMatchingMode(MODE_EQUALS)
 
+        ContextAccess.setLogToXhtml(getContext(), new GritTransformer(
+                    newTemplates(getClass(), "/xslt/main_collector_log.xslt")));
         def tplt = router.attach("/system/log/collect/{contextPath}",
                 new Finder(getContext(), CollectResource)).getTemplate()
         tplt.getVariables().put("contextPath", new Variable(Variable.TYPE_URI_PATH))

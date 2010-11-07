@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import static se.lagrummet.rinfo.base.TransformerUtil.newTemplates
 import se.lagrummet.rinfo.base.rdf.GritTransformer;
 
 import se.lagrummet.rinfo.main.storage.StorageHandler;
@@ -60,7 +61,7 @@ public class CheckerApplication extends Application {
             getContext().getAttributes().putIfAbsent("entryDatasetUri", entryDatasetUri);
             // TODO: set mediabase param
             GritTransformer logXhtmlTransformer = new GritTransformer(
-                    CheckerApplication.class.getResourceAsStream("/xslt/collector_log.xslt"));
+                    newTemplates(CheckerApplication.class, "/xslt/checker_collector_log.xslt"));
             getContext().getAttributes().putIfAbsent("logXhtmlTransformer", logXhtmlTransformer);
             Router router = new Router(getContext());
             router.attachDefault(CheckerResource.class);

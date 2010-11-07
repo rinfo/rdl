@@ -171,7 +171,10 @@ public class Components {
         depot.initialize()
         // TODO:? fix only one, or should depot have a findLockedEntries?
         try {
-            depot.checkConsistency()
+            boolean checkDepot = false
+            if (checkDepot) {
+                depot.checkConsistency()
+            }
         } catch (LockedDepotEntryException e) {
             // TODO:IMPROVE: This unconditionally expects that the
             // locked entry has not been indexed (which it should not have
