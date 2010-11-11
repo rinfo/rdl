@@ -3,6 +3,7 @@ package se.lagrummet.rinfo.collector
 import spock.lang.*
 
 import java.util.concurrent.Semaphore
+import java.util.concurrent.CountDownLatch
 
 
 class AbstractCollectSchedulerSpec extends Specification {
@@ -37,7 +38,6 @@ class AbstractCollectSchedulerSpec extends Specification {
         when:
         collectScheduler.waitForCompletedCollect()
         then:
-        Thread.sleep 1
         fakeSource.items == collectScheduler.collectedItems
     }
 
@@ -113,7 +113,6 @@ class ManagedDummyScheduler extends AbstractCollectScheduler {
 
     int feedVisitCount
     int feedsToWaitFor
-    private reachedLastSemaphore = new Semaphore(1)
     private blockCollectSemaphore
 
     void collectFeed(URL feedUrl, boolean lastInBatch) {
@@ -127,14 +126,9 @@ class ManagedDummyScheduler extends AbstractCollectScheduler {
             collectedItems << it
         }
         feedVisitCount += 1
-        if (!feedsToWaitFor && lastInBatch
-            || feedVisitCount == feedsToWaitFor) {
-            reachedLastSemaphore.release()
-        }
     }
-
+    
     void collectAllFeeds() {
-        reachedLastSemaphore.tryAcquire()
         super.collectAllFeeds()
     }
 
@@ -144,8 +138,15 @@ class ManagedDummyScheduler extends AbstractCollectScheduler {
     }
 
     protected waitForCompletedCollect() {
-        reachedLastSemaphore.acquire()
-        reachedLastSemaphore.release()
+        final CountDownLatch hasStopped = new CountDownLatch(1);
+        
+        getExecutorService().execute new Runnable() {
+            void run() {
+                hasStopped.countDown();
+            }
+        }
+        
+        hasStopped.await()
     }
 
     protected pause() {
