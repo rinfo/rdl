@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import static se.lagrummet.rinfo.base.TransformerUtil.newTemplates
+import static se.lagrummet.rinfo.base.TransformerUtil.newTemplates;
 import se.lagrummet.rinfo.base.rdf.GritTransformer;
 
 import se.lagrummet.rinfo.main.storage.StorageHandler;

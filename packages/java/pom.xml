@@ -31,13 +31,15 @@
   -->
 
   <modules>
+    <!-- components/libs -->
     <module>rinfo-store</module>
     <module>rinfo-collector</module>
     <module>rinfo-base</module>
     <module>rinfo-rdf-repo</module>
-    <!-- TODO:? exclude these "apps" (i.e. not components/libs)? -->
+    <!-- apps -->
     <module>rinfo-main</module>
     <module>rinfo-service</module>
+    <module>rinfo-checker</module>
   </modules>
 
   <repositories>
