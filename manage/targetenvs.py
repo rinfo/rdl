@@ -103,6 +103,7 @@ def tg_integration():
     env.roledefs = {
         'main': ['rinfo-main'],
         'service': ['rinfo-service'],
+        'checker': ['rinfo-checker'],
         'doc': ['rinfo-main'],
         'admin': ['rinfo-admin'],
         'demo': ['sfs-demo', 'dv-demo', 'prop-demo', 'sou-demo', 'ds-demo'],

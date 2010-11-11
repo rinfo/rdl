@@ -76,7 +76,7 @@ standing in the directory rinfo-trunk/manage
          sudo apt-get update
 
    * Edit the hosts file on your local computer so that it contains:
-      <IP-OF-VIRTUAL-SERVER>  rinfo-main rinfo-service rinfo-admin
+      <IP-OF-VIRTUAL-SERVER>  rinfo-main rinfo-service rinfo-admin rinfo-checker
       <IP-OF-VIRTUAL-SERVER>  sfs-demo dv-demo prop-demo sou-demo ds-demo
 
    * Run on your local computer::
@@ -89,6 +89,7 @@ standing in the directory rinfo-trunk/manage
       fab tg_integration -R main configure_server
       fab tg_integration -R service configure_server
       fab tg_integration -R demo configure_server
+      fab tg_integration -R checker configure_server
 
    * Run on your virtual server::
       sudo /etc/init.d/apache2 graceful
@@ -134,6 +135,19 @@ Verify main:
       * fab tg_integration ping_main_collector:http\://prop-demo/feed/current
       * fab tg_integration ping_main_collector:http\://sou-demo/feed/current
       * fab tg_integration ping_main_collector:http\://ds-demo/feed/current
+
+Deploy checker:
+
+   * Run on your local computer::
+      fab tg_integration checker_all
+
+Verify checker:
+
+   * http://rinfo-checker/
+      should contain the checker form. Put <http://dv-demo/feed/current> in 
+      the URL input field and click Check to check the feed. This should 
+      result in 10 green line being shown, one for each successfully checked 
+      feed entry.
 
 Deploy service (not verified to work yet):
 
