@@ -53,6 +53,23 @@ From within Hudson perform the following steps
         #. Subversion Repository URL: https://dev.lagrummet.se/svn/rinfo/trunk (you might have to create a new user)
         #. Root POM: packages/java/pom.xml
         #. Goals and options: clean install cobertura:cobertura
-        #. Build -> Advanced… -> MAVEN_OPTS: -Xmx128m
+        #. Build -> Advanced… -> MAVEN_OPTS: -Xmx256m
         #. Activate the Post-build Actions: Publish Cobertura Coverage Report
         #. Cobertura xml report pattern: packages/java/**/target/site/cobertura/coverage.xml
+
+# Auto deploy to demo environment
+
+In order to make automatic deploys to some other environment you should use 
+the normal fabric scripts. The scripts needs to be able to run without manual 
+input. 
+
+To achieve this you need to make the Hudson user able to login without 
+using a password on the demo environment using password less SSH. It is also 
+necessary to configure the demo environment so that the Hudson user can sudo 
+without entering a password. You achieve this by editing the sudoers file with 
+"sudo visudo" and add the following line:
+
+   hudson_user ALL=(ALL) NOPASSWD: ALL
+
+where "hudson_user" should be exchanged to the username of the Hudson user on 
+the demo environment.
