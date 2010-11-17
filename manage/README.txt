@@ -58,7 +58,10 @@ standing in the directory rinfo-trunk/manage
    * Setup a virtual server using a debian based linux distribution
    * Ensure that sudo is available (run: apt-get install sudo if not)
    * Ensure that sshd is available (run: sudo apt-get install openssh-server if not)
-   * Ensure that you can ssh to the server preferably password less
+   * Ensure that you can ssh to the server, preferably passwordless
+   * Ensure that the following tools are available: wget, curl, rsync
+     and add-apt-repository (available in the ubuntu package
+     python-software-properties)
    * Ensure that there is a package repository setup that contains sun-java6-jdk
 
       * For Debian:
@@ -69,6 +72,10 @@ standing in the directory rinfo-trunk/manage
 
       * For Ubuntu (10.04 Lucid):
          sudo add-apt-repository "deb http://archive.canonical.com/ lucid partner"
+         sudo apt-get update
+         
+      * For Ubuntu (10.10 Meerkat):
+         sudo add-apt-repository "deb http://archive.canonical.com/ meerkat partner"
          sudo apt-get update
 
       * For Ubuntu (10.10 Maverick):
@@ -103,6 +110,8 @@ Deploy demo data from lagen.nu:
       fab tg_integration -H dv-demo demo_refresh:dv
       fab tg_integration -H sfs-demo demo_refresh:sfs
 
+      
+      
 Deploy demo data from riksdagen.se (very time consuming):
 
    * Run on your local computer::
