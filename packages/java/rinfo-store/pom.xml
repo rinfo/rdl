@@ -113,18 +113,6 @@
       </plugin>
 
       <plugin>
-        <groupId>org.spockframework</groupId>
-        <artifactId>spock-maven</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>find-specs</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <descriptorRefs>
