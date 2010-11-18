@@ -164,6 +164,12 @@ Deploy service (not verified to work yet):
       fab tg_integration deploy_sesame
       fab tg_integration service_all
 
+Verify service:
+
+¨  * http://rinfo-service/view/browse/publ
+      should contain a main page from where you can browse the various 
+      collected data.
+
 Development Environment
 ========================================================================
 
