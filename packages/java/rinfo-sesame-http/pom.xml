@@ -53,6 +53,7 @@
     </plugins>
     -->
     <defaultGoal>package</defaultGoal>
+    
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -89,6 +90,23 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <configuration>
+          <webApp>${basedir}/target/dependency/openrdf-sesame.war</webApp>
+          <webAppConfig>
+            <contextPath>/openrdf-sesame</contextPath>
+          </webAppConfig>
+          <systemProperties>
+            <systemProperty>
+              <name>info.aduna.platform.appdata.basedir</name>
+              <value>/opt/_workapps/rinfo/aduna</value>
+            </systemProperty>
+          </systemProperties>
+        </configuration>
       </plugin>
     </plugins>
   </build>
