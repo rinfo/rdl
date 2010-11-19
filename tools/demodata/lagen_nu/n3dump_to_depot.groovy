@@ -194,8 +194,9 @@ def convertLagenNuTripleGroups(String key, List<String> lines) {
             def s = replaceOnce(it, "<${DCT}description>", "<${RPUBL}referatrubrik>")
             // TODO: is "issued" good enough?
             s = replaceOnce(s, "<${RPUBL}avgorandedatum>", "<${DCT}issued>")
-            s = s.replaceAll(/(.+) <${DCT}identifier> "\w+ ([^"]+)"@sv \./,
-                            '$1 <'+RPUBL+'publikationsplatsangivelse> "$2" .')
+            s = s.replaceAll(/(.+) <${DCT}identifier> "(\w+ ([^"]+))"@sv \./,
+                            '$1 <'+RPUBL+'publikationsplatsangivelse> "$3" .' + 
+                            '$1 <'+DCT+'identifier> "$2" .')
             return s
         }
     }
