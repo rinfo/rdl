@@ -16,6 +16,7 @@ import se.lagrummet.rinfo.store.supply.DepotFinder
 
 import static se.lagrummet.rinfo.base.TransformerUtil.newTemplates
 import se.lagrummet.rinfo.base.rdf.GritTransformer
+import org.restlet.routing.Redirector
 
 
 class MainApplication extends Application {
@@ -47,6 +48,9 @@ class MainApplication extends Application {
         tplt.getVariables().put("contextPath", new Variable(Variable.TYPE_URI_PATH))
         tplt.setMatchingMode(MODE_STARTS_WITH)
 
+        router.attach("/", new Redirector(getContext(), "{rh}/feed/current", 
+                Redirector.MODE_CLIENT_TEMPORARY))
+        
         router.attachDefault(
                 new DepotFinder(getContext(), components.getStorage().getDepot()))
         return router
