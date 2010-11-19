@@ -92,13 +92,23 @@ def ntStringtoRepo(ntStr) {
     return repo
 }
 
+previousDate = null
+
 def createEntry(session, uri, docRepo) {
     def RDFXML_MEDIA_TYPE = "application/rdf+xml"
     def inStream = RDFUtil.toInputStream(docRepo, RDFXML_MEDIA_TYPE, true)
+    
+    // Ensure date uniqueness
+    def date = new Date()
+    while(date == previousDate){
+      date = new Date()
+    }
+    previousDate = date
+    
     try {
         def rdfContent = new SourceContent(inStream, RDFXML_MEDIA_TYPE)
         println "Creating entry <$uri>"
-        session.createEntry(uri, new Date(), [rdfContent])
+        session.createEntry(uri, date, [rdfContent])
     } finally {
         inStream.close()
     }
