@@ -121,7 +121,7 @@ def tg_integration():
     env.docs_webroot = "/var/www/dokumentation"
     env.apache_sites = {
         'demo': ['sfs', 'dv', 'prop', 'sou', 'ds'],
-        'main': ['default', 'admin'],
+        'main': ['rinfo-main', 'admin'],
         'service': ['service'],
         'checker': ['checker'],
     }
