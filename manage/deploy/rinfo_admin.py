@@ -57,6 +57,6 @@ def ping_main_with_admin():
     """Ping rinfo-main to (re-)collect the admin feed"""
     _needs_targetenv()
     feed_url = "http://%s/feed/current" % env.roledefs['admin'][0]
-    collector_url = "http://%s/collector/" % env.roledefs['main'][0]
+    collector_url = "http://%s/collector" % env.roledefs['main'][0]
     print local("curl --data 'feed=%(feed_url)s' %(collector_url)s"%vars())
 
