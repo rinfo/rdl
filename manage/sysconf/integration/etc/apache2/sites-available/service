@@ -19,7 +19,6 @@
         Allow from all
     </Proxy>
 
-    ProxyPassMatch ^/(index(\..+)?)?$ !
     ProxyPassMatch ^/robots\.txt$ !
     ProxyPass / ajp://localhost:8009/rinfo-service/
 
