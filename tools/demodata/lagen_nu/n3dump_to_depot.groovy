@@ -25,10 +25,9 @@
  *   still lack some specific needs).
  */
 
-@Grapes([
-    @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT'),
-    @Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
-])
+@Grab('commons-codec:commons-codec:1.4')
+@Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT')
+@Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
 import static org.apache.commons.lang.StringUtils.replaceOnce
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.vocabulary.XMLSchema
