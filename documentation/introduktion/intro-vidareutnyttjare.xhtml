@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xml" href="../templates/dv-intro.xslt"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Introduktion till rättsinformationssystemet för beslutsfattare och informationsansvariga</title>
+  </head>
+  <body>
+    <div id="frontpage">
+      <h1>Introduktion till rättsinformationssystemet</h1>
+      <h2>För beslutsfattare och informationsansvariga</h2>
+      <p>
+	Detta dokument förklarar vad rättsinformationssystemet är,
+	vilken information som lagras där, och hur man kan komma åt
+	och vidareutnyttja denna.
+      </p>
+      <p>
+	Om du har några frågor med anledning av detta dokument eller
+	angående rättsinformationsprojektet i stort, kontakta gärna
+	projektledare Staffan Malmgren på staffan.malmgren@dom.se.
+      </p>
+      <p>
+        Den senaste versionen av detta dokument finns tillgänglig på <a href="http://dev.lagrummet.se/dokumentation/introduktion/intro-vidareutnyttjare.pdf">http://dev.lagrummet.se/dokumentation/introduktion/intro-vidareutnyttjare.pdf</a>.
+      </p>
+    </div>
+
+    <div class="pagebreakbefore">
+      <!--
+      <div class="changes">
+	<table class="changes">
+	  <caption>Ändringar</caption>
+	  <tr>
+	    <th>Datum</th>
+	    <th>Ändring</th>
+	  </tr>
+	  <tr>
+	    <td>2010-11-19</td>
+	    <td>Initial version</td>
+	  </tr>
+	</table>
+      </div>
+      -->
+    </div>
+    
+    
+    <div id="toc">
+      <h2>Innehåll</h2>
+      <ul/>
+    </div>
+
+    <div class="section">
+      <h2>0. Den korta versionen</h2>
+      <p>
+        Hämta ett Atom-flöde över allt som finns i systemet på
+        <code>http://rinfo.lagrummet.se/feed/current/</code> (<a
+        href="http://tools.ietf.org/html/rfc5005">RFC 5005</a> används)
+      </p>
+      <p>
+        Från Atomflödet framgår URIn till varje enskilt
+        dokument. Hämta information <b>om</b> dokumentet:
+      </p>
+      <pre>
+$ <b>curl -s -H "Accept: application/rdf+xml" http://rinfo.lagrummet.se/publ/rf/rk/2009:4</b>
+      </pre>
+      <p>
+        Hämta själva dokumentet i ett angivet format (förutsatt att
+        just det formatet finns tillgängligt):
+      </p>
+      <pre>
+$ <b>curl -s -H "Accept: application/pdf" http://rinfo.lagrummet.se/publ/rf/rk/2009:4</b>
+      </pre>
+      <p>
+        Bläddra bland alla dokument på
+        <code>http://service.demo.lagrummet.se/view/browse/publ</code>
+      </p>
+      <p>
+        Observera att allt som publiceras under
+        <code>*.<b>demo</b>.lagrummet.se</code> är simulerat,
+        inofficiellt, ofullständigt material. Framöver kommer mer
+        officiellt publicerat material finnas under
+        <code>rinfo.lagrummet.se</code>.
+      </p>
+    </div>
+    
+    <div class="section">
+      <h2>1. Bakgrund</h2>
+      <p>
+	Med "rättsinformation" menas här författningar, vägledande
+	domstols- och myndighetsavgöranden, förarbeten och andra
+	rättskällor. 
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>2. Rättsinformationssystemet</h2>
+      <p>
+      </p>
+      <h3>2.1 Situationen idag</h3>
+      <p>
+        Den grundläggande offentliga rättsinformationen som idag finns
+        tillgänglig via Internet görs tillgänglig via ett stort antal
+        källor. De centrala tillhandahålls av Regeringskansliet (SFS i
+        tryckt och konsoliderad form samt förarbeten m.m.) och
+        Domstolsverket (Vägledande domstolsavgöranden), men även alla
+        länsstyrelser och de myndigheter som har föreskriftsrätt
+        tillhandahåller sina författningssamlingar i elektronisk form.
+      </p>
+      <p>
+        De ca 100 tillgängliga källorna görs inte tillgängliga på
+        något enhetligt sätt, utan varje informationsproducent har
+        frihet att ordna navigation, sökning, formatval och övriga
+        detaljer i gränssnittet efter eget huvud. Det saknas även i
+        regel någon form av maskinanpassat gränssnitt (API) för att
+        komma åt informationen.
+      </p>
+      <p>
+        Detta orsakar mycket arbete för den som vill vidareutnyttja
+        informationen. I enlighet med rättsinformationssystemets
+        syfte, att tillgodose enskilda och den offentliga
+        förvaltningen tillgång till grundläggande rättsinformation, är
+        det eftersträvansvärt att detta görs enklare.
+      </p>
+      <h3>2.2 Rättsinformationsprojektet</h3>
+      
+      <h4>2.2.1 Insamling</h4>
+      <p>
+	En grundläggande tanke i rättsinformationsprojektet är att
+	central insamling av rättsinformation måste ske för att göra
+	det möjligt att erbjuda ett enhetligt gränssnitt för att
+	bläddra, läsa och söka i rättsinformationen. Detta är dock
+	inte tänkt att medföra en ändring i informationsansvaret, som
+	även i fortsättningen ska vara decentraliserat.
+      </p>
+      <h4>2.2.2 Format</h4>
+      <p>
+	En annan tanke är att tekniska format för informationen måste
+	standardiseras i mer detalj än vad som gjorts hittills.  För
+	att den centrala platsen ska kunna hämta informationen med
+	automatik så krävs att varje myndighet publicerar en
+	<em>postförteckning</em>, dvs en lista över vilka dokument som
+	finns tillgängliga. Denna lista ska följa det standardiserade
+	och etablerade Atom-formatet.
+      </p>
+      <h4>2.3 Ordlista / begreppsdefinitioner</h4>
+      <dl>
+        <dt>Informationsproducent</dt>
+        <dd>
+          En myndighet som enligt rättsinformationsförordningen
+          (1999:175) har ett informationsansvar, dvs en skyldighet att
+          se till att viss information tillgängliggörs och sprids
+          elektroniskt.
+        </dd>
+        <dt>Vidareutnyttjare</dt>
+        <dd>
+          En part (myndighet, företag eller privatperson) som vill
+          vidareutnyttja den information finns i
+          rättsinformationssystemet för att exempelvis bygga en
+          informationstjänst på nätet.
+        </dd>
+        <dt>Rättsinformationssystemet</dt>
+        <dd>
+          Ett system för att samla in och tillgängliggöra all den
+          rättsinformation som enligt rättsinformationsförordningen
+          ska finnas tillgänglig.
+        </dd>
+        <dt>Informationspost</dt>
+        <dd>
+          Ett sammanhållande begrepp för ett enskilt dokument, dess
+          identifierare och metadata om dokumentet. Informationsposten
+          innehåller även information om när själva posten skapades
+          eller uppdaterades.
+        </dd>
+      </dl>
+    </div>
+
+    <div class="section">
+      <h2>3. Åtkomst</h2>
+      <p>
+        Gränssnittet mellan informationsproducenter och
+        rättsinformationssystemet är detsamma som gränssnittet mellan
+        rättsinformationssystemet och vidareutnyttjare. Men istället
+        för att läsa från ca 100 olika datakällor kan en
+        vidareutnyttjare, genom att gå mot det centrala
+        rättsinformationssystemet, istället läsa från endast en källa.
+      </p>
+      <h3>3.0 Demoversion</h3>
+      <p>
+        Det system som beskrivs nedan finns i skrivande stund
+        (november 2010) inte i skarp drift, eftersom endast enstaka
+        informationsproducenter levererar information till
+        systemet. För att kunna testa och visa systemet har projektet
+        simulerat ca 40 000 dokument av olika typer (lagar,
+        förordningar, rättsfallsreferat och olika typer av förarbeten)
+        med grundläggande metadata och hänvisningar, och importerat
+        detta i en demoversion. De adresser som används är samma som
+        anges nedan, men med demo.lagrummet.se istället för
+        lagrummet.se.
+      </p>
+
+      <ul>
+        <li>
+          Startpunkten för demoversionen av rättsinformationssystemet
+          finns alltså på http://rinfo.demo.lagrummet.se/feed/current
+        </li>
+        <li>
+          Information om en enskild resurs finns på exv
+          http://rinfo.demo.lagrummet.se/publ/rf/rk/2009:4
+        </li>
+        <li>
+          Tjänstegränssnittets startpunkt är
+          http://service.demo.lagrummet.se/view/browse/publ
+        </li>
+      </ul>
+      
+      <h3>3.1 Atom-feeds</h3>
+      <p>
+        Startpunkten för att hämta data från rättsinformationssystemet
+        är dess Atom-flöde som återfinns på
+        http://rinfo.lagrummet.se/feed/current. En vidareutnyttjare
+        kan använda de mekanismer som Atom-formatet specificerar för
+        att få uppdateringar om nytillkommna och ändrade
+        informationsposter i systemet.
+      </p>
+      <p>
+        Eftersom antalet informationsposter i
+        rättsinformationssystemet är många fler än vad som är
+        praktiskt att lista i en "fysisk" Atom-fil använder
+        rättsinformationssystemet en mekanism med arkivfiler för äldre
+        material. Huvudflödet innehåller en länk till den nyaste
+        arkivfilen, som i sin tur innehåller en länk till den näst
+        nyaste, och så vidare. Genom att traversera denna kedja kan
+        man hämta hela det "logiska" flödet.
+      </p>
+      <p>
+        Atom-flödet innehåller i sig inte så mycket faktisk
+        information. Den nås istället genom att följa de länkar som
+        finns i flödet. Varje informationspost uttrycks i Atom-flödet
+        som ett &lt;entry&gt;-element. Inuti detta finns sedan
+        ytterligare tre viktiga element:
+      </p>
+      <ul>
+        <li>
+          &lt;id&gt;: Anger den maskinläsbara identifieraren, i form
+          av en URI, för dokumentet i
+          fråga. Rättsinformationsprojektet har tagit fram en
+          uppsättning principer för hur dessa identifierare ska
+          konstrueras för olika typer av dokument.
+        </li>
+        <li>
+          &lt;link&gt; Hänvisar till en en fil med information om
+          dokumentet, uttryckt i RDF-format. Se nedan för information
+          om vad som ingår i detta.
+        </li>
+        <li>
+          &lt;content&gt; Hänvisar till en fil som innehåller en
+          representation av dokumentet, vanligen i form av en PDF-fil.
+        </li>
+      </ul>
+
+      <h3>3.2 RDF-data</h3>
+      <p>
+        För varje dokument ska finnas en uppsättning grundläggande
+        metadata, vilket innefattar egenskaper som dokumentets titel,
+        beteckning, utgivandedatum, men också hur dokumentet relaterar
+        till andra dokument. Enligt den begreppsmodell som
+        rättsinformationsprojektet tagit fram finns ett antal olika
+        dokumenttyper, och beroende på dokumenttyp skiljer sig den
+        obligatoriska och frivilliga metadatan åt.
+      </p>
+      <p>
+        Mer information om vilken RDF-data som ska finnas för de olika
+        dokumenttyperna finns i de olika handböcker som
+        rättsinformationsprojektet tagit fram.
+      </p>
+      <p>
+        Om man har ett dokuments identifierare i form av en URI kan
+        man få ut RDF-datat för dokumentet genom att använda
+        HTTP-protokollets mekanism för <i>content negotiation</i>.
+      </p>
+
+      <pre>
+$ <b>curl -s -H "Accept: application/rdf+xml" http://rinfo.lagrummet.se/publ/rf/rk/2009:4</b>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;rdf:RDF
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"&gt;
+&lt;rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/rf/rk/2009:4"&gt;
+	&lt;creator xmlns="http://purl.org/dc/terms/" rdf:resource="http://rinfo.lagrummet.se/org/kammarratten-i-stockholm"/&gt;
+	&lt;identifier xmlns="http://purl.org/dc/terms/"&gt;RK 2009:4&lt;/identifier&gt;
+...       
+      </pre>
+
+      <p>
+        Det finns även, som beskrivs ovan, länkar i Atom-flödet som
+        leder direkt till RDF-beskrivningar av dokument, som inte
+        kräver content negotiation.
+      </p>
+      <h3>3.3 Dokument</h3>
+      <p>
+        På liknande sätt som man kommer åt RDF-datat genom att ange att man vill ha just application/rdf+xml så kan man komma åt exv en PDF-representation (om sådan finns):
+      </p>
+      <pre>
+$ <b>curl -s -H "Accept: application/pdf" http://dv.demo.lagrummet.se/publ/rf/rk/2009:4|head -10</b>
+      </pre>
+      <p>
+        Även här kan man använda Atom-flödet för att ta reda på vilka
+        olika representationer av resursen som finns tillgänglig.
+      </p>
+      <h3>3.4 Servicegränssnitt</h3>
+      <p>
+        Vid sidan av det grundläggande datalagret finns även ett
+        tjänstelager som vidareutnyttjare kan använda för att bläddra
+        bland de olika resurser som finns i systemet, och även få mer
+        information om hänvisningar mellan resurserna. Tjänstelagret
+        innehåller ingen information som inte redan finns i
+        datalagret, men informationen presenteras på ett mer
+        användbart sätt.
+      </p>
+      <p>
+        Servicelagret kan nås på http://service.lagrummet.se/view/browse/publ
+      </p>
+      <p>
+        Tjänstelagret presenterar en vy för varje resurs som byggs
+        delvis från metadata för den resursen, men även från metadata
+        för andra resurser som hänvisar till denna. För en lag kan
+        exempel visas rättsfall som hänvisat till lagen i fråga.
+      </p>
+      <p>
+        Även tjänstelagret stödjer content negotiation för att få ut
+        informationen för en viss vy i ett maskinläsbart format. För
+        vyn http://service.demo.lagrummet.se/view/publ/sfs/1999:175
+        kan man få en JSON-representation på följande sätt:
+      </p>
+      <pre>
+        $ <b>curl -H "Accept: application/json" http://service.demo.lagrummet.se/view/publ/sfs/1999:175</b>
+      </pre>
+    </div>
+
+    <div class="section">
+      <h2>4. Informationsstandard</h2>
+      <p>Not: Denna sektion är under utarbetande</p>
+      <h3>4.1 Dokumenttyper</h3>
+      <h3>4.2 Egenskaper</h3>
+      <h3>4.3 Utökningar</h3>
+    </div>
+
+    <div class="section">
+      <h2>5. Villkor för vidareutnyttjande</h2>
+      <p>Not: Denna sektion är under utarbetande</p>
+      <h3>5.1 Upphovsrätt och databasrätt</h3>
+      <h3>5.2 Personuppgiftsskydd</h3>
+      <h3>5.3</h3>
+    </div>
+    
+  </body>
+</html>
