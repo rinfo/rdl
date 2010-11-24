@@ -44,7 +44,7 @@ class CollectResource extends Resource {
         def context = new org.openrdf.model.impl.URIImpl(collectContextUri)
         // TODO: return null if context is not found
         def ins = RDFUtil.toInputStream(collectorLog.repo,
-                "application/rdf+xml", true, context)
+                "application/rdf+xml", false, context)
 
         if (MediaType.APPLICATION_RDF_XML.equals(variant.getMediaType())) {
             return new InputRepresentation(ins, MediaType.APPLICATION_RDF_XML)

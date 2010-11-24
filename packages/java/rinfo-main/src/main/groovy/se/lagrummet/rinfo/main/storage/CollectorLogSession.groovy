@@ -159,7 +159,7 @@ class CollectorLogSession {
         }
         errorDesc.addLiteral("tl:at", dateTime(new Date()))
         def sourceEntryDesc = makeSourceEntryDesc(sourceEntry)
-        errorDesc.addLiteral("iana:via", sourceEntryDesc)
+        errorDesc.addRel("iana:via", sourceEntryDesc.about)
     }
 
     private Description makeSourceEntryDesc(sourceEntry) {

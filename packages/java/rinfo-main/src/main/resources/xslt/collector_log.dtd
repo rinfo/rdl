@@ -11,5 +11,4 @@
     xmlns:ov CDATA #FIXED "http://open.vocab.org/terms/"
     xmlns:tl CDATA #FIXED "http://purl.org/NET/c4dm/timeline.owl#"
     xmlns:rc CDATA #FIXED "http://rinfo.lagrummet.se/ns/2008/10/collector#"
-    xmlns CDATA #FIXED "http://www.w3.org/1999/xhtml"
 >

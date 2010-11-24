@@ -1,5 +1,6 @@
 <!DOCTYPE xsl:stylesheet SYSTEM "collector_log.dtd">
 <xsl:stylesheet version="1.0"
+                xmlns="http://www.w3.org/1999/xhtml"
                 extension-element-prefixes="date"
                 xmlns:date="http://exslt.org/dates-and-times"
                 exclude-result-prefixes="xsd dct iana rx awol tl rc">
