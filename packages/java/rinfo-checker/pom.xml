@@ -47,6 +47,23 @@
       </plugin>
 
       <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals><goal>run</goal></goals>
+            <configuration>
+              <tasks>
+                <copy todir="${project.build.outputDirectory}/xslt">
+                  <fileset file="${basedir}/../rinfo-main/src/main/resources/xslt/collector_log.*"/>
+                </copy>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
