@@ -16,6 +16,7 @@
 from __future__ import with_statement
 from os import path as p, sep
 from fabric.api import *
+from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
 from targetenvs import _needs_targetenv
 from util import mkdirpath, slashed
@@ -30,8 +31,23 @@ SCRIPT_DIR = p.dirname(__file__)
 def configure_server(sync="1"):
     if int(sync):
         _sync_workdir()
+    sync_static_web(0)
     configure_app_container(0)
     configure_sites(0)
+
+
+def sync_static_web(sync="1"):
+    if int(sync):
+        _sync_workdir()
+    targetenv_www_dir = "%(mgr_workdir)s/%(target)s/www" % env
+    with cd(targetenv_www_dir):
+        for fname in ['index.html', 'robots.txt']:
+            if not exists(fname):
+                continue
+            www ="/var/www"
+            dest = "%s/%s" % (www, fname)
+            if sudo("cp -vu %s %s/" % (fname, www)):
+                sudo("chmod u=rw,a=r %s" % dest)
 
 
 def configure_app_container(sync="1"):
@@ -59,9 +75,9 @@ def configure_sites(sync="1"):
     if int(sync):
         _sync_workdir()
 
-    env_etc_dir = "%(mgr_workdir)s/%(target)s/etc" % env
+    targetenv_etc_dir = "%(mgr_workdir)s/%(target)s/etc" % env
 
-    with cd(env_etc_dir):
+    with cd(targetenv_etc_dir):
         for role in env.roles:
             sites = env.get('apache_sites')
             if not sites or role not in sites: continue
@@ -72,11 +88,9 @@ def configure_sites(sync="1"):
 @runs_once
 def _sync_workdir():
     common_conf_dir = p.join(SCRIPT_DIR, "common")
-    rsync_project(env.mgr_workdir, common_conf_dir,
-            exclude=".*", delete=True)
-    local_conf_dir = p.join(SCRIPT_DIR, env.target)
-    rsync_project(env.mgr_workdir, local_conf_dir,
-            exclude=".*", delete=True)
+    rsync_project(env.mgr_workdir, common_conf_dir, exclude=".*", delete=True)
+    targetenv_conf_dir = p.join(SCRIPT_DIR, env.target)
+    rsync_project(env.mgr_workdir, targetenv_conf_dir, exclude=".*", delete=True)
 
 
 ##
