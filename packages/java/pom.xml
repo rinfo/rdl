@@ -79,6 +79,21 @@
     </repository>
   </repositories>
 
+  <!-- for codenarc-maven-plugin
+  <pluginRepositories>
+    <pluginRepository>
+      <id>Codehaus Snapshots</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+  -->
+
   <dependencyManagement>
     <dependencies>
       <!-- Default scope (compile) {{{ -->
@@ -421,6 +436,10 @@
 
   <build>
 
+    <!-- for codenarc-maven-plugin (but probably too limited for mixed code bases)
+    <sourceDirectory>src/main/groovy</sourceDirectory>
+    -->
+
     <pluginManagement>
       <plugins>
 
@@ -552,6 +571,25 @@
         <artifactId>cobertura-maven-plugin</artifactId>
         <version>2.4</version>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>2.3.1</version>
+        <configuration>
+          <!--
+          <findbugsXmlOutput>true</findbugsXmlOutput>
+          <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+          <xmlOutput>true</xmlOutput>
+          -->
+        </configuration>
+      </plugin>
+      <!--
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>codenarc-maven-plugin</artifactId>
+        <version>0.8-alpha-SNAPSHOT</version>
+      </plugin>
+      -->
     </plugins>
   </reporting>
 
