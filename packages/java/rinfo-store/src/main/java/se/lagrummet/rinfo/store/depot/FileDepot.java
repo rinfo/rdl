@@ -64,7 +64,6 @@ public class FileDepot implements Depot {
                         "Cannot create missing depot base directory: " + baseDir);
             }
         }
-        // TODO:? always checkConsistency(); // may be a slow operation
         this.initialized = true;
     }
 
@@ -181,6 +180,10 @@ public class FileDepot implements Depot {
                 includeHistorical, includeDeleted);
     }
 
+    public Iterator<DepotEntry> iterateLockedEntries() {
+        return backend.iterateLockedEntries();
+    }
+
 
     public void generateIndex() throws DepotReadException, DepotWriteException {
         backend.cleanFeedDir();
@@ -196,20 +199,6 @@ public class FileDepot implements Depot {
             atomIndexer.indexEntry(entry);
         }
         atomIndexer.close();
-    }
-
-
-    public void checkConsistency() throws DepotReadException {
-        for (Iterator<DepotEntry> iter = iterateEntries();
-                iter.hasNext(); ) {
-            DepotEntry entry = iter.next();
-            entry.assertIsNotLocked();
-        }
-        /* TODO:?
-        - atomIndexer.checkConsistency()
-            - ensures feeds chain as expected
-            - opt. ensures all entries are properly indexed
-        */
     }
 
 

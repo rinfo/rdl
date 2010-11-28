@@ -61,6 +61,10 @@ public class FileDepotBackend {
                 depot, includeHistorical, includeDeleted);
     }
 
+    public Iterator<DepotEntry> iterateLockedEntries() {
+        return FileDepotEntry.iterateLockedEntries(depot);
+    }
+
     // TODO:IMPROVE: don't hard-code ".atom" (or don't even do it at all?)
     // Most importantly, DepotContent for a feed now has a non-working uriPath!
     // I.e. we must consider that public feed uri:s are non-suffixed (currently)..

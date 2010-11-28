@@ -33,10 +33,11 @@ public interface Depot {
     DepotSession openSession() throws DepotReadException;
 
     void generateIndex() throws DepotReadException, DepotWriteException;
-    void checkConsistency() throws DepotReadException;
 
     Iterator iterateEntries();
     Iterator iterateEntries(boolean includeHistorical);
     Iterator iterateEntries(boolean includeHistorical, boolean includeDeleted);
+
+    Iterator<DepotEntry> iterateLockedEntries();
 
 }

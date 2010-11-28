@@ -85,8 +85,6 @@ class FileDepotReadSpec extends Specification {
         results.size() == 1
     }
 
-    // TODO: getHistoricalEntries..
-
     def "should iterate entries"() {
         when:
         def entries = depot.iterateEntries().toList()
@@ -100,6 +98,17 @@ class FileDepotReadSpec extends Specification {
 
         // TODO: historical: depot.iterateEntries(true, false)
     }
+
+    def "should find locked entries"() {
+        when:
+        def lockedEntries = depot.iterateLockedEntries().toList()
+        then:
+        lockedEntries.size() == 1
+        and:
+        lockedEntries[0].id == new URI("http://example.org/publ/1901/locked")
+    }
+
+    // TODO: getHistoricalEntries..
 
 
     // negative tests

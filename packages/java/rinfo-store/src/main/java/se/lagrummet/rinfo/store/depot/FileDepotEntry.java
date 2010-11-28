@@ -163,13 +163,12 @@ public class FileDepotEntry implements DepotEntry {
 
     public static Iterator<DepotEntry> iterateEntries(
             final FileDepot depot,
-            boolean includeHistorical, final boolean includeDeleted) {
+            final boolean includeHistorical, final boolean includeDeleted) {
 
         final Iterator<File> manifestIter = FileUtils.iterateFiles(
-                depot.getBaseDir(),
-                new NameFileFilter(MANIFEST_FILE_NAME),
-                HiddenFileFilter.VISIBLE
-            );
+                depot.getBaseDir(), new NameFileFilter(MANIFEST_FILE_NAME),
+                HiddenFileFilter.VISIBLE);
+
         /* TODO:
         if (!includeHistorical) {
             dirFilter in manifestIter must be (as the first "if" below does)
@@ -181,9 +180,7 @@ public class FileDepotEntry implements DepotEntry {
         */
 
         return new Iterator<DepotEntry>() {
-
             public boolean hasNext() { return manifestIter.hasNext(); }
-
             public DepotEntry next() {
                 while (manifestIter.hasNext()) {
                     File contentDir = manifestIter.next().getParentFile();
@@ -195,16 +192,35 @@ public class FileDepotEntry implements DepotEntry {
                     if (!includeDeleted && depotEntry.isDeleted()) {
                         continue;
                     }
-                    // TODO: includeLocked (and/or onlyLocked?) Fail on locked..
                     return depotEntry;
                 }
                 throw new NoSuchElementException();
             }
-
             public void remove() { throw new UnsupportedOperationException(); }
         };
     }
 
+    public static Iterator<DepotEntry> iterateLockedEntries(final FileDepot depot) {
+        final Iterator<File> lockedFileIter = FileUtils.iterateFiles(
+                depot.getBaseDir(), new NameFileFilter(LOCKED_FILE_NAME),
+                HiddenFileFilter.VISIBLE);
+        return new Iterator<DepotEntry>() {
+            public boolean hasNext() { return lockedFileIter.hasNext(); }
+            public DepotEntry next() {
+                while (lockedFileIter.hasNext()) {
+                    File contentDir = lockedFileIter.next().getParentFile();
+                    if (!contentDir.getName().equals(ENTRY_CONTENT_DIR_NAME)) {
+                        continue;
+                    }
+                    DepotEntry depotEntry = FileDepotEntry.newUncheckedDepotEntry(
+                        depot, contentDir.getParentFile(), null);
+                    return depotEntry;
+                }
+                throw new NoSuchElementException();
+            }
+            public void remove() { throw new UnsupportedOperationException(); }
+        };
+    }
 
     public List<DepotContent> findContents() {
         return findContents(null, null);
