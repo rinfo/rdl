@@ -19,10 +19,10 @@ import org.openrdf.model.vocabulary.XMLSchema;
 
 public class Describer {
 
-    public static String RDF_NS = RDF.NAMESPACE;
-    public static String RDFS_NS = RDFS.NAMESPACE;
-    public static String OWL_NS = OWL.NAMESPACE;
-    public static String XSD_NS = XMLSchema.NAMESPACE;
+    public static final String RDF_NS = RDF.NAMESPACE;
+    public static final String RDFS_NS = RDFS.NAMESPACE;
+    public static final String OWL_NS = OWL.NAMESPACE;
+    public static final String XSD_NS = XMLSchema.NAMESPACE;
 
     RepositoryConnection conn;
     ValueFactory vf;

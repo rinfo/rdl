@@ -9,6 +9,7 @@ public class Triple {
 
     public Triple(Describer describer,
             String subject, String property, Object object) {
+        this.describer = describer;
         this.subject = subject;
         this.property = property;
         this.object = object;
