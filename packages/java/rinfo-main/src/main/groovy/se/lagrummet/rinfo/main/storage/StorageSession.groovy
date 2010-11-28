@@ -108,7 +108,8 @@ class StorageSession {
                             "> exists as <"+entryId +
                             "> but does not appear as updated. Source:" +
                             sourceEntry)
-                    throw new DuplicateDepotEntryException(depotEntry);
+                    // FIXME: remove or enable:
+                    //throw new DuplicateDepotEntryException(depotEntry);
                 }
                 logger.info("Updating entry <${entryId}>.")
                 depotSession.update(depotEntry, timestamp, contents, enclosures)

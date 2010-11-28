@@ -163,26 +163,31 @@ public class Components {
     private Depot createDepot() {
         Depot depot = new FileDepot()
         configure(depot, "rinfo.depot")
-        /* TODO: the depot API should have atomizer less central; then:
-        def atomizer = new AtomIndexer()
-        configure(atomizer, "rinfo.main.atomizer")
-        depot.setIndexer(atomizer)
-        */
+        // TODO:IMPROVE: the depot API should decouple the atomizer; then do:
+        //def atomizer = new AtomIndexer()
+        //configure(atomizer, "rinfo.main.atomizer")
+        //depot.setIndexer(atomizer)
         depot.initialize()
-        // TODO:? fix only one, or should depot have a findLockedEntries?
-        try {
-            boolean checkDepot = false
-            if (checkDepot) {
-                depot.checkConsistency()
-            }
-        } catch (LockedDepotEntryException e) {
+
+        boolean checkDepot = true
+        if (checkDepot) {
             // TODO:IMPROVE: This unconditionally expects that the
             // locked entry has not been indexed (which it should not have
             // been, if lock occurred during collect). But how about:
-            //if (!e.lockedEntry.isIndexed())
-            logger.info("Found locked depot entry: <${e.lockedEntry}>. " +
-                    "Rolling it back.")
-            e.lockedEntry.rollback();
+            //if (!e.lockedEntry.isIndexed()) { ... }
+
+            def start = new Date().time
+            logger.info("Checking depot consistency..")
+            for (lockedEntry in depot.iterateLockedEntries()) {
+                logger.info("Found locked depot entry: <${lockedEntry}>. " +
+                        "Rolling it back.")
+                //lockedEntry.rollback()
+            }
+            logger.info("Done in ${new Date().time - start} ms.")
+
+            // TODO:?
+            //atomizer.checkFeedChain()
+            //(depot & atomizer).ensureIndexedEnties()
         }
         return depot
     }

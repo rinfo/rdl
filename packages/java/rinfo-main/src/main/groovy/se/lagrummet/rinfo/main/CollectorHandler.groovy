@@ -38,7 +38,7 @@ class CollectorHandler extends Handler {
         }
 
         def msg = "Scheduled collect of <${feedUrl}>."
-        def status = Status.SUCCESS_ACCEPTED // 202
+        def status = Status.SUCCESS_ACCEPTED // 202 (204 if pubsubhubbub)
         //  TODO:? The entity returned with this response SHOULD include an
         //  indication of the request's current status and either a pointer to
         //  a status monitor or some estimate of when the user can expect the
