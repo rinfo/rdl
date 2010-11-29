@@ -250,17 +250,20 @@ public class Atomizer {
     public Map<String,String> getChecksums(Element element) {
         Map<String,String> checksums = new HashMap<String,String>();
         String hashValues = element.getAttributeValue("hash");
-        if (hashValues == null)
-            return checksums;
-        String[] typesAndValues = hashValues.split("\\s");
-        for (String typeAndValue : typesAndValues) {
-            String[] typeValuePair = typeAndValue.split(":", 2);
-            if (typeValuePair.length != 2)
-                continue;
-            checksums.put(typeValuePair[0], typeValuePair[1]);
+        if (hashValues != null) {
+            String[] typesAndValues = hashValues.split("\\s");
+            for (String typeAndValue : typesAndValues) {
+                String[] typeValuePair = typeAndValue.split(":", 2);
+                if (typeValuePair.length != 2)
+                    continue;
+                checksums.put(typeValuePair[0], typeValuePair[1]);
+            }
         }
         if (readLegacyMd5LinkExtension && !checksums.containsKey("md5")) {
-            checksums.put("md5", element.getAttributeValue(LINK_EXT_MD5));
+            String legacyMd5Value = element.getAttributeValue(LINK_EXT_MD5);
+            if (legacyMd5Value != null) {
+                checksums.put("md5", legacyMd5Value);
+            }
         }
         return checksums;
     }
@@ -271,8 +274,8 @@ public class Atomizer {
                 throw new UnsupportedOperationException(
                         "Only 'md5' is supported for legacy MD5 link extension.");
             element.setAttributeValue(LINK_EXT_MD5, value);
-            //return; // TODO:? always also add new hash attr in this legacy mode?
         }
+        // NOTE: always add the new hash attr, even in legacy mode
         element.setAttributeValue("hash", checksumType + ":" + value);
     }
 

@@ -33,6 +33,8 @@ class AtomizerSpec extends Specification {
         atomizer.feedSkeleton == feed
     }
 
+    @Unroll("""get and set checksums where
+ writeLegacy: #writeLegacy, readLegacy: #readLegacy""")
     def "should get and set checksums"() {
         given:
         def entry = Abdera.instance.newEntry()
@@ -44,11 +46,21 @@ class AtomizerSpec extends Specification {
         atomizer.getChecksums(elem).size() == 0
 
         when:
+        atomizer.writeLegacyMd5LinkExtension = writeLegacy
+        atomizer.readLegacyMd5LinkExtension = readLegacy
         atomizer.setChecksum(elem, "md5", md5sum)
         then:
         def checksums = atomizer.getChecksums(elem)
         checksums.size() == 1
         checksums["md5"] == md5sum
+        elem.getAttributeValue(Atomizer.LINK_EXT_MD5) == (writeLegacy? md5sum : null)
+
+        where:
+        writeLegacy | readLegacy
+        false       | false
+        true        | false
+        false       | true
+        true        | true
     }
 
 }
