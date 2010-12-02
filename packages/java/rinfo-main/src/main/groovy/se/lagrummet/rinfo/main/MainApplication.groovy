@@ -17,8 +17,6 @@ import se.lagrummet.rinfo.store.supply.DepotFinder
 import static se.lagrummet.rinfo.base.TransformerUtil.newTemplates
 import se.lagrummet.rinfo.base.rdf.GritTransformer
 import org.restlet.routing.Redirector
-import org.slf4j.bridge.SLF4JBridgeHandler
-import java.util.logging.LogManager
 
 
 class MainApplication extends Application {
@@ -29,13 +27,6 @@ class MainApplication extends Application {
 
     MainApplication(Context context) {
         super(context)
-
-        println "Removing any installed JUL handlers pre SLF4J install";
-        LogManager.logManager.getLogger("").handlers.each { handler ->
-            println " * Removing " + handler.class
-            LogManager.logManager.getLogger("").removeHandler(handler)
-        }
-        SLF4JBridgeHandler.install()
 
         def configBuilder = new DefaultConfigurationBuilder(CONFIG_FILE_NAME)
         components = new Components(configBuilder.getConfiguration())

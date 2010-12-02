@@ -22,8 +22,6 @@ import org.apache.commons.configuration.PropertiesConfiguration
 import se.lagrummet.rinfo.collector.NotAllowedSourceFeedException
 import se.lagrummet.rinfo.rdf.repo.RepositoryHandler
 import se.lagrummet.rinfo.rdf.repo.RepositoryHandlerFactory
-import org.slf4j.bridge.SLF4JBridgeHandler
-import java.util.logging.LogManager
 
 
 class ServiceApplication extends Application {
@@ -41,13 +39,6 @@ class ServiceApplication extends Application {
 
     public ServiceApplication(Context parentContext) {
         super(parentContext)
-
-        println "Removing any installed JUL handlers pre SLF4J install";
-        LogManager.logManager.getLogger("").handlers.each { handler ->
-            println " * Removing " + handler.class
-            LogManager.logManager.getLogger("").removeHandler(handler)
-        }
-        SLF4JBridgeHandler.install()
 
         tunnelService.extensionsTunnel = true
 
