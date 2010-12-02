@@ -83,6 +83,7 @@ standing in the directory rinfo-trunk/manage
          sudo apt-get update
 
    * Edit the hosts file on your local computer so that it contains:
+      <IP-OF-VIRTUAL-SERVER>  rinfo-integration
       <IP-OF-VIRTUAL-SERVER>  rinfo-main rinfo-service rinfo-admin rinfo-checker
       <IP-OF-VIRTUAL-SERVER>  sfs-demo dv-demo prop-demo sou-demo ds-demo
 
@@ -93,10 +94,7 @@ standing in the directory rinfo-trunk/manage
       ~/mgr_work/install/4_install-jdk.sh
 
    * Run on your local computer::
-      fab tg_integration -R main configure_server
-      fab tg_integration -R service configure_server
-      fab tg_integration -R demo configure_server
-      fab tg_integration -R checker configure_server
+      fab tg_integration -R main,service,checker,demo configure_server
 
    * Run on your virtual server::
       sudo /etc/init.d/apache2 graceful
@@ -107,15 +105,15 @@ applications and the demo data.
 Deploy demo data from lagen.nu:
 
    * Run on your local computer::
-      fab tg_integration -H dv-demo demo_refresh:dv
-      fab tg_integration -H sfs-demo demo_refresh:sfs
+      fab tg_integration demo_refresh:dv
+      fab tg_integration demo_refresh:sfs
 
 Deploy demo data from riksdagen.se (very time consuming):
 
    * Run on your local computer::
-      fab tg_integration -H prop-demo demo_refresh:prop
-      fab tg_integration -H sou-demo demo_refresh:sou
-      fab tg_integration -H ds-demo demo_refresh:ds
+      fab tg_integration demo_refresh:prop
+      fab tg_integration demo_refresh:sou
+      fab tg_integration demo_refresh:ds
 
 Deploy admin feed:
 
@@ -126,6 +124,9 @@ Deploy main:
 
    * Run on your local computer::
       fab tg_integration main_all
+
+   * Ping admin feed::
+      fab tg_integration ping_main_collector:http\://rinfo-admin/feed/current
 
 Verify main:
 

@@ -92,8 +92,7 @@ def tg_demo():
     env.tomcat_user = 'tomcat'
 
 # Integration is a virtual environment that you could setup on your own computer
-# You need to put the following in your /etc/hosts file:
-# <IP-TO-VIRTUAL-MACHINE> rinfo-main rinfo-service
+# See README.txt for more information
 @_targetenv
 def tg_integration():
     """Set target env to: integration"""
@@ -101,12 +100,12 @@ def tg_integration():
     env.target = "integration"
     # Machines:
     env.roledefs = {
-        'main': ['rinfo-main'],
-        'service': ['rinfo-service'],
-        'checker': ['rinfo-checker'],
-        'doc': ['rinfo-main'],
-        'admin': ['rinfo-admin'],
-        'demo': ['sfs-demo', 'dv-demo', 'prop-demo', 'sou-demo', 'ds-demo'],
+        'main': ['rinfo-integration'],
+        'service': ['rinfo-integration'],
+        'checker': ['rinfo-integration'],
+        'doc': ['rinfo-integration'],
+        'admin': ['rinfo-integration'],
+        'demo': ['rinfo-integration'],
     }
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
