@@ -110,8 +110,6 @@ Deploy demo data from lagen.nu:
       fab tg_integration -H dv-demo demo_refresh:dv
       fab tg_integration -H sfs-demo demo_refresh:sfs
 
-      
-      
 Deploy demo data from riksdagen.se (very time consuming):
 
    * Run on your local computer::
