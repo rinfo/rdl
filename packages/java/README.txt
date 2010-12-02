@@ -75,6 +75,26 @@ Code coverage from tests::
     $ mvn cobertura:cobertura
 
 
+Logging
+-------
+
+This project uses the logging API SLF4J since it allows various logging
+mechanisms such as Java util logging (JUL), Java Commons Logging (JCL) and
+Log4j to be funneled together and output using one logging implementation.
+The logging implementation used is Logback which has very few dependencies
+and is supposed to be fast.
+
+Log configuration comes in three flavors: main (for applications), test
+(for tests) and dev (for running the applications directly in the shell).
+The logfiles are put in the log-config directory and are required using the
+resources element in pom files that need them.
+
+When run in a servlet container every webapp produces logging in two files:
+a normal log file and an access log file. The only output that ends up in
+other files are output to stdout and stderr and uncaught Exceptions thrown
+in spawned threads.
+
+
 Site
 ----
 
