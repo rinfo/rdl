@@ -90,19 +90,21 @@
 
     <!-- pass jcl over slf4j -->
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.1.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- pass jul over slf4j -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <scope>compile</scope>
     </dependency>
     <!-- chosen slf4j impl. -->
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -176,7 +178,7 @@
           </connectors>
           <webAppConfig>
             <contextPath>/</contextPath>
-            <extraClasspath>${basedir}/src/environments/${environment}</extraClasspath>
+            <extraClasspath>${basedir}/src/environments/${environment};${basedir}/src/dev/resources/</extraClasspath>
           </webAppConfig>
           <scanIntervalSeconds>5</scanIntervalSeconds>
         </configuration>

@@ -7,13 +7,14 @@
 
     <display-name>Example Depot</display-name>
 
-    <context-param>
-        <param-name>org.restlet.application</param-name>
-        <param-value>se.lagrummet.rinfo.store.supply.SupplyApplication</param-value>
-    </context-param>
     <servlet>
         <servlet-name>RestServlet</servlet-name>
         <servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
+        <init-param>
+            <param-name>org.restlet.application</param-name>
+            <param-value>se.lagrummet.rinfo.store.supply.SupplyApplication</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>RestServlet</servlet-name>

@@ -89,7 +89,10 @@
         <configuration>
           <webApp>${basedir}/target/${project.artifactId}-${environment}.war</webApp>
           <scanIntervalSeconds>10</scanIntervalSeconds>
-          <contextPath>/</contextPath>
+          <webAppConfig>
+            <contextPath>/</contextPath>
+            <extraClasspath>${basedir}/src/dev/resources/</extraClasspath>
+          </webAppConfig>
           <connectors>
             <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
               <port>8182</port>

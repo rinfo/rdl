@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--for further documentation see-->
+<!--http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+<!--http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+<configuration>
+  <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <append>true</append>
+    <file>${catalina.home}/logs/rinfo-main.log</file>
+    <encoder>
+      <pattern>%d{yy-MM-dd HH:mm:ss} %5p %c:%L - %m [%t]%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.home}/logs/rinfo-main.log%d{.yyyy-MM-dd-HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender>
+  
+  <appender name="access-log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <append>true</append>
+    <file>${catalina.home}/logs/rinfo-main-access.log</file>
+    <encoder>
+      <pattern>%m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.home}/logs/rinfo-main-access.log%d{.yyyy-MM-dd-HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender>
+  
+  <logger name="org.restlet.Component.LogService" additivity="false" level="info">
+    <appender-ref ref="access-log"/>
+  </logger>
+  
+  <logger name="se.lagrummet.rinfo" level="debug"/>
+  
+  <root level="warn">
+    <appender-ref ref="file"/>
+  </root>
+</configuration>

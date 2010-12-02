@@ -162,6 +162,11 @@
         <artifactId>jcl-over-slf4j</artifactId>
         <version>1.6.1</version>
       </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jul-to-slf4j</artifactId>
+        <version>1.6.1</version>
+      </dependency>
       <!-- NOTE: sesame-repository-http uses (used?) jcl104 -->
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -173,11 +178,12 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
         <version>1.6.1</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>1.6.1</version>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>0.9.26</version>
       </dependency>
 
       <dependency>
@@ -387,7 +393,7 @@
             <groupId>org.sonatype.gossip</groupId>
             <artifactId>gossip</artifactId>
           </exclusion>
-      </exclusions>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -459,6 +465,15 @@
           <artifactId>maven-jar-plugin</artifactId>
           <version>2.2</version>
         </plugin>
+
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.4.3</version>
+          <configuration>
+            <escapeString>\</escapeString>
+          </configuration>
+        </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>

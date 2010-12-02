@@ -61,10 +61,14 @@
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
-    <!-- chosen slf4j impl. -->
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <artifactId>jul-to-slf4j</artifactId>
+    </dependency>
+    <!-- chosen slf4j impl. -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
     </dependency>
 
     <dependency>
@@ -142,7 +146,7 @@
           </connectors>
           <webAppConfig>
             <contextPath>/</contextPath>
-            <extraClasspath>${basedir}/src/environments/${environment}</extraClasspath>
+            <extraClasspath>${basedir}/src/environments/${environment};${basedir}/src/dev/resources/</extraClasspath>
           </webAppConfig>
         </configuration>
       </plugin>

@@ -8,11 +8,14 @@ import org.restlet.data.Protocol;
 
 import org.apache.commons.configuration.ConfigurationException;
 
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import se.lagrummet.rinfo.store.depot.Depot;
 import se.lagrummet.rinfo.store.depot.DepotUtil;
 import static se.lagrummet.rinfo.store.depot.DepotUtil.DEFAULT_PROPERTIES_PATH;
 import static se.lagrummet.rinfo.store.depot.DepotUtil.DEPOT_CONFIG_SUBSET_KEY;
-import se.lagrummet.rinfo.store.depot.FileDepot;
+
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
 
 
 public class SupplyApplication extends Application {
@@ -27,6 +30,13 @@ public class SupplyApplication extends Application {
     public SupplyApplication(Context context, Depot depot) {
         super(context);
         this.depot = depot;
+
+        System.out.println("Removing any installed JUL handlers pre SLF4J install");
+        for (Handler handler : LogManager.getLogManager().getLogger("").getHandlers()) {
+            System.out.println(" * Removing " + handler.getClass());
+            LogManager.getLogManager().getLogger("").removeHandler(handler);
+        }
+        SLF4JBridgeHandler.install();
     }
 
     @Override
