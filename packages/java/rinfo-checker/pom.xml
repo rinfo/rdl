@@ -29,7 +29,21 @@
   </dependencies>
 
   <build>
+    <finalName>${project.artifactId}</finalName>
     <defaultGoal>package</defaultGoal>
+
+    <resources>
+
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>${basedir}/../log-config/main</directory>
+        <filtering>true</filtering>
+      </resource>
+
+    </resources>
 
     <plugins>
 
@@ -91,7 +105,7 @@
           <scanIntervalSeconds>10</scanIntervalSeconds>
           <webAppConfig>
             <contextPath>/</contextPath>
-            <extraClasspath>${basedir}/src/dev/resources/</extraClasspath>
+            <extraClasspath>${basedir}/../log-config/dev</extraClasspath>
           </webAppConfig>
           <connectors>
             <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">

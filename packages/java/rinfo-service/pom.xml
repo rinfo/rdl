@@ -132,7 +132,32 @@
 
 
   <build>
+    <finalName>${project.artifactId}</finalName>
     <defaultGoal>package</defaultGoal>
+
+    <resources>
+
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>${basedir}/../log-config/main</directory>
+        <filtering>true</filtering>
+      </resource>
+
+    </resources>
+
+    <testResources>
+      
+      <testResource>
+        <directory>${basedir}/src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>${basedir}/../log-config/test</directory>
+        <filtering>true</filtering>
+      </testResource>
+
+    </testResources>
 
     <plugins>
 
@@ -178,7 +203,7 @@
           </connectors>
           <webAppConfig>
             <contextPath>/</contextPath>
-            <extraClasspath>${basedir}/src/environments/${environment};${basedir}/src/dev/resources/</extraClasspath>
+            <extraClasspath>${basedir}/src/environments/${environment};${basedir}/../log-config/dev</extraClasspath>
           </webAppConfig>
           <scanIntervalSeconds>5</scanIntervalSeconds>
         </configuration>
