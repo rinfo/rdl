@@ -9,10 +9,9 @@ import org.restlet.Request
 import org.restlet.Response
 import org.restlet.representation.StringRepresentation
 import org.restlet.representation.Representation
-import org.restlet.representation.Variant
 import org.restlet.resource.Finder
-import org.restlet.resource.Handler
-import org.restlet.resource.Resource
+import org.restlet.resource.Get
+import org.restlet.resource.ServerResource
 import org.restlet.routing.Router
 import org.restlet.routing.Variable
 
@@ -161,17 +160,11 @@ class StringTemplateFinder extends Finder {
     }
 
     @Override
-    Handler findTarget(Request request, Response response) {
-        return new Resource(getContext(), request, response) {
-
-            @Override
-            List<Variant> getVariants() {
-                return [ new Variant(MediaType.TEXT_HTML), ]
-            }
-
-            @Override
-            Representation represent(Variant variant) {
-                def locale = getLocale(variant)
+    ServerResource find(Request request, Response response) {
+        def locale = getLocale(request.clientInfo)
+        return new ServerResource() {
+            @Get("html|xhtml")
+            Representation asHtml() {
                 def viewData = makeViewData(locale, [:])
                 return toRepresentation(makeHtmlView(viewData),
                         MediaType.TEXT_HTML, locale)
@@ -179,8 +172,9 @@ class StringTemplateFinder extends Finder {
         }
     }
 
-    String getLocale(Variant variant) {
-        return DEFAULT_LOCALE // TODO: from Variant (unless locale should be hardwired)
+    String getLocale(clientInfo) {
+        // TODO: clientInfo.getPreferredLanguage(List<Language> supported).primaryTag
+        return DEFAULT_LOCALE
     }
 
     Map makeViewData(String locale, Map data) {
@@ -223,39 +217,42 @@ class RDataFinder extends StringTemplateFinder {
     }
 
     @Override
-    Handler findTarget(Request request, Response response) {
+    ServerResource find(Request request, Response response) {
 
-        return new Resource(getContext(), request, response) {
+        // TODO:IMPROVE: in theory, the use of getQueryData is open for
+        // "SPARQL injection". We "should" guard against it by properly
+        // checking/escaping the values.
+        def locale = getLocale(request.clientInfo)
+        def data = runQuery(locale, getQueryData(request))
 
-            @Override
-            List<Variant> getVariants() {
-                return [
-                    new Variant(MediaType.TEXT_HTML),
-                    new Variant(MediaType.APPLICATION_JSON),
-                ]
-            }
+        return new ServerResource() {
 
             @Override
-            Representation represent(Variant variant) {
-                // TODO:IMPROVE: in theory, the use of getQueryData is open for
-                // "SPARQL injection". We "should" guard against it by properly
-                // checking/escaping the values.
-                if (isDevMode() && query.getFirst("showQuery")) {
+            Representation handle() {
+                metadataService.setDefaultMediaType(MediaType.TEXT_HTML)
+                if (isDevMode() && getQuery().getFirst("showQuery")) {
                     def rq = makeQuery(getQueryData(getRequest()))
                     return toRepresentation(rq, MediaType.TEXT_PLAIN, null)
-                }
-                def locale = getLocale(variant)
-                def data = runQuery(locale, getQueryData(request))
-                if (data == null) {
-                    return null
-                } else if (variant.mediaType.equals(MediaType.APPLICATION_JSON)) {
-                    return toRepresentation(JSONSerializer.toJSON(data).toString(4),
-                            MediaType.APPLICATION_JSON, locale)
                 } else {
-                    def viewData = makeViewData(locale, data)
-                    return toRepresentation(makeHtmlView(viewData),
-                            MediaType.TEXT_HTML, locale)
+                    return super.handle()
                 }
+            }
+
+            @Get("html|xhtml")
+            Representation asHtml() {
+                if (data == null)
+                    return null
+                def viewData = makeViewData(locale, data)
+                return toRepresentation(makeHtmlView(viewData),
+                        MediaType.TEXT_HTML, locale)
+            }
+
+            @Get("json")
+            Representation asJson() {
+                if (data == null)
+                    return null
+                return toRepresentation(JSONSerializer.toJSON(data).toString(4),
+                        MediaType.APPLICATION_JSON, locale)
             }
 
         }
