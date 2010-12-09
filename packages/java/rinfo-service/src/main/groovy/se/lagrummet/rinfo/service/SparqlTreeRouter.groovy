@@ -237,6 +237,9 @@ class RDataFinder extends StringTemplateFinder {
 
             @Override
             Representation represent(Variant variant) {
+                // TODO:IMPROVE: in theory, the use of getQueryData is open for
+                // "SPARQL injection". We "should" guard against it by properly
+                // checking/escaping the values.
                 if (isDevMode() && query.getFirst("showQuery")) {
                     def rq = makeQuery(getQueryData(getRequest()))
                     return toRepresentation(rq, MediaType.TEXT_PLAIN, null)
