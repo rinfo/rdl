@@ -44,6 +44,7 @@ class CompleteFeedReaderSpec extends Specification {
         then:
         reader.entryMap.size() == 3
         when:
+        reader = new CompleteFeedAwareReader()
         reader.readFeed(completeUrl2)
         then:
         // TODO: use one deleted, one updated, one new..

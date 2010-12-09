@@ -102,6 +102,8 @@ public abstract class AbstractCollectScheduler {
      * of <code>scheduleInterval</code>, unless it is set to -1.
      */
     public void startup() {
+        feedInProcess.clear();
+        feedQueue.clear();
         executorService = newExecutorService();
         if (scheduleInterval == -1) {
             logger.info("Disabled scheduled collects.");

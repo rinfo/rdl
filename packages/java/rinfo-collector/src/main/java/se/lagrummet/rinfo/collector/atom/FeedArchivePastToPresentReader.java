@@ -9,6 +9,8 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.http.client.HttpClient;
+
 import org.apache.abdera.model.AtomDate;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Entry;
@@ -34,6 +36,14 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
     private LinkedList<FeedReference> feedTrail;
     private Map<IRI, AtomDate> entryModificationMap;
     private Entry knownStoppingEntry;
+
+    public FeedArchivePastToPresentReader() {
+        super();
+    }
+
+    public FeedArchivePastToPresentReader(HttpClient httpClient) {
+        super(httpClient);
+    }
 
     @Override
     public void beforeTraversal() {
@@ -325,8 +335,11 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
             File tempFile = File.createTempFile("feed", ".atom");
             tempFileUri = tempFile.toURI();
             OutputStream outStream = new FileOutputStream(tempFile);
-            feed.writeTo(outStream);
-            outStream.close();
+            try {
+                feed.writeTo(outStream);
+            } finally {
+                outStream.close();
+            }
         }
 
         public URL getFeedUrl() {

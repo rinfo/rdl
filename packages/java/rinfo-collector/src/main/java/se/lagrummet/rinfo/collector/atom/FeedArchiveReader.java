@@ -27,18 +27,22 @@ public abstract class FeedArchiveReader {
     public static final String LINK_NEXT_ARCHIVE_REL = "next-archive";
     public static final String LINK_PREV_ARCHIVE_REL = "prev-archive";
 
-    private HttpClient httpClient = new DefaultHttpClient();
+    private HttpClient httpClient;
 
     /**
-     * Getter for an {@link HttpClient}. This defaults to
-     * {@link DefaultHttpClient} with no special settings.
+     * This default constructor uses a new {@link DefaultHttpClient} with no
+     * special settings.
      */
-    public final HttpClient getClient() {
-        return httpClient;
+    public FeedArchiveReader() {
+        this(new DefaultHttpClient());
     }
 
-    public void setClient(HttpClient httpClient) {
+    public FeedArchiveReader(HttpClient httpClient) {
         this.httpClient = httpClient;
+    }
+
+    public final HttpClient getClient() {
+        return httpClient;
     }
 
     /**
@@ -48,29 +52,12 @@ public abstract class FeedArchiveReader {
     }
 
     /**
-     * Always called when {@link readFeed} has completed.
+     * Always called when {@link readFeed} has completed. This shuts down the
+     * HttpClient.
      */
     public void shutdown() {
-    }
-
-    /**
-     * Utility method to use the HttpClient (from {@link getClient}) to open
-     * an URL and get the entity content as an InputStream.
-     *
-     * @return InputStream, or null if the response didn't enclose an entity.
-     */
-    public InputStream getResponseAsInputStream(URL url) throws IOException {
-        return getResponseAsInputStream(url.toString());
-    }
-
-    public InputStream getResponseAsInputStream(String url) throws IOException {
-        HttpGet urlGet = new HttpGet(url);
-        HttpResponse response = getClient().execute(urlGet);
-        HttpEntity entity = response.getEntity();
-        if (entity == null) {
-            return null;
-        }
-        return entity.getContent();
+        getClient().getConnectionManager().shutdown();
+        logger.info("Closed down the HTTP client connection manager.");
     }
 
     /**
@@ -123,8 +110,7 @@ public abstract class FeedArchiveReader {
         URL followingUrl = null;
         /* TODO:IMPROVE:
             optional use of supplied "If-Modified-Since"/"ETag"..
-            .. from template method(?): getLastReadTimeTag(url)..
-            .. configurable to always try HEAD first (at least on feeds)?
+            .. from template method(?): getFeedPageResponseCache().getLastReadTimeTag(url)..
          */
         InputStream inStream = getResponseAsInputStream(url);
         try {
@@ -166,6 +152,37 @@ public abstract class FeedArchiveReader {
     public static Feed parseFeed(InputStream inStream, URL baseUrl) {
         return (Feed) Abdera.getInstance().getParser().parse(
                 inStream, baseUrl.toString()).getRoot();
+    }
+
+    // TODO: define and make a default impl. (use a single dir, only latest feedUrl/feeId?)
+    ///**
+    // * Optional getter for a {@link FeedPageResponseCache}, used for
+    // * conditional requests to optimize retrieval. See that interface for
+    // * details.
+    // * @return null by default.
+    // */
+    //public FeedPageResponseCache getFeedPageResponseCache() {
+    //    return null;
+    //}
+
+    /**
+     * Utility method to use the HttpClient (from {@link getClient}) to open
+     * an URL and get the entity content as an InputStream.
+     *
+     * @return InputStream, or null if the response didn't enclose an entity.
+     */
+    public InputStream getResponseAsInputStream(URL url) throws IOException {
+        return getResponseAsInputStream(url.toString());
+    }
+
+    public InputStream getResponseAsInputStream(String url) throws IOException {
+        HttpGet urlGet = new HttpGet(url);
+        HttpResponse response = getClient().execute(urlGet);
+        HttpEntity entity = response.getEntity();
+        if (entity == null) {
+            return null;
+        }
+        return entity.getContent();
     }
 
 }
