@@ -1,0 +1,12 @@
+
+select * {
+  {
+    <http://rinfo.lagrummet.se/publ/sfs/1995:584> ?p ?o .
+  } union {
+    ?s ?rev <http://rinfo.lagrummet.se/publ/sfs/1995:584> .
+  }
+}
+
+# basically same as:
+#describe <http://rinfo.lagrummet.se/publ/sfs/1995:584>
+
