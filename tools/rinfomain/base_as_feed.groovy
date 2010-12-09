@@ -1,5 +1,8 @@
 
 @Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
+@Grab('org.restlet.jse:org.restlet:2.0.1')
+@Grab('org.restlet.jee:org.restlet.ext.servlet:2.0.1')
+
 @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT')
 
 import javax.xml.transform.OutputKeys

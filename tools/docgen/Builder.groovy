@@ -133,6 +133,7 @@ class Builder {
     }
 
     void generateBaseDocs() {
+        // TODO: use GritTransformer from base
         transformRdfToXhtml(
                 ["${resourceDir}/base/model",
                     "${resourceDir}/base/extended/rdf",

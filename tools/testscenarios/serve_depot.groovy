@@ -1,7 +1,6 @@
-@Grapes([
-    @Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT'),
-    @Grab('org.slf4j:slf4j-simple:1.4.2'),
-])
+@Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
+@Grab('org.restlet.jse:org.restlet:2.0.1')
+@Grab('org.restlet.jee:org.restlet.ext.servlet:2.0.1')
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.supply.SupplyApplication
 
