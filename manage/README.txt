@@ -74,11 +74,7 @@ standing in the directory rinfo-trunk/manage
          sudo add-apt-repository "deb http://archive.canonical.com/ lucid partner"
          sudo apt-get update
          
-      * For Ubuntu (10.10 Meerkat):
-         sudo add-apt-repository "deb http://archive.canonical.com/ meerkat partner"
-         sudo apt-get update
-
-      * For Ubuntu (10.10 Maverick):
+      * For Ubuntu (10.10 Maverick Meerkat):
          sudo add-apt-repository "deb http://archive.canonical.com/ maverick partner"
          sudo apt-get update
 
