@@ -1,6 +1,9 @@
 """
 Diagnostics and admin tasks
 """
+from __future__ import with_statement
+import contextlib
+import time
 from fabric.api import *
 from util import venv
 from targetenvs import _needs_targetenv
@@ -32,10 +35,22 @@ def restart_all():
     restart_tomcat()
     sudo("/etc/init.d/apache2 start")
 
-def restart_tomcat():
+@contextlib.contextmanager
+def _managed_tomcat_restart(wait=5):
     _needs_targetenv()
-    sudo("%(tomcat_stop)s"%env)
-    sudo("%(tomcat_start)s"%env)
+    result = sudo("%(tomcat_stop)s" % env)
+    if result.failed:
+        raise OSError(result)
+    yield
+    print "... restarting in",
+    for i in range(wait, 0, -1):
+        print "%d..." % i,
+        time.sleep(1)
+    print
+    sudo("%(tomcat_start)s" % env)
+
+def restart_tomcat():
+    with _managed_tomcat_restart(): pass
 
 def restart_apache():
     _needs_targetenv()
