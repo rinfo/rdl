@@ -38,11 +38,7 @@ class SesameLoader extends FeedArchivePastToPresentReader {
         try {
             super.shutdown()
         } finally {
-            try {
-                conn.commit()
-            } finally {
-                conn.close()
-            }
+            conn.close()
         }
     }
 

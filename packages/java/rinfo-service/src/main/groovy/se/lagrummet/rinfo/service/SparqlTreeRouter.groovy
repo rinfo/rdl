@@ -159,21 +159,8 @@ class StringTemplateFinder extends Finder {
         this.viewTpltPath = viewTpltPath
     }
 
-    @Override
-    ServerResource find(Request request, Response response) {
-        def locale = getLocale(request.clientInfo)
-        return new ServerResource() {
-            @Get("html|xhtml")
-            Representation asHtml() {
-                def viewData = makeViewData(locale, [:])
-                return toRepresentation(makeHtmlView(viewData),
-                        MediaType.TEXT_HTML, locale)
-            }
-        }
-    }
-
     String getLocale(clientInfo) {
-        // TODO: clientInfo.getPreferredLanguage(List<Language> supported).primaryTag
+        // TODO:? clientInfo.getPreferredLanguage(List<Language> supported).primaryTag
         return DEFAULT_LOCALE
     }
 
@@ -190,6 +177,19 @@ class StringTemplateFinder extends Finder {
     Representation toRepresentation(repr, mediaType, locale) {
         return new StringRepresentation(repr, mediaType,
                 new Language(locale), new CharacterSet("utf-8"))
+    }
+
+    @Override
+    ServerResource find(Request request, Response response) {
+        def locale = getLocale(request.clientInfo)
+        return new ServerResource() {
+            @Get("html|xhtml")
+            Representation asHtml() {
+                def viewData = makeViewData(locale, [:])
+                return toRepresentation(makeHtmlView(viewData),
+                        MediaType.TEXT_HTML, locale)
+            }
+        }
     }
 
 }

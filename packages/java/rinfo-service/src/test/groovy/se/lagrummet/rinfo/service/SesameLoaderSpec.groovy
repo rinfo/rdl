@@ -15,7 +15,6 @@ import spock.lang.*
 
 class SesameLoaderSpec extends Specification {
 
-    @Shared loader
     @Shared repo
     @Shared component
     @Shared httpPort = 9991
@@ -23,7 +22,6 @@ class SesameLoaderSpec extends Specification {
 
     def setupSpec() {
         repo = RDFUtil.createMemoryRepository()
-        loader = new SesameLoader(repo)
         component = new Component()
         component.servers.add(Protocol.HTTP, httpPort)
         component.clients.add(Protocol.FILE)
@@ -35,11 +33,20 @@ class SesameLoaderSpec extends Specification {
         component.stop()
     }
 
+    def loadFeed(String url) {
+        def loader = new SesameLoader(repo)
+        try {
+            loader.readFeed(new URL(url))
+        } finally {
+            loader.shutdown()
+        }
+
+    }
+
     def "should load rdf"() {
         setup:
-        def conn = repo.connection
+        def conn = repo.getConnection()
         and:
-        def url = { new URL(it) }
         def lit = repo.valueFactory.&createLiteral
         def thing = {
             repo.valueFactory.createURI("http://example.org/things/$it")
@@ -49,7 +56,7 @@ class SesameLoaderSpec extends Specification {
         countContexts() == 0
 
         when:
-        loader.readFeed(url("${baseUrl}/1-init.atom"))
+        loadFeed("${baseUrl}/1-init.atom")
         then:
         countContexts() == 2
         conn.hasStatement(thing(1), RDFS.LABEL, lit("Thing 1"), false)
@@ -57,39 +64,39 @@ class SesameLoaderSpec extends Specification {
 
         // No changes
         when:
-        loader.readFeed(url("${baseUrl}/1-init.atom"))
+        loadFeed("${baseUrl}/1-init.atom")
         then:
         countContexts() == 2
         conn.hasStatement(thing(1), RDFS.LABEL, lit("Thing 1"), false)
 
         when:
-        loader.readFeed(url("${baseUrl}/2-updated_t1.atom"))
+        loadFeed("${baseUrl}/2-updated_t1.atom")
         then:
         countContexts() == 2
         conn.hasStatement(thing(1), RDFS.LABEL, 
                         lit("Updated thing 1"), false)
 
         when:
-        loader.readFeed(url("${baseUrl}/3-added_t3.atom"))
+        loadFeed("${baseUrl}/3-added_t3.atom")
         then:
         countContexts() == 3
         conn.hasStatement(thing(3), RDFS.LABEL, lit("Thing 3"), false)
 
         when:
-        loader.readFeed(url("${baseUrl}/4-deleted_t3.atom"))
+        loadFeed("${baseUrl}/4-deleted_t3.atom")
         then:
         countContexts() == 2
         // TODO: assertEquals contextTimeStamp..
         ! conn.hasStatement(thing(3), RDFS.LABEL, null, false)
 
         when:
-        loader.readFeed(url("${baseUrl}/5-deleted_t2.atom"))
+        loadFeed("${baseUrl}/5-deleted_t2.atom")
         then:
         countContexts() == 1
         ! conn.hasStatement(thing(2), RDFS.LABEL, null, false)
 
         when:
-        loader.readFeed(url("${baseUrl}/6-deleted_t1.atom"))
+        loadFeed("${baseUrl}/6-deleted_t1.atom")
         then:
         countContexts() == 0
         ! conn.hasStatement(thing(1), RDFS.LABEL, null, false)
