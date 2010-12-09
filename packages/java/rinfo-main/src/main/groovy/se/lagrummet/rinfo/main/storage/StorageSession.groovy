@@ -18,7 +18,7 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.SourceContent
 import se.lagrummet.rinfo.store.depot.DuplicateDepotEntryException
 
-import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex;
+import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex
 
 
 class StorageSession {

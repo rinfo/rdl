@@ -22,7 +22,7 @@ import se.lagrummet.rinfo.store.depot.SourceCheckException
  * for collector activity.
  * This is a stateful object that is not thread-safe and must be closed.
  */
-class CollectorLogSession {
+class CollectorLogSession implements Closeable {
 
     private String collectedLogsBaseUri
     private String entryDatasetUri
