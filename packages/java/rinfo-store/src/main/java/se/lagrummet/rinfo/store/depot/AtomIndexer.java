@@ -77,6 +77,9 @@ public class AtomIndexer {
             // save as archive
             atomizer.setArchive(currentFeed, true);
             // path based on date of youngest entry..
+            // FIXME: if indexed entries on "horizon" have the same timestamp,
+            // "self" and "prev-archive" will be the same!
+            // (Is it time to change to feedPath + "/archive-" + counter instead?)
             String archPath = atomizer.pathToArchiveFeed(depotEntry.getUpdated());
             currentFeed.getSelfLink().setHref(archPath);
             atomizer.setCurrentFeedHref(currentFeed, subscriptionPath);
