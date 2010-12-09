@@ -5,6 +5,10 @@ from fabric.api import *
 from util import venv
 from targetenvs import _needs_targetenv
 
+def can_i_deploy():
+    """Tests password less sudo for automatic deploys."""
+    sudo("echo 'it seems that I can run sudo as '", shell=False)
+    sudo("whoami", shell=False)
 
 def list_dist():
     _needs_targetenv()
