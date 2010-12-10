@@ -37,7 +37,7 @@ public class FeedCollector {
         return createDefaultClient()
     }
 
-    public HttpClient createDefaultClient() {
+    public static HttpClient createDefaultClient() {
 
         // TODO:? httpClient.setHttpRequestRetryHandler(...) // no use case demands it..
 
