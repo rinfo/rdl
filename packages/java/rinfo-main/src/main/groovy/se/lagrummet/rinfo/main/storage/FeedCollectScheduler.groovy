@@ -54,7 +54,9 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     protected void collectFeed(URL feedUrl, boolean lastInBatch) {
         def credentials = newStorageCredentials(feedUrl)
         feedCollector.readFeed(feedUrl, credentials)
-        if (/* FIXME:? lastInBatch &&*/ batchCompletedCallback != null) {
+        // TODO:? Ok to ping after each collect?
+        // Else, use if (lastInBatch && ...) to only run after last batch run.
+        if (batchCompletedCallback != null) {
             batchCompletedCallback.run()
         }
     }

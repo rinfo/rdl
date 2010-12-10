@@ -10,10 +10,11 @@ import org.apache.http.conn.scheme.SchemeRegistry
 import org.apache.http.conn.ssl.SSLSocketFactory
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
+import org.apache.http.impl.conn.SingleClientConnManager
 import org.apache.http.params.BasicHttpParams
+import org.apache.http.params.HttpConnectionParams
 import org.apache.http.params.HttpParams
 import org.apache.http.params.HttpProtocolParams
-
 
 public class FeedCollector {
 
@@ -24,12 +25,7 @@ public class FeedCollector {
     }
 
     public void readFeed(URL url, StorageCredentials credentials) {
-        def collectorSession = openSession(credentials)
-        try {
-            collectorSession.readFeed(url)
-        } finally {
-            collectorSession.shutdown()
-        }
+        openSession(credentials).readFeed(url)
     }
 
     public openSession(StorageCredentials credentials) {
@@ -37,29 +33,32 @@ public class FeedCollector {
         return new FeedCollectorSession(createClient(), storageSession)
     }
 
-    // TODO:
-    //  .. <http://hc.apache.org/httpcomponents-client/tutorial/html/connmgmt.html>
-    //  - set timeout (default is infinite!)
-    //  - Configure to use SSL (https) and verify cert.!
-    //  -? httpClient.setHttpRequestRetryHandler(...)
     public HttpClient createClient() {
-        return FeedCollector.createDefaultClient()
+        return createDefaultClient()
     }
 
-    public static HttpClient createDefaultClient() {
-        HttpParams params = new BasicHttpParams()
-        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1)
-        ConnManagerParams.setMaxTotalConnections(params, 100)
+    public HttpClient createDefaultClient() {
 
-        SchemeRegistry schemeRegistry = new SchemeRegistry()
-        schemeRegistry.register(
-                new Scheme("http", PlainSocketFactory.getSocketFactory(), 80))
-        schemeRegistry.register(
-                new Scheme("https", SSLSocketFactory.getSocketFactory(), 443))
+        // TODO:? httpClient.setHttpRequestRetryHandler(...) // no use case demands it..
 
-        ClientConnectionManager clientConnMgr =
-                new ThreadSafeClientConnManager(params, schemeRegistry)
-        return new DefaultHttpClient(clientConnMgr, params)
+        /* TODO: Configure to use SSL (https) and verify cert.
+        import java.security.KeyStore
+        import javax.net.ssl.SSLPeerUnverifiedException
+
+        def trustStore  = KeyStore.getInstance(KeyStore.getDefaultType())
+        def inStream = new FileInputStream(new File(KEYSTORE_PATH))
+        try {
+            trustStore.load(inStream, "nopassword".toCharArray())
+        } finally {
+            inStream.close()
+        }
+        def socketFactory = new SSLSocketFactory(trustStore)
+        */
+        def socketFactory = SSLSocketFactory.getSocketFactory()
+        def httpClient = new DefaultHttpClient()
+        httpClient.connectionManager.schemeRegistry.register(
+                new Scheme("https", socketFactory, 443))
+        return httpClient
     }
 
 }

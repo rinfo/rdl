@@ -14,7 +14,7 @@ import org.apache.abdera.i18n.iri.IRI
 import se.lagrummet.rinfo.store.depot.Atomizer
 import se.lagrummet.rinfo.store.depot.SourceContent
 
-import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex;
+import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex
 import se.lagrummet.rinfo.collector.atom.FeedArchivePastToPresentReader
 
 
@@ -40,7 +40,7 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
     StorageSession storageSession
     EntryPathMapper entryPathMapper
 
-    private Atomizer atomizer = new Atomizer()
+    private Atomizer atomizer
 
     /**
      * Important: this class is not thread safe. Create a new instance for each
@@ -48,7 +48,8 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
      */
     public FeedCollectorSession(HttpClient httpClient,
             StorageSession storageSession) {
-        setClient(httpClient)
+        super(httpClient)
+        this.atomizer = new Atomizer(readLegacyMd5LinkExtension: true)
         this.storageSession = storageSession
         this.entryPathMapper = new EntryPathMapper(
                 storageSession.getDepot().getPathHandler())
@@ -59,11 +60,7 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
         try {
             super.shutdown()
         } finally {
-            try {
-                storageSession.close()
-            } finally {
-                getClient().getConnectionManager().shutdown()
-            }
+            storageSession.close()
         }
     }
 
@@ -182,13 +179,13 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
 
 public class RemoteSourceContent extends SourceContent {
 
-    private FeedCollectorSession collector;
+    private FeedCollectorSession collectorSession;
     String urlPath;
 
-    public RemoteSourceContent(FeedCollectorSession collector, String urlPath,
+    public RemoteSourceContent(FeedCollectorSession collectorSession, String urlPath,
             String mediaType, String lang, String enclosedUriPath) {
         super(mediaType, lang, enclosedUriPath);
-        this.collector = collector;
+        this.collectorSession = collectorSession;
         this.urlPath = urlPath;
     }
 
@@ -196,7 +193,7 @@ public class RemoteSourceContent extends SourceContent {
     public void writeTo(OutputStream outStream) throws IOException {
         // TODO:IMPROVE: retrying http; and also handle failed gets in writeTo(File)
         if (getSourceStream() == null) {
-            setSourceStream(collector.getResponseAsInputStream(urlPath), false);
+            setSourceStream(collectorSession.getResponseAsInputStream(urlPath), false);
         }
         super.writeTo(outStream);
     }
