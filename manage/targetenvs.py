@@ -51,6 +51,7 @@ def tg_dev_unix():
     env.tomcat_start = "%(tomcat)s/bin/catalina.sh start"%env
     env.tomcat_stop = "%(tomcat)s/bin/catalina.sh stop"%env
     env.tomcat_user = "tomcat"
+    env.tomcat_group = 'tomcat'
 
 @_targetenv
 def tg_demo():
@@ -90,6 +91,7 @@ def tg_demo():
     env.tomcat_start = '/etc/init.d/tomcat start'
     env.tomcat_stop = '/etc/init.d/tomcat stop'
     env.tomcat_user = 'tomcat'
+    env.tomcat_group = 'tomcat'
 
 # Integration is a virtual environment that you could setup on your own computer
 # See README.txt for more information
@@ -99,6 +101,7 @@ def tg_integration():
     # Name env:
     env.target = "integration"
     # Machines:
+    env.user = 'rinfo'
     env.roledefs = {
         'main': ['rinfo-integration'],
         'service': ['rinfo-integration'],
@@ -133,6 +136,7 @@ def tg_integration():
     env.tomcat_start = '/etc/init.d/tomcat start'
     env.tomcat_stop = '/etc/init.d/tomcat stop'
     env.tomcat_user = 'tomcat'
+    env.tomcat_group = 'tomcat'
 
 @_targetenv
 def tg_prod():
@@ -172,4 +176,5 @@ def tg_prod():
     env.tomcat_start = '/etc/init.d/tomcat start'
     env.tomcat_stop = '/etc/init.d/tomcat stop'
     env.tomcat_user = 'tomcat'
+    env.tomcat_group = 'tomcat'
 

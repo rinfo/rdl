@@ -57,8 +57,6 @@ def configure_app_container(sync="1"):
     common_etc_dir = "%(mgr_workdir)s/common/etc" % env
 
     if env.get('custom_tomcat'):
-        with cd("%(tomcat)s" % env):
-            sudo("chown -R %(tomcat_user)s webapps temp logs work conf" % env)
         with cd(common_etc_dir):
             if sudo("cp -vu init.d/tomcat /etc/init.d/"):
                 sudo("chmod 0755 /etc/init.d/tomcat")
@@ -120,5 +118,5 @@ def install_tomcat():
     _prepare_initial_setup()
     workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
     with cd(workdir_tomcat):
-        sudo("bash %(mgr_workdir)s/install/3_install-tomcat.sh %(tomcat_version)s" % env)
+        sudo("bash %(mgr_workdir)s/install/3_install-tomcat.sh %(tomcat_version)s %(tomcat_user)s %(tomcat_group)s %(user)s" % env)
 

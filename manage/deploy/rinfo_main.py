@@ -30,15 +30,15 @@ def setup_main():
         sudo("chown -R %(tomcat_user)s %(rinfo_main_store)s" % env)
 
 @roles('main')
-def deploy_main():
+def deploy_main(headless="0"):
     setup_main()
     _deploy_war("%(java_packages)s/rinfo-main/target/rinfo-main-%(target)s.war" % env,
-            "rinfo-main")
+            "rinfo-main", int(headless))
 
 @roles('main')
-def main_all(deps="1", test="1"):
+def main_all(deps="1", test="1", headless="0"):
     package_main(deps, test)
-    deploy_main()
+    deploy_main(headless)
 
 ##
 # Server Maintainance

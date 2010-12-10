@@ -23,13 +23,13 @@ def setup_checker():
         run("mkdir %(dist_dir)s"%env)
 
 @roles('checker')
-def deploy_checker():
+def deploy_checker(headless="0"):
     setup_checker()
     _deploy_war("%(java_packages)s/rinfo-checker/target/rinfo-checker-%(target)s.war"%env,
-            "rinfo-checker")
+            "rinfo-checker", int(headless))
 
 @roles('checker')
-def checker_all(deps="1"):
+def checker_all(deps="1", headless="0"):
     package_checker(deps)
-    deploy_checker()
+    deploy_checker(headless)
 

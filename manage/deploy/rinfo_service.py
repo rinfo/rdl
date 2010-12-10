@@ -22,23 +22,25 @@ def package_service(deps="1"):
 @roles('service')
 def setup_service():
     _needs_targetenv()
-    if not exists(env.dist_dir): run("mkdir %(dist_dir)s"%env)
-    if not exists(env.rinfo_dir): sudo("mkdir %(rinfo_dir)s"%env)
+    if not exists(env.dist_dir):
+        run("mkdir %(dist_dir)s"%env)
+    if not exists(env.rinfo_dir):
+        sudo("mkdir %(rinfo_dir)s"%env)
     if not exists(env.rinfo_rdf_repo_dir):
         sudo("mkdir %(rinfo_rdf_repo_dir)s"%env)
     sudo("chown %(tomcat_user)s %(rinfo_rdf_repo_dir)s"%env)
 
 @roles('service')
-def deploy_service():
+def deploy_service(headless="0"):
     setup_service()
     _deploy_war(
             "%(java_packages)s/rinfo-service/target/rinfo-service-%(target)s.war"%env,
-            "rinfo-service")
+            "rinfo-service", int(headless))
 
 @roles('service')
-def service_all(deps="1"):
+def service_all(deps="1", headless="0"):
     package_service(deps)
-    deploy_service()
+    deploy_service(headless)
 
 ##
 # Sesame and Repo Util deploy

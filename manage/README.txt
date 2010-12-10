@@ -83,6 +83,15 @@ standing in the directory rinfo-trunk/manage
       <IP-OF-VIRTUAL-SERVER>  rinfo-main rinfo-service rinfo-admin rinfo-checker
       <IP-OF-VIRTUAL-SERVER>  sfs-demo dv-demo prop-demo sou-demo ds-demo
 
+   * Create the rinfo user on your virtual server:
+      sudo groupadd rinfo
+      sudo useradd rinfo -g rinfo -d /home/rinfo/ -s /bin/bash -m
+      sudo passwd rinfo # Choose a password
+      sudo visudo # Append to the bottom: rinfo ALL=ALL
+
+   * To deploy non-interactivly append with "sudo visudo":
+      rinfo ALL=ALL, NOPASSWD: /etc/init.d/tomcat *
+
    * Run on your local computer::
       fab tg_integration -R main install_dependencies fetch_tomcat_dist install_tomcat
 
