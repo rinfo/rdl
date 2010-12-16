@@ -36,9 +36,9 @@ def restart_all():
     sudo("/etc/init.d/apache2 start")
 
 @contextlib.contextmanager
-def _managed_tomcat_restart(wait=5):
+def _managed_tomcat_restart(wait=5, headless=False):
     _needs_targetenv()
-    result = sudo("%(tomcat_stop)s" % env)
+    result = sudo("%(tomcat_stop)s" % env, term=not headless)
     if result.failed:
         raise OSError(result)
     yield
@@ -47,7 +47,7 @@ def _managed_tomcat_restart(wait=5):
         print "%d..." % i,
         time.sleep(1)
     print
-    sudo("%(tomcat_start)s" % env)
+    sudo("%(tomcat_start)s" % env, term=not headless)
 
 def restart_tomcat():
     with _managed_tomcat_restart(): pass
