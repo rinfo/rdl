@@ -9,11 +9,12 @@ from targetenvs import _needs_targetenv
 # Local build
 
 @runs_once
-def package_service(deps="1"):
+def package_service(deps="1", test="1"):
     if int(deps): local_lib_rinfo_pkg()
     _needs_targetenv()
+    flags = "" if int(test) else "-Dmaven.test.skip=true"
     local("cd %(java_packages)s/rinfo-service/ && "
-            "mvn -P%(target)s clean package war:war"%env, capture=False)
+            "mvn %(flags)s -P%(target)s clean package war:war" % venv(), capture=False)
 
 ##
 # Server deploy
@@ -38,8 +39,8 @@ def deploy_service(headless="0"):
             "rinfo-service", int(headless))
 
 @roles('service')
-def service_all(deps="1", headless="0"):
-    package_service(deps)
+def service_all(deps="1", test="1", headless="0"):
+    package_service(deps, test)
     deploy_service(headless)
 
 ##
