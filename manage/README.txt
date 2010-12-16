@@ -47,7 +47,7 @@ want to deploy them to your own local development environment)
 This sends a "ping" request to the rinfo-main server, causing it to
 reload the admin data.
 
-Setting Up the Integration Environment
+Setting Up the Integration Environment from Scratch
 ========================================================================
 
 The integration environment is supposed to be run as a virtual server
@@ -131,7 +131,7 @@ Deploy main:
       fab tg_integration main_all
 
    * Ping admin feed::
-      fab tg_integration ping_main_collector:http\://rinfo-admin/feed/current
+      curl --data 'feed=http://rinfo-admin/feed/current' http://rinfo-main/collector
 
 Verify main:
 
@@ -170,9 +170,26 @@ Deploy service (not verified to work yet):
 
 Verify service:
 
-¨  * http://rinfo-service/view/browse/publ
+   * http://rinfo-service/view/browse/publ
       should contain a main page from where you can browse the various 
       collected data.
+
+Upgrading the Integration Environment that has Existing Data
+========================================================================
+
+If you have done the initial setup and used the applications for a while
+you might want to upgrade the environment but don't touch the data. To 
+upgrade your integration environment (tomcat and applications) please 
+follow the instructions below:
+
+   * integration: sudo /etc/init.d/tomcat stop
+   * integration: sudo rm -rf /opt/tomcat /opt/apache-tomcat-*
+   * local: fab tg_integration -R main fetch_tomcat_dist install_tomcat
+   * local: fab tg_integration demo_war:dv demo_war:sfs demo_war:prop demo_war:sou demo_war:ds
+   * local: fab tg_integration main_all
+   * local: fab tg_integration deploy_sesame
+   * local: fab tg_integration service_all
+   * local: fab tg_integration service_all
 
 Development Environment
 ========================================================================
