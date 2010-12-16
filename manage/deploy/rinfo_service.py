@@ -29,7 +29,7 @@ def setup_service():
         sudo("mkdir %(rinfo_dir)s"%env)
     if not exists(env.rinfo_rdf_repo_dir):
         sudo("mkdir %(rinfo_rdf_repo_dir)s"%env)
-    sudo("chown %(tomcat_user)s %(rinfo_rdf_repo_dir)s"%env)
+        sudo("chown %(tomcat_user)s %(rinfo_rdf_repo_dir)s"%env)
 
 @roles('service')
 def deploy_service(headless="0"):
