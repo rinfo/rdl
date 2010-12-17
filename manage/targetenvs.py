@@ -63,6 +63,7 @@ def tg_demo():
     env.roledefs = {
         'main': ['demo.lagrummet.se'],
         'service': ['demo.lagrummet.se'],
+        'checker': ['demo.lagrummet.se'],
         'admin': ['demo.lagrummet.se'],
         'demo': ['demo.lagrummet.se'],
     }
@@ -81,6 +82,7 @@ def tg_demo():
         'main': ['rinfo-main', 'admin'],
         'service': ['service'],
         'demo': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+        'checker': ['checker'],
     }
     env.apache_jk_tomcat = True
     # Tomcat
