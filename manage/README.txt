@@ -89,9 +89,6 @@ standing in the directory rinfo-trunk/manage
       sudo passwd rinfo # Choose a password
       sudo visudo # Append to the bottom: rinfo ALL=ALL
 
-   * To deploy non-interactivly append with "sudo visudo":
-      rinfo ALL=ALL, NOPASSWD: /etc/init.d/tomcat *
-
    * Run on your local computer::
       fab tg_integration -R main install_dependencies fetch_tomcat_dist install_tomcat
 
@@ -162,11 +159,14 @@ Verify checker:
       result in 10 green line being shown, one for each successfully checked 
       feed entry.
 
-Deploy service (not verified to work yet):
+Deploy service:
 
    * Run on your local computer::
       fab tg_integration deploy_sesame
       fab tg_integration service_all
+
+   * Ping main feed::
+      curl --data 'feed=http://rinfo-main/feed/current' http://rinfo-service/collector
 
 Verify service:
 

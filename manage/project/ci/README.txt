@@ -59,17 +59,28 @@ From within Hudson perform the following steps
 
 # Auto deploy to demo environment
 
-In order to make automatic deploys to some other environment you should use 
-the normal fabric scripts. The scripts needs to be able to run without manual 
-input. 
+It is possible to make automatic deploys from the Hudson to another rinfo
+environment. This is currently setup for the demo environment like this:
 
-To achieve this you need to make the Hudson user able to login without 
-using a password on the demo environment using password less SSH. It is also 
-necessary to configure the demo environment so that the Hudson user can sudo 
-without entering a password. You achieve this by editing the sudoers file with 
-"sudo visudo" and add the following line:
+   #. Passwordless SSH has been setup so that the hudson user can SSH to
+      demo.lagrummet.se as the rinfo user without needing a password.
+      It is essential that a ~/.ssh/config file is created which states the
+      user to use:
 
-   hudson_user ALL=(ALL) NOPASSWD: ALL
+         host demo.lagrummet.se
+            user rinfo
 
-where "hudson_user" should be exchanged to the username of the Hudson user on 
-the demo environment.
+   #. The demo environment has been configured so that the rinfo user can
+      restart tomcat without providing a password. This is done by appending
+      to the sudoers file with visudo
+
+         rinfo ALL=ALL, NOPASSWD: /etc/init.d/tomcat *
+
+      which means that the rinfo user can run any command using sudo WITH
+      a password but run /etc/init.d/tomcat with any arguments WITHOUT
+      providing a password.
+
+   #. The normal fabric scripts are used for the deploys but they are run
+      with the headless parameter set to 1 like this:
+
+         fab tg_demo main_all:headless=1
