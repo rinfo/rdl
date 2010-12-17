@@ -4,7 +4,7 @@
 JAVA_OPTS="-Xmx1024m -XX:MaxPermSize=256m -server"
 TOMCAT_USER=tomcat
 
-function tomcat() {
+tomcat() {
   sudo -u $TOMCAT_USER JAVA_OPTS="$JAVA_OPTS" sh /opt/tomcat/bin/$1.sh
 }
 
