@@ -1,19 +1,27 @@
 #!/bin/sh
+
 # Tomcat init-script
-#export JAVA_HOME="/usr/lib/jvm/java-6-sun/"
-export JAVA_OPTS="-Xmx1024m -Xms256m -server"
+JAVA_OPTS="-Xmx1024m -XX:MaxPermSize=256m -server"
 TOMCAT_USER=tomcat
-RUN="sudo -u $TOMCAT_USER sh"
+
+function tomcat() {
+  sudo -u $TOMCAT_USER JAVA_OPTS="$JAVA_OPTS" sh /opt/tomcat/bin/$1.sh
+}
+
 case $1 in
     start)
-        $RUN /opt/tomcat/bin/startup.sh
+        tomcat startup
     ;;
     stop)
-        $RUN /opt/tomcat/bin/shutdown.sh
+        tomcat shutdown
     ;;
     restart)
-        $RUN /opt/tomcat/bin/shutdown.sh
-        $RUN /opt/tomcat/bin/startup.sh
+        tomcat shutdown
+        tomcat startup
     ;;
+    *)
+        echo "Usage: /etc/init.d/tomcat {start|stop|restart}"
+        exit 1
 esac
+
 exit 0
