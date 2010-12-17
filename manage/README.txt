@@ -191,6 +191,21 @@ follow the instructions below:
    * local: fab tg_integration service_all
    * local: fab tg_integration service_all
 
+Deleting All Data
+========================================================================
+
+Sometimes you might want to start from scratch when it comes to the data.
+This is an example of how to delete all data from the integration 
+environment. Run all of these commands on the integration environment::
+
+   * sudo /etc/init.d/tomcat stop
+   * sudo rm -rf /opt/rinfo/rdf/*
+   * sudo rm -rf /opt/rinfo/store/*
+
+If you also want to delete the demo data::
+
+   * sudo rm -rf /opt/rinfo/demo-depots/*
+
 Development Environment
 ========================================================================
 
