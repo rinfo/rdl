@@ -211,3 +211,32 @@ Development Environment
 
 For continuous integration see ``project/ci/README.txt``.
 
+Maven Site - http://dev.lagrummet.se/maven-site/
+========================================================================
+
+It is possible to generate a project site using the Maven command::
+
+   mvn site-deploy
+
+For it to work properly you need to add to your ~/.m2/settings.xml::
+
+   <servers>
+      <server>
+         <id>rinfo-maven-site</id>
+         <username>USERNAME</username>
+         <privateKey>${user.home}/.ssh/IDFILE</privateKey>
+      </server>
+   </servers>
+
+where USERNAME is replaced with your username on dev.lagrummet.se and
+IDFILE is replaced with id_rsa or id_dsa depending on which key you used.
+
+Your user need write permission in /var/www/maven-site on dev.lagrummet.se.
+
+This is supposed to be possible to do password less which would enable the
+site to be continually generated from Hudson but I haven't gotten this to 
+work. Maven asks for password for every module in the project.
+
+Some plugins has been disabled because they are very time consuming. Enable
+these ones the password less issue has been solved and the generation has
+been moved to Hudson.
