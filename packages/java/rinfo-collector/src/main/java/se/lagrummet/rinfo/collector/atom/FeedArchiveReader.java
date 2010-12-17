@@ -1,3 +1,4 @@
+
 package se.lagrummet.rinfo.collector.atom;
 
 import java.io.IOException;
@@ -105,7 +106,7 @@ public abstract class FeedArchiveReader {
      * @return the previous archive URL, or null to stop climbing.
      */
     public URL readFeedPage(URL url) throws IOException {
-        logger.info("Reading Feed <"+url+"> ...");
+        logger.info(String.format("Reading Feed <%s> ...", url));
         Feed feed;
         URL followingUrl = null;
         /* TODO:IMPROVE:
@@ -124,7 +125,7 @@ public abstract class FeedArchiveReader {
             }
 
         } catch (Exception e) {
-            logger.error("Error parsing feed!", e);
+            logger.error(String.format("Error parsing feed: <%s>", url), e);
             throw new RuntimeException(e); /* TODO: stop on error?
             followingUrl = null; */
         } finally {
