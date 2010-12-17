@@ -216,9 +216,10 @@ Maven Site - http://dev.lagrummet.se/maven-site/
 
 It is possible to generate a project site using the Maven command::
 
-   mvn site-deploy
+   mvn -Psite site-deploy
 
-For it to work properly you need to add to your ~/.m2/settings.xml::
+For it to work properly you need Maven 3 and you need to add to your 
+~/.m2/settings.xml::
 
    <servers>
       <server>
