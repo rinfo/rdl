@@ -95,7 +95,7 @@
 <http://rinfo.lagrummet.se/org/institutet_foer_tillvaextpolitiska_studier>
     a foaf:Organization;
     foaf:name "Institutet för tillväxtpolitiska studier"@sv .
-    
+
 <http://rinfo.lagrummet.se/org/justitiekanslern>
     a foaf:Organization;
     skos:altLabel "JK"@sv;
@@ -125,7 +125,7 @@
 <http://rinfo.lagrummet.se/org/kriminalvaarden>
     a foaf:Organization;
     foaf:name "Kriminalvården"@sv .
-    
+
 <http://rinfo.lagrummet.se/org/kronofogdemyndigheten>
     a foaf:Organization;
     foaf:name "Kronofogdemyndigheten"@sv .
@@ -161,7 +161,7 @@
 <http://rinfo.lagrummet.se/org/myndigheten_foer_tillvaextpolitiska_utvaerderingar_och_analyser>
     a foaf:Organization;
     foaf:name "Myndigheten för tillväxtpolitiska utvärderingar och analyser"@sv .
-    
+
 <http://rinfo.lagrummet.se/org/myndigheten_foer_yrkeshoegskolan>
     a foaf:Organization;
     foaf:name "Myndigheten för yrkeshögskolan"@sv .
@@ -176,8 +176,8 @@
 
 <http://rinfo.lagrummet.se/org/pensionsmyndigheten>
     a foaf:Organization;
-    foaf:name "Pensionsmyndigheten"@sv .       
-    
+    foaf:name "Pensionsmyndigheten"@sv .
+
 <http://rinfo.lagrummet.se/org/post-_och_telestyrelsen>
     a foaf:Organization;
     foaf:name "Post- och telestyrelsen"@sv .
@@ -275,6 +275,10 @@
 <http://rinfo.lagrummet.se/org/totalfoersvarets_pliktverk>
     a foaf:Organization;
     foaf:name "Totalförsvarets pliktverk"@sv .
+
+# TODO: ersätter totalfoersvarets_pliktverk?
+<http://rinfo.lagrummet.se/org/totalfoersvarets_rekryteringsmyndighet> a foaf:Organization;
+    foaf:name "Totalförsvarets rekryteringsmyndighet"@sv .
 
 <http://rinfo.lagrummet.se/org/trafikverket>
     a foaf:Organization;
@@ -437,7 +441,7 @@
     a foaf:Organization;
     foaf:name "Talboks- och punktskriftsbiblioteket"@sv .
 
-# SCB-FS    
+# SCB-FS
 <http://rinfo.lagrummet.se/org/konjunkturinstitutet>
     a foaf:Organization;
     foaf:name "Konjunkturinstitutet"@sv .

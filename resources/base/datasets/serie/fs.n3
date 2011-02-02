@@ -387,7 +387,7 @@
 <http://rinfo.lagrummet.se/serie/fs/kvfs>
     skos:altLabel "KVFS"@sv;
     skos:prefLabel "Kriminalvårdens författningssamling"@sv;
-    dct:publisher <http://rinfo.lagrummet.se/org/konsumentverket>;
+    dct:publisher <http://rinfo.lagrummet.se/org/kriminalvaarden>;
     rdfs:seeAlso <http://www.kvv.se/templates/KVV_InfoMaterialListing____3464.aspx>;
     a :Forfattningssamling .
 
@@ -455,7 +455,7 @@
 
 <http://rinfo.lagrummet.se/serie/fs/msbfs>
     skos:altLabel "MSBFS"@sv;
-    skos:prefLabel "Myndigheten för samhällsskydd och beredskaps författningssamling."@sv;
+    skos:prefLabel "Myndigheten för samhällsskydd och beredskaps författningssamling"@sv;
     rdfs:comment "Utnyttjas också av Riksvärderingsnämnden"@sv;
     dct:publisher <http://rinfo.lagrummet.se/org/myndigheten_foer_samhaellsskydd_och_beredskap>;
     a :Forfattningssamling .
@@ -493,6 +493,11 @@
     dct:publisher <http://rinfo.lagrummet.se/org/patent-_och_registreringsverket>;
     rdfs:seeAlso <http://www.prv.se/om_prv/styrdokument/forfattningssamling/start.html>;
     a :Forfattningssamling .
+
+<http://rinfo.lagrummet.se/serie/fs/pfs> a :Forfattningssamling;
+    dct:publisher <http://rinfo.lagrummet.se/org/pensionsmyndigheten>;
+    skos:altLabel "PFS"@sv;
+    skos:prefLabel "Pensionsmyndighetens författningssamling"@sv .
 
 <http://rinfo.lagrummet.se/serie/fs/ptfs>
     skos:altLabel "PTFS"@sv;
@@ -686,6 +691,12 @@
     dct:publisher <http://rinfo.lagrummet.se/org/totalfoersvarets_pliktverk>;
     rdfs:seeAlso <http://www.pliktverket.se/sv/Om_Pliktverket/Forfattningar/>;
     a :Forfattningssamling .
+
+# TODO: ersätter tpvfs?
+<http://rinfo.lagrummet.se/serie/fs/trmfs> a rpubl:Forfattningssamling;
+    dct:publisher <http://rinfo.lagrummet.se/org/totalfoersvarets_rekryteringsmyndighet>;
+    skos:altLabel "TRMFS"@sv;
+    skos:prefLabel "Totalförsvarets rekryteringsmyndighets författningssamling"@sv .
 
 <http://rinfo.lagrummet.se/serie/fs/trvfs>
     skos:altLabel "TRVFS"@sv;
