@@ -693,7 +693,7 @@
     a :Forfattningssamling .
 
 # TODO: ersätter tpvfs?
-<http://rinfo.lagrummet.se/serie/fs/trmfs> a rpubl:Forfattningssamling;
+<http://rinfo.lagrummet.se/serie/fs/trmfs> a :Forfattningssamling;
     dct:publisher <http://rinfo.lagrummet.se/org/totalfoersvarets_rekryteringsmyndighet>;
     skos:altLabel "TRMFS"@sv;
     skos:prefLabel "Totalförsvarets rekryteringsmyndighets författningssamling"@sv .
