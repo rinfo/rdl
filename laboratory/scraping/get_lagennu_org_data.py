@@ -85,9 +85,13 @@ if __name__ == '__main__':
     cmd = args.pop(0)
 
     if not args:
-        print "USAGE: %s FILE" % p.basename(cmd)
+        print "USAGE: %s FILE [rdf...]" % p.basename(cmd)
         print "Where FILE is a local copy of <https://lagen.nu/1976:725>. Get it by doing e.g.:"
         print "  $ /usr/bin/curl -sk 'https://lagen.nu/1976:725' > /tmp/sfs-1976_725.xhtml"
+        print
+        print "If additional local rdf files are supplied, a diff of the " \
+            "extracted data and the supplied data is output (instead of just the " \
+            "extracted data)."
         exit()
     docpath = args[0]
 
