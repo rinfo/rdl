@@ -1,0 +1,81 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
+
+#=======================================================================
+
+<http://rinfo.lagrummet.se/publ/csnfs/2001:1> a :Myndighetsforeskrift;
+  # ...
+  :kapitel <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_2>;
+  :kapitel <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_3>;
+  :kapitel <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_4>;
+  .
+
+<http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_2>
+  :kapitelnummer "2";
+  :allmannaRad [ a :AllmannaRadText;
+    # TODO: förslag på URI:er för denna typ:
+    = <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_2-p_1+rad>; # strukturellt: "råd efter p .."
+    = <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_2-radTill_sfs_2000_655-k_3-p_4> # referentiellt: "råd till .."
+    # NOTE:
+    # * För att hänvisa till en :AllmannaRadText kan eventuellt *båda* URI:erna ovan behövas.
+    #   Se CSNFS 2007:4 för ett bra exempel (den upphäver just detta råd (med "strukturell" hänvisning)).
+    :radTill <http://rinfo.lagrummet.se/publ/sfs/2000:655#k_3-p_4>;
+  ];
+  .
+
+<http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_3>
+  :kapitelnummer "3";
+  :paragraf <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_3-p_10>;
+  :allmannaRad [ a :AllmannaRadText;
+    # = <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_3-p_10+rad>
+    :radTill <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_3-p_10>;
+  ];
+  .
+
+<http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_4>
+  :kapitelnummer "4";
+  :paragraf <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_4-p_2>
+  :allmannaRad [ a :AllmannaRadText;
+    = <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_4-p_2+rad>;
+    :radTill <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_4-p_2>;
+  ];
+  .
+
+<http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_3-p_10>
+  :paragrafnummer "10" .
+
+<http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_4-p_2>
+  :paragrafnummer "2" .
+
+#=======================================================================
+
+<http://rinfo.lagrummet.se/publ/csnfs/2010:9> a :Myndighetsforeskrift;
+  # ...
+  :andrar <http://rinfo.lagrummet.se/publ/csnfs/2001:1>;
+  :kapitel [ # TODO: a :Kapitelandring; ? # D.v.s. "typa innehållet (här finns transumering)"
+    :kapitelnummer "1";
+    :andrar <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_1>
+  ]
+  :kapitel [
+    :kapitelnummer "4";
+    :andrar <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_4>
+    :allmannaRad [ a :AllmannaRadText;
+      :radTill <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_4-p_2>;
+      :andrar <http://rinfo.lagrummet.se/publ/csnfs/2001:1#k_4-p_2+rad>;
+    ]
+  ]
+  .
+
+
+########################################################################
+# TODO: Att införa:
+
+:AllmannaRadText rdfs:subClassOf bibo:DocumentPart .
+:Paragraf rdfs:subClassOf bibo:DocumentPart .
+:Kapitel rdfs:subClassOf bibo:DocumentPart .
+:radTill rdfs:subPropertyOf dct:references .
+:allmannaRad rdfs:subPropertyOf dct:hasPart .
+

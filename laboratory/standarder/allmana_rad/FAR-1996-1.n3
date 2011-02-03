@@ -1,0 +1,28 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
+
+#=======================================================================
+
+<http://rinfo.lagrummet.se/publ/ar/far/1996:1> a :AllmannaRad;
+  :arsutgava "1996";
+  :lopnummer "3";
+  :allmannaRadSerie <http://rinfo.lagrummet.se/serie/ar/far>;
+  :radTill <http://rinfo.lagrummet.se/publ/ffs/1996:3>;
+  .
+
+#=======================================================================
+
+<http://rinfo.lagrummet.se/serie/ar/far> a :AllmannaRadSerie;
+  #coin:abbrSlug "far"
+  .
+
+########################################################################
+# TODO: Att införa:
+
+:AllmannaRad rdfs:subClassOf :Rattsinformationsdokument .
+:AllmannaRadSerie rdfs:subClassOf :Publikationssamling .
+:allmannaRadSerie rdfs:subPropertyOf :publikationssamling .
+
