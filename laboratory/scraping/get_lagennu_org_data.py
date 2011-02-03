@@ -80,12 +80,15 @@ def fsdoc_to_graph(docpath):
 
 
 if __name__ == '__main__':
-    import sys
+    import sys, os.path as p
     args = sys.argv[:]
     cmd = args.pop(0)
 
-    # get doc like::
-    #   $ /usr/bin/curl -sk "https://lagen.nu/1976:725" > /tmp/sfs-1976_725.xhtml
+    if not args:
+        print "USAGE: %s FILE" % p.basename(cmd)
+        print "Where FILE is a local copy of <https://lagen.nu/1976:725>. Get it by doing e.g.:"
+        print "  $ /usr/bin/curl -sk 'https://lagen.nu/1976:725' > /tmp/sfs-1976_725.xhtml"
+        exit()
     docpath = args[0]
 
     graph = fsdoc_to_graph(docpath)
