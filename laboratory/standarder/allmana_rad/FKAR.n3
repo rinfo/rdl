@@ -1,0 +1,68 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
+
+#=======================================================================
+
+<http://rinfo.lagrummet.se/publ/ar/rfv-ar/1986:4> a :AllmannaRad;
+  :allmannaRadSerie <http://rinfo.lagrummet.se/serie/ar/rfv-ar>;
+  dct:hasPart [
+    rdfs:label "Inledning"@sv;
+    :radTill <http://rinfo.lagrummet.se/publ/sfs/1962:381#k_3-p_1>;
+    :radTill <http://rinfo.lagrummet.se/publ/sfs/1962:381#k_3-p_4>;
+    :radTill <http://rinfo.lagrummet.se/publ/sfs/1962:381#k_3-p_5>;
+    :radTill <http://rinfo.lagrummet.se/publ/sfs/1962:381#k_21-p_1>;
+    :radTill <http://rinfo.lagrummet.se/publ/sfs/1985:87>;
+  ];
+  # ...
+  dct:hasPart [
+    rdfs:label "Sjukpenningens storlek"@sv;
+    dct:hasPart [
+      rdfs:label "Nyteckning av försäkring"@sv;
+      :radTill <http://rinfo.lagrummet.se/publ/sfs/1962:381#k_3-p_1>;
+      :radTill <http://rinfo.lagrummet.se/publ/sfs/1962:381#k_4-p_6>;
+      :radTill <http://rinfo.lagrummet.se/publ/sfs/1962:381#k_21-p_1>;
+      :radTill <http://rinfo.lagrummet.se/publ/sfs/1985:733>;
+      :radTill <http://rinfo.lagrummet.se/publ/sfs/1928:370>;
+      # TODO:? specifikt?
+      #:radTill <http://rinfo.lagrummet.se/publ/sfs/1928:370#p_21+anvisning>;
+      #:radTill <http://rinfo.lagrummet.se/publ/sfs/1928:370#p_28+anvisning>;
+      #:radTill <http://rinfo.lagrummet.se/publ/sfs/1928:370#p_32+anvisning>;
+    ];
+    dct:hasPart [
+      rdfs:label "Hemmamakeförsäkrade"@sv;
+      # ...
+    ];
+  ];
+  # ...
+  .
+
+#=======================================================================
+
+<http://rinfo.lagrummet.se/publ/ar/rar/2001:8> a :AllmannaRad;
+  :allmannaRadSerie <http://rinfo.lagrummet.se/serie/ar/rar>;
+  # TODO: ett gäng av dessa kommer från ändringsråd...
+  dct:hasPart [ :radTill <http://rinfo.lagrummet.se/publ/sfs/2010:110#k_95-p_8> ];
+  dct:hasPart [ :radTill <http://rinfo.lagrummet.se/publ/sfs/2010:110#k_96-p_2> ];
+  dct:hasPart [ :radTill <http://rinfo.lagrummet.se/publ/sfs/2010:110#k_96-p_4> ];
+  # + ett gäng till...
+  .
+
+#=======================================================================
+
+<http://rinfo.lagrummet.se/publ/ar/fkar/2010:22> a :AllmannaRad;
+  :allmannaRadSerie <http://rinfo.lagrummet.se/serie/ar/fkar>;
+  .
+
+#=======================================================================
+
+<http://rinfo.lagrummet.se/serie/ar/rfv-ar> a :AllmannaRadSerie .
+# TODO: owl:sameAs ?
+<http://rinfo.lagrummet.se/serie/ar/rar> a :AllmannaRadSerie .
+
+<http://rinfo.lagrummet.se/serie/ar/fkar> a :AllmannaRadSerie .
+
+

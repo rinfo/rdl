@@ -8,7 +8,7 @@
 
 <http://rinfo.lagrummet.se/publ/ar/far/1996:1> a :AllmannaRad;
   :arsutgava "1996";
-  :lopnummer "3";
+  :lopnummer "1";
   :allmannaRadSerie <http://rinfo.lagrummet.se/serie/ar/far>;
   :radTill <http://rinfo.lagrummet.se/publ/ffs/1996:3>;
   .
