@@ -73,6 +73,19 @@
             ]
     ],
 
+    # Allmänna råd utgivna i egen serie
+    [
+        coin:uriTemplate "/publ/ar/{serie}/{arsutgava}:{lopnummer}";
+        coin:component [ coin:variable "serie";
+                coin:property rpubl:allmannaRadSerie;
+                coin:slugFrom :abbrSlug;
+            ], [
+                coin:property rpubl:arsutgava
+            ], [
+                coin:property rpubl:lopnummer
+            ]
+    ],
+
     # Here we have done one "risky" move by pushing short names for document
     # types into the same "directory" ("segment space") as some series' names.
     # But this directly reflects how these documents are formally referred to

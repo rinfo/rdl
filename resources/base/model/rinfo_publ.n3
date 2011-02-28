@@ -526,6 +526,77 @@
     owl:inverseOf [ rdfs:label "Konsolideringsunderlag för"@sv ]; .
 
 
+##
+# Allmänna råd (Nästan FSDokument, men inte riktigt...)
+#-----------------------------------------------------------------------
+
+:AllmannaRad a owl:Class;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Allmänna råd"@sv;
+    rdfs:comment "Ett dokument med allmänna, icke-bindande, råd om tillämpningen av bindande regler i föreskrift, förordning eller lag."@sv;
+    rdfs:subClassOf :Rattsinformationsdokument;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :arsutgava;
+            owl:maxCardinality 1
+        ],
+        [ a owl:Restriction;
+            owl:onProperty :lopnummer;
+            owl:maxCardinality 1
+        ],
+        # TODO: How to express that a :AllmannaRad must have either a
+        # :forfattningssamling or a :allmannaRadSerie?
+        [ a owl:Restriction;
+            owl:onProperty :forfattningssamling;
+            owl:cardinality 1
+        ],
+        [ a owl:Restriction;
+            owl:onProperty :allmannaRadSerie;
+            owl:cardinality 1
+        ],
+        [ a owl:Restriction;
+            owl:onProperty :utkomFranTryck;
+            owl:maxCardinality 1
+        ].
+
+:allmannaRadSerie a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf :publikationssamling;
+    rdfs:label "Allmänna råd-serie"@sv;
+    rdfs:comment """Den serie med allmänna råd som detta dokument ingår i."""@sv;
+    rdfs:range :AllmannaRadSerie; .
+
+:AllmannaRadSerie a owl:Class;
+    rdfs:subClassOf :Publikationssamling;
+    rdfs:label "Allmänna råd-serie"@sv;
+    rdfs:comment "En serie med allmänna råd, utgiven av någon myndighet"@sv;
+    rdfs:isDefinedBy : . 
+
+:AllmannaRadText a owl:Class;
+    rdfs:subClassOf bibo:DocumentPart;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Allmänna råd-text"@sv;
+    rdfs:comment "Ett större eller mindre sammanhållet textavsnitt som innehåller ett eller flera allmänna råd."@sv; .
+
+:allmannaRadText a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf dct:hasPart;
+    rdfs:label "Allmänna råd-text"@sv;
+    rdfs:domain [ owl:unionOf (:AllmannaRadText :Myndighetsforeskrift) ];
+    # rdfs:domain :AllmannaRad ; 
+    rdfs:comment "Ett textavsnitt med allmänna råd som ingår i dokumentet"@sv;
+    rdfs:range :AllmannaRadText; .
+
+
+:radTill a owl:ObjectProperty;
+    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf dct:references;
+    rdfs:label "Råd till"@sv ;
+    rdfs:comment "Den författning eller paragraf i författning som detta råd berör."@sv ;
+    rdfs:domain [ owl:unionOf (:AllmannaRadText :AllmannaRad) ] ;
+    rdfs:range  [ owl:unionOf (:Forfattning :Kapitel :Paragraf) ] ; .
+
+
 #---------------------------------------
 
 :Rattelseblad a owl:Class;

@@ -163,6 +163,33 @@ g        </content>
         </content>
     </entry>
 
+    <!-- allmänna råd -->
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/ar/fkar/2010:22</id>
+        <summary>Ett allmänt råd, utgiven i en serie med andra allmänna råd</summary>
+        <content type="application/rdf+xml">
+            <rpubl:AllmannaRad>
+                <rpubl:allmannaRadSerie rdf:resource="http://rinfo.lagrummet.se/serie/ar/fkar"/>
+                <dct:identifier>FKAR 2010:22</dct:identifier>
+                <rpubl:arsutgava>2010</rpubl:arsutgava>
+                <rpubl:lopnummer>22</rpubl:lopnummer>
+            </rpubl:AllmannaRad>
+        </content>
+    </entry>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/tsfs/2010:182</id>
+        <summary>Ett allmänt råd, utgiven i en författningssamling</summary>
+        <content type="application/rdf+xml">
+            <rpubl:AllmannaRad>
+                <rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/tsfs"/>
+                <dct:identifier>TSFS 2010:182</dct:identifier>
+                <rpubl:arsutgava>2010</rpubl:arsutgava>
+                <rpubl:lopnummer>182</rpubl:lopnummer>
+            </rpubl:AllmannaRad>
+        </content>
+    </entry>
+
 
     <!-- Rättsfallsreferat och rättsfallsnotiser-->
 

@@ -7,6 +7,7 @@ rpubl:Proposition :abbrSlug "prop" .
 rpubl:Forordningsmotiv :abbrSlug "fm" .
 rpubl:Kommittedirektiv :abbrSlug "dir" .
 rpubl:InternationellOverenskommelse :abbrSlug "so" .
+#rpubl:AllmannaRad :abbrSlug "ar" .
 
 # Myndigheter
 ## Förvaltningsmyndigheter
@@ -64,7 +65,6 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/fs/agvfs> :abbrSlug "agvfs" .
 <http://rinfo.lagrummet.se/serie/fs/affs> :abbrSlug "affs" .
 <http://rinfo.lagrummet.se/serie/fs/amsfs> :abbrSlug "amsfs" .
-<http://rinfo.lagrummet.se/serie/fs/bfnar> :abbrSlug "bfnar" .
 <http://rinfo.lagrummet.se/serie/fs/bfs> :abbrSlug "bfs" .
 <http://rinfo.lagrummet.se/serie/fs/bolfs> :abbrSlug "bolfs" .
 <http://rinfo.lagrummet.se/serie/fs/bv-fs> :abbrSlug "bv-fs" .
@@ -125,6 +125,8 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/fs/svkfs> :abbrSlug "svkfs" .
 <http://rinfo.lagrummet.se/serie/fs/tfs> :abbrSlug "tfs" .
 <http://rinfo.lagrummet.se/serie/fs/tpvfs> :abbrSlug "tpvfs" .
+<http://rinfo.lagrummet.se/serie/fs/tsfs> :abbrSlug "tsfs" .
+<http://rinfo.lagrummet.se/serie/fs/tvfs> :abbrSlug "tvfs" .
 <http://rinfo.lagrummet.se/serie/fs/valfs> :abbrSlug "valfs" .
 <http://rinfo.lagrummet.se/serie/fs/vervafs> :abbrSlug "vervafs" .
 <http://rinfo.lagrummet.se/serie/fs/vrfs> :abbrSlug "vrfs" .
@@ -141,3 +143,7 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/rf/md> :abbrSlug "md" .
 <http://rinfo.lagrummet.se/serie/rf/fod> :abbrSlug "fod" .
 
+# Allmänna råd-serier
+<http://rinfo.lagrummet.se/serie/ar/fkar> :abbrSlug "fkar" .
+<http://rinfo.lagrummet.se/serie/ar/far> :abbrSlug "far" .
+<http://rinfo.lagrummet.se/serie/ar/bfnar> :abbrSlug "bfnar" .
