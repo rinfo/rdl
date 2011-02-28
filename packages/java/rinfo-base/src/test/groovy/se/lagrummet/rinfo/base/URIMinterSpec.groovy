@@ -25,7 +25,7 @@ class URIMinterSpec extends Specification {
         testFeedPath = "${minterDir}/tests/publ.atom"
     }
 
-    def "should mint urifrom stream"() {
+    def "should mint uri from stream"() {
         when:
         def feed = DOMBuilder.parse(new FileReader(testFeedPath)).documentElement
         then:
