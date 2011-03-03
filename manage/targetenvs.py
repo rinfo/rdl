@@ -73,7 +73,7 @@ def tg_demo():
     # Filesystem paths
     env.rinfo_dir = '/opt/rinfo'
     env.rinfo_main_store = "/opt/rinfo/store"
-    env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
     env.demo_data_root = "/opt/rinfo/demo-depots"
     # Apache
     env.admin_webroot = "/var/www/admin"
@@ -118,7 +118,7 @@ def tg_integration():
     # Filesystem paths
     env.rinfo_main_store = "/opt/rinfo/store"
     env.rinfo_dir = '/opt/rinfo'
-    env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
     env.demo_data_root = "/opt/rinfo/demo-depots"
     # Apache
     env.admin_webroot = "/var/www/admin"
@@ -160,7 +160,7 @@ def tg_prod():
     # Filesystem paths
     env.rinfo_main_store = "/opt/rinfo/store"
     env.rinfo_dir = '/opt/rinfo'
-    env.rinfo_rdf_repo_dir = '/opt/rinfo/rdf'
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
     # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
