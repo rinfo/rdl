@@ -3,6 +3,10 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
+<http://rinfo.lagrummet.se/org/regeringen>
+    a foaf:Organization;
+    foaf:name "Regeringen"@sv .
+
 <http://rinfo.lagrummet.se/org/regeringskansliet>
     a foaf:Organization;
     foaf:name "Regeringskansliet"@sv .
