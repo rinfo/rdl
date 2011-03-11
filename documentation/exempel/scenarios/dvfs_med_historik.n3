@@ -44,7 +44,7 @@
     :utkomFranTryck "2010-06-04"^^xsd:date;
     dct:subject [ rdfs:label "Notarienämnden"@sv ];
     :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1076#p_11>;
-    :beslutadAv [ foaf:name "Håkan Nordling" ];
+    :beslutande [ foaf:name "Håkan Nordling" ];
     :foredragande [ foaf:name "Richard Ekstrand" ];
     foaf:homepage <http://www.domstol.se/templates/DV_Publication____17807.aspx>;
     # :diarienummer "12-2010";
@@ -71,7 +71,7 @@
     :utkomFranTryck "2010-06-04"^^xsd:date;
     dct:subject [ rdfs:label "Notarienämnden"@sv ];
     :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1076#p_11>;
-    :beslutadAv [ foaf:name "Håkan Nordling" ];
+    :beslutande [ foaf:name "Håkan Nordling" ];
     :foredragande [ foaf:name "Richard Ekstrand" ];
     foaf:homepage <http://www.domstol.se/templates/DV_Publication____17806.aspx>;
     # :diarienummer "11-2010";
@@ -102,7 +102,7 @@
     :utkomFranTryck "2010-06-04"^^xsd:date;
     dct:subject [ rdfs:label "Notarienämnden"@sv ];
     :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1076#p_11>;
-    :beslutadAv [ foaf:name "Håkan Nordling" ];
+    :beslutande [ foaf:name "Håkan Nordling" ];
     :foredragande [ foaf:name "Richard Ekstrand" ];
     foaf:homepage <http://www.domstol.se/templates/DV_Publication____17805.aspx>;
     # :diarienummer "10-2010";
@@ -131,7 +131,7 @@
     :utkomFranTryck "2010-06-04"^^xsd:date;
     dct:subject [ rdfs:label "Notarienämnden"@sv ];
     :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1076#p_11>;
-    :beslutadAv [ foaf:name "Håkan Nordling" ];
+    :beslutande [ foaf:name "Håkan Nordling" ];
     :foredragande [ foaf:name "Richard Ekstrand" ];
     foaf:homepage <http://www.domstol.se/templates/DV_Publication____17804.aspx>;
     # :diarienummer "9-2010";
@@ -164,7 +164,7 @@
     :utkomFranTryck "2010-06-04"^^xsd:date;
     dct:subject [ rdfs:label "Notarienämnden"@sv ];
     :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1076#p_11>;
-    :beslutadAv [ foaf:name "Håkan Nordling" ];
+    :beslutande [ foaf:name "Håkan Nordling" ];
     :foredragande [ foaf:name "Richard Ekstrand" ];
     foaf:homepage <http://www.domstol.se/templates/DV_Publication____17803.aspx>;
     # :diarienummer "8-2010";
@@ -196,7 +196,7 @@
     :utkomFranTryck "2010-06-04"^^xsd:date;
     dct:subject [ rdfs:label "Notarienämnden"@sv ];
     :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1076#p_11>;
-    :beslutadAv [ foaf:name "Håkan Nordling" ];
+    :beslutande [ foaf:name "Håkan Nordling" ];
     :foredragande [ foaf:name "Richard Ekstrand" ];
     foaf:homepage <http://www.domstol.se/templates/DV_Publication____17802.aspx>;
     # :diarienummer "7-2010";
@@ -221,7 +221,7 @@
     :utkomFranTryck "2010-05-24"^^xsd:date;
     dct:subject [ rdfs:label "Redovisning"@sv ];
     :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1073#p_10>;
-    :beslutadAv [ foaf:name "Barbro Thorblad" ];
+    :beslutande [ foaf:name "Barbro Thorblad" ];
     :foredragande [ foaf:name "Jörgen Nilsson" ];
     foaf:homepage <http://www.domstol.se/templates/DV_Publication____17170.aspx>;
     # :diarienummer "2030-2009";
@@ -264,7 +264,7 @@
     :utkomFranTryck "2010-05-24"^^xsd:date;
     dct:subject [ rdfs:label "Redovisning"@sv ];
     :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/2007:1073#p_10>;
-    :beslutadAv [ foaf:name "Barbro Thorblad" ];
+    :beslutande [ foaf:name "Barbro Thorblad" ];
     :foredragande [ foaf:name "Jörgen Nilsson" ];
     foaf:homepage <http://www.domstol.se/templates/DV_Publication____17169.aspx>;
     # :diarienummer "2030-2009";
@@ -331,7 +331,7 @@
     :utkomFranTryck "2010-03-08"^^xsd:date;
     dct:subject [ rdfs:label "Målregistrering"@sv ];
     :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/1979:575#p_22>;
-    :beslutadAv [ foaf:name "Barbro Thorblad" ];
+    :beslutande [ foaf:name "Barbro Thorblad" ];
     :foredragande [ foaf:name "Jörgen Nilsson" ];
     foaf:homepage <http://www.domstol.se/templates/DV_Publication____15924.aspx>;
     # :diarienummer "385-2010";
@@ -399,7 +399,7 @@
     :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/1979:575#p_22>;
     :ikrafttradandedatum "2010-04-01"^^xsd:date;
     :upphaver <http://rinfo.lagrummet.se/publ/dvfs/2005:1>;
-    :beslutadAv [ foaf:name "Barbro Thorblad" ];
+    :beslutande [ foaf:name "Barbro Thorblad" ];
     :foredragande [ foaf:name "Jörgen Nilsson" ];
     # :diarienummer "825-2009";
     :paragraf <http://rinfo.lagrummet.se/publ/dvfs/2010:2#p_1>,
@@ -410,7 +410,7 @@
 <http://rinfo.lagrummet.se/publ/dvfs/2010:2#p_1> :paragrafnummer "1" .
 <http://rinfo.lagrummet.se/publ/dvfs/2010:2#p_2> :paragrafnummer "2" .
 <http://rinfo.lagrummet.se/publ/dvfs/2010:2#p_3> :paragrafnummer "3" .
-<http://rinfo.lagrummet.se/publ/dvfs/2010:2#bilaga_1> dct:title  "Underrättelse" .
+<http://rinfo.lagrummet.se/publ/dvfs/2010:2#bilaga_1> dct:title  "Underrättelse"@sv .
 
 # vad hände med DVFS 2010:1? De är allmänna råd. Här är en preliminär
 # uppskattning av hur dessa kan representeras:
@@ -430,7 +430,7 @@
 #         <http://rinfo.lagrummet.se/publ/sfs/1996:382#p_7>;
 #     :ikrafttradandedatum "2010-02-15"^^xsd:date;
 #     :upphaver <http://rinfo.lagrummet.se/publ/dvfs/2009:1>;
-#     :beslutadAv [ foaf:name "Barbro Thorblad" ];
+#     :beslutande [ foaf:name "Barbro Thorblad" ];
 #     :foredragande [ foaf:name "Jörgen Nilsson" ];
 #     # :diarienummer "1589-2009";
 #
@@ -452,7 +452,7 @@
     :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/1979:291>;
     :ikrafttradandedatum "2010-01-01"^^xsd:date;
     :upphaver <http://rinfo.lagrummet.se/publ/dvfs/2008:8>;
-    :beslutadAv [ foaf:name "Barbro Thorblad" ];
+    :beslutande [ foaf:name "Barbro Thorblad" ];
     :foredragande [ foaf:name "Jörgen Nilsson" ];
     # :diarienummer "1221-2009";
     :paragraf <http://rinfo.lagrummet.se/publ/dvfs/2009:8#p_1>,
@@ -511,7 +511,7 @@
     :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/1999:998#p_3>;
     :ikrafttradandedatum "2010-01-01"^^xsd:date;
     :upphaver <http://rinfo.lagrummet.se/publ/dvfs/2008:7>;
-    :beslutadAv [ foaf:name "Barbro Thorblad" ];
+    :beslutande [ foaf:name "Barbro Thorblad" ];
     :foredragande [ foaf:name "Jörgen Nilsson" ];
     # :diarienummer "1893-2009";
     :paragraf <http://rinfo.lagrummet.se/publ/dvfs/2009:7#p_1>,
@@ -525,3 +525,120 @@
 <http://rinfo.lagrummet.se/publ/dvfs/2009:7#p_3> :paragrafnummer "3" .
 <http://rinfo.lagrummet.se/publ/dvfs/2009:7#p_4> :paragrafnummer "4" .
 <http://rinfo.lagrummet.se/publ/dvfs/2009:7#p_5> :paragrafnummer "5" .
+
+<http://rinfo.lagrummet.se/publ/dvfs/2009:6> a :Myndighetsforeskrift;
+    dct:identifier "DVFS 2009:6";
+    dct:title "Domstolsverkets föreskrifter om konkursförvaltartaxa;"@sv;
+    :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/dvfs>;
+    :arsutgava "2009"; :lopnummer "6";
+    foaf:homepage <http://www.domstol.se/templates/DV_Publication____17802.aspx>;
+    dct:subject [ rdfs:label "Taxa"@sv ];
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/domstolsverket>;
+    :utkomFranTryck "2009-12-21"^^xsd:date;
+    :beslutsdatum "2009-11-30"^^xsd:date;
+    :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/1987:672#k_14-p_4>;
+    :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/1987:916#p_44>;
+    :ikrafttradandedatum "2010-01-01"^^xsd:date;
+    :upphaver <http://rinfo.lagrummet.se/publ/dvfs/2008:6>;
+    :beslutande [ foaf:name "Barbro Thorblad" ];
+    :foredragande [ foaf:name "Jörgen Nilsson" ];
+    # :diarienummer "1892-2009";
+    :paragraf <http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_1>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_2>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_3>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_4>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_5>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_6>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_7>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_8>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_9>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_10>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_11>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_12>.
+
+<http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_1> :paragrafnummer "1" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_2> :paragrafnummer "2" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_3> :paragrafnummer "3" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_4> :paragrafnummer "4" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_5> :paragrafnummer "5" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_6> :paragrafnummer "6" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_7> :paragrafnummer "7" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_8> :paragrafnummer "8" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_9> :paragrafnummer "9" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_10> :paragrafnummer "10" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_11> :paragrafnummer "11" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:6#p_12> :paragrafnummer "12" .
+
+<http://rinfo.lagrummet.se/publ/dvfs/2009:5> a :Myndighetsforeskrift;
+    dct:identifier "DVFS 2009:5";
+    dct:title "Domstolsverkets föreskrifter om advokatberedskap;"@sv;
+    :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/dvfs>;
+    :arsutgava "2009"; :lopnummer "5";
+    foaf:homepage <http://www.domstol.se/templates/DV_Publication____13993.aspx>;
+    dct:subject [ rdfs:label "Advokatberedskap"@sv ];
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/domstolsverket>;
+    :utkomFranTryck "2009-12-21"^^xsd:date;
+    :beslutsdatum "2009-11-30"^^xsd:date;
+    :bemyndigande [ dct:description "Regeringens bemyndigande den 14 april 1988"@sv . ];
+    :ikrafttradandedatum "2010-01-01"^^xsd:date;
+    :upphaver <http://rinfo.lagrummet.se/publ/dvfs/2008:5>;
+    :beslutande [ foaf:name "Barbro Thorblad" ];
+    :foredragande [ foaf:name "Jörgen Nilsson" ];
+    # :diarienummer "1891-2009";
+    :paragraf <http://rinfo.lagrummet.se/publ/dvfs/2009:5#p_1>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:5#p_2>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:5#p_3>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:5#p_4>.
+
+<http://rinfo.lagrummet.se/publ/dvfs/2009:5#p_1> :paragrafnummer "1" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:5#p_2> :paragrafnummer "2" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:5#p_3> :paragrafnummer "3" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:5#p_4> :paragrafnummer "4" .
+
+
+<http://rinfo.lagrummet.se/publ/dvfs/2009:4> a :Myndighetsforeskrift;
+    dct:identifier "DVFS 2009:4";
+    dct:title "Domstolsverkets föreskrifter om brottmålstaxa för målsägandebiträde i tingsrätt och hovrätt;"@sv;
+    :forfattningssamling <http://rinfo.lagrummet.se/serie/fs/dvfs>;
+    :arsutgava "2009"; :lopnummer "4";
+    foaf:homepage <http://www.domstol.se/templates/DV_Publication____13992.aspx>;
+    dct:subject [ rdfs:label "Taxa"@sv ];
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    :beslutadAv <http://rinfo.lagrummet.se/org/domstolsverket>;
+    :utkomFranTryck "2009-12-21"^^xsd:date;
+    :beslutsdatum "2009-11-30"^^xsd:date;
+    :bemyndigande <http://rinfo.lagrummet.se/publ/sfs/1997:408#p_3>;
+    :ikrafttradandedatum "2010-01-01"^^xsd:date;
+    :upphaver <http://rinfo.lagrummet.se/publ/dvfs/2008:4>;
+    :beslutande [ foaf:name "Barbro Thorblad" ];
+    :foredragande [ foaf:name "Jörgen Nilsson" ];
+    # :diarienummer "1890-2009";
+    :paragraf <http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_1>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_2>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_3>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_4>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_5>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_6>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_7>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_8>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_9>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_10>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_11>,
+        <http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_12>.
+    :bilaga <http://rinfo.lagrummet.se/publ/dvfs/2009:4#bilaga_1>.
+
+<http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_1> :paragrafnummer "1" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_2> :paragrafnummer "2" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_3> :paragrafnummer "3" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_4> :paragrafnummer "4" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_5> :paragrafnummer "5" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_6> :paragrafnummer "6" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_7> :paragrafnummer "7" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_8> :paragrafnummer "8" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_9> :paragrafnummer "9" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_10> :paragrafnummer "10" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_11> :paragrafnummer "11" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:4#p_12> :paragrafnummer "12" .
+<http://rinfo.lagrummet.se/publ/dvfs/2009:4#bilaga_1> dct:title  "Ersättningsbelopp och gräns för överskridande av taxan"@sv .
