@@ -161,7 +161,7 @@ Depot newDepot(File depotDir) {
         atomizer.feedPath = "/feed"
         atomizer.feedBatchSize = 100
         atomizer.feedSkeleton = Abdera.instance.newFeed().with {
-            id = "tag:data.diksdagen.se,2010:rinfo:data:${dataset}"
+            id = "tag:data.riksdagen.se,2010:rinfo:data:${dataset}"
             return it
         }
     }
