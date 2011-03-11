@@ -11,7 +11,7 @@
   <body>
     <div id="frontpage">
       <h1>Introduktion till rättsinformationssystemet</h1>
-      <h2>För beslutsfattare och informationsansvariga</h2>
+      <h2>För vidareutnyttjare av rättsinformation</h2>
       <p>
 	Detta dokument förklarar vad rättsinformationssystemet är,
 	vilken information som lagras där, och hur man kan komma åt
@@ -45,7 +45,6 @@
       -->
     </div>
     
-    
     <div id="toc">
       <h2>Innehåll</h2>
       <ul/>
@@ -63,14 +62,14 @@
         dokument. Hämta information <b>om</b> dokumentet:
       </p>
       <pre>
-$ <b>curl -s -H "Accept: application/rdf+xml" http://rinfo.lagrummet.se/publ/rf/rk/2009:4</b>
+$ <b>curl -H "Accept: application/rdf+xml" http://rinfo.lagrummet.se/publ/rf/rk/2009:4</b>
       </pre>
       <p>
         Hämta själva dokumentet i ett angivet format (förutsatt att
         just det formatet finns tillgängligt):
       </p>
       <pre>
-$ <b>curl -s -H "Accept: application/pdf" http://rinfo.lagrummet.se/publ/rf/rk/2009:4</b>
+$ <b>curl -H "Accept: application/pdf" http://rinfo.lagrummet.se/publ/rf/rk/2009:4</b>
       </pre>
       <p>
         Bläddra bland alla dokument på
@@ -196,22 +195,22 @@ $ <b>curl -s -H "Accept: application/pdf" http://rinfo.lagrummet.se/publ/rf/rk/2
         förordningar, rättsfallsreferat och olika typer av förarbeten)
         med grundläggande metadata och hänvisningar, och importerat
         detta i en demoversion. De adresser som används är samma som
-        anges nedan, men med demo.lagrummet.se istället för
-        lagrummet.se.
+        anges nedan, men med <code><b>demo</b>.lagrummet.se</code> istället för
+        <code>lagrummet.se</code>.
       </p>
 
       <ul>
         <li>
           Startpunkten för demoversionen av rättsinformationssystemet
-          finns alltså på http://rinfo.demo.lagrummet.se/feed/current
+          finns alltså på <code>http://rinfo.demo.lagrummet.se/feed/current</code>
         </li>
         <li>
           Information om en enskild resurs finns på exv
-          http://rinfo.demo.lagrummet.se/publ/rf/rk/2009:4
+          <code>http://rinfo.demo.lagrummet.se/publ/rf/rk/2009:4</code>
         </li>
         <li>
           Tjänstegränssnittets startpunkt är
-          http://service.demo.lagrummet.se/view/browse/publ
+          <code>http://service.demo.lagrummet.se/view/browse/publ</code>
         </li>
       </ul>
       
@@ -219,7 +218,7 @@ $ <b>curl -s -H "Accept: application/pdf" http://rinfo.lagrummet.se/publ/rf/rk/2
       <p>
         Startpunkten för att hämta data från rättsinformationssystemet
         är dess Atom-flöde som återfinns på
-        http://rinfo.lagrummet.se/feed/current. En vidareutnyttjare
+        <code>http://rinfo.lagrummet.se/feed/current</code>. En vidareutnyttjare
         kan använda de mekanismer som Atom-formatet specificerar för
         att få uppdateringar om nytillkommna och ändrade
         informationsposter i systemet.
@@ -243,19 +242,19 @@ $ <b>curl -s -H "Accept: application/pdf" http://rinfo.lagrummet.se/publ/rf/rk/2
       </p>
       <ul>
         <li>
-          &lt;id&gt;: Anger den maskinläsbara identifieraren, i form
+          <code>&lt;id&gt;</code>: Anger den maskinläsbara identifieraren, i form
           av en URI, för dokumentet i
           fråga. Rättsinformationsprojektet har tagit fram en
           uppsättning principer för hur dessa identifierare ska
           konstrueras för olika typer av dokument.
         </li>
         <li>
-          &lt;link&gt; Hänvisar till en en fil med information om
+          <code>&lt;link&gt;</code>: Hänvisar till en en fil med information om
           dokumentet, uttryckt i RDF-format. Se nedan för information
           om vad som ingår i detta.
         </li>
         <li>
-          &lt;content&gt; Hänvisar till en fil som innehåller en
+          <code>&lt;content&gt;</code>: Hänvisar till en fil som innehåller en
           representation av dokumentet, vanligen i form av en PDF-fil.
         </li>
       </ul>
@@ -282,13 +281,14 @@ $ <b>curl -s -H "Accept: application/pdf" http://rinfo.lagrummet.se/publ/rf/rk/2
       </p>
 
       <pre>
-$ <b>curl -s -H "Accept: application/rdf+xml" http://rinfo.lagrummet.se/publ/rf/rk/2009:4</b>
+$ <b>curl -H "Accept: application/rdf+xml" http://rinfo.lagrummet.se/publ/rf/rk/2009:4</b>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;rdf:RDF
-	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"&gt;
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"&gt;
 &lt;rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/rf/rk/2009:4"&gt;
-	&lt;creator xmlns="http://purl.org/dc/terms/" rdf:resource="http://rinfo.lagrummet.se/org/kammarratten-i-stockholm"/&gt;
+	&lt;creator xmlns="http://purl.org/dc/terms/"
+            rdf:resource="http://rinfo.lagrummet.se/org/kammarratten-i-stockholm"/&gt;
 	&lt;identifier xmlns="http://purl.org/dc/terms/"&gt;RK 2009:4&lt;/identifier&gt;
 ...       
       </pre>
@@ -303,7 +303,7 @@ $ <b>curl -s -H "Accept: application/rdf+xml" http://rinfo.lagrummet.se/publ/rf/
         På liknande sätt som man kommer åt RDF-datat genom att ange att man vill ha just application/rdf+xml så kan man komma åt exv en PDF-representation (om sådan finns):
       </p>
       <pre>
-$ <b>curl -s -H "Accept: application/pdf" http://dv.demo.lagrummet.se/publ/rf/rk/2009:4|head -10</b>
+$ <b>curl -H "Accept: application/pdf" http://rinfo.lagrummet.se/publ/rf/rk/2009:4|head -10</b>
       </pre>
       <p>
         Även här kan man använda Atom-flödet för att ta reda på vilka
@@ -335,13 +335,13 @@ $ <b>curl -s -H "Accept: application/pdf" http://dv.demo.lagrummet.se/publ/rf/rk
         kan man få en JSON-representation på följande sätt:
       </p>
       <pre>
-        $ <b>curl -H "Accept: application/json" http://service.demo.lagrummet.se/view/publ/sfs/1999:175</b>
+$ <b>curl -H "Accept: application/json" http://service.demo.lagrummet.se/view/publ/sfs/1999:175</b>
       </pre>
     </div>
 
     <div class="section">
       <h2>4. Informationsstandard</h2>
-      <p>Not: Denna sektion är under utarbetande</p>
+      <p>Not: Denna sektion är under utarbetande. Vidareutnyttjare kan dock få vägledning av introduktioner, handböcker och specifikationer under <code><a href="http://dev.lagrummet.se/dokumentation/">http://dev.lagrummet.se/dokumentation/</a></code>, även om dessa är skrivna främst för informationsproducenter.</p>
       <h3>4.1 Dokumenttyper</h3>
       <h3>4.2 Egenskaper</h3>
       <h3>4.3 Utökningar</h3>
@@ -352,7 +352,7 @@ $ <b>curl -s -H "Accept: application/pdf" http://dv.demo.lagrummet.se/publ/rf/rk
       <p>Not: Denna sektion är under utarbetande</p>
       <h3>5.1 Upphovsrätt och databasrätt</h3>
       <h3>5.2 Personuppgiftsskydd</h3>
-      <h3>5.3</h3>
+      <h3>5.3 Skydd för beteckningar</h3>
     </div>
     
   </body>
