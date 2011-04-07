@@ -582,7 +582,7 @@
     rdfs:isDefinedBy : ;
     rdfs:subPropertyOf dct:hasPart;
     rdfs:label "Allmänna råd-text"@sv;
-    rdfs:domain [ owl:unionOf (:AllmannaRadText :Myndighetsforeskrift) ];
+    rdfs:domain [ owl:unionOf (:AllmannaRad :Myndighetsforeskrift) ];
     # rdfs:domain :AllmannaRad ; 
     rdfs:comment "Ett textavsnitt med allmänna råd som ingår i dokumentet"@sv;
     rdfs:range :AllmannaRadText; .
