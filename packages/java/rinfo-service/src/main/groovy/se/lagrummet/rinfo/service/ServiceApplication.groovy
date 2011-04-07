@@ -16,6 +16,7 @@ import org.restlet.resource.Handler
 import org.restlet.resource.Resource
 import org.restlet.routing.Redirector
 import org.restlet.routing.Router
+import org.restlet.routing.Variable
 
 import org.apache.commons.configuration.PropertiesConfiguration
 
@@ -36,6 +37,7 @@ class ServiceApplication extends Application {
 
     SesameLoadScheduler loadScheduler
     RepositoryHandler repositoryHandler
+    String dataAppBaseUrl
 
     public ServiceApplication(Context parentContext) {
         super(parentContext)
@@ -44,6 +46,8 @@ class ServiceApplication extends Application {
 
         // TODO: reuse IoC pattern from main (Components etc.)
         def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
+
+        dataAppBaseUrl = config.getString("rinfo.service.dataAppBaseUrl")
 
         repositoryHandler = RepositoryHandlerFactory.create(config.subset(
                 REPO_PROPERTIES_SUBSET_KEY))
@@ -63,6 +67,10 @@ class ServiceApplication extends Application {
         router.attach("/collector", new Finder(getContext(), RDFLoaderHandler))
         router.attach("/view", new SparqlTreeRouter(
                 getContext(), repositoryHandler.repository))
+        router.attach("/data/{path}",
+                new DataFinder(getContext(), dataAppBaseUrl, repositoryHandler.repository)
+            ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
+
         if (mediaDirUrl) {
             router.attach("/css", new Directory(getContext(), mediaDirUrl+"css/"))
             router.attach("/img", new Directory(getContext(), mediaDirUrl+"img/"))
