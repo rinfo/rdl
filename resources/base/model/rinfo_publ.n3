@@ -548,11 +548,11 @@
         # :forfattningssamling or a :allmannaRadSerie?
         [ a owl:Restriction;
             owl:onProperty :forfattningssamling;
-            owl:cardinality 1
+            owl:maxCardinality 1
         ],
         [ a owl:Restriction;
             owl:onProperty :allmannaRadSerie;
-            owl:cardinality 1
+            owl:maxCardinality 1
         ],
         [ a owl:Restriction;
             owl:onProperty :utkomFranTryck;
