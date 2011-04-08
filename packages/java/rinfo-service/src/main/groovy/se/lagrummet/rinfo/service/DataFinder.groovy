@@ -14,6 +14,8 @@ import org.restlet.resource.ServerResource
 import org.restlet.routing.Router
 
 import org.openrdf.repository.Repository
+import static org.openrdf.query.QueryLanguage.SPARQL
+import org.openrdf.repository.util.RDFInserter
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 
@@ -21,6 +23,7 @@ import se.lagrummet.rinfo.base.rdf.RDFUtil
 class DataFinder extends Finder {
 
     def baseUrl
+    def baseUri = "http://rinfo.lagrummet.se/"
     def repo
 
     DataFinder(Context context, String baseUrl, Repository repo) {
@@ -54,7 +57,8 @@ class DataFinder extends Finder {
 
             def getRepr(mediaType, mediaTypeStr) {
                 return new StringRepresentation(
-                        getFullRDF(path, mediaTypeStr), mediaType)
+                        getFullRDF(path, mediaTypeStr), mediaType,
+                        null, new CharacterSet("utf-8"))
             }
 
         }
@@ -65,6 +69,22 @@ class DataFinder extends Finder {
         def url = new URL(baseUrl + path)
         def itemRepo = RDFUtil.createMemoryRepository()
         RDFUtil.loadDataFromURL(itemRepo, url, "application/rdf+xml")
+        def itemConn = itemRepo.getConnection()
+        try {
+            def conn = repo.getConnection()
+            try {
+                def currentUri = conn.valueFactory.createURI(baseUri + path)
+                def graphQuery = conn.prepareGraphQuery(SPARQL,
+                        constructRelRevDataSparql)
+                graphQuery.setBinding("current", currentUri)
+                graphQuery.evaluate(new RDFInserter(itemConn))
+            } finally {
+                conn.close()
+            }
+        } finally {
+            itemConn.close()
+        }
+
         def outStream = new ByteArrayOutputStream()
         try {
             RDFUtil.serialize(itemRepo, mediaType, outStream)
@@ -72,6 +92,11 @@ class DataFinder extends Finder {
             outStream.close()
         }
         return outStream.toString()
+    }
+
+    String getConstructRelRevDataSparql() {
+        return getClass().getResourceAsStream(
+                "/construct_relrev_data.rq").getText("utf-8")
     }
 
 }

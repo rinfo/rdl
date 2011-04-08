@@ -1,0 +1,27 @@
+CONSTRUCT {
+
+    ?related ?relprop ?reltext .
+
+    ?subject ?rev ?current;
+        ?revprop ?revtext .
+
+} WHERE {
+
+    {
+        ?current ?rel ?related .
+        ?related ?relprop ?reltext .
+        FILTER( isLiteral(?reltext) )
+    } UNION {
+        ?subject ?rev ?current; ?revprop ?revtext .
+        FILTER( isLiteral(?revtext) )
+        #FILTER( ?rev = rpubl:andrar )
+        #FILTER(
+        #    ?revprop = rdfs:label ||
+        #    ?revprop = dct:identifier ||
+        #    ?revprop = dct:title ||
+        #    ?revprop = foaf:name #||
+        #    #?revprop rdfs:subPropertyOf -||-
+        #)
+    }
+
+}
