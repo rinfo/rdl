@@ -22,13 +22,12 @@ import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 class DataFinder extends Finder {
 
-    def baseUrl
-    def baseUri = "http://rinfo.lagrummet.se/"
+    def baseUri
     def repo
 
-    DataFinder(Context context, String baseUrl, Repository repo) {
+    DataFinder(Context context, Repository repo, String baseUri) {
         super(context)
-        this.baseUrl = baseUrl
+        this.baseUri = baseUri
         this.repo = repo
     }
 
@@ -66,9 +65,7 @@ class DataFinder extends Finder {
     }
 
     def getFullRDF(String path, String mediaType) {
-        def url = new URL(baseUrl + path)
         def itemRepo = RDFUtil.createMemoryRepository()
-        RDFUtil.loadDataFromURL(itemRepo, url, "application/rdf+xml")
         def itemConn = itemRepo.getConnection()
         try {
             def conn = repo.getConnection()

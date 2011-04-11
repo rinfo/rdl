@@ -37,7 +37,7 @@ class ServiceApplication extends Application {
 
     SesameLoadScheduler loadScheduler
     RepositoryHandler repositoryHandler
-    String dataAppBaseUrl
+    String dataAppBaseUri
 
     public ServiceApplication(Context parentContext) {
         super(parentContext)
@@ -47,7 +47,7 @@ class ServiceApplication extends Application {
         // TODO: reuse IoC pattern from main (Components etc.)
         def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
 
-        dataAppBaseUrl = config.getString("rinfo.service.dataAppBaseUrl")
+        dataAppBaseUri = config.getString("rinfo.service.dataAppBaseUri")
 
         repositoryHandler = RepositoryHandlerFactory.create(config.subset(
                 REPO_PROPERTIES_SUBSET_KEY))
@@ -68,7 +68,8 @@ class ServiceApplication extends Application {
         router.attach("/view", new SparqlTreeRouter(
                 getContext(), repositoryHandler.repository))
         router.attach("/data/{path}",
-                new DataFinder(getContext(), dataAppBaseUrl, repositoryHandler.repository)
+                new DataFinder(getContext(), repositoryHandler.repository,
+                    dataAppBaseUri)
             ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
 
         if (mediaDirUrl) {

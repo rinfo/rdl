@@ -1,19 +1,30 @@
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
 CONSTRUCT {
 
-    ?related ?relprop ?reltext .
+    ?s ?p ?o .
 
-    ?subject ?rev ?current;
+    ?relitem a ?reltype;
+        ?relprop ?reltext .
+
+    ?revitem a ?revtype;
+        ?rev ?current;
         ?revprop ?revtext .
 
 } WHERE {
 
     {
-        ?current ?rel ?related .
-        ?related ?relprop ?reltext .
-        FILTER( isLiteral(?reltext) )
+        ?g foaf:primaryTopic ?current .
+        GRAPH ?g { ?s ?p ?o }
     } UNION {
-        ?subject ?rev ?current; ?revprop ?revtext .
+        ?current ?rel ?relitem .
+        ?relitem ?relprop ?reltext .
+        FILTER( isLiteral(?reltext) )
+        OPTIONAL { ?relitem a ?reltype . }
+    } UNION {
+        ?revitem ?rev ?current; ?revprop ?revtext .
         FILTER( isLiteral(?revtext) )
+        OPTIONAL { ?revitem a ?revtype . }
         #FILTER( ?rev = rpubl:andrar )
         #FILTER(
         #    ?revprop = rdfs:label ||
