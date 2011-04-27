@@ -115,17 +115,19 @@ public class URIMinter {
                 templates.add(new CoinTemplate(this, tdesc));
             }
             Description slugTransl = desc.getRel("coin:slugTranslation");
-            for (Description type : slugTransl.getTypes()) {
-                if (type.getAbout().equals(
-                        desc.expandCurie("coin:LowerCasedTranslation")))
-                    lowerCasedTranslation = true;
-                if (type.getAbout().equals(
-                        desc.expandCurie("coin:BaseCharTranslation")))
-                    baseCharTranslation = true;
+            if (slugTransl != null) {
+              for (Description type : slugTransl.getTypes()) {
+                  if (type.getAbout().equals(
+                          desc.expandCurie("coin:LowerCasedTranslation")))
+                      lowerCasedTranslation = true;
+                  if (type.getAbout().equals(
+                          desc.expandCurie("coin:BaseCharTranslation")))
+                      baseCharTranslation = true;
+              }
+              String slugSpaceRepl = slugTransl.getString("coin:spaceReplacement");
+              if (slugSpaceRepl != null)
+                  spaceRepl = slugSpaceRepl;
             }
-            String slugSpaceRepl = slugTransl.getString("coin:spaceReplacement");
-            if (slugSpaceRepl != null)
-                spaceRepl = slugSpaceRepl;
         }
 
         List<String> coinUris(Description desc) {
