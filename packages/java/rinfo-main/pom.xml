@@ -37,19 +37,6 @@
       <artifactId>rinfo-base</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.openrdf.elmo</groupId>
-      <artifactId>elmo-sesame</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.openrdf.elmo</groupId>
-      <artifactId>elmo-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.openrdf.elmo</groupId>
-      <artifactId>elmo-repository</artifactId>
-    </dependency>
-
     <!-- pass jcl over slf4j -->
     <dependency>
       <groupId>commons-logging</groupId>
