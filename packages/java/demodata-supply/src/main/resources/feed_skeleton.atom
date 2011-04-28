@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <id>tag:example.org,2009:publ</id>
-    <title>Example.org Feed</title>
-    <author>
-        <name>Example.org</name>
-    </author>
-</feed>
