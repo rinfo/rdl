@@ -67,7 +67,7 @@ class ServiceApplication extends Application {
         router.attach("/collector", new Finder(getContext(), RDFLoaderHandler))
         router.attach("/view", new SparqlTreeRouter(
                 getContext(), repositoryHandler.repository))
-        router.attach("/data/{path}",
+        router.attach("/{path}/data",
                 new DataFinder(getContext(), repositoryHandler.repository,
                     dataAppBaseUri)
             ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
