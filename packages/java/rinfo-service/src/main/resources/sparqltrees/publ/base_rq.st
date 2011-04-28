@@ -15,10 +15,20 @@ PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
 
 SELECT DISTINCT * WHERE {
 
+    $if (doc)$ FILTER(?doc = $doc$) $endif$
+
+    $if (inBlock)$ { $endif$
+
     ?doc a ?doc__1_type .
 
-    ?doc__1_entry foaf:primaryTopic ?doc; a awol:Entry .
+    # TODO: adapt UI to this simpler form:
+    # - { main bulk using identifier } union {
+    #     # certain avgörande-labellings:
+    #     publisher + diarienummer / publisher + malnummer + avgorandedatum
+    #   }
+    ?doc dct:identifier ?doc__1_identifier .
 
+    ?doc__1_entry foaf:primaryTopic ?doc; a awol:Entry .
     {
         ?doc__1_entry awol:content ?doc__1_entry__repr .
     } UNION {
@@ -27,17 +37,16 @@ SELECT DISTINCT * WHERE {
     ?doc__1_entry__repr awol:type ?doc__1_entry__repr__1_mediaType .
 
     OPTIONAL { ?doc dct:title ?doc__1_title }
-
     OPTIONAL { ?doc__1_type rdfs:label ?doc__1_type__1_label }
 
-    OPTIONAL { ?doc dct:publisher ?doc__1_publisher }
+    OPTIONAL {
+        ?doc dct:publisher ?doc__1_publisher
+        OPTIONAL {
+            ?doc__1_publisher foaf:name ?doc__1_publisher__1_name .
+        }
+    }
 
-    # TODO: adapt UI to this simpler form:
-    # - { main bulk using identifier } union {
-    #     # certain avgörande-labellings:
-    #     publisher + diarienummer / publisher + malnummer + avgorandedatum
-    #   }
-    ?doc dct:identifier ?doc__1_identifier .
+    $if (inBlock)$ } $endif$
 
     $query_body$
 
