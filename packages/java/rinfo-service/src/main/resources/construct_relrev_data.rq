@@ -25,7 +25,11 @@ CONSTRUCT {
         ?revitem ?rev ?current; ?revprop ?revtext .
         FILTER( isLiteral(?revtext) )
         OPTIONAL { ?revitem a ?revtype . }
-        #FILTER( ?rev = rpubl:andrar )
+        # TODO:
+        # - don't get (isPartOf?) rev for "membership" containers
+        #   - instead find eventual scovo:Item..
+        # - but do follow revitems upward on hasPart and describe those
+        ##FILTER( ?rev = rpubl:andrar )
         #FILTER(
         #    ?revprop = rdfs:label ||
         #    ?revprop = dct:identifier ||

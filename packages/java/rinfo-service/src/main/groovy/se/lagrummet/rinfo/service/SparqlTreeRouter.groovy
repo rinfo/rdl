@@ -219,6 +219,16 @@ class RDataFinder extends StringTemplateFinder {
     @Override
     ServerResource find(Request request, Response response) {
 
+        if (isDevMode() && request.resourceRef.queryAsForm.getFirst("query")) {
+            def rq = makeQuery(getQueryData(request))
+            return new ServerResource() {
+                @Override
+                Representation doHandle() {
+                    return toRepresentation(rq, MediaType.TEXT_PLAIN, null)
+                }
+            }
+        }
+
         // TODO:IMPROVE: in theory, the use of getQueryData is open for
         // "SPARQL injection". We "should" guard against it by properly
         // checking/escaping the values.
@@ -226,17 +236,6 @@ class RDataFinder extends StringTemplateFinder {
         def data = runQuery(locale, getQueryData(request))
 
         return new ServerResource() {
-
-            @Override
-            Representation handle() {
-                metadataService.setDefaultMediaType(MediaType.TEXT_HTML)
-                if (isDevMode() && getQuery().getFirst("showQuery")) {
-                    def rq = makeQuery(getQueryData(getRequest()))
-                    return toRepresentation(rq, MediaType.TEXT_PLAIN, null)
-                } else {
-                    return super.handle()
-                }
-            }
 
             @Get("html|xhtml")
             Representation asHtml() {
