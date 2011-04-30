@@ -4,6 +4,7 @@ import org.restlet.Context
 import org.restlet.data.CharacterSet
 import org.restlet.data.Language
 import org.restlet.data.MediaType
+import org.restlet.data.Status
 import org.restlet.Request
 import org.restlet.Response
 import org.restlet.representation.StringRepresentation
@@ -55,8 +56,12 @@ class DataFinder extends Finder {
             }
 
             def getRepr(mediaType, mediaTypeStr) {
-                return new StringRepresentation(
-                        getFullRDF(path, mediaTypeStr), mediaType,
+                def rdfRepr = getFullRDF(path, mediaTypeStr)
+                if (rdfRepr == null) {
+                    setStatus(Status.CLIENT_ERROR_NOT_FOUND)
+                    return null
+                }
+                return new StringRepresentation(rdfRepr, mediaType,
                         null, new CharacterSet("utf-8"))
             }
 
@@ -67,6 +72,7 @@ class DataFinder extends Finder {
     def getFullRDF(String path, String mediaType) {
         def itemRepo = RDFUtil.createMemoryRepository()
         def itemConn = itemRepo.getConnection()
+        boolean empty = true
         try {
             def conn = repo.getConnection()
             try {
@@ -78,9 +84,13 @@ class DataFinder extends Finder {
             } finally {
                 conn.close()
             }
+            empty = itemConn.size() == 0 // itemConn.isEmpty()
         } finally {
             itemConn.close()
         }
+
+        if (empty)
+            return null
 
         def outStream = new ByteArrayOutputStream()
         try {

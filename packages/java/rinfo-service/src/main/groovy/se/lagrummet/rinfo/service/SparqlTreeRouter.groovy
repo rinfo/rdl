@@ -5,6 +5,7 @@ import org.restlet.Context
 import org.restlet.data.CharacterSet
 import org.restlet.data.Language
 import org.restlet.data.MediaType
+import org.restlet.data.Status
 import org.restlet.Request
 import org.restlet.Response
 import org.restlet.representation.StringRepresentation
@@ -239,8 +240,10 @@ class RDataFinder extends StringTemplateFinder {
 
             @Get("html|xhtml")
             Representation asHtml() {
-                if (data == null)
+                if (data == null) {
+                    setStatus(Status.CLIENT_ERROR_NOT_FOUND)
                     return null
+                }
                 def viewData = makeViewData(locale, data)
                 return toRepresentation(makeHtmlView(viewData),
                         MediaType.TEXT_HTML, locale)
@@ -248,8 +251,10 @@ class RDataFinder extends StringTemplateFinder {
 
             @Get("json")
             Representation asJson() {
-                if (data == null)
+                if (data == null) {
+                    setStatus(Status.CLIENT_ERROR_NOT_FOUND)
                     return null
+                }
                 return toRepresentation(JSONSerializer.toJSON(data).toString(4),
                         MediaType.APPLICATION_JSON, locale)
             }
