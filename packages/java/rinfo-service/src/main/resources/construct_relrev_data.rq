@@ -1,8 +1,13 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX bibo: <http://purl.org/ontology/bibo/>
+PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
 
 CONSTRUCT {
 
     ?s ?p ?o .
+    ?current ?curr_p ?curr_o .
 
     ?relitem a ?reltype;
         ?relprop ?reltext .
@@ -11,32 +16,83 @@ CONSTRUCT {
         ?rev ?current;
         ?revprop ?revtext .
 
+    ?reldoc rpubl:paragraf ?relitem .
+    ?relchapter rpubl:paragraf ?relitem .
+    ?reldoc rpubl:kapitel ?relchapter .
+    ?reldoc a ?reldoctype;
+        dct:identifier ?reldoc_label .
+
+    ?revdoc rpubl:paragraf ?revitem .
+    ?revchapter rpubl:paragraf ?revitem .
+    ?revdoc rpubl:kapitel ?revchapter .
+    ?revdoc a ?revdoctype;
+        dct:identifier ?revdoc_label .
+
 } WHERE {
 
     {
+
         ?g foaf:primaryTopic ?current .
         GRAPH ?g { ?s ?p ?o }
+
     } UNION {
+
+        ?current ?curr_p ?curr_o .
+
+    } UNION {
+
         ?current ?rel ?relitem .
         ?relitem ?relprop ?reltext .
         FILTER( isLiteral(?reltext) )
         OPTIONAL { ?relitem a ?reltype . }
+
+        # TODO:IMPROVE: generalize...
+        # NOTE: this part is a bit slow:
+        OPTIONAL {
+            {
+                ?reldoc rpubl:paragraf ?relitem .
+            } UNION {
+                ?relchapter rpubl:paragraf ?relitem .
+                ?reldoc rpubl:kapitel ?relchapter .
+            }
+            ?reldoc a ?reldoctype;
+                dct:identifier ?reldoc_label .
+        }
+
     } UNION {
+
         ?revitem ?rev ?current; ?revprop ?revtext .
         FILTER( isLiteral(?revtext) )
         OPTIONAL { ?revitem a ?revtype . }
-        # TODO:
-        # - don't get (isPartOf?) rev for "membership" containers
-        #   - instead find eventual scovo:Item..
-        # - but do follow revitems upward on hasPart and describe those
-        ##FILTER( ?rev = rpubl:andrar )
-        #FILTER(
-        #    ?revprop = rdfs:label ||
-        #    ?revprop = dct:identifier ||
-        #    ?revprop = dct:title ||
-        #    ?revprop = foaf:name #||
-        #    #?revprop rdfs:subPropertyOf -||-
-        #)
+
+        # Don't get revs if ?current may have lots of "part_of"...
+        ?current a ?type .
+        OPTIONAL {
+            ?type rdfs:subClassOf ?supertype .
+            OPTIONAL { ?supertype rdfs:subClassOf ?supersupertype . }
+        }
+        FILTER(
+            ?type != foaf:Organization &&
+            ?type != bibo:Collection &&
+            ?supertype != bibo:Collection &&
+            ?supersupertype != bibo:Collection)
+
+        # TODO:IMPROVE: generalize...
+        # - do follow revitems upward on hasPart and describe those
+        # - find eventual scovo:Item..
+        # - don't get (isPartOf?) rev for collections
+        # NOTE: this part is a bit slow:
+        OPTIONAL {
+            {
+                ?revdoc rpubl:paragraf ?revitem .
+            } UNION {
+                ?revchapter rpubl:paragraf ?revitem .
+                ?revdoc rpubl:kapitel ?revchapter .
+            }
+            ?revdoc a ?revdoctype;
+                dct:identifier ?revdoc_label .
+        }
+
     }
 
 }
