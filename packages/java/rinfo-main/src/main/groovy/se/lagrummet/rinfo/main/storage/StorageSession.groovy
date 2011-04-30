@@ -82,7 +82,7 @@ class StorageSession {
 
         // NOTE: Needed since even if hasCollected is true (via stopOnEntry),
         // there may be several entries with the same timestamp.
-        // TODO:IMPROVE? Will this "thrash" on many true:s?
+        // IMPROVE:? Will this "thrash" on many true:s?
         if (hasCollected(sourceEntry, depotEntry)) {
             logger.info("Encountered collected entry with id=<" +
                     sourceEntry.getId()+">, updated=[" +

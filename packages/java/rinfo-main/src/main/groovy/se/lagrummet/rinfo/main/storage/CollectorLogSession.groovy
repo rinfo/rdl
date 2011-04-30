@@ -142,7 +142,7 @@ class CollectorLogSession implements Closeable {
             if (error.failedCheck == SourceContent.Check.MD5) {
                 errorDesc = currentDescriber.newDescription(null, "rc:ChecksumError")
                 def src = (RemoteSourceContent) error.sourceContent
-                errorDesc.addLiteral("rc:document", src.urlPath)
+                errorDesc.addLiteral("rc:document", src.urlPath, "xsd:anyURI")
                 //def documentInfo = "type=${src.mediaType};lang=${src.lang};slug=${src.enclosedUriPath}"
                 errorDesc.addLiteral("rc:givenMd5", error.givenValue)
                 errorDesc.addLiteral("rc:computedMd5", error.realValue)
