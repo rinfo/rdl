@@ -4,15 +4,17 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix coin: <http://purl.org/court/def/2009/coin#> .
 @prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
-@prefix : <http://rinfo.lagrummet.se/sys/uri/scheme#> .
+@prefix : <http://rinfo.lagrummet.se/sys/uri/space#> .
 
 
-: a coin:CoinScheme;
+: a coin:URISpace;
     coin:base "http://rinfo.lagrummet.se";
     coin:fragmentSeparator "-";
     rdfs:seeAlso <http://rinfo.lagrummet.se/sys/uri/slugs>;
-    coin:slugTranslation [
-            a coin:LowerCasedTranslation, coin:BaseCharTranslation;
+    coin:slugTransform [
+            coin:apply coin:ToLowerCase;
+            coin:apply coin:ToBaseChar; # TODO: remove when replace works!
+            coin:replace "é e", "å aa", "ä ae", "ö oe";
             coin:spaceReplacement "_";
         ];
 
@@ -20,7 +22,7 @@
     coin:template [
         # TODO: priority rules? ("most components win"?)
         coin:uriTemplate "/publ/{fs}/{arsutgava}:{lopnummer}_s_{sidnummer}";
-        coin:component [ coin:variable "fs";
+        coin:binding [ coin:variable "fs";
                 coin:property rpubl:forfattningssamling;
                 coin:slugFrom :abbrSlug;
             ], [ coin:variable "arsutgava";
@@ -32,7 +34,7 @@
             ]
     ], [
         coin:uriTemplate "/publ/{fs}/{arsutgava}:{lopnummer}";
-        coin:component [ coin:variable "fs";
+        coin:binding [ coin:variable "fs";
                 coin:property rpubl:forfattningssamling;
                 coin:slugFrom :abbrSlug
             ], [
@@ -45,13 +47,13 @@
     # NOTE: Vi avvvaktar med att introducera :platsangivelse tills reellt behov uppstår.
     #], [ # TODO: arsutgava + platsangivelse?
     #    coin:uriTemplate "/publ/{fs}/{platsangivelse}";
-    #    coin:component [ coin:variable "fs";
+    #    coin:binding [ coin:variable "fs";
     #            coin:property rpubl:forfattningssamling;
     #            coin:slugFrom :abbrSlug;
     #        ], [ coin:property rpubl:platsangivelse ]
     ], [
         coin:uriTemplate "/publ/{fs}/{arsutgava}:bih_{bihang}_s_{sidnummer}";
-        coin:component [ coin:variable "fs";
+        coin:binding [ coin:variable "fs";
                 coin:property rpubl:forfattningssamling;
                 coin:slugFrom :abbrSlug;
             ], [ coin:variable "arsutgava";
@@ -63,7 +65,7 @@
             ]
     ], [
         coin:uriTemplate "/publ/{fs}/{arsutgava}:bih_{bihang}";
-        coin:component [ coin:variable "fs";
+        coin:binding [ coin:variable "fs";
                 coin:property rpubl:forfattningssamling;
                 coin:slugFrom :abbrSlug;
             ], [ coin:variable "arsutgava";
@@ -76,7 +78,7 @@
     # Allmänna råd utgivna i egen serie
     [
         coin:uriTemplate "/publ/ar/{serie}/{arsutgava}:{lopnummer}";
-        coin:component [ coin:variable "serie";
+        coin:binding [ coin:variable "serie";
                 coin:property rpubl:allmannaRadSerie;
                 coin:slugFrom :abbrSlug;
             ], [
@@ -95,7 +97,7 @@
 
     [
         coin:uriTemplate "/publ/{rtype}/{arsutgava}:{lopnummer}";
-        coin:component [ coin:variable "rtype";
+        coin:binding [ coin:variable "rtype";
                 coin:property rdf:type;
                 coin:slugFrom :abbrSlug;
             ], [
@@ -107,7 +109,7 @@
 
     [
         coin:uriTemplate "/publ/utr/{serie}/{arsutgava}:{lopnummer}";
-        coin:component [ coin:variable "serie";
+        coin:binding [ coin:variable "serie";
                 coin:property rpubl:utrSerie;
                 coin:slugFrom :abbrSlug;
             ], [
@@ -121,7 +123,7 @@
     [
         coin:uriTemplate "/publ/rf/{serie}/{arsutgava}/not/{notisserie}_{lopnummer}";
         coin:forType rpubl:Rattsfallsnotis;
-        coin:component [ coin:variable "serie";
+        coin:binding [ coin:variable "serie";
                 coin:property rpubl:rattsfallspublikation;
                 coin:slugFrom :abbrSlug;
             ], [
@@ -134,7 +136,7 @@
     ], [
         coin:uriTemplate "/publ/rf/{serie}/{arsutgava}/not/{lopnummer}";
         coin:forType rpubl:Rattsfallsnotis;
-        coin:component [ coin:variable "serie";
+        coin:binding [ coin:variable "serie";
                 coin:property rpubl:rattsfallspublikation;
                 coin:slugFrom :abbrSlug;
             ], [
@@ -144,7 +146,7 @@
             ]
     ], [
         coin:uriTemplate "/publ/rf/{serie}/{arsutgava}_{referatserie}:{lopnummer}";
-        coin:component [ coin:variable "serie";
+        coin:binding [ coin:variable "serie";
                 coin:property rpubl:rattsfallspublikation;
                 coin:slugFrom :abbrSlug;
             ], [
@@ -156,7 +158,7 @@
             ]
     ], [
         coin:uriTemplate "/publ/rf/{serie}/{arsutgava}:{lopnummer}";
-        coin:component [ coin:variable "serie";
+        coin:binding [ coin:variable "serie";
                 coin:property rpubl:rattsfallspublikation;
                 coin:slugFrom :abbrSlug;
             ], [
@@ -166,7 +168,7 @@
             ]
     ], [
         coin:uriTemplate "/publ/rf/{serie}/{arsutgava}/s_{sidnummer}";
-        coin:component [ coin:variable "serie";
+        coin:binding [ coin:variable "serie";
                 coin:property rpubl:rattsfallspublikation;
                 coin:slugFrom :abbrSlug;
             ], [
@@ -180,7 +182,7 @@
     [
         coin:uriTemplate "/publ/avg/{publisher}/{diarienummer}";
         coin:forType rpubl:VagledandeMyndighetsavgorande;
-        coin:component [ coin:variable "publisher";
+        coin:binding [ coin:variable "publisher";
                 coin:property dct:publisher;
                 coin:slugFrom :abbrSlug;
             ] , [ coin:variable "diarienummer";
@@ -189,7 +191,7 @@
     ], [
         coin:uriTemplate "/publ/dom/{publisher}/{malnummer}/{avgorandedatum}";
         coin:forType rpubl:VagledandeDomstolsavgorande;
-        coin:component [ coin:variable "publisher";
+        coin:binding [ coin:variable "publisher";
                 coin:property dct:publisher;
                 coin:slugFrom :abbrSlug;
             ], [ coin:variable "malnummer";
@@ -204,35 +206,35 @@
         coin:relToBase rpubl:konsoliderar;
         # TODO: appendTemplate?
         coin:uriTemplate "{+base}/konsolidering/{issued}";
-        coin:component [ coin:property dct:issued ]
+        coin:binding [ coin:property dct:issued ]
     ], [
         coin:relToBase rpubl:rattningAv;
         # TODO: appendTemplate?
         coin:uriTemplate "{+base}/rattelse/{issued}";
-        coin:component [ coin:property dct:issued ]
+        coin:binding [ coin:property dct:issued ]
     ], [
         coin:relFromBase rpubl:paragraf;
         coin:fragmentTemplate "p_{paragrafnummer}";
-        coin:component [ coin:property rpubl:paragrafnummer ]
+        coin:binding [ coin:property rpubl:paragrafnummer ]
     ], [
         coin:relFromBase rpubl:kapitel;
         coin:fragmentTemplate "k_{kapitelnummer}";
-        coin:component [ coin:property rpubl:kapitelnummer ]
+        coin:binding [ coin:property rpubl:kapitelnummer ]
     ], [
         coin:relFromBase rpubl:bilaga;
         coin:fragmentTemplate "bilaga_{repr}";
         # TODO: externally provided ordinal..
-        coin:component [ coin:variable "repr"; coin:property dct:title, rdfs:label ]
+        coin:binding [ coin:variable "repr"; coin:property dct:title, rdfs:label ]
     ],
 
     # other (non core publication) resources
     [
         coin:uriTemplate "/ext/eur-lex/{celexNummer}";
-        coin:component [ coin:property rpubl:celexNummer ]
+        coin:binding [ coin:property rpubl:celexNummer ]
     ], [
         coin:uriTemplate "/org/{name}";
         coin:forType foaf:Organization;
-        coin:component [ coin:property foaf:name ]
+        coin:binding [ coin:property foaf:name ]
 
     ] .
 

@@ -1,6 +1,6 @@
 @prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
 @prefix coin: <http://purl.org/court/def/2009/coin#> .
-@prefix : <http://rinfo.lagrummet.se/sys/uri/scheme#> .
+@prefix : <http://rinfo.lagrummet.se/sys/uri/space#> .
 
 # Rättsinformationsdokumentstyper
 rpubl:Proposition :abbrSlug "prop" .

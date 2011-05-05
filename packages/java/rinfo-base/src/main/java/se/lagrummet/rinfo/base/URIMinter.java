@@ -19,16 +19,16 @@ import net.sf.json.JSONSerializer;
 
 public class URIMinter {
 
-    CoinScheme scheme;
+    CoinURISpace space;
     public static final String BASE_CHAR_MAP_PATH =
             "/uriminter/unicodebasechars-scandinavian.json";
 
-    public URIMinter(Repository repo, String schemeUri) {
+    public URIMinter(Repository repo, String spaceUri) {
         try {
             RepositoryConnection conn = repo.getConnection();
             try {
-                Description desc = newDescriber(conn).newDescription(schemeUri);
-                scheme = new CoinScheme(desc, loadBaseCharMap(BASE_CHAR_MAP_PATH));
+                Description desc = newDescriber(conn).newDescription(spaceUri);
+                space = new CoinURISpace(desc, loadBaseCharMap(BASE_CHAR_MAP_PATH));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } finally {
@@ -80,8 +80,9 @@ public class URIMinter {
             Map<String, List<String>> resultMap =
                     new HashMap<String, List<String>>();
             Describer describer = newDescriber(conn);
+            // TODO:IMPROVE: add to Set first (subjects may occur multiple times)
             for (Description desc : describer.subjects(null, null)) {
-                List<String> uris = scheme.coinUris(desc);
+                List<String> uris = space.coinUris(desc);
                 if (uris != null) {
                     resultMap.put(desc.getAbout(), uris);
                 }
@@ -93,7 +94,7 @@ public class URIMinter {
     }
 
 
-    static class CoinScheme {
+    static class CoinURISpace {
 
         List<CoinTemplate> templates = new ArrayList<CoinTemplate>();
         Map<String, Map<String, String>> slugMappings =
@@ -103,26 +104,26 @@ public class URIMinter {
 
         String base;
         String fragmentSeparator;
-        boolean lowerCasedTranslation;
-        boolean baseCharTranslation;
+        boolean lowerCasedTransform;
+        boolean baseCharTransform;
         String spaceRepl = "_";
 
-        CoinScheme(Description desc, Map<String, String> baseCharMap) {
+        CoinURISpace(Description desc, Map<String, String> baseCharMap) {
             this.baseCharMap = baseCharMap;
             base = desc.getString("coin:base");
             fragmentSeparator = desc.getString("coin:fragmentSeparator");
             for (Description tdesc : desc.getRels("coin:template")) {
                 templates.add(new CoinTemplate(this, tdesc));
             }
-            Description slugTransl = desc.getRel("coin:slugTranslation");
+            Description slugTransl = desc.getRel("coin:slugTransform");
             if (slugTransl != null) {
-              for (Description type : slugTransl.getTypes()) {
-                  if (type.getAbout().equals(
-                          desc.expandCurie("coin:LowerCasedTranslation")))
-                      lowerCasedTranslation = true;
-                  if (type.getAbout().equals(
-                          desc.expandCurie("coin:BaseCharTranslation")))
-                      baseCharTranslation = true;
+              for (Description transform : slugTransl.getRels("coin:apply")) {
+                  if (transform.getAbout().equals(
+                          desc.expandCurie("coin:ToLowerCase")))
+                      lowerCasedTransform = true;
+                  if (transform.getAbout().equals(
+                          desc.expandCurie("coin:ToBaseChar")))
+                      baseCharTransform = true;
               }
               String slugSpaceRepl = slugTransl.getString("coin:spaceReplacement");
               if (slugSpaceRepl != null)
@@ -142,9 +143,9 @@ public class URIMinter {
         }
 
         String translateValue(String value) {
-            if (this.lowerCasedTranslation)
+            if (this.lowerCasedTransform)
                 value = value.toString().toLowerCase();
-            if (this.baseCharTranslation)
+            if (this.baseCharTransform)
                 value = toBaseChars(value);
             if (this.spaceRepl != null)
                 value = value.replace(" ", this.spaceRepl);
@@ -168,21 +169,21 @@ public class URIMinter {
 
     static class CoinTemplate {
 
-        CoinScheme scheme;
+        CoinURISpace space;
         String forType;
         String uriTemplate;
         String relToBase;
         String relFromBase;
-        List<CoinComponent> components = new ArrayList<CoinComponent>();
+        List<CoinBinding> bindings = new ArrayList<CoinBinding>();
 
-        CoinTemplate(CoinScheme scheme, Description desc) {
-            this.scheme = scheme;
+        CoinTemplate(CoinURISpace space, Description desc) {
+            this.space = space;
             forType = desc.getObjectUri("coin:forType");
             uriTemplate = desc.getString("coin:uriTemplate");
             relToBase = desc.getObjectUri("coin:relToBase");
             relFromBase = desc.getObjectUri("coin:relFromBase");
-            for (Description cmp : desc.getRels("coin:component")) {
-                components.add(new CoinComponent(this, cmp));
+            for (Description cmp : desc.getRels("coin:binding")) {
+                bindings.add(new CoinBinding(this, cmp));
             }
         }
 
@@ -195,13 +196,13 @@ public class URIMinter {
                     return null;
             }
             Map<String, String> matches = new HashMap<String, String>();
-            for (CoinComponent component : components) {
-                String match = component.findMatch(desc);
+            for (CoinBinding binding : bindings) {
+                String match = binding.findMatch(desc);
                 if (match != null) {
-                    matches.put(component.variable, match);
+                    matches.put(binding.variable, match);
                 }
             }
-            if (matches.size() < components.size()) {
+            if (matches.size() < bindings.size()) {
                 return null;
             }
             return buildUri(determineBase(desc), matches);
@@ -216,7 +217,7 @@ public class URIMinter {
                 Description baseRev = desc.getRev(relFromBase);
                 return (baseRev != null)? baseRev.getAbout() : null;
             }
-            return scheme.base;
+            return space.base;
         }
 
         String buildUri(String base, Map<String, String> matches) {
@@ -229,7 +230,7 @@ public class URIMinter {
             expanded = expanded.replace("{+base}", base);
             for (Map.Entry<String,String> entry : matches.entrySet()) {
                 String var = "{"+entry.getKey()+"}";
-                String value = scheme.translateValue(entry.getValue());
+                String value = space.translateValue(entry.getValue());
                 expanded = expanded.replace(var, value);
             }
             // TODO: if (expanded.indexOf("{") > -1)
@@ -242,14 +243,14 @@ public class URIMinter {
 
     }
 
-    static class CoinComponent {
+    static class CoinBinding {
 
         CoinTemplate tplt;
         String property;
         String variable;
         String slugFrom;
 
-        CoinComponent(CoinTemplate tplt, Description desc) {
+        CoinBinding(CoinTemplate tplt, Description desc) {
             this.tplt = tplt;
             property = desc.getObjectUri("coin:property");
             variable = desc.getString("coin:variable");
@@ -257,10 +258,10 @@ public class URIMinter {
                 variable = getLeaf(property);
             slugFrom = desc.getObjectUri("coin:slugFrom");
             if (slugFrom != null) {
-                Map<String, String> slugMap = tplt.scheme.slugMappings.get(slugFrom);
+                Map<String, String> slugMap = tplt.space.slugMappings.get(slugFrom);
                 if (slugMap == null) {
                     slugMap = new HashMap<String, String>();
-                    tplt.scheme.slugMappings.put(slugFrom, slugMap);
+                    tplt.space.slugMappings.put(slugFrom, slugMap);
                 }
                 for (Description slugged : desc.getDescriber().
                         subjects(slugFrom, null)) {
@@ -277,7 +278,7 @@ public class URIMinter {
                 String v = rel.getString(slugFrom);
                 if (v != null)
                     return v;
-                Map<String, String> slugMap = tplt.scheme.slugMappings.get(slugFrom);
+                Map<String, String> slugMap = tplt.space.slugMappings.get(slugFrom);
                 if (slugMap != null) {
                     return slugMap.get(rel.getAbout());
                 }
@@ -298,24 +299,24 @@ public class URIMinter {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 3) {
-            System.out.println("Usage: <scheme-uri> <base-data> <doc>");
+            System.out.println("Usage: <space-uri> <base-data> <doc>");
             System.exit(1);
         }
-        String schemeUri = args[0];
-        String schemeDataDir = args[1];
+        String spaceUri = args[0];
+        String spaceDataDir = args[1];
         List<String> docPaths = Arrays.asList(args).subList(2, args.length);
 
         //String baseCharMapPath = args[0];
-        System.out.println("// Reading scheme data..");
+        System.out.println("// Reading space data..");
         Date time = new Date();
-        Repository schemeRepo = RDFUtil.slurpRdf(schemeDataDir);
+        Repository spaceRepo = RDFUtil.slurpRdf(spaceDataDir);
         double diff = (new Date().getTime() - time.getTime()) / 1000.0;
-        System.out.println("// Read scheme data in "+diff+" s.");
+        System.out.println("// Read space data in "+diff+" s.");
 
-        System.out.println("// Configuring from scheme data..");
+        System.out.println("// Configuring from space data..");
         time = new Date();
-        URIMinter uriMinter = new URIMinter(schemeRepo, schemeUri);//, baseCharMapPath);
-        schemeRepo.shutDown();
+        URIMinter uriMinter = new URIMinter(spaceRepo, spaceUri);//, baseCharMapPath);
+        spaceRepo.shutDown();
         diff = (new Date().getTime() - time.getTime()) / 1000.0;
         System.out.println("// Configured in "+diff+" s.");
 

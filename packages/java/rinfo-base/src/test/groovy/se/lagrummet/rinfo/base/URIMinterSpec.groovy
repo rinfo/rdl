@@ -19,8 +19,8 @@ class URIMinterSpec extends Specification {
     def setupSpec() {
         def baseDir = "../../../resources/base"
         def repo = RDFUtil.slurpRdf("${baseDir}/sys/uri")
-        def schemeUri = "http://rinfo.lagrummet.se/sys/uri/scheme#"
-        uriMinter = new URIMinter(repo, schemeUri)
+        def coinSpaceUri = "http://rinfo.lagrummet.se/sys/uri/space#"
+        uriMinter = new URIMinter(repo, coinSpaceUri)
         def minterDir = "${baseDir}/uri_algorithm"
         testFeedPath = "${minterDir}/tests/publ.atom"
     }

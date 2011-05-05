@@ -148,8 +148,8 @@ class Builder {
                     "${resourceDir}/base/model/rinfo_publ.n3",
                     "${resourceDir}/base/extended/rdf/"],
                 ["${resourceDir}/external/xslt/grit/rdfxml-grit.xslt",
-                    "${sourceDir}/templates/coinscheme.xslt"],
-                buildDir+"/urischeme.xhtml", false)
+                    "${sourceDir}/templates/coinspace.xslt"],
+                buildDir+"/urispace.xhtml", false)
     }
 
     void transformRdfToXhtml(rdfPaths, xslts, outPath, makePdf=true) {

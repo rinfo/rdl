@@ -20,19 +20,18 @@
     <xsl:template match="/graph">
         <html>
             <head>
-                <title>CoinScheme</title>
+                <title>URISpace</title>
                 <link rel="stylesheet" type="text/css" href="css/dv.css" />
             </head>
             <body>
-                <xsl:apply-templates select="resource[a/coin:CoinScheme]"/>
+                <xsl:apply-templates select="resource[a/coin:URISpace]"/>
             </body>
         </html>
     </xsl:template>
 
-    <xsl:template match="resource[a/coin:CoinScheme]">
-        <xsl:variable name="sep" select="coin:separator"/>
-        <div class="coinscheme">
-            <h1>URI-myntningsschema</h1>
+    <xsl:template match="resource[a/coin:URISpace]">
+        <div class="urispace">
+            <h1>URI-myntningsregler</h1>
             <p>
                 <xsl:text>Bas-URI: </xsl:text>
                 <span id="baseuri">
@@ -46,7 +45,7 @@
                             not(coin:relToBase | coin:relFromBase)]">
                     <xsl:sort select="starts-with(coin:uriTemplate, '/publ')" order="descending"/>
                     <xsl:sort select="substring-before(coin:uriTemplate, '}')"/>
-                    <xsl:sort select="count(coin:component)"/>
+                    <xsl:sort select="count(coin:binding)"/>
                     <xsl:sort select="coin:uriTemplate"/>
                     <xsl:apply-templates select=".">
                         <xsl:with-param name="last" select="position() = last()"/>
@@ -101,7 +100,7 @@
                     <th>Variabel</th>
                     <th>Egenskap</th>
                 </tr>
-                <xsl:for-each select="coin:component">
+                <xsl:for-each select="coin:binding">
                     <!-- TODO:IMPROVE: this sort expression is quite slow! -->
                     <xsl:sort select="count(str:tokenize(
                               substring-before(../coin:uriTemplate,
@@ -159,7 +158,7 @@
                             select="key('rel', coin:relToBase/@ref)/owl:inverseOf/rdfs:label |
                                     key('rel', coin:relToBase/@ref)/owl:inverseOf/@ref"/>
                         &#8594;
-                        { <xsl:apply-templates select="coin:component/coin:property/@ref"/> }
+                        { <xsl:apply-templates select="coin:binding/coin:property/@ref"/> }
                     </p>
                 </xsl:when>
                 <xsl:when test="coin:fragmentTemplate">
@@ -170,7 +169,7 @@
                         &#8596;
                         <xsl:apply-templates select="coin:relFromBase/@ref"/>
                         &#8594;
-                        { <xsl:apply-templates select="coin:component/coin:property/@ref"/> }
+                        { <xsl:apply-templates select="coin:binding/coin:property/@ref"/> }
                     </p>
                     <!--
                     <xsl:apply-templates select="coin:fragmentTemplate"/>
@@ -182,15 +181,8 @@
 
     <xsl:template name="slugsets">
         <div id="slugsets">
-            <!--
-            <xsl:for-each select="$r[a/coin:TokenSet and
-                        coin:scheme/@ref = current()/@uri]">
-                <xsl:sort select="rdfs:label"/>
-                <xsl:apply-templates select="."/>
-            </xsl:for-each>
-            -->
             <xsl:variable name="slugprop-refs"
-                          select="set:distinct(coin:template/coin:component/coin:slugFrom/@ref)"/>
+                          select="set:distinct(coin:template/coin:binding/coin:slugFrom/@ref)"/>
             <xsl:variable name="slugged-resources" select="$r[*[self:is-referenced(., $slugprop-refs)]]"/>
             <xsl:variable name="slugged-type-refs"
                           select="set:distinct(dyn:map($slugged-resources/a/*,
