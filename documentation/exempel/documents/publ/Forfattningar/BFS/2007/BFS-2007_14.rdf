@@ -7,7 +7,7 @@
     <Myndighetsforeskrift rdf:about="http://rinfo.lagrummet.se/publ/bfs/2007:14">
         <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/bfs"/>
         <arsutgava>2007</arsutgava>
-        <lopnummer>4</lopnummer>
+        <lopnummer>14</lopnummer>
         <dct:identifier>BFS 2007:14</dct:identifier>
         <dct:title xml:lang="sv">Boverkets föreskrifter om ändring i
             föreskrifterna och de allmänna råden (BFS 2007:4) om

@@ -3,7 +3,7 @@
          xmlns:dct="http://purl.org/dc/terms/"
          xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
 
-  <Forordning rdf:about="http://rinfo.lagrummet.se/publ/sfs/1899:bih._40_s._3">
+  <Forordning rdf:about="http://rinfo.lagrummet.se/publ/sfs/1899:bih_40_s_3">
 
     <!-- identifiering -->
     <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>

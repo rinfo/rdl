@@ -73,7 +73,7 @@
 
         <!-- Information om bilagor som i detta fall är en del av dokumentet -->
         <bilaga>
-            <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga_1">
+            <rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/livsfs/2007:4#bilaga_1">
                 <dct:title>Bilaga 1</dct:title>
             </rdf:Description>
         </bilaga>
