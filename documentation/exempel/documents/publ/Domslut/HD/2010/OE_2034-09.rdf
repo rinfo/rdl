@@ -8,7 +8,7 @@
   <!-- notera att "Ö" översatts till "oe" när identifieraren för detta
        rättsfall skapats -->
   <VagledandeDomstolsavgorande
-     rdf:about="http://rinfo.lagrummet.se/publ/dom/hd/oe2034-09/2010-03-31">
+     rdf:about="http://rinfo.lagrummet.se/publ/dom/hd/oe_2034-09/2010-03-31">
     <avgorandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
        >2010-03-31</avgorandedatum>
     <domstolsavdelning xml:lang="sv">2</domstolsavdelning>
