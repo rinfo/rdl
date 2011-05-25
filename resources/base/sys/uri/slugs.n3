@@ -22,6 +22,8 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/org/hovraetten_foer_nedre_norrland> :abbrSlug "hnn" .
 <http://rinfo.lagrummet.se/org/hovraetten_foer_oevre_norrland> :abbrSlug "hon" .
 <http://rinfo.lagrummet.se/org/miljoeoeverdomstolen> :abbrSlug "mod" .
+<http://rinfo.lagrummet.se/org/mark-_och-miljoeoeverdomstolen> :abbrSlug "mmd" .
+<http://rinfo.lagrummet.se/org/hoegsta_foervaltningsdomstolen> :abbrSlug "hfd" .
 <http://rinfo.lagrummet.se/org/regeringsraetten> :abbrSlug "regr" .
 <http://rinfo.lagrummet.se/org/kammarraetten_i_stockholm> :abbrSlug "kst" .
 <http://rinfo.lagrummet.se/org/kammarraetten_i_goeteborg> :abbrSlug "kgg" .
@@ -138,12 +140,13 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/rf/rk> :abbrSlug "rk" .
 <http://rinfo.lagrummet.se/serie/rf/mod> :abbrSlug "mod" .
 <http://rinfo.lagrummet.se/serie/rf/ra> :abbrSlug "ra" .
+<http://rinfo.lagrummet.se/serie/rf/hfd> :abbrSlug "hfd" .
 <http://rinfo.lagrummet.se/serie/rf/mig> :abbrSlug "mig" .
 <http://rinfo.lagrummet.se/serie/rf/ad> :abbrSlug "ad" .
 <http://rinfo.lagrummet.se/serie/rf/md> :abbrSlug "md" .
 <http://rinfo.lagrummet.se/serie/rf/fod> :abbrSlug "fod" .
 
-# Allmänna råd-serier
+# Allmänna råd-serier (inte komplett)
 <http://rinfo.lagrummet.se/serie/ar/fkar> :abbrSlug "fkar" .
 <http://rinfo.lagrummet.se/serie/ar/far> :abbrSlug "far" .
 <http://rinfo.lagrummet.se/serie/ar/bfnar> :abbrSlug "bfnar" .

@@ -55,6 +55,11 @@
     skos:altLabel "RÅ"@sv;
     skos:prefLabel "Regeringsrättens årsbok"@sv .
 
+<http://rinfo.lagrummet.se/serie/rf/hfd> a :Rattsfallspublikation;
+    skos:altLabel "HFD"@sv;
+    skos:prefLabel "Högsta förvaltningsdomstolens årsbok"@sv;
+    rdfs:seeAlso <http://rinfo.lagrummet.se/serie/rf/ra> .
+
 <http://rinfo.lagrummet.se/serie/rf/mig> a :Rattsfallspublikation;
     skos:altLabel "MIG"@sv;
     skos:prefLabel "Migrationsöverdomstolen"@sv .

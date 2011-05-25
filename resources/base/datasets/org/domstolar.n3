@@ -4,7 +4,8 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
-# Domstolar
+# Domstolar (endast sådana som skapar vägledande avgöranden, dvs inte
+# tings- och förvaltningsrätter, eller hyres- och arrendenämnderna)
 
 <http://rinfo.lagrummet.se/org/hoegsta_domstolen>
     a foaf:Organization;
@@ -38,9 +39,23 @@
     a foaf:Organization;
     foaf:name "Miljööverdomstolen"@sv .
 
+# NB: Denna domstol övertar allt från miljööverdomstolen, och
+# fortsätter publicera i samma författningssamling (som väl inte ges
+# ut fysiskt). Därför finns ingen ny :Rattsfallspublikation i
+# ../serie/rf.n3
+<http://rinfo.lagrummet.se/org/mark-_och-miljoeoeverdomstolen>
+    a foaf:Organization;
+    foaf:name "Mark- och miljööverdomstolen"@sv;
+    rdfs:seeAlso <http://rinfo.lagrummet.se/org/miljoeoeverdomstolen> .
+
 <http://rinfo.lagrummet.se/org/regeringsraetten>
     a foaf:Organization;
     foaf:name "Regeringsrätten"@sv .
+
+<http://rinfo.lagrummet.se/org/hoegsta_foervaltningsdomstolen>
+    a foaf:Organization;
+    foaf:name "Högsta förvaltningsdomstolen"@sv ;
+    rdfs:seeAlso <http://rinfo.lagrummet.se/org/regeringsraetten> .
 
 <http://rinfo.lagrummet.se/org/kammarraetten_i_stockholm>
     a foaf:Organization;
