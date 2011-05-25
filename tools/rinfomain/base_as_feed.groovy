@@ -128,7 +128,7 @@ def collectItems(baseUri, base, sources) {
                 ["n3"] as String[], true))
 
     addItem datasetItem(baseUri, "sys/uri", [
-            new File(base, "sys/uri/scheme.n3"),
+            new File(base, "sys/uri/space.n3"),
             new File(base, "sys/uri/slugs.n3")
         ])
 
