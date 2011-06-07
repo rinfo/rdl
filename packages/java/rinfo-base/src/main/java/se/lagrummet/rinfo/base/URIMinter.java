@@ -14,7 +14,7 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.model.URI;
 
-import net.sf.json.JSONSerializer;
+import org.codehaus.jackson.map.ObjectMapper;
 
 
 public class URIMinter {
@@ -40,13 +40,12 @@ public class URIMinter {
     }
 
     public Map<String, String> loadBaseCharMap(String jsonPath) throws IOException {
-        String encoding = "UTF-8";
         InputStream charMapInStream =
                 getClass().getResourceAsStream(jsonPath);
         Map<String, String> baseCharMap = null;
+        ObjectMapper mapper = new ObjectMapper();
         try {
-            baseCharMap = (Map) JSONSerializer.toJSON(
-                    IOUtils.toString(charMapInStream, encoding));
+            baseCharMap = mapper.readValue(charMapInStream, Map.class);
         } finally {
             charMapInStream.close();
         }
