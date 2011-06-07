@@ -42,7 +42,12 @@ class RDFCheckerSpec extends Specification {
         1       | MalformedURIRefErrorItem      | /Illegal character in authority/
         2       | DatatypeErrorItem             | /Invalid value \d+ for \w+ field/
         3       | MissingTypeWarnItem           | null
-        7       | SpuriousWhiteSpaceWarnItem    | null
+        4       | UnknownTypeWarnItem           | null
+        5       | UnknownPropertyWarnItem       | null
+        6       | UnexpectedDatatypeErrorItem   | null
+        7       | ExpectedLangErrorItem         | null
+        8       | ExpectedLangErrorItem         | null
+        9       | SpuriousWhiteSpaceWarnItem    | null
     }
 
 }
