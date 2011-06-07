@@ -186,8 +186,12 @@ public class Describer {
         }
     }
 
+    public List<Triple> triples() {
+      return triples(null);
+    }
+
     public List<Triple> triples(String sUri) {
-        Resource s = toRef(sUri);
+        Resource s = sUri != null? toRef(sUri) : null;
         try {
             RepositoryResult<Statement> stmts = conn.getStatements(s, null, null,
                     inferred, contextRefs);
