@@ -1,0 +1,32 @@
+{
+    "prefixes": {
+        "dct": "http://purl.org/dc/terms/",
+        "": "http://example.org/def/vocab#"
+    },
+    "classes": {
+        "Document": {}
+    },
+    "properties": {
+        "token": {},
+        "dct:title": {
+            "requireLang": "en",
+            "strictWhitespace": true
+        },
+        "dct:created": {
+            "datatype": "xsd:date"
+        },
+        "dct:issued": {
+            "datatype": "xsd:date"
+        },
+        "dct:references": {
+            "reference": true
+        },
+        "changes": {
+            "reference": true,
+            "usePattern": "fsPubl"
+        }
+    },
+    "patterns": {
+        "fsPubl": "http://rinfo.lagrummet.se/publ/[0-9a-z]+fs/[1-9][0-9/]+:\\w+"
+    }
+}
