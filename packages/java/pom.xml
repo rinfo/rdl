@@ -393,6 +393,12 @@
         <classifier>jdk15</classifier>
       </dependency>
 
+      <dependency>
+        <groupId>org.codehaus.jackson</groupId>
+        <artifactId>jackson-mapper-asl</artifactId>
+        <version>1.8.1</version>
+      </dependency>
+
       <!-- }}} -->
 
       <!-- Test scope {{{ -->
