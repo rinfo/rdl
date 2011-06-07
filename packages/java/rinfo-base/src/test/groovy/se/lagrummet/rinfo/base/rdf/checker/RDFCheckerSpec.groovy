@@ -32,11 +32,11 @@ class RDFCheckerSpec extends Specification {
         when:
         def report = checker.check(repo, "http://example.org/publ/${id}")
         then:
-        report.items.size() == 1
         def item = report.items[0]
         item.class.is failureType
         if (messageMatches)
             assert item.error.message =~ messageMatches
+        report.items.size() == 1
         where:
         id      | failureType                   | messageMatches
         1       | MalformedURIRefErrorItem      | /Illegal character in authority/
@@ -48,6 +48,7 @@ class RDFCheckerSpec extends Specification {
         7       | ExpectedLangErrorItem         | null
         8       | ExpectedLangErrorItem         | null
         9       | SpuriousWhiteSpaceWarnItem    | null
+        10      | PatternMismatchErrorItem      | null
     }
 
 }

@@ -1,35 +1,35 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dct: <http://purl.org/dc/terms/> .
-@prefix ex: <http://example.org/def/vocab#> .
+@prefix : <http://example.org/def/vocab#> .
 
-<http://example.org/publ/1> a ex:Document;
+<http://example.org/publ/1> a :Document;
     dct:references <http:// error> . # bad URI
 
-<http://example.org/publ/2> a ex:Document;
+<http://example.org/publ/2> a :Document;
     dct:created "2011-16-10"^^xsd:date . # datatype error
 
 <http://example.org/publ/3> dct:title "a title"@en . # no class
 
-<http://example.org/publ/4> a ex:DocumentZZ . # undefined class
+<http://example.org/publ/4> a :DocumentZZ . # undefined class
 
-<http://example.org/publ/5> a ex:Document;
-    ex:tokenZZ "token" . # undefined property
+<http://example.org/publ/5> a :Document;
+    :tokenZZ "token" . # undefined property
 
-<http://example.org/publ/6> a ex:Document;
+<http://example.org/publ/6> a :Document;
     dct:issued "2011-06-01"@en . # language where datatype (date) expected
 
-<http://example.org/publ/7> a ex:Document;
+<http://example.org/publ/7> a :Document;
     dct:title "false"^^xsd:boolean . # datatype where language expected
 
-<http://example.org/publ/8> a ex:Document;
+<http://example.org/publ/8> a :Document;
     dct:title "no lang" . # no language where expected
 
-<http://example.org/publ/9> a ex:Document;
+<http://example.org/publ/9> a :Document;
     dct:title " a title"@en . # spurious whitespace
 
-<http://example.org/publ/10> a ex:Document;
-    dct:created "3011-06-10"^^xsd:date . # improbable value
+<http://example.org/publ/10> a :Document;
+    :changes <http://example.org/publ/NaN> . # unexpected uri pattern
 
-<http://example.org/publ/11> a ex:Document;
-    dct:isPartOf <http://example.org/seriesZZ/s1> . # unexpected uri segment seriesZZ
+<http://example.org/publ/11> a :Document;
+    dct:created "3011-06-10"^^xsd:date . # improbable value
 
