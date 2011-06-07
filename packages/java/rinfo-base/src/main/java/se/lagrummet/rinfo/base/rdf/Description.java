@@ -17,6 +17,7 @@ public class Description {
         return about;
     }
 
+
     public Describer getDescriber() {
         return describer;
     }
@@ -25,16 +26,19 @@ public class Description {
         return describer.expandCurie(curie);
     }
 
+
     public RDFLiteral getLiteral(String curie) {
         List<Object> values = getObjectValues(curie);
         return (values.size() != 0)? (RDFLiteral) values.get(0) : null;
     }
 
+    // TODO:? rename to getLexical?
     public String getString(String curie) {
         RDFLiteral literal = getLiteral(curie);
         return (literal != null)? literal.toString() : null;
     }
 
+    // TODO:? rename to get?
     public Object getNative(String curie) {
         RDFLiteral literal = getLiteral(curie);
         return (literal != null)? literal.toNativeValue() : null;
@@ -49,10 +53,12 @@ public class Description {
         return describer.triples(about);
     }
 
+    // TODO:? merge with getLexical?
     public String getObjectUri(String curie) {
         Description rel = getRel(curie);
         return (rel != null)? rel.getAbout() : null;
     }
+
 
     public Description getRel(String curie) {
         List<Description> descriptions = getRels(curie);
@@ -61,10 +67,6 @@ public class Description {
     public List<Description> getRels(String curie) {
         return describer.objects(about, curie);
     }
-    //public Description getRel(Description desc) {
-    //}
-    //public List<Description> getRels(Description desc) {
-    //}
 
     public Description getRev(String curie) {
         List<Description> descriptions = getRevs(curie);
@@ -73,10 +75,7 @@ public class Description {
     public List<Description> getRevs(String curie) {
         return describer.subjects(curie, about);
     }
-    //List<Description> getRev(Description desc) {
-    //}
-    //List<Description> getRevs(Description desc) {
-    //}
+
 
     public Description getType() {
         List<Description> types = getTypes();
