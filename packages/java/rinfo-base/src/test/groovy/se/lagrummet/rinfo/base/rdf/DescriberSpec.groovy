@@ -117,6 +117,21 @@ class DescriberSpec extends Specification {
         describer.objects(null, null).collect { it.about } == [o]
     }
 
+    def "should have map of property values"() {
+        given:
+        def describer = newDescriber()
+        def foafNickRef = describer.expandCurie("foaf:nick")
+        and:
+        def p = describer.newDescription("${ORG_URI}/persons/some_body#person")
+        p.addLiteral("foaf:nick", "somebody")
+        p.addLiteral("foaf:nick", "someone")
+        when:
+        def map = p.getPropertyValuesMap()
+        then:
+        map.keySet().toList() == [foafNickRef]
+        map[foafNickRef].collect { it as String }.sort() == ["somebody", "someone"]
+    }
+
     def "should find subject URIs by value"() {
         given:
         def describer = newDescriber()
@@ -127,7 +142,7 @@ class DescriberSpec extends Specification {
         describer.newDescription(s).addLiteral(prop, v)
 
         expect:
-        describer.subjectUrisByLiteral(prop, v) == [s]
+        describer.subjectUrisByLiteral(prop, v).toArray() == [s] as String[]
     }
 
     def "should created typed description"() {

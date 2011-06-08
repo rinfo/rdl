@@ -28,8 +28,9 @@ public class Description {
 
 
     public RDFLiteral getLiteral(String curie) {
-        List<Object> values = getObjectValues(curie);
-        return (values.size() != 0)? (RDFLiteral) values.get(0) : null;
+        Set<Object> values = getObjectValues(curie);
+        for (Object value : values) return (RDFLiteral) value;
+        return null;
     }
 
     // TODO:? rename to getLexical?
@@ -45,12 +46,25 @@ public class Description {
     }
 
     // TODO: consolidate with describer.objectValues and make getValues/getLiterals/getUris...
-    public List<Object> getObjectValues(String curie) {
+    public Set<Object> getObjectValues(String curie) {
         return describer.objectValues(about, curie);
     }
 
-    public List<Triple> getTriples() {
+    public Set<Triple> getTriples() {
         return describer.triples(about);
+    }
+
+    public Map<String, List<Object>> getPropertyValuesMap() {
+        Map<String, List<Object>> propsValues = new HashMap<String, List<Object>>();
+        for (Triple triple : getTriples()) {
+            List<Object> values = propsValues.get(triple.getProperty());
+            if (values == null) {
+                values = new ArrayList<Object>();
+                propsValues.put(triple.getProperty(), values);
+            }
+            values.add(triple.getObject());
+        }
+        return propsValues;
     }
 
     // TODO:? merge with getLexical?
@@ -61,27 +75,33 @@ public class Description {
 
 
     public Description getRel(String curie) {
-        List<Description> descriptions = getRels(curie);
-        return (descriptions.size() > 0)? descriptions.get(0) : null;
+        for (Description it : getRels(curie))
+          return it;
+        return null;
     }
-    public List<Description> getRels(String curie) {
+
+    public Set<Description> getRels(String curie) {
         return describer.objects(about, curie);
     }
 
     public Description getRev(String curie) {
-        List<Description> descriptions = getRevs(curie);
-        return (descriptions.size() > 0)? descriptions.get(0) : null;
+        for (Description it : getRevs(curie))
+          return it;
+        return null;
     }
-    public List<Description> getRevs(String curie) {
+
+    public Set<Description> getRevs(String curie) {
         return describer.subjects(curie, about);
     }
 
 
     public Description getType() {
-        List<Description> types = getTypes();
-        return (Description) ((types.size() > 0)? types.get(0) : null);
+        for (Description it : getTypes())
+          return it;
+        return null;
     }
-    public List<Description> getTypes() {
+
+    public Set<Description> getTypes() {
         return describer.objects(about, "rdf:type");
     }
 

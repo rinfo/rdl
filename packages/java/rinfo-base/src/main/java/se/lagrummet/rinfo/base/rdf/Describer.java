@@ -120,31 +120,31 @@ public class Describer {
         }
     }
 
-    public List<Description> subjects(String pCurie, String oUri) {
-        List<Description> things = new ArrayList<Description>();
+    public Set<Description> subjects(String pCurie, String oUri) {
+        Set<Description> things = new HashSet<Description>();
         for (Object ref : subjectUris(pCurie, oUri)) {
             things.add(newDescription((String) ref));
         }
         return things;
     }
 
-    public List<Object> subjectUris(String pCurie, String oUri) {
+    public Set<Object> subjectUris(String pCurie, String oUri) {
         Value o = (oUri != null)? toRef(oUri) : null;
         return subjectUrisByObject(pCurie, o);
     }
 
-    public List<Object> subjectUrisByLiteral(String pCurie, Object value) {
+    public Set<Object> subjectUrisByLiteral(String pCurie, Object value) {
         Value o = (value != null)? toLiteral(value) : null;
         return subjectUrisByObject(pCurie, o);
     }
 
-    protected List<Object> subjectUrisByObject(String pCurie, Value o) {
+    protected Set<Object> subjectUrisByObject(String pCurie, Value o) {
         org.openrdf.model.URI p = (pCurie != null)?
                 (org.openrdf.model.URI) toRef(expandCurie(pCurie)) : null;
         try {
             RepositoryResult<Statement> stmts = conn.getStatements(null, p, o,
                     inferred, contextRefs);
-            List<Object> values = new ArrayList<Object>();
+            Set<Object> values = new HashSet<Object>();
             while (stmts.hasNext()) {
                 values.add(castValue(stmts.next().getSubject()));
             }
@@ -155,27 +155,27 @@ public class Describer {
         }
     }
 
-    public List<Description> getByType(String typeCurie) {
+    public Set<Description> getByType(String typeCurie) {
         return subjects("rdf:type", expandCurie(typeCurie));
     }
 
 
-    public List<Description> objects(String sUri, String pCurie) {
-        List<Description> things = new ArrayList<Description>();
+    public Set<Description> objects(String sUri, String pCurie) {
+        Set<Description> things = new HashSet<Description>();
         for (Object ref : objectValues(sUri, pCurie)) {
             things.add(newDescription((String) ref));
         }
         return things;
     }
 
-    public List<Object> objectValues(String sUri, String pCurie) {
+    public Set<Object> objectValues(String sUri, String pCurie) {
         Resource s = (sUri != null)? toRef(sUri) : null;
         org.openrdf.model.URI p = (pCurie != null)?
                 (org.openrdf.model.URI) toRef(expandCurie(pCurie)) : null;
         try {
             RepositoryResult<Statement> stmts = conn.getStatements(s, p, null,
                     inferred, contextRefs);
-            List<Object> values = new ArrayList<Object>();
+            Set<Object> values = new HashSet<Object>();
             while (stmts.hasNext()) {
                 values.add(castValue(stmts.next().getObject()));
             }
@@ -186,16 +186,16 @@ public class Describer {
         }
     }
 
-    public List<Triple> triples() {
+    public Set<Triple> triples() {
       return triples(null);
     }
 
-    public List<Triple> triples(String sUri) {
+    public Set<Triple> triples(String sUri) {
         Resource s = sUri != null? toRef(sUri) : null;
         try {
             RepositoryResult<Statement> stmts = conn.getStatements(s, null, null,
                     inferred, contextRefs);
-            List<Triple> values = new ArrayList<Triple>();
+            Set<Triple> values = new HashSet<Triple>();
             while (stmts.hasNext()) {
                 Statement stmt = stmts.next();
                 Triple triple = new Triple(this, sUri,
