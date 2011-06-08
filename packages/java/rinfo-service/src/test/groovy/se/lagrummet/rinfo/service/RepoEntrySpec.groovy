@@ -56,7 +56,7 @@ class RepoEntrySpec extends Specification {
 
     def "should add entry for resource"() {
         given:
-        def atomEntry = desc.subjects("foaf:primaryTopic", resourceUri)[0]
+        def atomEntry = desc.subjects("foaf:primaryTopic", resourceUri).toList()[0]
         expect:
         atomEntry.type.about == desc.expandCurie("awol:Entry")
         atomEntry.getString("awol:updated") == updated
@@ -67,7 +67,7 @@ class RepoEntrySpec extends Specification {
     def "should add statistics for resource"() {
         given:
         def statsDesc = repoEntry.entryStats.desc
-        def statItem = statsDesc.getByType("scv:Item")[0]
+        def statItem = statsDesc.getByType("scv:Item").toList()[0]
 
         /*
         expect:
