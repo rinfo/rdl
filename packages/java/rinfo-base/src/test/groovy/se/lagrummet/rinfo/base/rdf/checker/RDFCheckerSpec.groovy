@@ -27,10 +27,10 @@ class RDFCheckerSpec extends Specification {
         checker.schemaInfo.propertyMap
     }
 
-    @Unroll("checking resource #id")
-    def "should check rdf"() {
+    @Unroll("checking resource #name")
+    def "problematic data"() {
         when:
-        def report = checker.check(repo, "http://example.org/publ/${id}")
+        def report = checker.check(repo, "http://example.org/publ/${name}")
         then:
         def item = report.items[0]
         item.class.is failureType
@@ -38,17 +38,29 @@ class RDFCheckerSpec extends Specification {
             assert item.error.message =~ messageMatches
         report.items.size() == 1
         where:
-        id      | failureType                   | messageMatches
-        1       | MalformedURIRefErrorItem      | /Illegal character in authority/
-        2       | DatatypeErrorItem             | /Invalid value \d+ for \w+ field/
-        3       | MissingTypeWarnItem           | null
-        4       | UnknownTypeWarnItem           | null
-        5       | UnknownPropertyWarnItem       | null
-        6       | UnexpectedDatatypeErrorItem   | null
-        7       | ExpectedLangErrorItem         | null
-        8       | ExpectedLangErrorItem         | null
-        9       | SpuriousWhiteSpaceWarnItem    | null
-        10      | PatternMismatchErrorItem      | null
+        name                    | failureType                   | messageMatches
+        "bad_uri"               | MalformedURIRefErrorItem      | /Illegal character in authority/
+        "datatype_error"        | DatatypeErrorItem             | /Invalid value \d+ for \w+ field/
+        "no_class"              | MissingTypeWarnItem           | null
+        "undefined_class"       | UnknownTypeWarnItem           | null
+        "undefined_property"    | UnknownPropertyWarnItem       | null
+        "lang_expected_date"    | UnexpectedDatatypeErrorItem   | null
+        "datatype_expected_lang"| ExpectedLangErrorItem         | null
+        "expected_lang"         | ExpectedLangErrorItem         | null
+        "spurious_whitespace"   | SpuriousWhiteSpaceWarnItem    | null
+        "unexpected_uri_pattern"| PatternMismatchErrorItem      | null
+        "improbable_future"     | PatternMismatchErrorItem      | null
+        "improbable_past"       | PatternMismatchErrorItem      | null
     }
 
+    def "ok data"() {
+        given:
+        def report = checker.check(repo, "http://example.org/publ/${name}")
+        expect:
+        report.items.size() == 0
+        where:
+        name << [
+            "ok_two_titles",
+        ]
+    }
 }

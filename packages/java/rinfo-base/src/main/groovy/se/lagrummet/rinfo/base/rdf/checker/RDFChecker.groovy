@@ -19,20 +19,14 @@ class RDFChecker {
 
     def schemaInfo = new SchemaInfo()
 
-    Report check(repo, mainUri=null) {
+    Report check(repo, mainUri) {
         def report = new Report()
         def describer = new Describer(repo.getConnection())
         try {
-            boolean hasType = false
-            // TODO: check all triples, not only for mainUri?
-            for (triple in describer.triples(mainUri)) {
-                if (triple.property == RDF_TYPE &&
-                        triple.subject == mainUri) {
-                    hasType = true
-                }
-                new TripleCheck(triple, report).run()
-            }
-            if (mainUri && !hasType) {
+            // TODO: check all/"descending" resources?
+            def desc = describer.findDescription(mainUri)
+            new ResourceCheck(desc, report).run()
+            if (mainUri != null && desc.getType() == null) {
                 report.add new MissingTypeWarnItem(mainUri)
             }
         } finally {
@@ -42,34 +36,61 @@ class RDFChecker {
     }
 
 
-    class TripleCheck {
+    class ResourceCheck {
 
-        Triple triple
+        Description desc
         Report report
 
-        TripleCheck(triple, report) {
-            this.triple = triple
+        ResourceCheck(desc, report) {
+            this.desc = desc
             this.report = report
         }
 
         void run() {
-            checkReference(triple.subject, null)
-            if (triple.property == RDF_TYPE) {
-                checkType(triple.object)
-            } else {
-                def propInfo = schemaInfo.propertyMap.get(triple.property)
-                if (propInfo == null) {
-                    report.add new UnknownPropertyWarnItem(triple.property)
-                } else
-                checkValue(triple.object, propInfo)
+            checkReference(desc.about, null)
+            for (entry in desc.getPropertyValuesMap().entrySet()) {
+                checkValues(entry.key, entry.value)
             }
         }
 
-        void checkValue(Object v, propInfo) {
-            if (v instanceof RDFLiteral) {
-                checkLiteral(v, propInfo)
+        void checkValues(property, values) {
+            if (property == RDF_TYPE) {
+                for (value in values) {
+                    checkType(value)
+                }
+                return
+            }
+            def propInfo = schemaInfo.propertyMap.get(property)
+            if (propInfo == null) {
+                report.add new UnknownPropertyWarnItem(property)
             } else {
-                checkReference(v, propInfo)
+                checkMultiple(propInfo, values)
+            }
+            for (value in values) {
+                checkValue(value, propInfo)
+            }
+        }
+
+        void checkMultiple(propInfo, values) {
+            if (propInfo.requireLang) {
+                checkRequiredLang(propInfo, values)
+            }
+        }
+
+        void checkRequiredLang(propInfo, values) {
+            for (literal in values) {
+                if (literal.lang == propInfo.requireLang) {
+                    return
+                }
+            }
+            report.add new ExpectedLangErrorItem(propInfo.requireLang)
+        }
+
+        void checkValue(Object value, propInfo) {
+            if (value instanceof RDFLiteral) {
+                checkLiteral(value, propInfo)
+            } else {
+                checkReference(value, propInfo)
             }
         }
 
@@ -86,10 +107,6 @@ class RDFChecker {
             }
             if (propInfo.datatype && propInfo.datatype != literal.datatype) {
                 report.add new UnexpectedDatatypeErrorItem(literal, propInfo.datatype)
-            }
-            if (propInfo.requireLang && propInfo.requireLang != literal.lang) {
-                // TODO: only if *no* o for same s and p has expected lang
-                report.add new ExpectedLangErrorItem(literal, propInfo.requireLang)
             }
             if (propInfo.strictWhitespace &&
                 !hasStrictWhitespace(literal.toString())) {

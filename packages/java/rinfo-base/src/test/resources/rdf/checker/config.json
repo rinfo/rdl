@@ -16,14 +16,15 @@
             "datatype": "xsd:date"
         },
         "dct:issued": {
-            "datatype": "xsd:date"
+            "datatype": "xsd:date",
+            "pattern": "(^1[6-9]|^2[0-5])\\d{2}.*"
         },
         "dct:references": {
             "reference": true
         },
         "changes": {
             "reference": true,
-            "usePattern": "fsPubl"
+            "patternRef": "fsPubl"
         }
     },
     "patterns": {

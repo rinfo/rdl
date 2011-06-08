@@ -35,11 +35,14 @@ class SchemaInfo {
         for (curieDef in config.get("properties")?.entrySet()) {
             def uri = resolve(prefixes, curieDef.key)
             def data = curieDef.value
+            def pattern = (data.containsKey("pattern"))?
+                 Pattern.compile(data.get("pattern")) :
+                 patterns.get(data.get("patternRef"))
             def propInfo = new PropertyInfo(uri,
                     resolve(prefixes, data.get("datatype")),
                     data.get("reference"),
                     data.get("requireLang"),
-                    patterns.get(data.get("usePattern")),
+                    pattern,
                     data.get("strictWhitespace"))
             propertyMap.put(uri, propInfo)
         }

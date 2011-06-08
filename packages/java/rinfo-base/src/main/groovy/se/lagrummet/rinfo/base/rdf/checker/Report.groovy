@@ -88,10 +88,8 @@ class UnexpectedDatatypeErrorItem extends ErrorItem {
 }
 
 class ExpectedLangErrorItem extends ErrorItem {
-    def literal
     def expected
-    ExpectedLangErrorItem(literal, expected) {
-        this.literal = literal
+    ExpectedLangErrorItem(expected) {
         this.expected = expected
     }
 }

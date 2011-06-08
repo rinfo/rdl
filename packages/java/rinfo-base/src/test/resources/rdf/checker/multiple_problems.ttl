@@ -2,34 +2,40 @@
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix : <http://example.org/def/vocab#> .
 
-<http://example.org/publ/1> a :Document;
-    dct:references <http:// error> . # bad URI
+<http://example.org/publ/bad_uri> a :Document;
+    dct:references <http:// error> .
 
-<http://example.org/publ/2> a :Document;
-    dct:created "2011-16-10"^^xsd:date . # datatype error
+<http://example.org/publ/datatype_error> a :Document;
+    dct:created "2011-16-10"^^xsd:date .
 
-<http://example.org/publ/3> dct:title "a title"@en . # no class
+<http://example.org/publ/no_class> dct:title "a title"@en .
 
-<http://example.org/publ/4> a :DocumentZZ . # undefined class
+<http://example.org/publ/undefined_class> a :DocumentZZ .
 
-<http://example.org/publ/5> a :Document;
-    :tokenZZ "token" . # undefined property
+<http://example.org/publ/undefined_property> a :Document;
+    :tokenZZ "token" .
 
-<http://example.org/publ/6> a :Document;
-    dct:issued "2011-06-01"@en . # language where datatype (date) expected
+<http://example.org/publ/lang_expected_date> a :Document;
+    dct:created "2011-06-01"@en .
 
-<http://example.org/publ/7> a :Document;
-    dct:title "false"^^xsd:boolean . # datatype where language expected
+<http://example.org/publ/datatype_expected_lang> a :Document;
+    dct:title "false"^^xsd:boolean .
 
-<http://example.org/publ/8> a :Document;
-    dct:title "no lang" . # no language where expected
+<http://example.org/publ/expected_lang> a :Document;
+    dct:title "no lang" .
 
-<http://example.org/publ/9> a :Document;
-    dct:title " a title"@en . # spurious whitespace
+<http://example.org/publ/ok_two_titles> a :Document;
+    dct:title "a title"@en, "en titel"@sv .
 
-<http://example.org/publ/10> a :Document;
-    :changes <http://example.org/publ/NaN> . # unexpected uri pattern
+<http://example.org/publ/spurious_whitespace> a :Document;
+    dct:title " a title"@en .
 
-<http://example.org/publ/11> a :Document;
-    dct:created "3011-06-10"^^xsd:date . # improbable value
+<http://example.org/publ/unexpected_uri_pattern> a :Document;
+    :changes <http://example.org/publ/NaN> .
+
+<http://example.org/publ/improbable_future> a :Document;
+    dct:issued "3011-01-10"^^xsd:date .
+
+<http://example.org/publ/improbable_past> a :Document;
+    dct:issued "1011-01-10"^^xsd:date .
 
