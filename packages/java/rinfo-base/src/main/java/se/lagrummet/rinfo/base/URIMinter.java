@@ -64,26 +64,27 @@ public class URIMinter {
     }
 
     public String computeUri(Repository docRepo) throws Exception {
-        for (List<String> uris : computeUris(docRepo).values()) {
-            for (String uri : uris) {
-                return uri;
+        for (List<MintResult> results : computeUris(docRepo).values()) {
+            for (MintResult result : results) {
+                if (result.getUri() != null) {
+                    return result.getUri();
+                }
             }
         }
         return null;
     }
 
-    public Map<String, List<String>> computeUris(Repository docRepo)
+    public Map<String, List<MintResult>> computeUris(Repository docRepo)
             throws Exception {
         RepositoryConnection conn = docRepo.getConnection();
         try {
-            Map<String, List<String>> resultMap =
-                    new HashMap<String, List<String>>();
+            Map<String, List<MintResult>> resultMap =
+                    new HashMap<String, List<MintResult>>();
             Describer describer = newDescriber(conn);
-            // TODO:IMPROVE: add to Set first (subjects may occur multiple times)
             for (Description desc : describer.subjects(null, null)) {
-                List<String> uris = space.coinUris(desc);
-                if (uris != null) {
-                    resultMap.put(desc.getAbout(), uris);
+                List<MintResult> results = space.coinUris(desc);
+                if (results != null) {
+                    resultMap.put(desc.getAbout(), results);
                 }
             }
             return resultMap;
@@ -130,15 +131,24 @@ public class URIMinter {
             }
         }
 
-        List<String> coinUris(Description desc) {
-            List<String> uris = new ArrayList<String>();
+        /**
+         * Results are ordered by the {@link MintResult#getMatchCount()}
+         * property. Higher value leads to earlier (lower) index in list.
+         */
+        List<MintResult> coinUris(Description desc) {
+            List<MintResult> results = new ArrayList<MintResult>();
             for (CoinTemplate tplt : templates) {
-                String uri = tplt.coinUri(desc);
-                if (uri != null) {
-                    uris.add(uri);
+                MintResult result = tplt.coinUri(desc);
+                if (result.getUri() != null) {
+                    results.add(result);
                 }
             }
-            return uris;
+            Collections.sort(results, new Comparator<MintResult>() {
+                public int compare(MintResult a, MintResult b) {
+                    return -1 * a.getMatchCount().compareTo(b.getMatchCount());
+                }
+            });
+            return results;
         }
 
         String translateValue(String value) {
@@ -186,25 +196,34 @@ public class URIMinter {
             }
         }
 
-        String coinUri(Description desc) {
+        MintResult coinUri(Description desc) {
+            int matchCount = 0;
+            int rulesSize = bindings.size();
             if (forType != null) {
+                rulesSize += 1;
                 boolean ok = false;
-                for (Description type : desc.getTypes())
-                    if (type.getAbout().equals(forType)) ok = true;
+                for (Description type : desc.getTypes()) {
+                    if (type.getAbout().equals(forType)) {
+                        matchCount += 1;
+                        ok = true;
+                        break;
+                    }
+                }
                 if (!ok)
-                    return null;
+                    return new MintResult(null, matchCount, rulesSize);
             }
             Map<String, String> matches = new HashMap<String, String>();
             for (CoinBinding binding : bindings) {
                 String match = binding.findMatch(desc);
                 if (match != null) {
+                    matchCount++;
                     matches.put(binding.variable, match);
                 }
             }
-            if (matches.size() < bindings.size()) {
-                return null;
-            }
-            return buildUri(determineBase(desc), matches);
+            String uri = (matchCount == rulesSize)?
+                buildUri(determineBase(desc), matches) :
+                null;
+            return new MintResult(uri, matchCount, rulesSize);
         }
 
         String determineBase(Description desc) {
@@ -324,9 +343,9 @@ public class URIMinter {
             System.out.println("// Loading <"+docPath+">..");
             Repository docRepo = RDFUtil.createMemoryRepository();
             RDFUtil.loadDataFromFile(docRepo, new File(docPath));
-            for (List<String> uris : uriMinter.computeUris(docRepo).values()) {
-                for (String uri : uris) {
-                    System.out.println("Minted <"+uri+">");
+            for (List<MintResult> results : uriMinter.computeUris(docRepo).values()) {
+                for (MintResult result : results) {
+                    System.out.println("Minted <"+result.getUri()+">");
                 }
             }
             diff = (new Date().getTime() - time.getTime()) / 1000.0;
