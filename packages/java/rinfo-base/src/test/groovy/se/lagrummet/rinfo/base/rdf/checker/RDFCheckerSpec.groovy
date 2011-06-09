@@ -32,6 +32,7 @@ class RDFCheckerSpec extends Specification {
         when:
         def report = checker.check(repo, "http://example.org/publ/${name}")
         then:
+        !report.ok
         def item = report.items[0]
         item?.class.is failureType
         if (messageMatches)

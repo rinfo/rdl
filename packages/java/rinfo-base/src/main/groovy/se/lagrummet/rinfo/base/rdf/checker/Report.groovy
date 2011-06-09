@@ -6,6 +6,9 @@ class Report {
     void add(ReportItem item) {
         items.add item
     }
+    boolean isOk() {
+        return items.size() == 0
+    }
 }
 
 
