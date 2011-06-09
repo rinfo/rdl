@@ -58,10 +58,10 @@ class DescriberSpec extends Specification {
         p.about == "http://example.org/persons/some_body#person"
         p.type.about == "${FOAF}Person"
         p.getString("foaf:name") == "Some Body"
-        img = p.getRel("foaf:depiction")
-        img.getRel("foaf:thumbnail").about == "http://example.org/img/some_body-64x64.png"
-        cv = p.getRev("cv:aboutPerson")
-        cv.getRels("cv:hasWorkHistory").collect { it.getRel("cv:employedIn").about }.sort() ==
+        def img2 = p.getRel("foaf:depiction")
+        img2.getRel("foaf:thumbnail").about == "http://example.org/img/some_body-64x64.png"
+        def cv2 = p.getRev("cv:aboutPerson")
+        cv2.getRels("cv:hasWorkHistory").collect { it.getRel("cv:employedIn").about }.sort() ==
                 ["http://example.com/about#", "http://example.net/about#"]
     }
 

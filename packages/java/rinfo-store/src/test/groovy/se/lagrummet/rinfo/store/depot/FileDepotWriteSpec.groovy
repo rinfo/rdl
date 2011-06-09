@@ -270,14 +270,14 @@ class FileDepotWriteSpec extends Specification {
         session.delete(entry, deleteTime)
         session.close()
         then:
-        entry = depot.getEntryOrDeletedEntry(id.path)
-        !entry.isLocked()
-        entry.findContents("application/pdf").size() == 0
-        entry.updated == deleteTime
-        assert entry.isDeleted()
+        def entry2 = depot.getEntryOrDeletedEntry(id.path)
+        !entry2.isLocked()
+        entry2.findContents("application/pdf").size() == 0
+        entry2.updated == deleteTime
+        assert entry2.isDeleted()
 
         when:
-        entry = depot.getEntry(id)
+        depot.getEntry(id)
         then:
         thrown(DeletedDepotEntryException)
     }
@@ -312,11 +312,11 @@ class FileDepotWriteSpec extends Specification {
             ])
         session.close()
         then: "it appears as new"
-        session = depot.openSession()
-        entry = depot.getEntry(id)
-        !entry.isDeleted()
-        entry.published == newCreateDate
-        entry.updated == newCreateDate
+        def session2 = depot.openSession()
+        def entry2 = depot.getEntry(id)
+        !entry2.isDeleted()
+        entry2.published == newCreateDate
+        entry2.updated == newCreateDate
     }
 
     def "should create entry and check md5 and length"() {

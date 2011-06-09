@@ -27,7 +27,7 @@ class RDFCheckerSpec extends Specification {
         checker.schemaInfo.propertyMap
     }
 
-    @Unroll("checking resource #name")
+    @Unroll({"checking resource #name"})
     def "problematic data"() {
         when:
         def report = checker.check(repo, "http://example.org/publ/${name}")

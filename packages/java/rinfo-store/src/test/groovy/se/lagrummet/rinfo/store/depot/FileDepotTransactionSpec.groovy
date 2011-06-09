@@ -29,8 +29,7 @@ class FileDepotTransactionSpec extends Specification {
         entry.unlock()
         then:
         !entry.isLocked()
-        entry = depot.getEntry(id)
-        !entry.isLocked()
+        !depot.getEntry(id).isLocked()
     }
 
     def "should leave locked on bad content"() {
@@ -154,9 +153,9 @@ class FileDepotTransactionSpec extends Specification {
         entry.lastModified() == storedModified
         entry.findEnclosures().size() == 2
         and:
-        metaIn = entry.getMetaInputStream("TEST_META_FILE")
-        metaIn.text == "TEST"
-        metaIn.close()
+        def metaIn2 = entry.getMetaInputStream("TEST_META_FILE")
+        metaIn2.text == "TEST"
+        metaIn2.close()
         // TODO:IMPROVE: verify path of enclosures..
     }
 

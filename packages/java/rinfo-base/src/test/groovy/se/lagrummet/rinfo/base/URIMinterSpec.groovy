@@ -6,7 +6,7 @@ import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 import groovy.xml.DOMBuilder
 import groovy.xml.dom.DOMCategory
-import groovy.xml.dom.DOMUtil
+import groovy.xml.XmlUtil
 
 import spock.lang.*
 
@@ -33,7 +33,7 @@ class URIMinterSpec extends Specification {
             feed.entry.each {
                 def expectedUri = it.id.text()
                 def content = it.content[0]
-                def data = DOMUtil.serialize(content.'*'[0])
+                def data = XmlUtil.serialize(content.'*'[0])
                 def format = RDFFormat.forMIMEType(content.'@type')
                 def repo = RDFUtil.createMemoryRepository()
                 def conn = repo.getConnection()
@@ -48,5 +48,11 @@ class URIMinterSpec extends Specification {
             }
         }
     }
+
+    //TODO: def "mint result has rulesSize and matchCount"
+
+    //TODO: def "mint results are ordered by matchCount"
+
+    //TODO: def "partial mint results"
 
 }
