@@ -20,8 +20,8 @@ import org.openrdf.repository.Repository
 
 import org.antlr.stringtemplate.StringTemplateGroup
 
-import net.sf.json.JSONSerializer
-//import net.sf.json.groovy.JsonSlurper
+import org.codehaus.jackson.map.ObjectMapper
+import org.codehaus.jackson.map.SerializationConfig
 
 import se.lagrummet.rinfo.service.dataview.TemplateUtil
 import se.lagrummet.rinfo.service.dataview.RDataSparqlTree
@@ -255,7 +255,10 @@ class RDataFinder extends StringTemplateFinder {
                     setStatus(Status.CLIENT_ERROR_NOT_FOUND)
                     return null
                 }
-                return toRepresentation(JSONSerializer.toJSON(data).toString(4),
+                def jsonMapper = new ObjectMapper()
+                jsonMapper.configure(
+                        SerializationConfig.Feature.INDENT_OUTPUT, true)
+                return toRepresentation(jsonMapper.writeValueAsString(data),
                         MediaType.APPLICATION_JSON, locale)
             }
 
