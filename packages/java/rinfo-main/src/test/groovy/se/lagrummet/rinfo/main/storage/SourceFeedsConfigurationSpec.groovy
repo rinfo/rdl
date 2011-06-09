@@ -11,8 +11,8 @@ class SourceFeedsConfigurationSpec extends Specification {
 
     def sourceFeedsEntryId = new URI("http://example.org/sources")
     def sourceFeedUrls = [
-        new URL("http://regeringen.se/sfs/feed/current"),
         new URL("http://dom.se/dvfs/feed/current"),
+        new URL("http://regeringen.se/sfs/feed/current"),
     ]
 
     def "Collect scheduler gets source feeds from rdf in configured entry"() {
@@ -27,7 +27,7 @@ class SourceFeedsConfigurationSpec extends Specification {
         sourceFeedsConfigHandler.onModified(session, mockSourcesEntry(), true)
 
         then: "the collect scheduler gets source feeds from the entry data"
-        collectScheduler.sourceFeedUrls == sourceFeedUrls
+        collectScheduler.sourceFeedUrls.toList().sort() == sourceFeedUrls
     }
 
     def "Source feed entry must come from admin session"() {
