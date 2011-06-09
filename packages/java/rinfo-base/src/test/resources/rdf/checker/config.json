@@ -13,11 +13,17 @@
             "strictWhitespace": true
         },
         "dct:created": {
-            "datatype": "xsd:date"
+            "datatype": "xsd:date",
+            "dateConstraint": {
+                "maxDaysFromNow": 0
+            }
         },
         "dct:issued": {
             "datatype": "xsd:date",
-            "pattern": "(^1[6-9]|^2[0-5])\\d{2}.*"
+            "dateConstraint": {
+                "minYear": 1600,
+                "maxYearsFromNow": 20
+            }
         },
         "dct:references": {
             "reference": true

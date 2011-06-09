@@ -33,6 +33,9 @@
 <http://example.org/publ/unexpected_uri_pattern> a :Document;
     :changes <http://example.org/publ/NaN> .
 
+<http://example.org/publ/from_future> a :Document;
+    dct:created "3011-01-10"^^xsd:date .
+
 <http://example.org/publ/improbable_future> a :Document;
     dct:issued "3011-01-10"^^xsd:date .
 

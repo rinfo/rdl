@@ -19,13 +19,21 @@ class SchemaInfo {
 
     private mapper = new ObjectMapper()
 
-    void configure(Map config) {
-        def patterns = new HashMap<String, Pattern>()
-
-        for (entry in config.get("patterns")?.entrySet()) {
-            patterns.put(entry.key, Pattern.compile(entry.value))
+    void loadConfig(String jsonPath) {
+        def inStream = new FileInputStream(new File(jsonPath))
+        try {
+            loadConfig(inStream)
+        } finally {
+            inStream.close()
         }
+    }
 
+    void loadConfig(InputStream inStream) {
+        def config = mapper.readValue(inStream, Map)
+        configure(config)
+    }
+
+    void configure(Map config) {
         def prefixes = config.get("prefixes")?.clone() ?: [:]
         prefixes.put("rdf", Describer.RDF_NS)
         prefixes.put("rdfs", Describer.RDFS_NS)
@@ -35,15 +43,13 @@ class SchemaInfo {
         for (curieDef in config.get("properties")?.entrySet()) {
             def uri = resolve(prefixes, curieDef.key)
             def data = curieDef.value
-            def pattern = (data.containsKey("pattern"))?
-                 Pattern.compile(data.get("pattern")) :
-                 patterns.get(data.get("patternRef"))
             def propInfo = new PropertyInfo(uri,
                     resolve(prefixes, data.get("datatype")),
                     data.get("reference"),
                     data.get("requireLang"),
-                    pattern,
-                    data.get("strictWhitespace"))
+                    data.get("strictWhitespace"),
+                    makePattern(config, data),
+                    makeDateConstraint(config, data))
             propertyMap.put(uri, propInfo)
         }
 
@@ -64,18 +70,32 @@ class SchemaInfo {
         return prefixes.get(pfx) + local
     }
 
-    void loadConfig(String jsonPath) {
-        def inStream = new FileInputStream(new File(jsonPath))
-        try {
-            loadConfig(inStream)
-        } finally {
-            inStream.close()
-        }
+    private def makePattern(config, data) {
+        def patternDefs = config.get("patterns")
+        def pattern = getItem(config, data, "pattern",
+                "patterns", "patternRef")
+        if (pattern == null)
+            return
+        return Pattern.compile(pattern)
     }
 
-    void loadConfig(InputStream inStream) {
-        def config = mapper.readValue(inStream, Map)
-        configure(config)
+    private def makeDateConstraint(config, data) {
+        def dateConstraintData = getItem(config, data, "dateConstraint",
+                "dateConstraints", "dateConstraintRef")
+        if (dateConstraintData == null)
+            return null
+        return new DateConstraint(
+                dateConstraintData.get("minYear"),
+                dateConstraintData.get("maxDaysFromNow"),
+                dateConstraintData.get("maxYearsFromNow"))
+    }
+
+    private def getItem(config, data, key, defsKey, refKey) {
+        def defs = config.get(defsKey)
+        return data.containsKey(key)?
+                data.get(key) : (defs != null)?
+                defs.get(data.get(refKey)) :
+                null
     }
 
 }

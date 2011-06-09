@@ -99,14 +99,25 @@ class RDFChecker {
                 literal.toNativeValue()
             } catch (e) {
                 report.add new DatatypeErrorItem(literal, e)
+                return
             }
             if (propInfo == null)
                 return
             if (propInfo.reference) {
                 report.add new ExpectedReferenceErrorItem(literal)
+                return
             }
             if (propInfo.datatype && propInfo.datatype != literal.datatype) {
                 report.add new UnexpectedDatatypeErrorItem(literal, propInfo.datatype)
+                return
+            }
+            if (propInfo.dateConstraint) {
+                def now = RDFLiteral.toGCal(new Date(), "UTC")
+                if (!propInfo.dateConstraint.verify(literal.toGCal(), now)) {
+                    report.add new DateConstraintWarnItem(
+                            propInfo.dateConstraint, literal, now)
+                }
+                return
             }
             if (propInfo.strictWhitespace &&
                 !hasStrictWhitespace(literal.toString())) {

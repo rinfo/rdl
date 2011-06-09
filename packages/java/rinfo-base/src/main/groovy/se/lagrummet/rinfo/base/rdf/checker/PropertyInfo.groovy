@@ -9,18 +9,24 @@ class PropertyInfo {
     String datatype
     boolean reference
     String requireLang
-    Pattern lexicalPattern
     boolean strictWhitespace
+    Pattern lexicalPattern
+    DateConstraint dateConstraint
 
     PropertyInfo(String property,
-            String datatype, Boolean reference, String requireLang,
-            Pattern lexicalPattern, Boolean strictWhitespace) {
+            String datatype,
+            Boolean reference,
+            String requireLang,
+            Boolean strictWhitespace,
+            Pattern lexicalPattern,
+            DateConstraint dateConstraint) {
         this.property = property
         this.datatype = datatype
         this.reference = reference
         this.requireLang = requireLang
         this.lexicalPattern = lexicalPattern
         this.strictWhitespace = strictWhitespace
+        this.dateConstraint = dateConstraint
     }
 
 }

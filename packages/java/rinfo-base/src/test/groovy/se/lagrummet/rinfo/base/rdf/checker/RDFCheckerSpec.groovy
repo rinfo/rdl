@@ -33,7 +33,7 @@ class RDFCheckerSpec extends Specification {
         def report = checker.check(repo, "http://example.org/publ/${name}")
         then:
         def item = report.items[0]
-        item.class.is failureType
+        item?.class.is failureType
         if (messageMatches)
             assert item.error.message =~ messageMatches
         report.items.size() == 1
@@ -49,8 +49,9 @@ class RDFCheckerSpec extends Specification {
         "expected_lang"         | ExpectedLangErrorItem         | null
         "spurious_whitespace"   | SpuriousWhiteSpaceWarnItem    | null
         "unexpected_uri_pattern"| PatternMismatchErrorItem      | null
-        "improbable_future"     | PatternMismatchErrorItem      | null
-        "improbable_past"       | PatternMismatchErrorItem      | null
+        "improbable_future"     | DateConstraintWarnItem        | null
+        "improbable_past"       | DateConstraintWarnItem        | null
+        "from_future"           | DateConstraintWarnItem        | null
     }
 
     def "ok data"() {

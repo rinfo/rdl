@@ -110,3 +110,13 @@ class SpuriousWhiteSpaceWarnItem extends WarnItem {
     }
 }
 
+class DateConstraintWarnItem extends WarnItem {
+    def constraint
+    def literal
+    def now
+    DateConstraintWarnItem(constraint, literal, now) {
+        this.constraint = constraint
+        this.literal = literal
+        this.now = now
+    }
+}
