@@ -30,18 +30,14 @@ class ElasticIndexer {
     Repository repo
     Client esClient
     def indexName = "rinfo"
+    def elastifier
+    boolean dryRun
 
-    def sparqlTree = new SparqlTree(
-            uriKey: "URI",
-            bnodeKey: 'BNODE',
-            datatypeKey: 'DATATYPE',
-            valueKey: 'VALUE',
-            langTag: "_",
-            keepNull: false)
-
-    ElasticIndexer(repo, esClient) {
+    ElasticIndexer(repo, esClient, dryRun=false) {
         this.repo = repo
         this.esClient = esClient
+        this.dryRun = dryRun
+        this.elastifier = new Elastifier(repo)
     }
 
     void indexTripleStore(int limit=-1) {
@@ -57,34 +53,17 @@ class ElasticIndexer {
                 def row = res.next()
                 def uri = row.getValue('topic')
                 def type = row.getValue('type')
-                def elasticObj = topicToElastic(uri, type)
+                def elasticObj = elastifier.toElastic(uri, type)
                 println "[${i}] For <${uri}> of type <${type}>..."
-                if (elasticObj) {
-                    indexElastic elasticObj
-                } else {
+                if (elasticObj == null) {
                     println "Empty; skipped."
+                    continue
                 }
+                indexElastic elasticObj
             }
-            println "Done. Indexed ${i} objects."
+            println "Done. Indexed ${dryRun? 0 : i} objects."
         } finally {
             conn.close()
-        }
-    }
-
-    void indexElastic(obj) {
-        def jsonMapper = new ObjectMapper()
-        jsonMapper.configure(INDENT_OUTPUT, true)
-        println "Elastic Object:"
-        println jsonMapper.writeValueAsString(obj)
-        obj.entrySet().each {
-            def data = it.value
-            def indexType = it.key
-            def id = data.URI
-            println "Indexing ${indexType}/<${id}>..."
-            IndexRequestBuilder irb = esClient.prepareIndex(indexName, indexType, id).
-                setConsistencyLevel(WriteConsistencyLevel.DEFAULT).
-                setSource(data)
-            irb.execute().actionGet()
         }
     }
 
@@ -99,18 +78,110 @@ class ElasticIndexer {
         return pq.evaluate()
     }
 
-    def topicToElastic(uri, type) {
+    void indexElastic(obj) {
+        def jsonMapper = new ObjectMapper()
+        jsonMapper.configure(INDENT_OUTPUT, true)
+        println "Elastic Object:"
+        println jsonMapper.writeValueAsString(obj)
+
+        obj.entrySet().each {
+            def data = it.value
+            def indexType = it.key
+            def id = data.URI
+            if (dryRun) {
+                println "Dry run; no indexing done."
+                return
+            }
+            // TODO:
+            //def contentRef = findContentRef(id)
+            //data['content'] = [
+            //    '_content_type': contentRef.mediaType,
+            //    'content': contentRef.base64EncodedValue
+            //]
+            println "Indexing ${indexType}/<${id}>..."
+            IndexRequestBuilder irb = esClient.prepareIndex(indexName, indexType, id).
+                setConsistencyLevel(WriteConsistencyLevel.DEFAULT).
+                setSource(data)
+            irb.execute().actionGet()
+        }
+    }
+
+}
+
+
+class Elastifier {
+
+    Repository repo
+
+    Elastifier(repo) {
+        this.repo = repo
+    }
+    def sparqlTree = new SparqlTree() {
+        {
+            uriKey = "URI"
+            bnodeKey = 'BNODE'
+            datatypeKey = 'DATATYPE'
+            valueKey = 'VALUE'
+            langTag = "LANG_"
+            keepNull = false
+        }
+
+        @Override
+        Object completeNode(Object node, String key, Map parentNode) {
+            if (isResource(node)) {
+                // TODO:
+                // Terms are proably the most useful (for facets etc.),
+                // and path for docs.
+                // But perhaps check if uri within expected uri space,
+                // and keep URI in a field which isn't indexed? (Generally
+                // good, and here to support simple roundtrip back to RDF data
+                // about referenced resource.)
+                if (parentNode.containsKey(uriKey)) { // node is not at top
+                    node['term'] = getUriTerm(node.remove(uriKey))
+                } else {
+                    node[uriKey] = new URI(node[uriKey]).path
+                }
+                return node
+
+            } else if (isDatatypeNode(node)) {
+                // TODO: somehow note if datatype is date?
+                return node[valueKey]
+
+            } else if (isLangNode(node)) {
+                def keys = node.keySet()
+                if (keys.size() == 1) {
+                    def langKey = keys.toArray()[0]
+                    //parentNode.get('lang', []) << langKey.substring(langTag.size())
+                    return node[langKey]
+                }
+                for (langKey in keys) {
+                    node[langKey.substring(langTag.size())] = node.remove(langKey)
+                }
+                return node
+
+            } else {
+                return node
+            }
+        }
+
+        def getUriTerm(uri) {
+            uri.substring(
+                    uri.lastIndexOf(uri.contains('#')? '#' : '/') + 1,
+                    uri.size())
+        }
+
+    }
+
+    def toElastic(uri, type) {
         // TODO: switch on type for *ToTree(uri)
         return createData(uri, 'get_doc_tree.rq', 'doc')
     }
 
     def createData(uri, queryRef, key) {
-        // TODO: gather data for desired indexing
         def ins = this.class.getResourceAsStream(queryRef)
         try {
             def query = ins.getText('utf-8').replaceAll('URI', "${uri}")
             def tree = sparqlTree.runQuery(repo, query)
-            // TODO: massage to suitable record
             def obj = tree[key][0]
             return (obj)? [(key): obj] : null
         } finally {
@@ -122,7 +193,8 @@ class ElasticIndexer {
 
 
 def repoName = args[0]
-def limit = args.length > 1? args[1] as int : 100
+int limit = args.length > 1? args[1] as int : 100
+boolean dryRun = args.length > 2? args[2] == 'dry' : false
 
 def repo = new HTTPRepository("http://localhost:8080/openrdf-sesame", repoName)
 
@@ -130,7 +202,7 @@ def client = new TransportClient()
     .addTransportAddress(new InetSocketTransportAddress("127.0.0.1", 9300))
 
 try {
-    def elIndex = new ElasticIndexer(repo, client)
+    def elIndex = new ElasticIndexer(repo, client, dryRun)
     elIndex.indexTripleStore(limit)
 } finally {
     client.close()
