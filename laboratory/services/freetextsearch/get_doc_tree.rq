@@ -27,17 +27,17 @@ SELECT * {
     OPTIONAL {
         ?doc rpubl:utredningsserie ?doc__1_utredningsserie .
         ?doc__1_utredningsserie skos:altLabel ?doc__1_utredningsserie__1_altLabel .
-        ?doc__1_utredningsserie skos:prefLabel ?doc__1_utredningsserie__1_altLabel .
+        ?doc__1_utredningsserie skos:prefLabel ?doc__1_utredningsserie__1_prefLabel .
     }
     OPTIONAL {
         ?doc rpubl:rattsfallspublikation ?doc__1_rattsfallspublikation .
         ?doc__1_rattsfallspublikation skos:altLabel ?doc__1_rattsfallspublikation__1_altLabel .
-        ?doc__1_rattsfallspublikation skos:prefLabel ?doc__1_rattsfallspublikation__1_altLabel .
+        ?doc__1_rattsfallspublikation skos:prefLabel ?doc__1_rattsfallspublikation__1_prefLabel .
     }
     OPTIONAL {
         ?doc rpubl:allmannaRadSerie ?doc__1_allmannaRadSerie .
         ?doc__1_allmannaRadSerie skos:altLabel ?doc__1_allmannaRadSerie__1_altLabel .
-        ?doc__1_allmannaRadSerie skos:prefLabel ?doc__1_allmannaRadSerie__1_altLabel .
+        ?doc__1_allmannaRadSerie skos:prefLabel ?doc__1_allmannaRadSerie__1_prefLabel .
     }
 
     OPTIONAL {
