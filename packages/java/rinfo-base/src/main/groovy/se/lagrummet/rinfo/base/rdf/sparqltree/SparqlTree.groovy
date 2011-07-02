@@ -256,6 +256,9 @@ class SparqlTree {
     }
 
     protected boolean isLangMap(Object obj) {
+        // TODO:IMPROVE: would otherwise fail (and mangle all nodes)!
+        if (!langTag)
+          return false
         if (obj instanceof Map) {
             for (key in ((Map)obj).keySet()) {
                 if (key.startsWith(langTag)) {
