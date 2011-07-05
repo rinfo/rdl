@@ -13,48 +13,61 @@ SELECT * {
         dct:identifier ?doc__1_identifier;
         dct:publisher ?doc__1_publisher .
 
-    OPTIONAL { ?doc dct:title ?doc__1_title }
+    {
 
-    ?doc__1_type rdfs:label ?doc__1_type__1_label .
+        OPTIONAL { ?doc dct:title ?doc__1_title }
 
-    ?doc__1_publisher foaf:name ?doc__1_publisher__1_name .
+        ?doc__1_type rdfs:label ?doc__1_type__1_label .
 
-    OPTIONAL {
-        ?doc rpubl:forfattningssamling ?doc__1_forfattningssamling .
-        ?doc__1_forfattningssamling skos:altLabel ?doc__1_forfattningssamling__1_altLabel .
-        ?doc__1_forfattningssamling skos:prefLabel ?doc__1_forfattningssamling__1_prefLabel .
-    }
-    OPTIONAL {
-        ?doc rpubl:utredningsserie ?doc__1_utredningsserie .
-        ?doc__1_utredningsserie skos:altLabel ?doc__1_utredningsserie__1_altLabel .
-        ?doc__1_utredningsserie skos:prefLabel ?doc__1_utredningsserie__1_prefLabel .
-    }
-    OPTIONAL {
-        ?doc rpubl:rattsfallspublikation ?doc__1_rattsfallspublikation .
-        ?doc__1_rattsfallspublikation skos:altLabel ?doc__1_rattsfallspublikation__1_altLabel .
-        ?doc__1_rattsfallspublikation skos:prefLabel ?doc__1_rattsfallspublikation__1_prefLabel .
-    }
-    OPTIONAL {
-        ?doc rpubl:allmannaRadSerie ?doc__1_allmannaRadSerie .
-        ?doc__1_allmannaRadSerie skos:altLabel ?doc__1_allmannaRadSerie__1_altLabel .
-        ?doc__1_allmannaRadSerie skos:prefLabel ?doc__1_allmannaRadSerie__1_prefLabel .
-    }
+        ?doc__1_publisher foaf:name ?doc__1_publisher__1_name .
 
-    OPTIONAL {
-        ?doc dct:issued ?doc__1_issued
-    }
-    OPTIONAL {
-        ?doc rpubl:beslutsdatum ?doc__1_beslutsdatum
-    }
-    OPTIONAL {
-        ?doc rpubl:utfardandedatum ?doc__1_utfardandedatum
-    }
-    OPTIONAL {
-        ?doc rpubl:ikrafttradandedatum ?doc__1_ikrafttradandedatum
-    }
-    OPTIONAL {
-        ?doc rpubl:utkomFranTryck ?doc__1_utkomFranTryck
-    }
+        OPTIONAL {
+            ?doc rpubl:forfattningssamling ?doc__1_forfattningssamling .
+            ?doc__1_forfattningssamling skos:altLabel ?doc__1_forfattningssamling__1_altLabel .
+            ?doc__1_forfattningssamling skos:prefLabel ?doc__1_forfattningssamling__1_prefLabel .
+        }
+        OPTIONAL {
+            ?doc rpubl:utredningsserie ?doc__1_utredningsserie .
+            ?doc__1_utredningsserie skos:altLabel ?doc__1_utredningsserie__1_altLabel .
+            ?doc__1_utredningsserie skos:prefLabel ?doc__1_utredningsserie__1_prefLabel .
+        }
+        OPTIONAL {
+            ?doc rpubl:rattsfallspublikation ?doc__1_rattsfallspublikation .
+            ?doc__1_rattsfallspublikation skos:altLabel ?doc__1_rattsfallspublikation__1_altLabel .
+            ?doc__1_rattsfallspublikation skos:prefLabel ?doc__1_rattsfallspublikation__1_prefLabel .
+        }
+        OPTIONAL {
+            ?doc rpubl:allmannaRadSerie ?doc__1_allmannaRadSerie .
+            ?doc__1_allmannaRadSerie skos:altLabel ?doc__1_allmannaRadSerie__1_altLabel .
+            ?doc__1_allmannaRadSerie skos:prefLabel ?doc__1_allmannaRadSerie__1_prefLabel .
+        }
 
+        OPTIONAL {
+            ?doc dct:issued ?doc__1_issued
+        }
+        OPTIONAL {
+            ?doc rpubl:beslutsdatum ?doc__1_beslutsdatum
+        }
+        OPTIONAL {
+            ?doc rpubl:utfardandedatum ?doc__1_utfardandedatum
+        }
+        OPTIONAL {
+            ?doc rpubl:ikrafttradandedatum ?doc__1_ikrafttradandedatum
+        }
+        OPTIONAL {
+            ?doc rpubl:utkomFranTryck ?doc__1_utkomFranTryck
+        }
+
+    } UNION {
+
+        OPTIONAL {
+            ?doc rpubl:upphaver ?doc__upphaver .
+            ?doc__upphaver a ?doc__upphaver__1_type;
+                dct:identifier ?doc__upphaver__1_identifier .
+            ?doc__upphaver__1_type rdfs:label ?doc__upphaver__1_type__1_label .
+            OPTIONAL { ?doc__upphaver dct:title ?doc__upphaver__1_title }
+        }
+
+    }
 
 }

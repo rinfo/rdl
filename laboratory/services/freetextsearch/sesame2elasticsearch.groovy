@@ -29,11 +29,11 @@ class ElasticIndexer {
 
     Repository repo
     Client esClient
-    def indexName = "rinfo"
+    String indexName
     def elastifier
     boolean dryRun
 
-    ElasticIndexer(repo, esClient, dryRun=false) {
+    ElasticIndexer(repo, esClient, indexName, dryRun=false) {
         this.repo = repo
         this.esClient = esClient
         this.dryRun = dryRun
@@ -124,6 +124,7 @@ class Elastifier {
             valueKey = 'VALUE'
             langTag = "LANG_"
             keepNull = false
+            keepEmpty = false
         }
 
         @Override
@@ -182,7 +183,7 @@ class Elastifier {
         try {
             def query = ins.getText('utf-8').replaceAll('URI', "${uri}")
             def tree = sparqlTree.runQuery(repo, query)
-            def obj = tree[key][0]
+            def obj = tree[key]?.getAt(0)
             return (obj)? [(key): obj] : null
         } finally {
             ins.close()
@@ -192,17 +193,17 @@ class Elastifier {
 }
 
 
-def repoName = args[0]
+def repoIndexName = args[0]
 int limit = args.length > 1? args[1] as int : 100
 boolean dryRun = args.length > 2? args[2] == 'dry' : false
 
-def repo = new HTTPRepository("http://localhost:8080/openrdf-sesame", repoName)
+def repo = new HTTPRepository("http://localhost:8080/openrdf-sesame", repoIndexName)
 
 def client = new TransportClient()
     .addTransportAddress(new InetSocketTransportAddress("127.0.0.1", 9300))
 
 try {
-    def elIndex = new ElasticIndexer(repo, client, dryRun)
+    def elIndex = new ElasticIndexer(repo, client, repoIndexName, dryRun)
     elIndex.indexTripleStore(limit)
 } finally {
     client.close()
