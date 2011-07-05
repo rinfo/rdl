@@ -37,6 +37,7 @@ class SparqlTree {
     String datatypeKey = DEFAULT_DATATYPE_KEY
     String valueKey = DEFAULT_VALUE_KEY
     String langTag = DEFAULT_LANG_TAG
+    boolean keepNull = true
     //String locale = null
     //boolean laxOne = true
 
@@ -180,7 +181,9 @@ class SparqlTree {
                     nodes[i] = completeNode(nodes[i], key, parentNode)
                 }
             }
-            parentNode[key] = finalValue
+            if (keepNull || finalValue != null) {
+              parentNode[key] = finalValue
+            }
         }
     }
 
