@@ -38,6 +38,7 @@ class SparqlTree {
     String valueKey = DEFAULT_VALUE_KEY
     String langTag = DEFAULT_LANG_TAG
     boolean keepNull = true
+    boolean keepEmpty = true
     //String locale = null
     //boolean laxOne = true
 
@@ -173,6 +174,9 @@ class SparqlTree {
                     fillNodes(subVarModel, node, groupedBindings)
                 }
             }
+            if (!keepEmpty && (nodes.size() == 0)) {
+              continue
+            }
             def finalValue = nodes
             if (useOne) {
                 finalValue = completeNode(toOne(nodes), key, parentNode)
@@ -181,9 +185,10 @@ class SparqlTree {
                     nodes[i] = completeNode(nodes[i], key, parentNode)
                 }
             }
-            if (keepNull || finalValue != null) {
-              parentNode[key] = finalValue
+            if (!keepNull && finalValue == null) {
+              continue
             }
+            parentNode[key] = finalValue
         }
     }
 
