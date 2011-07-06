@@ -1,0 +1,56 @@
+@base <http://rinfo.lagrummet.se/sys/2011/api> .
+
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
+@prefix :     <http://purl.org/linked-data/api/vocab#> .
+
+
+<#> a :API;
+    rdfs:label "RInfo Linked Data API"@en;
+    :maxPageSize "50";
+    :defaultPageSize "10";
+    :defaultLang "sv";
+    :endpoint
+        [ a :ItemEndpoint;
+            :uriTemplate "/publ/{a}/{b}";
+            :itemTemplate "http://rinfo.lagrummet.se/publ/{a}/{b}";
+            :viewer <#rpublViewer>
+        ],
+        [ a :ItemEndpoint;
+            :uriTemplate "/publ/{a}/{b}/{c}";
+            :itemTemplate "http://rinfo.lagrummet.se/publ/{a}/{b}/{c}";
+            :viewer <#rpublViewer>
+        ],
+        [ a :ListEndpoint;
+            :uriTemplate "/publishers";
+            :selector [
+                :where "?item a foaf:Organization"
+            ]
+        ],
+        [ a :ListEndpoint;
+            :uriTemplate "/by-publisher/{publisher}";
+            :selector [
+                    :parent <#publishersEndpoint>;
+                    :filter "publisher={publisher}"
+                ]
+        ];
+    :sparqlEndpoint <http://localhost:8080/openrdf-sesame/repositories/rinfo>;
+    :defaultViewer :describeViewer .
+
+
+<#rpublViewer> a :Viewer;
+    :name "rinfo doc viewer";
+    :property (rpubl:paragraf rpubl:paragrafnummer);
+    :property (rpubl:andrar dct:identifier);
+    :property (rpubl:upphaver dct:identifier);
+    #:properties "identifier,andrar.identifier,upphaver.identifier";
+    :include :describeViewer .
+
+
+rdf:type a owl:ObjectProperty; :label "type" .
+
