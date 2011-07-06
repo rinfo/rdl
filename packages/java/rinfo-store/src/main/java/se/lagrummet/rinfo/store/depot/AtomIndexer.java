@@ -124,7 +124,8 @@ public class AtomIndexer {
         /* TODO:IMPROVE:
             Dry out, unless generating new (when we know all, incl. deleteds..)
             If so, historical entries must know if their current is deleted!
-        dryOutHistoricalEntries(depotEntry)
+        prunePreviousEntry(depotEntry) // using getOldFeedRef(depotEntry)
+        saveCurrentFeedRef(depotEntry, currentFeed)
         */
     }
 
@@ -156,15 +157,6 @@ public class AtomIndexer {
         }
         return getFeed(prev.toString());
     }
-
-    /* TODO: to use for e.g. "emptying" ("drying out") deleted entries.
-        Search in feed folder by date, time; opt. offset (if many of same in
-        same instant?).
-    protected Feed findFeedForDateTime(Date date) {
-        .. findFeedForDateTime(pathToArchiveFeed(date))
-        return null;
-    }
-    */
 
     protected void writeFeed(Feed feed) throws DepotWriteException {
         String uriPath = atomizer.uriPathFromFeed(feed);
