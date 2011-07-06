@@ -49,8 +49,9 @@ public class Components {
         DEPOT_BASE_URI("rinfo.depot.baseUri"),
         DEPOT_BASE_DIR("rinfo.depot.baseDir"),
         SOURCE_FEEDS_ENTRY_ID("rinfo.main.storage.sourceFeedsEntryId"),
-        URIMINTER_DESCRIPTION_ENTRY_ID("rinfo.main.uriMinter.containerDescriptionEntryId"),
+        URIMINTER_ENTRY_ID("rinfo.main.uriMinter.uriSpaceEntryId"),
         URIMINTER_CHECKED_BASE_PATH("rinfo.main.uriMinter.checkedBasePath"),
+        URIMINTER_URI_SPACE_URI("rinfo.main.uriMinter.uriSpaceUri"),
         ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets", false),
         PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
         COLLECTOR_LOG_DATA_DIR("rinfo.main.collector.logDataDir"),
@@ -163,10 +164,6 @@ public class Components {
     private Depot createDepot() {
         Depot depot = new FileDepot()
         configure(depot, "rinfo.depot")
-        // TODO:IMPROVE: the depot API should decouple the atomizer; then do:
-        //def atomizer = new AtomIndexer()
-        //configure(atomizer, "rinfo.main.atomizer")
-        //depot.setIndexer(atomizer)
         depot.initialize()
 
         boolean checkDepot = true
@@ -216,17 +213,16 @@ public class Components {
     }
 
     private StorageHandler createSourceFeedsConfigHandler() {
-        URI sourceFeedsEntryId = new URI(config.getString(
-                ConfigKey.SOURCE_FEEDS_ENTRY_ID.value))
-        return new SourceFeedsConfigHandler(collectScheduler, sourceFeedsEntryId)
+        return new SourceFeedsConfigHandler(
+                collectScheduler,
+                config.getString(ConfigKey.SOURCE_FEEDS_ENTRY_ID.value))
     }
 
     private StorageHandler createEntryRdfValidatorHandler() {
-        URI containerEntryId = new URI(config.getString(
-                ConfigKey.URIMINTER_DESCRIPTION_ENTRY_ID.value))
-        String checkedBasePath = config.getString(
-                ConfigKey.URIMINTER_CHECKED_BASE_PATH.value)
-        return new EntryRdfValidatorHandler(containerEntryId, checkedBasePath)
+        return new EntryRdfValidatorHandler(
+                config.getString(ConfigKey.URIMINTER_CHECKED_BASE_PATH.value),
+                config.getString(ConfigKey.URIMINTER_ENTRY_ID.value),
+                config.getString(ConfigKey.URIMINTER_URI_SPACE_URI.value))
     }
 
     private void ensureDir(File dir) {

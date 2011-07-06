@@ -18,9 +18,9 @@ class SourceFeedsConfigHandler implements StorageHandler {
     URI configurationEntryId
 
     public SourceFeedsConfigHandler(FeedCollectScheduler collectScheduler,
-            URI configurationEntryId) {
+            String configurationEntryId) {
         this.collectScheduler = collectScheduler
-        this.configurationEntryId = configurationEntryId
+        this.configurationEntryId = new URI(configurationEntryId)
     }
 
     void onStartup(StorageSession storageSession) throws Exception {

@@ -9,7 +9,7 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 
 class SourceFeedsConfigurationSpec extends Specification {
 
-    def sourceFeedsEntryId = new URI("http://example.org/sources")
+    def sourceFeedsEntryId = "http://example.org/sources"
     def sourceFeedUrls = [
         new URL("http://dom.se/dvfs/feed/current"),
         new URL("http://regeringen.se/sfs/feed/current"),
@@ -46,7 +46,7 @@ class SourceFeedsConfigurationSpec extends Specification {
 
     private mockSourcesEntry() {
         DepotEntry entry = Mock()
-        entry.getId() >> sourceFeedsEntryId
+        entry.getId() >> new URI(sourceFeedsEntryId)
         entry.getMimeType() >> "application/rdf+xml"
         entry.findContents() >> [
                 new DepotContent(new File("src/test/resources/source_feeds.rdf"),
