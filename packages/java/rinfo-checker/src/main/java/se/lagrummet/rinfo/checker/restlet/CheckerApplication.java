@@ -73,8 +73,11 @@ public class CheckerApplication extends Application {
     }
 
     protected void initializeHandlers() throws Exception {
+        // TODO: don't hardcode this config (get from main?)
         EntryRdfValidatorHandler uriMinterHandler = new EntryRdfValidatorHandler(
-                new URI("http://rinfo.lagrummet.se/sys/uri"), "/publ/");
+                "/publ/",
+                "http://rinfo.lagrummet.se/sys/uri",
+                "http://rinfo.lagrummet.se/sys/uri/space#");
         handlers.add(uriMinterHandler);
         Checker adminChecker = new Checker(systemBaseUri, entryDatasetUri);
         adminChecker.setHandlers(handlers);
