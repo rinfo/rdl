@@ -2,8 +2,21 @@
 import static org.openrdf.query.QueryLanguage.SPARQL
 import org.openrdf.repository.Repository
 import org.openrdf.repository.http.HTTPRepository
-import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.base.rdf.sparqltree.SparqlTree
+
+@Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
+// TODO:IMPROVE: should decouple restlet-based supply from depot...
+@Grab('org.restlet.jse:org.restlet:2.0.1')
+@Grab('org.restlet.jee:org.restlet.ext.servlet:2.0.1')
+import se.lagrummet.rinfo.store.depot.FileDepot
+
+@Grab('org.apache.tika:tika-parsers:0.9')
+import org.apache.tika.detect.DefaultDetector
+import org.apache.tika.parser.AutoDetectParser
+import org.apache.tika.parser.ParseContext
+import org.apache.tika.io.TikaInputStream
+import org.apache.tika.metadata.Metadata
+import org.apache.tika.parser.html.BoilerpipeContentHandler
 
 @Grab('org.codehaus.jackson:jackson-mapper-asl:1.8.1')
 import org.codehaus.jackson.map.ObjectMapper
@@ -28,14 +41,19 @@ import org.elasticsearch.common.xcontent.XContentFactory
 class ElasticIndexer {
 
     Repository repo
+    FileDepot depot
     Client esClient
     String indexName
     def elastifier
     boolean dryRun
 
-    ElasticIndexer(repo, esClient, indexName, dryRun=false) {
+    def textExtractor = new TextExtractor()
+
+    ElasticIndexer(repo, depot=null, esClient, indexName, dryRun=false) {
         this.repo = repo
+        this.depot = depot
         this.esClient = esClient
+        this.indexName = indexName
         this.dryRun = dryRun
         this.elastifier = new Elastifier(repo)
     }
@@ -51,7 +69,7 @@ class ElasticIndexer {
                 }
                 i++
                 def row = res.next()
-                def uri = row.getValue('topic')
+                def uri = new URI(row.getValue('topic').toString())
                 def type = row.getValue('type')
                 def elasticObj = elastifier.toElastic(uri, type)
                 println "[${i}] For <${uri}> of type <${type}>..."
@@ -59,7 +77,8 @@ class ElasticIndexer {
                     println "Empty; skipped."
                     continue
                 }
-                indexElastic elasticObj
+                def contentRef = findContentRef(uri)
+                indexElastic(elasticObj, contentRef)
             }
             println "Done. Indexed ${dryRun? 0 : i} objects."
         } finally {
@@ -78,26 +97,46 @@ class ElasticIndexer {
         return pq.evaluate()
     }
 
-    void indexElastic(obj) {
+    def contentMediaTypes = ["application/pdf",
+        "application/xhtml+xml", "text/html", "text/plain"]
+
+    def findContentRef(uri) {
+        if (depot == null)
+            return
+        def entry = depot.getEntry(uri)
+        if (entry == null)
+            return
+        def contents = entry.findContents()
+        // TODO: return all? (in theory yes, but we don't expect multiple?)
+        for (content in contents) {
+          if (content.mediaType in contentMediaTypes) {
+            return content
+          }
+        }
+
+    }
+
+    void indexElastic(obj, contentRef=null) {
         def jsonMapper = new ObjectMapper()
         jsonMapper.configure(INDENT_OUTPUT, true)
         println "Elastic Object:"
         println jsonMapper.writeValueAsString(obj)
 
+        if (dryRun) {
+            println "Dry run; no indexing done."
+            return
+        }
         obj.entrySet().each {
             def data = it.value
             def indexType = it.key
             def id = data.URI
-            if (dryRun) {
-                println "Dry run; no indexing done."
-                return
+            if (contentRef) {
+                println "Adding document data with mediaType ${contentRef.mediaType}"
+                data['document'] = [
+                    'content_type': contentRef.mediaType,
+                    'content': textExtractor.getString(contentRef.file)
+                ]
             }
-            // TODO:
-            //def contentRef = findContentRef(id)
-            //data['content'] = [
-            //    '_content_type': contentRef.mediaType,
-            //    'content': contentRef.base64EncodedValue
-            //]
             println "Indexing ${indexType}/<${id}>..."
             IndexRequestBuilder irb = esClient.prepareIndex(indexName, indexType, id).
                 setConsistencyLevel(WriteConsistencyLevel.DEFAULT).
@@ -193,17 +232,54 @@ class Elastifier {
 }
 
 
-def repoIndexName = args[0]
-int limit = args.length > 1? args[1] as int : 100
-boolean dryRun = args.length > 2? args[2] == 'dry' : false
+class TextExtractor {
+
+    def detector
+    def parser
+    def context
+
+    TextExtractor() {
+        detector = new DefaultDetector()
+        parser = new AutoDetectParser(detector)
+        context = new ParseContext()
+    }
+
+    def getString(file) {
+        def metadata = new Metadata()
+        def output = new ByteArrayOutputStream()
+        def input = TikaInputStream.get(file, metadata)
+        try {
+            def writer = new OutputStreamWriter(output, "UTF-8")
+            def handler = new BoilerpipeContentHandler(writer)
+            parser.parse(input, handler, metadata, context)
+        } finally {
+            input.close()
+            return output.toString("UTF-8")
+        }
+    }
+
+}
+
+
+assert System.env['JAVA_OPTS'] =~ '-Xmx512m'
+
+def (argFlags, argList) = args.split { it =~ /^--/ }
+
+def repoIndexName = argList[0]
+int limit = argList[1] as int ?: 100
+File depotDir = argList[2] as File ?: null
+boolean dryRun = '--dry' in argFlags
 
 def repo = new HTTPRepository("http://localhost:8080/openrdf-sesame", repoIndexName)
+
+def depot = depotDir? new FileDepot(
+    new URI("http://rinfo.lagrummet.se/"), depotDir) : null
 
 def client = new TransportClient()
     .addTransportAddress(new InetSocketTransportAddress("127.0.0.1", 9300))
 
 try {
-    def elIndex = new ElasticIndexer(repo, client, repoIndexName, dryRun)
+    def elIndex = new ElasticIndexer(repo, depot, client, repoIndexName, dryRun)
     elIndex.indexTripleStore(limit)
 } finally {
     client.close()
