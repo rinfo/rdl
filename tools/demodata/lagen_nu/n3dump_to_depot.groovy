@@ -58,7 +58,18 @@ def createDepotFromTriples(URI baseUri, File rdfSource, File depotDir, debug=fal
                             new BufferedOutputStream(System.out) { void close() { println() } },
                             true)
                 } else {
-                    createEntry(session, new URI(uri), docRepo)
+                    otherSources = []
+                    // FIXME: Here we should download PDF or XHT2
+                    // (depending on URI, optionally transforming through XSLT)
+                    if (uri =~ /konsolidering\/\d+-\d+-\d+$/) {
+                        // Download XHT2, transform
+                    } else if (uri =~ /\/sfs\/\d+:/) {
+                        m = (uri =~ /\/sfs\/\d+:/)
+                        // Download PDF if new enough
+                    } else if (uri =~ /\/rf\//) {
+                        // Download XHT2, transform
+                    } 
+                    createEntry(session, new URI(uri), docRepo, otherSources)
                 }
                 docRepo.shutDown()
             }
@@ -93,7 +104,7 @@ def ntStringtoRepo(ntStr) {
 
 previousDate = null
 
-def createEntry(session, uri, docRepo) {
+def createEntry(session, uri, docRepo, otherSources) {
     def RDFXML_MEDIA_TYPE = "application/rdf+xml"
     def inStream = RDFUtil.toInputStream(docRepo, RDFXML_MEDIA_TYPE, true)
     
@@ -153,14 +164,16 @@ def convertLagenNuTripleGroups(String key, List<String> lines) {
     def typeTriplePosition = newLines.findIndexOf { it.startsWith("<${uri}> <${RDF.TYPE}> ") }
 
     if (typeTriplePosition == -1) {
+        if (isLaw(newLines)) {
+            newLines += ["<${uri}> <${RDF.TYPE}> <${RPUBL}Lag> ."]
+        } else {
+            newLines += ["<${uri}> <${RDF.TYPE}> <${RPUBL}Forordning> ."]
+        }
         newLines += [
-            "<${uri}> <${RDF.TYPE}> <${RPUBL}Forordning> .",
             "<${uri}> <${RPUBL}forfattningssamling> <${RINFO}serie/fs/sfs> .",
             "<${uri}> <http://purl.org/dc/terms/publisher> <${RINFO}org/regeringskansliet> .",
         ]
-    }
-
-    if (newLines[typeTriplePosition].endsWith("<${RPUBL}KonsolideradGrundforfattning> .")) {
+    } else if (newLines[typeTriplePosition].endsWith("<${RPUBL}KonsolideradGrundforfattning> .")) {
         def konsLines = null
         def konsTypeTriple = newLines[typeTriplePosition]
 
@@ -203,7 +216,7 @@ def convertLagenNuTripleGroups(String key, List<String> lines) {
             def s = replaceOnce(it, "<${DCT}description>", "<${RPUBL}referatrubrik>")
             // TODO: is "issued" good enough?
             s = replaceOnce(s, "<${RPUBL}avgorandedatum>", "<${DCT}issued>")
-            s = s.replaceAll(/(.+) <${DCT}identifier> "(\w+ ([^"]+))"@sv \./,
+            s = s.replaceAll(/(.+) <${DCT}identifier> "(\w+ ([^"]+))"@sv \./, //"
                             '$1 <'+RPUBL+'publikationsplatsangivelse> "$3" .' + "\n" +
                             '$1 <'+DCT+'identifier> "$2" .')
             return s
@@ -284,20 +297,28 @@ def fixUri(line) {
 
 def isLaw(lines) {
     def titleTriple = lines.find { it =~ "title>" }
-    if (!titleTriple)
+    if (!titleTriple) {
         return false
-    def title = titleTriple.replaceFirst(/.+"([^"]+)"@sv\s*.$/, '$1')
-    // TODO: find (e.g.) "Personuppgiftslag (1998:204)" -> (title =~ /\w+lag\s+\(\d+:.+\)$/)[0]
-    return (title.startsWith('Lag ') ||
-            ((title =~ /\w+lag\s*(\(\d+:.+\))?$/) && !title.startsWith('Förordning')) ||
-            title.endsWith('balk'))
+        println "# Couldn't find title in ${lines[0]}"
+    }
+    def title = titleTriple.replaceFirst(/.+"([^"]+)"@sv\s*.$/, '$1') //"
+
+    println "# Checking ${title}"
+    if (title.startsWith('Lag '))
+        return true
+    if ((title =~ /\w+lag(|en)\s*(\(\d+:.+\))?$/) && !title.startsWith('Förordning'))
+        return true
+    if (title.endsWith('balk'))
+        return true
+
+    return false
 }
 
 
 /*=============================== main ===============================*/
 
 try {
-    createDepotFromTriples(new URI(RINFO), new File(args[0]), new File(args[1]),
+    createDepotFromTriples(new URI(RINFO), new File(args[0]), new File(args[1])
             "-debug" in args)
 } catch (IndexOutOfBoundsException e) {
     println "Usage: <rdf-source> <depot-dir>"
