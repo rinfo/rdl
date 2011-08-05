@@ -1,3 +1,4 @@
+
 /**
  * Generate Atom Depots with RDF posts per document from nt data dumps of
  * lagen.nu scrapes.
@@ -28,6 +29,11 @@
 @Grab('commons-codec:commons-codec:1.4')
 @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT')
 @Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
+import javax.xml.transform.Source
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.stream.StreamResult
+import javax.xml.transform.stream.StreamSource
+
 import static org.apache.commons.lang.StringUtils.replaceOnce
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.vocabulary.XMLSchema
@@ -35,6 +41,29 @@ import org.apache.abdera.Abdera
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.store.depot.*
 
+class MediaType {
+    static RDF_XML = "application/rdf+xml"
+    static HTML = "text/html"
+    static TEXT = "text/plain"
+    static PDF  = "application/pdf"
+}
+
+def download(URL remoteurl,File localfile) {
+    if (localfile.exists())
+	return
+    
+    localdir = new File(localfile.parent)
+    if (!localdir.exists())
+	localdir.mkdirs()
+    println "Attempting download"
+    def out = new BufferedOutputStream(new FileOutputStream(localfile))
+    out << remoteurl.openStream()
+}
+
+scriptFile = new File(this.class.protectionDomain.codeSource.location.toURI())
+tFactory = TransformerFactory.newInstance()
+transformer = tFactory.newTransformer(new StreamSource(
+            new File(scriptFile.parent, "xht2-to-xhtml.xslt")))
 
 def createDepotFromTriples(URI baseUri, File rdfSource, File depotDir, debug=false) {
     def uriTripleGroups = groupTriplesByLeadingUri(rdfSource)
@@ -56,17 +85,46 @@ def createDepotFromTriples(URI baseUri, File rdfSource, File depotDir, debug=fal
                     println "# DEBUG - RDF for <${uri}>:"
                     RDFUtil.serialize(docRepo, RDFUtil.TURTLE,
                             new BufferedOutputStream(System.out) { void close() { println() } },
-                            true)
-                } else {
+				      true)
+		} else {
                     otherSources = []
                     // FIXME: Here we should download PDF or XHT2
                     // (depending on URI, optionally transforming through XSLT)
+                    // http://rinfo.lagrummet.se/publ/sfs/1998:204
+                    m = (uri =~ /\/publ\/(\w+)\/(\d+):([^\/]+)/)
+		    def type = m[0][1]
+		    def year = m[0][2]
+		    def no   = m[0][3]
                     if (uri =~ /konsolidering\/\d+-\d+-\d+$/) {
-                        // Download XHT2, transform
+			def fname = new File("dl/kons/${year}/${no}.xht2")
+			def outFname = new File("dl/kons/${year}/${no}.xhtml")
+			def url = new URL("https://lagen.nu/${year}:${no}.xht2")
+                        println "# Downloading XHT2 from ${url} to ${fname}"
+			download(url,fname)
+			def out = new BufferedOutputStream(new FileOutputStream(outFname))
+			try { 
+			    transformer.transform(new StreamSource(fname),
+						  new StreamResult(out))
+			} finally {
+			    out.close()
+			}
+
+			otherSources << new SourceContent(outFname, MediaType.HTML, "sv")
+			// TODO: Transform XHT2 into a simpler XHTML 1.1 file
                     } else if (uri =~ /\/sfs\/\d+:/) {
-                        m = (uri =~ /\/sfs\/\d+:/)
-                        // Download PDF if new enough
+			if ((year.toInteger() > 1998) ||
+			    (year.toInteger() == 1998 && no.toInteger() > 305)) {
+			    def yy = year[2..3]
+			    def padno = String.format('%04d',no.toInteger())
+			    def fname = new File("dl/sfs/${year}/${no}.pdf")
+			    def url  = new URL("http://62.95.69.3/SFSdoc/${yy}/${yy}${padno}.PDF")
+			    println "# Downloading XHT2 from ${url} to ${fname}"
+			    download(url,fname)
+			    otherSources << new SourceContent(fname, MediaType.PDF, "sv")
+			}
+
                     } else if (uri =~ /\/rf\//) {
+                        println "# Downloading RF XHT2 from ${uri} (soon)"
                         // Download XHT2, transform
                     } 
                     createEntry(session, new URI(uri), docRepo, otherSources)
@@ -107,7 +165,6 @@ previousDate = null
 def createEntry(session, uri, docRepo, otherSources) {
     def RDFXML_MEDIA_TYPE = "application/rdf+xml"
     def inStream = RDFUtil.toInputStream(docRepo, RDFXML_MEDIA_TYPE, true)
-    
     // Ensure date uniqueness
     def date = new Date()
     while(date == previousDate){
@@ -117,8 +174,12 @@ def createEntry(session, uri, docRepo, otherSources) {
     
     try {
         def rdfContent = new SourceContent(inStream, RDFXML_MEDIA_TYPE)
+	sources = [rdfContent]
+	otherSources.each{
+	    sources << it
+	}
         println "Creating entry <$uri>"
-        session.createEntry(uri, date, [rdfContent])
+        session.createEntry(uri, date, sources)
     } finally {
         inStream.close()
     }
@@ -303,7 +364,6 @@ def isLaw(lines) {
     }
     def title = titleTriple.replaceFirst(/.+"([^"]+)"@sv\s*.$/, '$1') //"
 
-    println "# Checking ${title}"
     if (title.startsWith('Lag '))
         return true
     if ((title =~ /\w+lag(|en)\s*(\(\d+:.+\))?$/) && !title.startsWith('Förordning'))
@@ -318,7 +378,7 @@ def isLaw(lines) {
 /*=============================== main ===============================*/
 
 try {
-    createDepotFromTriples(new URI(RINFO), new File(args[0]), new File(args[1])
+    createDepotFromTriples(new URI(RINFO), new File(args[0]), new File(args[1]),
             "-debug" in args)
 } catch (IndexOutOfBoundsException e) {
     println "Usage: <rdf-source> <depot-dir>"
