@@ -32,3 +32,7 @@
     dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
     iana:current <http://dv.demo.lagrummet.se/feed/current> .
 
+<tag:dom.se,2009:rinfo:dataset:dvfs> a void:Dataset;
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    iana:current <http://fst.lagrummet.se/dvfs/feed/> .
+
