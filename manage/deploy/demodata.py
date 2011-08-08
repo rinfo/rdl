@@ -22,7 +22,7 @@ def _can_handle_dataset(dataset):
         raise ValueError("Undefined dataset %r" % dataset)
 
 
-def demo_data_download(dataset,force="0"):
+def demo_data_download(dataset,force="1"):
     """Downloads a demo dataset from its source."""
     _can_handle_dataset(dataset)
     if not int(force) and p.isdir("%(demodata_dir)s/%(dataset)s-raw" % venv()):
@@ -112,7 +112,7 @@ def _mkdir_keep_prev(dir_path):
 
 
 def _download_lagen_nu_data(dataset):
-    local("curl https://lagen.nu/%(dataset)s/parsed/rdf.nt -o lagennu-%(dataset)s.nt" % vars())
+    local("curl https://lagen.nu/%(dataset)s/parsed/rdf.nt -o %(demodata_dir)s/%(dataset)s-raw/lagennu-%(dataset)s.nt" % venv())
 
 def _transform_lagen_nu_data(dataset):
     local("%(java_opts)s groovy %(demodata_tools)s/lagen_nu/n3dump_to_depot.groovy "
