@@ -55,17 +55,30 @@ def download(URL remoteurl,File localfile) {
     localdir = new File(localfile.parent)
     if (!localdir.exists())
 	localdir.mkdirs()
-    println "Attempting download"
     def out = new BufferedOutputStream(new FileOutputStream(localfile))
     out << remoteurl.openStream()
 }
 
-scriptFile = new File(this.class.protectionDomain.codeSource.location.toURI())
-tFactory = TransformerFactory.newInstance()
-transformer = tFactory.newTransformer(new StreamSource(
-            new File(scriptFile.parent, "xht2-to-xhtml.xslt")))
+					  
+
+def transform(File infile, File outfile)  { 	   
+    scriptFile = new File(this.class.protectionDomain.codeSource.location.toURI())
+    tFactory = TransformerFactory.newInstance()
+    transformer = tFactory.newTransformer(new StreamSource(
+					      new File(scriptFile.parent, "xht2-to-xhtml.xslt")))
+
+    def out = new BufferedOutputStream(new FileOutputStream(outfile))
+    try { 
+	transformer.transform(new StreamSource(infile),
+			      new StreamResult(outfile))
+    } finally {
+	out.close()
+    }
+}
+
 
 def createDepotFromTriples(URI baseUri, File rdfSource, File depotDir, debug=false) {
+    def workDir = new File(rdfSource.parent)
     def uriTripleGroups = groupTriplesByLeadingUri(rdfSource)
 
     depot = new FileDepot(baseUri, depotDir)
@@ -77,10 +90,12 @@ def createDepotFromTriples(URI baseUri, File rdfSource, File depotDir, debug=fal
 
     def session = depot.openSession()
     try {
+	println "# Grouping triples"
         uriTripleGroups.each { key, lines ->
             def results = convertLagenNuTripleGroups(key, lines)
             results.each { uri, ntStr ->
                 def docRepo = ntStringtoRepo(ntStr)
+		// println "Handling ${uri}"
                 if (debug) {
                     println "# DEBUG - RDF for <${uri}>:"
                     RDFUtil.serialize(docRepo, RDFUtil.TURTLE,
@@ -88,46 +103,66 @@ def createDepotFromTriples(URI baseUri, File rdfSource, File depotDir, debug=fal
 				      true)
 		} else {
                     otherSources = []
-                    // FIXME: Here we should download PDF or XHT2
-                    // (depending on URI, optionally transforming through XSLT)
-                    // http://rinfo.lagrummet.se/publ/sfs/1998:204
+                    // Download PDF or XHT2 documents (for XHT2,
+                    // transform to XHTML 1.1 w/ XSLT) so we have some
+                    // document data to play with.
                     m = (uri =~ /\/publ\/(\w+)\/(\d+):([^\/]+)/)
-		    def type = m[0][1]
-		    def year = m[0][2]
-		    def no   = m[0][3]
-                    if (uri =~ /konsolidering\/\d+-\d+-\d+$/) {
-			def fname = new File("dl/kons/${year}/${no}.xht2")
-			def outFname = new File("dl/kons/${year}/${no}.xhtml")
-			def url = new URL("https://lagen.nu/${year}:${no}.xht2")
-                        println "# Downloading XHT2 from ${url} to ${fname}"
-			download(url,fname)
-			def out = new BufferedOutputStream(new FileOutputStream(outFname))
-			try { 
-			    transformer.transform(new StreamSource(fname),
-						  new StreamResult(out))
-			} finally {
-			    out.close()
+		    def coll, year, no
+		    if (m) { 
+			coll = m[0][1]
+			year = m[0][2]
+			no   = m[0][3]
+		    } else {
+			m = (uri =~ /\/publ\/rf\/(\w+)\/(\d+)(:|\/)([^\/]+)/)
+			if (m) { 
+			    coll = m[0][1]
+			    year = m[0][2]
+			    no   = m[0][4]
 			}
-
-			otherSources << new SourceContent(outFname, MediaType.HTML, "sv")
-			// TODO: Transform XHT2 into a simpler XHTML 1.1 file
-                    } else if (uri =~ /\/sfs\/\d+:/) {
-			if ((year.toInteger() > 1998) ||
-			    (year.toInteger() == 1998 && no.toInteger() > 305)) {
-			    def yy = year[2..3]
-			    def padno = String.format('%04d',no.toInteger())
-			    def fname = new File("dl/sfs/${year}/${no}.pdf")
-			    def url  = new URL("http://62.95.69.3/SFSdoc/${yy}/${yy}${padno}.PDF")
+		    }
+		    try { 
+			if (uri =~ /konsolidering\/\d+-\d+-\d+$/) {
+			    def fname = new File(workDir, "dl/kons/${year}/${no}.xht2")
+			    def outFname = new File(workDir, "dl/kons/${year}/${no}.xhtml")
+			    def url = new URL("https://lagen.nu/${year}:${no}.xht2")
 			    println "# Downloading XHT2 from ${url} to ${fname}"
 			    download(url,fname)
-			    otherSources << new SourceContent(fname, MediaType.PDF, "sv")
-			}
+			    transform(fname,outFname)
+			    otherSources << new SourceContent(outFname, MediaType.HTML, "sv")
+			    // TODO: Transform XHT2 into a simpler XHTML 1.1 file
+			} else if (uri =~ /\/sfs\/\d+:/) {
+			    if ((year.toInteger() > 1998) ||
+				(year.toInteger() == 1998 && no.toInteger() > 305)) {
+				def yy = year[2..3]
+				def padno = String.format('%04d',no.toInteger())
+				def fname = new File(workDir, "dl/sfs/${year}/${no}.pdf")
+				def url  = new URL("http://62.95.69.3/SFSdoc/${yy}/${yy}${padno}.PDF")
+				println "# Downloading XHT2 from ${url} to ${fname}"
+				download(url,fname)
+				otherSources << new SourceContent(fname, MediaType.PDF, "sv")
+			    }
 
-                    } else if (uri =~ /\/rf\//) {
-                        println "# Downloading RF XHT2 from ${uri} (soon)"
-                        // Download XHT2, transform
-                    } 
-                    createEntry(session, new URI(uri), docRepo, otherSources)
+			} else if (uri =~ /\/rf\//) {
+			    def fname = new File(workDir, "dl/dom/${coll}/${year}/${no}.xht2")
+			    def outFname = new File(workDir, "dl/dom/${coll}/${year}/${no}.xhtml")
+			    def url
+			    if (uri =~ /\/nja\//) {
+				no = no.substring(2)
+				url = new URL("https://lagen.nu/dom/${coll}/${year}s${no}.xht2")
+			    } else {
+				url = new URL("https://lagen.nu/dom/${coll}/${year}:${no}.xht2")
+			    }
+			    println "# Downloading XHT2 from ${url} to ${fname}"
+			    download(url,fname)
+			    transform(fname,outFname)
+			    otherSources << new SourceContent(outFname, MediaType.HTML, "sv")
+			}
+		    } catch (java.io.FileNotFoundException e) {
+			println "# Downloading failed, creating entry without source document"
+		    }
+		    if (uri.startsWith("http://rinfo.lagrummet.se/")) { 
+			createEntry(session, new URI(uri), docRepo, otherSources)
+		    }
                 }
                 docRepo.shutDown()
             }
@@ -178,7 +213,7 @@ def createEntry(session, uri, docRepo, otherSources) {
 	otherSources.each{
 	    sources << it
 	}
-        println "Creating entry <$uri>"
+        println "# Creating entry <$uri>"
         session.createEntry(uri, date, sources)
     } finally {
         inStream.close()
@@ -378,6 +413,7 @@ def isLaw(lines) {
 /*=============================== main ===============================*/
 
 try {
+    println "# Starting..."
     createDepotFromTriples(new URI(RINFO), new File(args[0]), new File(args[1]),
             "-debug" in args)
 } catch (IndexOutOfBoundsException e) {
