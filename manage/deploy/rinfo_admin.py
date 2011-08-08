@@ -36,7 +36,7 @@ def package_admin(sources=None, outdir=None):
 
 @roles('admin')
 def deploy_admin(builddir=None):
-    """Deploy the admin feed."""
+    """Deploy the admin feed to target env."""
     setup_admin()
     builddir = builddir or env.adminbuild
     if sys.platform == 'win32':

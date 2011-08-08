@@ -39,8 +39,8 @@ resources.
     $ fab tg_prod deploy_admin
 
 This rsync's the resulting directory hierarchy to the correct place in
-the production environment (substitute tg_dev_unix for tg_prod if you
-want to deploy them to your own local development environment)
+the production environment (substitute tg_prod with tg_dev_unix if you
+want to deploy them to your own local development environment, or tg_demo if you want to deploy them to the demo/staging environment)
 
     $ fab tg_prod ping_main_with_admin
 

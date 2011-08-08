@@ -10,6 +10,7 @@ from targetenvs import _needs_targetenv
 
 @runs_once
 def package_service(deps="1", test="1"):
+    """Builds and packages the rinfo-service war, configured for the target env."""
     if int(deps): local_lib_rinfo_pkg()
     _needs_targetenv()
     flags = "" if int(test) else "-Dmaven.test.skip=true"
@@ -22,6 +23,7 @@ def package_service(deps="1", test="1"):
 @runs_once
 @roles('service')
 def setup_service():
+    """Creates neccessary directories for rinfo-service runtime data."""
     _needs_targetenv()
     if not exists(env.dist_dir):
         run("mkdir %(dist_dir)s"%env)
@@ -33,6 +35,7 @@ def setup_service():
 
 @roles('service')
 def deploy_service(headless="0"):
+    """Deploys the rinfo-service war package to target env."""
     setup_service()
     _deploy_war(
             "%(java_packages)s/rinfo-service/target/rinfo-service-%(target)s.war"%env,
@@ -40,6 +43,7 @@ def deploy_service(headless="0"):
 
 @roles('service')
 def service_all(deps="1", test="1", headless="0"):
+    """Packages and deploys the rinfo-service war to target env."""
     package_service(deps, test)
     deploy_service(headless)
 
@@ -49,6 +53,7 @@ def service_all(deps="1", test="1", headless="0"):
 @runs_once
 @roles('service')
 def package_sesame():
+    """Packages and deploys the rinfo-service war to target env."""
     env.pkgdir = "%(java_packages)s/rinfo-sesame-http"%env
     local("cd %(pkgdir)s && mvn package"%env)
     env.local_sesame_dir = "%(pkgdir)s/target/dependency"%env
