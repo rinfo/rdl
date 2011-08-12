@@ -61,8 +61,10 @@ void createDepotFromDataDump(File sourceDir, File depotDir, boolean debug=false)
             try {
                 def describer = new Describer(repo.connection).
                         setPrefix('rpubl', "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#")
-                def uri = ["rpubl:Proposition", "rpubl:Utredningsbetankande"].collect(
-                        describer.&getByType).find { it }[0].about
+		//def uri = ["rpubl:Proposition", "rpubl:Utredningsbetankande"].collect(
+		//    describer.&getByType).find { it }[0].about
+		def uri = ["rpubl:Proposition", "rpubl:Utredningsbetankande"].collect(
+		    describer.&getByType).find { it }.about[0]
                 describer.close()
                 def inStream = RDFUtil.toInputStream(repo, MediaType.RDF_XML, true)
                 def sources = [new SourceContent(inStream, MediaType.RDF_XML)]

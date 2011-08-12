@@ -41,7 +41,7 @@ class Fetcher {
                 fileToCreate(listFile.parentFile, "${sysDateSlug}-${docId}.${suffix}") {
                     def docLink = elem[tag].text()
                     if (docLink) {
-                        download(docLink, it)
+			download(docLink, it)
                     }
                 }
             }
@@ -89,15 +89,26 @@ if (args.size() < 1) {
     System.exit 0
 }
 
-def fetcher = new Fetcher(targetDir: new File(args[0]), force: "-f" in flags)
+if (args.size() < 2) {
+    println "Usage: TARGET_DIR DOCTYPE [-l] [-d] [-f]"
+    println "   where DOCTYPE can be one of ${KNOWN_DOCTYPES}"
+    println "   -l: Just download search result lists"
+    println "   -d: Download document using previously downloaded search result lists"
+    println "   -f: Download documents/list even if present already"
+    // if you're having problem with script exiting due to "500 server
+    // error", try first downloading the list (-l), then documents
+    // (-d) over and over until you get all docs.
+} else {
+    def fetcher = new Fetcher(targetDir: new File(args[0]), force: "-f" in flags)
+    def doctype = args[1] ?: KNOWN_DOCTYPES[0]
+    assert doctype in KNOWN_DOCTYPES
 
-def doctype = args[1] ?: KNOWN_DOCTYPES[0]
-assert doctype in KNOWN_DOCTYPES
+    if ("-l" in flags)
+	fetcher.downloadLists(startLink(doctype))
+    else if ("-d" in flags)
+        fetcher.downloadDocs()
+    else
+	fetcher.downloadData(startLink(doctype))
+}
 
-if ("-l" in flags)
-    fetcher.downloadLists(startLink(doctype))
-else if ("-d" in flags)
-    fetcher.downloadDocs()
-else
-    fetcher.downloadData(startLink(doctype))
 
