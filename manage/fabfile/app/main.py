@@ -1,14 +1,15 @@
 from fabric.api import *
 from fabric.contrib.files import exists
-from util import venv
-from deploy import local_lib_rinfo_pkg, _deploy_war
-from targetenvs import _needs_targetenv
+from fabfile.util import venv
+from fabfile.app import local_lib_rinfo_pkg, _deploy_war
+from fabfile.target import _needs_targetenv
 
 ##
 # Local build
 
+@task
 @runs_once
-def package_main(deps="1", test="1"):
+def package(deps="1", test="1"):
     """Builds and packages the rinfo-main war, configured for the target env."""
     if int(deps): local_lib_rinfo_pkg()
     _needs_targetenv()
@@ -19,9 +20,10 @@ def package_main(deps="1", test="1"):
 ##
 # Server deploy
 
+@task
 @runs_once
 @roles('main')
-def setup_main():
+def setup():
     """Creates neccessary directories for rinfo-main runtime data."""
     if not exists(env.dist_dir):
         run("mkdir %(dist_dir)s" % env)
@@ -31,26 +33,28 @@ def setup_main():
         sudo("mkdir %(rinfo_main_store)s" % env)
         sudo("chown -R %(tomcat_user)s %(rinfo_main_store)s" % env)
 
+@task
 @roles('main')
-def deploy_main(headless="0"):
+def deploy(headless="0"):
     """Deploys the rinfo-main war package to target env."""
-    setup_main()
+    setup()
     _deploy_war("%(java_packages)s/rinfo-main/target/rinfo-main-%(target)s.war" % env,
             "rinfo-main", int(headless))
 
+@task
 @roles('main')
-def main_all(deps="1", test="1", headless="0"):
+def all(deps="1", test="1", headless="0"):
     """Packages and deploys the rinfo-main war to target env."""
-    package_main(deps, test)
-    deploy_main(headless)
+    package(deps, test)
+    deploy(headless)
 
 ##
 # Server Maintainance
 
-@roles('main')
-def clear_main_collect_log(force="0"):
-    """(Not implemented)"""
-    raise NotImplementedError
-    # TODO: make **SURE** this is whay you really want to do!
-    #sudo("rm -rf %(rinfo_main_store)s/collector-log" % env, user=env.tomcat_user)
+#@task
+#@roles('main')
+#def clear_collect_log(force="0"):
+#    raise NotImplementedError
+#    # TODO: make **SURE** this is whay you really want to do!
+#    #sudo("rm -rf %(rinfo_main_store)s/collector-log" % env, user=env.tomcat_user)
 

@@ -1,15 +1,16 @@
 from __future__ import with_statement
 from fabric.api import *
 from fabric.contrib.files import exists
-from util import venv
-from deploy import local_lib_rinfo_pkg, _deploy_war
-from targetenvs import _needs_targetenv
+from fabfile.util import venv
+from fabfile.app import local_lib_rinfo_pkg, _deploy_war
+from fabfile.target import _needs_targetenv
 
 ##
 # Local build
 
+@task
 @runs_once
-def package_service(deps="1", test="1"):
+def package(deps="1", test="1"):
     """Builds and packages the rinfo-service war, configured for the target env."""
     if int(deps): local_lib_rinfo_pkg()
     _needs_targetenv()
@@ -20,9 +21,10 @@ def package_service(deps="1", test="1"):
 ##
 # Server deploy
 
+@task
 @runs_once
 @roles('service')
-def setup_service():
+def setup():
     """Creates neccessary directories for rinfo-service runtime data."""
     _needs_targetenv()
     if not exists(env.dist_dir):
@@ -33,35 +35,39 @@ def setup_service():
         sudo("mkdir %(rinfo_rdf_repo_dir)s"%env)
         sudo("chown %(tomcat_user)s %(rinfo_rdf_repo_dir)s"%env)
 
+@task
 @roles('service')
-def deploy_service(headless="0"):
+def deploy(headless="0"):
     """Deploys the rinfo-service war package to target env."""
-    setup_service()
+    setup()
     _deploy_war(
             "%(java_packages)s/rinfo-service/target/rinfo-service-%(target)s.war"%env,
             "rinfo-service", int(headless))
 
+@task
 @roles('service')
-def service_all(deps="1", test="1", headless="0"):
+def all(deps="1", test="1", headless="0"):
     """Packages and deploys the rinfo-service war to target env."""
-    package_service(deps, test)
-    deploy_service(headless)
+    package(deps, test)
+    deploy(headless)
 
 ##
 # Sesame and Repo Util deploy
 
+@task
 @runs_once
 @roles('service')
 def package_sesame():
-    """Packages and deploys the rinfo-service war to target env."""
+    """Packages and deploys the Sesame RDF store war to target env."""
     env.pkgdir = "%(java_packages)s/rinfo-sesame-http"%env
     local("cd %(pkgdir)s && mvn package"%env)
     env.local_sesame_dir = "%(pkgdir)s/target/dependency"%env
 
+@task
 @runs_once
 @roles('service')
 def deploy_sesame():
-    setup_service()
+    setup()
     package_sesame()
     _patch_catalina_properties()
     for warname in ['openrdf-sesame', 'sesame-workbench']:
@@ -84,12 +90,14 @@ def _patch_catalina_properties():
 ##
 # Manage repository
 
+@task
 @roles('service')
-def service_repotool():
-    setup_service()
+def repotool():
+    setup()
     env.rinfo_repo_jar = "rinfo-rdf-repo-%s-jar-with-dependencies.jar" % env.java_pkg_version
     env.rinfo_service_props = "rinfo-service.properties"
 
+@task
 @runs_once
 @roles('service')
 def deploy_repotool():
@@ -100,10 +108,12 @@ def deploy_repotool():
             "%(dist_dir)s/"%env)
     put("%(java_packages)s/rinfo-rdf-repo/target/%(rinfo_repo_jar)s"%env, "%(dist_dir)s/"%env)
 
+@task
 @roles('service')
 def setup_repo():
     _repotool('setup')
 
+@task
 @roles('service')
 def clean_repo():
     _repotool('clean')

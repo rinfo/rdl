@@ -6,28 +6,28 @@ from fabric.api import *
 
 targetenvs = []
 
-def _targetenv(f):
+def targetenv(f):
     """
     Decorator function that makes sure that the list targetenvs contains all 
     available target environments. It does so by adding the decorated function 
     to the targetenvs list which is used by the _needs_targetenv function. 
     """
     targetenvs.append(f)
-    return f
+    return task(f)
 
 def _needs_targetenv():
     """
     Makes sure that the env dictionary contains a certain set of keys. These 
     keys are provided by one of the targetenv functions (decorated with 
-    @_targetenv). Targets calling this function i.e. 'package_main' requires 
+    @targetenv). Targets calling this function i.e. 'package_main' requires 
     a target and are executed like this:
     
         fab <some_targetenv_target> package_main
     """
     require('target', 'roledefs', 'dist_dir', 'tomcat', provided_by=targetenvs)
 
-@_targetenv
-def tg_dev_unix():
+@targetenv
+def dev_unix():
     """Set target env to: dev-unix"""
     # Name env:
     env.target = "dev-unix"
@@ -53,8 +53,8 @@ def tg_dev_unix():
     env.tomcat_user = "tomcat"
     env.tomcat_group = 'tomcat'
 
-@_targetenv
-def tg_demo():
+@targetenv
+def demo():
     """Set target env to: demo"""
     # Name env:
     env.target = "demo"
@@ -97,8 +97,8 @@ def tg_demo():
 
 # Integration is a virtual environment that you could setup on your own computer
 # See README.txt for more information
-@_targetenv
-def tg_integration():
+@targetenv
+def integration():
     """Set target env to: integration"""
     # Name env:
     env.target = "integration"
@@ -140,8 +140,8 @@ def tg_integration():
     env.tomcat_user = 'tomcat'
     env.tomcat_group = 'tomcat'
 
-@_targetenv
-def tg_prod():
+@targetenv
+def prod():
     """Set target env to: prod"""
     # Name env:
     env.target = "prod"
