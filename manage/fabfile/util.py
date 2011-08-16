@@ -17,7 +17,3 @@ def slashed(path):
 def cygpath(path):
     return local("cygpath %s" % path)
 
-# Hack to tell fabric these aren't tasks
-from fabric.main import _internals
-_internals += [venv, fullpath, mkdirpath, slashed, cygpath]
-

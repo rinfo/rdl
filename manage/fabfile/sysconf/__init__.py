@@ -18,8 +18,8 @@ from os import path as p, sep
 from fabric.api import *
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
-from targetenvs import _needs_targetenv
-from util import mkdirpath, slashed
+from fabfile.target import _needs_targetenv
+from fabfile.util import mkdirpath, slashed
 
 
 SCRIPT_DIR = p.dirname(__file__)
@@ -28,6 +28,7 @@ SCRIPT_DIR = p.dirname(__file__)
 ##
 # Continuous Maintenance
 
+@task
 def configure_server(sync="1"):
     if int(sync):
         _sync_workdir()
@@ -36,6 +37,7 @@ def configure_server(sync="1"):
     configure_sites(0)
 
 
+@task
 def sync_static_web(sync="1"):
     if int(sync):
         _sync_workdir()
@@ -50,6 +52,7 @@ def sync_static_web(sync="1"):
                 sudo("chmod u=rw,a=r %s" % dest)
 
 
+@task
 def configure_app_container(sync="1"):
     if int(sync):
         _sync_workdir()
@@ -69,6 +72,7 @@ def configure_app_container(sync="1"):
             if sudo("cp -vu apache2/conf.d/jk.conf /etc/apache2/conf.d/"):
                 sudo("chown root:root /etc/apache2/conf.d/jk.conf")
 
+@task
 def configure_sites(sync="1"):
     if int(sync):
         _sync_workdir()
@@ -101,11 +105,13 @@ def _prepare_initial_setup():
 
     mkdirpath("%(mgr_workdir)s/tomcat_pkg" % env)
 
+@task
 def install_dependencies():
     _needs_targetenv()
     _prepare_initial_setup()
     sudo("bash %(mgr_workdir)s/install/1_deps.sh" % env)
 
+@task
 def fetch_tomcat_dist():
     _needs_targetenv()
     _prepare_initial_setup()
@@ -113,6 +119,7 @@ def fetch_tomcat_dist():
     with cd(workdir_tomcat):
         run("bash %(mgr_workdir)s/install/2_get-tomcat.sh %(tomcat_version)s" % env)
 
+@task
 def install_tomcat():
     _needs_targetenv()
     _prepare_initial_setup()

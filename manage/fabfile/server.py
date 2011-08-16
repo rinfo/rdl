@@ -6,29 +6,35 @@ import contextlib
 import time
 from fabric.api import *
 from util import venv
-from targetenvs import _needs_targetenv
+from target import _needs_targetenv
 
+@task
 def can_i_deploy():
     """Tests password less sudo for automatic deploys."""
     sudo("echo 'it seems that I can run sudo as '", shell=False)
     sudo("whoami", shell=False)
 
+@task
 def list_dist():
     _needs_targetenv()
     run("ls -latr %(dist_dir)s/"%env)
 
+@task
 def clean_dist():
     _needs_targetenv()
     run("rm -rf %(dist_dir)s/*"%env)
 
+@task
 def tail():
     _needs_targetenv()
     sudo("ls -t %(tomcat)s/logs/catalina*.* | head -1 | xargs tail -f"%env)
 
+@task
 def tail2():
     _needs_targetenv()
     run("tail -f %(tomcat)s/logs/localhost.%(datestamp)s.log"%env)
 
+@task
 def restart_all():
     _needs_targetenv()
     sudo("/etc/init.d/apache2 stop")
@@ -49,15 +55,18 @@ def _managed_tomcat_restart(wait=5, headless=False):
     print
     sudo("%(tomcat_start)s" % env, shell=not headless)
 
+@task
 def restart_tomcat():
     with _managed_tomcat_restart(): pass
 
+@task
 def restart_apache():
     _needs_targetenv()
     #sudo("/etc/init.d/apache2 stop")
     #sudo("/etc/init.d/apache2 start")
     sudo("/etc/init.d/apache2 restart")
 
+@task
 def war_props(warname="ROOT"):
     _needs_targetenv()
     run("unzip -p %(tomcat_webapps)s/%(warname)s.war"
