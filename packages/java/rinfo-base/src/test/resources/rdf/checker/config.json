@@ -1,36 +1,38 @@
 {
-    "prefixes": {
-        "dct": "http://purl.org/dc/terms/",
-        "": "http://example.org/def/vocab#"
-    },
-    "classes": {
-        "Document": {}
-    },
-    "properties": {
-        "token": {},
-        "dct:title": {
-            "requireLang": "en",
-            "strictWhitespace": true
-        },
-        "dct:created": {
-            "datatype": "xsd:date",
-            "dateConstraint": {
-                "maxDaysFromNow": 0
+    "http://purl.org/dc/terms/": {
+        "properties": {
+            "title": {
+                "requireLang": "en",
+                "strictWhitespace": true
+            },
+            "created": {
+                "datatype": "date",
+                "dateConstraint": {
+                    "maxDaysFromNow": 0
+                }
+            },
+            "issued": {
+                "datatype": "date",
+                "dateConstraint": {
+                    "minYear": 1600,
+                    "maxYearsFromNow": 20
+                }
+            },
+            "references": {
+                "reference": true
             }
+        }
+    },
+    "http://example.org/def/vocab#": {
+        "classes": {
+            "Document": {}
         },
-        "dct:issued": {
-            "datatype": "xsd:date",
-            "dateConstraint": {
-                "minYear": 1600,
-                "maxYearsFromNow": 20
+        "properties": {
+            "token": {},
+            "changes": {
+                "reference": true,
+                "patternRef": "publUrl"
             }
-        },
-        "dct:references": {
-            "reference": true
-        },
-        "changes": {
-            "reference": true,
-            "patternRef": "publUrl"
         }
     },
     "patterns": {

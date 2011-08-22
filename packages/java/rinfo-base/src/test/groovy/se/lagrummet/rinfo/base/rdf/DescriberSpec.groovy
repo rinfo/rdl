@@ -14,6 +14,7 @@ class DescriberSpec extends Specification {
 
     static final ORG_URI = "http://example.org"
     static final FOAF = "http://xmlns.com/foaf/0.1/"
+    static final RDF = Describer.RDF_NS
 
     def setup() {
         repo = new SailRepository(new MemoryStore())
@@ -163,6 +164,7 @@ class DescriberSpec extends Specification {
         blank.about.startsWith("_:")
     }
 
+    @Unroll
     def "should read primitive values"() {
         given:
         def describer = newDescriber()
@@ -277,17 +279,19 @@ class DescriberSpec extends Specification {
         0 * conn.setNamespace('foaf', FOAF)
     }
 
+    @Unroll
     def "should make CURIE:s from stored prefixes"() {
         given:
         def describer = new Describer(conn).setPrefix('foaf', FOAF)
         expect:
         describer.toCurie(uri) == curie
         where:
-        uri                         | curie
-        "${Describer.RDF_NS}type"   | "rdf:type"
-        "${FOAF}name"               | "foaf:name"
+        uri             | curie
+        "${RDF}type"    | "rdf:type"
+        "${FOAF}name"   | "foaf:name"
     }
 
+    @Unroll
     def "should get term from URI"() {
         expect:
         Describer.getUriTerm(uri) == term
@@ -295,7 +299,23 @@ class DescriberSpec extends Specification {
         uri                         | term
         "${FOAF}name"               | "name"
         "tag:example.org,2010:item" | "item"
-        "${FOAF}"                   | ""
+        "${FOAF}"                   | null
+    }
+
+    @Unroll
+    def "should split URI into vocab and term"() {
+        when:
+        def result = Describer.splitVocabTerm(uri)
+        then:
+        vocab == result[0]
+        term == result[1]
+        where:
+        uri             | vocab | term
+        "${FOAF}name"   | FOAF  | "name"
+        "${RDF}type"    | RDF   | "type"
+        "${FOAF}"       | FOAF  | null
+        "${RDF}"        | RDF   | null
+        "opaque"        | null  | null
     }
 
     def "should close underlying connection"() {

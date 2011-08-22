@@ -1,4 +1,4 @@
-package se.lagrummet.rinfo.base.checker
+package se.lagrummet.rinfo.base.rdf.checker
 
 
 class DateConstraint {

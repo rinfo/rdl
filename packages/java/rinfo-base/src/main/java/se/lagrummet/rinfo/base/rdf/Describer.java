@@ -321,11 +321,21 @@ public class Describer {
         return prefix + ":" + uri.substring(offset, uri.length());
     }
 
-    static String getUriTerm(String uri) {
+    public static String getUriTerm(String uri) {
+        return splitVocabTerm(uri)[1];
+    }
+
+    public static String[] splitVocabTerm(String uri) {
+        String[] result = new String[] {null, null};
         int lastDelimIdx = findLastDelimIdx(uri);
-        if (lastDelimIdx == -1)
-            return null;
-        return uri.substring(lastDelimIdx + 1, uri.length());
+        if (lastDelimIdx > -1) {
+            int offset = lastDelimIdx + 1;
+            result[0] = uri.substring(0, offset);
+            if (offset < uri.length()) {
+                result[1] = uri.substring(offset, uri.length());
+            }
+        }
+        return result;
     }
 
     private static int findLastDelimIdx(String uri) {

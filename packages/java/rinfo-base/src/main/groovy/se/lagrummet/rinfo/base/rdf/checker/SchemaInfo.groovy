@@ -1,4 +1,4 @@
-package se.lagrummet.rinfo.base.checker
+package se.lagrummet.rinfo.base.rdf.checker
 
 import java.util.regex.Pattern
 
@@ -34,40 +34,34 @@ class SchemaInfo {
     }
 
     void configure(Map config) {
-        def prefixes = config.get("prefixes")?.clone() ?: [:]
-        prefixes.put("rdf", Describer.RDF_NS)
-        prefixes.put("rdfs", Describer.RDFS_NS)
-        prefixes.put("owl", Describer.OWL_NS)
-        prefixes.put("xsd", Describer.XSD_NS)
 
-        for (curieDef in config.get("properties")?.entrySet()) {
-            def uri = resolve(prefixes, curieDef.key)
-            def data = curieDef.value
-            def propInfo = new PropertyInfo(uri,
-                    resolve(prefixes, data.get("datatype")),
-                    data.get("reference"),
-                    data.get("requireLang"),
-                    data.get("strictWhitespace"),
-                    makePattern(config, data),
-                    makeDateConstraint(config, data))
-            propertyMap.put(uri, propInfo)
+        for (vocabEntry in config.entrySet()) {
+            def vocab = vocabEntry.key
+            def vocabData = vocabEntry.value
+
+            for (propEntry in vocabData.get("properties")?.entrySet()) {
+                def uri = vocab + propEntry.key
+                def data = propEntry.value
+
+                def datatype = data.get("datatype")
+                if (datatype && datatype.indexOf("/") == -1)
+                    datatype = Describer.XSD_NS + datatype
+
+                def propInfo = new PropertyInfo(uri,
+                        datatype,
+                        data.get("reference"),
+                        data.get("requireLang"),
+                        data.get("strictWhitespace"),
+                        makePattern(config, data),
+                        makeDateConstraint(config, data))
+                propertyMap.put(uri, propInfo)
+            }
+
+            for (className in vocabData.get("classes")?.keySet()) {
+                classes.add(vocab + className)
+            }
         }
 
-        for (curie in config.get("classes")?.keySet()) {
-            classes.add(resolve(prefixes, curie))
-        }
-
-    }
-
-    def resolve(Map prefixes, String curie) {
-        if (curie == null)
-            return null
-        int ic = curie.indexOf(":")
-        if (ic == -1)
-            return prefixes.get("") + curie
-        def pfx = curie.substring(0, ic)
-        def local = curie.substring(ic + 1)
-        return prefixes.get(pfx) + local
     }
 
     private def makePattern(config, data) {
