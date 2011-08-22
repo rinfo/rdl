@@ -16,7 +16,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <sesame.version>2.4.0</sesame.version>
+    <sesame.version>2.4.2</sesame.version>
+    <groovy.version>1.8.1</groovy.version>
   </properties>
 
   <organization>
@@ -370,7 +371,7 @@
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>1.8.0</version>
+        <version>${groovy.version}</version>
         <exclusions>
           <!-- exclude gossip (as long as we use another slf4j impl.) -->
           <exclusion>
@@ -536,7 +537,7 @@
             <dependency>
               <groupId>org.codehaus.groovy</groupId>
               <artifactId>groovy-all</artifactId>
-              <version>1.8.0</version>
+              <version>${groovy.version}</version>
             </dependency>
           </dependencies>
         </plugin>
