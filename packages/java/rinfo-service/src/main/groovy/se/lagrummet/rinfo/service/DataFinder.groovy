@@ -38,7 +38,7 @@ class DataFinder extends Finder {
 
         return new ServerResource() {
 
-            @Get("n3|txt")
+            @Get("n3|ttl|txt")
             Representation asN3() {
                 //return getRepr(MediaType.TEXT_RDF_N3)
                 return getRepr(MediaType.TEXT_PLAIN, "application/x-turtle")
