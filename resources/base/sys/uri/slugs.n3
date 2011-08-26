@@ -63,7 +63,7 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/fs/24fs> :abbrSlug "24fs" .
 <http://rinfo.lagrummet.se/serie/fs/25fs> :abbrSlug "25fs" .
 <http://rinfo.lagrummet.se/serie/fs/afs> :abbrSlug "afs" .
-<http://rinfo.lagrummet.se/serie/fs/afs> :abbrSlug "afs" .
+<http://rinfo.lagrummet.se/serie/fs/aafs> :abbrSlug "aafs" .
 <http://rinfo.lagrummet.se/serie/fs/agvfs> :abbrSlug "agvfs" .
 <http://rinfo.lagrummet.se/serie/fs/affs> :abbrSlug "affs" .
 <http://rinfo.lagrummet.se/serie/fs/amsfs> :abbrSlug "amsfs" .
@@ -74,7 +74,7 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/fs/dfs> :abbrSlug "dfs" .
 <http://rinfo.lagrummet.se/serie/fs/difs> :abbrSlug "difs" .
 <http://rinfo.lagrummet.se/serie/fs/dvfs> :abbrSlug "dvfs" .
-<http://rinfo.lagrummet.se/serie/fs/elsak-fs> :abbrSlug "elsak-fs" .
+<http://rinfo.lagrummet.se/serie/fs/elsaek-fs> :abbrSlug "elsaek-fs" .
 <http://rinfo.lagrummet.se/serie/fs/fffs> :abbrSlug "fffs" .
 <http://rinfo.lagrummet.se/serie/fs/ffs> :abbrSlug "ffs" .
 <http://rinfo.lagrummet.se/serie/fs/fhifs> :abbrSlug "fhifs" .
@@ -113,7 +113,7 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/fs/scb-fs> :abbrSlug "scb-fs" .
 <http://rinfo.lagrummet.se/serie/fs/sfs> :abbrSlug "sfs" .
 <http://rinfo.lagrummet.se/serie/fs/sgu-fs> :abbrSlug "sgu-fs" .
-<http://rinfo.lagrummet.se/serie/fs/sjofs> :abbrSlug "sjofs" .
+<http://rinfo.lagrummet.se/serie/fs/sjoefs> :abbrSlug "sjoefs" .
 <http://rinfo.lagrummet.se/serie/fs/sjvfs> :abbrSlug "sjvfs" .
 <http://rinfo.lagrummet.se/serie/fs/skifs> :abbrSlug "skifs" .
 <http://rinfo.lagrummet.se/serie/fs/skolfs> :abbrSlug "skolfs" .
@@ -133,6 +133,10 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/fs/vervafs> :abbrSlug "vervafs" .
 <http://rinfo.lagrummet.se/serie/fs/vrfs> :abbrSlug "vrfs" .
 <http://rinfo.lagrummet.se/serie/fs/vvfs> :abbrSlug "vvfs" .
+
+# Författningssamlingar för upphävda myndigheter
+<http://rinfo.lagrummet.se/serie/fs/saeifs> :abbrSlug "saeifs" .
+
 
 # Rättsfallsförteckningar
 <http://rinfo.lagrummet.se/serie/rf/nja> :abbrSlug "nja" .
