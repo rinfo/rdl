@@ -191,14 +191,21 @@ public class Describer {
     }
 
     public Set<Triple> triples(String sUri) {
+      return triples(sUri, null, null);
+    }
+
+    public Set<Triple> triples(String sUri, String pCurie, String oUri) {
         Resource s = sUri != null? toRef(sUri) : null;
+        org.openrdf.model.URI p = (pCurie != null)?
+                (org.openrdf.model.URI) toRef(expandCurie(pCurie)) : null;
+        Resource o = oUri != null? toRef(oUri) : null;
         try {
-            RepositoryResult<Statement> stmts = conn.getStatements(s, null, null,
+            RepositoryResult<Statement> stmts = conn.getStatements(s, p, o,
                     inferred, contextRefs);
             Set<Triple> values = new HashSet<Triple>();
             while (stmts.hasNext()) {
                 Statement stmt = stmts.next();
-                Triple triple = new Triple(this, sUri,
+                Triple triple = new Triple(this, fromRef(stmt.getSubject()),
                         fromRef(stmt.getPredicate()),
                         castValue(stmt.getObject()));
                 values.add(triple);
