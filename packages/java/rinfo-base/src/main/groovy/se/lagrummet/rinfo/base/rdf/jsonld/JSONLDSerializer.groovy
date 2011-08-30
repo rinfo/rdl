@@ -12,6 +12,7 @@ class JSONLDSerializer {
     static final VOCAB_KEY = "@vocab"
     static final TYPE_KEY = "@type"
     static final SUBJECT_KEY = "@subject"
+    static final COERCE_KEY = "@coerce"
 
     protected static RDF_TYPE = Describer.RDF_NS + "type"
 
@@ -19,6 +20,7 @@ class JSONLDSerializer {
     def typeKey = TYPE_KEY
     def subjectKey = SUBJECT_KEY
     def iriTermMap = [:]
+    def coerceMap = [:]
     def vocab = null
     def addRevs = true
 
@@ -27,7 +29,8 @@ class JSONLDSerializer {
         contextMap.each { key, value ->
             if (key == VOCAB_KEY)
                 this.vocab = value
-            //else if (key == "@coerce")
+            else if (key == COERCE_KEY)
+                coerceMap = (Map<String, List<String>>) value
             else if (value == TYPE_KEY)
                 typeKey = key
             else if (value == SUBJECT_KEY)
@@ -72,7 +75,7 @@ class JSONLDSerializer {
                 item[typeKey] = result
             } else {
                 def key = toKey(prop)
-                def result = values.collect { valueToJSON(description.describer, it, rootIri) }
+                def result = values.collect { valueToJSON(description.describer, key, it, rootIri) }
                 if (result.size() == 1)
                     result = result[0]
                 item[key] = result
@@ -93,13 +96,22 @@ class JSONLDSerializer {
             return iriTermMap[vocab] + ":" + vocabKeyPair[1]
     }
 
-    def valueToJSON(Describer describer, value, rootIri=null) {
+    def valueToJSON(Describer describer, String key, Object value, String rootIri=null) {
         if (value instanceof RDFLiteral) {
-            // TODO: simplify booleans, numbers and coerced
-            return (value.datatype == null)? value.toString() : [
-                    "@datatype": Describer.splitVocabTerm(value.datatype)[1],
-                    "@literal": value.toString()
-                ]
+            if (value.datatype == null)
+                return value.toString()
+            def dtVocabTermPair = Describer.splitVocabTerm(value.datatype)
+            def isXsdVocab = (dtVocabTermPair[0] == Describer.XSD_NS)
+            def dtTerm = dtVocabTermPair[1]
+            // TODO: improve coerce mechanics (set of tokens; support @iri...)
+            if (key in coerceMap[dtTerm])
+                return value.toString()
+            // TODO: which number types?
+            else if (isXsdVocab && (dtTerm in ['boolean', 'int', 'integer', 'float', 'double']))
+                return value.toNativeValue()
+            else
+                return ["@datatype": isXsdVocab? dtTerm : value.datatype,
+                       "@literal": value.toString()]
         } else {
             return toJSON(describer.findDescription(value), rootIri)
         }
