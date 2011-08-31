@@ -77,12 +77,12 @@ class DataFinder extends Finder {
 
             def getRepr(mediaType, mediaTypeStr) {
                 def resourceUri = baseUri + requestPath
-                def repo = getRichRDF(resourceUri)
-                if (repo == null) {
+                def itemRepo = getRichRDF(resourceUri)
+                if (itemRepo == null) {
                     setStatus(Status.CLIENT_ERROR_NOT_FOUND)
                     return null
                 }
-                def rdfRepr = serializeRDF(repo, resourceUri, mediaTypeStr)
+                def rdfRepr = serializeRDF(itemRepo, resourceUri, mediaTypeStr)
                 return new StringRepresentation(rdfRepr, mediaType,
                         null, new CharacterSet("utf-8"))
             }
