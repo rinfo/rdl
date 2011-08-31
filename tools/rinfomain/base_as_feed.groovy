@@ -270,7 +270,7 @@ def mediaItem(itemUri, content, mediaIitems) {
 /**
  * Either uses the file as-is and closes the repo, or returns a lazy serializer..
  */
-Closure createRdfWriter(file, final repo=null) {
+Closure createRdfWriter(file, repo=null) {
     if (file.name.endsWith(".n3")) {
         if (repo == null) {
             repo = RDFUtil.createMemoryRepository()
