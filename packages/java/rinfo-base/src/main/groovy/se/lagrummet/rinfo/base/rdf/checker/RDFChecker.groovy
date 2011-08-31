@@ -127,10 +127,13 @@ class RDFChecker {
         }
 
         void checkReference(String uriRef, propInfo) {
-            try {
-                new URI(uriRef)
-            } catch (e) {
-                report.add new MalformedURIRefErrorItem(uriRef, e)
+            // NOTE: there's currently no way to enforce a *URI only* ref.
+            if (!uriRef.startsWith("_:")) {
+                try {
+                    new URI(uriRef)
+                } catch (e) {
+                    report.add new MalformedURIRefErrorItem(uriRef, e)
+                }
             }
             if (propInfo == null)
                 return
