@@ -49,8 +49,9 @@ public class Components {
         DEPOT_BASE_URI("rinfo.depot.baseUri"),
         DEPOT_BASE_DIR("rinfo.depot.baseDir"),
         SOURCE_FEEDS_ENTRY_ID("rinfo.main.storage.sourceFeedsEntryId"),
+        RDF_CHECK_BASE_PATH("rinfo.main.rdfcheck.basePath"),
+        RDF_CHECKER_VOCAB_ENTRY_IDS("rinfo.main.checker.vocabEntryIds"),
         URIMINTER_ENTRY_ID("rinfo.main.uriMinter.uriSpaceEntryId"),
-        URIMINTER_CHECKED_BASE_PATH("rinfo.main.uriMinter.checkedBasePath"),
         URIMINTER_URI_SPACE_URI("rinfo.main.uriMinter.uriSpaceUri"),
         ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets", false),
         PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
@@ -220,7 +221,8 @@ public class Components {
 
     private StorageHandler createEntryRdfValidatorHandler() {
         return new EntryRdfValidatorHandler(
-                config.getString(ConfigKey.URIMINTER_CHECKED_BASE_PATH.value),
+                config.getString(ConfigKey.RDF_CHECK_BASE_PATH.value),
+                config.getList(ConfigKey.RDF_CHECKER_VOCAB_ENTRY_IDS.value),
                 config.getString(ConfigKey.URIMINTER_ENTRY_ID.value),
                 config.getString(ConfigKey.URIMINTER_URI_SPACE_URI.value))
     }
