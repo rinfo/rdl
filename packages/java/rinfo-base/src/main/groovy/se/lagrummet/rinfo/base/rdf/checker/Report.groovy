@@ -33,6 +33,11 @@ class DatatypeErrorItem extends ErrorItem {
         this.literal = literal
         this.error = error
     }
+    String toString() {
+        return "DatatypeErrorItem: " +
+            " literal = " + literal + ";"
+            " error = " + error + ";"
+    }
 }
 
 
@@ -40,6 +45,10 @@ class MissingTypeWarnItem extends WarnItem {
     String uriRef
     MissingTypeWarnItem(uriRef) {
         this.uriRef = uriRef
+    }
+    String toString() {
+        return "MissingTypeWarnItem: " +
+            " uriRef = " + uriRef + ";"
     }
 }
 
@@ -50,6 +59,11 @@ class MalformedURIRefErrorItem extends ErrorItem {
         this.uriRef = uriRef
         this.error = error
     }
+    String toString() {
+        return "MalformedURIRefErrorItem: " +
+            " uriRef = " + uriRef + ";"
+            " error = " + error + ";"
+    }
 }
 
 
@@ -58,12 +72,20 @@ class UnknownTypeWarnItem extends WarnItem {
     UnknownTypeWarnItem(uriRef) {
         this.uriRef = uriRef
     }
+    String toString() {
+        return "UnknownTypeWarnItem: " +
+            " uriRef = " + uriRef + ";"
+    }
 }
 
 class UnknownPropertyWarnItem extends WarnItem {
     String uriRef
     UnknownPropertyWarnItem(uriRef) {
         this.uriRef = uriRef
+    }
+    String toString() {
+        return "UnknownPropertyWarnItem: " +
+            " uriRef = " + uriRef + ";"
     }
 }
 
@@ -72,12 +94,20 @@ class ExpectedReferenceErrorItem extends ErrorItem {
     ExpectedReferenceErrorItem(literal) {
         this.literal = literal
     }
+    String toString() {
+        return "ExpectedReferenceErrorItem: " +
+            " literal = " + literal + ";"
+    }
 }
 
 class ExpectedLiteralErrorItem extends ErrorItem {
     def uriRef
     ExpectedLiteralErrorItem(uriRef) {
         this.uriRef = uriRef
+    }
+    String toString() {
+        return "ExpectedLiteralErrorItem: " +
+            " uriRef = " + uriRef + ";"
     }
 }
 
@@ -88,12 +118,21 @@ class UnexpectedDatatypeErrorItem extends ErrorItem {
         this.literal = literal
         this.expected = expected
     }
+    String toString() {
+        return "UnexpectedDatatypeErrorItem: " +
+            " literal = " + literal + ";"
+            " expected = " + expected + ";"
+    }
 }
 
 class ExpectedLangErrorItem extends ErrorItem {
     def expected
     ExpectedLangErrorItem(expected) {
         this.expected = expected
+    }
+    String toString() {
+        return "ExpectedLangErrorItem: " +
+            " expected = " + expected + ";"
     }
 }
 
@@ -104,12 +143,21 @@ class PatternMismatchErrorItem extends ErrorItem {
         this.lexical = lexical
         this.pattern = pattern
     }
+    String toString() {
+        return "PatternMismatchErrorItem: " +
+            " lexical = " + lexical + ";"
+            " pattern = " + pattern + ";"
+    }
 }
 
 class SpuriousWhiteSpaceWarnItem extends WarnItem {
     def literal
     SpuriousWhiteSpaceWarnItem(literal) {
         this.literal = literal
+    }
+    String toString() {
+        return "SpuriousWhiteSpaceWarnItem: " +
+            " literal = " + literal + ";"
     }
 }
 
@@ -121,5 +169,11 @@ class DateConstraintWarnItem extends WarnItem {
         this.constraint = constraint
         this.literal = literal
         this.now = now
+    }
+    String toString() {
+        return "DateConstraintWarnItem: " +
+            " constraint = " + constraint + ";"
+            " literal = " + literal + ";"
+            " now = " + now + ";"
     }
 }
