@@ -18,6 +18,7 @@ import org.restlet.resource.Directory;
 import org.restlet.routing.Router;
 
 import se.lagrummet.rinfo.checker.Checker;
+import se.lagrummet.rinfo.checker.CheckerTool;
 
 
 /* TODO:
@@ -52,10 +53,13 @@ public class CheckerApplication extends Application {
     String systemBaseUri = "http://rinfo.lagrummet.se/system/";
     String entryDatasetUri = "tag:lagrummet.se,2009:rinfo";
 
+    String adminFeedUrlSource = "http://admin.lagrummet.se/feed/current.atom";
+
     @Override
     public Restlet createInboundRoot() {
         try {
-            initializeHandlers();
+            URL adminFeedUrl = new URL(adminFeedUrlSource);
+            CheckerTool.initializeHandlers(adminFeedUrl, handlers);
             getContext().getAttributes().putIfAbsent("handlers", handlers);
             getContext().getAttributes().putIfAbsent("systemBaseUri", systemBaseUri);
             getContext().getAttributes().putIfAbsent("entryDatasetUri", entryDatasetUri);
@@ -69,24 +73,6 @@ public class CheckerApplication extends Application {
             return router;
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    protected void initializeHandlers() throws Exception {
-        // TODO: don't hardcode this config (get from main?)
-        EntryRdfValidatorHandler uriMinterHandler = new EntryRdfValidatorHandler(
-                "/publ/",
-                "http://rinfo.lagrummet.se/sys/uri",
-                "http://rinfo.lagrummet.se/sys/uri/space#");
-        handlers.add(uriMinterHandler);
-        Checker adminChecker = new Checker(systemBaseUri, entryDatasetUri);
-        adminChecker.setHandlers(handlers);
-        // TODO: read just the URIMinter config directly <http://rinfo.lagrummet.se/sys/uri>?
-        URL adminFeedUrl = new URL("http://admin.lagrummet.se/feed/current.atom");
-        try {
-            adminChecker.checkFeed(adminFeedUrl, true);
-        } finally {
-            adminChecker.shutdown();
         }
     }
 
