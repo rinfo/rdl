@@ -47,7 +47,7 @@ class JSONLDSerializer {
             def description = describer.findDescription(resourceIri)
             if (description == null)
                 return
-            item = toJSON(description)
+            item = createJSON(description)
             if (addRevs) {
                 def revItems = getRevData(describer, resourceIri)
                 if (revItems) {
@@ -60,9 +60,9 @@ class JSONLDSerializer {
         return item
     }
 
-    def toJSON(Description description, rootIri=null) {
+    def createJSON(Description description, String rootIri=null) {
         def item = [:]
-        if (!description.about.startsWith("_:"))
+        if (description.about != null && !description.about.startsWith("_:"))
             item[subjectKey] = description.about
             if (rootIri == description.about) {
                 return item
@@ -113,7 +113,7 @@ class JSONLDSerializer {
                 return ["@datatype": isXsdVocab? dtTerm : value.datatype,
                        "@literal": value.toString()]
         } else {
-            return toJSON(describer.findDescription(value), rootIri)
+            return createJSON(describer.newDescription(value), rootIri)
         }
     }
 
@@ -128,7 +128,7 @@ class JSONLDSerializer {
             } else {
                 itemsByKey = revItems[key] = []
             }
-            itemsByKey << toJSON(describer.findDescription(triple.subject), resourceIri)
+            itemsByKey << createJSON(describer.newDescription(triple.subject), resourceIri)
         }
         return revItems
     }
