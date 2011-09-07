@@ -7,7 +7,6 @@ import org.restlet.Response
 import org.restlet.Restlet
 import org.restlet.data.MediaType
 import org.restlet.data.Status
-import org.restlet.representation.FileRepresentation
 import org.restlet.representation.Representation
 import org.restlet.representation.StringRepresentation
 import org.restlet.representation.Variant
@@ -73,7 +72,7 @@ class ServiceApplication extends Application {
         router.attach("/",
                 new Redirector(ctx, "{rh}/view", Redirector.MODE_CLIENT_SEE_OTHER))
 
-        router.attach("/status", StatusResource)
+        //router.attach("/status", StatusResource)
         router.attach("/collector", new Finder(ctx, RDFLoaderHandler))
 
         router.attach("/view", new SparqlTreeRouter(ctx, repositoryHandler.repository))
@@ -154,22 +153,4 @@ class RDFLoaderHandler extends Handler {
 
     }
 
-}
-
-/*
- *  Basic resource for simple status message.
- *
- *  TODO: replace this by a handleGet in RDFLoaderHandler?
- *  TODO: some form of collect status page..?
- */
-class StatusResource extends Resource {
-    public StatusResource(Context context, Request request, Response response) {
-        super(context, request, response)
-        getVariants().add(new Variant(MediaType.TEXT_PLAIN))
-    }
-    @Override
-    public Representation represent(Variant variant) {
-        def representation = new StringRepresentation("OK", MediaType.TEXT_PLAIN)
-        return representation
-    }
 }
