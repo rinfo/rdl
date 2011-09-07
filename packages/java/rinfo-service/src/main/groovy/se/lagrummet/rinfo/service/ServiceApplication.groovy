@@ -7,6 +7,7 @@ import org.restlet.Response
 import org.restlet.Restlet
 import org.restlet.data.MediaType
 import org.restlet.data.Status
+import org.restlet.representation.FileRepresentation
 import org.restlet.representation.Representation
 import org.restlet.representation.StringRepresentation
 import org.restlet.representation.Variant
@@ -39,6 +40,10 @@ class ServiceApplication extends Application {
     RepositoryHandler repositoryHandler
     String dataAppBaseUri
 
+    String jsonLdContextPath = "/json-ld/context.json"
+
+    def esClient
+
     public ServiceApplication(Context parentContext) {
         super(parentContext)
 
@@ -56,26 +61,35 @@ class ServiceApplication extends Application {
         loadScheduler = new SesameLoadScheduler(config, repositoryHandler.repository)
         def attrs = getContext().getAttributes()
         attrs.putIfAbsent(RDF_LOADER_CONTEXT_KEY, loadScheduler)
+
+        esClient = null
     }
 
     @Override
     public synchronized Restlet createRoot() {
-        def router = new Router(getContext())
+        def ctx = getContext()
+        def router = new Router(ctx)
+
         router.attach("/",
-                new Redirector(getContext(), "{rh}/view", Redirector.MODE_CLIENT_SEE_OTHER))
+                new Redirector(ctx, "{rh}/view", Redirector.MODE_CLIENT_SEE_OTHER))
+
         router.attach("/status", StatusResource)
-        router.attach("/collector", new Finder(getContext(), RDFLoaderHandler))
-        router.attach("/view", new SparqlTreeRouter(
-                getContext(), repositoryHandler.repository))
+        router.attach("/collector", new Finder(ctx, RDFLoaderHandler))
+
+        router.attach("/view", new SparqlTreeRouter(ctx, repositoryHandler.repository))
+
         router.attach("/{path}/data",
-                new DataFinder(getContext(), repositoryHandler.repository,
-                    dataAppBaseUri)
+                new DataFinder(ctx, repositoryHandler.repository,
+                    jsonLdContextPath, dataAppBaseUri)
             ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
 
+        router.attach("/-/{collection}", new ElasticFinder(ctx, esClient))
+
         if (mediaDirUrl) {
-            router.attach("/css", new Directory(getContext(), mediaDirUrl+"css/"))
-            router.attach("/img", new Directory(getContext(), mediaDirUrl+"img/"))
-            router.attach("/js", new Directory(getContext(), mediaDirUrl+"js/"))
+            router.attach("/json-ld/", new Directory(ctx, "clap:///json-ld/"))
+            router.attach("/css/", new Directory(ctx, mediaDirUrl + "css/"))
+            router.attach("/img/", new Directory(ctx, mediaDirUrl + "img/"))
+            router.attach("/js/", new Directory(ctx, mediaDirUrl + "js/"))
         }
         return router
     }
