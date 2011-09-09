@@ -13,7 +13,7 @@
     </context-param>
     <context-param>
         <param-name>org.restlet.clients</param-name>
-        <param-value>HTTP FILE</param-value>
+        <param-value>HTTP FILE CLAP</param-value>
     </context-param>
 
     <servlet>
@@ -26,8 +26,8 @@
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>RestServlet</servlet-name> 
-        <url-pattern>/*</url-pattern> 
+        <servlet-name>RestServlet</servlet-name>
+        <url-pattern>/*</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>

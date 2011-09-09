@@ -30,16 +30,15 @@ class DataFinder extends Finder {
     String baseUri
     Repository repo
     Map contextData
-    String contextUrl
+    String contextPath
 
-    DataFinder(Context context, Repository repo, String baseUri) {
+    DataFinder(Context context, Repository repo, String contextPath, String baseUri) {
         super(context)
         this.baseUri = baseUri
         this.repo = repo
         def mapper = new ObjectMapper()
-        // TODO: configurable context and contextUrl
-        this.contextUrl = "/json-ld/context.json"
-        def inStream = getClass().getResourceAsStream(contextUrl)
+        this.contextPath = contextPath
+        def inStream = getClass().getResourceAsStream(contextPath)
         try {
             this.contextData = mapper.readValue(inStream, Map)
         } finally {
@@ -120,10 +119,9 @@ class DataFinder extends Finder {
 
     String serializeRDF(Repository itemRepo, String resourceUri, String mediaType) {
         if (mediaType == "application/json") {
-            def json = new JSONLDSerializer(contextData).toJSON(itemRepo, resourceUri)
+            def json = new JSONLDSerializer(contextData, false, true).toJSON(itemRepo, resourceUri)
             if (json != null) {
-                //json["@context"] = contextMap
-                json["@context"] = contextUrl
+                json["@context"] = contextPath
             }
             def jsonMapper = new ObjectMapper()
             jsonMapper.configure(
@@ -133,7 +131,7 @@ class DataFinder extends Finder {
         def outStream = new ByteArrayOutputStream()
         try {
             RDFUtil.serialize(itemRepo, mediaType, outStream)
-            return outStream.toString()
+            return outStream.toString("UTF-8")
         } finally {
             outStream.close()
         }
@@ -141,7 +139,7 @@ class DataFinder extends Finder {
 
     String getConstructRelRevDataSparql() {
         return getClass().getResourceAsStream(
-                "/construct_relrev_data.rq").getText("utf-8")
+                "/sparql/construct_relrev_data.rq").getText("utf-8")
     }
 
 }

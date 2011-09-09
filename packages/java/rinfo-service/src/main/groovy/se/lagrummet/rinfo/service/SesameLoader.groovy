@@ -20,11 +20,13 @@ class SesameLoader extends FeedArchivePastToPresentReader {
 
     Repository repository
     RepositoryConnection conn
+    ElasticLoader elasticLoader
 
     private final logger = LoggerFactory.getLogger(SesameLoader)
 
-    SesameLoader(Repository repository) {
+    SesameLoader(Repository repository, elasticLoader=null) {
         this.repository = repository
+        this.elasticLoader = elasticLoader
     }
 
     @Override
@@ -51,29 +53,36 @@ class SesameLoader extends FeedArchivePastToPresentReader {
 
     void processFeedPageInOrder(URL pageUrl, Feed feed,
             List<Entry> effectiveEntries, Map<IRI, AtomDate> deletedMap) {
-
         deleteFromMarkers(feed, deletedMap)
-
         for (Entry entry : effectiveEntries) {
-            def repoEntry = new RepoEntry(this, entry)
-            // TODO: isn't this an exception, "not supposed to happen"?
-            // (FeedArchivePastToPresentReader shouldn't supply known stuff..)
-            if (repoEntry.isCollected()) {
-                logger.debug("Skipping collected entry <${entry.id}> [${entry.updated}]")
-                continue
-            }
-            logger.info("Storing entry <${entry.id}>")
-            repoEntry.create()
+            create(entry)
         }
     }
 
     protected void deleteFromMarkers(Feed sourceFeed, Map<IRI, AtomDate> deletedMap) {
         for (Map.Entry<URI, Date> delItem : deletedMap.entrySet()) {
-            def repoEntry = new RepoEntry(this,
-                    delItem.getKey().toURI(), delItem.getValue().getDate())
-            logger.info("Deleting entry <${repoEntry.id}>")
-            repoEntry.delete()
+            delete(delItem.getKey().toURI(), delItem.getValue().getDate())
         }
+    }
+
+    protected void create(entry) {
+        def repoEntry = new RepoEntry(this, entry)
+        // TODO: isn't this an exception, "not supposed to happen"?
+        // (FeedArchivePastToPresentReader shouldn't supply known stuff..)
+        if (repoEntry.isCollected()) {
+            logger.debug("Skipping collected entry <${entry.id}> [${entry.updated}]")
+            return
+        }
+        logger.info("Storing entry <${entry.id}>")
+        elasticLoader?.create(entry)
+        repoEntry.create()
+    }
+
+    protected void delete(entryId, deletedTime) {
+        def repoEntry = new RepoEntry(this, entryId, deletedTime)
+        logger.info("Deleting entry <${repoEntry.id}>")
+        repoEntry.delete()
+        elasticLoader?.delete(entryId)
     }
 
 }

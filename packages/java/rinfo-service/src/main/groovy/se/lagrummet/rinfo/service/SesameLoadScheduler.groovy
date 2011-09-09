@@ -1,50 +1,29 @@
 package se.lagrummet.rinfo.service
 
-import org.apache.commons.configuration.Configuration
-import org.apache.commons.configuration.ConfigurationException
-
-import org.openrdf.repository.Repository
-import org.openrdf.repository.event.base.NotifyingRepositoryWrapper
-
 import se.lagrummet.rinfo.collector.AbstractCollectScheduler
 
 
 class SesameLoadScheduler extends AbstractCollectScheduler {
 
-    private NotifyingRepositoryWrapper repository
-    private Collection<URL> sourceFeedUrls
+    ServiceComponents components
+    protected Collection<URL> sourceFeedUrls
 
-    SesameLoadScheduler(Configuration config, Repository repository) {
-        this.repository = new NotifyingRepositoryWrapper(repository)
-        this.configure(config)
+    SesameLoadScheduler(components, sourceFeedUrls) {
+        this.components = components
+        this.sourceFeedUrls = sourceFeedUrls
     }
 
-    void configure(Configuration config) {
-        // TODO: never schedule running collects?
-        setInitialDelay(-1)
-        setScheduleInterval(-1)
-        sourceFeedUrls = new ArrayList<URL>()
-        for (String url : config.getList("rinfo.service.sourceFeedUrls")) {
-            sourceFeedUrls.add(new URL(url))
-        }
-    }
-
-    public Collection getSourceFeedUrls() {
+    public Collection<URL> getSourceFeedUrls() {
         return sourceFeedUrls
     }
 
     protected void collectFeed(URL feedUrl, boolean lastInBatch) {
-        def rdfStoreLoader = new SesameLoader(repository)
-        rdfStoreLoader.readFeed(feedUrl)
-        rdfStoreLoader.shutdown()
-    }
-
-    protected void addRepositoryListener(listener) {
-        repository.addRepositoryListener(listener)
-    }
-
-    protected void addRepositoryConnectionListener(listener) {
-        repository.addRepositoryConnectionListener(listener)
+        def repoLoader = components.newSesameLoader()
+        try {
+          repoLoader.readFeed(feedUrl)
+        } finally {
+          repoLoader.shutdown()
+        }
     }
 
 }

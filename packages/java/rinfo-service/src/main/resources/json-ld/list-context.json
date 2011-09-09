@@ -1,0 +1,22 @@
+{
+  "iri": "@subject",
+  "a": "@type",
+  "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+  "@vocab": "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#",
+  "title": "http://purl.org/dc/terms/title",
+  "issued": "http://purl.org/dc/terms/issued",
+  "identifier": "http://purl.org/dc/terms/identifier",
+  "publisher": "http://purl.org/dc/terms/publisher",
+  "hasFormat": "http://purl.org/dc/terms/hasFormat",
+  "describedby": "http://www.w3.org/2007/05/powder-s#describedby",
+  "prev": "http://www.w3.org/1999/xhtml/vocab#prev",
+  "current": "http://www.w3.org/1999/xhtml/vocab#current",
+  "next": "http://www.w3.org/1999/xhtml/vocab#next",
+  "startIndex": "http://a9.com/-/spec/opensearch/1.1/startIndex",
+  "itemsPerPage": "http://a9.com/-/spec/opensearch/1.1/itemsPerPage",
+  "totalResults": "http://a9.com/-/spec/opensearch/1.1/totalResults",
+  "duration": "http://purl.org/NET/c4dm/timeline.owl#durationXSD",
+  "items": "http://purl.org/linked-data/api/vocab#items",
+  "Page": "http://purl.org/linked-data/api/vocab#Page",
+  "string": ["identifier"]
+}
