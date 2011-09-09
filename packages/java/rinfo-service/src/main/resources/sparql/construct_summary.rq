@@ -1,0 +1,35 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX bibo: <http://purl.org/ontology/bibo/>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
+
+CONSTRUCT {
+
+    ?s ?p ?o .
+    ?current ?curr_p ?curr_o .
+
+    ?relitem a ?reltype;
+        ?relprop ?reltext .
+
+} WHERE {
+
+    {
+
+        ?g foaf:primaryTopic ?current .
+        GRAPH ?g { ?s ?p ?o }
+
+    } UNION {
+
+        ?current ?curr_p ?curr_o .
+
+    } UNION {
+
+        ?current ?rel ?relitem .
+        ?relitem ?relprop ?reltext .
+        FILTER( isLiteral(?reltext) )
+        OPTIONAL { ?relitem a ?reltype . }
+
+    }
+
+}

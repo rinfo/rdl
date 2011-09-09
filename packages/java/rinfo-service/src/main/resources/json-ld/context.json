@@ -14,6 +14,8 @@
   "issued": "http://purl.org/dc/terms/issued",
   "references": "http://purl.org/dc/terms/references",
   "isVersionOf": "http://purl.org/dc/terms/isVersionOf",
+  "hasFormat": "http://purl.org/dc/terms/hasFormat",
+  "hasVersion": "http://purl.org/dc/terms/hasFormat",
   "Document": "http://xmlns.com/foaf/0.1/Document",
   "Organization": "http://xmlns.com/foaf/0.1/Organization",
   "Person": "http://xmlns.com/foaf/0.1/Person",
@@ -21,17 +23,18 @@
   "primaryTopic": "http://xmlns.com/foaf/0.1/primaryTopic",
   "prefLabel": "http://www.w3.org/2004/02/skos/core#prefLabel",
   "altLabel": "http://www.w3.org/2004/02/skos/core#altLabel",
-  "abbrSlug": "http://rinfo.lagrummet.se/sys/uri/scheme#abbrSlug",
+  "describedby": "http://www.w3.org/2007/05/powder-s#describedby",
   "Entry": "http://bblfish.net/work/atom-owl/2006-06-06/#Entry",
   "id": "http://bblfish.net/work/atom-owl/2006-06-06/#id",
   "entryUpdated": "http://bblfish.net/work/atom-owl/2006-06-06/#updated",
   "content": "http://bblfish.net/work/atom-owl/2006-06-06/#content",
   "mediaType": "http://bblfish.net/work/atom-owl/2006-06-06/#type",
+  "abbrSlug": "http://rinfo.lagrummet.se/sys/uri/scheme#abbrSlug",
   "@coerce": {
     "date": ["beslutsdatum", "ikrafttradandedatum", "utfardandedatum", "utkomFranTryck", "avgorandedatum", "avkravtAvrapporteringsdatum", "ratificieringsdatum", "issued"],
     "dateTime": ["created", "updated", "entryUpdated"],
     "anyURI": ["id"],
-    "@set": ["andrar", "bilaga", "upphaver", "konsolideringsunderlag", "foreslarAndringAv", "utgarFran", "giltigaSprak", "kapitel", "paragraf", "references"],
-    "@localized": ["title", "prefLabel", "altLabel"]
+    "string": ["identifier"],
+    "@set": ["andrar", "bilaga", "upphaver", "konsolideringsunderlag", "foreslarAndringAv", "utgarFran", "giltigaSprak", "kapitel", "paragraf", "references"]
   }
 }

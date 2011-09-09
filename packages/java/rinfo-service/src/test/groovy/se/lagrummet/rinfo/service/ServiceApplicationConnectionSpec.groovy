@@ -13,7 +13,7 @@ import org.restlet.routing.VirtualHost
 
 import org.openrdf.repository.Repository
 import org.openrdf.repository.RepositoryConnection
-import org.openrdf.repository.event.RepositoryListener;
+import org.openrdf.repository.event.RepositoryListener
 import se.lagrummet.rinfo.service.util.FeedApplication
 import se.lagrummet.rinfo.service.util.RepoConnectionListener
 import spock.lang.Specification
@@ -45,8 +45,8 @@ class ServiceApplicationConnectionSpec extends Specification {
         def serviceApplication = new ServiceApplication(context.createChildContext())
 
         repoListener = new RListener()
-        serviceApplication.loadScheduler.addRepositoryListener(repoListener)
-        serviceApplication.loadScheduler.addRepositoryConnectionListener(repoListener)
+        serviceApplication.components.addRepositoryListener(repoListener)
+        serviceApplication.components.addRepositoryConnectionListener(repoListener)
 
         // create a local application that serves feeds
         def feedApplication = new FeedApplication(context.createChildContext())
@@ -75,20 +75,11 @@ class ServiceApplicationConnectionSpec extends Specification {
         component.stop()
     }
 
-    def testServiceApplicationConnection() {
-        def request = new Request(Method.GET, serviceAppUrl + "/status")
-        def client = new Client(Protocol.HTTP)
-        def response = client.handle(request)
-        
-        expect:
-        response.status == Status.SUCCESS_OK
-    }
-
     def testFeedApplicationConnection() {
         def request = new Request(Method.GET, feedAppUrl + "/1-init.atom")
         def client = new Client(Protocol.HTTP)
         def response = client.handle(request)
-        
+
         expect:
         response.status == Status.SUCCESS_OK
     }
@@ -103,16 +94,16 @@ class ServiceApplicationConnectionSpec extends Specification {
         request.setEntity(param, MediaType.MULTIPART_FORM_DATA)
         def client = new Client(Protocol.HTTP)
         def response = client.handle(request)
-        
+
         then:
         response.status == Status.SUCCESS_OK
-        
+
         when:
         request = new Request(Method.POST, "${serviceAppUrl}/collector")
         param = "feed=${feedAppUrl}/2-updated_t1.atom"
         request.setEntity(param, MediaType.MULTIPART_FORM_DATA)
         response = client.handle(request)
-        
+
         then:
         response.status == Status.SUCCESS_OK
 
