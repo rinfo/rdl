@@ -16,8 +16,13 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <sesame.version>2.4.2</sesame.version>
     <groovy.version>1.8.1</groovy.version>
+    <restlet.version>2.0.9</restlet.version>
+    <sesame.version>2.5.0</sesame.version>
+    <elasticsearch.version>0.16.2</elasticsearch.version>
+    <tika.version>0.9</tika.version>
+    <jackson.version>1.8.1</jackson.version>
+    <stringtemplate.version>3.2.1</stringtemplate.version>
   </properties>
 
   <organization>
@@ -72,6 +77,17 @@
       <id>maven-restlet</id>
       <name>Public online Restlet repository</name>
       <url>http://maven.restlet.org</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>sonatype</id>
+      <name>Sonatype</name>
+      <url>https://oss.sonatype.org/content/repositories/releases</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -212,12 +228,12 @@
       <dependency>
         <groupId>org.restlet.jse</groupId>
         <artifactId>org.restlet</artifactId>
-        <version>2.0.1</version>
+        <version>${restlet.version}</version>
       </dependency>
       <dependency>
         <groupId>org.restlet.jee</groupId>
         <artifactId>org.restlet.ext.servlet</artifactId>
-        <version>2.0.1</version>
+        <version>${restlet.version}</version>
       </dependency>
 
       <!-- TODO: is there some umbrella for all/most of sesame?
@@ -384,13 +400,25 @@
       <dependency>
         <groupId>org.antlr</groupId>
         <artifactId>stringtemplate</artifactId>
-        <version>3.2.1</version>
+        <version>${stringtemplate.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.codehaus.jackson</groupId>
         <artifactId>jackson-mapper-asl</artifactId>
-        <version>1.8.1</version>
+        <version>${jackson.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.elasticsearch</groupId>
+        <artifactId>elasticsearch</artifactId>
+        <version>${elasticsearch.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.tika</groupId>
+        <artifactId>tika-parsers</artifactId>
+        <version>${tika.version}</version>
       </dependency>
 
       <!-- }}} -->
