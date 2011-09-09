@@ -149,6 +149,9 @@ class JSONLDSerializer {
         def revTriples = describer.triples(null, null, resourceIri)
         for (triple in revTriples) {
             def key = toKey(triple.property)
+            if (!key) {
+                continue
+            }
             def itemsByKey = null
             if (key in revItems) {
                 itemsByKey = revItems[key]
