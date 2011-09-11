@@ -29,17 +29,22 @@ import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.vocabulary.XMLSchema;
+import org.openrdf.query.GraphQuery;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryEvaluationException;
+import org.openrdf.query.QueryLanguage;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.sail.SailRepository;
+import org.openrdf.repository.util.RDFInserter;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
+import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.RDFWriterFactory;
 import org.openrdf.rio.RDFWriterRegistry;
-import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.rdfxml.util.RDFXMLPrettyWriter;
 import org.openrdf.sail.memory.MemoryStore;
 
@@ -227,6 +232,40 @@ public class RDFUtil {
             }
         }
         return repo;
+    }
+
+
+    public static Repository constructQuery(RepositoryConnection conn, String queryString)
+            throws RepositoryException, MalformedQueryException,
+                              QueryEvaluationException, RDFHandlerException {
+        return constructQuery(conn, queryString, null);
+    }
+
+    public static Repository constructQuery(RepositoryConnection conn, String queryString,
+            Map<String, Value> bindings)
+            throws RepositoryException, MalformedQueryException,
+                              QueryEvaluationException, RDFHandlerException {
+        GraphQuery query = conn.prepareGraphQuery(QueryLanguage.SPARQL, queryString);
+        if (bindings != null) {
+            for (Map.Entry<String, Value> entry : bindings.entrySet()) {
+                query.setBinding(entry.getKey(), entry.getValue());
+            }
+        }
+        return constructQuery(conn, query);
+    }
+
+    public static Repository constructQuery(RepositoryConnection conn, GraphQuery query)
+            throws RepositoryException, QueryEvaluationException, RDFHandlerException {
+        Repository result = RDFUtil.createMemoryRepository();
+        RepositoryConnection resConn = result.getConnection();
+        boolean empty = true;
+        try {
+            query.evaluate(new RDFInserter(resConn));
+            empty = resConn.size() == 0; // resConn.isEmpty()
+        } finally {
+            resConn.close();
+        }
+        return (empty)? null : result;
     }
 
 
