@@ -83,7 +83,9 @@ class JSONLDSerializer {
             if (!key) {
                 return
             }
-            def result = values.collect { valueToJSON(description.describer, key, it, rootIri) }
+            def result = values.collect {
+                valueToJSON(description.describer, key, it, rootIri ?: description.about)
+            }
             item[key] = reduceValues(key, result)
         }
         return item
