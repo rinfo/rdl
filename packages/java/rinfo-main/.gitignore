@@ -1,3 +1,4 @@
+/src/environments/local
 /target
 /classpath.txt
 /*.ipr
