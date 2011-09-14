@@ -1,5 +1,7 @@
 package se.lagrummet.rinfo.service
 
+import groovy.util.logging.Slf4j
+
 import org.apache.commons.configuration.Configuration
 
 import org.openrdf.repository.Repository
@@ -11,8 +13,11 @@ import se.lagrummet.rinfo.rdf.repo.RepositoryHandlerFactory
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
+import org.elasticsearch.indices.IndexAlreadyExistsException
+import org.elasticsearch.transport.RemoteTransportException
 
 
+@Slf4j
 class ServiceComponents {
 
     static final String REPO_PROPERTIES_SUBSET_KEY = "rinfo.service.repo"
@@ -44,10 +49,11 @@ class ServiceComponents {
     }
 
     def newSesameLoader() {
-        return new SesameLoader(repository)
+        return new SesameLoader(repository, createElasticLoader())
     }
 
     void startup() {
+        configureElasticSearch()
         loadScheduler.startup()
     }
 
@@ -80,11 +86,41 @@ class ServiceComponents {
     }
 
     private def createElasticSearchClient() {
-        // TODO: move to config file
+        // TODO: move to config file; return null if config for this is missing
         def host = "127.0.0.1"
         def port = 9300
         return new TransportClient().addTransportAddress(
                 new InetSocketTransportAddress(host, port))
+    }
+
+    private void configureElasticSearch() {
+        def indices = searchClient.admin().indices()
+        try {
+            indices.prepareCreate(searchIndexName).execute().actionGet()
+        } catch (IndexAlreadyExistsException e) {
+            log.info "ElasticSearch index '${searchIndexName}' already exists."
+        } catch (RemoteTransportException e) {
+            if (e.cause instanceof IndexAlreadyExistsException) {
+                log.info "ElasticSearch index '${searchIndexName}' already exists."
+            } else {
+                throw e
+            }
+        }
+        // TODO: configure from context/schema
+        indices.preparePutMapping(searchIndexName).setType("doc").setSource([
+            "doc": [
+                "properties": [
+                    "domsnummer": ["type": "string"]
+                ]
+            ]
+        ]).execute().actionGet()
+    }
+
+    private def createElasticLoader() {
+        if (searchClient == null) {
+            return null
+        }
+        return new ElasticLoader(searchClient, searchIndexName)
     }
 
 }
