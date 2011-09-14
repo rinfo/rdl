@@ -15,7 +15,9 @@ import org.restlet.resource.ServerResource
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.action.search.*
-import org.elasticsearch.index.query.xcontent.*//QueryBuilders,...
+import org.elasticsearch.index.query.QueryBuilder
+import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.QueryStringQueryBuilder
 import org.elasticsearch.search.sort.SortOrder
 
 import org.codehaus.jackson.map.ObjectMapper
@@ -72,16 +74,15 @@ class ElasticFinder extends Finder {
         }
 
         data.items = esRes.hits.hits.collect {
-            def item = [
-                iri: it.id
-            ]
+            def item = [:] //iri: it.id
             //it.type (== 'doc' right now...)
             it.fields.each { key, hf ->
-                if (key == "_source.type")
-                    item.type = hf.value.term
-                else
-                    item[key] = hf.value/*s*/
+                // TODO: if (key.indexOf('.') > -1) { ... key.substring(0, key.indexOf('.')) }
+                if (hf.value != null) {
+                    item[key] = hf.values.size() > 1?  hf.values : hf.value
+                }
             }
+            item.describedby = makeServiceLink(item.iri)
             return item
         }
 
@@ -95,22 +96,30 @@ class ElasticFinder extends Finder {
         }
     }
 
-    def makeElasticSearch(Reference ref) {
+    Map makeElasticSearch(Reference ref) {
         def query = ref.getQueryAsForm(UTF_8)
         def page = 0
         def pageSize = defaultPageSize
+        def showFields = ["_id", "iri", "type", "title", "identifier",
+            "utfardandedatum", "beslutsdatum", "issued"]
         SearchRequestBuilder srb = client.prepareSearch(indexName)
+        srb.addFields(showFields as String[])
         def matches = []
         for (name in query.names) {
             def value = query.getFirstValue(name)
             if (name == 'q') {
                 matches << query.getFirstValue('q')
             } else if (name == '_sort') {
-                value.split(",").collect {
+                value.split(",").each {
                     if (it.startsWith('-')) {
-                        srb.addSort(it.substring(1), SortOrder.DESC)
+                        def sortKey = it.substring(1)
+                        srb.addSort(sortKey, SortOrder.DESC)
+                        if (!showFields.contains(sortKey))
+                            srb.addFields(sortKey)
                     } else {
                         srb.addSort(it, SortOrder.ASC)
+                        if (!showFields.contains(it))
+                            srb.addFields(it)
                     }
                 }
             } else if (name == pageParamKey) {
@@ -119,14 +128,15 @@ class ElasticFinder extends Finder {
                 pageSize = value as int
             } else {
                 matches << "${name}:${value}"
+                if (!showFields.contains(name))
+                    srb.addFields(name)
             }
         }
-        XContentQueryBuilder qb = (matches)?
+        QueryBuilder qb = (matches)?
             QueryBuilders.queryString(matches.join(' AND ')) :
             QueryBuilders.matchAllQuery()
         //TermFilterBuilder fb = FilterBuilders.termFilter("longval", 124L)
 
-        srb.addFields("_id", "_source.type", "iri", "type", "title", "identifier", "utfardandedatum", "beslutsdatum", "issued")
         srb.setQuery(qb)
         //srb.setQuery(QueryBuilders.filteredQuery(qb, fb))
         def startIndex = page * pageSize
@@ -139,6 +149,11 @@ class ElasticFinder extends Finder {
             startIndex: startIndex,
             queryString: ref.query ?: ''
         ]
+    }
+
+    String makeServiceLink(String iri) {
+        // TODO: Experimental. Use base from request? Link to alt mediaType versions?
+        return iri.replaceFirst(/http:\/\/rinfo\.([^#]+)(#.*)?/, 'http://service.$1/data.json$2')
     }
 
 }
