@@ -34,7 +34,7 @@
     "date": ["beslutsdatum", "ikrafttradandedatum", "utfardandedatum", "utkomFranTryck", "avgorandedatum", "avkravtAvrapporteringsdatum", "ratificieringsdatum", "issued"],
     "dateTime": ["created", "updated", "entryUpdated"],
     "anyURI": ["id"],
-    "string": ["identifier"],
+    "string": ["identifier", "domsnummer"],
     "@set": ["andrar", "bilaga", "upphaver", "konsolideringsunderlag", "foreslarAndringAv", "utgarFran", "giltigaSprak", "kapitel", "paragraf", "references"]
   }
 }

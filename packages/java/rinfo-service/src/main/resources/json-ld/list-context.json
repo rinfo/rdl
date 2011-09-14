@@ -18,5 +18,7 @@
   "duration": "http://purl.org/NET/c4dm/timeline.owl#durationXSD",
   "items": "http://purl.org/linked-data/api/vocab#items",
   "Page": "http://purl.org/linked-data/api/vocab#Page",
-  "string": ["identifier"]
+  "@coerce": {
+    "string": ["identifier", "domsnummer"]
+  }
 }
