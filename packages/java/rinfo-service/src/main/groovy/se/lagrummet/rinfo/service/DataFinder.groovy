@@ -15,8 +15,6 @@ import org.restlet.resource.ServerResource
 import org.restlet.routing.Router
 
 import org.openrdf.repository.Repository
-import static org.openrdf.query.QueryLanguage.SPARQL
-import org.openrdf.repository.util.RDFInserter
 
 import org.codehaus.jackson.map.ObjectMapper
 import org.codehaus.jackson.map.SerializationConfig
@@ -95,26 +93,13 @@ class DataFinder extends Finder {
      * with added contextual data for relevant incoming and outgoing relations.
      */
     Repository getRichRDF(String resourceUri) {
-        def itemRepo = RDFUtil.createMemoryRepository()
-        def itemConn = itemRepo.getConnection()
-        boolean empty = true
+        def conn = repo.getConnection()
         try {
-            def conn = repo.getConnection()
-            try {
-                def graphQuery = conn.prepareGraphQuery(SPARQL,
-                        constructRelRevDataSparql)
-                graphQuery.setBinding("current",
-                        conn.valueFactory.createURI(resourceUri))
-                graphQuery.evaluate(new RDFInserter(itemConn))
-            } finally {
-                conn.close()
-            }
-            empty = itemConn.size() == 0 // itemConn.isEmpty()
+            return RDFUtil.constructQuery(conn, constructRelRevDataSparql,
+                    ["current": conn.valueFactory.createURI(resourceUri)])
         } finally {
-            itemConn.close()
+            conn.close()
         }
-
-        return (empty)? null: itemRepo
     }
 
     String serializeRDF(Repository itemRepo, String resourceUri, String mediaType) {
