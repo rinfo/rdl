@@ -20,10 +20,20 @@ class TextExtractor {
         context = new ParseContext()
     }
 
-    def getString(file) {
+    String getText(File file) {
         def metadata = new Metadata()
-        def output = new ByteArrayOutputStream()
         def input = TikaInputStream.get(file, metadata)
+        return parseToString(input, metadata)
+    }
+
+    String getText(InputStream inputStream) {
+        def metadata = new Metadata()
+        def input = TikaInputStream.get(inputStream)
+        return parseToString(input, metadata)
+    }
+
+    String parseToString(TikaInputStream input, Metadata metadata) {
+        def output = new ByteArrayOutputStream()
         try {
             def writer = new OutputStreamWriter(output, "UTF-8")
             def handler = new BoilerpipeContentHandler(writer)
