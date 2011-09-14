@@ -6,6 +6,12 @@ import org.elasticsearch.client.Client
 import org.elasticsearch.action.WriteConsistencyLevel
 import org.elasticsearch.client.action.index.IndexRequestBuilder
 
+import org.openrdf.repository.Repository
+import org.openrdf.repository.RepositoryConnection
+
+import org.codehaus.jackson.map.ObjectMapper
+
+import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDSerializer
 
 
@@ -15,6 +21,11 @@ class ElasticLoader {
     Client client
     String indexName
 
+    def indexType = "doc" // TODO: different by path base?
+
+    String constructSummaryQuery
+    Map contextData
+
     def textExtractor = new TextExtractor()
     def contentMediaTypes = ["application/pdf",
         "application/xhtml+xml", "text/html", "text/plain"]
@@ -22,16 +33,27 @@ class ElasticLoader {
     ElasticLoader(client, indexName) {
         this.client = client
         this.indexName = indexName
+        this.constructSummaryQuery = getClass().getResourceAsStream(
+                    "/sparql/construct_summary.rq").getText("utf-8")
+        // TODO: refactor and configure
+        def mapper = new ObjectMapper()
+        def inStream = getClass().getResourceAsStream("/json-ld/context.json")
+        try {
+            this.contextData = mapper.readValue(inStream, Map)
+        } finally {
+            inStream.close()
+        }
     }
 
-    void create(entry) {
-        def id = entry.id
-        def data = toElasticData(entry) // + repoEntry...
+    void create(RepositoryConnection conn, entry, collector) {
+        def id = entry.id.toString()
+        def data = toElasticData(conn, entry, collector)
         if (data == null) {
             log.info "No elastic data created for <${entry.id}> - skipped."
             return
         }
         log.info "Indexing elastic data for <${id}>..."
+        // TODO: ensure that updates have effect!
         IndexRequestBuilder irb = client.prepareIndex(indexName, indexType, id).
             setConsistencyLevel(WriteConsistencyLevel.DEFAULT).
             setSource(data)
@@ -40,29 +62,88 @@ class ElasticLoader {
     }
 
     void delete(entryId) {
+        //DeleteResponse response =
+        client.prepareDelete(indexName, indexType, entryId).execute().actionGet()
     }
 
-    Map toElasticData(entry) {
-        return null /* TODO
-        def rq = "sparql/construct_summary.rq"
-        new JSONLDSerializer(conn, false, false)
-        def contentRef = null
-        def contents = entry.findContents()
-        // TODO: but we don't expect multiple, but if there are, which one to use? warn?
-        for (content in contents) {
-          if (content.mediaType in contentMediaTypes) {
-            contentRef = content
-            break
-          }
+    Map toElasticData(conn, entry, collector) {
+        def resourceUri = entry.id.toString()
+        def summaryRepo = getSummaryRDF(conn, resourceUri)
+        def data = new JSONLDSerializer(contextData, false, false).toJSON(summaryRepo, resourceUri)
+        if (data) {
+            cleanForElastic(data)
+            def contentRef = findContentRef(entry)
+            if (contentRef) {
+                log.info "Adding document data with mediaType ${contentRef.mediaType}"
+                def inputStream = collector.getResponseAsInputStream(contentRef.url)
+                try {
+                    def contentText = textExtractor.getText(inputStream)
+                    data['document'] = [
+                        'content_type': contentRef.mediaType,
+                        'content': contentText
+                    ]
+                } finally {
+                    inputStream.close()
+                }
+            }
         }
-        if (contentRef) {
-            println "Adding document data with mediaType ${contentRef.mediaType}"
-            data['document'] = [
-                'content_type': contentRef.mediaType,
-                'content': textExtractor.getString(contentRef.file)
-            ]
+        return data
+    }
+
+    Repository getSummaryRDF(conn, String resourceUri) {
+        return RDFUtil.constructQuery(conn, constructSummaryQuery,
+                ["current": conn.valueFactory.createURI(resourceUri)])
+    }
+
+    /**
+     * Removes string values from lists mixing strings and maps. If the result
+     * has size 1, use single value.
+     */
+    static def cleanForElastic(data, refKeys=['creator']) {
+        // TODO: this is just a quick fix for loading data
+        for (key in refKeys) {
+            if (data[key] instanceof String) {
+                data.remove(key)
+            }
         }
-        */
+        data.each { key, value ->
+            if (value instanceof Map) {
+                cleanForElastic(value)
+            } else if (value instanceof List) {
+                if (value.find { it instanceof Map } &&
+                        value.find { !(it instanceof Map) }) {
+                    def mapValues = value.findAll { it instanceof Map }
+                    data[key] = (mapValues.size() == 1)? mapValues[0] : mapValues
+                }
+            }
+        }
+    }
+
+    def findContentRef(entry) {
+        // TODO: we don't expect multiple content docs, but if there are, which one to use? warn?
+        def contentElem = entry.contentElement
+        if (contentElem?.resolvedSrc) {
+            def contentUrl = contentElem.resolvedSrc.toString()
+            def contentMediaType = contentElem.mimeType.toString()
+            if (contentMediaTypes.contains(contentMediaType)) {
+                return [
+                    mediaType: contentMediaType,
+                    url: contentUrl
+                ]
+            }
+        }
+        for (link in entry.links) {
+            def urlPath = link.resolvedHref.toString()
+            def mediaType = link.getMimeType().toString()
+            if (link.rel == "alternate") {
+                if (contentMediaTypes.contains(mediaType)) {
+                    return [
+                        mediaType: mediaType,
+                        url: urlPath
+                    ]
+                }
+            }
+        }
     }
 
 }
