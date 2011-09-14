@@ -645,6 +645,12 @@
       </properties>
     </profile>
     <profile>
+      <id>local</id>
+      <properties>
+        <environment>local</environment>
+      </properties>
+    </profile>
+    <profile>
       <id>integration</id>
       <properties>
         <environment>integration</environment>
