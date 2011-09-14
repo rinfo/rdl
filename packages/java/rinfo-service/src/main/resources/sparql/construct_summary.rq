@@ -26,6 +26,11 @@ CONSTRUCT {
     } UNION {
 
         ?current ?rel ?relitem .
+        FILTER(?rel = dct:publisher
+            || ?rel = rpubl:forfattningssamling
+            || ?rel = rpubl:utredningsserie
+            || ?rel = rpubl:rattsfallspublikation
+            || ?rel = rpubl:allmannaRadSerie) .
         ?relitem ?relprop ?reltext .
         FILTER( isLiteral(?reltext) )
         OPTIONAL { ?relitem a ?reltype . }
