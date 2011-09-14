@@ -74,8 +74,8 @@ class SesameLoader extends FeedArchivePastToPresentReader {
             return
         }
         logger.info("Storing entry <${entry.id}>")
-        elasticLoader?.create(entry)
         repoEntry.create()
+        elasticLoader?.create(conn, entry, this)
     }
 
     protected void delete(entryId, deletedTime) {
