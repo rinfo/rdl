@@ -2,7 +2,10 @@ package se.lagrummet.rinfo.service
 
 import org.restlet.Application
 import org.restlet.Context
+import org.restlet.Request
+import org.restlet.Response
 import org.restlet.Restlet
+import org.restlet.data.Form
 import org.restlet.data.MediaType
 import org.restlet.resource.Directory
 import org.restlet.resource.Finder
@@ -26,6 +29,8 @@ class ServiceApplication extends Application {
 
     String jsonLdContextPath = "/json-ld/context.json"
 
+    boolean allowCORS = true
+
     ServiceApplication(Context parentContext) {
         super(parentContext)
         setupExtensions()
@@ -35,9 +40,27 @@ class ServiceApplication extends Application {
     }
 
     @Override
-    synchronized Restlet createRoot() {
+    synchronized Restlet createInboundRoot() {
         def ctx = getContext()
-        def router = new Router(ctx)
+        def router = new Router(ctx) {
+            @Override
+            void handle(Request request, Response response) {
+                if (allowCORS) {
+                    addCORSHeaders(response)
+                }
+                super.handle(request, response)
+            }
+            private addCORSHeaders(Response response) {
+                def responseHeaders = response.attributes.get("org.restlet.http.headers")
+                if (responseHeaders == null) {
+                    responseHeaders = new Form()
+                    response.attributes.put("org.restlet.http.headers", responseHeaders)
+                }
+                responseHeaders.add("Access-Control-Allow-Origin", "*")
+                responseHeaders.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                responseHeaders.add("Access-Control-Allow-Credentials", "false")
+            }
+        }
 
         router.attach("/",
                 new Redirector(ctx, "{rh}/view", Redirector.MODE_CLIENT_SEE_OTHER))
