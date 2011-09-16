@@ -13,7 +13,7 @@ from fabric.api import env
 env.project = 'rinfo'
 
 # NOTE: env.projectroot must be an absolute, not a relative path:
-env.projectroot = p.normpath(p.join(p.dirname(__file__), '..'))
+env.projectroot = p.normpath(p.join(p.dirname(__file__), '..', '..'))
 
 env.toolsdir = sep.join((env.projectroot, 'tools'))
 
