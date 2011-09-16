@@ -18,6 +18,8 @@ import org.elasticsearch.client.action.search.*
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryStringQueryBuilder
+import org.elasticsearch.search.facet.FacetBuilders
+import org.elasticsearch.search.facet.datehistogram.DateHistogramFacet
 import org.elasticsearch.search.sort.SortOrder
 
 import org.codehaus.jackson.map.ObjectMapper
@@ -34,6 +36,13 @@ class ElasticFinder extends Finder {
     def defaultPageSize = 50
     def pageParamKey = '_page'
     def pageSizeParamKey = '_pageSize'
+    def facetStatsSegment = "stats"
+
+    def showFields = ["_id", "iri", "type", "title", "identifier",
+        "utfardandedatum", "beslutsdatum", "issued"]
+    def refTerms = ['publisher', 'forfattningssamling', 'utredningsserie',
+        'rattsfallspublikation', 'allmannaRadSerie']
+    def dateTerms = ["utfardandedatum", "beslutsdatum", "issued"]
 
     ElasticFinder(Context context, client, indexName) {
         super(context)
@@ -47,11 +56,24 @@ class ElasticFinder extends Finder {
     @Override
     ServerResource find(Request request, Response response) {
         final String collection = request.attributes["collection"]
+        SearchRequestBuilder srb = client.prepareSearch(indexName)
+        def data = (collection == facetStatsSegment)?
+            getElasticStats(srb) :
+            searchElastic(srb, collection, request.resourceRef)
+        return new ServerResource() {
+            @Get("json")
+            Representation asJSON() {
+                def jsonStr = jsonMapper.writeValueAsString(data)
+                def mediaType = MediaType.APPLICATION_JSON
+                return new StringRepresentation(jsonStr, mediaType, null, UTF_8)
+            }
+        }
+    }
 
-        // TODO: if no query params: list facets with stats and context
-        def search = makeElasticSearch(request.resourceRef)
+    def searchElastic(srb, collection, ref) {
+        def search = prepareElasticSearch(srb, ref, showFields) // TODO: showFieldsby collection?
 
-        SearchResponse esRes = search.searchRequestBuilder.execute().actionGet()
+        SearchResponse esRes = srb.execute().actionGet()
         assert esRes.failedShards == 0
 
         def data = [
@@ -85,24 +107,13 @@ class ElasticFinder extends Finder {
             item.describedby = makeServiceLink(item.iri)
             return item
         }
-
-        return new ServerResource() {
-            @Get("json")
-            Representation asJSON() {
-                def jsonStr = jsonMapper.writeValueAsString(data)
-                def mediaType = MediaType.APPLICATION_JSON
-                return new StringRepresentation(jsonStr, mediaType, null, UTF_8)
-            }
-        }
+        return data
     }
 
-    Map makeElasticSearch(Reference ref) {
+    Map prepareElasticSearch(SearchRequestBuilder srb, Reference ref, List<String> showFields) {
         def query = ref.getQueryAsForm(UTF_8)
         def page = 0
         def pageSize = defaultPageSize
-        def showFields = ["_id", "iri", "type", "title", "identifier",
-            "utfardandedatum", "beslutsdatum", "issued"]
-        SearchRequestBuilder srb = client.prepareSearch(indexName)
         srb.addFields(showFields as String[])
         def matches = []
         for (name in query.names) {
@@ -143,7 +154,6 @@ class ElasticFinder extends Finder {
         srb.setFrom(startIndex)
         srb.setSize(pageSize)
         return [
-            searchRequestBuilder: srb,
             page: page,
             pageSize: pageSize,
             startIndex: startIndex,
@@ -154,6 +164,36 @@ class ElasticFinder extends Finder {
     String makeServiceLink(String iri) {
         // TODO: Experimental. Use base from request? Link to alt mediaType versions?
         return iri.replaceFirst(/http:\/\/rinfo\.([^#]+)(#.*)?/, 'http://service.$1/data.json$2')
+    }
+
+    def getElasticStats(SearchRequestBuilder srb) {
+        def qb = QueryBuilders.matchAllQuery()
+        srb.setQuery(qb)
+        srb.addFacet(FacetBuilders.termsFacet("type").field("type"))
+        refTerms.each {
+            srb.addFacet(FacetBuilders.termsFacet(it).field(it + ".iri"))
+        }
+        dateTerms.each {
+            srb.addFacet(FacetBuilders.dateHistogramFacet(it).
+                    field(it).interval("year"))
+        }
+        srb.setSize(0)
+        SearchResponse esRes = srb.execute().actionGet()
+        def data = [
+            type: "DataSet",
+            //totalResults: esRes.hits.totalHits(),
+            slices: esRes.facets.collect {
+                [
+                    dimension: it.name,
+                    observations: it.entries.collect {
+                        it instanceof DateHistogramFacet.Entry?
+                            [year: 1900 + new Date(it.time).year, count: it.count] :
+                            [term: it.term, count: it.count]
+                    }
+                ]
+            }
+        ]
+        return data
     }
 
 }
