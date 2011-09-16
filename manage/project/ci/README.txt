@@ -2,8 +2,8 @@
 README - Continuous Integration
 ########################################################################
 
-When developing its nice to have a continuous integration server. For 
-this project we use Hudson. This is how Hudson is setup from scratch 
+When developing its nice to have a continuous integration server. For
+this project we use Hudson. This is how Hudson is setup from scratch
 for this project if necessary.
 
 # Login to the CI-server and create a hudson user
@@ -29,7 +29,7 @@ Put the following (or similar) config in the appropriate config file:
     ProxyPass         /hudson  http://localhost:8080/hudson
     ProxyPassReverse  /hudson  http://localhost:8080/hudson
     ProxyRequests     Off
-    
+
     # Local reverse proxy authorization override
     # Most unix distribution deny proxy by default (ie /etc/apache2/mods-enabled/proxy.conf in Ubuntu)
     <Proxy http://localhost:8080/hudson*>
@@ -56,6 +56,36 @@ From within Hudson perform the following steps
         #. Build -> Advanced… -> MAVEN_OPTS: -Xmx256m
         #. Activate the Post-build Actions: Publish Cobertura Coverage Report
         #. Cobertura xml report pattern: packages/java/**/target/site/cobertura/coverage.xml
+
+# Maven Site - http://dev.lagrummet.se/maven-site/
+
+It is possible to generate a project site using the Maven command:
+
+    mvn -Psite site-deploy
+
+For it to work properly you need Maven 3 and you need to add to your
+~/.m2/settings.xml:
+
+    <servers>
+        <server>
+          <id>rinfo-maven-site</id>
+          <username>USERNAME</username>
+          <privateKey>${user.home}/.ssh/IDFILE</privateKey>
+        </server>
+    </servers>
+
+where USERNAME is replaced with your username on dev.lagrummet.se and
+IDFILE is replaced with id_rsa or id_dsa depending on which key you used.
+
+Your user need write permission in /var/www/maven-site on dev.lagrummet.se.
+
+This is supposed to be possible to do password less which would enable the
+site to be continually generated from Hudson but I haven't gotten this to
+work. Maven asks for password for every module in the project.
+
+Some plugins has been disabled because they are very time consuming. Enable
+these ones the password less issue has been solved and the generation has
+been moved to Hudson.
 
 # Auto deploy to demo environment
 
@@ -84,3 +114,4 @@ environment. This is currently setup for the demo environment like this:
       with the headless parameter set to 1 like this:
 
          fab tg_demo main_all:headless=1
+

@@ -74,7 +74,7 @@ standing in the directory rinfo-trunk/manage
       * For Ubuntu (10.04 Lucid):
          sudo add-apt-repository "deb http://archive.canonical.com/ lucid partner"
          sudo apt-get update
-         
+
       * For Ubuntu (10.10 Maverick Meerkat):
          sudo add-apt-repository "deb http://archive.canonical.com/ maverick partner"
          sudo apt-get update
@@ -155,9 +155,9 @@ Deploy checker:
 Verify checker:
 
    * http://rinfo-checker/
-      should contain the checker form. Put <http://dv-demo/feed/current> in 
-      the URL input field and click Check to check the feed. This should 
-      result in 10 green line being shown, one for each successfully checked 
+      should contain the checker form. Put <http://dv-demo/feed/current> in
+      the URL input field and click Check to check the feed. This should
+      result in 10 green line being shown, one for each successfully checked
       feed entry.
 
 Deploy service:
@@ -172,15 +172,15 @@ Deploy service:
 Verify service:
 
    * http://rinfo-service/view/browse/publ
-      should contain a main page from where you can browse the various 
+      should contain a main page from where you can browse the various
       collected data.
 
 Upgrading the Integration Environment that has Existing Data
 ========================================================================
 
 If you have done the initial setup and used the applications for a while
-you might want to upgrade the environment but don't touch the data. To 
-upgrade your integration environment (tomcat and applications) please 
+you might want to upgrade the environment but don't touch the data. To
+upgrade your integration environment (tomcat and applications) please
 follow the instructions below:
 
    * integration: sudo /etc/init.d/tomcat stop
@@ -196,7 +196,7 @@ Deleting All Data
 ========================================================================
 
 Sometimes you might want to start from scratch when it comes to the data.
-This is an example of how to delete all data from the integration 
+This is an example of how to delete all data from the integration
 environment. Run all of these commands on the integration environment::
 
    * sudo /etc/init.d/tomcat stop
@@ -212,33 +212,3 @@ Development Environment
 
 For continuous integration see ``project/ci/README.txt``.
 
-Maven Site - http://dev.lagrummet.se/maven-site/
-========================================================================
-
-It is possible to generate a project site using the Maven command::
-
-   mvn -Psite site-deploy
-
-For it to work properly you need Maven 3 and you need to add to your 
-~/.m2/settings.xml::
-
-   <servers>
-      <server>
-         <id>rinfo-maven-site</id>
-         <username>USERNAME</username>
-         <privateKey>${user.home}/.ssh/IDFILE</privateKey>
-      </server>
-   </servers>
-
-where USERNAME is replaced with your username on dev.lagrummet.se and
-IDFILE is replaced with id_rsa or id_dsa depending on which key you used.
-
-Your user need write permission in /var/www/maven-site on dev.lagrummet.se.
-
-This is supposed to be possible to do password less which would enable the
-site to be continually generated from Hudson but I haven't gotten this to 
-work. Maven asks for password for every module in the project.
-
-Some plugins has been disabled because they are very time consuming. Enable
-these ones the password less issue has been solved and the generation has
-been moved to Hudson.
