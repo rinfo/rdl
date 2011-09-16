@@ -8,21 +8,19 @@ targetenvs = []
 
 def targetenv(f):
     """
-    Decorator function that makes sure that the list targetenvs contains all 
-    available target environments. It does so by adding the decorated function 
-    to the targetenvs list which is used by the _needs_targetenv function. 
+    Decorator function that makes sure that the list targetenvs contains all
+    available target environments. It does so by adding the decorated function
+    to the targetenvs list which is used by the _needs_targetenv function.
     """
     targetenvs.append(f)
     return task(f)
 
 def _needs_targetenv():
     """
-    Makes sure that the env dictionary contains a certain set of keys. These 
-    keys are provided by one of the targetenv functions (decorated with 
-    @targetenv). Targets calling this function i.e. 'package_main' requires 
-    a target and are executed like this:
-    
-        fab <some_targetenv_target> package_main
+    Makes sure that the env dictionary contains a certain set of keys. These
+    keys are provided by one of the targetenv functions (decorated with
+    @targetenv). Targets calling this function require a target to have been
+    invoked.
     """
     require('target', 'roledefs', 'dist_dir', 'tomcat', provided_by=targetenvs)
 
