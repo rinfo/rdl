@@ -5,7 +5,7 @@ import org.openrdf.repository.Repository
 import se.lagrummet.rinfo.store.depot.DepotEntry
 
 import se.lagrummet.rinfo.base.URIMinter
-import se.lagrummet.rinfo.base.checker.RDFChecker
+import se.lagrummet.rinfo.base.rdf.checker.RDFChecker
 
 
 class EntryRdfValidatorHandler implements StorageHandler {

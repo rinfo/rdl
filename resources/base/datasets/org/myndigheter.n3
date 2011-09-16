@@ -300,14 +300,6 @@
     a foaf:Organization;
     foaf:name "Valmyndigheten"@sv .
 
-# TODO: uri-minter-regeln enligt detta är "slugify(skos:altLabel or foaf:name)"
-#<http://rinfo.lagrummet.se/org/verket_foer_foervaltningsutveckling>
-<http://rinfo.lagrummet.se/org/verva>
-    a foaf:Organization;
-    foaf:name "Verket för förvaltningsutveckling"@sv;
-    rdfs:comment "Nedlagd sedan 2008-12-31."@sv;
-    skos:altLabel "Verva"@sv .
-
 # Ersatt av tillväxtverket sedan 2009-03-31 (har delvis tagit över författningssamlingen)
 <http://rinfo.lagrummet.se/org/verket_foer_naeringslivsutveckling>
     a foaf:Organization;
@@ -485,3 +477,25 @@
 <http://rinfo.lagrummet.se/org/inspektionen_foer_strategiska_produkter>
     a foaf:Organization;
     foaf:name "Inspektionen för strategiska produkter"@sv .
+
+################################################################
+# Upphävda myndigheter -- en inkomplett lista. Fyll på allt eftersom
+# äldre föreskrifter utgivna av nu nedlagda myndigheter
+# påträffas. Synka även med Synka även med ../serie/fs.n3
+
+<http://rinfo.lagrummet.se/org/bankinspektionen>
+    a foaf:Organization;
+    foaf:name "Bankinspektionen"@sv .
+
+<http://rinfo.lagrummet.se/org/djurskyddsmyndigheten>
+    a foaf:Organization;
+    foaf:name "Djurskyddsmyndigheten"@sv .
+
+
+# TODO: uri-minter-regeln enligt detta är "slugify(skos:altLabel or foaf:name)"
+# <http://rinfo.lagrummet.se/org/verket_foer_foervaltningsutveckling>
+<http://rinfo.lagrummet.se/org/verva>
+    a foaf:Organization;
+    foaf:name "Verket för förvaltningsutveckling"@sv;
+    rdfs:comment "Nedlagd sedan 2008-12-31."@sv;
+    skos:altLabel "Verva"@sv .

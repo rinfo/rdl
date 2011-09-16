@@ -191,14 +191,21 @@ public class Describer {
     }
 
     public Set<Triple> triples(String sUri) {
+      return triples(sUri, null, null);
+    }
+
+    public Set<Triple> triples(String sUri, String pCurie, String oUri) {
         Resource s = sUri != null? toRef(sUri) : null;
+        org.openrdf.model.URI p = (pCurie != null)?
+                (org.openrdf.model.URI) toRef(expandCurie(pCurie)) : null;
+        Resource o = oUri != null? toRef(oUri) : null;
         try {
-            RepositoryResult<Statement> stmts = conn.getStatements(s, null, null,
+            RepositoryResult<Statement> stmts = conn.getStatements(s, p, o,
                     inferred, contextRefs);
             Set<Triple> values = new HashSet<Triple>();
             while (stmts.hasNext()) {
                 Statement stmt = stmts.next();
-                Triple triple = new Triple(this, sUri,
+                Triple triple = new Triple(this, fromRef(stmt.getSubject()),
                         fromRef(stmt.getPredicate()),
                         castValue(stmt.getObject()));
                 values.add(triple);
@@ -321,11 +328,21 @@ public class Describer {
         return prefix + ":" + uri.substring(offset, uri.length());
     }
 
-    static String getUriTerm(String uri) {
+    public static String getUriTerm(String uri) {
+        return splitVocabTerm(uri)[1];
+    }
+
+    public static String[] splitVocabTerm(String uri) {
+        String[] result = new String[] {null, null};
         int lastDelimIdx = findLastDelimIdx(uri);
-        if (lastDelimIdx == -1)
-            return null;
-        return uri.substring(lastDelimIdx + 1, uri.length());
+        if (lastDelimIdx > -1) {
+            int offset = lastDelimIdx + 1;
+            result[0] = uri.substring(0, offset);
+            if (offset < uri.length()) {
+                result[1] = uri.substring(offset, uri.length());
+            }
+        }
+        return result;
     }
 
     private static int findLastDelimIdx(String uri) {

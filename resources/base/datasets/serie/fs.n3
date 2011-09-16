@@ -224,12 +224,6 @@
     rdfs:seeAlso <http://www.csn.se/Avdelningar/OmCSN/LagOchRatt/CSNsForfattningssamling%28CSNFS%29/CSNsForfattningssamling%28CSNFS%29.asp?MenyIdnr=1163>;
     a :Forfattningssamling .
 
-<http://rinfo.lagrummet.se/serie/fs/dfs>
-    skos:altLabel "DFS"@sv;
-    skos:prefLabel "Djurskyddsmyndighetens författningssamling"@sv;
-    rdfs:seeAlso <http://www.djurskyddsmyndigheten.se/Steria/templates/Page.aspx?id=482>;
-    rdfs:comment "Har tagits över av jordbruksverkets författningssamling (SJVFS)"@sv;
-    a :Forfattningssamling .
 
 <http://rinfo.lagrummet.se/serie/fs/difs>
     skos:altLabel "DIFS"@sv;
@@ -724,14 +718,6 @@
     rdfs:seeAlso <http://www.val.se/valsystemet/lagar/valfs/index.html>;
     a :Forfattningssamling .
 
-<http://rinfo.lagrummet.se/serie/fs/vervafs>
-    skos:altLabel "VERVAFS"@sv;
-    skos:prefLabel "Verket för förvaltningsutvecklings (Verva) författningssamling"@sv;
-    #TODO:korrekt;gammal? dct:publisher <http://rinfo.lagrummet.se/org/verva>;
-    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
-    rdfs:seeAlso <http://www.verva.se/web/t/Page____490.aspx>;
-    a :Forfattningssamling .
-
 <http://rinfo.lagrummet.se/serie/fs/vrfs>
     skos:altLabel "VRFS"@sv;
     skos:prefLabel "Vetenskapsrådets författningssamling"@sv;
@@ -752,5 +738,36 @@
     skos:prefLabel "Åklagarmyndighetens författningssamling"@sv;
     dct:publisher <http://rinfo.lagrummet.se/org/aaklagarmyndigheten>;
     rdfs:seeAlso <http://www.aklagare.se/Dokument/Foreskrifter-och-riktlinjer/>;
+    a :Forfattningssamling .
+
+################################################################
+# Upphävda författningssamlingar -- en inkomplett lista. Fyll på allt
+# eftersom äldre föreskrifter utgivna av nu nedlagda myndigheter
+# påträffas. Synka även med ../org/myndigheter.n3.
+
+<http://rinfo.lagrummet.se/serie/fs/bfs>
+    skos:altLabel "BFS"@sv;
+    skos:prefLabel "Bankinspektionens författningssamling"@sv;
+    dct:publisher <http://rinfo.lagrummet.se/org/bankinspektionen>;
+    # rdfs:seeAlso <...>;
+    rdfs:comment "Har tagits över av Finansinspektionens författningssamling (FFFS)"@sv;
+    a :Forfattningssamling .
+
+<http://rinfo.lagrummet.se/serie/fs/dfs>
+    skos:altLabel "DFS"@sv;
+    skos:prefLabel "Djurskyddsmyndighetens författningssamling"@sv;
+    dct:publisher <http://rinfo.lagrummet.se/org/djurskyddsmyndigheten>;
+    rdfs:seeAlso <http://www.djurskyddsmyndigheten.se/Steria/templates/Page.aspx?id=482>;
+    rdfs:comment "Har tagits över av jordbruksverkets författningssamling (SJVFS)"@sv;
+    a :Forfattningssamling .
+
+<http://rinfo.lagrummet.se/serie/fs/vervafs>
+    skos:altLabel "VERVAFS"@sv;
+    skos:prefLabel "Verket för förvaltningsutvecklings (Verva) författningssamling"@sv;
+    # Vi anger verva, inte RK, som publisher eftersom det var verva
+    # som stod bakom VERVAFS när den fanns.
+    dct:publisher <http://rinfo.lagrummet.se/org/verva>;
+    # dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
+    rdfs:seeAlso <http://www.verva.se/web/t/Page____490.aspx>;
     a :Forfattningssamling .
 

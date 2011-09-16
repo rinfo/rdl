@@ -1,38 +1,31 @@
 {
-    "prefixes": {
-        "dct": "http://purl.org/dc/terms/",
-        "": "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
-    },
-    "classes": {
-        "Myndighetsforeskrift": {}
-    },
-    "properties": {
-        "dct:title": {
-            "requireLang": "sv",
-            "strictWhitespace": true
-        },
-        "dct:created": {
-            "datatype": "xsd:date",
-            "dateConstraint": {
-                "maxDaysFromNow": 0
+    "http://purl.org/dc/terms/": {
+        "properties": {
+            "title": {
+                "requireLang": "sv",
+                "strictWhitespace": true
+            },
+            "created": {
+                "datatype": "date",
+                "dateConstraint": {
+                    "maxDaysFromNow": 0
+                }
+            },
+            "issued": {
+                "datatype": "date",
+                "dateConstraint": {
+                    "minYear": 1600,
+                    "maxYearsFromNow": 20
+                }
             }
-        },
-        "dct:issued": {
-            "datatype": "xsd:date",
-            "dateConstraint": {
-                "minYear": 1600,
-                "maxYearsFromNow": 20
-            }
-        },
-        "dct:reference": {
-            "reference": true
-        },
-        "andrar": {
-            "reference": true,
-            "usePattern": "fsPubl"
         }
     },
-    "patterns": {
-        "fsPubl": "http://rinfo.lagrummet.se/publ/[0-9a-z]+fs/[1-9][0-9/]+:\\w+"
+    "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#": {
+        "properties": {
+            "andrar": {
+                "reference": true,
+                "pattern": "http://rinfo.lagrummet.se/publ/[0-9a-z]+fs/[1-9][0-9/]+:\\w+"
+            }
+        }
     }
 }

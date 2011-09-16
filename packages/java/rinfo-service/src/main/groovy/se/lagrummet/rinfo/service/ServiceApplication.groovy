@@ -42,7 +42,7 @@ class ServiceApplication extends Application {
     public ServiceApplication(Context parentContext) {
         super(parentContext)
 
-        tunnelService.extensionsTunnel = true
+        setupExtensions()
 
         // TODO: reuse IoC pattern from main (Components etc.)
         def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
@@ -93,6 +93,10 @@ class ServiceApplication extends Application {
         repositoryHandler.shutDown()
     }
 
+    void setupExtensions() {
+        tunnelService.extensionsTunnel = true
+        metadataService.addExtension("ttl", MediaType.APPLICATION_RDF_TURTLE)
+    }
 }
 
 
