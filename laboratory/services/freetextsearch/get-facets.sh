@@ -1,25 +1,28 @@
 #!/bin/sh
-curl -s -X POST "http://localhost:9200/rinfo/doc/_search?size=0&pretty=true" -d '
+curl -s -X POST "http://localhost:9200/rinfo/_search?size=0&pretty=true" -d '
 {
   "query": { "match_all": {} },
   "facets": {
     "type": {
-      "terms": { "field": "type.term" }
+      "terms": { "field": "type" }
     },
     "publisher": {
-      "terms": { "field": "publisher.term" }
+      "terms": { "field": "publisher.iri" }
     },
     "forfattningssamling": {
-      "terms": { "field": "forfattningssamling.term" }
+      "terms": { "field": "forfattningssamling.iri" }
     },
     "utredningsserie": {
-      "terms": { "field": "utredningsserie.term" }
+      "terms": { "field": "utredningsserie.iri" }
     },
     "rattsfallspublikation": {
-      "terms": { "field": "rattsfallspublikation.term" }
+      "terms": { "field": "rattsfallspublikation.iri" }
     },
     "allmannaRadSerie": {
-      "terms": { "field": "allmannaRadSerie.term" }
+      "terms": { "field": "allmannaRadSerie.iri" }
+    },
+    "utfardandedatum": {
+      "date_histogram": { "field": "utfardandedatum", "interval": "year" }
     }
   }
 }
