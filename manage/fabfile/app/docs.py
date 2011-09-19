@@ -1,16 +1,18 @@
 from __future__ import with_statement
-from fabric.api import env, local, roles
+from fabric.api import env, local, roles, task
 from fabric.contrib.project import rsync_project
-from util import slashed, cygpath
-from targetenvs import _needs_targetenv
+from fabfile.util import slashed, cygpath
+from fabfile.target import _needs_targetenv
 import sys
 
-def build_docs():
+@task
+def build():
     local("cd %(toolsdir)s &&"
             " groovy build_rinfo_docs.groovy --clean %(docbuild)s"%env)
 
+@task
 @roles('doc')
-def deploy_docs():
+def deploy():
     _needs_targetenv()
     if sys.platform == 'win32':
         build_path = cygpath(slashed(env.docbuild))

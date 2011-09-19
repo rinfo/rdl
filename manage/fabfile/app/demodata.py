@@ -2,10 +2,10 @@ from __future__ import with_statement
 from fabric.api import env, local, cd, roles
 from fabric.contrib.files import *
 from fabric.contrib.project import rsync_project
-from targetenvs import _needs_targetenv
-from deploy import _deploy_war
-from deploy.rinfo_admin import setup_admin, package_admin, deploy_admin
-from util import venv
+from fabfile.target import _needs_targetenv
+from fabfile.app import _deploy_war
+from fabfile.app import admin
+from fabfile.util import venv
 from os import path as p
 
 
@@ -22,7 +22,8 @@ def _can_handle_dataset(dataset):
         raise ValueError("Undefined dataset %r" % dataset)
 
 
-def demo_data_download(dataset,force="1"):
+@task
+def download(dataset, force="1"):
     """Downloads a demo dataset from its source."""
     _can_handle_dataset(dataset)
     if not int(force) and p.isdir("%(demodata_dir)s/%(dataset)s-raw" % venv()):
@@ -34,7 +35,8 @@ def demo_data_download(dataset,force="1"):
         elif dataset in riksdagen_se_datasets:
             _download_riksdagen_data(dataset)
 
-def demo_data_to_depot(dataset):
+@task
+def create_depot(dataset):
     """Transforms the downloaded demo data to a depot."""
     _can_handle_dataset(dataset)
     _mkdir_keep_prev("%(demodata_dir)s/%(dataset)s" % venv())
@@ -43,8 +45,9 @@ def demo_data_to_depot(dataset):
     elif dataset in riksdagen_se_datasets:
         _transform_riksdagen_data(dataset)
 
+@task
 @roles('demo')
-def demo_data_upload(dataset):
+def upload(dataset):
     """Upload the transformed demo data depot to the demo server."""
     _can_handle_dataset(dataset)
     _needs_targetenv()
@@ -54,13 +57,15 @@ def demo_data_upload(dataset):
     rsync_project(env.demo_data_root, "%(demodata_dir)s/%(dataset)s" % venv(), exclude=".*", delete=True)
 
 
-def demo_build_war(dataset):
+#@task
+def build_dataset_war(dataset):
     """Build a webapp capable of serving an uploaded demo data depot."""
     local("cd %(java_packages)s/demodata-supply && "
             "mvn -Ddataset=%(dataset)s -Ddemodata-root=%(demo_data_root)s clean package" % venv(), capture=False)
 
+#@task
 @roles('demo')
-def demo_deploy_war(dataset):
+def deploy_dataset_war(dataset):
     """Deploy a demo webapp for the given uploaded dataset."""
     _can_handle_dataset(dataset)
     if not exists(env.dist_dir):
@@ -68,31 +73,36 @@ def demo_deploy_war(dataset):
     _deploy_war("%(java_packages)s/demodata-supply/target/%(dataset)s-demodata-supply.war" % venv(),
             "%(dataset)s-demodata-supply" % venv())
 
+@task
 @roles('demo')
-def demo_war(dataset):
+def dataset_war(dataset):
     """Package and deploy a demo webapp for the given uploaded dataset."""
-    demo_build_war(dataset)
-    demo_deploy_war(dataset)
+    build_dataset_war(dataset)
+    deploy_dataset_war(dataset)
 
-def demo_refresh(dataset, force="0"):
+@task
+def refresh(dataset, force="0"):
     """
     Download, transform, upload, build and deploy a webapp for serving a demo
     dataset.
     """
     _can_handle_dataset(dataset)
-    demo_data_download(dataset, force)
-    demo_data_to_depot(dataset)
-    demo_data_upload(dataset)
-    demo_war(dataset)
+    download(dataset, force)
+    create_depot(dataset)
+    upload(dataset)
+    dataset_war(dataset)
 
 
+@task
 @roles('admin')
 def demo_admin():
-    setup_admin()
+    """
+    Create and deploy a static admin webapp configured for the demo datasets.
+    """
     adminbuild = p.join(env.demodata_dir, "rinfo-admin-demo")
     sources = p.join(env.projectroot, "resources", env.target, "datasources.n3")
-    package_admin(sources, adminbuild)
-    deploy_admin(adminbuild)
+    admin.package(sources, adminbuild)
+    admin.deploy(adminbuild)
 
 
 #def full_demo_deploy():
@@ -128,3 +138,4 @@ def _transform_riksdagen_data(dataset):
             " %(demodata_dir)s/%(dataset)s-raw %(demodata_dir)s/%(dataset)s" % venv())
 
 
+__all__ = tuple(key for key in globals() if key != 'admin')

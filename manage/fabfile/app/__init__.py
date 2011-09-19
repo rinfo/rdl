@@ -1,9 +1,9 @@
 from __future__ import with_statement
 from fabric.api import *
 from exceptions import OSError
-from util import venv
-from targetenvs import _needs_targetenv
-from servertools import _managed_tomcat_restart
+from fabfile.util import venv
+from fabfile.target import _needs_targetenv
+from fabfile.server import _managed_tomcat_restart
 
 @runs_once
 def local_lib_rinfo_pkg():
