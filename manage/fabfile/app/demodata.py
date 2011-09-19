@@ -99,7 +99,6 @@ def demo_admin():
     """
     Create and deploy a static admin webapp configured for the demo datasets.
     """
-    admin.setup()
     adminbuild = p.join(env.demodata_dir, "rinfo-admin-demo")
     sources = p.join(env.projectroot, "resources", env.target, "datasources.n3")
     admin.package(sources, adminbuild)

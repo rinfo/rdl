@@ -27,23 +27,31 @@ To find out which commands are available, run:
 
     $ fab -l
 
-To build, deploy and make rinfo-main load the admin data:
+Or (for a nice, nested view of the namespaces):
 
-    $ fab package_admin
+    $ fab -lFnested
+
+To build the admin data, run:
+
+    $ fab app.admin.package
 
 This creates a directory hierarchy containing RDF and XHTML data,
 based on the RDF files located in resources/base. This contains the
 model (ontology), uri patterns, URIs for organizations and other
 resources.
 
-    $ fab tg_prod deploy_admin
+To deploy this to production, do:
+
+    $ fab taget.prod app.admin.deploy
 
 This rsync's the resulting directory hierarchy to the correct place in the
-production environment (substitute tg_prod with tg_dev_unix if you want to
-deploy them to your own local development environment, or tg_demo if you want
+production environment (substitute taget.prod with target.dev_unix if you want to
+deploy them to your own local development environment, or target.demo if you want
 to deploy them to the demo/staging environment)
 
-    $ fab tg_prod ping_main_with_admin
+Ping rinfo-main to load this data immediately by running:
+
+    $ fab target.prod app.admin.ping_main
 
 This sends a "ping" request to the rinfo-main server, causing it to
 reload the admin data.
@@ -91,42 +99,39 @@ standing in the directory rinfo-trunk/manage
       sudo visudo # Append to the bottom: rinfo ALL=ALL
 
    * Run on your local computer::
-      fab tg_integration -R main install_dependencies fetch_tomcat_dist install_tomcat
+      fab target.integration -R main sysconf.install_server
 
    * Run on your virtual server::
       ~/mgr_work/install/4_install-jdk.sh
 
    * Run on your local computer::
-      fab tg_integration -R main,service,checker,demo configure_server
+      fab target.integration -R main,service,checker,demo sysconf.configure_server server.reload_apache
 
-   * Run on your virtual server::
-      sudo /etc/init.d/apache2 graceful
-
-The virtual server should now be ready for the deployment of the
-applications and the demo data.
+The virtual server should now be ready for the deployment of the applications
+and the demo data.
 
 Deploy demo data from lagen.nu:
 
    * Run on your local computer::
-      fab tg_integration demo_refresh:dv
-      fab tg_integration demo_refresh:sfs
+      fab target.integration app.demodata.refresh:dv
+      fab target.integration app.demodata.refresh:sfs
 
 Deploy demo data from riksdagen.se (very time consuming):
 
    * Run on your local computer::
-      fab tg_integration demo_refresh:prop
-      fab tg_integration demo_refresh:sou
-      fab tg_integration demo_refresh:ds
+      fab target.integration app.demodata.refresh:prop
+      fab target.integration app.demodata.refresh:sou
+      fab target.integration app.demodata.refresh:ds
 
 Deploy admin feed:
 
    * Run on your local computer::
-      fab tg_integration demo_admin
+      fab target.integration app.demodata.demo_admin
 
 Deploy main:
 
    * Run on your local computer::
-      fab tg_integration main_all
+      fab target.integration app.main.all
 
    * Ping admin feed::
       curl --data 'feed=http://rinfo-admin/feed/current' http://rinfo-main/collector
@@ -141,16 +146,16 @@ Verify main:
 
    You might need to ping main to collect data from the demo sources:
 
-      * fab tg_integration ping_main_collector:http\://dv-demo/feed/current
-      * fab tg_integration ping_main_collector:http\://sfs-demo/feed/current
-      * fab tg_integration ping_main_collector:http\://prop-demo/feed/current
-      * fab tg_integration ping_main_collector:http\://sou-demo/feed/current
-      * fab tg_integration ping_main_collector:http\://ds-demo/feed/current
+      * fab target.integration tools.ping_main_collector:http\://dv-demo/feed/current
+      * fab target.integration tools.ping_main_collector:http\://sfs-demo/feed/current
+      * fab target.integration tools.ping_main_collector:http\://prop-demo/feed/current
+      * fab target.integration tools.ping_main_collector:http\://sou-demo/feed/current
+      * fab target.integration tools.ping_main_collector:http\://ds-demo/feed/current
 
 Deploy checker:
 
    * Run on your local computer::
-      fab tg_integration checker_all
+      fab target.integration app.checker.all
 
 Verify checker:
 
@@ -163,8 +168,8 @@ Verify checker:
 Deploy service:
 
    * Run on your local computer::
-      fab tg_integration deploy_sesame
-      fab tg_integration service_all
+      fab target.integration app.service.deploy_sesame
+      fab target.integration app.service.all
 
    * Ping main feed::
       curl --data 'feed=http://rinfo-main/feed/current' http://rinfo-service/collector
@@ -185,12 +190,13 @@ follow the instructions below:
 
    * integration: sudo /etc/init.d/tomcat stop
    * integration: sudo rm -rf /opt/tomcat /opt/apache-tomcat-*
-   * local: fab tg_integration -R main fetch_tomcat_dist install_tomcat
-   * local: fab tg_integration demo_war:dv demo_war:sfs demo_war:prop demo_war:sou demo_war:ds
-   * local: fab tg_integration main_all
-   * local: fab tg_integration deploy_sesame
-   * local: fab tg_integration service_all
-   * local: fab tg_integration service_all
+   * local: fab target.integration -R main fetch_tomcat_dist install_tomcat
+   * local: fab target.integration app.demodata.dataset_war:dv app.demodata.dataset_war:sfs \
+                app.demodata.dataset_war:prop app.demodata.dataset_war:sou app.demodata.dataset_war:ds
+   * local: fab target.integration app.main.all
+   * local: fab target.integration app.service.deploy_sesame
+   * local: fab target.integration app.service.all
+   * local: fab target.integration app.service.all
 
 Deleting All Data
 ========================================================================
