@@ -146,11 +146,11 @@ Verify main:
 
    You might need to ping main to collect data from the demo sources:
 
-      * fab target.integration tools.ping_main_collector:http\://dv-demo/feed/current
-      * fab target.integration tools.ping_main_collector:http\://sfs-demo/feed/current
-      * fab target.integration tools.ping_main_collector:http\://prop-demo/feed/current
-      * fab target.integration tools.ping_main_collector:http\://sou-demo/feed/current
-      * fab target.integration tools.ping_main_collector:http\://ds-demo/feed/current
+      * fab target.integration app.tools.ping_main_collector:http\://dv-demo/feed/current
+      * fab target.integration app.tools.ping_main_collector:http\://sfs-demo/feed/current
+      * fab target.integration app.tools.ping_main_collector:http\://prop-demo/feed/current
+      * fab target.integration app.tools.ping_main_collector:http\://sou-demo/feed/current
+      * fab target.integration app.tools.ping_main_collector:http\://ds-demo/feed/current
 
 Deploy checker:
 

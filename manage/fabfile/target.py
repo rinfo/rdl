@@ -102,9 +102,9 @@ def integration():
     # Machines:
     env.user = 'rinfo'
     env.roledefs = {
-        'main': ['rinfo-integration'],
-        'service': ['rinfo-integration'],
-        'checker': ['rinfo-integration'],
+        'main': ['rinfo-main'],
+        'service': ['rinfo-service'],
+        'checker': ['rinfo-checker'],
         'doc': ['rinfo-integration'],
         'admin': ['rinfo-integration'],
         'demo': ['rinfo-integration'],
