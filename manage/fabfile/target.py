@@ -85,7 +85,7 @@ def demo():
     env.apache_jk_tomcat = True
     # Tomcat
     env.custom_tomcat = True
-    env.tomcat_version = "6.0.29"
+    env.tomcat_version = "6.0.33"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
     env.tomcat_start = '/etc/init.d/tomcat start'
@@ -130,7 +130,7 @@ def integration():
     env.apache_jk_tomcat = True
     # Tomcat
     env.custom_tomcat = True
-    env.tomcat_version = "6.0.29"
+    env.tomcat_version = "6.0.33"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
     env.tomcat_start = '/etc/init.d/tomcat start'
@@ -170,7 +170,7 @@ def prod():
     env.apache_jk_tomcat = True
     # Tomcat
     env.custom_tomcat = True
-    env.tomcat_version = "6.0.20"
+    env.tomcat_version = "6.0.33"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
     env.tomcat_start = '/etc/init.d/tomcat start'

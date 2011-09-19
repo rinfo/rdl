@@ -67,6 +67,11 @@ def restart_apache():
     sudo("/etc/init.d/apache2 restart")
 
 @task
+def reload_apache():
+    _needs_targetenv()
+    sudo("/etc/init.d/apache2 graceful")
+
+@task
 def war_props(warname="ROOT"):
     _needs_targetenv()
     run("unzip -p %(tomcat_webapps)s/%(warname)s.war"
