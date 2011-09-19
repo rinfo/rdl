@@ -3,23 +3,25 @@ import sys
 from fabric.api import *
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
-from util import slashed, cygpath
-from targetenvs import _needs_targetenv
-from util import venv, fullpath
+from fabfile.util import slashed, cygpath
+from fabfile.target import _needs_targetenv
+from fabfile.util import venv, fullpath
 
 
 env.adminbuild = sep.join((env.builddir, 'rinfo-admin'))
 
 
+@task
 @runs_once
 @roles('admin')
-def setup_admin():
+def setup():
     _needs_targetenv()
     if not exists(env.admin_webroot):
        sudo("mkdir %(admin_webroot)s" % env)
        sudo("chown %(user)s %(admin_webroot)s" % env)
 
-def package_admin(sources=None, outdir=None):
+@task
+def package(sources=None, outdir=None):
     """
     Package the admin feed files into a servable directory.
     """
@@ -34,10 +36,11 @@ def package_admin(sources=None, outdir=None):
     local("cd %(toolsdir)s/rinfomain && groovy base_as_feed.groovy "
             " -b %(baseresources)s %(sourceopt)s %(outdiropt)s" % venv())
 
+@task
 @roles('admin')
-def deploy_admin(builddir=None):
+def deploy(builddir=None):
     """Deploy the admin feed to target env."""
-    setup_admin()
+    setup()
     builddir = builddir or env.adminbuild
     if sys.platform == 'win32':
         # There is no native rsync for windows, only the cygwin
@@ -48,13 +51,15 @@ def deploy_admin(builddir=None):
         build_path = slashed(builddir)
     rsync_project((env.admin_webroot), build_path, exclude=".*", delete=True)
 
+@task
 @roles('admin')
-def admin_all():
+def all():
     """Package and deploy the admin feed."""
-    package_admin()
-    deploy_admin()
+    package()
+    deploy()
 
-def ping_main_with_admin():
+@task
+def ping_main():
     """Ping rinfo-main to (re-)collect the admin feed"""
     _needs_targetenv()
     feed_url = "http://%s/feed/current" % env.roledefs['admin'][0]
