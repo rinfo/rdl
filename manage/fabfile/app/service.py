@@ -99,7 +99,7 @@ def repotool():
 @runs_once
 @roles('service')
 def deploy_repotool():
-    service_repotool()
+    repotool()
     local("cd %(java_packages)s/rinfo-rdf-repo && "
             "mvn -P %(target)s assembly:assembly"%env)
     put("%(java_packages)s/rinfo-service/src/environments/%(target)s/%(rinfo_service_props)s"%env,
@@ -117,7 +117,7 @@ def clean_repo():
     _repotool('clean')
 
 def _repotool(cmd):
-    service_repotool()
+    repotool()
     run("cd %(dist_dir)s && "
             "java -jar %(rinfo_repo_jar)s %(cmd)s "
             "%(rinfo_service_props)s rinfo.service.repo"%venv())
@@ -146,4 +146,16 @@ def fetch_elasticsearch():
         if not exists(elastic_distfile):
             run("wget https://github.com/downloads/elasticsearch/elasticsearch/%s" % elastic_distfile)
     return elastic_version, "%(workdir_elastic)s/%(elastic_distfile)s" % vars()
+
+@task
+@roles('service')
+def stop_elasticsearch():
+    _needs_targetenv()
+    sudo("/etc/init.d/elasticsearch stop")
+
+@task
+@roles('service')
+def start_elasticsearch():
+    _needs_targetenv()
+    sudo("/etc/init.d/elasticsearch start")
 
