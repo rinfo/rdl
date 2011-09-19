@@ -69,7 +69,7 @@ def deploy_sesame():
     package_sesame()
     _patch_catalina_properties()
     for warname in ['openrdf-sesame', 'sesame-workbench']:
-        _deploy_war("%(local_sesame_dir)s/%(warname)s.war"%venv(), warname)
+        app._deploy_war("%(local_sesame_dir)s/%(warname)s.war"%venv(), warname)
 
 def _patch_catalina_properties():
     # This will patch catalina.properties so that it contains the system 
