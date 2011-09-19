@@ -26,18 +26,16 @@ from fabfile.util import mkdirpath, slashed
 # Continuous Maintenance
 
 @task
-def configure_server(sync="1"):
-    if int(sync):
-        _sync_workdir()
-    sync_static_web(0)
-    configure_app_container(0)
-    configure_sites(0)
+def configure_server():
+    _sync_workdir()
+    sync_static_web()
+    configure_app_container()
+    configure_sites()
 
 
 @task
-def sync_static_web(sync="1"):
-    if int(sync):
-        _sync_workdir()
+def sync_static_web():
+    _sync_workdir()
     targetenv_www_dir = "%(mgr_workdir)s/%(target)s/www" % env
     with cd(targetenv_www_dir):
         for fname in ['index.html', 'robots.txt']:
@@ -50,19 +48,9 @@ def sync_static_web(sync="1"):
 
 
 @task
-def configure_app_container(sync="1"):
-    if int(sync):
-        _sync_workdir()
-
-    common_etc_dir = "%(mgr_workdir)s/common/etc" % env
-
-    if env.get('custom_tomcat'):
-        with cd(common_etc_dir):
-            if sudo("cp -vu init.d/tomcat /etc/init.d/"):
-                sudo("chmod 0755 /etc/init.d/tomcat")
-                sudo("update-rc.d tomcat defaults")
-
-    with cd(common_etc_dir):
+def configure_app_container():
+    _sync_workdir()
+    with cd("%(mgr_workdir)s/common/etc" % env):
         if env.get('apache_jk_tomcat'):
             if sudo("cp -vu apache2/workers.properties /etc/apache2/"):
                 sudo("chown root:root /etc/apache2/workers.properties")
@@ -70,12 +58,9 @@ def configure_app_container(sync="1"):
                 sudo("chown root:root /etc/apache2/conf.d/jk.conf")
 
 @task
-def configure_sites(sync="1"):
-    if int(sync):
-        _sync_workdir()
-
+def configure_sites():
+    _sync_workdir()
     targetenv_etc_dir = "%(mgr_workdir)s/%(target)s/etc" % env
-
     with cd(targetenv_etc_dir):
         for role in env.roles:
             sites = env.get('apache_sites')
@@ -84,19 +69,26 @@ def configure_sites(sync="1"):
                 sudo("cp -vu apache2/sites-available/%s /etc/apache2/sites-available/" % site)
                 sudo("a2ensite %s" % site)
 
+def install_init_d(name):
+    _sync_workdir()
+    with cd("%(mgr_workdir)s/common/etc" % env):
+        if sudo("cp -vu init.d/%s /etc/init.d/" % name):
+            sudo("chmod 0755 /etc/init.d/%s" % name)
+            sudo("update-rc.d %s defaults" % name)
+
 @runs_once
 def _sync_workdir():
-    common_conf_dir = p.join(env.manageroot, "sysconf", "common")
-    rsync_project(env.mgr_workdir, common_conf_dir, exclude=".*", delete=True)
-    targetenv_conf_dir = p.join(env.manageroot, "sysconf", env.target)
-    rsync_project(env.mgr_workdir, targetenv_conf_dir, exclude=".*", delete=True)
+    for confdir in [p.join(env.manageroot, "sysconf", "common"),
+                    p.join(env.manageroot, "sysconf", env.target)]:
+        rsync_project(env.mgr_workdir, confdir, exclude=".*", delete=True)
 
 
 ##
-# Initial Setup
+# Initial Software Installation
 
 @runs_once
-def _prepare_initial_setup():
+def _prepare_mgr_work():
+    _needs_targetenv()
     mkdirpath("%(mgr_workdir)s/install" % env)
     put(p.join(env.manageroot, "sysconf", "install", "*.sh"), "%(mgr_workdir)s/install" % env)
     mkdirpath("%(mgr_workdir)s/tomcat_pkg" % env)
@@ -104,29 +96,25 @@ def _prepare_initial_setup():
 @task
 def install_server():
     install_dependencies()
-    install_jdk() # Installing the Proprietary JDK requires manual confirmation.
-    fetch_tomcat_dist()
+    #install_jdk() # Installing the Proprietary JDK requires manual confirmation.
     install_tomcat()
 
 @task
 def install_dependencies():
-    _needs_targetenv()
-    _prepare_initial_setup()
+    _prepare_mgr_work()
     sudo("bash %(mgr_workdir)s/install/1_deps.sh" % env)
 
 @task
-def fetch_tomcat_dist():
-    _needs_targetenv()
-    _prepare_initial_setup()
-    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
-    with cd(workdir_tomcat):
-        run("bash %(mgr_workdir)s/install/2_get-tomcat.sh %(tomcat_version)s" % env)
-
-@task
 def install_tomcat():
-    _needs_targetenv()
-    _prepare_initial_setup()
+    fetch_tomcat_dist()
     workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
     with cd(workdir_tomcat):
         sudo("bash %(mgr_workdir)s/install/3_install-tomcat.sh %(tomcat_version)s %(tomcat_user)s %(tomcat_group)s %(user)s" % env)
+    install_init_d("tomcat")
+
+def fetch_tomcat_dist():
+    _prepare_mgr_work()
+    workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
+    with cd(workdir_tomcat):
+        run("bash %(mgr_workdir)s/install/2_get-tomcat.sh %(tomcat_version)s" % env)
 
