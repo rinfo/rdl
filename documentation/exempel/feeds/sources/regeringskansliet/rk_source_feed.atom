@@ -206,14 +206,14 @@
       Exemplet visar även hur material utan någon (av systemet accepterad)
       digital dokumentrepresentation publiceras. D.v.s. enbart med RDF-data.
     -->
-    <id>http://rinfo.lagrummet.se/publ/sfs/1899:bih._40_s._3</id>
+    <id>http://rinfo.lagrummet.se/publ/sfs/1899:bih_40_s_3</id>
     <updated>2009-02-02T15:43:04Z</updated>
     <published>2009-02-02T15:43:04Z</published>
     <title>Kungl. Maj:ts Resolution angående rättighet för anglikanska kyrkans prästerskap i allmänhet att med laga verkan förrätta vigsel här i riket</title>
     <summary></summary>
-    <content src="https://sfs.regeringen.se/publikationer/foreskrifter/SFS-1899_bih._40_s._3.rdf"
+    <content src="https://sfs.regeringen.se/publikationer/foreskrifter/SFS-1899_bih_40_s_3.rdf"
              type="application/rdf+xml"
-             le:md5="5ace15aee1dacf942a26aecaec1eb570"/>
+             le:md5="b2b58364ca5e5d4c9308cc10530e235e"/>
   </entry>
 
   <entry>
