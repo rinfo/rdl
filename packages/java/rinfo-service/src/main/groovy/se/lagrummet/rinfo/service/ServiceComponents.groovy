@@ -1,7 +1,5 @@
 package se.lagrummet.rinfo.service
 
-import groovy.util.logging.Slf4j
-
 import org.apache.commons.configuration.Configuration
 
 import org.openrdf.repository.Repository
@@ -10,25 +8,15 @@ import org.openrdf.repository.event.base.NotifyingRepositoryWrapper
 import se.lagrummet.rinfo.rdf.repo.RepositoryHandler
 import se.lagrummet.rinfo.rdf.repo.RepositoryHandlerFactory
 
-import org.elasticsearch.client.Client
-import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.transport.InetSocketTransportAddress
-import org.elasticsearch.indices.IndexAlreadyExistsException
-import org.elasticsearch.transport.RemoteTransportException
 
-
-@Slf4j
 class ServiceComponents {
 
-    static final String REPO_PROPERTIES_SUBSET_KEY = "rinfo.service.repo"
+    Configuration config
 
     private NotifyingRepositoryWrapper repository
     SesameLoadScheduler loadScheduler
     RepositoryHandler repositoryHandler
-    Configuration config
-
-    Client searchClient
-    def searchIndexName = "rinfo"
+    ElasticData elasticData
 
     public Repository getRepository() {
         return repository
@@ -36,12 +24,11 @@ class ServiceComponents {
 
     ServiceComponents(Configuration config) {
         this.config = config
-        repositoryHandler = RepositoryHandlerFactory.create(config.subset(
-                REPO_PROPERTIES_SUBSET_KEY))
+        repositoryHandler = RepositoryHandlerFactory.create(config.subset("rinfo.service.repo"))
         repositoryHandler.initialize()
         this.repository = new NotifyingRepositoryWrapper(repositoryHandler.repository)
         this.loadScheduler = createLoadScheduler()
-        this.searchClient = createElasticSearchClient()
+        this.elasticData = createElasticData()
     }
 
     String getDataAppBaseUri() {
@@ -53,7 +40,7 @@ class ServiceComponents {
     }
 
     void startup() {
-        configureElasticSearch()
+        elasticData?.initialize()
         loadScheduler.startup()
     }
 
@@ -85,42 +72,22 @@ class ServiceComponents {
         return loadScheduler
     }
 
-    private def createElasticSearchClient() {
-        // TODO: move to config file; return null if config for this is missing
-        def host = "127.0.0.1"
-        def port = 9300
-        return new TransportClient().addTransportAddress(
-                new InetSocketTransportAddress(host, port))
-    }
-
-    private void configureElasticSearch() {
-        def indices = searchClient.admin().indices()
-        try {
-            indices.prepareCreate(searchIndexName).execute().actionGet()
-        } catch (IndexAlreadyExistsException e) {
-            log.info "ElasticSearch index '${searchIndexName}' already exists."
-        } catch (RemoteTransportException e) {
-            if (e.cause instanceof IndexAlreadyExistsException) {
-                log.info "ElasticSearch index '${searchIndexName}' already exists."
-            } else {
-                throw e
-            }
+    private def createElasticData() {
+        def esConf = config.subset("rinfo.service.elasticdata")
+        if (esConf.isEmpty()) {
+            return null
         }
-        // TODO: configure from context/schema
-        indices.preparePutMapping(searchIndexName).setType("doc").setSource([
-            "doc": [
-                "properties": [
-                    "domsnummer": ["type": "string"]
-                ]
-            ]
-        ]).execute().actionGet()
+        def host = esConf.getString("host")
+        def port = esConf.getInt("port")
+        def indexName = esConf.getString("index")
+        return new ElasticData(host, port, indexName)
     }
 
     private def createElasticLoader() {
-        if (searchClient == null) {
+        if (elasticData == null) {
             return null
         }
-        return new ElasticLoader(searchClient, searchIndexName)
+        return new ElasticLoader(elasticData)
     }
 
 }

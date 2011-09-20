@@ -18,8 +18,7 @@ import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDSerializer
 @Slf4j
 class ElasticLoader {
 
-    Client client
-    String indexName
+    ElasticData elasticData
 
     def indexType = "doc" // TODO: different by path base?
 
@@ -30,9 +29,8 @@ class ElasticLoader {
     def contentMediaTypes = ["application/pdf",
         "application/xhtml+xml", "text/html", "text/plain"]
 
-    ElasticLoader(client, indexName) {
-        this.client = client
-        this.indexName = indexName
+    ElasticLoader(elasticData) {
+        this.elasticData = elasticData
         this.constructSummaryQuery = getClass().getResourceAsStream(
                     "/sparql/construct_summary.rq").getText("utf-8")
         // TODO: refactor and configure
@@ -54,7 +52,7 @@ class ElasticLoader {
         }
         log.info "Indexing elastic data for <${id}>..."
         // TODO: ensure that updates have effect!
-        IndexRequestBuilder irb = client.prepareIndex(indexName, indexType, id).
+        IndexRequestBuilder irb = elasticData.client.prepareIndex(elasticData.indexName, indexType, id).
             setConsistencyLevel(WriteConsistencyLevel.DEFAULT).
             setSource(data)
         irb.execute().actionGet()
@@ -63,7 +61,7 @@ class ElasticLoader {
 
     void delete(entryId) {
         //DeleteResponse response =
-        client.prepareDelete(indexName, indexType, entryId).execute().actionGet()
+        elasticData.client.prepareDelete(elasticData.indexName, indexType, entryId).execute().actionGet()
     }
 
     Map toElasticData(conn, entry, collector) {
