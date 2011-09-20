@@ -28,8 +28,7 @@ import org.codehaus.jackson.map.SerializationConfig
 
 class ElasticFinder extends Finder {
 
-    def client
-    def indexName
+    ElasticData elasticData
     def contextMap
     def jsonMapper
 
@@ -38,16 +37,9 @@ class ElasticFinder extends Finder {
     def pageSizeParamKey = '_pageSize'
     def facetStatsSegment = "stats"
 
-    def showFields = ["_id", "iri", "type", "title", "identifier",
-        "utfardandedatum", "beslutsdatum", "issued"]
-    def refTerms = ['publisher', 'forfattningssamling', 'utredningsserie',
-        'rattsfallspublikation', 'allmannaRadSerie']
-    def dateTerms = ["utfardandedatum", "beslutsdatum", "issued"]
-
-    ElasticFinder(Context context, client, indexName) {
+    ElasticFinder(Context context, ElasticData elasticData) {
         super(context)
-        this.client = client
-        this.indexName = indexName
+        this.elasticData = elasticData
         jsonMapper = new ObjectMapper()
         jsonMapper.configure(
                 SerializationConfig.Feature.INDENT_OUTPUT, true)
@@ -56,7 +48,7 @@ class ElasticFinder extends Finder {
     @Override
     ServerResource find(Request request, Response response) {
         final String collection = request.attributes["collection"]
-        SearchRequestBuilder srb = client.prepareSearch(indexName)
+        SearchRequestBuilder srb = elasticData.client.prepareSearch(elasticData.indexName)
         def data = (collection == facetStatsSegment)?
             getElasticStats(srb) :
             searchElastic(srb, collection, request.resourceRef)
@@ -71,7 +63,7 @@ class ElasticFinder extends Finder {
     }
 
     def searchElastic(srb, collection, ref) {
-        def search = prepareElasticSearch(srb, ref, showFields) // TODO: showFieldsby collection?
+        def search = prepareElasticSearch(srb, ref, elasticData.listTerms) // TODO: showFieldsby collection?
 
         SearchResponse esRes = srb.execute().actionGet()
         assert esRes.failedShards == 0
@@ -110,11 +102,11 @@ class ElasticFinder extends Finder {
         return data
     }
 
-    Map prepareElasticSearch(SearchRequestBuilder srb, Reference ref, List<String> showFields) {
+    Map prepareElasticSearch(SearchRequestBuilder srb, Reference ref, List<String> listTerms) {
         def query = ref.getQueryAsForm(UTF_8)
         def page = 0
         def pageSize = defaultPageSize
-        srb.addFields(showFields as String[])
+        srb.addFields(listTerms as String[])
         def matches = []
         for (name in query.names) {
             def value = query.getFirstValue(name)
@@ -125,11 +117,11 @@ class ElasticFinder extends Finder {
                     if (it.startsWith('-')) {
                         def sortKey = it.substring(1)
                         srb.addSort(sortKey, SortOrder.DESC)
-                        if (!showFields.contains(sortKey))
+                        if (!listTerms.contains(sortKey))
                             srb.addFields(sortKey)
                     } else {
                         srb.addSort(it, SortOrder.ASC)
-                        if (!showFields.contains(it))
+                        if (!listTerms.contains(it))
                             srb.addFields(it)
                     }
                 }
@@ -139,7 +131,7 @@ class ElasticFinder extends Finder {
                 pageSize = value as int
             } else {
                 matches << "${name}:${value}"
-                if (!showFields.contains(name))
+                if (!listTerms.contains(name))
                     srb.addFields(name)
             }
         }
@@ -170,10 +162,10 @@ class ElasticFinder extends Finder {
         def qb = QueryBuilders.matchAllQuery()
         srb.setQuery(qb)
         srb.addFacet(FacetBuilders.termsFacet("type").field("type"))
-        refTerms.each {
+        elasticData.refTerms.each {
             srb.addFacet(FacetBuilders.termsFacet(it).field(it + ".iri"))
         }
-        dateTerms.each {
+        elasticData.dateTerms.each {
             srb.addFacet(FacetBuilders.dateHistogramFacet(it).
                     field(it).interval("year"))
         }

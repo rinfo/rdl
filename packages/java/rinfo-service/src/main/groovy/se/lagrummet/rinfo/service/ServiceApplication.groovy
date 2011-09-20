@@ -74,8 +74,10 @@ class ServiceApplication extends Application {
                     jsonLdContextPath, components.dataAppBaseUri)
             ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
 
-        router.attach("/-/{collection}",
-                new ElasticFinder(ctx, components.searchClient, components.searchIndexName))
+        if (components.elasticData) {
+            router.attach("/-/{collection}",
+                    new ElasticFinder(ctx, components.elasticData))
+        }
 
         if (mediaDirUrl) {
             router.attach("/json-ld/", new Directory(ctx, "clap:///json-ld/"))
