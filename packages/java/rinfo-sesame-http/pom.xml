@@ -103,7 +103,7 @@
           <systemProperties>
             <systemProperty>
               <name>info.aduna.platform.appdata.basedir</name>
-              <value>/opt/_workapps/rinfo/aduna</value>
+              <value>/opt/work/rinfo/aduna</value>
             </systemProperty>
           </systemProperties>
         </configuration>
