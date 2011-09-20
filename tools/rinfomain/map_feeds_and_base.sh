@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEST_SRC_DIR=/opt/_workapps/rinfo/testsources/www
+TEST_SRC_DIR=/opt/work/rinfo/testsources/www
 TEST_SERVER=http://localhost:8280
 
 if [[ -n "$1" ]]; then
