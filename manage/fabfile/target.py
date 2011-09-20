@@ -37,12 +37,12 @@ def dev_unix():
         'examples': ['localhost'],
     }
     # Filesystem paths
-    env.rinfo_main_store = "/opt/_workapps/rinfo/depots/rinfo"
-    env.examples_store = "/opt/_workapps/rinfo/depots"
-    env.dist_dir = '/opt/_workapps/rinfo/rinfo_dist'
-    env.rinfo_dir = '/opt/_workapps/rinfo'
-    env.rinfo_rdf_repo_dir = '/opt/_workapps/rinfo/aduna'
-    env.admin_webroot = "/opt/_workapps/rinfo/admin"
+    env.rinfo_main_store = "/opt/work/rinfo/depots/rinfo"
+    env.examples_store = "/opt/work/rinfo/depots"
+    env.dist_dir = '/opt/work/rinfo/rinfo_dist'
+    env.rinfo_dir = '/opt/work/rinfo'
+    env.rinfo_rdf_repo_dir = '/opt/work/rinfo/aduna'
+    env.admin_webroot = "/opt/work/rinfo/admin"
     # Tomcat
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
