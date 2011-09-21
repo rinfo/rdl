@@ -35,6 +35,10 @@ class ServiceComponents {
         return config.getString("rinfo.service.dataAppBaseUri")
     }
 
+    String getServiceAppBaseUrl() {
+        return config.getString("rinfo.service.serviceAppBaseUrl")
+    }
+
     def newSesameLoader() {
         return new SesameLoader(repository, createElasticLoader())
     }

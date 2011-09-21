@@ -76,7 +76,7 @@ class ServiceApplication extends Application {
 
         if (components.elasticData) {
             router.attach("/-/{collection}",
-                    new ElasticFinder(ctx, components.elasticData))
+                    new ElasticFinder(ctx, components.elasticData, components.serviceAppBaseUrl))
         }
 
         if (mediaDirUrl) {
