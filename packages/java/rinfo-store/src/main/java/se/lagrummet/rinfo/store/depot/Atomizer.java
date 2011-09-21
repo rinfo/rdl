@@ -45,7 +45,7 @@ public class Atomizer {
     public static final String TOMBSTONE_REF = "ref";
     public static final String TOMBSTONE_WHEN = "when";
 
-    public static final int DEFAULT_FEED_BATCH_SIZE = 25;
+    public static final int DEFAULT_FEED_BATCH_SIZE = 100;
 
     private String feedPath;
 
