@@ -8,6 +8,8 @@
 @prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
 #=======================================================================
 
+# Synka även med ../org/myndigheter.n3 och ../../base/sys/uri/slugs.n3.
+
 # TODO:? is the use of skos:prefLabel and skos:altLabel ok?
 #       see e.g. <http://www.w3.org/TR/skos-primer/#secalt>
 # TODO: Assign prism:issn <urn:ISSN:0000-0000>;
@@ -297,6 +299,13 @@
     rdfs:seeAlso <http://www.hsv.se/lagochratt/lagarochregler/foreskrifter.4.539a949110f3d5914ec800062619.html>;
     a :Forfattningssamling .
 
+<http://rinfo.lagrummet.se/serie/fs/hvmfs>
+    skos:altLabel "HVMFS"@sv;
+    skos:prefLabel "Havs- och vattenmyndighetens författningssamling"@sv;
+    dct:publisher <http://rinfo.lagrummet.se/org/havs-_och_vattenmyndigheten>;
+    rdfs:seeAlso <http://www.havochvatten.se/miljopolitik-och-lagar/lagstiftning/svensk-lagstiftning/havs--och-vattenmyndighetens-forfattningssamling.html>;
+    a :Forfattningssamling .
+
 <http://rinfo.lagrummet.se/serie/fs/iaffs>
     skos:altLabel "IAFFS"@sv;
     skos:prefLabel "Inspektionen för arbetslöshetsförsäkringens författningssamling"@sv;
@@ -537,14 +546,6 @@
     rdfs:comment "Har övertagits av Myndigheten för radio och tvs författningssamling (MRTVFS)"@sv;
     a :Forfattningssamling .
 
-<http://rinfo.lagrummet.se/serie/fs/saeifs>
-    skos:altLabel "SÄIFS"@sv;
-    skos:prefLabel "Sprängämnesinspektionens författningssamling"@sv;
-    # TODO: dct:publisher <msb?>;
-    rdfs:comment "Har övertagits av Myndigheten för samhällsskydd och beredskaps författningssamling (MSBFS)"@sv;
-    rdfs:seeAlso <http://www2.msb.se/shopping/srv_itemlist____13768.aspx>;
-    a :Forfattningssamling .
-
 <http://rinfo.lagrummet.se/serie/fs/scb-fs>
     skos:altLabel "SCB-FS"@sv;
     skos:prefLabel "Statistiska centralbyråns författningssamling"@sv;
@@ -743,7 +744,7 @@
 ################################################################
 # Upphävda författningssamlingar -- en inkomplett lista. Fyll på allt
 # eftersom äldre föreskrifter utgivna av nu nedlagda myndigheter
-# påträffas. Synka även med ../org/myndigheter.n3.
+# påträffas. Synka även med ../org/myndigheter.n3 och ../../base/sys/uri/slugs.n3.
 
 <http://rinfo.lagrummet.se/serie/fs/bfs>
     skos:altLabel "BFS"@sv;
@@ -759,6 +760,14 @@
     dct:publisher <http://rinfo.lagrummet.se/org/djurskyddsmyndigheten>;
     rdfs:seeAlso <http://www.djurskyddsmyndigheten.se/Steria/templates/Page.aspx?id=482>;
     rdfs:comment "Har tagits över av jordbruksverkets författningssamling (SJVFS)"@sv;
+    a :Forfattningssamling .
+
+<http://rinfo.lagrummet.se/serie/fs/saeifs>
+    skos:altLabel "SÄIFS"@sv;
+    skos:prefLabel "Sprängämnesinspektionens författningssamling"@sv;
+    dct:publisher <http://rinfo.lagrummet.se/org/spraengaemnesinspektionen>;
+    rdfs:comment "Har övertagits av Myndigheten för samhällsskydd och beredskaps författningssamling (MSBFS)"@sv;
+    rdfs:seeAlso <http://www2.msb.se/shopping/srv_itemlist____13768.aspx>;
     a :Forfattningssamling .
 
 <http://rinfo.lagrummet.se/serie/fs/vervafs>
