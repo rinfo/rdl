@@ -67,11 +67,9 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/fs/agvfs> :abbrSlug "agvfs" .
 <http://rinfo.lagrummet.se/serie/fs/affs> :abbrSlug "affs" .
 <http://rinfo.lagrummet.se/serie/fs/amsfs> :abbrSlug "amsfs" .
-<http://rinfo.lagrummet.se/serie/fs/bfs> :abbrSlug "bfs" .
 <http://rinfo.lagrummet.se/serie/fs/bolfs> :abbrSlug "bolfs" .
 <http://rinfo.lagrummet.se/serie/fs/bv-fs> :abbrSlug "bv-fs" .
 <http://rinfo.lagrummet.se/serie/fs/csnfs> :abbrSlug "csnfs" .
-<http://rinfo.lagrummet.se/serie/fs/dfs> :abbrSlug "dfs" .
 <http://rinfo.lagrummet.se/serie/fs/difs> :abbrSlug "difs" .
 <http://rinfo.lagrummet.se/serie/fs/dvfs> :abbrSlug "dvfs" .
 <http://rinfo.lagrummet.se/serie/fs/elsaek-fs> :abbrSlug "elsaek-fs" .
@@ -81,6 +79,7 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/fs/fifs> :abbrSlug "fifs" .
 <http://rinfo.lagrummet.se/serie/fs/fkfs> :abbrSlug "fkfs" .
 <http://rinfo.lagrummet.se/serie/fs/hsvfs> :abbrSlug "hsvfs" .
+<http://rinfo.lagrummet.se/serie/fs/hvmfs> :abbrSlug "hvmfs" .
 <http://rinfo.lagrummet.se/serie/fs/iaffs> :abbrSlug "iaffs" .
 <http://rinfo.lagrummet.se/serie/fs/itpsfs> :abbrSlug "itpsfs" .
 <http://rinfo.lagrummet.se/serie/fs/jvsfs> :abbrSlug "jvsfs" .
@@ -130,12 +129,14 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/fs/tsfs> :abbrSlug "tsfs" .
 <http://rinfo.lagrummet.se/serie/fs/tvfs> :abbrSlug "tvfs" .
 <http://rinfo.lagrummet.se/serie/fs/valfs> :abbrSlug "valfs" .
-<http://rinfo.lagrummet.se/serie/fs/vervafs> :abbrSlug "vervafs" .
 <http://rinfo.lagrummet.se/serie/fs/vrfs> :abbrSlug "vrfs" .
 <http://rinfo.lagrummet.se/serie/fs/vvfs> :abbrSlug "vvfs" .
 
 # Författningssamlingar för upphävda myndigheter
+<http://rinfo.lagrummet.se/serie/fs/bfs> :abbrSlug "bfs" .
+<http://rinfo.lagrummet.se/serie/fs/dfs> :abbrSlug "dfs" .
 <http://rinfo.lagrummet.se/serie/fs/saeifs> :abbrSlug "saeifs" .
+<http://rinfo.lagrummet.se/serie/fs/vervafs> :abbrSlug "vervafs" .
 
 
 # Rättsfallsförteckningar
@@ -151,6 +152,8 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/rf/fod> :abbrSlug "fod" .
 
 # Allmänna råd-serier (inte komplett)
-<http://rinfo.lagrummet.se/serie/ar/fkar> :abbrSlug "fkar" .
-<http://rinfo.lagrummet.se/serie/ar/far> :abbrSlug "far" .
 <http://rinfo.lagrummet.se/serie/ar/bfnar> :abbrSlug "bfnar" .
+<http://rinfo.lagrummet.se/serie/ar/far> :abbrSlug "far" .
+<http://rinfo.lagrummet.se/serie/ar/fkar> :abbrSlug "fkar" .
+<http://rinfo.lagrummet.se/serie/ar/nar> :abbrSlug "nar" .
+<http://rinfo.lagrummet.se/serie/ar/nrr> :abbrSlug "nrr" .
