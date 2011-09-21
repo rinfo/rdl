@@ -1,6 +1,6 @@
 package se.lagrummet.rinfo.service
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Slf4j as Log
 
 import org.elasticsearch.client.Client
 import org.elasticsearch.action.WriteConsistencyLevel
@@ -15,7 +15,7 @@ import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDSerializer
 
 
-@Slf4j
+@Log
 class ElasticLoader {
 
     ElasticData elasticData
