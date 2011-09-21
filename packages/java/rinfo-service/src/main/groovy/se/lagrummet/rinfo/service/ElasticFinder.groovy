@@ -29,6 +29,8 @@ import org.codehaus.jackson.map.SerializationConfig
 class ElasticFinder extends Finder {
 
     ElasticData elasticData
+    String serviceAppBaseUrl
+
     def contextMap
     def jsonMapper
 
@@ -37,9 +39,10 @@ class ElasticFinder extends Finder {
     def pageSizeParamKey = '_pageSize'
     def facetStatsSegment = "stats"
 
-    ElasticFinder(Context context, ElasticData elasticData) {
+    ElasticFinder(Context context, ElasticData elasticData, String serviceAppBaseUrl) {
         super(context)
         this.elasticData = elasticData
+        this.serviceAppBaseUrl = serviceAppBaseUrl
         jsonMapper = new ObjectMapper()
         jsonMapper.configure(
                 SerializationConfig.Feature.INDENT_OUTPUT, true)
@@ -157,7 +160,7 @@ class ElasticFinder extends Finder {
 
     String makeServiceLink(String iri) {
         // TODO: Experimental. Use base from request? Link to alt mediaType versions?
-        return iri.replaceFirst(/http:\/\/rinfo\.([^#]+)(#.*)?/, 'http://service.$1/data.json$2')
+        return iri.replaceFirst(/http:\/\/rinfo\.lagrummet\.se\/([^#]+)(#.*)?/, serviceAppBaseUrl + '$1/data.json$2')
     }
 
     def getElasticStats(SearchRequestBuilder srb) {
