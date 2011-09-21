@@ -96,7 +96,9 @@ class ElasticFinder extends Finder {
                     item[key] = hf.values.size() > 1?  hf.values : hf.value
                 }
             }
-            item.describedby = makeServiceLink(item.iri)
+            if (item.iri) {
+                item.describedby = makeServiceLink(item.iri)
+            }
             return item
         }
         return data
