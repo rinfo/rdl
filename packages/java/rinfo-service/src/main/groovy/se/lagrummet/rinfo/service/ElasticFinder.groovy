@@ -86,7 +86,8 @@ class ElasticFinder extends Finder {
             data.prev = currentPage.replace(pageParam, pageParamKey + '=' + (search.page - 1))
         }
         data.current = currentPage as String
-        if (esRes.hits.hits.length == data.itemsPerPage && data.startIndex + data.itemsPerPage > data.totalHits) {
+        if (esRes.hits.hits.length == data.itemsPerPage &&
+                (data.startIndex + data.itemsPerPage) < data.totalResults) {
             data.next = currentPage.replace(pageParam, pageParamKey + '=' + (search.page + 1))
         }
 
