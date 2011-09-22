@@ -84,6 +84,7 @@ class ServiceApplication extends Application {
             router.attach("/css/", new Directory(ctx, mediaDirUrl + "css/"))
             router.attach("/img/", new Directory(ctx, mediaDirUrl + "img/"))
             router.attach("/js/", new Directory(ctx, mediaDirUrl + "js/"))
+            router.attach("/ui", new Directory(ctx, mediaDirUrl + "ui"))
         }
         return router
     }
