@@ -1,5 +1,7 @@
 package se.lagrummet.rinfo.service
 
+import groovy.util.logging.Slf4j as Log
+
 import org.restlet.Context
 import static org.restlet.data.CharacterSet.UTF_8
 import org.restlet.data.MediaType
@@ -26,6 +28,7 @@ import org.codehaus.jackson.map.ObjectMapper
 import org.codehaus.jackson.map.SerializationConfig
 
 
+@Log
 class ElasticFinder extends Finder {
 
     ElasticData elasticData
@@ -113,14 +116,12 @@ class ElasticFinder extends Finder {
         def page = 0
         def pageSize = defaultPageSize
         srb.addFields(listTerms as String[])
-        def matches = []
+        def q = null
+        def terms = [:]
         for (name in query.names) {
             def value = query.getFirstValue(name)
             if (name == 'q') {
-                def q = query.getFirstValue('q')
-                if (q) {
-                    matches << q
-                }
+                q = query.getFirstValue('q')
             } else if (name == '_sort') {
                 value.split(",").each {
                     if (it.startsWith('-')) {
@@ -139,13 +140,22 @@ class ElasticFinder extends Finder {
             } else if (name == pageSizeParamKey) {
                 pageSize = value as int
             } else {
-                matches << "${name}:${value}"
-                if (!listTerms.contains(name))
-                    srb.addFields(name)
+                terms[name] = query.getValuesArray(name)
             }
         }
+        def matches = []
+        if (q) {
+            matches << q
+        }
+        terms.each { name, values ->
+            matches << values.collect { "${name}:${it}" }.join(" ")
+            if (!listTerms.contains(name))
+                srb.addFields(name)
+        }
+        def elasticQStr = matches.collect { "(${it})" }.join(' AND ')
+        log.debug "Using ElasticSearch query string: ${elasticQStr}"
         QueryBuilder qb = (matches)?
-            QueryBuilders.queryString(matches.join(' AND ')) :
+            QueryBuilders.queryString(elasticQStr) :
             QueryBuilders.matchAllQuery()
         //TermFilterBuilder fb = FilterBuilders.termFilter("longval", 124L)
 
