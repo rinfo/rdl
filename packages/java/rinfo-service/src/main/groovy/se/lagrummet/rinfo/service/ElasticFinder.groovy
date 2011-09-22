@@ -86,7 +86,7 @@ class ElasticFinder extends Finder {
             data.prev = currentPage.replace(pageParam, pageParamKey + '=' + (search.page - 1))
         }
         data.current = currentPage as String
-        if (esRes.hits.hits.length == search.pageSize) {
+        if (esRes.hits.hits.length == data.itemsPerPage && data.startIndex + data.itemsPerPage > data.totalHits) {
             data.next = currentPage.replace(pageParam, pageParamKey + '=' + (search.page + 1))
         }
 
@@ -116,7 +116,10 @@ class ElasticFinder extends Finder {
         for (name in query.names) {
             def value = query.getFirstValue(name)
             if (name == 'q') {
-                matches << query.getFirstValue('q')
+                def q = query.getFirstValue('q')
+                if (q) {
+                    matches << q
+                }
             } else if (name == '_sort') {
                 value.split(",").each {
                     if (it.startsWith('-')) {
