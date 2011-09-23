@@ -8,13 +8,14 @@
     <link rel="stylesheet" href="main.css" />
     <script src="jquery-1.6.4.min.js"></script>
     <script src="jquery.tmpl.min.js"></script>
+    <script src="bootstrap-modal.js"></script>
     <script src="main.js"></script>
     <!--[if lte IE 8]><script src="html5shiv.js"></script><![endif]-->
   </head>
   <body>
     <div class="container">
       <div class="row">
-        <div class="span4">
+        <div id="queryBox" class="span4">
           <h1>RInfo Service</h1>
           <form action="/-/doc" id="queryForm" class="form-stacked">
             <fieldset>
@@ -46,49 +47,90 @@
             </fieldset>
           </form>
         </div>
-        <div class="span12">
-            <h2>Resultat</h2>
-            <div id="resultInfo"></div>
-            <table class="zebra-striped">
-              <thead>
-                <tr>
-                  <th>Identifierare</th>
-                  <th>Titel</th>
-                  <th>Typ</th>
-                  <!--
-                  <th>Datum</th>
-                  <th>Utgivare</th>
-                  -->
-                </tr>
-              </thead>
-              <tbody id="resultRows"></tbody>
-            </table>
+        <div id="content" class="span12">
+          <div id="errorInfo"></div>
+          <div id="resultsView"></div>
+          <div id="documentView"></div>
         </div>
       </div>
     </div>
 
-    <script id="resultInfoTemplate" type="text/x-jquery-tmpl">
+    <script id="resultsTemplate" type="text/x-jquery-tmpl">
+      <h2>S&ouml;kresultat</h2>
       <p>Din s&ouml;kning p&aring; "<em class="">${queryStr}</em>" gav
-        <strong class="label ${totalResults? 'success' : 'warning'}">${totalResults}</strong> tr&auml;ffar.</p>
+        <strong class="label ${totalResults? 'success' : 'warning'}"
+                >${totalResults}</strong> tr&auml;ffar.</p>
       {{if totalResults}}
         <div class="pagination">
           <ul>
             <li class="prev ${results.prev? '' : 'disabled'}">
               <a href="#${results.prev}">&larr; F&ouml;reg&aring;ende</a></li>
-            <li class="active"><a href="#">${start} &ndash; ${end}</a></li>
+            <li class="active"><a href="#${results.current}">${start} &ndash; ${end}</a></li>
             <li class="next ${results.next? '' : 'disabled'}">
               <a href="#${results.next}">N&auml;sta &rarr;</a></li>
           </ul>
         </div>
+        <table class="zebra-striped">
+          <thead>
+            <tr>
+              <th>Identifierare</th>
+              <th>Titel</th>
+              <th>Typ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{each results.items}}
+              <tr>
+                <td><a href="#${toServiceRef(iri)}">${identifier}</a></td>
+                <td>${title}</td>
+                <td>${type}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
       {{/if}}
     </script>
 
-    <script id="resultRowTemplate" type="text/x-jquery-tmpl">
-      <tr>
-        <td>${identifier}</td>
-        <td>${title}</td>
-        <td>${type}</td>
-      </tr>
+    <script id="documentTemplate" type="text/x-jquery-tmpl">
+      <dl class="data">
+        {{each(key, value) obj}}
+        <dt>${key}</dt>
+        <dd>
+          {{if typeof value === 'string'}}
+            {{if key === 'iri'}}
+              <a class="svc" href="#${toServiceRef(value)}">${value}</a>
+            {{else}}
+              ${value}
+            {{/if}}
+          {{else value.length !== undefined}}
+            <ul>
+              {{each(i, it) value}}
+              <li>
+                {{if typeof it === 'string'}}
+                  ${it}
+                {{else}}
+                  {{tmpl({obj: it}) '#documentTemplate'}}
+                {{/if}}
+              </li>
+              {{/each}}
+            </ul>
+          {{else}}
+            {{tmpl({obj: value}) '#documentTemplate'}}
+          {{/if}}
+        </dd>
+        {{/each}}
+      </dl>
+    </script>
+
+    <script id="errorTemplate" type="text/x-jquery-tmpl">
+      <div class="alert-message warning">
+        <p>
+          Kunde inte l&auml;sa <code>${serviceRef}</code>
+        </p>
+        <p>
+          <strong>${response.status}:</strong> ${response.statusText}
+        </p>
+      </div>
     </script>
 
   </body>
