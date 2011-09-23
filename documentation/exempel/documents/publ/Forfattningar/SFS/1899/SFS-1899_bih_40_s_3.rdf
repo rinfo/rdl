@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dct="http://purl.org/dc/terms/"
+         xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+
+  <Forordning rdf:about="http://rinfo.lagrummet.se/publ/sfs/1899:bih_40_s_3">
+
+    <!-- identifiering -->
+    <forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
+    <arsutgava>1899</arsutgava>
+    <bihangsnummer>40</bihangsnummer>
+    <sidnummer>3</sidnummer>
+    <dct:identifier>SFS 1899:bih. 40 s. 3</dct:identifier>
+    <dct:title xml:lang="sv">Kungl. Maj:ts Resolution angående rättighet för anglikanska kyrkans prästerskap i allmänhet att med laga verkan förrätta vigsel här i riket</dct:title>
+    <!-- tidsaspekter -->
+    <utfardandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1899-05-19</utfardandedatum>
+    <!-- ursprung -->
+    <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
+    <beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
+    <!-- TODO: Ska "Justitiedepartementet L2" anses som en annan organisation än
+         Justitiedepartementet? Om ja, hur bör det påverka användingen av rättsinfo? -->
+    <!-- dokumentkopplingar: inga angivna -->
+    <!-- dokumentsammansätting: inga angivna -->
+  </Forordning>
+
+</rdf:RDF>

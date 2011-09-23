@@ -8,6 +8,7 @@ rinfo_user=$4
 tar xzf apache-tomcat-${version}.tar.gz
 mv apache-tomcat-${version} /opt/
 pushd /opt/
+    test -h tomcat && rm tomcat
     ln -s apache-tomcat-${version} tomcat
 
     # Set owner to rinfo and group to tomcat

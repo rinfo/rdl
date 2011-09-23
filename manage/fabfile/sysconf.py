@@ -14,20 +14,18 @@
 # See: <http://httpd.apache.org/docs/2.0/mod/core.html#namevirtualhost>
 # See: <http://httpd.apache.org/docs/2.0/mod/mod_proxy.html#access>
 from __future__ import with_statement
-from os import path as p, sep
+from os import path as p
 from fabric.api import *
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
-from targetenvs import _needs_targetenv
-from util import mkdirpath, slashed
-
-
-SCRIPT_DIR = p.dirname(__file__)
+from fabfile.target import _needs_targetenv
+from fabfile.util import mkdirpath, slashed
 
 
 ##
 # Continuous Maintenance
 
+@task
 def configure_server(sync="1"):
     if int(sync):
         _sync_workdir()
@@ -36,6 +34,7 @@ def configure_server(sync="1"):
     configure_sites(0)
 
 
+@task
 def sync_static_web(sync="1"):
     if int(sync):
         _sync_workdir()
@@ -50,6 +49,7 @@ def sync_static_web(sync="1"):
                 sudo("chmod u=rw,a=r %s" % dest)
 
 
+@task
 def configure_app_container(sync="1"):
     if int(sync):
         _sync_workdir()
@@ -69,6 +69,7 @@ def configure_app_container(sync="1"):
             if sudo("cp -vu apache2/conf.d/jk.conf /etc/apache2/conf.d/"):
                 sudo("chown root:root /etc/apache2/conf.d/jk.conf")
 
+@task
 def configure_sites(sync="1"):
     if int(sync):
         _sync_workdir()
@@ -85,9 +86,9 @@ def configure_sites(sync="1"):
 
 @runs_once
 def _sync_workdir():
-    common_conf_dir = p.join(SCRIPT_DIR, "common")
+    common_conf_dir = p.join(env.manageroot, "sysconf", "common")
     rsync_project(env.mgr_workdir, common_conf_dir, exclude=".*", delete=True)
-    targetenv_conf_dir = p.join(SCRIPT_DIR, env.target)
+    targetenv_conf_dir = p.join(env.manageroot, "sysconf", env.target)
     rsync_project(env.mgr_workdir, targetenv_conf_dir, exclude=".*", delete=True)
 
 
@@ -97,15 +98,23 @@ def _sync_workdir():
 @runs_once
 def _prepare_initial_setup():
     mkdirpath("%(mgr_workdir)s/install" % env)
-    put(sep.join((env.projectroot, 'manage', 'sysconf', 'install', '*.sh')), "%(mgr_workdir)s/install" % env)
-
+    put(p.join(env.manageroot, "sysconf", "install", "*.sh"), "%(mgr_workdir)s/install" % env)
     mkdirpath("%(mgr_workdir)s/tomcat_pkg" % env)
 
+@task
+def install_server():
+    install_dependencies()
+    install_jdk() # Installing the Proprietary JDK requires manual confirmation.
+    fetch_tomcat_dist()
+    install_tomcat()
+
+@task
 def install_dependencies():
     _needs_targetenv()
     _prepare_initial_setup()
     sudo("bash %(mgr_workdir)s/install/1_deps.sh" % env)
 
+@task
 def fetch_tomcat_dist():
     _needs_targetenv()
     _prepare_initial_setup()
@@ -113,6 +122,7 @@ def fetch_tomcat_dist():
     with cd(workdir_tomcat):
         run("bash %(mgr_workdir)s/install/2_get-tomcat.sh %(tomcat_version)s" % env)
 
+@task
 def install_tomcat():
     _needs_targetenv()
     _prepare_initial_setup()
