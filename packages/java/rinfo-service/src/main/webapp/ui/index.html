@@ -48,8 +48,8 @@
           </form>
         </div>
         <div id="content" class="span12">
-          <div id="errorInfo"></div>
           <div id="resultsView"></div>
+          <div id="errorInfo"></div>
           <div id="documentView"></div>
         </div>
       </div>
@@ -92,6 +92,7 @@
     </script>
 
     <script id="documentTemplate" type="text/x-jquery-tmpl">
+      <h2>${heading}</h2>
       <dl class="data">
         {{each(key, value) obj}}
         <dt>${key}</dt>

@@ -87,6 +87,7 @@ function renderDocument(serviceRef, doc) {
   $('#errorInfo').empty();
   $('#resultsView:has(*)').addClass('folded');
   $('#documentTemplate').tmpl({
+    heading: doc.identifier || doc.name || doc.altLabel || doc.label,
     obj: doc
   }).appendTo($('#documentView').empty());
 }
