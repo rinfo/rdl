@@ -29,12 +29,16 @@ class ElasticData {
         "doc": [
             "properties": [
                 "iri": ["type": "string", "index": "not_analyzed"],
-                "domsnummer": ["type": "string"],
-                "publisher": [
-                    "properties": [
-                        "iri": ["type": "string", "index": "not_analyzed"]
+                "type": ["type": "string", "index": "not_analyzed"],
+                "identifier": [
+                    //"type": "string", "index": "not_analyzed", "boost": 2.0
+                    "type": "multi_field",
+                    "fields": [
+                        "identifier": ["type": "string", "index": "not_analyzed", "boost": 4.0],
+                        "plain": ["type": "string", "index": "analyzed", "boost": 4.0]
                     ]
-                ]
+                ],
+                "domsnummer": ["type": "string"]
             ]
         ]
     ]
