@@ -106,6 +106,9 @@ class ElasticFinder extends Finder {
             if (item.iri) {
                 item.describedby = makeServiceLink(item.iri)
             }
+            it.highlightFields.each { key, hlf ->
+                item.get('matches', [:])[key] = hlf.fragments
+            }
             return item
         }
         return data
@@ -124,16 +127,21 @@ class ElasticFinder extends Finder {
                 q = query.getFirstValue('q')
             } else if (name == '_sort') {
                 value.split(",").each {
+                    def sortTerm = it
+                    def sortOrder = SortOrder.ASC
                     if (it.startsWith('-')) {
-                        def sortKey = it.substring(1)
-                        srb.addSort(sortKey, SortOrder.DESC)
-                        if (!listTerms.contains(sortKey))
-                            srb.addFields(sortKey)
-                    } else {
-                        srb.addSort(it, SortOrder.ASC)
-                        if (!listTerms.contains(it))
-                            srb.addFields(it)
+                        sortOrder = SortOrder.DESC
+                        sortTerm = it.substring(1)
                     }
+                    if (elasticData.termsWithRawField.contains(sortTerm)) {
+                        sortTerm = sortTerm + ".raw"
+                    } else if (!elasticData.dateTerms.contains(sortTerm)) {
+                        // TODO: if not sortable; silent or client error?
+                        return // not sortable
+                    }
+                    srb.addSort(sortTerm, sortOrder)
+                        if (!listTerms.contains(sortTerm))
+                            srb.addFields(sortTerm)
                 }
             } else if (name == pageParamKey) {
                 page = value as int
@@ -164,6 +172,16 @@ class ElasticFinder extends Finder {
         def startIndex = page * pageSize
         srb.setFrom(startIndex)
         srb.setSize(pageSize)
+
+        if (q) { // free text query
+            srb.setHighlighterPreTags('<em class="match">')
+            srb.setHighlighterPostTags('</em>')
+            srb.addHighlightedField("title", 150, 0)
+            srb.addHighlightedField("identifier", 150, 0)
+            //srb.addHighlightedField("publisher.name", 150, 0)
+            srb.addHighlightedField("content", 150, 3)
+        }
+
         return [
             page: page,
             pageSize: pageSize,

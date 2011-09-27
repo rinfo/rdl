@@ -81,8 +81,22 @@
           <tbody>
             {{each results.items}}
               <tr>
-                <td><a href="#${toServiceRef(iri)}">${identifier}</a></td>
-                <td>${title}</td>
+                <td>
+                  <a href="#${toServiceRef(iri)}">
+                    {{if $value.matches && matches.identifier}}
+                      {{html matches.identifier}}
+                    {{else}}
+                      ${identifier}
+                    {{/if}}
+                  </a>
+                </td>
+                <td>{{if $value.matches && matches.title}}{{html matches.title}}{{else}}${title}{{/if}}
+                  {{if $value.matches && matches.content}}
+                    <p class="excerpt">
+                      {{each matches.content}}<small>[...]{{html $value}}[...]</small><br />{{/each}}
+                    </p>
+                  {{/if}}
+                </td>
                 <td>${type}</td>
               </tr>
             {{/each}}
