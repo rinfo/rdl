@@ -33,3 +33,9 @@ dl.data li {
   padding: 0.8em;
 }
 
+.match {
+  background-color: #46a546;
+  color: #ffffff;
+  font-style: italic;
+  font-weight: bold;
+}
