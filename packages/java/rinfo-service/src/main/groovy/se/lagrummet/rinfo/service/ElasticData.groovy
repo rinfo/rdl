@@ -47,7 +47,8 @@ class ElasticData {
     def refTerms = []
     def dateTerms = []
 
-    def termsWithRawField = ["identifier"]
+    private def notAnalyzedFields = ["type"]
+    private def termsWithRawField = ["identifier"]
 
     ElasticData(String host, int port, String indexName) {
         this(new TransportClient().addTransportAddress(
@@ -68,6 +69,16 @@ class ElasticData {
                 ]
             ]
         }
+    }
+
+    String getFieldForSort(String term) {
+        if (termsWithRawField.contains(term)) {
+            return term + ".raw"
+        } else if (dateTerms.contains(term) ||
+                notAnalyzedFields.contains(term)) {
+            return term
+        }
+        return null
     }
 
     synchronized void initialize() {

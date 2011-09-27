@@ -133,15 +133,13 @@ class ElasticFinder extends Finder {
                         sortOrder = SortOrder.DESC
                         sortTerm = it.substring(1)
                     }
-                    if (elasticData.termsWithRawField.contains(sortTerm)) {
-                        sortTerm = sortTerm + ".raw"
-                    } else if (!elasticData.dateTerms.contains(sortTerm)) {
+                    def field = elasticData.getFieldForSort(sortTerm)
+                    if (field == null) {
                         // TODO: if not sortable; silent or client error?
                         return // not sortable
                     }
-                    srb.addSort(sortTerm, sortOrder)
-                        if (!listTerms.contains(sortTerm))
-                            srb.addFields(sortTerm)
+                    srb.addSort(field, sortOrder)
+                    if (!listTerms.contains(sortTerm)) srb.addFields(sortTerm)
                 }
             } else if (name == pageParamKey) {
                 page = value as int

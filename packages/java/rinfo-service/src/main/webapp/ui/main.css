@@ -1,4 +1,8 @@
 
+a.sort {
+  color: #404040;
+}
+
 dl.data > dt {
   float: left;
   text-overflow: ellipsis;
