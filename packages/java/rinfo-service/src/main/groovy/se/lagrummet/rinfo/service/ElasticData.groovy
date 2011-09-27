@@ -34,8 +34,8 @@ class ElasticData {
                     //"type": "string", "index": "not_analyzed", "boost": 2.0
                     "type": "multi_field",
                     "fields": [
-                        "identifier": ["type": "string", "index": "not_analyzed", "boost": 4.0],
-                        "plain": ["type": "string", "index": "analyzed", "boost": 4.0]
+                        "identifier": ["type": "string", "index": "analyzed", "boost": 4.0],
+                        "raw": ["type": "string", "index": "not_analyzed", "boost": 4.0]
                     ]
                 ],
                 "domsnummer": ["type": "string"]
@@ -46,6 +46,8 @@ class ElasticData {
     def listTerms = []
     def refTerms = []
     def dateTerms = []
+
+    def termsWithRawField = ["identifier"]
 
     ElasticData(String host, int port, String indexName) {
         this(new TransportClient().addTransportAddress(
