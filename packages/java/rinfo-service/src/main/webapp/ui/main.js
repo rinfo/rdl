@@ -15,7 +15,7 @@ $(function () {
     return false;
   });
 
-  $('#resultsView a:link, a.svc:link').live('click', function () {
+  $('#resultsView a:link, a.svc:link, a.sort:link').live('click', function () {
     var serviceRef = $(this).attr('href').substring(1);
     if (serviceRef) {
       window.location.hash = serviceRef;
@@ -104,6 +104,19 @@ function renderError(serviceRef, response) {
 
 function toServiceRef(iri) {
   return iri.replace(/^https?:\/\/[^\/]+(.+?)(\/data\.json)?$/, "$1") + "/data.json";
+}
+
+function sortLink(serviceRef, sortTerm) {
+  var match = serviceRef.match(/\&_sort=([^&]+)/);
+  var currSort = match? match[1] : "";
+  var doSort = sortTerm;
+  if (currSort === '-'+sortTerm) {
+    doSort = "";
+  } else if (currSort === sortTerm) {
+    doSort = '-' + sortTerm;
+  }
+  return serviceRef.replace(/\&_sort=[^&]+/, "") +
+      (doSort? '&_sort=' + doSort : "");
 }
 
 /**
