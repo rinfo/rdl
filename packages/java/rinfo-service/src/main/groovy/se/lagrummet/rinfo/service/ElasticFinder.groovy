@@ -126,7 +126,7 @@ class ElasticFinder extends Finder {
             if (name == 'q') {
                 q = query.getFirstValue('q')
             } else if (name == '_sort') {
-                value.split(",").each {
+                value?.split(",").each {
                     def sortTerm = it
                     def sortOrder = SortOrder.ASC
                     if (it.startsWith('-')) {
