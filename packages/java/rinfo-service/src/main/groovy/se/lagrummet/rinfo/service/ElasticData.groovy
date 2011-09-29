@@ -20,7 +20,7 @@ class ElasticData {
     def termData = [
         listTerms: ["_id", "iri", "type", "title", "identifier",
             "utfardandedatum", "beslutsdatum", "issued"],
-        refTerms: ["publisher", "forfattningssamling", "utredningsserie",
+        refTerms: ["publisher", "forfattningssamling", "utrSerie",
             "rattsfallspublikation", "allmannaRadSerie"],
         dateTerms: ["utfardandedatum", "beslutsdatum", "issued"]
     ]
