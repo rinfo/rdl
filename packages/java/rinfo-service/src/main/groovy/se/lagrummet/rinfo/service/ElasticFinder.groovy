@@ -56,7 +56,7 @@ class ElasticFinder extends Finder {
         final String collection = request.attributes["collection"]
         SearchRequestBuilder srb = elasticData.client.prepareSearch(elasticData.indexName)
         def data = (collection == facetStatsSegment)?
-            getElasticStats(srb) :
+            getElasticStats(srb, request.resourceRef) :
             searchElastic(srb, collection, request.resourceRef)
         return new ServerResource() {
             @Get("json")
@@ -68,7 +68,7 @@ class ElasticFinder extends Finder {
         }
     }
 
-    def searchElastic(srb, collection, ref) {
+    def searchElastic(SearchRequestBuilder srb, String collection, Reference ref) {
         def search = prepareElasticSearch(srb, ref, elasticData.listTerms) // TODO: showFieldsby collection?
 
         SearchResponse esRes = srb.execute().actionGet()
@@ -111,6 +111,41 @@ class ElasticFinder extends Finder {
             }
             return item
         }
+        return data
+    }
+
+    def getElasticStats(SearchRequestBuilder srb, Reference ref) {
+        //def qb = QueryBuilders.matchAllQuery()
+        //srb.setQuery(qb)
+        prepareElasticSearch(srb, ref, [])
+        srb.addFacet(FacetBuilders.termsFacet("type").field("type"))
+        elasticData.refTerms.each {
+            def key = it + ".iri"
+            srb.addFacet(FacetBuilders.termsFacet(key).field(key))
+        }
+        elasticData.dateTerms.each {
+            srb.addFacet(FacetBuilders.dateHistogramFacet(it).
+                    field(it).interval("year"))
+        }
+        srb.setSize(0)
+        SearchResponse esRes = srb.execute().actionGet()
+        def data = [
+            type: "DataSet",
+            //totalResults: esRes.hits.totalHits(),
+            slices: esRes.facets.collect {
+                def iriPos = it.name.indexOf(".iri")
+                def isIri = iriPos > -1
+                return [
+                    dimension: isIri? it.name.substring(0, iriPos) : it.name,
+                    observations: it.entries.collect {
+                        def isDate = it instanceof DateHistogramFacet.Entry
+                        def key = isDate? "year" : isIri? "ref" : "term"
+                        def value = isDate? 1900 + new Date(it.time).year : it.term
+                        return [(key): value, count: it.count]
+                    }
+                ]
+            }.findAll { it.observations }
+        ]
         return data
     }
 
@@ -191,36 +226,6 @@ class ElasticFinder extends Finder {
     String makeServiceLink(String iri) {
         // TODO: Experimental. Use base from request? Link to alt mediaType versions?
         return iri.replaceFirst(/http:\/\/rinfo\.lagrummet\.se\/([^#]+)(#.*)?/, serviceAppBaseUrl + '$1/data.json$2')
-    }
-
-    def getElasticStats(SearchRequestBuilder srb) {
-        def qb = QueryBuilders.matchAllQuery()
-        srb.setQuery(qb)
-        srb.addFacet(FacetBuilders.termsFacet("type").field("type"))
-        elasticData.refTerms.each {
-            srb.addFacet(FacetBuilders.termsFacet(it).field(it + ".iri"))
-        }
-        elasticData.dateTerms.each {
-            srb.addFacet(FacetBuilders.dateHistogramFacet(it).
-                    field(it).interval("year"))
-        }
-        srb.setSize(0)
-        SearchResponse esRes = srb.execute().actionGet()
-        def data = [
-            type: "DataSet",
-            //totalResults: esRes.hits.totalHits(),
-            slices: esRes.facets.collect {
-                [
-                    dimension: it.name,
-                    observations: it.entries.collect {
-                        it instanceof DateHistogramFacet.Entry?
-                            [year: 1900 + new Date(it.time).year, count: it.count] :
-                            [term: it.term, count: it.count]
-                    }
-                ]
-            }
-        ]
-        return data
     }
 
 }

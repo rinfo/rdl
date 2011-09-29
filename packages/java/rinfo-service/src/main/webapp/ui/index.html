@@ -16,7 +16,7 @@
     <div class="container">
       <div class="row">
         <div id="queryBox" class="span4">
-          <h1>RInfo Service</h1>
+          <h1><a href="">RInfo Service</a></h1>
           <form action="/-/doc" id="queryForm" class="form-stacked">
             <fieldset>
               <div class="clearfix">
@@ -85,6 +85,8 @@
                   <a href="#${toServiceRef(iri)}">
                     {{if $value.matches && matches.identifier}}
                       {{html matches.identifier}}
+                    {{else !$value.identifier}}
+                      ${iri}
                     {{else}}
                       ${identifier}
                     {{/if}}
