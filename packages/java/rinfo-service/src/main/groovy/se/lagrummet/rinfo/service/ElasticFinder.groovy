@@ -17,6 +17,8 @@ import org.restlet.resource.ServerResource
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.action.search.*
+import org.elasticsearch.index.query.FilterBuilder
+import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryStringQueryBuilder
@@ -156,6 +158,7 @@ class ElasticFinder extends Finder {
         srb.addFields(listTerms as String[])
         def q = null
         def terms = [:]
+        def ranges = [:]
         for (name in query.names) {
             def value = query.getFirstValue(name)
             if (name == 'q') {
@@ -180,6 +183,14 @@ class ElasticFinder extends Finder {
                 page = value as int
             } else if (name == pageSizeParamKey) {
                 pageSize = value as int
+            } else if (name.startsWith('minEx-')) {
+                ranges.get(name.substring(6), [:]).minEx = value
+            } else if (name.startsWith('min-')) {
+                ranges.get(name.substring(4), [:]).min = value
+            } else if (name.startsWith('maxEx-')) {
+                ranges.get(name.substring(6), [:]).maxEx = value
+            } else if (name.startsWith('max-')) {
+                ranges.get(name.substring(4), [:]).max = value
             } else {
                 terms[name] = query.getValuesArray(name)
             }
@@ -190,18 +201,37 @@ class ElasticFinder extends Finder {
         }
         terms.each { name, values ->
             matches << values.collect { "${name}:${it}" }.join(" ")
-            if (!listTerms.contains(name))
+            if (!listTerms.contains(name)) {
                 srb.addFields(name)
+            }
         }
         def elasticQStr = matches.collect { "(${it})" }.join(' AND ')
-        log.debug "Using ElasticSearch query string: ${elasticQStr}"
+
         QueryBuilder qb = (matches)?
             QueryBuilders.queryString(elasticQStr) :
             QueryBuilders.matchAllQuery()
-        //TermFilterBuilder fb = FilterBuilders.termFilter("longval", 124L)
+
+        List<FilterBuilder> filterBuilders = []
+        ranges.each { key, item ->
+            def rqb = FilterBuilders.rangeFilter(key)
+            if (item.minEx) {
+                rqb.gt(item.minEx)
+            } else if (item.min) {
+                rqb.gte(item.min)
+            }
+            if (item.maxEx) {
+                rqb.lt(item.maxEx)
+            } else if (item.max) {
+                rqb.lte(item.max)
+            }
+            filterBuilders << rqb
+        }
+
+        for (fb in filterBuilders) {
+            qb = QueryBuilders.filteredQuery(qb, fb)
+        }
 
         srb.setQuery(qb)
-        //srb.setQuery(QueryBuilders.filteredQuery(qb, fb))
         def startIndex = page * pageSize
         srb.setFrom(startIndex)
         srb.setSize(pageSize)
@@ -209,11 +239,14 @@ class ElasticFinder extends Finder {
         if (q) { // free text query
             srb.setHighlighterPreTags('<em class="match">')
             srb.setHighlighterPostTags('</em>')
+            // TODO: extract fields with matchable text content to config (ElasticData)
             srb.addHighlightedField("title", 150, 0)
             srb.addHighlightedField("identifier", 150, 0)
             //srb.addHighlightedField("publisher.name", 150, 0)
             srb.addHighlightedField("content", 150, 3)
         }
+
+        log.debug "Using ElasticSearch search JSON: ${srb.internalBuilder()}"
 
         return [
             page: page,
