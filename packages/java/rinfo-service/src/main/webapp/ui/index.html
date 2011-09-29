@@ -39,6 +39,15 @@
                   </select>
                 </div>
               </div>
+              <div class="clearfix">
+                <div class="input">
+                  <label for="stats">
+                    <input id="stats" name="_stats" type="checkbox" />
+                    <span>Anpassa urval till s&ouml;kning</span>
+                  </label>
+                </div>
+              </div>
+              <div id="optFields"></div>
               <div class="actions">
                 <button type="submit" class="btn primary">S&ouml;k</button>
               </div>
@@ -54,6 +63,15 @@
         </div>
       </div>
     </div>
+
+    <script id="selectTemplate" type="text/x-jquery-tmpl">
+      <div class="clearfix">
+        <label for="${id}">${label}</label>
+        <div class="input">
+          <select id="${id}" name="${name}" multiple="multiple"></select>
+        </div>
+      </div>
+    </script>
 
     <script id="resultsTemplate" type="text/x-jquery-tmpl">
       <h2>S&ouml;kresultat</h2>
