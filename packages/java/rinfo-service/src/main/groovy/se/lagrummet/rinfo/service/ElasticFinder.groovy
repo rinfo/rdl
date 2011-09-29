@@ -40,8 +40,10 @@ class ElasticFinder extends Finder {
     def jsonMapper
 
     def defaultPageSize = 50
+    def sortParamKey = '_sort'
     def pageParamKey = '_page'
     def pageSizeParamKey = '_pageSize'
+    def statsParamKey = '_stats'
     def facetStatsSegment = "stats"
 
     ElasticFinder(Context context, ElasticData elasticData, String serviceAppBaseUrl) {
@@ -71,7 +73,7 @@ class ElasticFinder extends Finder {
     }
 
     def searchElastic(SearchRequestBuilder srb, String collection, Reference ref) {
-        def search = prepareElasticSearch(srb, ref, elasticData.listTerms) // TODO: showFieldsby collection?
+        def prepSearch = prepareElasticSearch(srb, ref, elasticData.listTerms) // TODO: showFieldsby collection?
 
         SearchResponse esRes = srb.execute().actionGet()
         assert esRes.failedShards == 0
@@ -79,21 +81,21 @@ class ElasticFinder extends Finder {
         def data = [
             "@language": "sv",
             "@context": "/json-ld/list-context.json",
-            startIndex: search.startIndex,
-            itemsPerPage: search.pageSize,
+            startIndex: prepSearch.startIndex,
+            itemsPerPage: prepSearch.pageSize,
             totalResults: esRes.hits.totalHits(),
             duration: "PT${esRes.took.secondsFrac}S" as String,
         ]
 
-        def currentPage = "/-/${collection}?${search.queryString}"
-        def pageParam = pageParamKey + '=' + search.page
-        if (search.page > 0) {
-            data.prev = currentPage.replace(pageParam, pageParamKey + '=' + (search.page - 1))
+        def currentPage = "/-/${collection}?${prepSearch.queryString}"
+        def pageParam = pageParamKey + '=' + prepSearch.page
+        if (prepSearch.page > 0) {
+            data.prev = currentPage.replace(pageParam, pageParamKey + '=' + (prepSearch.page - 1))
         }
         data.current = currentPage as String
         if (esRes.hits.hits.length == data.itemsPerPage &&
                 (data.startIndex + data.itemsPerPage) < data.totalResults) {
-            data.next = currentPage.replace(pageParam, pageParamKey + '=' + (search.page + 1))
+            data.next = currentPage.replace(pageParam, pageParamKey + '=' + (prepSearch.page + 1))
         }
 
         data.items = esRes.hits.hits.collect {
@@ -113,57 +115,33 @@ class ElasticFinder extends Finder {
             }
             return item
         }
+        if (prepSearch.addStats) {
+            data.statistics = buildStats(esRes)
+        }
         return data
     }
 
     def getElasticStats(SearchRequestBuilder srb, Reference ref) {
         //def qb = QueryBuilders.matchAllQuery()
         //srb.setQuery(qb)
-        prepareElasticSearch(srb, ref, [])
-        srb.addFacet(FacetBuilders.termsFacet("type").field("type"))
-        elasticData.refTerms.each {
-            def key = it + ".iri"
-            srb.addFacet(FacetBuilders.termsFacet(key).field(key))
-        }
-        elasticData.dateTerms.each {
-            srb.addFacet(FacetBuilders.dateHistogramFacet(it).
-                    field(it).interval("year"))
-        }
-        srb.setSize(0)
+        prepareElasticSearch(srb, ref, [], 0, true)
         SearchResponse esRes = srb.execute().actionGet()
-        def data = [
-            type: "DataSet",
-            //totalResults: esRes.hits.totalHits(),
-            slices: esRes.facets.collect {
-                def iriPos = it.name.indexOf(".iri")
-                def isIri = iriPos > -1
-                return [
-                    dimension: isIri? it.name.substring(0, iriPos) : it.name,
-                    observations: it.entries.collect {
-                        def isDate = it instanceof DateHistogramFacet.Entry
-                        def key = isDate? "year" : isIri? "ref" : "term"
-                        def value = isDate? 1900 + new Date(it.time).year : it.term
-                        return [(key): value, count: it.count]
-                    }
-                ]
-            }.findAll { it.observations }
-        ]
-        return data
+        return buildStats(esRes)
     }
 
-    Map prepareElasticSearch(SearchRequestBuilder srb, Reference ref, List<String> listTerms) {
-        def query = ref.getQueryAsForm(UTF_8)
-        def page = 0
-        def pageSize = defaultPageSize
-        srb.addFields(listTerms as String[])
+    Map prepareElasticSearch(SearchRequestBuilder srb, Reference ref, List<String> listTerms,
+            pageSize=defaultPageSize, addStats=false) {
+        def queryForm = ref.getQueryAsForm(UTF_8)
         def q = null
         def terms = [:]
         def ranges = [:]
-        for (name in query.names) {
-            def value = query.getFirstValue(name)
+        def page = 0
+        srb.addFields(listTerms as String[])
+        for (name in queryForm.names) {
+            def value = queryForm.getFirstValue(name)
             if (name == 'q') {
-                q = query.getFirstValue('q')
-            } else if (name == '_sort') {
+                q = queryForm.getFirstValue('q')
+            } else if (name == sortParamKey) {
                 value?.split(",").each {
                     def sortTerm = it
                     def sortOrder = SortOrder.ASC
@@ -183,6 +161,8 @@ class ElasticFinder extends Finder {
                 page = value as int
             } else if (name == pageSizeParamKey) {
                 pageSize = value as int
+            } else if (name == statsParamKey) {
+                addStats = true
             } else if (name.startsWith('minEx-')) {
                 ranges.get(name.substring(6), [:]).minEx = value
             } else if (name.startsWith('min-')) {
@@ -192,7 +172,7 @@ class ElasticFinder extends Finder {
             } else if (name.startsWith('max-')) {
                 ranges.get(name.substring(4), [:]).max = value
             } else {
-                terms[name] = query.getValuesArray(name)
+                terms[name] = queryForm.getValuesArray(name)
             }
         }
         def matches = []
@@ -236,6 +216,10 @@ class ElasticFinder extends Finder {
         srb.setFrom(startIndex)
         srb.setSize(pageSize)
 
+        if (addStats) {
+            prepareStats(srb)
+        }
+
         if (q) { // free text query
             srb.setHighlighterPreTags('<em class="match">')
             srb.setHighlighterPostTags('</em>')
@@ -252,7 +236,41 @@ class ElasticFinder extends Finder {
             page: page,
             pageSize: pageSize,
             startIndex: startIndex,
-            queryString: ref.query ?: ''
+            queryString: ref.query ?: '',
+            addStats: addStats
+        ]
+    }
+
+    def prepareStats(SearchRequestBuilder srb) {
+        srb.addFacet(FacetBuilders.termsFacet("type").field("type"))
+        elasticData.refTerms.each {
+            def key = it + ".iri"
+            srb.addFacet(FacetBuilders.termsFacet(key).field(key))
+        }
+        elasticData.dateTerms.each {
+            srb.addFacet(FacetBuilders.dateHistogramFacet(it).
+                    field(it).interval("year"))
+        }
+    }
+
+    Map buildStats(SearchResponse esRes) {
+        return [
+            type: "DataSet",
+            slices: esRes.facets.collect {
+                def iriPos = it.name.indexOf(".iri")
+                def isIri = iriPos > -1
+                return [
+                    dimension: isIri? it.name.substring(0, iriPos) : it.name,
+                    observations: it.entries.collect {
+                        def isDate = it instanceof DateHistogramFacet.Entry
+                        def key = isDate? "year" : isIri? "ref" : "term"
+                        def value = isDate? 1900 + new Date(it.time).year : it.term
+                        return [(key): value, count: it.count]
+                    }
+                ]
+            }.findAll {
+                it.observations
+            }
         ]
     }
 
