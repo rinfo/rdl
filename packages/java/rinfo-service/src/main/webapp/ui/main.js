@@ -51,15 +51,15 @@ function loadStats() {
     loader.stop($('#queryBox'));
     $.each(stats.slices, function () {
       var $select = $('#' + this.dimension);
+      if (!$select[0]) return;
       $select.empty();
       $.each(this.observations, function () {
-        if (!this.term) return; // TODO: date stats
-        var key = this.term;
-        if (this.term.indexOf('/') > -1) {
-          key = '*' + this.term.substring(this.term.lastIndexOf('/') + 1);
-        }
-        var label = this.term.substring(this.term.lastIndexOf('/') + 1);
-        $select.append('<option value="'+ key +'">'+ label +' ('+ this.count +')'+'</option>');
+        var value = this.ref?
+                    '*/' + this.ref.substring(this.ref.lastIndexOf('/') + 1) :
+                    this.term;
+        if (!value) return; // TODO: date stats
+        var label = this.ref? this.ref.substring(this.ref.lastIndexOf('/') + 1) : this.term;
+        $select.append('<option value="'+ value +'">'+ label +' ('+ this.count +')'+'</option>');
       });
     });
   });
@@ -103,7 +103,7 @@ function renderError(serviceRef, response) {
 /* utils */
 
 function toServiceRef(iri) {
-  return iri.replace(/^https?:\/\/[^\/]+(.+?)(\/data\.json)?$/, "$1") + "/data.json";
+  return iri.replace(/^https?:\/\/[^\/]+([^#]+?)(\/data\.json)?(#.+)?$/, "$1/data.json$3");
 }
 
 function sortLink(serviceRef, sortTerm) {
