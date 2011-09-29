@@ -49,23 +49,51 @@ function loadStats() {
   loader.start($('#queryBox'));
   $.getJSON(base + '/-/stats', function (stats) {
     loader.stop($('#queryBox'));
-    $.each(stats.slices, function () {
-      var $select = $('#' + this.dimension);
-      if (!$select[0]) return;
-      $select.empty();
-      $.each(this.observations, function () {
-        var value = this.ref?
-                    '*/' + this.ref.substring(this.ref.lastIndexOf('/') + 1) :
-                    this.term;
-        if (!value) return; // TODO: date stats
-        var label = this.ref? this.ref.substring(this.ref.lastIndexOf('/') + 1) : this.term;
-        $select.append('<option value="'+ value +'">'+ label +' ('+ this.count +')'+'</option>');
-      });
-    });
+    renderStats(stats);
   });
 }
 
 /* render */
+
+function renderStats(stats, dynamicSelects) {
+  var $optFields = $('#optFields').empty();
+  $.each(stats.slices, function () {
+    var $select = $('#' + this.dimension);
+    if (!$select[0]) {
+      if (!dynamicSelects) return;
+      var $selectBox = $('#selectTemplate').tmpl({
+        id: this.dimension,
+        label: this.dimension,
+        name: this.dimension + ((this.observations && this.observations[0].ref)? '.iri' : '')
+      });
+      $optFields.append($selectBox);
+      $select = $('select', $selectBox);
+    } else {
+      if (dynamicSelects) {
+        $select.empty().addClass('narrowed');
+      } else if ($select.is('.narrowed')) {
+        $select.empty().removeClass('narrowed');
+      }
+    }
+    $.each(this.observations, function () {
+      var value, label;
+      if (this.ref) {
+        value = '*/' + this.ref.substring(this.ref.lastIndexOf('/') + 1);
+        label = this.ref.substring(this.ref.lastIndexOf('/') + 1);
+      } else if (this.term) {
+        value = this.term;
+        label = this.term;
+      } else if (this.year) {
+        // TODO: add proper 'min-' and 'maxEx-' + this.dimension for date range
+        value = '['+ this.year +'-01-01 TO '+ this.year +'-12-31]';
+        label = this.year;
+      }
+      if (!value)
+        return;
+      $select.append('<option value="'+ value +'">'+ label +' ('+ this.count +')'+'</option>');
+    });
+  });
+}
 
 function renderResults(serviceRef, results) {
   var endIndex = results.startIndex + results.itemsPerPage;
@@ -81,6 +109,11 @@ function renderResults(serviceRef, results) {
     totalResults: results.totalResults,
     results: results
   }).appendTo($('#resultsView').removeClass('folded').empty());
+  if (results.statistics) {
+    renderStats(results.statistics, true);
+  } else {
+    loadStats();
+  }
 }
 
 function renderDocument(serviceRef, doc) {
