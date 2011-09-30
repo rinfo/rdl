@@ -121,9 +121,31 @@ function renderResults(serviceRef, results) {
 function renderDocument(serviceRef, doc) {
   $('#errorInfo').empty();
   $('#resultsView:has(*)').addClass('folded');
+
+  var props = {}, rels = {}, revs = {};
+  for (key in doc) {
+    var value = doc[key];
+    if (key === '@context')
+      continue;
+    if (key === '@rev') {
+      for (revKey in value) {
+        revs['@rev.' + revKey + ''] = value[revKey];
+      }
+    } else {
+      if (typeof value === 'string' ||
+          value.length !== undefined && typeof value[0] === 'string') {
+        props[key] = value;
+      } else {
+        rels[key] = value;
+      }
+    }
+  }
+
   $('#documentTemplate').tmpl({
     heading: doc.identifier || doc.name || doc.altLabel || doc.label,
-    obj: doc
+    properties: props,
+    relations: rels,
+    incoming: revs
   }).appendTo($('#documentView').empty());
 }
 

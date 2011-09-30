@@ -127,6 +127,21 @@
 
     <script id="documentTemplate" type="text/x-jquery-tmpl">
       <h2>${heading}</h2>
+      <div>
+        <h3 class="page-header"><small>Egenskaper</small></h3>
+        {{tmpl({obj: $item.data.properties}) '#dataTemplate'}}
+      </div>
+      <div>
+        <h3 class="page-header"><small>Relationer</small></h3>
+        {{tmpl({obj: $item.data.relations}) '#dataTemplate'}}
+      </div>
+      <div>
+        <h3 class="page-header"><small>Inkommande relationer</small></h3>
+        {{tmpl({obj: $item.data.incoming}) '#dataTemplate'}}
+      </div>
+    </script>
+
+    <script id="dataTemplate" type="text/x-jquery-tmpl">
       <dl class="data">
         {{each(key, value) obj}}
         <dt>${key}</dt>
@@ -144,13 +159,13 @@
                 {{if typeof it === 'string'}}
                   ${it}
                 {{else}}
-                  {{tmpl({obj: it}) '#documentTemplate'}}
+                  {{tmpl({obj: it}) '#dataTemplate'}}
                 {{/if}}
               </li>
               {{/each}}
             </ul>
           {{else}}
-            {{tmpl({obj: value}) '#documentTemplate'}}
+            {{tmpl({obj: value}) '#dataTemplate'}}
           {{/if}}
         </dd>
         {{/each}}
