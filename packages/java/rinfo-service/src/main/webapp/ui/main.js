@@ -73,6 +73,8 @@ function renderStats(stats, dynamicSelects) {
         $select.empty().addClass('narrowed');
       } else if ($select.is('.narrowed')) {
         $select.empty().removeClass('narrowed');
+      } else if ($select.is(':has(option)')) {
+        return; // .. or update if changed?
       }
     }
     $.each(this.observations, function () {
