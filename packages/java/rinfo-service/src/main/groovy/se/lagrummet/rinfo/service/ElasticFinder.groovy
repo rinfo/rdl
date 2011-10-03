@@ -138,9 +138,9 @@ class ElasticFinder extends Finder {
         def page = 0
         srb.addFields(listTerms as String[])
         for (name in queryForm.names) {
-            def value = queryForm.getFirstValue(name)
+            def value = queryForm.getFirstValue(name).replace(":", "\\:")
             if (name == 'q') {
-                q = queryForm.getFirstValue('q')
+                q = value
             } else if (name == sortParamKey) {
                 value?.split(",").each {
                     def sortTerm = it
@@ -174,7 +174,9 @@ class ElasticFinder extends Finder {
             } else if (name.startsWith('max-')) {
                 ranges.get(name.substring(4), [:]).max = value
             } else {
-                terms[name] = queryForm.getValuesArray(name)
+                terms[name] = queryForm.getValuesArray(name).collect {
+                    it.replace(":", "\\:")
+                }
             }
         }
         def matches = []
