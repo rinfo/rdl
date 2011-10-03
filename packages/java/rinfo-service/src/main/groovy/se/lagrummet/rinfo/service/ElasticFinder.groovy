@@ -73,7 +73,7 @@ class ElasticFinder extends Finder {
     }
 
     def searchElastic(SearchRequestBuilder srb, String collection, Reference ref) {
-        def prepSearch = prepareElasticSearch(srb, ref, elasticData.listTerms) // TODO: showFieldsby collection?
+        def prepSearch = prepareElasticSearch(srb, ref, elasticData.listTerms) // TODO: showFieldsBy collection?
 
         SearchResponse esRes = srb.execute().actionGet()
         assert esRes.failedShards == 0
@@ -163,6 +163,8 @@ class ElasticFinder extends Finder {
                 pageSize = value as int
             } else if (name == statsParamKey) {
                 addStats = true
+            } else if (name.startsWith('year-')) {
+                ranges.get(name.substring(5), [:]).year = value
             } else if (name.startsWith('minEx-')) {
                 ranges.get(name.substring(6), [:]).minEx = value
             } else if (name.startsWith('min-')) {
@@ -194,15 +196,20 @@ class ElasticFinder extends Finder {
         List<FilterBuilder> filterBuilders = []
         ranges.each { key, item ->
             def rqb = FilterBuilders.rangeFilter(key)
-            if (item.minEx) {
-                rqb.gt(item.minEx)
-            } else if (item.min) {
-                rqb.gte(item.min)
-            }
-            if (item.maxEx) {
-                rqb.lt(item.maxEx)
-            } else if (item.max) {
-                rqb.lte(item.max)
+            if (item.year) {
+                rqb.gte(item.year)
+                rqb.lt(((item.year as int) + 1) as String)
+            } else {
+                if (item.minEx) {
+                    rqb.gt(item.minEx)
+                } else if (item.min) {
+                    rqb.gte(item.min)
+                }
+                if (item.maxEx) {
+                    rqb.lt(item.maxEx)
+                } else if (item.max) {
+                    rqb.lte(item.max)
+                }
             }
             filterBuilders << rqb
         }
