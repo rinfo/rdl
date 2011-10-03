@@ -6,14 +6,14 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Introduktion till rättsinformationssystemet för beslutsfattare och informationsansvariga</title>
+    <title>Introduktion till rättsdatalagret för vidareutnyttjare</title>
   </head>
   <body>
     <div id="frontpage">
-      <h1>Introduktion till rättsinformationssystemet</h1>
+      <h1>Introduktion till rättsdatalagret</h1>
       <h2>För vidareutnyttjare av rättsinformation</h2>
       <p>
-	Detta dokument förklarar vad rättsinformationssystemet är,
+	Detta dokument förklarar vad rättsdatalagret är,
 	vilken information som lagras där, och hur man kan komma åt
 	och vidareutnyttja denna.
       </p>
@@ -51,7 +51,7 @@
     </div>
 
     <div class="section">
-      <h2>0. Den korta versionen</h2>
+      <h2>1. Den korta versionen</h2>
       <p>
         Hämta ett Atom-flöde över allt som finns i systemet på
         <code>http://rinfo.lagrummet.se/feed/current/</code> (<a
@@ -65,39 +65,88 @@
 $ <b>curl -H "Accept: application/rdf+xml" http://rinfo.lagrummet.se/publ/rf/rk/2009:4</b>
       </pre>
       <p>
-        Hämta själva dokumentet i ett angivet format (förutsatt att
-        just det formatet finns tillgängligt):
+        Hämta själva dokumentet i ett angivet format (tillgängliga
+        format framgår från Atomflödet):
       </p>
       <pre>
 $ <b>curl -H "Accept: application/pdf" http://rinfo.lagrummet.se/publ/rf/rk/2009:4</b>
       </pre>
       <p>
-        Bläddra bland alla dokument på
-        <code>http://service.demo.lagrummet.se/view/browse/publ</code>
+	Lista alla dokument utgivna av ...
+      </p>
+      <pre>
+$ <b>curl -H "Accept: application/json" ...</b>
+      </pre>
+      <p>
+	Lista alla dokument som innehåller ord som börjar på "ekonom":
+      </p>
+      <pre>
+$ <b>curl -H "Accept: application/json" ...</b>
+      </pre>
+      <p>
+	Visa utökad/berikad data <b>om</b> ett visst dokument, inklusive information om andra dokument som hänvisar till detta:
+      </p>
+      <pre>
+$ <b>curl -H "Accept: application/json" ...</b>
+      </pre>
+
+      <p>
+        Bläddra bland alla dokument på <code><a
+        href="http://service.demo.lagrummet.se/view/browse/publ">http://service.demo.lagrummet.se/view/browse/publ</a></code>
+        eller sök med fritext- eller fältsökning på <code><a
+        href="http://service.demo.lagrummet.se/ui/">http://service.demo.lagrummet.se/ui/</a></code>.
       </p>
       <p>
         Observera att allt som publiceras under
         <code>*.<b>demo</b>.lagrummet.se</code> är simulerat,
-        inofficiellt, ofullständigt material. Framöver kommer mer
+        inofficiellt, ofullständigt material. Framöver kommer
         officiellt publicerat material finnas under
         <code>rinfo.lagrummet.se</code>.
       </p>
     </div>
-    
+
     <div class="section">
-      <h2>1. Bakgrund</h2>
-      <p>
-	Med "rättsinformation" menas här författningar, vägledande
-	domstols- och myndighetsavgöranden, förarbeten och andra
-	rättskällor. 
-      </p>
+      <h2>2. Ordlista / begreppsdefinitioner</h2>
+      <dl>
+        <dt>Informationspost</dt>
+        <dd>
+          Ett sammanhållande begrepp för ett enskilt dokument, dess
+          identifierare och metadata om dokumentet. Informationsposten
+          innehåller även information om när själva posten skapades
+          eller uppdaterades.
+        </dd>
+        <dt>Informationsproducent</dt>
+        <dd>
+          En myndighet som enligt rättsinformationsförordningen
+          (1999:175) har ett informationsansvar, dvs en skyldighet att
+          se till att viss information tillgängliggörs och sprids
+          elektroniskt.
+        </dd>
+        <dt>Rättsdatalagret</dt>
+        <dd>
+          Ett system för att samla in och tillgängliggöra all den
+          rättsinformation som enligt rättsinformationsförordningen
+          ska finnas tillgänglig.
+        </dd>
+	<dt>Rättsinformation</dt>
+	<dd>
+	  Författningar, vägledande domstols- och
+	  myndighetsavgöranden, förarbeten och andra
+	  rättskällor. Begreppet används här i samma betydelse som i
+	  rättsinformationsförordningen.
+	</dd>
+        <dt>Vidareutnyttjare</dt>
+        <dd>
+          En part (myndighet, företag eller privatperson) som vill
+          vidareutnyttja den information finns i
+          rättsdatalagret för att exempelvis bygga en
+          informationstjänst på nätet.
+        </dd>
+      </dl>
     </div>
 
     <div class="section">
-      <h2>2. Rättsinformationssystemet</h2>
-      <p>
-      </p>
-      <h3>2.1 Situationen idag</h3>
+      <h2>3. Bakgrund</h2>
       <p>
         Den grundläggande offentliga rättsinformationen som idag finns
         tillgänglig via Internet görs tillgänglig via ett stort antal
@@ -122,101 +171,93 @@ $ <b>curl -H "Accept: application/pdf" http://rinfo.lagrummet.se/publ/rf/rk/2009
         förvaltningen tillgång till grundläggande rättsinformation, är
         det eftersträvansvärt att detta görs enklare.
       </p>
-      <h3>2.2 Rättsinformationsprojektet</h3>
-      
-      <h4>2.2.1 Insamling</h4>
       <p>
-	En grundläggande tanke i rättsinformationsprojektet är att
-	central insamling av rättsinformation måste ske för att göra
-	det möjligt att erbjuda ett enhetligt gränssnitt för att
-	bläddra, läsa och söka i rättsinformationen. Detta är dock
-	inte tänkt att medföra en ändring i informationsansvaret, som
-	även i fortsättningen ska vara decentraliserat.
+	Rättsinformationsprojektets syfte är att åstadkomma detta
+	genom att samordna informationsproducenternas publicering så
+	att en gemensamt teknisk standard används med väldefinerade
+	metadatatermer, och en gemensam lagringsplats från vilken
+	rättsinformationen kan sökas och hämtas.
       </p>
-      <h4>2.2.2 Format</h4>
-      <p>
-	En annan tanke är att tekniska format för informationen måste
-	standardiseras i mer detalj än vad som gjorts hittills.  För
-	att den centrala platsen ska kunna hämta informationen med
-	automatik så krävs att varje myndighet publicerar en
-	<em>postförteckning</em>, dvs en lista över vilka dokument som
-	finns tillgängliga. Denna lista ska följa det standardiserade
-	och etablerade Atom-formatet.
-      </p>
-      <h4>2.3 Ordlista / begreppsdefinitioner</h4>
-      <dl>
-        <dt>Informationsproducent</dt>
-        <dd>
-          En myndighet som enligt rättsinformationsförordningen
-          (1999:175) har ett informationsansvar, dvs en skyldighet att
-          se till att viss information tillgängliggörs och sprids
-          elektroniskt.
-        </dd>
-        <dt>Vidareutnyttjare</dt>
-        <dd>
-          En part (myndighet, företag eller privatperson) som vill
-          vidareutnyttja den information finns i
-          rättsinformationssystemet för att exempelvis bygga en
-          informationstjänst på nätet.
-        </dd>
-        <dt>Rättsinformationssystemet</dt>
-        <dd>
-          Ett system för att samla in och tillgängliggöra all den
-          rättsinformation som enligt rättsinformationsförordningen
-          ska finnas tillgänglig.
-        </dd>
-        <dt>Informationspost</dt>
-        <dd>
-          Ett sammanhållande begrepp för ett enskilt dokument, dess
-          identifierare och metadata om dokumentet. Informationsposten
-          innehåller även information om när själva posten skapades
-          eller uppdaterades.
-        </dd>
-      </dl>
     </div>
 
     <div class="section">
-      <h2>3. Åtkomst</h2>
+      <h2>4. Rättsdatalagret</h2>
+      <p>
+	En grundläggande tanke i rättsinformationsprojektet är att
+	central insamling av rättsinformation till ett rättsdatalager
+	måste ske för att göra det möjligt att erbjuda ett enhetligt
+	gränssnitt för att bläddra, läsa och söka i
+	rättsinformationen. Detta är dock inte tänkt att medföra en
+	ändring i informationsansvaret, som även i fortsättningen ska
+	vara decentraliserat.
+      </p>
+      <p>
+	En annan tanke är att tekniska format för informationen måste
+	standardiseras i mer detalj än vad som gjorts hittills.  För
+	att rättsdatalagret ska kunna hämta informationen med
+	automatik så krävs att varje myndighet publicerar en
+	<em>postförteckning</em>, dvs en lista över vilka dokument som
+	finns tillgängliga. Denna lista ska följa det standardiserade
+	Atom-formatet.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>4. Åtkomst till datalagret</h2>
       <p>
         Gränssnittet mellan informationsproducenter och
-        rättsinformationssystemet är detsamma som gränssnittet mellan
-        rättsinformationssystemet och vidareutnyttjare. Men istället
+        rättsdatalagret är detsamma som gränssnittet mellan
+        rättsdatalagret och vidareutnyttjare. Men istället
         för att läsa från ca 100 olika datakällor kan en
         vidareutnyttjare, genom att gå mot det centrala
-        rättsinformationssystemet, istället läsa från endast en källa.
+        rättsdatalagret, istället läsa från endast en källa.
       </p>
-      <h3>3.0 Demoversion</h3>
+      <h3>4.1 Demoversion</h3>
       <p>
-        Det system som beskrivs nedan finns i skrivande stund
-        (november 2010) inte i skarp drift, eftersom endast enstaka
-        informationsproducenter levererar information till
-        systemet. För att kunna testa och visa systemet har projektet
+        Det system som beskrivs nedan är i skrivande stund (oktober
+        2011) visserligen i skarp drift, men ganska tomt etersom
+        endast enstaka informationsproducenter levererar information
+        till systemet. För att kunna testa och visa systemet har projektet
         simulerat ca 40 000 dokument av olika typer (lagar,
         förordningar, rättsfallsreferat och olika typer av förarbeten)
         med grundläggande metadata och hänvisningar, och importerat
-        detta i en demoversion. De adresser som används är samma som
-        anges nedan, men med <code><b>demo</b>.lagrummet.se</code> istället för
-        <code>lagrummet.se</code>.
+        detta i en demoversion.
       </p>
-
-      <ul>
-        <li>
-          Startpunkten för demoversionen av rättsinformationssystemet
-          finns alltså på <code>http://rinfo.demo.lagrummet.se/feed/current</code>
-        </li>
-        <li>
-          Information om en enskild resurs finns på exv
-          <code>http://rinfo.demo.lagrummet.se/publ/rf/rk/2009:4</code>
-        </li>
-        <li>
-          Tjänstegränssnittets startpunkt är
-          <code>http://service.demo.lagrummet.se/view/browse/publ</code>
-        </li>
-      </ul>
-      
-      <h3>3.1 Atom-feeds</h3>
       <p>
-        Startpunkten för att hämta data från rättsinformationssystemet
+	Från och med avsnitt 4.2 och i resten av dokumentet används
+	addresser till det driftsatta systemet. Innan detta system har
+	fyllts med officiellt publicerat material är det många
+	av de nedan angivna addresserna som inte kommer innehålla någon
+	information.
+      </p>
+      <p>
+	Man kan därför genomgående översätta sådana addresser med
+	motsvarande adddresser till demosystemet, där det i dagsläget
+	finns många fler dokument. Detta görs genom att byta ut
+	hostnamnet <code>rinfo.lagrummet.se</code> mot
+	<code>rinfo.demo.lagrummet.se</code>, och
+	<code>service.lagrummet.se</code> mot
+	<code>service.demo.lagrummet.se</code>.
+      </p>
+      
+      <p>
+	Exempel:
+      </p>
+      <p style="display:block; text-align: center;">
+	<code>http://<b>rinfo.lagrummet.se</b>/publ/sfs/1999:175><br/></code>
+	&darr;<br/>
+	<code>http://<b>rinfo.demo.lagrummet.se</b>/publ/sfs/1999:175</code>
+      </p>
+      <p>Exempel:</p>
+      <p style="display:block; text-align: center;">
+	<code>http://<b>service.lagrummet.se</b>/-/doc?q=eko*<br/></code>
+	&darr;<br/>
+	<code>http://<b>service.demo.lagrummet.se</b>/-/doc?q=eko*</code>
+      </p>
+      
+      <h3>4.2 Atom-flöden</h3>
+      <p>
+        Startpunkten för att hämta data från rättsdatalagret
         är dess Atom-flöde som återfinns på
         <code>http://rinfo.lagrummet.se/feed/current</code>. En vidareutnyttjare
         kan använda de mekanismer som Atom-formatet specificerar för
@@ -225,9 +266,9 @@ $ <b>curl -H "Accept: application/pdf" http://rinfo.lagrummet.se/publ/rf/rk/2009
       </p>
       <p>
         Eftersom antalet informationsposter i
-        rättsinformationssystemet är många fler än vad som är
+        rättsdatalagret är många fler (tiotusentals) än vad som är
         praktiskt att lista i en "fysisk" Atom-fil använder
-        rättsinformationssystemet en mekanism med arkivfiler för äldre
+        rättsdatalagret en mekanism med arkivfiler för äldre
         material. Huvudflödet innehåller en länk till den nyaste
         arkivfilen, som i sin tur innehåller en länk till den näst
         nyaste, och så vidare. Genom att traversera denna kedja kan
@@ -259,7 +300,7 @@ $ <b>curl -H "Accept: application/pdf" http://rinfo.lagrummet.se/publ/rf/rk/2009
         </li>
       </ul>
 
-      <h3>3.2 RDF-data</h3>
+      <h3>4.3 RDF-data</h3>
       <p>
         För varje dokument ska finnas en uppsättning grundläggande
         metadata, vilket innefattar egenskaper som dokumentets titel,
@@ -298,7 +339,7 @@ $ <b>curl -H "Accept: application/rdf+xml" http://rinfo.lagrummet.se/publ/rf/rk/
         leder direkt till RDF-beskrivningar av dokument, som inte
         kräver content negotiation.
       </p>
-      <h3>3.3 Dokument</h3>
+      <h3>4.4 Dokument</h3>
       <p>
         På liknande sätt som man kommer åt RDF-datat genom att ange att man vill ha just application/rdf+xml så kan man komma åt exv en PDF-representation (om sådan finns):
       </p>
@@ -309,51 +350,206 @@ $ <b>curl -H "Accept: application/pdf" http://rinfo.lagrummet.se/publ/rf/rk/2009
         Även här kan man använda Atom-flödet för att ta reda på vilka
         olika representationer av resursen som finns tillgänglig.
       </p>
-      <h3>3.4 Servicegränssnitt</h3>
+    </div>
+
+    <div class="section">
+      <h2>5. Tjänstegränssnitt</h2>
       <p>
-        Vid sidan av det grundläggande datalagret finns även ett
-        tjänstelager som vidareutnyttjare kan använda för att bläddra
-        bland de olika resurser som finns i systemet, och även få mer
-        information om hänvisningar mellan resurserna. Tjänstelagret
-        innehåller ingen information som inte redan finns i
-        datalagret, men informationen presenteras på ett mer
-        användbart sätt.
+        Vid sidan av det grundläggande datalagret finns även en
+        uppsättning <b>tjänster</b> som vidareutnyttjare kan använda
+        för att enklare hitta och sammanställa
+        rättsinformationen. Tjänstelagret innehåller ingen information
+        som inte redan finns i datalagret, men informationen
+        presenteras på ett mer användbart sätt.
       </p>
       <p>
-        Servicelagret kan nås på http://service.lagrummet.se/view/browse/publ
+        Tjänstegränssnittet kan nås på <code>http://service.lagrummet.se/</code> (Obs!
+        Denna address kan komma att ändras till en address under
+        <code>http://rinfo.lagrummet.se/</code> i framtiden.)
+      </p>
+
+      <h3>5.1 Åtkomst till information om dokument (och andra resurser)</h3>
+      <p>
+        Tjänstelagret kan ge en informationsvy för varje resurs som
+        bygger både på den metadata som kan fås från datalagret för
+        den resursen men också metadata för andra resurser som
+        hänvisar till denna. För en lag kan exempel visas rättsfall
+        som hänvisat till lagen i fråga.
+      </p>
+
+      <p>
+	Addressen till denna informationsvy skapas från dokument-URI:n på följande sätt:
       </p>
       <p>
-        Tjänstelagret presenterar en vy för varje resurs som byggs
-        delvis från metadata för den resursen, men även från metadata
-        för andra resurser som hänvisar till denna. För en lag kan
-        exempel visas rättsfall som hänvisat till lagen i fråga.
+	<code>http://rinfo.lagrummet.se/<b>publ/sfs/1999:175</b><br/></code>
+	<span style="display:block; text-align: center;">&darr;</span>
+	<code>http://service.lagrummet.se/<b>publ/sfs/1999:175</b>/data</code>
       </p>
       <p>
-        Även tjänstelagret stödjer content negotiation för att få ut
-        informationen för en viss vy i ett maskinläsbart format. För
-        vyn http://service.demo.lagrummet.se/view/publ/sfs/1999:175
-        kan man få en JSON-representation på följande sätt:
+	Även här kan man använda content negotiation för att få ut
+	informationen i olika format. Det är även möjligt att istället
+	utöka addressen med en dokumenttypssuffix för att få ett visst
+	givet format (exempelvis
+	<code>http://service.lagrummet.se/publ/sfs/1999:175/data.n3</code>). Samma
+	information (i form av en utökad RDF-graf) returneras i
+	samtliga fall, men i olika format.
+      </p>
+      <table>
+	<tr>
+	  <th>MIME-typ</th>
+	  <th>Suffix</th>
+	  <th>Kommentar</th>
+	</tr>
+	<tr>
+	  <td>application/json</td>
+	  <td>.json</td>
+	  <td>
+	    Denna vyn använder sig av <a
+	    href="http://json-ld.org/">JSON-LD</a> för att representera
+	    RDF i JSON-format.
+	  </td>
+	</tr>
+	<tr>
+	  <td>application/rdf+xml</td>
+	  <td>.rdf</td>
+	  <td>...</td>
+	</tr>
+	<tr>
+	  <td>text/n3</td>
+	  <td>.n3</td>
+	  <td>
+	    <a
+	    href="http://www.w3.org/TeamSubmission/n3/">Notation-3</a>,
+	    ett RDF-format som är enklare för människor att läsa.
+	  </td>
+	</tr>
+      </table>
+
+      <h4>5.2 Sökning och bläddring</h4>
+
+      <p>
+	Det går även att ställa frågor mot tjänstelagret och få ut
+	listor på dokument som matchar de parametrar som
+	angetts. Parametrarna anges i URL:en och kan omfatta både
+	dokumentegenskaper och dokumentinnehåll. Den grundaddress som
+	frågningen sker mot är
+	<code>http://service.lagrummet.se/-/doc</code>.  Svaren
+	returneras som JSON. För varje dokument i träfflistan anges
+	grundläggande information om dokumentet inklusive den address
+	där den utökade metadatan för dokumentet kan hittas (se
+	avsnitt 5.1).
+      </p>
+      <p>
+	<b>Generella frågor:</b> <code>q</code> är den generella
+	frågeparametern. Den söker i samtliga parametrar samt
+	textkroppen. Exempel (returnerar alla dokument som i titel,
+	dokumenttext eller annars innehåller ett ord som börjar med
+	"ekonom"):
       </p>
       <pre>
-$ <b>curl -H "Accept: application/json" http://service.demo.lagrummet.se/view/publ/sfs/1999:175</b>
+http://service.lagrummet.se/-/doc?q=ekonom*
+      </pre>
+      <p>
+	<b>Fritextsökning i fält:</b> Vissa dokumentegenskaper kan
+	innehålla fritext som kan fritextsökas i. Dessa är för
+	närvarande <code>title</code> (dokumentets titel, exv
+	"Inkomstskattelag (1999:1229)" och <code>identifier</code>
+	(dokumentets beteckning, exv "SFS 1999:1229"). Exempel
+	(returnerar alla dokument vars titel innehåller något ord som
+	innehåller texten "djur"):
+      </p>
+      <pre>
+http://service.lagrummet.se/-/doc?title=*djur*
+      </pre>
+      <p>
+	<b>Dokumenttyp:</b> Med parametern <code>type</code> (som kan anges flera gånger) kan man avgränsa frågan till en eller flera dokumenttyper. Se nedan under "Tillgängliga parametrar" för hur hela listan av möjliga dokumenttyper kan fås. Exempel (returnerar alla dokument av typen <code>Lag</code> eller <code>Forordning</code>):
+      </p>
+      <pre>
+http://service.lagrummet.se/-/doc?type=Lag&amp;type=Forordning
+      </pre>
+      <p>
+	<b>Publikationssamling:</b> De flesta dokument i
+	rättsinformationssystemet ingår i någon typ av
+	publikationssamling. En <code>Myndighetsforeskrift</code>
+	ingår i en <code>Forfattningssamling</code>, ett
+	<code>Rattsfallsreferat</code> ingår i en
+	<code>Rattsfallspublikation</code>, osv. Varje sådant dokument
+	har en egenskap vars värde är URI:n för den
+	publikationssamlingen. Se nedan
+	under "Tillgängliga parametrar" för hur hela listan av möjliga
+	publikationssamlingar kan fås.
+      </p>
+      <p>
+	Olika dokumenttyper använder olika sorters publikationssamlingar. De som finns definerade är:
+      </p>
+      <ul>
+	<li><code>allmannaRadSerie</code></li>
+	<li><code>forfattningssamling</code></li>
+	<li><code>rattsfallspublikation</code></li>
+	<li><code>utredningsserie</code></li>
+      </ul>
+      <p>
+	Finansinspektionens författningssamling (FFFS) har URI:n
+	<code>http://rinfo.lagrummet.se/serie/fs/fffs</code>. Exempel
+	(returnerar alla dokument i FFFS):
+      </p>
+      <pre>
+http://service.lagrummet.se/-/doc?forfattningssamling.iri="http://rinfo.lagrummet.se/serie/fs/fffs"
+      </pre>
+      <p>
+	(OBS att parametervärdet måste omslutas av '"' om värdet
+	innehåller ':'). Likvärdigt men kortare exempel som matchar
+	alla dokument vars forfattningssamling slutar på
+	<code>/fffs</code>:
+      </p>
+      <pre>
+http://service.lagrummet.se/-/doc?forfattningssamling.iri=*/fffs
+      </pre>
+      <p><b>Sortering:</b> Många av de parametrar som man kan avgränsa
+      sökningen på kan också användas för att sortera sökresultaten. Parametern <code>_sort</code> används, med parametervärdet satt till det parameter man vill sortera på. Sorteringen är vanligen i stigande ordning, men kan fås i fallande ordning om parametervärdet föregås av ett '-'. Exempel (alla dokument i FFFS, sorterat i fallande beslutsordning):
+      </p>
+      <pre>
+http://service.lagrummet.se/-/doc?forfattningssamling.iri=*/fffs&amp;_sort=-iri
+      </pre>
+      <p>
+	<b>Paginering:</b> Om inget annat anges returneras endast de
+	första 50 träffarna i en träfflista. Nyckeln
+	<code>totalResults</code> i svaret anger hur många träffar
+	som finns totalt för frågan. Genom att ange parametern
+	<code>_page</code> (med en siffra som värde, första sidan
+	har sidnummer 0) returneras efterföljande "sidor" med
+	träffar från listan. Genom att ange parametern
+	<code>_pageSize</code> med en siffra som värde kan antalet
+	träffar på en sida ändras från 50. Exempel (Listar dokument 21-40 i FFFS):
+      </p>
+      <pre>
+http://service.lagrummet.se/-/doc?forfattningssamling.iri=*/fffs&amp;_pageSize=20&amp;_page=1
+      </pre>
+      <p>
+	<b>Tillgängliga parametrar:</b> De "fasta" värden som kan
+	användas för ovanstående parametrar beror på vilken mängd
+	dokument som för tillfället finns inladdat i
+	rättsdatalagret. Från nedanstående vy kan man utläsa vilka
+	parametrar och möjliga värden som finns (notera att vissa
+	parametrar med fritextvärden, som <code>q</code>,
+	<code>title</code> och <code>identifier</code>, inte finns med
+	i nedanstående):
+      </p>
+
+      <pre>
+http://service.lagrummet.se/-/stats
+      </pre>
+
+      <h4>5.3 Verktyg för sökning, bläddring och dokumentvisning</h4>
+      <p>
+	Det finns även ett verktyg för att bläddra/söka i
+	rättsdatalagret. Detta kan användas för att utforska API:t och
+	se möjliga värden för olika sökparametrar. Verktyget hittas på
+	nedanstående address:
+      </p>
+      <pre>
+	<a href="http://service.lagrummet.se/ui/">http://service.lagrummet.se/ui/</a>
       </pre>
     </div>
-
-    <div class="section">
-      <h2>4. Informationsstandard</h2>
-      <p>Not: Denna sektion är under utarbetande. Vidareutnyttjare kan dock få vägledning av introduktioner, handböcker och specifikationer under <code><a href="http://dev.lagrummet.se/dokumentation/">http://dev.lagrummet.se/dokumentation/</a></code>, även om dessa är skrivna främst för informationsproducenter.</p>
-      <h3>4.1 Dokumenttyper</h3>
-      <h3>4.2 Egenskaper</h3>
-      <h3>4.3 Utökningar</h3>
-    </div>
-
-    <div class="section">
-      <h2>5. Villkor för vidareutnyttjande</h2>
-      <p>Not: Denna sektion är under utarbetande</p>
-      <h3>5.1 Upphovsrätt och databasrätt</h3>
-      <h3>5.2 Personuppgiftsskydd</h3>
-      <h3>5.3 Skydd för beteckningar</h3>
-    </div>
-    
   </body>
 </html>
