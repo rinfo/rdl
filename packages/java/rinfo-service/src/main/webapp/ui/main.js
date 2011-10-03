@@ -59,12 +59,15 @@ function renderStats(stats, dynamicSelects) {
   var $optFields = $('#optFields').empty();
   $.each(stats.slices, function () {
     var $select = $('#' + this.dimension);
+    if (!this.observations) return;
     if (!$select[0]) {
       if (!dynamicSelects) return;
       var $selectBox = $('#selectTemplate').tmpl({
         id: this.dimension,
         label: this.dimension,
-        name: this.dimension + ((this.observations && this.observations[0].ref)? '.iri' : '')
+        name: ((this.observations[0].year)? 'year-' : '') +
+              this.dimension +
+              ((this.observations[0].ref)? '.iri' : '')
       });
       $optFields.append($selectBox);
       $select = $('select', $selectBox);
@@ -86,8 +89,7 @@ function renderStats(stats, dynamicSelects) {
         value = this.term;
         label = this.term;
       } else if (this.year) {
-        // TODO: add proper 'min-' and 'maxEx-' + this.dimension for date range
-        value = '['+ this.year +'-01-01 TO '+ this.year +'-12-31]';
+        value = this.year;
         label = this.year;
       }
       if (!value)
