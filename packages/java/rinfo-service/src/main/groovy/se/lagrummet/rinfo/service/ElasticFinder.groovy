@@ -87,8 +87,10 @@ class ElasticFinder extends Finder {
             duration: "PT${esRes.took.secondsFrac}S" as String,
         ]
 
-        def currentPage = "/-/${collection}?${prepSearch.queryString}"
         def pageParam = pageParamKey + '=' + prepSearch.page
+        def currentPage = "/-/${collection}?" +
+                ((prepSearch.queryString.indexOf(pageParam) == -1)? "${pageParam}&" : "") +
+                prepSearch.queryString
         if (prepSearch.page > 0) {
             data.prev = currentPage.replace(pageParam, pageParamKey + '=' + (prepSearch.page - 1))
         }
