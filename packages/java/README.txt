@@ -54,6 +54,15 @@ Basic usage within application sub-packages::
     # Use config in src/environments/prod/:
     $ mvn -Pprod <...>
 
+The source code repository has been configured to ignore an environment named
+"local". You can thus create such a directory for local, non-versioned
+configurations. (This is useful to experiment without worrying about
+accidentally committing odd settings.) Example::
+
+    $ mkdir src/environments/local/
+    $ cp src/environments/dev-unix/*.properties src/environments/local/
+    $ mvn -Plocal <...>
+
 Maven Usage
 ========================================================================
 
