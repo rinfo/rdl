@@ -28,7 +28,7 @@ CONSTRUCT {
         ?current ?rel ?relitem .
         FILTER(?rel = dct:publisher
             || ?rel = rpubl:forfattningssamling
-            || ?rel = rpubl:utredningsserie
+            || ?rel = rpubl:utrSerie
             || ?rel = rpubl:rattsfallspublikation
             || ?rel = rpubl:allmannaRadSerie) .
         ?relitem ?relprop ?reltext .
