@@ -139,7 +139,11 @@ class ElasticFinder extends Finder {
         def page = 0
         srb.addFields(listTerms as String[])
         for (name in queryForm.names) {
-            def value = queryForm.getFirstValue(name).replace(":", "\\:")
+            def value = queryForm.getFirstValue(name)
+            if (value == null) {
+                continue
+            }
+            value = value.replace(":", "\\:")
             if (name == 'q') {
                 q = value
             } else if (name == sortParamKey) {
