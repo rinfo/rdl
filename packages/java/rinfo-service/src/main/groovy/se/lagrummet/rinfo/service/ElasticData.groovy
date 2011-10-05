@@ -22,7 +22,9 @@ class ElasticData {
             "utfardandedatum", "beslutsdatum", "issued"],
         refTerms: ["publisher", "forfattningssamling", "utrSerie",
             "rattsfallspublikation", "allmannaRadSerie"],
-        dateTerms: ["utfardandedatum", "beslutsdatum", "issued"]
+        dateTerms: ["utfardandedatum", "beslutsdatum", "utkomFranTryck", "ikrafttradandedatum",
+                    "avkravtAvrapporteringsdatum", "avgorandedatum", "ratificieringsdatum",
+                    "issued", "created", "updated"]
     ]
 
     def initialMappings = [
@@ -48,7 +50,7 @@ class ElasticData {
     def dateTerms = []
 
     private def notAnalyzedFields = ["type"]
-    private def termsWithRawField = ["identifier"]
+    private def termsWithRawField = ["identifier"] // TODO: + "arsutgava", "lopnummer" (add as multi_field)
 
     ElasticData(String host, int port, String indexName) {
         this(new TransportClient().addTransportAddress(
