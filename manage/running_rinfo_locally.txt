@@ -48,8 +48,8 @@ Data directories
 
 These directories needs to be writable by the user used to run maven and groovy.
 
-* /opt/_workapps/rinfo/ => EMPTY!
-* /opt/_workapps/rinfo/depots/rinfo/ => EMPTY!
+* /opt/work/rinfo/ => EMPTY!
+* /opt/work/rinfo/depots/rinfo/ => EMPTY!
 
 The RInfo Applications
 ------------------------------------------------------------------------
