@@ -15,7 +15,7 @@ machine during development. To do this from scratch, you need:
 
 To use the various instrumental tools used you also need:
 
-* Groovy 1.7.4+ - <http://groovy.codehaus.org/Download>
+* Groovy 1.8+ - <http://groovy.codehaus.org/Download>
 
   - See ``../tools/README.txt``.
 
@@ -75,8 +75,8 @@ Now you are ready to start up:
     $ ./map_feeds_and_base.sh
     $ groovy serve_folder.groovy
 
-  Go to <http://localhost:8280/feed/current> to verify that it contains a 
-  valid feed. This is basically an admin feed for the main application and 
+  Go to <http://localhost:8280/feed/current> to verify that it contains a
+  valid feed. This is basically an admin feed for the main application and
   a couple of test sources.
 
 * Start local instance of the RInfo system:
@@ -84,25 +84,51 @@ Now you are ready to start up:
   rinfo-main
       Collects from the sources defined for development mode (a base/admin
       prototype feed and example suppliers) and supplies the main data feed.
-      Run it with "mvn jetty:run" from the rinfo-main directory. To populate
-      rinfo-main with data you must trigger several collects.
-      
-      # Collect the admin feed
-      curl --data 'feed=http://localhost:8280/feed/current' http://localhost:8180/collector
-      
-      # Collect the sources as pointed out in the admin feed
-      curl --data 'feed=http://localhost:8280/arbetsformedlingen.se/current.atom' http://localhost:8180/collector
-      curl --data 'feed=http://localhost:8280/boverket.se/current.atom' http://localhost:8180/collector
-      curl --data 'feed=http://localhost:8280/jordbruksverket.se/current.atom' http://localhost:8180/collector
-      curl --data 'feed=http://localhost:8280/slv.se/current.atom' http://localhost:8180/collector
-      curl --data 'feed=http://localhost:8280/regeringen.se/current.atom' http://localhost:8180/collector
-      curl --data 'feed=http://localhost:8280/komdir.regeringen.se/current.atom' http://localhost:8180/collector
-      curl --data 'feed=http://localhost:8280/riksarkivet.se/current.atom' http://localhost:8180/collector
-      curl --data 'feed=http://localhost:8280/verva.se/current.atom' http://localhost:8180/collector
-      
-      Verify that rinfo-main is up and running by going to 
+
+      Go to the application package and run it::
+
+        $ cd packages/java/rinfo-main/
+        $ mvn jetty:run
+
+      By default the profile (and thus environment settings) will set to one of
+      the "dev-*" profiles. (See ``../packages/java/README.txt`` for details
+      about environments.)
+
+      In this mode, the application runs with scheduled collections turned
+      *off*. To populate rinfo-main with data you must trigger collects
+      manually::
+
+        # Collect the admin feed
+        curl -d 'feed=http://localhost:8280/feed/current' http://localhost:8180/collector
+
+        # Collect the sources as pointed out in the admin feed
+        curl -d 'feed=http://localhost:8280/arbetsformedlingen.se/current.atom' http://localhost:8180/collector
+        curl -d 'feed=http://localhost:8280/boverket.se/current.atom' http://localhost:8180/collector
+        curl -d 'feed=http://localhost:8280/jordbruksverket.se/current.atom' http://localhost:8180/collector
+        curl -d 'feed=http://localhost:8280/slv.se/current.atom' http://localhost:8180/collector
+        curl -d 'feed=http://localhost:8280/regeringen.se/current.atom' http://localhost:8180/collector
+        curl -d 'feed=http://localhost:8280/komdir.regeringen.se/current.atom' http://localhost:8180/collector
+        curl -d 'feed=http://localhost:8280/riksarkivet.se/current.atom' http://localhost:8180/collector
+        curl -d 'feed=http://localhost:8280/verva.se/current.atom' http://localhost:8180/collector
+
+      If you wish to automate this, the best way to enable scheduled
+      collections is to create a local environment::
+
+        $ mkdir src/environments/local/
+        $ cp src/environments/dev-unix/*.properties src/environments/local/
+
+      Edit ``rinfo-main.properties`` and make sure that the scheduleInterval is
+      larger than -1, like this (for collecting every 60th second)::
+
+        rinfo.main.collector.scheduleInterval=60
+
+      Then run::
+
+        $ mvn jetty:run -Plocal
+
+      Verify that rinfo-main is up and running by going to
       http://localhost:8180/feed/current which should contain a valid feed.
-      
+
       Additional information can be found in:
       ``../packages/java/rinfo-main/README.txt``.
 
@@ -111,15 +137,25 @@ Now you are ready to start up:
       for its data views. In order to run rinfo-service you need to first have
       openrdf-sesame started. It can be started by running "mvn jetty:run-war"
       in the rinfo-sesame-http directory. After that you can start rinfo-service
-      by running "mvn jetty:run" from the rinfo-service directory. To populate
-      rinfo-service with data you must trigger a collect of rinfo-main:
+      by running "mvn jetty:run" from the rinfo-service directory.
       
-      curl --data 'feed=http://localhost:8180/feed/current' http://localhost:8181/collector
-      
-      Verify that rinfo-service is up and running by going to 
-      http://localhost:8181/view/org which should contain the list of 
-      organisations present in the test data.
-      
+      To populate rinfo-service with data you must trigger a collect of
+      rinfo-main::
+
+        $ curl -d 'feed=http://localhost:8180/feed/current' http://localhost:8181/collector
+
+      (If you have a local setting for enabled scheduled collects, as described
+      above, you can instead also add the following in your
+      ``rinfo-main.properties``::
+
+        rinfo.main.collector.onCompletePingTargets=http://localhost:8181/collector
+
+      This will have main automatically ping service instead.)
+
+      Verify that rinfo-service is up and running by going to
+      http://localhost:8181/ui/ where you should be able to search and navigate
+      using the service REST API.
+
       Additional information can be found in:
       ``../packages/java/rinfo-service/README.txt``.
 
