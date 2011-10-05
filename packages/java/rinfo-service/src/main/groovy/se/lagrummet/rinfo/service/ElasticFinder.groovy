@@ -36,7 +36,6 @@ class ElasticFinder extends Finder {
     ElasticData elasticData
     String serviceAppBaseUrl
 
-    def contextMap
     def jsonMapper
 
     def defaultPageSize = 50
