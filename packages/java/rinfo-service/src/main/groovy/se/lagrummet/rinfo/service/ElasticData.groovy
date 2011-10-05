@@ -29,11 +29,25 @@ class ElasticData {
 
     def initialMappings = [
         "doc": [
+
+            // TODO: add to all root types:
+            "dynamic_templates": [
+                [
+                    "resource_iri": [
+                        "match": "iri",
+                        "mapping": ["type": "string", "index": "not_analyzed"]
+                    ],
+                ], [
+                    "resource_type": [
+                        "match": "type",
+                        "mapping": ["type": "string", "index": "not_analyzed"]
+                    ]
+                ]
+            ],
+
+            //"date_detection" : false, TODO: use and do each dateTerm "type": "dateOptionalTime"
             "properties": [
-                "iri": ["type": "string", "index": "not_analyzed"],
-                "type": ["type": "string", "index": "not_analyzed"],
                 "identifier": [
-                    //"type": "string", "index": "not_analyzed", "boost": 2.0
                     "type": "multi_field",
                     "fields": [
                         "identifier": ["type": "string", "index": "analyzed", "boost": 4.0],
@@ -60,17 +74,6 @@ class ElasticData {
     ElasticData(Client client, indexName) {
         this.client = client
         this.indexName = indexName
-        initRefMappings()
-    }
-
-    void initRefMappings() {
-        termData.refTerms.each {
-            initialMappings["doc"]["properties"][it] = [
-                "properties": [
-                    "iri": ["type": "string", "index": "not_analyzed"]
-                ]
-            ]
-        }
     }
 
     String getFieldForSort(String term) {
