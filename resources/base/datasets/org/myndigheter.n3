@@ -85,6 +85,10 @@
     a foaf:Organization;
     foaf:name "Försäkringskassan"@sv .
 
+<http://rinfo.lagrummet.se/org/havs-_och_vattenmyndigheten>
+    a foaf:Organization;
+    foaf:name "Havs- och vattenmyndigheten"@sv .
+
 <http://rinfo.lagrummet.se/org/hoegskoleverket>
     a foaf:Organization;
     foaf:name "Högskoleverket"@sv .
@@ -490,6 +494,15 @@
 <http://rinfo.lagrummet.se/org/djurskyddsmyndigheten>
     a foaf:Organization;
     foaf:name "Djurskyddsmyndigheten"@sv .
+
+<http://rinfo.lagrummet.se/org/spraengaemnesinspektionen>
+    a foaf:Organization;
+    foaf:name "Sprängämnesinspektionen"@sv .
+
+<http://rinfo.lagrummet.se/org/statens_naturvaardsverk>
+    a foaf:Organization;
+    rdfs:comment "Numera Naturvårdsverket";
+    foaf:name "Statens naturvårdsverk"@sv .
 
 
 # TODO: uri-minter-regeln enligt detta är "slugify(skos:altLabel or foaf:name)"

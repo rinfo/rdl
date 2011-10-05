@@ -6,10 +6,12 @@
 @prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
 #=======================================================================
 
-<http://rinfo.lagrummet.se/serie/ar/fkar> a :AllmannaRadSerie;
-    skos:altLabel "fkar"@sv;
-    skos:prefLabel "Försäkringskassans allmänna råd"@sv;
-    dct:publisher <http://rinfo.lagrummet.se/org/foersaekringskassan> .
+# Synka även med ../org/myndigheter.n3 och ../../base/sys/uri/slugs.n3.
+
+<http://rinfo.lagrummet.se/serie/ar/bfnarr> a :AllmannaRadSerie;
+    skos:altLabel "bfnar"@sv;
+    skos:prefLabel "Bokföringsnämndens allmänna råd"@sv;
+    dct:publisher <http://rinfo.lagrummet.se/org/bokfoeringsnaemnden> .
 
 <http://rinfo.lagrummet.se/serie/ar/far> a :AllmannaRadSerie;
     skos:altLabel "far"@sv;
@@ -17,7 +19,19 @@
     dct:publisher <http://rinfo.lagrummet.se/org/foersvarsmakten> .
 
 <http://rinfo.lagrummet.se/serie/ar/fkar> a :AllmannaRadSerie;
-    skos:altLabel "bfnar"@sv;
-    skos:prefLabel "Bokföringsnämndens allmänna råd"@sv;
-    dct:publisher <http://rinfo.lagrummet.se/org/bokfoeringsnaemnden> .
+    skos:altLabel "fkar"@sv;
+    skos:prefLabel "Försäkringskassans allmänna råd"@sv;
+    dct:publisher <http://rinfo.lagrummet.se/org/foersaekringskassan> .
+
+<http://rinfo.lagrummet.se/serie/ar/nar> a :AllmannaRadSerie;
+    skos:altLabel "nar"@sv;
+    skos:prefLabel "Naturvårdsverkets allmänna råd"@sv;
+    rdfs:comment "Publiceras i NFS fr.o.m. 2000-01-01";
+    dct:publisher <http://rinfo.lagrummet.se/org/naturvaardsverket> .
+
+<http://rinfo.lagrummet.se/serie/ar/nrr> a :AllmannaRadSerie;
+    skos:altLabel "nrr"@sv;
+    skos:prefLabel "Naturvårdsverkets råd och riktlinjer"@sv;
+    dct:publisher <http://rinfo.lagrummet.se/org/naturvaardsverket> .
+
 
