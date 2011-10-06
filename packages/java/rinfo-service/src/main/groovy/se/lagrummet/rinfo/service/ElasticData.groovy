@@ -19,9 +19,9 @@ class ElasticData {
 
     //def docTypes = ["publ", "org", "serie", "ns", "sys", "ext/celex", "..."]
 
-    // TODO: listTerms and refTerms are per rootType; get dateTerms from JSON-LD context
+    // TODO: showTerms and refTerms are per rootType; get dateTerms from JSON-LD context
     def termData = [
-        listTerms: ["_id", "iri", "type", "title", "identifier",
+        showTerms: ["_id", "iri", "type", "title", "identifier",
             "utfardandedatum", "beslutsdatum", "issued"],
         refTerms: ["publisher", "forfattningssamling", "utrSerie",
             "rattsfallspublikation", "allmannaRadSerie"],
@@ -71,7 +71,7 @@ class ElasticData {
 
     ]
 
-    def listTerms = []
+    def showTerms = []
     def refTerms = []
     def dateTerms = []
 
@@ -125,7 +125,7 @@ class ElasticData {
      * termData by checking if terms occur in read mappings.
      */
     synchronized void updateKnownTerms() {
-        listTerms = []
+        showTerms = []
         refTerms = []
         dateTerms = []
         def clusterStateRequestBuilder = client.admin().cluster().
@@ -135,7 +135,7 @@ class ElasticData {
         indexMetaData.mappings.each { esType, mappingMetaData ->
             // TODO: Simple indexOf-hack since current ES API doesn't expose parsed JSON
             def mappingJsonRepr = mappingMetaData.source().string()
-            updateTermList(mappingJsonRepr, termData.listTerms, listTerms)
+            updateTermList(mappingJsonRepr, termData.showTerms, showTerms)
             updateTermList(mappingJsonRepr, termData.refTerms, refTerms)
             updateTermList(mappingJsonRepr, termData.dateTerms, dateTerms)
         }
