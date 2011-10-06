@@ -17,6 +17,9 @@ class ElasticData {
 
     // TODO: configure from context/schema
 
+    //def docTypes = ["publ", "org", "serie", "ns", "sys", "ext/celex", "..."]
+
+    // TODO: listTerms and refTerms are per rootType; get dateTerms from JSON-LD context
     def termData = [
         listTerms: ["_id", "iri", "type", "title", "identifier",
             "utfardandedatum", "beslutsdatum", "issued"],
@@ -27,24 +30,26 @@ class ElasticData {
                     "issued", "created", "updated"]
     ]
 
-    def initialMappings = [
-        "doc": [
-
-            // TODO: add to all root types:
-            "dynamic_templates": [
-                [
-                    "resource_iri": [
-                        "match": "iri",
-                        "mapping": ["type": "string", "index": "not_analyzed"]
-                    ],
-                ], [
-                    "resource_type": [
-                        "match": "type",
-                        "mapping": ["type": "string", "index": "not_analyzed"]
-                    ]
+    // TODO: is it possible to set these for all doc types? (key "_all" doesn't work..)
+    def sharedMappings = [
+        "dynamic_templates": [
+            [
+                "resource_iri": [
+                    "match": "iri",
+                    "mapping": ["type": "string", "index": "not_analyzed"]
+                ],
+            ], [
+                "resource_type": [
+                    "match": "type",
+                    "mapping": ["type": "string", "index": "not_analyzed"]
                 ]
-            ],
+            ]
+        ]
+    ]
 
+    def initialMappings = [
+
+        "publ": sharedMappings + [
             //"date_detection" : false, TODO: use and do each dateTerm "type": "dateOptionalTime"
             "properties": [
                 "identifier": [
@@ -56,14 +61,21 @@ class ElasticData {
                 ],
                 "domsnummer": ["type": "string"]
             ]
-        ]
+        ],
+
+        "ns": sharedMappings + [:],
+
+        "ext": sharedMappings + [:],
+
+        "sys": sharedMappings + [:],
+
     ]
 
     def listTerms = []
     def refTerms = []
     def dateTerms = []
 
-    private def notAnalyzedFields = ["type"]
+    private def notAnalyzedFields = ["iri", "type"]
     private def termsWithRawField = ["identifier"] // TODO: + "arsutgava", "lopnummer" (add as multi_field)
 
     ElasticData(String host, int port, String indexName) {
@@ -80,7 +92,8 @@ class ElasticData {
         if (termsWithRawField.contains(term)) {
             return term + ".raw"
         } else if (dateTerms.contains(term) ||
-                notAnalyzedFields.contains(term)) {
+                notAnalyzedFields.contains(term) ||
+                term.endsWith(".iri")) {
             return term
         }
         return null
@@ -131,7 +144,9 @@ class ElasticData {
     private void updateTermList(mappingJsonRepr, possibleTerms, terms) {
         for (term in possibleTerms) {
             if (mappingJsonRepr.indexOf('"' + term + '"') > -1) {
-                terms << term
+                if (!terms.contains(term)) {
+                    terms << term
+                }
             }
         }
     }
