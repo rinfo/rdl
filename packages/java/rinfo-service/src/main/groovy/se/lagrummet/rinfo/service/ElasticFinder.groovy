@@ -73,9 +73,9 @@ class ElasticFinder extends Finder {
 
     def searchElastic(SearchRequestBuilder srb, String docType, Reference ref) {
         // TODO:
-        // - listTerms by docType
+        // - showTerms by docType
         // - 404 if docType not in known mappings
-        def prepSearch = prepareElasticSearch(srb, ref, docType, elasticData.listTerms)
+        def prepSearch = prepareElasticSearch(srb, ref, docType, elasticData.showTerms)
 
         SearchResponse esRes = srb.execute().actionGet()
         assert esRes.failedShards == 0
@@ -134,7 +134,7 @@ class ElasticFinder extends Finder {
     }
 
     Map prepareElasticSearch(SearchRequestBuilder srb, Reference ref,
-            String docType, List<String> listTerms,
+            String docType, List<String> showTerms,
             pageSize=defaultPageSize, addStats=false) {
         def queryForm = ref.getQueryAsForm(UTF_8)
         def q = null
@@ -144,7 +144,7 @@ class ElasticFinder extends Finder {
         if (docType) {
             srb.setTypes(docType)
         }
-        srb.addFields(listTerms as String[])
+        srb.addFields(showTerms as String[])
         for (name in queryForm.names) {
             def value = queryForm.getFirstValue(name)
             if (value == null) {
@@ -167,7 +167,7 @@ class ElasticFinder extends Finder {
                         return // not sortable
                     }
                     srb.addSort(field, sortOrder)
-                    if (!listTerms.contains(sortTerm)) srb.addFields(sortTerm)
+                    if (!showTerms.contains(sortTerm)) srb.addFields(sortTerm)
                 }
             } else if (name == pageParamKey) {
                 page = value as int
@@ -197,7 +197,7 @@ class ElasticFinder extends Finder {
         }
         terms.each { name, values ->
             matches << values.collect { "${name}:${it}" }.join(" ")
-            if (!listTerms.contains(name)) {
+            if (!showTerms.contains(name)) {
                 srb.addFields(name)
             }
         }
