@@ -20,8 +20,6 @@ class ElasticLoader {
 
     ElasticData elasticData
 
-    def indexType = "doc" // TODO: different by path base?
-
     String constructSummaryQuery
     Map contextData
 
@@ -45,23 +43,37 @@ class ElasticLoader {
 
     void create(RepositoryConnection conn, entry, collector) {
         def id = entry.id.toString()
-        def data = toElasticData(conn, entry, collector)
-        if (data == null) {
-            log.info "No elastic data created for <${entry.id}> - skipped."
+        def docType = findElasticType(entry.id.toURI())
+        if (docType == null) {
+            log.info "No elastic type detected for <${entry.id}> - skipping."
             return
         }
-        log.info "Indexing elastic data for <${id}>..."
+        def data = toElasticData(conn, entry, collector)
+        if (data == null) {
+            log.info "No elastic data created for <${entry.id}> - skipping."
+            return
+        }
+        log.info "Indexing elastic data of doctype ${docType} with id <${id}>..."
         // TODO: ensure that updates have effect!
-        IndexRequestBuilder irb = elasticData.client.prepareIndex(elasticData.indexName, indexType, id).
+        IndexRequestBuilder irb = elasticData.client.prepareIndex(elasticData.indexName, docType, id).
             setConsistencyLevel(WriteConsistencyLevel.DEFAULT).
             setSource(data)
         irb.execute().actionGet()
         log.info "Done."
     }
 
-    void delete(entryId) {
+    void delete(URI entryId) {
+        def docType = findElasticType(entry.id)
         //DeleteResponse response =
-        elasticData.client.prepareDelete(elasticData.indexName, indexType, entryId).execute().actionGet()
+        elasticData.client.prepareDelete(
+                elasticData.indexName, docType, entryId.toString()).execute().actionGet()
+    }
+
+    String findElasticType(URI uri) {
+        def pathNoLead = uri.path.substring(1)
+        int slashPos = pathNoLead.indexOf("/")
+        if (slashPos == -1) return null
+        return pathNoLead.substring(0, slashPos)
     }
 
     Map toElasticData(conn, entry, collector) {

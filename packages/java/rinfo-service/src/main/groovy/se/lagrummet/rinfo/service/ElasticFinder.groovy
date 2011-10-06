@@ -56,11 +56,11 @@ class ElasticFinder extends Finder {
 
     @Override
     ServerResource find(Request request, Response response) {
-        final String collection = request.attributes["collection"]
+        final String docType = request.attributes["docType"]
         SearchRequestBuilder srb = elasticData.client.prepareSearch(elasticData.indexName)
-        def data = (collection == facetStatsSegment)?
+        def data = (docType == facetStatsSegment)?
             getElasticStats(srb, request.resourceRef) :
-            searchElastic(srb, collection, request.resourceRef)
+            searchElastic(srb, docType, request.resourceRef)
         return new ServerResource() {
             @Get("json")
             Representation asJSON() {
@@ -71,8 +71,11 @@ class ElasticFinder extends Finder {
         }
     }
 
-    def searchElastic(SearchRequestBuilder srb, String collection, Reference ref) {
-        def prepSearch = prepareElasticSearch(srb, ref, elasticData.listTerms) // TODO: showFieldsBy collection?
+    def searchElastic(SearchRequestBuilder srb, String docType, Reference ref) {
+        // TODO:
+        // - listTerms by docType
+        // - 404 if docType not in known mappings
+        def prepSearch = prepareElasticSearch(srb, ref, docType, elasticData.listTerms)
 
         SearchResponse esRes = srb.execute().actionGet()
         assert esRes.failedShards == 0
@@ -87,7 +90,7 @@ class ElasticFinder extends Finder {
         ]
 
         def pageParam = pageParamKey + '=' + prepSearch.page
-        def currentPage = "/-/${collection}?" +
+        def currentPage = "/-/${docType}?" +
                 ((prepSearch.queryString.indexOf(pageParam) == -1)? "${pageParam}&" : "") +
                 prepSearch.queryString
         if (prepSearch.page > 0) {
@@ -125,18 +128,22 @@ class ElasticFinder extends Finder {
     def getElasticStats(SearchRequestBuilder srb, Reference ref) {
         //def qb = QueryBuilders.matchAllQuery()
         //srb.setQuery(qb)
-        prepareElasticSearch(srb, ref, [], 0, true)
+        prepareElasticSearch(srb, ref, null, [], 0, true)
         SearchResponse esRes = srb.execute().actionGet()
         return buildStats(esRes)
     }
 
-    Map prepareElasticSearch(SearchRequestBuilder srb, Reference ref, List<String> listTerms,
+    Map prepareElasticSearch(SearchRequestBuilder srb, Reference ref,
+            String docType, List<String> listTerms,
             pageSize=defaultPageSize, addStats=false) {
         def queryForm = ref.getQueryAsForm(UTF_8)
         def q = null
         def terms = [:]
         def ranges = [:]
         def page = 0
+        if (docType) {
+            srb.setTypes(docType)
+        }
         srb.addFields(listTerms as String[])
         for (name in queryForm.names) {
             def value = queryForm.getFirstValue(name)

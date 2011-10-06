@@ -75,7 +75,7 @@ class ServiceApplication extends Application {
             ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
 
         if (components.elasticData) {
-            router.attach("/-/{collection}",
+            router.attach("/-/{docType}",
                     new ElasticFinder(ctx, components.elasticData, components.serviceAppBaseUrl))
         }
 
