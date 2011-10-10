@@ -360,7 +360,6 @@ def rewriteLagenNuNTLines(lines) {
         line = line.replaceAll(/#K(\d+)P/, '#k_$1-p_')
         line = line.replaceAll(/#K(\d+)/, '#k_$1')
         line = line.replaceAll(/#P(\d+)/, '#p_$1')
-
         line = fixUri(line)
         return line
     }
@@ -384,7 +383,7 @@ def flipPartOfTriples(lines) {
 
 
 def fixUri(line) {
-    line = replaceOnce(line, "${RINFO}publ/rattsfall/", "${RINFO}publ/rf/")
+    line = line.replaceAll("${RINFO}publ/rattsfall/", "${RINFO}publ/rf/")
     line = line.replaceAll(/${RINFO}publ\/rf\/(\w+)\/(\d+?)s(\d+)\b/, "${RINFO}publ/rf/"+'$1/$2/s_$3')
     // TODO: change e.g. </publ/sfs/1893:37_s.1> to </publ/sfs/1893:37_s_1>
     return line
