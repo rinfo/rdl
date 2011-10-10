@@ -29,13 +29,13 @@ def setup():
 @task
 @roles('checker')
 def deploy(headless="0"):
-    setup_checker()
+    setup()
     _deploy_war("%(java_packages)s/rinfo-checker/target/rinfo-checker-%(target)s.war"%env,
             "rinfo-checker", int(headless))
 
 @task
 @roles('checker')
 def all(deps="1", test="1", headless="0"):
-    package_checker(deps, test)
-    deploy_checker(headless)
+    package(deps, test)
+    deploy(headless)
 
