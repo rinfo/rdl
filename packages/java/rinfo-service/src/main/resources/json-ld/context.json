@@ -2,6 +2,7 @@
   "iri": "@subject",
   "type": "@type",
   "@vocab": "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#",
+
   "label": "http://www.w3.org/2000/01/rdf-schema#label",
   "comment": "http://www.w3.org/2000/01/rdf-schema#comment",
   "title": "http://purl.org/dc/terms/title",
@@ -15,7 +16,7 @@
   "references": "http://purl.org/dc/terms/references",
   "isVersionOf": "http://purl.org/dc/terms/isVersionOf",
   "hasFormat": "http://purl.org/dc/terms/hasFormat",
-  "hasVersion": "http://purl.org/dc/terms/hasFormat",
+  "hasVersion": "http://purl.org/dc/terms/hasVersion",
   "Document": "http://xmlns.com/foaf/0.1/Document",
   "Organization": "http://xmlns.com/foaf/0.1/Organization",
   "Person": "http://xmlns.com/foaf/0.1/Person",
@@ -23,19 +24,31 @@
   "primaryTopic": "http://xmlns.com/foaf/0.1/primaryTopic",
   "prefLabel": "http://www.w3.org/2004/02/skos/core#prefLabel",
   "altLabel": "http://www.w3.org/2004/02/skos/core#altLabel",
-  "describedby": "http://www.w3.org/2007/05/powder-s#describedby",
+
   "Entry": "http://bblfish.net/work/atom-owl/2006-06-06/#Entry",
   "id": "http://bblfish.net/work/atom-owl/2006-06-06/#id",
   "entryUpdated": "http://bblfish.net/work/atom-owl/2006-06-06/#updated",
   "content": "http://bblfish.net/work/atom-owl/2006-06-06/#content",
   "alternate": "http://www.iana.org/assignments/relation/alternate",
   "mediaType": "http://bblfish.net/work/atom-owl/2006-06-06/#type",
-  "abbrSlug": "http://rinfo.lagrummet.se/sys/uri/scheme#abbrSlug",
+
+  "prev": "http://www.w3.org/1999/xhtml/vocab#prev",
+  "current": "http://www.w3.org/1999/xhtml/vocab#current",
+  "next": "http://www.w3.org/1999/xhtml/vocab#next",
+  "describedby": "http://www.w3.org/2007/05/powder-s#describedby",
+  "startIndex": "http://a9.com/-/spec/opensearch/1.1/startIndex",
+  "itemsPerPage": "http://a9.com/-/spec/opensearch/1.1/itemsPerPage",
+  "totalResults": "http://a9.com/-/spec/opensearch/1.1/totalResults",
+  "duration": "http://purl.org/NET/c4dm/timeline.owl#durationXSD",
+  "items": "http://purl.org/linked-data/api/vocab#items",
+  "Page": "http://purl.org/linked-data/api/vocab#Page",
+
   "@coerce": {
-    "date": ["beslutsdatum", "ikrafttradandedatum", "utfardandedatum", "utkomFranTryck", "avgorandedatum", "avkravtAvrapporteringsdatum", "ratificieringsdatum", "issued"],
+    "date": ["beslutsdatum", "ikrafttradandedatum", "utfardandedatum", "utkomFranTryck", "avgorandedatum", "avkravtAvrapporteringsdatum", "ratificeringsdatum", "issued"],
     "dateTime": ["created", "updated", "entryUpdated"],
     "anyURI": ["id"],
-    "string": ["identifier", "domsnummer"],
-    "@set": ["andrar", "bilaga", "upphaver", "konsolideringsunderlag", "foreslarAndringAv", "utgarFran", "giltigaSprak", "kapitel", "paragraf", "references"]
-  }
+    "string": ["identifier", "domsnummer", "arsutgava", "lopnummer"]
+  },
+
+  "@language": "sv"
 }

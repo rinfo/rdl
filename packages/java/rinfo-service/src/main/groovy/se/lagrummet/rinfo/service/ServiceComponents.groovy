@@ -16,6 +16,7 @@ class ServiceComponents {
     private NotifyingRepositoryWrapper repository
     SesameLoadScheduler loadScheduler
     RepositoryHandler repositoryHandler
+    JsonLdSettings jsonLdSettings
     ElasticData elasticData
 
     public Repository getRepository() {
@@ -28,6 +29,7 @@ class ServiceComponents {
         repositoryHandler.initialize()
         this.repository = new NotifyingRepositoryWrapper(repositoryHandler.repository)
         this.loadScheduler = createLoadScheduler()
+        this.jsonLdSettings = createJsonLdSettings()
         this.elasticData = createElasticData()
     }
 
@@ -76,6 +78,10 @@ class ServiceComponents {
         return loadScheduler
     }
 
+    private def createJsonLdSettings() {
+        return new JsonLdSettings()
+    }
+
     private def createElasticData() {
         def esConf = config.subset("rinfo.service.elasticdata")
         if (esConf.isEmpty()) {
@@ -84,7 +90,7 @@ class ServiceComponents {
         def host = esConf.getString("host")
         def port = esConf.getInt("port")
         def indexName = esConf.getString("index")
-        return new ElasticData(host, port, indexName)
+        return new ElasticData(host, port, indexName, jsonLdSettings)
     }
 
     private def createElasticLoader() {

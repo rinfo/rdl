@@ -42,9 +42,6 @@ class SesameLoader extends FeedArchivePastToPresentReader {
         } finally {
             conn.close()
         }
-        if (elasticLoader != null) {
-            elasticLoader.elasticData.updateKnownTerms()
-        }
     }
 
     boolean stopOnEntry(Entry entry) {
