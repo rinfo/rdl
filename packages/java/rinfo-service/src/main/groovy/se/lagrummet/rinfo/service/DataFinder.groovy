@@ -27,21 +27,18 @@ class DataFinder extends Finder {
 
     String baseUri
     Repository repo
-    Map contextData
-    String contextPath
+    JsonLdSettings jsonLdSettings
+    JSONLDSerializer jsonLdSerializer
+    ObjectMapper jsonMapper = new ObjectMapper()
 
-    DataFinder(Context context, Repository repo, String contextPath, String baseUri) {
+    DataFinder(Context context, Repository repo, JsonLdSettings jsonLdSettings, String baseUri) {
         super(context)
         this.baseUri = baseUri
         this.repo = repo
-        def mapper = new ObjectMapper()
-        this.contextPath = contextPath
-        def inStream = getClass().getResourceAsStream(contextPath)
-        try {
-            this.contextData = mapper.readValue(inStream, Map)
-        } finally {
-            inStream.close()
-        }
+        this.jsonLdSettings = jsonLdSettings
+        jsonLdSerializer = new JSONLDSerializer(jsonLdSettings.contextData, false, true)
+        jsonMapper.configure(
+                SerializationConfig.Feature.INDENT_OUTPUT, true)
     }
 
     @Override
@@ -104,13 +101,10 @@ class DataFinder extends Finder {
 
     String serializeRDF(Repository itemRepo, String resourceUri, String mediaType) {
         if (mediaType == "application/json") {
-            def json = new JSONLDSerializer(contextData, false, true).toJSON(itemRepo, resourceUri)
+            def json = jsonLdSerializer.toJSON(itemRepo, resourceUri)
             if (json != null) {
-                json["@context"] = contextPath
+                json["@context"] = jsonLdSettings.contextPath
             }
-            def jsonMapper = new ObjectMapper()
-            jsonMapper.configure(
-                    SerializationConfig.Feature.INDENT_OUTPUT, true)
             return jsonMapper.writeValueAsString(json)
         }
         def outStream = new ByteArrayOutputStream()

@@ -34,6 +34,7 @@ import org.codehaus.jackson.map.SerializationConfig
 class ElasticFinder extends Finder {
 
     ElasticData elasticData
+    JsonLdSettings jsonLdSettings
     String serviceAppBaseUrl
 
     def jsonMapper
@@ -48,6 +49,7 @@ class ElasticFinder extends Finder {
     ElasticFinder(Context context, ElasticData elasticData, String serviceAppBaseUrl) {
         super(context)
         this.elasticData = elasticData
+        this.jsonLdSettings = elasticData.jsonLdSettings
         this.serviceAppBaseUrl = serviceAppBaseUrl
         jsonMapper = new ObjectMapper()
         jsonMapper.configure(
@@ -61,6 +63,8 @@ class ElasticFinder extends Finder {
         def data = (docType == facetStatsSegment)?
             getElasticStats(srb, request.resourceRef) :
             searchElastic(srb, docType, request.resourceRef)
+        if (data == null)
+            return null
         return new ServerResource() {
             @Get("json")
             Representation asJSON() {
@@ -72,17 +76,18 @@ class ElasticFinder extends Finder {
     }
 
     def searchElastic(SearchRequestBuilder srb, String docType, Reference ref) {
-        // TODO:
-        // - showTerms by docType
-        // - 404 if docType not in known mappings
-        def prepSearch = prepareElasticSearch(srb, ref, docType, elasticData.showTerms)
+        def showTerms = jsonLdSettings.listFramesData[docType]?.keySet()
+        if (!showTerms) {
+            return null
+        }
+        def prepSearch = prepareElasticSearch(srb, ref, docType, showTerms)
 
         SearchResponse esRes = srb.execute().actionGet()
         assert esRes.failedShards == 0
 
         def data = [
             "@language": "sv",
-            "@context": "/json-ld/list-context.json",
+            "@context": jsonLdSettings.contextPath,
             startIndex: prepSearch.startIndex,
             itemsPerPage: prepSearch.pageSize,
             totalResults: esRes.hits.totalHits(),
@@ -134,7 +139,7 @@ class ElasticFinder extends Finder {
     }
 
     Map prepareElasticSearch(SearchRequestBuilder srb, Reference ref,
-            String docType, List<String> showTerms,
+            String docType, Collection<String> showTerms,
             pageSize=defaultPageSize, addStats=false) {
         def queryForm = ref.getQueryAsForm(UTF_8)
         def q = null
@@ -264,11 +269,11 @@ class ElasticFinder extends Finder {
 
     def prepareStats(SearchRequestBuilder srb) {
         srb.addFacet(FacetBuilders.termsFacet("type").field("type"))
-        elasticData.refTerms.each {
+        jsonLdSettings.refTerms.each {
             def key = it + ".iri"
             srb.addFacet(FacetBuilders.termsFacet(key).field(key))
         }
-        elasticData.dateTerms.each {
+        jsonLdSettings.dateTerms.each {
             srb.addFacet(FacetBuilders.dateHistogramFacet(it).
                     field(it).interval("year"))
         }

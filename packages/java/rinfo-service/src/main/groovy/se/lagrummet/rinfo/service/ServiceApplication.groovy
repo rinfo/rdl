@@ -27,8 +27,6 @@ class ServiceApplication extends Application {
 
     String mediaDirUrl = "war:///"
 
-    String jsonLdContextPath = "/json-ld/context.json"
-
     boolean allowCORS = true
 
     ServiceApplication(Context parentContext) {
@@ -71,7 +69,7 @@ class ServiceApplication extends Application {
 
         router.attach("/{path}/data",
                 new DataFinder(ctx, components.repository,
-                    jsonLdContextPath, components.dataAppBaseUri)
+                    components.jsonLdSettings, components.dataAppBaseUri)
             ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
 
         if (components.elasticData) {

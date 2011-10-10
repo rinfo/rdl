@@ -15,23 +15,10 @@ class ElasticData {
     Client client
     String indexName
 
-    // TODO: configure from context/schema
+    JsonLdSettings jsonLdSettings
 
-    //def docTypes = ["publ", "org", "serie", "ns", "sys", "ext/celex", "..."]
-
-    // TODO: showTerms and refTerms are per rootType; get dateTerms from JSON-LD context
-    def termData = [
-        showTerms: ["_id", "iri", "type", "title", "identifier",
-            "utfardandedatum", "beslutsdatum", "issued"],
-        refTerms: ["publisher", "forfattningssamling", "utrSerie",
-            "rattsfallspublikation", "allmannaRadSerie"],
-        dateTerms: ["utfardandedatum", "beslutsdatum", "utkomFranTryck", "ikrafttradandedatum",
-                    "avkravtAvrapporteringsdatum", "avgorandedatum", "ratificieringsdatum",
-                    "issued", "created", "updated"]
-    ]
-
-    // TODO: is it possible to set these for all doc types? (key "_all" doesn't work..)
     def sharedMappings = [
+        "date_detection" : false,
         "dynamic_templates": [
             [
                 "resource_iri": [
@@ -47,52 +34,22 @@ class ElasticData {
         ]
     ]
 
-    def initialMappings = [
-
-        "publ": sharedMappings + [
-            //"date_detection" : false, TODO: use and do each dateTerm "type": "dateOptionalTime"
-            "properties": [
-                "identifier": [
-                    "type": "multi_field",
-                    "fields": [
-                        "identifier": ["type": "string", "index": "analyzed", "boost": 4.0],
-                        "raw": ["type": "string", "index": "not_analyzed", "boost": 4.0]
-                    ]
-                ],
-                "domsnummer": ["type": "string"]
-            ]
-        ],
-
-        "ns": sharedMappings + [:],
-
-        "ext": sharedMappings + [:],
-
-        "sys": sharedMappings + [:],
-
-    ]
-
-    def showTerms = []
-    def refTerms = []
-    def dateTerms = []
-
-    private def notAnalyzedFields = ["iri", "type"]
-    private def termsWithRawField = ["identifier"] // TODO: + "arsutgava", "lopnummer" (add as multi_field)
-
-    ElasticData(String host, int port, String indexName) {
+    ElasticData(String host, int port, String indexName, JsonLdSettings jsonLdSettings) {
         this(new TransportClient().addTransportAddress(
-                new InetSocketTransportAddress(host, port)), indexName)
+                new InetSocketTransportAddress(host, port)), indexName, jsonLdSettings)
     }
 
-    ElasticData(Client client, indexName) {
+    ElasticData(Client client, String indexName, JsonLdSettings jsonLdSettings) {
         this.client = client
         this.indexName = indexName
+        this.jsonLdSettings = jsonLdSettings
     }
 
     String getFieldForSort(String term) {
-        if (termsWithRawField.contains(term)) {
+        if (jsonLdSettings.plainStringTerms.contains(term)) {
             return term + ".raw"
-        } else if (dateTerms.contains(term) ||
-                notAnalyzedFields.contains(term) ||
+        } else if (jsonLdSettings.dateTerms.contains(term) ||
+                jsonLdSettings.keywordTerms.contains(term) ||
                 term.endsWith(".iri")) {
             return term
         }
@@ -112,42 +69,29 @@ class ElasticData {
                 throw e
             }
         }
-        initialMappings.each { type, mappings ->
-            indices.preparePutMapping(indexName).setType(type).setSource(
-                (type): mappings
-            ).execute().actionGet()
-        }
-        updateKnownTerms()
-    }
-
-    /**
-     * Reads the mappings from elasticsearch and creates term lists from
-     * termData by checking if terms occur in read mappings.
-     */
-    synchronized void updateKnownTerms() {
-        showTerms = []
-        refTerms = []
-        dateTerms = []
-        def clusterStateRequestBuilder = client.admin().cluster().
-                prepareState().setFilterIndices(indexName)
-        def clusterState = clusterStateRequestBuilder.execute().actionGet().state
-        def indexMetaData = clusterState.metaData.index(indexName)
-        indexMetaData.mappings.each { esType, mappingMetaData ->
-            // TODO: Simple indexOf-hack since current ES API doesn't expose parsed JSON
-            def mappingJsonRepr = mappingMetaData.source().string()
-            updateTermList(mappingJsonRepr, termData.showTerms, showTerms)
-            updateTermList(mappingJsonRepr, termData.refTerms, refTerms)
-            updateTermList(mappingJsonRepr, termData.dateTerms, dateTerms)
-        }
-    }
-
-    private void updateTermList(mappingJsonRepr, possibleTerms, terms) {
-        for (term in possibleTerms) {
-            if (mappingJsonRepr.indexOf('"' + term + '"') > -1) {
-                if (!terms.contains(term)) {
-                    terms << term
+        jsonLdSettings.listFramesData.each { docType, frame ->
+            def propMap = [:]
+            for (term in frame.keySet()) {
+                if (term in jsonLdSettings.refTerms) {
+                } else if (term in jsonLdSettings.dateTerms) {
+                    propMap[term] = ["type": "date", "format": "dateOptionalTime"]
+                } else if (term in jsonLdSettings.plainStringTerms) {
+                    float boost = jsonLdSettings.boostTermMap[term] ?: 1.0
+                    propMap[term] = [
+                        "type": "multi_field",
+                        "fields": [
+                            (term): ["type": "string", "index": "analyzed", "boost": boost],
+                            "raw": ["type": "string", "index": "not_analyzed", "boost": boost]
+                        ]
+                    ]
                 }
             }
+
+            def mapping = sharedMappings + ["properties": propMap]
+
+            indices.preparePutMapping(indexName).setType(docType).setSource(
+                (docType): mapping
+            ).execute().actionGet()
         }
     }
 

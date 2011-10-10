@@ -9,8 +9,6 @@ import org.elasticsearch.client.action.index.IndexRequestBuilder
 import org.openrdf.repository.Repository
 import org.openrdf.repository.RepositoryConnection
 
-import org.codehaus.jackson.map.ObjectMapper
-
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDSerializer
 
@@ -31,14 +29,7 @@ class ElasticLoader {
         this.elasticData = elasticData
         this.constructSummaryQuery = getClass().getResourceAsStream(
                     "/sparql/construct_summary.rq").getText("utf-8")
-        // TODO: refactor and configure
-        def mapper = new ObjectMapper()
-        def inStream = getClass().getResourceAsStream("/json-ld/context.json")
-        try {
-            this.contextData = mapper.readValue(inStream, Map)
-        } finally {
-            inStream.close()
-        }
+        this.contextData = elasticData.jsonLdSettings.contextData
     }
 
     void create(RepositoryConnection conn, entry, collector) {
