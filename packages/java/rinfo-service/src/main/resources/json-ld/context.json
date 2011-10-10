@@ -28,6 +28,7 @@
   "id": "http://bblfish.net/work/atom-owl/2006-06-06/#id",
   "entryUpdated": "http://bblfish.net/work/atom-owl/2006-06-06/#updated",
   "content": "http://bblfish.net/work/atom-owl/2006-06-06/#content",
+  "alternate": "http://www.iana.org/assignments/relation/alternate",
   "mediaType": "http://bblfish.net/work/atom-owl/2006-06-06/#type",
   "abbrSlug": "http://rinfo.lagrummet.se/sys/uri/scheme#abbrSlug",
   "@coerce": {
