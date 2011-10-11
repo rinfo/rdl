@@ -169,6 +169,7 @@ class ElasticFinder extends Finder {
                     def field = elasticData.getFieldForSort(sortTerm)
                     if (field == null) {
                         // TODO: if not sortable; silent or client error?
+                        log.debug "Requested sorting on term not configured for sorting: ${sortTerm}"
                         return // not sortable
                     }
                     srb.addSort(field, sortOrder)
