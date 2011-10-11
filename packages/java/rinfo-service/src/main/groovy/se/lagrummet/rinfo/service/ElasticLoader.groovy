@@ -101,9 +101,9 @@ class ElasticLoader {
      * has size 1, use single value.
      */
     static def cleanForElastic(data, refKeys=['creator']) {
-        // TODO: this is just a quick fix for loading data
         for (key in refKeys) {
             if (data[key] instanceof String) {
+                log.info "Cleaning key ${key}: removing string where expected reference."
                 data.remove(key)
             }
         }
@@ -113,6 +113,7 @@ class ElasticLoader {
             } else if (value instanceof List) {
                 if (value.find { it instanceof Map } &&
                         value.find { !(it instanceof Map) }) {
+                    log.info "Cleaning key ${key}: found Maps in list, removing other values."
                     def mapValues = value.findAll { it instanceof Map }
                     data[key] = (mapValues.size() == 1)? mapValues[0] : mapValues
                 }
