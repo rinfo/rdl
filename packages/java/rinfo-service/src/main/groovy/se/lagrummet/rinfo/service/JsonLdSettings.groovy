@@ -1,8 +1,11 @@
 package se.lagrummet.rinfo.service
 
+import groovy.util.logging.Slf4j as Log
+
 import org.codehaus.jackson.map.ObjectMapper
 
 
+@Log
 class JsonLdSettings {
 
     String contextPath = "/json-ld/context.json"
@@ -30,15 +33,14 @@ class JsonLdSettings {
         def stringCoercionSet = new HashSet(contextData['@coerce']['string'])
         for (termMap in listFramesData.values()) {
             termMap.each { term, value ->
-                if (!(value instanceof Map)) {
-                    return // to continue
-                }
-                if (value['@datatype'] == 'date') {
-                    dateTerms << term
-                } else if (value.containsKey('iri')) {
-                    refTerms << term
-                } else if (term in stringCoercionSet) {
+                if (term in stringCoercionSet) {
                     plainStringTerms << term
+                } else if ((value instanceof Map)) {
+                    if (value['@datatype'] == 'date') {
+                        dateTerms << term
+                    } else if (value.containsKey('iri')) {
+                        refTerms << term
+                    }
                 }
             }
         }
