@@ -73,20 +73,7 @@ class ElasticLoader {
         def data = new JSONLDSerializer(contextData, false, false).toJSON(summaryRepo, resourceUri)
         if (data) {
             cleanForElastic(data)
-            def contentRef = findContentRef(entry)
-            if (contentRef) {
-                log.info "Adding document data with mediaType ${contentRef.mediaType}"
-                def inputStream = collector.getResponseAsInputStream(contentRef.url)
-                try {
-                    def contentText = textExtractor.getText(inputStream)
-                    data['document'] = [
-                        'content_type': contentRef.mediaType,
-                        'content': contentText
-                    ]
-                } finally {
-                    inputStream.close()
-                }
-            }
+            addContent(data, entry, collector)
         }
         return data
     }
@@ -121,6 +108,15 @@ class ElasticLoader {
         }
     }
 
+    void addContent(data, entry, collector) {
+        def contentRef = findContentRef(entry)
+        if (contentRef) {
+            log.info "Adding document data with mediaType ${contentRef.mediaType}"
+            def contentText = getContentText(contentRef.url, collector)
+            setContent(data, contentText, contentRef.mediaType)
+        }
+    }
+
     def findContentRef(entry) {
         // TODO: we don't expect multiple content docs, but if there are, which one to use? warn?
         def contentElem = entry.contentElement
@@ -146,6 +142,23 @@ class ElasticLoader {
                 }
             }
         }
+    }
+
+    String getContentText(String url, collector) {
+        def inputStream = collector.getResponseAsInputStream(url)
+        try {
+            def contentText = textExtractor.getText(inputStream)
+        } finally {
+            inputStream.close()
+        }
+        return contentText
+    }
+
+    void setContent(data, contentText, mediaType) {
+        data['document'] = [
+            'content_type': mediaType,
+            'content': contentText
+        ]
     }
 
 }
