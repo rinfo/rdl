@@ -6,35 +6,35 @@ PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
 
 CONSTRUCT {
 
-    ?s ?p ?o .
+    #?s ?p ?o .
     ?current ?curr_p ?curr_o .
 
-    ?relitem a ?reltype;
-        ?relprop ?reltext .
+    #?relitem a ?reltype;
+    #    ?relprop ?reltext .
 
 } WHERE {
 
-    {
-
-        ?g foaf:primaryTopic ?current .
-        GRAPH ?g { ?s ?p ?o }
-
-    } UNION {
+    #{
+    #
+    #    ?g foaf:primaryTopic ?current .
+    #    GRAPH ?g { ?s ?p ?o }
+    #
+    #} UNION {
 
         ?current ?curr_p ?curr_o .
 
-    } UNION {
-
-        ?current ?rel ?relitem .
-        FILTER(?rel = dct:publisher
-            || ?rel = rpubl:forfattningssamling
-            || ?rel = rpubl:utrSerie
-            || ?rel = rpubl:rattsfallspublikation
-            || ?rel = rpubl:allmannaRadSerie) .
-        ?relitem ?relprop ?reltext .
-        FILTER( isLiteral(?reltext) )
-        OPTIONAL { ?relitem a ?reltype . }
-
-    }
+    #} UNION {
+    #
+    #    ?current ?rel ?relitem .
+    #    FILTER(?rel = dct:publisher
+    #        || ?rel = rpubl:forfattningssamling
+    #        || ?rel = rpubl:utrSerie
+    #        || ?rel = rpubl:rattsfallspublikation
+    #        || ?rel = rpubl:allmannaRadSerie) .
+    #    ?relitem ?relprop ?reltext .
+    #    FILTER( isLiteral(?reltext) )
+    #    OPTIONAL { ?relitem a ?reltype . }
+    #
+    #}
 
 }
