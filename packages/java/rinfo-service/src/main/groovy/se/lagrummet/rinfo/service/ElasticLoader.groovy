@@ -148,8 +148,9 @@ class ElasticLoader {
 
     String getContentText(String url, collector) {
         def inputStream = collector.getResponseAsInputStream(url)
+        def contentText = null
         try {
-            def contentText = textExtractor.getText(inputStream)
+            contentText = textExtractor.getText(inputStream)
         } finally {
             inputStream.close()
         }
