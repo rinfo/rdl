@@ -70,6 +70,8 @@ class ElasticLoader {
     Map toElasticData(conn, entry, collector) {
         def resourceUri = entry.id.toString()
         def summaryRepo = getSummaryRDF(conn, resourceUri)
+        if (summaryRepo == null)
+            return null
         def data = new JSONLDSerializer(contextData, false, false).toJSON(summaryRepo, resourceUri)
         if (data) {
             cleanForElastic(data)
