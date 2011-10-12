@@ -84,7 +84,6 @@ def demo():
     }
     env.apache_jk_tomcat = True
     # Tomcat
-    env.custom_tomcat = True
     env.tomcat_version = "6.0.33"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
@@ -103,9 +102,9 @@ def integration():
     # Machines:
     env.user = 'rinfo'
     env.roledefs = {
-        'main': ['rinfo-integration'],
-        'service': ['rinfo-integration'],
-        'checker': ['rinfo-integration'],
+        'main': ['rinfo-main'],
+        'service': ['rinfo-service'],
+        'checker': ['rinfo-checker'],
         'doc': ['rinfo-integration'],
         'admin': ['rinfo-integration'],
         'demo': ['rinfo-integration'],
@@ -129,7 +128,6 @@ def integration():
     }
     env.apache_jk_tomcat = True
     # Tomcat
-    env.custom_tomcat = True
     env.tomcat_version = "6.0.33"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
@@ -169,7 +167,6 @@ def prod():
     }
     env.apache_jk_tomcat = True
     # Tomcat
-    env.custom_tomcat = True
     env.tomcat_version = "6.0.33"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env

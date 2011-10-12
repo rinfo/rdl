@@ -146,11 +146,11 @@ Verify main:
 
    You might need to ping main to collect data from the demo sources:
 
-      * fab target.integration tools.ping_main_collector:http\://dv-demo/feed/current
-      * fab target.integration tools.ping_main_collector:http\://sfs-demo/feed/current
-      * fab target.integration tools.ping_main_collector:http\://prop-demo/feed/current
-      * fab target.integration tools.ping_main_collector:http\://sou-demo/feed/current
-      * fab target.integration tools.ping_main_collector:http\://ds-demo/feed/current
+      * fab target.integration app.tools.ping_main_collector:http\://dv-demo/feed/current
+      * fab target.integration app.tools.ping_main_collector:http\://sfs-demo/feed/current
+      * fab target.integration app.tools.ping_main_collector:http\://prop-demo/feed/current
+      * fab target.integration app.tools.ping_main_collector:http\://sou-demo/feed/current
+      * fab target.integration app.tools.ping_main_collector:http\://ds-demo/feed/current
 
 Deploy checker:
 
@@ -168,7 +168,7 @@ Verify checker:
 Deploy service:
 
    * Run on your local computer::
-      fab target.integration app.service.deploy_sesame
+      fab target.integration app.service.deploy_sesame app.service.install_elasticsearch
       fab target.integration app.service.all
 
    * Ping main feed::
@@ -190,7 +190,7 @@ follow the instructions below:
 
    * integration: sudo /etc/init.d/tomcat stop
    * integration: sudo rm -rf /opt/tomcat /opt/apache-tomcat-*
-   * local: fab target.integration -R main fetch_tomcat_dist install_tomcat
+   * local: fab target.integration -R main install_tomcat
    * local: fab target.integration app.demodata.dataset_war:dv app.demodata.dataset_war:sfs \
                 app.demodata.dataset_war:prop app.demodata.dataset_war:sou app.demodata.dataset_war:ds
    * local: fab target.integration app.main.all

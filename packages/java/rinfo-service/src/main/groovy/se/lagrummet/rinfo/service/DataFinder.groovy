@@ -15,8 +15,6 @@ import org.restlet.resource.ServerResource
 import org.restlet.routing.Router
 
 import org.openrdf.repository.Repository
-import static org.openrdf.query.QueryLanguage.SPARQL
-import org.openrdf.repository.util.RDFInserter
 
 import org.codehaus.jackson.map.ObjectMapper
 import org.codehaus.jackson.map.SerializationConfig
@@ -29,22 +27,18 @@ class DataFinder extends Finder {
 
     String baseUri
     Repository repo
-    Map contextData
-    String contextUrl
+    JsonLdSettings jsonLdSettings
+    JSONLDSerializer jsonLdSerializer
+    ObjectMapper jsonMapper = new ObjectMapper()
 
-    DataFinder(Context context, Repository repo, String baseUri) {
+    DataFinder(Context context, Repository repo, JsonLdSettings jsonLdSettings, String baseUri) {
         super(context)
         this.baseUri = baseUri
         this.repo = repo
-        def mapper = new ObjectMapper()
-        // TODO: configurable context and contextUrl
-        this.contextUrl = "/json-ld/context.json"
-        def inStream = getClass().getResourceAsStream(contextUrl)
-        try {
-            this.contextData = mapper.readValue(inStream, Map)
-        } finally {
-            inStream.close()
-        }
+        this.jsonLdSettings = jsonLdSettings
+        jsonLdSerializer = new JSONLDSerializer(jsonLdSettings.contextData, false, true)
+        jsonMapper.configure(
+                SerializationConfig.Feature.INDENT_OUTPUT, true)
     }
 
     @Override
@@ -96,44 +90,27 @@ class DataFinder extends Finder {
      * with added contextual data for relevant incoming and outgoing relations.
      */
     Repository getRichRDF(String resourceUri) {
-        def itemRepo = RDFUtil.createMemoryRepository()
-        def itemConn = itemRepo.getConnection()
-        boolean empty = true
+        def conn = repo.getConnection()
         try {
-            def conn = repo.getConnection()
-            try {
-                def graphQuery = conn.prepareGraphQuery(SPARQL,
-                        constructRelRevDataSparql)
-                graphQuery.setBinding("current",
-                        conn.valueFactory.createURI(resourceUri))
-                graphQuery.evaluate(new RDFInserter(itemConn))
-            } finally {
-                conn.close()
-            }
-            empty = itemConn.size() == 0 // itemConn.isEmpty()
+            return RDFUtil.constructQuery(conn, constructRelRevDataSparql,
+                    ["current": conn.valueFactory.createURI(resourceUri)])
         } finally {
-            itemConn.close()
+            conn.close()
         }
-
-        return (empty)? null: itemRepo
     }
 
     String serializeRDF(Repository itemRepo, String resourceUri, String mediaType) {
         if (mediaType == "application/json") {
-            def json = new JSONLDSerializer(contextData).toJSON(itemRepo, resourceUri)
+            def json = jsonLdSerializer.toJSON(itemRepo, resourceUri)
             if (json != null) {
-                //json["@context"] = contextMap
-                json["@context"] = contextUrl
+                json["@context"] = jsonLdSettings.contextPath
             }
-            def jsonMapper = new ObjectMapper()
-            jsonMapper.configure(
-                    SerializationConfig.Feature.INDENT_OUTPUT, true)
             return jsonMapper.writeValueAsString(json)
         }
         def outStream = new ByteArrayOutputStream()
         try {
             RDFUtil.serialize(itemRepo, mediaType, outStream)
-            return outStream.toString()
+            return outStream.toString("UTF-8")
         } finally {
             outStream.close()
         }
@@ -141,7 +118,7 @@ class DataFinder extends Finder {
 
     String getConstructRelRevDataSparql() {
         return getClass().getResourceAsStream(
-                "/construct_relrev_data.rq").getText("utf-8")
+                "/sparql/construct_relrev_data.rq").getText("utf-8")
     }
 
 }

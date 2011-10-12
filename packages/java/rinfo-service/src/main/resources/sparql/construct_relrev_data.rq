@@ -12,21 +12,34 @@ CONSTRUCT {
     ?relitem a ?reltype;
         ?relprop ?reltext .
 
-    ?revitem a ?revtype;
-        ?rev ?current;
-        ?revprop ?revtext .
-
     ?reldoc rpubl:paragraf ?relitem .
     ?relchapter rpubl:paragraf ?relitem .
     ?reldoc rpubl:kapitel ?relchapter .
     ?reldoc a ?reldoctype;
         dct:identifier ?reldoc_label .
 
+
+    ?revdoc a ?revdoctype;
+        dct:identifier ?revdoc_id .
+
+    ?revitem a ?revtype;
+        ?rev ?current;
+        ?revprop ?revtext .
+
     ?revdoc rpubl:paragraf ?revitem .
     ?revchapter rpubl:paragraf ?revitem .
     ?revdoc rpubl:kapitel ?revchapter .
-    ?revdoc a ?revdoctype;
-        dct:identifier ?revdoc_label .
+
+
+    ?inrefitem a rpubl:Forfattningsreferens;
+        rpubl:angerGrundforfattning ?current;
+        ?refprop ?reftext .
+
+    ?revdoc ?refRev ?inrefitem .
+    ?revdoc rpubl:kapitel ?revchapter .
+    ?revchapter rpubl:paragraf ?revpara .
+    ?revdoc rpubl:paragraf ?revpara .
+    ?revpara ?paraRefRev ?inrefitem .
 
 } WHERE {
 
@@ -54,6 +67,10 @@ CONSTRUCT {
             } UNION {
                 ?relchapter rpubl:paragraf ?relitem .
                 ?reldoc rpubl:kapitel ?relchapter .
+            # TODO: currect construct for this
+            #} UNION {
+            #    ?relitem a rpubl:Forfattningsreferens;
+            #        rpubl:angerGrundforfattning ?reldoc .
             }
             ?reldoc a ?reldoctype;
                 dct:identifier ?reldoc_label .
@@ -65,7 +82,8 @@ CONSTRUCT {
         FILTER( isLiteral(?revtext) )
         OPTIONAL { ?revitem a ?revtype . }
 
-        # Don't get revs if ?current may have lots of "part_of"...
+        # Don't get revs if ?current may have lots of "parts"...
+        # TODO: optimize!
         ?current a ?type .
         OPTIONAL {
             ?type rdfs:subClassOf ?supertype .
@@ -78,8 +96,8 @@ CONSTRUCT {
             ?supersupertype != bibo:Collection)
 
         # TODO:IMPROVE: generalize...
-        # - do follow revitems upward on hasPart and describe those
-        # - find eventual scovo:Item..
+        # - follow revitems upward to containers and describe those
+        # - filter scovo:Item?
         # - don't get (isPartOf?) rev for collections
         # NOTE: this part is a bit slow:
         OPTIONAL {
@@ -92,6 +110,25 @@ CONSTRUCT {
             ?revdoc a ?revdoctype;
                 dct:identifier ?revdoc_label .
         }
+
+    } UNION {
+
+        ?inrefitem a rpubl:Forfattningsreferens;
+            rpubl:angerGrundforfattning ?current;
+            ?refprop ?reftext .
+        {
+            ?revdoc rpubl:kapitel ?revchapter .
+            ?revchapter rpubl:paragraf ?revpara .
+            ?revpara ?paraRefRev ?inrefitem .
+        } UNION {
+            ?revdoc rpubl:paragraf ?revpara .
+            ?revpara ?paraRefRev ?inrefitem .
+        } UNION {
+            ?revdoc ?refRev ?inrefitem .
+        }
+
+        ?revdoc a ?revdoctype;
+            dct:identifier ?revdoc_id .
 
     }
 

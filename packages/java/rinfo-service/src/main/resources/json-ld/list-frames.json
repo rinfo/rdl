@@ -1,0 +1,38 @@
+{
+  "publ": {
+    "type": "Rattsinformationsdokument",
+    "iri": null,
+    "identifier": null,
+    "title": null,
+    "utfardandedatum": {"@datatype": "date"},
+    "beslutsdatum": {"@datatype": "date"},
+    "issued": {"@datatype": "date"},
+    "utkomFranTryck": {"@datatype": "date"},
+    "ikrafttradandedatum": {"@datatype": "date"},
+    "avgorandedatum": {"@datatype": "date"},
+    "ratificeringsdatum": {"@datatype": "date"},
+    "publisher": {"iri": null},
+    "forfattningssamling": {"iri": null},
+    "utrSerie": {"iri": null},
+    "rattsfallspublikation": {"iri": null},
+    "allmannaRadSerie": {"iri": null}
+  },
+  "org": {
+    "type": "Organization",
+    "iri": null,
+    "name": null
+  },
+  "serie": {
+    "type": "Publikationssamling",
+    "iri": null,
+    "altLabel": null,
+    "prefLabel": null,
+    "publisher": {"iri": null}
+  },
+  "ns": {
+  },
+  "sys": {
+  },
+  "ext": {
+  }
+}

@@ -1,8 +1,8 @@
 from __future__ import with_statement
 from fabric.api import *
 from fabric.contrib.files import exists
-from fabfile.util import venv
-from fabfile.app import local_lib_rinfo_pkg, _deploy_war
+from fabfile.util import venv, mkdirpath
+from fabfile import app, sysconf
 from fabfile.target import _needs_targetenv
 
 ##
@@ -12,7 +12,7 @@ from fabfile.target import _needs_targetenv
 @runs_once
 def package(deps="1", test="1"):
     """Builds and packages the rinfo-service war, configured for the target env."""
-    if int(deps): local_lib_rinfo_pkg()
+    if int(deps): app.local_lib_rinfo_pkg()
     _needs_targetenv()
     flags = "" if int(test) else "-Dmaven.test.skip=true"
     local("cd %(java_packages)s/rinfo-service/ && "
@@ -40,7 +40,7 @@ def setup():
 def deploy(headless="0"):
     """Deploys the rinfo-service war package to target env."""
     setup()
-    _deploy_war(
+    app._deploy_war(
             "%(java_packages)s/rinfo-service/target/rinfo-service-%(target)s.war"%env,
             "rinfo-service", int(headless))
 
@@ -55,7 +55,6 @@ def all(deps="1", test="1", headless="0"):
 # Sesame and Repo Util deploy
 
 @task
-@runs_once
 @roles('service')
 def package_sesame():
     """Packages and deploys the Sesame RDF store war to target env."""
@@ -64,14 +63,13 @@ def package_sesame():
     env.local_sesame_dir = "%(pkgdir)s/target/dependency"%env
 
 @task
-@runs_once
 @roles('service')
 def deploy_sesame():
     setup()
     package_sesame()
     _patch_catalina_properties()
     for warname in ['openrdf-sesame', 'sesame-workbench']:
-        _deploy_war("%(local_sesame_dir)s/%(warname)s.war"%venv(), warname)
+        app._deploy_war("%(local_sesame_dir)s/%(warname)s.war"%venv(), warname)
 
 def _patch_catalina_properties():
     # This will patch catalina.properties so that it contains the system 
@@ -101,7 +99,7 @@ def repotool():
 @runs_once
 @roles('service')
 def deploy_repotool():
-    service_repotool()
+    repotool()
     local("cd %(java_packages)s/rinfo-rdf-repo && "
             "mvn -P %(target)s assembly:assembly"%env)
     put("%(java_packages)s/rinfo-service/src/environments/%(target)s/%(rinfo_service_props)s"%env,
@@ -119,8 +117,45 @@ def clean_repo():
     _repotool('clean')
 
 def _repotool(cmd):
-    service_repotool()
+    repotool()
     run("cd %(dist_dir)s && "
             "java -jar %(rinfo_repo_jar)s %(cmd)s "
             "%(rinfo_service_props)s rinfo.service.repo"%venv())
+
+##
+# ElasticSearch install and setup
+
+@task
+@roles('service')
+def install_elasticsearch():
+    sysconf._sync_workdir()
+    version, dist = fetch_elasticsearch()
+    with cd("/opt/"):
+        sudo("tar xzf %(dist)s" % vars())
+        if exists("elasticsearch"):
+            sudo("rm elasticsearch")
+        sudo("ln -s elasticsearch-%(version)s elasticsearch" % vars())
+        sysconf.install_init_d("elasticsearch")
+
+def fetch_elasticsearch():
+    elastic_version = "0.17.6"
+    workdir_elastic = "%(mgr_workdir)s/elastic_pkg" % env
+    mkdirpath(workdir_elastic)
+    elastic_distfile = "elasticsearch-%(elastic_version)s.tar.gz" % vars()
+    with cd(workdir_elastic):
+        if not exists(elastic_distfile):
+            run("wget https://github.com/downloads/elasticsearch/elasticsearch/%s" % elastic_distfile)
+    return elastic_version, "%(workdir_elastic)s/%(elastic_distfile)s" % vars()
+
+@task
+@roles('service')
+def stop_elasticsearch():
+    _needs_targetenv()
+    sudo("/etc/init.d/elasticsearch stop")
+
+@task
+@roles('service')
+def start_elasticsearch():
+    _needs_targetenv()
+    sudo("/etc/init.d/elasticsearch start")
 

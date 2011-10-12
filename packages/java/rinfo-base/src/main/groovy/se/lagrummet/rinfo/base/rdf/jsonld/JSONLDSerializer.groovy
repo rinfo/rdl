@@ -22,10 +22,13 @@ class JSONLDSerializer {
     def iriTermMap = [:]
     def coerceMap = [:]
     def vocab = null
-    def addRevs = true
+    boolean keepUnmapped
+    boolean addRevs
 
-    JSONLDSerializer(contextMap) {
+    JSONLDSerializer(contextMap, keepUnmapped=false, addRevs=false) {
         this.contextMap = contextMap
+        this.keepUnmapped = keepUnmapped
+        this.addRevs = addRevs
         contextMap.each { key, value ->
             if (key == VOCAB_KEY)
                 this.vocab = value
@@ -40,13 +43,14 @@ class JSONLDSerializer {
         }
     }
 
-    def toJSON(Repository repo, String resourceIri) {
+    Map toJSON(Repository repo, String resourceIri) {
         def describer = new Describer(repo.getConnection())
         def item = null
         try {
             def description = describer.findDescription(resourceIri)
-            if (description == null)
+            if (description == null) {
                 return
+            }
             item = createJSON(description)
             if (addRevs) {
                 def revItems = getRevData(describer, resourceIri)
@@ -60,68 +64,96 @@ class JSONLDSerializer {
         return item
     }
 
-    def createJSON(Description description, String rootIri=null) {
+    Map createJSON(Description description, String rootIri=null) {
         def item = [:]
-        if (description.about != null && !description.about.startsWith("_:"))
+        if (description.about != null && !description.about.startsWith("_:")) {
             item[subjectKey] = description.about
-            if (rootIri == description.about) {
-                return item
-            }
+        }
+        if (rootIri == description.about) {
+            return item
+        }
         description.propertyValuesMap.each { prop, values ->
             if (prop == RDF_TYPE) {
-                def result = values.collect { toKey(it) }
-                if (result.size() == 1)
-                    result = result[0]
-                item[typeKey] = result
-            } else {
-                def key = toKey(prop)
-                def result = values.collect { valueToJSON(description.describer, key, it, rootIri) }
-                if (result.size() == 1)
-                    result = result[0]
-                item[key] = result
+                def typeTokens = values.collect { toKey(it) }.findAll { it }
+                if (typeTokens) {
+                    item[typeKey] = reduceValues(typeKey, typeTokens)
+                }
+            } // NOTE: continue, since one might want *both* a type token and data about type
+            def key = toKey(prop)
+            if (!key) {
+                return
             }
+            def result = values.collect {
+                valueToJSON(description.describer, key, it, rootIri ?: description.about)
+            }
+            item[key] = reduceValues(key, result)
         }
         return item
     }
 
-    def toKey(String prop) {
+    String toKey(String prop) {
         def term = iriTermMap[prop]
-        if (term)
+        if (term) {
             return term
+        }
         def vocabKeyPair = Describer.splitVocabTerm(prop)
         def vocab = vocabKeyPair[0]
-        if (vocab == this.vocab)
+        if (vocab == this.vocab) {
             return vocabKeyPair[1]
-        else
-            return iriTermMap[vocab] + ":" + vocabKeyPair[1]
+        }
+        else {
+            def prefix = iriTermMap[vocab]
+            if (!prefix) {
+                if (keepUnmapped) {
+                    // TODO: prefix = generatePrefix(vocab)
+                } else {
+                    return null
+                }
+            }
+            return prefix + ":" + vocabKeyPair[1]
+        }
     }
 
-    def valueToJSON(Describer describer, String key, Object value, String rootIri=null) {
+    Object valueToJSON(Describer describer, String key, Object value, String rootIri=null) {
         if (value instanceof RDFLiteral) {
-            if (value.datatype == null)
+            if (value.datatype == null) {
                 return value.toString()
+            }
             def dtVocabTermPair = Describer.splitVocabTerm(value.datatype)
             def isXsdVocab = (dtVocabTermPair[0] == Describer.XSD_NS)
             def dtTerm = dtVocabTermPair[1]
             // TODO: improve coerce mechanics (set of tokens; support @iri...)
-            if (key in coerceMap[dtTerm])
+            if (key in coerceMap[dtTerm]) {
                 return value.toString()
             // TODO: which number types?
-            else if (isXsdVocab && (dtTerm in ['boolean', 'int', 'integer', 'float', 'double']))
+            } else if (isXsdVocab && (dtTerm in ['boolean', 'int', 'integer', 'float', 'double'])) {
                 return value.toNativeValue()
-            else
+            } else {
                 return ["@datatype": isXsdVocab? dtTerm : value.datatype,
                        "@literal": value.toString()]
+            }
         } else {
             return createJSON(describer.newDescription(value), rootIri)
         }
     }
 
-    def getRevData(Describer describer, String resourceIri) {
+    Object reduceValues(String key, List values) {
+        // TODO: check if term is specified as "always a set"...
+        if (values.size() == 1) {
+            return values[0]
+        } else {
+            return values
+        }
+    }
+
+    Map getRevData(Describer describer, String resourceIri) {
         def revItems = [:]
         def revTriples = describer.triples(null, null, resourceIri)
         for (triple in revTriples) {
             def key = toKey(triple.property)
+            if (!key) {
+                continue
+            }
             def itemsByKey = null
             if (key in revItems) {
                 itemsByKey = revItems[key]

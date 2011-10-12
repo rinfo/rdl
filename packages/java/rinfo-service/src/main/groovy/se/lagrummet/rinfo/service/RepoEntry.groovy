@@ -201,7 +201,11 @@ class RepoEntry {
         def ctx = getContext()
         logger.info("Loading RDF from <${url}>")
         def inStream = loader.getResponseAsInputStream(url)
-        conn.add(inStream, url, RDFFormat.forMIMEType(mediaType), ctx)
+        try {
+          conn.add(inStream, url, RDFFormat.forMIMEType(mediaType), ctx)
+        } finally {
+          inStream.close()
+        }
     }
 
     void addAtomEntryLinkMetadata(String url,

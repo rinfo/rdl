@@ -1009,7 +1009,7 @@
             owl:minCardinality 1
         ],
         [ a owl:Restriction;
-            owl:onProperty :ratificieringsdatum;
+            owl:onProperty :ratificeringsdatum;
             owl:cardinality 1
         ],
         [ a owl:Restriction;
@@ -1028,7 +1028,7 @@
     rdfs:domain :InternationellOverenskommelse;
     rdfs:comment "De språk som de giltiga texterna i en konvention är skrivna på."@sv; .
 
-:ratificieringsdatum a owl:DatatypeProperty;
+:ratificeringsdatum a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Ratificieringsdatum"@sv;
     rdfs:comment "Datum då Sveriges rike ratificerade den internationella överenskommelsen."@sv;

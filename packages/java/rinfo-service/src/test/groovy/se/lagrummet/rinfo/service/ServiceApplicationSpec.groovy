@@ -51,7 +51,7 @@ class ServiceApplicationSpec extends Specification {
 
         // create a local ServiceApplication
         def serviceApplication = new ServiceApplication(context.createChildContext())
-        repositoryHandler = serviceApplication.repositoryHandler
+        repositoryHandler = serviceApplication.components.repositoryHandler
         repositoryHandler.cleanRepository()
 
         // create a local application that serves feeds
