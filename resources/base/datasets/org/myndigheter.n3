@@ -487,6 +487,10 @@
 # äldre föreskrifter utgivna av nu nedlagda myndigheter
 # påträffas. Synka även med Synka även med ../serie/fs.n3
 
+<http://rinfo.lagrummet.se/org/arbetsmarknadsstyrelsen>
+    a foaf:Organization;
+    foaf:name "Arbetsmarknadsstyrelsen"@sv .
+
 <http://rinfo.lagrummet.se/org/bankinspektionen>
     a foaf:Organization;
     foaf:name "Bankinspektionen"@sv .
