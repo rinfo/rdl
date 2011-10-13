@@ -133,6 +133,7 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/fs/vvfs> :abbrSlug "vvfs" .
 
 # Författningssamlingar för upphävda myndigheter
+<http://rinfo.lagrummet.se/serie/fs/amsfs> :abbrSlug "amsfs" .
 <http://rinfo.lagrummet.se/serie/fs/bfs> :abbrSlug "bfs" .
 <http://rinfo.lagrummet.se/serie/fs/dfs> :abbrSlug "dfs" .
 <http://rinfo.lagrummet.se/serie/fs/saeifs> :abbrSlug "saeifs" .
