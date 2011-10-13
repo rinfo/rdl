@@ -84,10 +84,10 @@
       </p>
       <p>Exempel:</p>
       <p style="display:block; text-align: center; page-break-inside: avoid;">
-	<code>http://<b>service.demo.lagrummet.se</b>/-/doc?q=eko*<br/></code>
+	<code>http://<b>service.demo.lagrummet.se</b>/-/publ?q=eko*<br/></code>
 	|<br/>
 	V<br/>
-	<code>http://<b>service.lagrummet.se</b>/-/doc?q=eko*</code>
+	<code>http://<b>service.lagrummet.se</b>/-/publ?q=eko*</code>
       </p>
     </div>
 
@@ -101,14 +101,14 @@
       </p>
       <pre>
 $ <b>curl -H "Accept: application/json" \
-http://service.demo.lagrummet.se/-/doc?q=ekonom*</b>
+http://service.demo.lagrummet.se/-/publ?q=ekonom*</b>
       </pre>
       <p>
 	För att lista alla dokument utgivna av Finansinspektionen:
       </p>
       <pre>
 $ <b>curl -H "Accept: application/json" \
-http://service.demo.lagrummet.se/-/doc?publisher.iri=*/finansinspektionen</b>
+http://service.demo.lagrummet.se/-/publ?publisher.iri=*/finansinspektionen</b>
       </pre>
 
       <p>
@@ -457,7 +457,7 @@ http://rinfo.lagrummet.se/publ/rf/rk/2009:4 > rk-2009-4.pdf</b>
 	angetts. Parametrarna anges i URL:en och kan omfatta både
 	dokumentegenskaper och dokumentinnehåll. Den grundaddress som
 	frågningen sker mot är
-	<code>http://service.lagrummet.se/-/doc</code>.  Svaren
+	<code>http://service.lagrummet.se/-/publ</code>.  Svaren
 	returneras som JSON. För varje dokument i träfflistan anges
 	grundläggande information om dokumentet inklusive den address
 	där den utökade metadatan för dokumentet kan hittas (se
@@ -471,7 +471,7 @@ http://rinfo.lagrummet.se/publ/rf/rk/2009:4 > rk-2009-4.pdf</b>
 	"ekonom"):
       </p>
       <pre>
-http://service.lagrummet.se/-/doc?q=ekonom*
+http://service.lagrummet.se/-/publ?q=ekonom*
       </pre>
       <p>
 	<b>Fritextsökning i fält:</b> Vissa dokumentegenskaper kan
@@ -483,13 +483,13 @@ http://service.lagrummet.se/-/doc?q=ekonom*
 	innehåller texten "djur"):
       </p>
       <pre>
-http://service.lagrummet.se/-/doc?title=*djur*
+http://service.lagrummet.se/-/publ?title=*djur*
       </pre>
       <p>
 	<b>Dokumenttyp:</b> Med parametern <code>type</code> (som kan anges flera gånger) kan man avgränsa frågan till en eller flera dokumenttyper. Se nedan under "Tillgängliga parametrar" för hur hela listan av möjliga dokumenttyper kan fås. Exempel (returnerar alla dokument av typen <code>Lag</code> eller <code>Forordning</code>):
       </p>
       <pre>
-http://service.lagrummet.se/-/doc?type=Lag&amp;type=Forordning
+http://service.lagrummet.se/-/publ?type=Lag&amp;type=Forordning
       </pre>
       <p>
 	<b>Publikationssamling:</b> De flesta dokument i
@@ -518,7 +518,7 @@ http://service.lagrummet.se/-/doc?type=Lag&amp;type=Forordning
 	(returnerar alla dokument i FFFS):
       </p>
       <pre>
-http://service.lagrummet.se/-/doc?forfattningssamling.iri=
+http://service.lagrummet.se/-/publ?forfattningssamling.iri=
 "http://rinfo.lagrummet.se/serie/fs/fffs"
       </pre>
       <p>
@@ -528,13 +528,13 @@ http://service.lagrummet.se/-/doc?forfattningssamling.iri=
 	<code>/fffs</code>:
       </p>
       <pre>
-http://service.lagrummet.se/-/doc?forfattningssamling.iri=*/fffs
+http://service.lagrummet.se/-/publ?forfattningssamling.iri=*/fffs
       </pre>
       <p><b>Sortering:</b> Många av de parametrar som man kan avgränsa
       sökningen på kan också användas för att sortera sökresultaten. Parametern <code>_sort</code> används, med parametervärdet satt till det parameter man vill sortera på. Sorteringen är vanligen i stigande ordning, men kan fås i fallande ordning om parametervärdet föregås av ett '-'. Exempel (alla dokument i FFFS, sorterat i fallande beslutsdatumordning):
       </p>
       <pre>
-http://service.lagrummet.se/-/doc?forfattningssamling.iri=*/fffs&amp;_sort=-beslutsdatum
+http://service.lagrummet.se/-/publ?forfattningssamling.iri=*/fffs&amp;_sort=-beslutsdatum
       </pre>
       <p>
 	<b>Paginering:</b> Om inget annat anges returneras endast de
@@ -548,7 +548,7 @@ http://service.lagrummet.se/-/doc?forfattningssamling.iri=*/fffs&amp;_sort=-besl
 	träffar på en sida ändras från 50. Exempel (Listar dokument 21-40 i FFFS):
       </p>
       <pre>
-http://service.lagrummet.se/-/doc?forfattningssamling.iri=*/fffs&amp;_pageSize=20&amp;_page=1
+http://service.lagrummet.se/-/publ?forfattningssamling.iri=*/fffs&amp;_pageSize=20&amp;_page=1
       </pre>
       <p>
 	Nycklarna <code>prev</code> och <code>next</code> i resultatet
