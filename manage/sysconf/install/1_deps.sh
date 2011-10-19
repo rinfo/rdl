@@ -7,5 +7,7 @@ sudo /usr/sbin/a2enmod proxy_http
 sudo apt-get install pgp -y
 
 # admin tools:
+sudo apt-get install wget
+sudo apt-get install unzip
 sudo apt-get install lsof
 

@@ -68,7 +68,7 @@ standing in the directory rinfo-trunk/manage
    * Ensure that sudo is available (run: apt-get install sudo if not)
    * Ensure that sshd is available (run: sudo apt-get install openssh-server if not)
    * Ensure that you can ssh to the server, preferably passwordless
-   * Ensure that the following tools are available: wget, curl, rsync
+   * Ensure that the following tools are available: wget, curl, rsync, unzip
      and add-apt-repository (available in the ubuntu package
      python-software-properties)
    * Ensure that there is a package repository setup that contains sun-java6-jdk
@@ -91,6 +91,10 @@ standing in the directory rinfo-trunk/manage
       <IP-OF-VIRTUAL-SERVER>  rinfo-integration
       <IP-OF-VIRTUAL-SERVER>  rinfo-main rinfo-service rinfo-admin rinfo-checker
       <IP-OF-VIRTUAL-SERVER>  sfs-demo dv-demo prop-demo sou-demo ds-demo
+
+   * Unless user and group tomcat:tomcat exist on the virtual server, create them:
+      sudo groupadd tomcat
+      sudo useradd tomcat
 
    * Create the rinfo user on your virtual server:
       sudo groupadd rinfo
@@ -169,6 +173,7 @@ Deploy service:
 
    * Run on your local computer::
       fab target.integration app.service.deploy_sesame app.service.install_elasticsearch
+      fab target.integration app.service.start_elasticsearch
       fab target.integration app.service.all
 
    * Ping main feed::
@@ -212,6 +217,11 @@ environment. Run all of these commands on the integration environment::
 If you also want to delete the demo data::
 
    * sudo rm -rf /opt/rinfo/demo-depots/*
+
+To clear all data from the service backends, do:
+
+   * local: curl -XPOST http://rinfo-integration:8080/sesame-workbench/repositories/rinfo/clear
+   * integration: curl -XDELETE http://localhost:9200/rinfo
 
 Development Environment
 ========================================================================
