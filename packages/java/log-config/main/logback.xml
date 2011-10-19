@@ -10,7 +10,7 @@
       <pattern>%d{yy-MM-dd HH:mm:ss} %5p %c:%L - %m [%t]%n</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>\${catalina.home}/logs/${project.build.finalName}.log%d{.yyyy-MM-dd-HH}</fileNamePattern>
+      <fileNamePattern>\${catalina.home}/logs/${project.build.finalName}.log%d{.yyyy-MM-dd}</fileNamePattern>
     </rollingPolicy>
   </appender>
   
@@ -21,7 +21,7 @@
       <pattern>%m%n</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>\${catalina.home}/logs/${project.build.finalName}-access.log%d{.yyyy-MM-dd-HH}</fileNamePattern>
+      <fileNamePattern>\${catalina.home}/logs/${project.build.finalName}-access.log%d{.yyyy-MM-dd}</fileNamePattern>
     </rollingPolicy>
   </appender>
   
