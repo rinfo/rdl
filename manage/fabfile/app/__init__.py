@@ -1,6 +1,6 @@
 from __future__ import with_statement
 from fabric.api import *
-from exceptions import OSError
+from fabric.contrib.project import rsync_project
 from fabfile.util import venv
 from fabfile.target import _needs_targetenv
 from fabfile.server import _managed_tomcat_restart
@@ -11,9 +11,9 @@ def local_lib_rinfo_pkg():
 
 def _deploy_war(localwar, warname, headless=False):
     _needs_targetenv()
-    put(localwar, "%(dist_dir)s/%(warname)s.war"%venv())
+    rsync_project("%(dist_dir)s/%(warname)s.war" % venv(), localwar, '--progress')
     with _managed_tomcat_restart(5, headless):
-        run("rm -rf %(tomcat_webapps)s/%(warname)s/"%venv())
-        run("unzip -q %(dist_dir)s/%(warname)s.war -d %(tomcat_webapps)s/%(warname)s"%venv())
-        #run("chmod -R go-w %(tomcat_webapps)s/%(warname)s"%venv())
+        run("rm -rf %(tomcat_webapps)s/%(warname)s/" % venv())
+        run("unzip -q %(dist_dir)s/%(warname)s.war -d %(tomcat_webapps)s/%(warname)s" % venv())
+        #run("chmod -R go-w %(tomcat_webapps)s/%(warname)s" % venv())
 
