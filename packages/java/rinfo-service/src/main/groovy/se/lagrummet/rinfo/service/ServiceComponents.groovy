@@ -54,7 +54,11 @@ class ServiceComponents {
         try {
             loadScheduler.shutdown()
         } finally {
-            repositoryHandler.shutDown()
+            try {
+                repositoryHandler.shutDown()
+            } finally {
+                elasticData?.shutdown()
+            }
         }
     }
 

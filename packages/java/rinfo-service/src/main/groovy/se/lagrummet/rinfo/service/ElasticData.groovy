@@ -95,4 +95,8 @@ class ElasticData {
         }
     }
 
+    synchronized void shutdown() {
+        client.close()
+    }
+
 }
