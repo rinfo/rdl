@@ -69,6 +69,7 @@ def configure_sites():
                 sudo("cp -vu apache2/sites-available/%s /etc/apache2/sites-available/" % site)
                 sudo("a2ensite %s" % site)
 
+@task
 def install_init_d(name):
     _sync_workdir()
     with cd("%(mgr_workdir)s/common/etc" % env):
