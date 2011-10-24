@@ -203,6 +203,34 @@ follow the instructions below:
    * local: fab target.integration app.service.all
    * local: fab target.integration app.service.all
 
+Data Tools Bundled with the Web Apps
+========================================================================
+
+A script is provided to enable the running of certain diagnostic and
+maintenance tools which are bundled with the deployed web applications.
+
+These can be run on any deploy target server.
+
+Regenerate The ElasticSearch Index
+------------------------------------------------------------------------
+
+To extract text data from elasticsearch, run::
+
+    $ ~/mgr_work/common/bin/run_webapp_tool.sh /opt/tomcat/webapps/rinfo-service/ rinfo.service.cmd.ElasticTextExtract rinfo ~/elastic_text_extracts
+
+Then delete the entire elasticsearch index by calling::
+
+    $ curl -XDELETE http://localhost:9200/rinfo
+
+Then regenerate the elasticsearch index from the Sesame repo combined with
+extracted texts::
+
+    $ ~/mgr_work/common/bin/run_webapp_tool.sh /opt/tomcat/webapps/rinfo-service/ rinfo.service.cmd.GenElastic rinfo ~/elastic_text_extracts
+
+(These usually complete in about 30 minutes. It's recommended to run these in
+e.g. a screen session to ensure that loss of connection doesn't abort the
+process.)
+
 Deleting All Data
 ========================================================================
 
