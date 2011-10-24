@@ -43,6 +43,33 @@ Package sesame::
 Then copy ``openrdf-sesame.war`` and ``sesame-workbench.war`` in
 ``target/dependency`` to the container (e.g. ``$TOMCAT_HOME/webapps``).
 
+ElasticSearch
+------------------------------------------------------------------------
+
+Download and install ElasticSearch by following the instuctions at
+<http://www.elasticsearch.org/>.
+
+Start an instance by running the ``elasticsearch`` command (commonly in the bin
+directory of the installation)::
+
+    $ elasticsearch -f
+
+You can configure the location of log and data directories by creating an
+``elasticsearch.yml`` file and adding something like this (choose paths to your
+liking)::
+
+    cluster:
+        name: elasticsearch
+
+    path:
+        logs: /opt/work/rinfo/elasticsearch/log
+        data: /opt/work/rinfo/elasticsearch/data
+
+And run with (choose the config file location to your liking)::
+
+    $ elasticsearch -f -D es.config=/opt/work/rinfo/elasticsearch/elasticsearch.yml
+
+
 Data directories
 ------------------------------------------------------------------------
 
