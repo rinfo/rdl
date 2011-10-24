@@ -61,7 +61,7 @@ class ServiceApplication extends Application {
         }
 
         router.attach("/",
-                new Redirector(ctx, "{rh}/view", Redirector.MODE_CLIENT_SEE_OTHER))
+                new Redirector(ctx, "{rh}/ui/", Redirector.MODE_CLIENT_SEE_OTHER))
 
         router.attach("/collector", new Finder(ctx, RDFLoaderHandler))
 
