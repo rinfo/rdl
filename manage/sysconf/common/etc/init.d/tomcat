@@ -14,7 +14,8 @@ NAME=tomcat
 # Tomcat init-script
 TOMCAT_USER=tomcat
 TOMCAT_GROUP=tomcat
-PID_FILE="/var/run/$NAME.pid"
+PID_DIR="/var/run/$NAME"
+PID_FILE="$PID_DIR/$NAME.pid"
 
 CATALINA_SH=/opt/tomcat/bin/catalina.sh
 JAVA_OPTS="-Xmx1024m -XX:MaxPermSize=256m -server"
@@ -26,6 +27,8 @@ set -e
 case $1 in
     start)
         log_daemon_msg "Starting $NAME"
+        mkdir -p "$PID_DIR"
+        chown $TOMCAT_USER:$TOMCAT_GROUP "$PID_DIR"
         if start-stop-daemon -b --start --pidfile "$PID_FILE" \
             -u "$TOMCAT_USER" -g "$TOMCAT_GROUP" -c "$TOMCAT_USER" \
             -x /bin/bash -- -c "set -a; JAVA_OPTS=\"$JAVA_OPTS\"; CATALINA_PID=\"$PID_FILE\"; $CATALINA_SH start"
@@ -40,22 +43,21 @@ case $1 in
     ;;
     stop)
         log_daemon_msg "Stopping $NAME"
-        #if [ -f "$PID_FILE" ]; then 
-        #    start-stop-daemon --stop --pidfile "$PID_FILE" \
-        #        --user "$TOMCAT_USER" \
-        #        --retry=TERM/20/KILL/5 >/dev/null
-        #    if [ $? -eq 1 ]; then
-        #        log_progress_msg "$NAME is not running but pid file exists, cleaning up"
-        #    elif [ $? -eq 3 ]; then
-        #        PID="`cat $PID_FILE`"
-        #        log_failure_msg "Failed to stop $NAME (pid $PID)"
-        #        exit 1
-        #    fi
-        #    rm -f "$PID_FILE"
-        #else
-        #    log_progress_msg "(not running)"
-        #fi
-        sudo -u $TOMCAT_USER $CATALINA_SH stop
+        if [ -f "$PID_FILE" ]; then 
+            start-stop-daemon --stop --pidfile "$PID_FILE" \
+                --user "$TOMCAT_USER" \
+                --retry=TERM/20/KILL/5 >/dev/null
+            if [ $? -eq 1 ]; then
+                log_progress_msg "$NAME is not running but pid file exists, cleaning up"
+            elif [ $? -eq 3 ]; then
+                PID="`cat $PID_FILE`"
+                log_failure_msg "Failed to stop $NAME (pid $PID)"
+                exit 1
+            fi
+            rm -f "$PID_FILE"
+        else
+            log_progress_msg "(not running)"
+        fi
         log_end_msg 0
     ;;
     #restart|force-reload)
