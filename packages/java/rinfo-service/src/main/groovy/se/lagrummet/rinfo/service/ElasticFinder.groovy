@@ -6,6 +6,7 @@ import org.restlet.Context
 import static org.restlet.data.CharacterSet.UTF_8
 import org.restlet.data.MediaType
 import org.restlet.data.Reference
+import org.restlet.data.Status
 import org.restlet.Request
 import org.restlet.Response
 import org.restlet.representation.StringRepresentation
@@ -14,6 +15,7 @@ import org.restlet.resource.Finder
 import org.restlet.resource.Get
 import org.restlet.resource.ServerResource
 
+import org.elasticsearch.action.search.SearchPhaseExecutionException
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.action.search.*
@@ -60,9 +62,27 @@ class ElasticFinder extends Finder {
     ServerResource find(Request request, Response response) {
         final String docType = request.attributes["docType"]
         SearchRequestBuilder srb = elasticData.client.prepareSearch(elasticData.indexName)
-        def data = (docType == facetStatsSegment)?
-            getElasticStats(srb, request.resourceRef) :
-            searchElastic(srb, docType, request.resourceRef)
+        def data = null
+        def status = null
+        try {
+            data = (docType == facetStatsSegment)?
+                getElasticStats(srb, request.resourceRef) :
+                searchElastic(srb, docType, request.resourceRef)
+        } catch (Exception e) {
+            data = [type: "Error"]
+            log.error "Caught exception during query.", e
+            if (e.cause instanceof SearchPhaseExecutionException) {
+                status = Status.CLIENT_ERROR_BAD_REQUEST
+                data.description = e.cause.message
+            } else {
+                status = Status.SERVER_ERROR_INTERNAL
+                data.description = e.message
+            }
+        }
+        return toResource(data, status)
+    }
+
+    def toResource(final Map data, final Status status=null) {
         if (data == null)
             return null
         return new ServerResource() {
@@ -70,6 +90,9 @@ class ElasticFinder extends Finder {
             Representation asJSON() {
                 def jsonStr = jsonMapper.writeValueAsString(data)
                 def mediaType = MediaType.APPLICATION_JSON
+                if (status != null) {
+                    setStatus(status)
+                }
                 return new StringRepresentation(jsonStr, mediaType, null, UTF_8)
             }
         }
