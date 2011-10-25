@@ -67,17 +67,6 @@
       <artifactId>sesame-repository-http</artifactId>
     </dependency>
 
-    <!-- TODO: Use? Move to rinf-rdf-repo?
-    <dependency>
-      <groupId>org.openrdf.sesame</groupId>
-      <artifactId>sesame-sail-rdbms</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-    </dependency>
-    -->
-
     <dependency>
       <groupId>org.elasticsearch</groupId>
       <artifactId>elasticsearch</artifactId>
