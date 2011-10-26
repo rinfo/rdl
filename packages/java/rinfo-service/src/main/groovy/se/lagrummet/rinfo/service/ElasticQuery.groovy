@@ -38,10 +38,14 @@ class ElasticQuery {
     }
 
     Map search(String docType, Reference ref) {
-        SearchRequestBuilder srb = elasticData.client.prepareSearch(elasticData.indexName)
+        def srb = newSearchRequestBuilder()
         return (docType == facetStatsSegment)?
             getElasticStats(srb, ref) :
             searchElastic(srb, docType, ref)
+    }
+
+    SearchRequestBuilder newSearchRequestBuilder() {
+        return elasticData.client.prepareSearch(elasticData.indexName)
     }
 
     Map searchElastic(SearchRequestBuilder srb, String docType, Reference ref) {
@@ -49,9 +53,23 @@ class ElasticQuery {
         if (!showTerms) {
             return null
         }
-        def prepSearch = prepareElasticSearch(srb, ref, docType, showTerms)
 
-        SearchResponse esRes = srb.execute().actionGet()
+        def prepSearch = null
+        SearchResponse esRes = null
+        try {
+            prepSearch = prepareElasticSearch(srb, ref, docType, showTerms)
+            esRes = srb.execute().actionGet()
+        } catch (Exception e) {
+            if (e.cause instanceof SearchPhaseExecutionException) {
+                log.debug "Malformed query <${ref}>. Retrying with escaped query text..."
+                srb = newSearchRequestBuilder()
+                prepSearch = prepareElasticSearch(srb, ref, docType, showTerms, true)
+                esRes = srb.execute().actionGet()
+            } else {
+                throw e
+            }
+        }
+
         assert esRes.failedShards == 0
 
         def data = [
@@ -102,14 +120,17 @@ class ElasticQuery {
     def getElasticStats(SearchRequestBuilder srb, Reference ref) {
         //def qb = QueryBuilders.matchAllQuery()
         //srb.setQuery(qb)
-        prepareElasticSearch(srb, ref, null, [], 0, true)
+        prepareElasticSearch(srb, ref, null, Collections.emptyList(), false, true)
         SearchResponse esRes = srb.execute().actionGet()
         return buildStats(esRes)
     }
 
     Map prepareElasticSearch(SearchRequestBuilder srb, Reference ref,
-            String docType, Collection<String> showTerms,
-            pageSize=defaultPageSize, addStats=false) {
+            String docType,
+            Collection<String> showTerms,
+            escapeQueryTexts=false,
+            addStats=false,
+            pageSize=defaultPageSize) {
         def queryForm = ref.getQueryAsForm(UTF_8)
         def q = null
         def terms = [:]
@@ -124,7 +145,7 @@ class ElasticQuery {
             if (value == null) {
                 continue
             }
-            value = value.replace(":", "\\:")
+            value = escapeQueryTexts? escapeQueryString(value) : value.replace(":", "\\:")
             if (name == 'q') {
                 q = value
             } else if (name == sortParamKey) {
@@ -162,7 +183,7 @@ class ElasticQuery {
                 ranges.get(name.substring(4), [:]).max = value
             } else {
                 terms[name] = queryForm.getValuesArray(name).collect {
-                    it.replace(":", "\\:")
+                    escapeQueryString(it)
                 }
             }
         }
@@ -235,6 +256,12 @@ class ElasticQuery {
             queryString: ref.query ?: '',
             addStats: addStats
         ]
+    }
+
+    String escapeQueryString(String qs) {
+        return qs.
+            replaceAll(/(?<!\\)([:&|~\\()])/, /\\$1/).
+            replaceAll(/^(AND|OR)|(AND|OR)$/, "")
     }
 
     void prepareStats(SearchRequestBuilder srb) {

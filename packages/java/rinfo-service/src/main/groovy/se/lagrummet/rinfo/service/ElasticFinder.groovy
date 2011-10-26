@@ -15,8 +15,6 @@ import org.restlet.resource.Finder
 import org.restlet.resource.Get
 import org.restlet.resource.ServerResource
 
-import org.elasticsearch.action.search.SearchPhaseExecutionException
-
 import org.codehaus.jackson.map.ObjectMapper
 import org.codehaus.jackson.map.SerializationConfig
 
@@ -46,13 +44,8 @@ class ElasticFinder extends Finder {
         } catch (Exception e) {
             data = [type: "Error"]
             log.error "Caught exception during query.", e
-            if (e.cause instanceof SearchPhaseExecutionException) {
-                status = Status.CLIENT_ERROR_BAD_REQUEST
-                data.description = e.cause.message
-            } else {
-                status = Status.SERVER_ERROR_INTERNAL
-                data.description = e.message
-            }
+            status = Status.SERVER_ERROR_INTERNAL
+            data.description = e.message
         }
         return toResource(data, status)
     }
