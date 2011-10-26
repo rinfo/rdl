@@ -18,6 +18,7 @@ class ServiceComponents {
     RepositoryHandler repositoryHandler
     JsonLdSettings jsonLdSettings
     ElasticData elasticData
+    ElasticQuery elasticQuery
 
     public Repository getRepository() {
         return repository
@@ -31,6 +32,7 @@ class ServiceComponents {
         this.loadScheduler = createLoadScheduler()
         this.jsonLdSettings = createJsonLdSettings()
         this.elasticData = createElasticData()
+        this.elasticQuery = createElasticQuery()
     }
 
     String getDataAppBaseUri() {
@@ -102,6 +104,13 @@ class ServiceComponents {
             return null
         }
         return new ElasticLoader(elasticData)
+    }
+
+    private def createElasticQuery() {
+        if (elasticData == null) {
+            return null
+        }
+        return new ElasticQuery(elasticData, getServiceAppBaseUrl())
     }
 
 }
