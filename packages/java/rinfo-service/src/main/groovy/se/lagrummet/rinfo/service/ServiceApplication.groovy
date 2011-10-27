@@ -72,9 +72,9 @@ class ServiceApplication extends Application {
                     components.jsonLdSettings, components.dataAppBaseUri)
             ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
 
-        if (components.elasticData) {
+        if (components.elasticQuery) {
             router.attach("/-/{docType}",
-                    new ElasticFinder(ctx, components.elasticData, components.serviceAppBaseUrl))
+                    new ElasticFinder(ctx, components.elasticQuery))
         }
 
         if (mediaDirUrl) {
