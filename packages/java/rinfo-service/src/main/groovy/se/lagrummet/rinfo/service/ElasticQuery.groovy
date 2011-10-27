@@ -260,7 +260,7 @@ class ElasticQuery {
 
     String escapeQueryString(String qs) {
         return qs.
-            replaceAll(/(?<!\\)([:&|~\\()])/, /\\$1/).
+            replaceAll(/(?<!\\)([:&|\\()\[\]{}"])/, /\\$1/).
             replaceAll(/^(AND|OR)|(AND|OR)$/, "")
     }
 
