@@ -93,7 +93,8 @@ class Builder {
                     destfile:"${buildDir}/handbok/exempel.zip")
         }
 
-        def svnVersionNumber = getSvnVersionNumber()
+	// def svnVersionNumber = getSvnVersionNumber()
+        def svnVersionNumber = ""
 
         if (generate) {
             generateBaseDocs()
@@ -118,7 +119,7 @@ class Builder {
             def params = [
                 docdate: new SimpleDateFormat("yyyy-MM-dd").format(
                         new Date(it.lastModified() )),
-                svnversion: svnVersionNumber,
+                //svnversion: svnVersionNumber,
                 root: relRoot(srcPath, it)
             ]
             def tplt = new DocTemplate(systemIdMap, customProtocols, params)
