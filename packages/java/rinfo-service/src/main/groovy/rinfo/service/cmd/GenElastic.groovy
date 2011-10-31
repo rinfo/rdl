@@ -40,7 +40,7 @@ class GenElastic {
         try {
             indexTripleStore()
         } finally {
-            elasticData.shutdown()
+            elData.shutdown()
         }
     }
 
