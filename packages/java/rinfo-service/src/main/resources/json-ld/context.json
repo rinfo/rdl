@@ -2,6 +2,11 @@
   "iri": "@subject",
   "type": "@type",
   "@vocab": "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#",
+  "xsd": "http://www.w3.org/2001/XMLSchema#",
+  "date": "http://www.w3.org/2001/XMLSchema#date",
+  "dateTime": "http://www.w3.org/2001/XMLSchema#dateTime",
+  "anyURI": "http://www.w3.org/2001/XMLSchema#anyURI",
+  "string": "http://www.w3.org/2001/XMLSchema#string",
 
   "label": "http://www.w3.org/2000/01/rdf-schema#label",
   "comment": "http://www.w3.org/2000/01/rdf-schema#comment",
@@ -47,7 +52,8 @@
     "date": ["beslutsdatum", "ikrafttradandedatum", "utfardandedatum", "utkomFranTryck", "avgorandedatum", "avkravtAvrapporteringsdatum", "ratificeringsdatum", "issued"],
     "dateTime": ["created", "updated", "entryUpdated"],
     "anyURI": ["id"],
-    "string": ["identifier", "domsnummer", "arsutgava", "lopnummer"]
+    "string": ["identifier", "domsnummer", "arsutgava", "lopnummer"],
+    "@iri": ["prev", "current", "next", "describedby"]
   },
 
   "@language": "sv"
