@@ -209,9 +209,7 @@ class ElasticQuery {
         }
         terms.each { name, values ->
             matches << values.collect { "${name}:${it}" }.join(" ")
-            if (!showTerms.contains(name)) {
-                srb.addFields(name)
-            }
+            if (!showTerms.contains(name)) srb.addFields(name)
         }
         def elasticQStr = matches.collect { "(${it})" }.join(' AND ')
 
@@ -243,6 +241,7 @@ class ElasticQuery {
                         rqb)
             }
             filterBuilders << rqb
+            if (!showTerms.contains(key)) srb.addFields(key) //key.replaceFirst(/\..+/, ".*")
         }
 
         for (fb in filterBuilders) {
