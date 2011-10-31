@@ -135,6 +135,7 @@ class ElasticQuery {
         def q = null
         def terms = [:]
         def ranges = [:]
+        def optionals = new HashSet()
         def page = 0
         if (docType) {
             srb.setTypes(docType)
@@ -171,19 +172,34 @@ class ElasticQuery {
                 pageSize = value as int
             } else if (name == statsParamKey) {
                 addStats = true
-            } else if (name.startsWith('year-')) {
-                ranges.get(name.substring(5), [:]).year = value
-            } else if (name.startsWith('minEx-')) {
-                ranges.get(name.substring(6), [:]).minEx = value
-            } else if (name.startsWith('min-')) {
-                ranges.get(name.substring(4), [:]).min = value
-            } else if (name.startsWith('maxEx-')) {
-                ranges.get(name.substring(6), [:]).maxEx = value
-            } else if (name.startsWith('max-')) {
-                ranges.get(name.substring(4), [:]).max = value
             } else {
-                terms[name] = queryForm.getValuesArray(name).collect {
-                    escapeQueryString(it)
+                def ifExists = false
+                if (name.startsWith('ifExists-')) {
+                    name = name.substring(9)
+                    ifExists = true
+                }
+                if (name.startsWith('year-')) {
+                    name = name.substring(5)
+                    ranges.get(name, [:]).year = value
+                } else if (name.startsWith('minEx-')) {
+                    name = name.substring(6)
+                    ranges.get(name, [:]).minEx = value
+                } else if (name.startsWith('min-')) {
+                    name = name.substring(4)
+                    ranges.get(name, [:]).min = value
+                } else if (name.startsWith('maxEx-')) {
+                    name = name.substring(6)
+                    ranges.get(name, [:]).maxEx = value
+                } else if (name.startsWith('max-')) {
+                    name = name.substring(4)
+                    ranges.get(name, [:]).max = value
+                } else {
+                    terms[name] = queryForm.getValuesArray(name).collect {
+                        escapeQueryString(it)
+                    }
+                }
+                if (ifExists) {
+                    optionals << name
                 }
             }
         }
@@ -220,6 +236,11 @@ class ElasticQuery {
                 } else if (item.max) {
                     rqb.lte(item.max)
                 }
+            }
+            if (key in optionals) {
+                rqb = FilterBuilders.orFilter(
+                        FilterBuilders.notFilter(FilterBuilders.existsFilter(key)),
+                        rqb)
             }
             filterBuilders << rqb
         }
