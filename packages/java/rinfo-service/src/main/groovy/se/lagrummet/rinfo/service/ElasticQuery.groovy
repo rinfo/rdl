@@ -12,6 +12,7 @@ import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.facet.FacetBuilders
 import org.elasticsearch.search.facet.datehistogram.DateHistogramFacet
 import org.elasticsearch.search.sort.SortOrder
@@ -81,35 +82,9 @@ class ElasticQuery {
             duration: "PT${esRes.took.secondsFrac}S" as String,
         ]
 
-        def pageParam = pageParamKey + '=' + prepSearch.page
-        def currentPage = "/-/${docType}?" +
-                ((prepSearch.queryString.indexOf(pageParam) == -1)? "${pageParam}&" : "") +
-                prepSearch.queryString
-        if (prepSearch.page > 0) {
-            data.prev = currentPage.replace(pageParam, pageParamKey + '=' + (prepSearch.page - 1))
-        }
-        data.current = currentPage as String
-        if (esRes.hits.hits.length == data.itemsPerPage &&
-                (data.startIndex + data.itemsPerPage) < data.totalResults) {
-            data.next = currentPage.replace(pageParam, pageParamKey + '=' + (prepSearch.page + 1))
-        }
-
+        addPagination(docType, prepSearch, esRes.hits.hits.length, data)
         data.items = esRes.hits.hits.collect {
-            def item = [:] //iri: it.id
-            //it.type (== 'doc' right now...)
-            it.fields.each { key, hf ->
-                // TODO: if (key.indexOf('.') > -1) { ... key.substring(0, key.indexOf('.')) }
-                if (hf.value != null) {
-                    item[key] = hf.values.size() > 1?  hf.values : hf.value
-                }
-            }
-            if (item.iri) {
-                item.describedby = makeServiceLink(item.iri)
-            }
-            it.highlightFields.each { key, hlf ->
-                item.get('matches', [:])[key] = hlf.fragments
-            }
-            return item
+            buildResultItem(it)
         }
         if (prepSearch.addStats) {
             data.statistics = buildStats(esRes)
@@ -294,6 +269,45 @@ class ElasticQuery {
             srb.addFacet(FacetBuilders.dateHistogramFacet(it).
                     field(it).interval("year"))
         }
+    }
+
+    def addPagination(docType, prepSearch, hitsLength, data) {
+        def pageParam = pageParamKey + '=' + prepSearch.page
+        def currentPage = "/-/${docType}?" +
+                ((prepSearch.queryString.indexOf(pageParam) == -1)? "${pageParam}&" : "") +
+                prepSearch.queryString
+        if (prepSearch.page > 0) {
+            data.prev = currentPage.replace(pageParam, pageParamKey + '=' + (prepSearch.page - 1))
+        }
+        data.current = currentPage as String
+        if (hitsLength == data.itemsPerPage &&
+                (data.startIndex + data.itemsPerPage) < data.totalResults) {
+            data.next = currentPage.replace(pageParam, pageParamKey + '=' + (prepSearch.page + 1))
+        }
+    }
+
+    Map buildResultItem(SearchHit hit) {
+        def item = [:]
+        hit.fields.each { key, hf ->
+            def lItem = item
+            def lKey = key
+            def dotAt = key.indexOf('.')
+            if (dotAt > -1) {
+                def baseKey = key.substring(0, dotAt)
+                lItem = item.get(baseKey, [:])
+                lKey = key.substring(dotAt + 1)
+            }
+            if (hf.value != null) {
+                lItem[lKey] = hf.values.size() > 1?  hf.values : hf.value
+            }
+        }
+        if (item.iri) {
+            item.describedby = makeServiceLink(item.iri)
+        }
+        hit.highlightFields.each { key, hlf ->
+            item.get('matches', [:])[key] = hlf.fragments
+        }
+        return item
     }
 
     Map buildStats(SearchResponse esRes) {

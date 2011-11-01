@@ -1,6 +1,7 @@
 package se.lagrummet.rinfo.service
 
 import org.elasticsearch.client.action.search.SearchRequestBuilder
+import org.elasticsearch.search.SearchHit
 import org.restlet.data.Reference
 
 import groovy.json.JsonSlurper
@@ -75,6 +76,59 @@ class ElasticQuerySpec extends Specification {
             "http://service.lagrummet.se/publ/sfs/199:175/data.json",
             "http://service.lagrummet.se/publ/sfs/199:175/data.json#p1",
         ]
+    }
+
+    def "should add pagination info"() {
+
+        given:
+        def data = [itemsPerPage: 50, totalResults: 101]
+        def qs = "label=*"
+        when:
+        def data1 = data + [startIndex: 0]
+        elQuery.addPagination("publ", [page: 0, queryString: qs], 50, data1)
+        then:
+        data1.prev == null
+        data1.current == "/-/publ?_page=0&label=*"
+        data1.next == "/-/publ?_page=1&label=*"
+
+        when:
+        def data2 = data + [startIndex: 50]
+        elQuery.addPagination("publ", [page: 1, queryString: qs], 50, data2)
+        then:
+        data2.prev == "/-/publ?_page=0&label=*"
+        data2.current == "/-/publ?_page=1&label=*"
+        data2.next == "/-/publ?_page=2&label=*"
+
+        when:
+        def data3 = data + [startIndex: 100]
+        elQuery.addPagination("publ", [page: 2, queryString: qs], 1, data3)
+        then:
+        data3.prev == "/-/publ?_page=1&label=*"
+        data3.current == "/-/publ?_page=2&label=*"
+        data3.next == null
+
+    }
+
+    def "should build item from a hit"() {
+        when:
+        def item = elQuery.buildResultItem([
+                getFields: {
+                    [
+                        "label": [value: "Item 1", values: ["Item 1"]],
+                        "parts": [value: "Part 1", values: ["Part 1", "Part 2"]],
+                        "rel.id": [value: "rel.1", values: ["rel.1"]],
+                        "rel.label": [value: "Rel 1", values: ["Rel 1"]],
+                    ]
+                },
+                getHighlightFields: {
+                    [:]
+                }
+            ] as SearchHit)
+        then:
+        item.label == "Item 1"
+        item.parts == ["Part 1", "Part 2"]
+        item.rel.id == "rel.1"
+        item.rel.label == "Rel 1"
     }
 
 }
