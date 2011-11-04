@@ -5,9 +5,12 @@ import se.lagrummet.rinfo.base.rdf.Describer
 
 import spock.lang.*
 
+
 class JSONLDSerializerSpec extends Specification {
 
-    static final FOAF = "http://xmlns.com/foaf/0.1/"
+    static FOAF = "http://xmlns.com/foaf/0.1/"
+    static XSD = JSONLDSerializer.XSD
+
     def repo
     def describer
 
@@ -19,6 +22,7 @@ class JSONLDSerializerSpec extends Specification {
         describer = new Describer(repo.getConnection())
         describer.setPrefix("foaf", FOAF)
         def person = describer.newDescription(personIRI, "foaf:Person")
+        person.addLiteral("foaf:bday", "1970-01-01", "xsd:date")
         person.addLiteral("foaf:name", "Some One")
         def homepage = person.addRel("foaf:homepage", homepageIRI)
         homepage.addType("foaf:Document")
@@ -30,17 +34,14 @@ class JSONLDSerializerSpec extends Specification {
 
     def "should serialize RDF as JSON"() {
         given:
-        def context = [
+        def context = new JSONLDContext(
             iri: "@subject",
             type: "@type",
-            foaf: "${FOAF}",
+            foaf: FOAF,
             name: "${FOAF}name",
             homepage: "${FOAF}homepage",
             Document: "${FOAF}Document",
-            "@coerce": [
-                "@iri": ['homepage']
-            ]
-        ]
+        )
         and:
         def serializer = new JSONLDSerializer(context)
 
@@ -54,11 +55,60 @@ class JSONLDSerializerSpec extends Specification {
         data.homepage.type == 'Document'
     }
 
+    def "should output explicit datatyped literals"() {
+        given:
+        def context = new JSONLDContext(
+            xsd: XSD,
+            "@vocab": FOAF,
+            "bday": "${FOAF}bday"
+        )
+        and:
+        def serializer = new JSONLDSerializer(context)
+        when:
+        def data = serializer.toJSON(repo, personIRI)
+        then:
+        data.bday == ["@literal": "1970-01-01", "@datatype": "xsd:date"]
+    }
+
+    def "should support current coerce key"() {
+        given:
+        def context = new JSONLDContext(
+            xsd: XSD,
+            "@vocab": FOAF,
+            "bday": "${FOAF}bday",
+            "@coerce": ["bday": "xsd:date"]
+        )
+        and:
+        def serializer = new JSONLDSerializer(context)
+        when:
+        def data = serializer.toJSON(repo, personIRI)
+        then:
+        data.bday == "1970-01-01"
+    }
+
+    def "should support experimental combined form"() {
+        given:
+        def context = new JSONLDContext(
+            xsd: XSD,
+            "@vocab": FOAF,
+            "bday": ["bday": "xsd:date"]
+        )
+        and:
+        def serializer = new JSONLDSerializer(context)
+        when:
+        def data = serializer.toJSON(repo, personIRI)
+        then:
+        data.bday == "1970-01-01"
+    }
+
+    // TODO: coerce @iri, @set, @rev...
+    //          "@coerce": ["homepage": "@iri"]
+
     def "should support experimental @rev notation"() {
         given:
-        def context = [
+        def context = new JSONLDContext(
             homepage: "${FOAF}homepage"
-        ]
+        )
         def serializer = new JSONLDSerializer(context, false, true)
         when: "serializing homepage"
         def hpData = serializer.toJSON(repo, homepageIRI)
@@ -73,33 +123,33 @@ class JSONLDSerializerSpec extends Specification {
 
     def "should use default vocab"() {
         given:
-        def context = [
+        def context = new JSONLDContext(
             "@vocab": FOAF
-        ]
+        )
         and:
         def serializer = new JSONLDSerializer(context)
         describer.newDescription(personIRI, "foaf:Person")
         when:
         def data = serializer.toJSON(repo, personIRI)
         then:
-        serializer.vocab == FOAF
+        serializer.context.vocab == FOAF
         data['@type'] == 'Person'
     }
 
     def "should add both type token and type data if specified"() {
         given:
-        def context = [
+        def context = new JSONLDContext(
             "a": "@type",
             "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
             "@vocab": FOAF
-        ]
+        )
         and:
         def serializer = new JSONLDSerializer(context)
         describer.newDescription(personIRI, "foaf:Person")
         when:
         def data = serializer.toJSON(repo, personIRI)
         then:
-        serializer.vocab == FOAF
+        serializer.context.vocab == FOAF
         data['a'] == 'Person'
         data['type']['@subject'] == "${FOAF}Person"
     }
