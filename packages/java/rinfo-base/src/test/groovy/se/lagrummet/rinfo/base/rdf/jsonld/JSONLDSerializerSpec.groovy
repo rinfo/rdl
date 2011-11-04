@@ -55,6 +55,21 @@ class JSONLDSerializerSpec extends Specification {
         data.homepage.type == 'Document'
     }
 
+    def "should use default vocab"() {
+        given:
+        def context = new JSONLDContext(
+            "@vocab": FOAF
+        )
+        and:
+        def serializer = new JSONLDSerializer(context)
+        describer.newDescription(personIRI, "foaf:Person")
+        when:
+        def data = serializer.toJSON(repo, personIRI)
+        then:
+        serializer.context.vocab == FOAF
+        data['@type'] == 'Person'
+    }
+
     def "should output explicit datatyped literals"() {
         given:
         def context = new JSONLDContext(
@@ -101,10 +116,30 @@ class JSONLDSerializerSpec extends Specification {
         data.bday == "1970-01-01"
     }
 
-    // TODO: coerce @iri, @set, @rev...
+    // TODO: coerce @iri
     //          "@coerce": ["homepage": "@iri"]
 
-    def "should support experimental @rev notation"() {
+    // TODO: coerce @list
+    //          "@coerce": ["bibo:authorList": "@list"]
+
+    def "should use '@set' coerce to always make a list"() {
+        given:
+        def otherIRI = "http://example.org/person/other#self"
+        def context = new JSONLDContext(
+            knows: ["${FOAF}knows": "@set"]
+        )
+        def serializer = new JSONLDSerializer(context)
+        describer.findDescription(personIRI).addRel("foaf:knows", otherIRI)
+        when:
+        def data = serializer.toJSON(repo, personIRI)
+        then:
+        data.knows instanceof List
+        data.knows[0]['@subject'] == otherIRI
+    }
+
+    // TODO: coerce @rev...
+
+    def "should support experimental '@rev' notation"() {
         given:
         def context = new JSONLDContext(
             homepage: "${FOAF}homepage"
@@ -119,21 +154,6 @@ class JSONLDSerializerSpec extends Specification {
         rev.homepage[0]['@subject'] == personIRI
         and: "roto resource in reverse item only contains subject"
         rev.homepage[0].homepage == ['@subject': homepageIRI]
-    }
-
-    def "should use default vocab"() {
-        given:
-        def context = new JSONLDContext(
-            "@vocab": FOAF
-        )
-        and:
-        def serializer = new JSONLDSerializer(context)
-        describer.newDescription(personIRI, "foaf:Person")
-        when:
-        def data = serializer.toJSON(repo, personIRI)
-        then:
-        serializer.context.vocab == FOAF
-        data['@type'] == 'Person'
     }
 
     def "should add both type token and type data if specified"() {
