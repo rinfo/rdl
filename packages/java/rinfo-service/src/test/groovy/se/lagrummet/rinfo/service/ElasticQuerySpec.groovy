@@ -4,6 +4,8 @@ import org.elasticsearch.client.action.search.SearchRequestBuilder
 import org.elasticsearch.search.SearchHit
 import org.restlet.data.Reference
 
+import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDContext
+
 import groovy.json.JsonSlurper
 import spock.lang.*
 
@@ -11,7 +13,8 @@ import spock.lang.*
 class ElasticQuerySpec extends Specification {
 
     def elQuery = new ElasticQuery(
-            new ElasticData(null, "es-index", new JsonLdSettings()),
+            new ElasticData(null, "es-index",
+            new JsonLdSettings(new JSONLDContext([:]), [:])),
             "http://service.lagrummet.se/")
 
     def showTerms = ['title', 'identifier'] as Set

@@ -1,7 +1,9 @@
 {
   "iri": "@subject",
   "type": "@type",
+  "rev": "@rev",
   "@vocab": "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#",
+  "@language": "sv",
   "xsd": "http://www.w3.org/2001/XMLSchema#",
   "date": "http://www.w3.org/2001/XMLSchema#date",
   "dateTime": "http://www.w3.org/2001/XMLSchema#dateTime",
@@ -49,12 +51,26 @@
   "Page": "http://purl.org/linked-data/api/vocab#Page",
 
   "@coerce": {
-    "date": ["beslutsdatum", "ikrafttradandedatum", "utfardandedatum", "utkomFranTryck", "avgorandedatum", "avkravtAvrapporteringsdatum", "ratificeringsdatum", "issued"],
-    "dateTime": ["created", "updated", "entryUpdated"],
-    "anyURI": ["id"],
-    "string": ["identifier", "domsnummer", "arsutgava", "lopnummer"],
-    "@iri": ["prev", "current", "next", "describedby"]
-  },
+    "beslutsdatum": "date",
+    "ikrafttradandedatum": "date",
+    "utfardandedatum": "date",
+    "utkomFranTryck": "date",
+    "avgorandedatum": "date",
+    "avkravtAvrapporteringsdatum": "date",
+    "ratificeringsdatum": "date",
+    "issued": "date",
+    "created": "dateTime",
+    "updated": "dateTime",
+    "entryUpdated": "dateTime",
+    "id": "anyURI",
+    "identifier": "string",
+    "domsnummer": "string",
+    "arsutgava": "string",
+    "lopnummer": "string",
+    "prev": "@iri",
+    "current": "@iri",
+    "next": "@iri",
+    "describedby": "@iri"
+  }
 
-  "@language": "sv"
 }
