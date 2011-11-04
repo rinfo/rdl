@@ -69,7 +69,8 @@ class JSONLDSerializer {
             def result = values.collect {
                 valueToJSON(description.describer, key, it, rootIri ?: description.about)
             }
-            item[key] = reduceValues(key, result)
+            boolean asSet = context.keyTermMap[key]?.isSet
+            item[key] = asSet? result : reduceValues(key, result)
         }
         return item
     }
@@ -80,7 +81,7 @@ class JSONLDSerializer {
     }
 
     Object valueToJSON(Describer describer, String key, Object value, String rootIri=null) {
-        // TODO: improve coerce mechanics (support @iri, @set...)
+        // TODO: improve coerce mechanics (support @iri...)
         def term = context.keyTermMap[key]
         if (value instanceof RDFLiteral) {
             return toJSONLiteral(value, term?.datatype)
@@ -103,7 +104,7 @@ class JSONLDSerializer {
         def isBool = (dt == XSD + 'boolean')
         // TODO: which number types? Automatic only if lexical meets canonical...
         def isNumber = (!isBool && isXsdVocab && dt.substring(XSD.size()) in
-                        ['int', 'integer', 'float', 'double'])
+                        ['decimal', 'short', 'int', 'integer', 'float', 'double'])
         if (dt == coerceDatatype) {
             return (isBool || isNumber)? value.toNativeValue() : value.toString()
         } else if (isBool || isNumber) {
@@ -115,7 +116,6 @@ class JSONLDSerializer {
     }
 
     Object reduceValues(String key, List values) {
-        // TODO: check if term is specified as "always a set"...
         if (values.size() == 1) {
             return values[0]
         } else {
