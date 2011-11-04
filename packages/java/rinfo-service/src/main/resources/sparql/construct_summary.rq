@@ -1,40 +1,109 @@
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX bibo: <http://purl.org/ontology/bibo/>
+PREFIX : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
+PREFIX bibo: <http://purl.org/ontology/bibo/>
+PREFIX awol: <http://bblfish.net/work/atom-owl/2006-06-06/#>
+PREFIX iana: <http://www.iana.org/assignments/relation/>
 
 CONSTRUCT {
 
-    #?s ?p ?o .
+    ?current foaf:isPrimaryTopicOf ?g .
+    ?g a awol:Entry;
+        awol:updated ?entryUpdated;
+        awol:content ?content;
+        iana:alternate ?alternate .
+
+    ?content ?content_p ?content_o .
+    ?alternate ?alternate_p ?alternate_o .
+
     ?current ?curr_p ?curr_o .
 
-    #?relitem a ?reltype;
-    #    ?relprop ?reltext .
+    ?konsolidering :konsoliderar ?current .
+    #?current :konsoliderasAv ?konsolidering .
+    ?konsolidering a ?rev_type;
+        dct:identifier ?rev_identifier;
+        dct:issued ?rev_issued .
+
+    ?andrande :andrar ?current .
+    #?current :andrasAv ?andrande .
+    ?andrande a ?rev_type;
+        dct:identifier ?rev_identifier;
+        :ikrafttradandedatum ?rev_ikrafttradandedatum .
+
+    ?upphavande :upphaver ?current .
+    #?current :upphavsAv ?upphavande .
+    ?upphavande a ?rev_type;
+        dct:identifier ?rev_identifier;
+        :ikrafttradandedatum ?rev_ikrafttradandedatum .
 
 } WHERE {
 
-    #{
-    #
-    #    ?g foaf:primaryTopic ?current .
-    #    GRAPH ?g { ?s ?p ?o }
-    #
-    #} UNION {
+
+    {
 
         ?current ?curr_p ?curr_o .
+        FILTER(isLiteral(?curr_o))
 
-    #} UNION {
-    #
-    #    ?current ?rel ?relitem .
-    #    FILTER(?rel = dct:publisher
-    #        || ?rel = rpubl:forfattningssamling
-    #        || ?rel = rpubl:utrSerie
-    #        || ?rel = rpubl:rattsfallspublikation
-    #        || ?rel = rpubl:allmannaRadSerie) .
-    #    ?relitem ?relprop ?reltext .
-    #    FILTER( isLiteral(?reltext) )
-    #    OPTIONAL { ?relitem a ?reltype . }
-    #
-    #}
+    } UNION {
+
+        ?current ?curr_p ?curr_o .
+        FILTER(?curr_p in (dct:publisher,
+                            :forfattningssamling,
+                            :utrSerie,
+                            :rattsfallspublikation,
+                            :allmannaRadSerie))
+
+    } UNION {
+
+        ?g a awol:Entry;
+            foaf:primaryTopic ?current;
+            awol:updated ?entryUpdated .
+        OPTIONAL {
+            ?g awol:content ?content .
+            ?content ?content_p ?content_o .
+        }
+        OPTIONAL {
+            ?g iana:alternate ?alternate .
+            ?alternate ?alternate_p ?alternate_o .
+        }
+
+    } UNION {
+
+        ?konsolidering :konsoliderar ?current;
+            a ?rev_type;
+            dct:identifier ?rev_identifier;
+            dct:issued ?rev_issued .
+
+        FILTER NOT EXISTS {
+            ?konsolidering2 :konsoliderar ?current;
+                dct:issued ?rev_issued2 .
+            FILTER(?rev_issued2 > ?rev_issued)
+        }
+
+    } UNION {
+
+        ?andrande :andrar ?current;
+            a ?rev_type;
+            dct:identifier ?rev_identifier .
+        OPTIONAL {
+            ?andrande :ikrafttradandedatum ?rev_ikrafttradandedatum .
+        }
+
+        FILTER NOT EXISTS {
+            ?andrande2 :andrar ?current;
+                :ikrafttradandedatum ?rev_ikrafttradandedatum2 .
+            FILTER(?rev_ikrafttradandedatum2 > ?rev_ikrafttradandedatum)
+        }
+
+    } UNION {
+
+        ?upphavande :upphaver ?current;
+            a ?rev_type;
+            dct:identifier ?rev_identifier .
+        OPTIONAL {
+            ?upphavande :ikrafttradandedatum ?rev_ikrafttradandedatum .
+        }
+
+    }
 
 }
