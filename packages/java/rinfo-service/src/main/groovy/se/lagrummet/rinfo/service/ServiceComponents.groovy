@@ -2,11 +2,15 @@ package se.lagrummet.rinfo.service
 
 import org.apache.commons.configuration.Configuration
 
+import org.codehaus.jackson.map.ObjectMapper
+
 import org.openrdf.repository.Repository
 import org.openrdf.repository.event.base.NotifyingRepositoryWrapper
 
 import se.lagrummet.rinfo.rdf.repo.RepositoryHandler
 import se.lagrummet.rinfo.rdf.repo.RepositoryHandlerFactory
+
+import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDContext
 
 
 class ServiceComponents {
@@ -19,6 +23,11 @@ class ServiceComponents {
     JsonLdSettings jsonLdSettings
     ElasticData elasticData
     ElasticQuery elasticQuery
+
+    String ldContextPath = "/json-ld/context.json"
+    protected String listFramesPath = "/json-ld/list-frames.json"
+
+    protected def mapper = new ObjectMapper()
 
     public Repository getRepository() {
         return repository
@@ -85,7 +94,9 @@ class ServiceComponents {
     }
 
     private def createJsonLdSettings() {
-        return new JsonLdSettings()
+        def ldContext = new JSONLDContext(readJson(ldContextPath))
+        def listFramesData = readJson(listFramesPath)
+        return new JsonLdSettings(ldContext, listFramesData, ldContextPath)
     }
 
     private def createElasticData() {
@@ -111,6 +122,15 @@ class ServiceComponents {
             return null
         }
         return new ElasticQuery(elasticData, getServiceAppBaseUrl())
+    }
+
+    protected Map readJson(String dataPath) {
+        def inStream = getClass().getResourceAsStream(dataPath)
+        try {
+            return mapper.readValue(inStream, Map)
+        } finally {
+            inStream.close()
+        }
     }
 
 }

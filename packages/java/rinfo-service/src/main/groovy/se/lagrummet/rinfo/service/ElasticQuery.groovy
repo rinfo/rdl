@@ -75,7 +75,7 @@ class ElasticQuery {
 
         def data = [
             "@language": "sv",
-            "@context": jsonLdSettings.contextPath,
+            "@context": jsonLdSettings.ldContextPath,
             startIndex: prepSearch.startIndex,
             itemsPerPage: prepSearch.pageSize,
             totalResults: esRes.hits.totalHits(),

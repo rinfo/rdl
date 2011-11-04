@@ -20,6 +20,7 @@ import org.codehaus.jackson.map.ObjectMapper
 import org.codehaus.jackson.map.SerializationConfig
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil
+import static se.lagrummet.rinfo.base.rdf.jsonld.JSONLDContext.CONTEXT_KEY
 import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDSerializer
 
 
@@ -36,7 +37,7 @@ class DataFinder extends Finder {
         this.baseUri = baseUri
         this.repo = repo
         this.jsonLdSettings = jsonLdSettings
-        jsonLdSerializer = new JSONLDSerializer(jsonLdSettings.contextData, false, true)
+        jsonLdSerializer = jsonLdSettings.createJSONLDSerializer()
         jsonMapper.configure(
                 SerializationConfig.Feature.INDENT_OUTPUT, true)
     }
@@ -103,7 +104,7 @@ class DataFinder extends Finder {
         if (mediaType == "application/json") {
             def json = jsonLdSerializer.toJSON(itemRepo, resourceUri)
             if (json != null) {
-                json["@context"] = jsonLdSettings.contextPath
+                json = [(CONTEXT_KEY): jsonLdSettings.ldContextPath] + json
             }
             return jsonMapper.writeValueAsString(json)
         }
