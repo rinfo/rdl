@@ -26,17 +26,23 @@ import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDSerializer
 
 class DataFinder extends Finder {
 
-    String baseUri
     Repository repo
     JsonLdSettings jsonLdSettings
+    String baseUri
+    String constructQueryText
     JSONLDSerializer jsonLdSerializer
     ObjectMapper jsonMapper = new ObjectMapper()
 
-    DataFinder(Context context, Repository repo, JsonLdSettings jsonLdSettings, String baseUri) {
+    DataFinder(Context context,
+            Repository repo, JsonLdSettings jsonLdSettings,
+            String baseUri, String constructQueryPath) {
         super(context)
         this.baseUri = baseUri
         this.repo = repo
         this.jsonLdSettings = jsonLdSettings
+        this.constructQueryText = getClass().getResourceAsStream(
+                constructQueryPath).getText("utf-8")
+
         jsonLdSerializer = jsonLdSettings.createJSONLDSerializer()
         jsonMapper.configure(
                 SerializationConfig.Feature.INDENT_OUTPUT, true)
@@ -93,7 +99,7 @@ class DataFinder extends Finder {
     Repository getRichRDF(String resourceUri) {
         def conn = repo.getConnection()
         try {
-            return RDFUtil.constructQuery(conn, constructRelRevDataSparql,
+            return RDFUtil.constructQuery(conn, constructQueryText,
                     ["current": conn.valueFactory.createURI(resourceUri)])
         } finally {
             conn.close()
@@ -115,11 +121,6 @@ class DataFinder extends Finder {
         } finally {
             outStream.close()
         }
-    }
-
-    String getConstructRelRevDataSparql() {
-        return getClass().getResourceAsStream(
-                "/sparql/construct_relrev_data.rq").getText("utf-8")
     }
 
 }

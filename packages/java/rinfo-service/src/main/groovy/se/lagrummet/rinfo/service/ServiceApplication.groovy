@@ -69,7 +69,14 @@ class ServiceApplication extends Application {
 
         router.attach("/{path}/data",
                 new DataFinder(ctx, components.repository,
-                    components.jsonLdSettings, components.dataAppBaseUri)
+                    components.jsonLdSettings, components.dataAppBaseUri,
+                    "/sparql/construct_relrev_data.rq")
+            ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
+
+        router.attach("/{path}/listitem",
+                new DataFinder(ctx, components.repository,
+                    components.jsonLdSettings, components.dataAppBaseUri,
+                    "/sparql/construct_summary.rq")
             ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
 
         if (components.elasticQuery) {
