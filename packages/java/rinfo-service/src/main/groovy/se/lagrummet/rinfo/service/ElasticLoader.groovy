@@ -19,7 +19,6 @@ class ElasticLoader {
     ElasticData elasticData
 
     String constructSummaryQuery
-    Map contextData
 
     def textExtractor = new TextExtractor()
     def contentMediaTypes = ["application/pdf",
@@ -29,7 +28,6 @@ class ElasticLoader {
         this.elasticData = elasticData
         this.constructSummaryQuery = getClass().getResourceAsStream(
                     "/sparql/construct_summary.rq").getText("utf-8")
-        this.contextData = elasticData.jsonLdSettings.contextData
     }
 
     void create(RepositoryConnection conn, entry, collector) {
@@ -72,7 +70,8 @@ class ElasticLoader {
         def summaryRepo = getSummaryRDF(conn, resourceUri)
         if (summaryRepo == null)
             return null
-        def data = new JSONLDSerializer(contextData, false, false).toJSON(summaryRepo, resourceUri)
+        def jsonLdSerializer = elasticData.jsonLdSettings.createJSONLDSerializer()
+        def data = jsonLdSerializer.toJSON(summaryRepo, resourceUri)
         if (data) {
             cleanForElastic(data)
             addContent(data, entry, collector)
