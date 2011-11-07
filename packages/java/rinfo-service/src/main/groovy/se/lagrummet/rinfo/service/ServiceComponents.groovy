@@ -1,6 +1,8 @@
 package se.lagrummet.rinfo.service
 
 import org.apache.commons.configuration.Configuration
+import org.apache.commons.configuration.PropertiesConfiguration
+
 
 import org.codehaus.jackson.map.ObjectMapper
 
@@ -31,6 +33,10 @@ class ServiceComponents {
 
     public Repository getRepository() {
         return repository
+    }
+
+    ServiceComponents(String configPath) {
+        this(new PropertiesConfiguration(configPath))
     }
 
     ServiceComponents(Configuration config) {

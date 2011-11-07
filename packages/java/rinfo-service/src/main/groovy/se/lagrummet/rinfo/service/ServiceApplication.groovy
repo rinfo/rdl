@@ -13,8 +13,6 @@ import org.restlet.routing.Redirector
 import org.restlet.routing.Router
 import org.restlet.routing.Variable
 
-import org.apache.commons.configuration.PropertiesConfiguration
-
 
 class ServiceApplication extends Application {
 
@@ -32,8 +30,7 @@ class ServiceApplication extends Application {
     ServiceApplication(Context parentContext) {
         super(parentContext)
         setupExtensions()
-        this.components = new ServiceComponents(
-                new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME))
+        components = new ServiceComponents(CONFIG_PROPERTIES_FILE_NAME)
         getContext().getAttributes().putIfAbsent(SERVICE_COMPONENTS_CONTEXT_KEY, components)
     }
 

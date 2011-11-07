@@ -2,30 +2,27 @@ package rinfo.service.cmd
 
 import se.lagrummet.rinfo.service.ElasticData
 import se.lagrummet.rinfo.service.ElasticLoader
-import se.lagrummet.rinfo.service.JsonLdSettings
+import se.lagrummet.rinfo.service.ServiceComponents
 import org.apache.abdera.Abdera
 import org.apache.abdera.i18n.iri.IRI
-import org.openrdf.repository.http.HTTPRepository
 import static org.openrdf.query.QueryLanguage.SPARQL
 
 
 class GenElastic {
 
     static void main(args) {
-        def indexName = args[0]
+        def configPath = args[0]
         def textDir = args.length > 1? args[1] as File : null
-        new GenElastic(indexName, textDir).run()
+        new GenElastic(configPath, textDir).run()
     }
 
-    def repo
-    def elData
+    def components
     def eLoader
     def textDir
 
-    GenElastic(String indexName, File textDir=null) {
-        repo = new HTTPRepository("http://localhost:8080/openrdf-sesame", indexName)
-        elData = new ElasticData("127.0.0.1", 9300, indexName, new JsonLdSettings())
-        eLoader = new ElasticLoader(elData) {
+    GenElastic(String configPath, File textDir=null) {
+        components = new ServiceComponents(configPath)
+        eLoader = new ElasticLoader(components.elasticData) {
             @Override
             String getContentText(String url, collector) {
                 return new File(new URI(url)).getText('UTF-8')
@@ -35,18 +32,19 @@ class GenElastic {
     }
 
     void run() {
-        println "Initializing ElasticData..."
-        elData.initialize()
+        def indexName = components.elasticData.indexName
+        println "Initializing ElasticData into index <${indexName}>..."
+        components.startup()
         try {
             indexTripleStore()
         } finally {
-            elData.shutdown()
+            components.shutdown()
         }
     }
 
     void indexTripleStore(int limit=-1) {
         int i = 0
-        def conn = repo.connection
+        def conn = components.repository.connection
         try {
             println "Retrieving primary IRIs..."
             def res = findPrimaryIris(conn, limit)
