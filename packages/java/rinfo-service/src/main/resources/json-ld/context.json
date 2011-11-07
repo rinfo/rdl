@@ -67,10 +67,22 @@
     "domsnummer": "string",
     "arsutgava": "string",
     "lopnummer": "string",
+    "references": "@set",
+    "andrar": "@set",
+    "bilaga": "@set",
+    "ersatter": "@set",
+    "upphaver": "@set",
+    "konsolideringsunderlag": "@set",
+    "foreslarAndringAv": "@set",
+    "utgarFran": "@set",
+    "giltigaSprak": "@set",
+    "kapitel": "@set",
+    "paragraf": "@set",
     "prev": "@iri",
     "current": "@iri",
     "next": "@iri",
-    "describedby": "@iri"
+    "describedby": "@iri",
+    "items": "@list"
   }
 
 }
