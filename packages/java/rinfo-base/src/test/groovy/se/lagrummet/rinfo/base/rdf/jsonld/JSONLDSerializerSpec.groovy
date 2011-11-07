@@ -122,7 +122,7 @@ class JSONLDSerializerSpec extends Specification {
     // TODO: coerce @list
     //          "@coerce": ["bibo:authorList": "@list"]
 
-    def "should use '@set' coerce to always make a list"() {
+    def "should use experimental '@set' coerce to always make a list"() {
         given:
         def otherIRI = "http://example.org/person/other#self"
         def context = new JSONLDContext(
@@ -135,6 +135,24 @@ class JSONLDSerializerSpec extends Specification {
         then:
         data.knows instanceof List
         data.knows[0]['@subject'] == otherIRI
+    }
+
+    def "should add both type token and type data if specified"() {
+        given:
+        def context = new JSONLDContext(
+            "a": "@type",
+            "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+            "@vocab": FOAF
+        )
+        and:
+        def serializer = new JSONLDSerializer(context)
+        describer.newDescription(personIRI, "foaf:Person")
+        when:
+        def data = serializer.toJSON(repo, personIRI)
+        then:
+        serializer.context.vocab == FOAF
+        data['a'] == 'Person'
+        data['type']['@subject'] == "${FOAF}Person"
     }
 
     // TODO: coerce @rev...
@@ -156,22 +174,26 @@ class JSONLDSerializerSpec extends Specification {
         rev.homepage[0].homepage == ['@subject': homepageIRI]
     }
 
-    def "should add both type token and type data if specified"() {
+    def "should return null if missing data about resource"() {
         given:
-        def context = new JSONLDContext(
-            "a": "@type",
-            "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-            "@vocab": FOAF
-        )
-        and:
+        def context = new JSONLDContext("@vocab": FOAF)
         def serializer = new JSONLDSerializer(context)
-        describer.newDescription(personIRI, "foaf:Person")
         when:
-        def data = serializer.toJSON(repo, personIRI)
+        def data = serializer.toJSON(repo, "http://example.org/nothing")
         then:
-        serializer.context.vocab == FOAF
-        data['a'] == 'Person'
-        data['type']['@subject'] == "${FOAF}Person"
+        data == null
+    }
+
+    def "should return data even if only rev data about resource"() {
+        given:
+        def nullIRI = "http://example.org/null"
+        def context = new JSONLDContext("@vocab": FOAF)
+        def serializer = new JSONLDSerializer(context, false, true)
+        describer.findDescription(personIRI).addRel("foaf:knows", nullIRI)
+        when:
+        def data = serializer.toJSON(repo, nullIRI)
+        then:
+        data['@rev']['knows'][0]['@subject'] == personIRI
     }
 
 }

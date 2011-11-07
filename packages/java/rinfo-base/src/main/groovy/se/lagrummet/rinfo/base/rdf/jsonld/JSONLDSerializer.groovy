@@ -28,10 +28,7 @@ class JSONLDSerializer {
         def item = null
         try {
             def description = describer.findDescription(resourceIri)
-            if (description == null) {
-                return
-            }
-            item = createJSON(description)
+            item = (description != null)? createJSON(description) : [:]
             // TODO: context get rev terms
             if (addRevs) {
                 def revItems = getRevData(describer, resourceIri)
@@ -42,7 +39,7 @@ class JSONLDSerializer {
         } finally {
             describer.close()
         }
-        return item
+        return item.size() > 0? item : null
     }
 
     Map createJSON(Description description, String rootIri=null) {
@@ -81,7 +78,7 @@ class JSONLDSerializer {
     }
 
     Object valueToJSON(Describer describer, String key, Object value, String rootIri=null) {
-        // TODO: improve coerce mechanics (support @iri...)
+        // TODO: improve coerce mechanics (support @iri, @list...)
         def term = context.keyTermMap[key]
         if (value instanceof RDFLiteral) {
             return toJSONLiteral(value, term?.datatype)
