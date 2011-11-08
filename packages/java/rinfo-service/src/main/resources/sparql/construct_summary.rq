@@ -8,37 +8,34 @@ PREFIX iana: <http://www.iana.org/assignments/relation/>
 
 CONSTRUCT {
 
-    ?current foaf:isPrimaryTopicOf ?g .
-    ?g a awol:Entry;
+    ?entry a awol:Entry;
         awol:updated ?entryUpdated;
         awol:content ?content;
-        iana:alternate ?alternate .
-
-    ?content ?content_p ?content_o .
-    ?alternate ?alternate_p ?alternate_o .
+        iana:alternate ?alternate;
+        foaf:primaryTopic ?current .
+    ?content awol:type ?mediaType .
+    ?alternate awol:type ?mediaType .
 
     ?current ?curr_p ?curr_o .
 
     ?konsolidering :konsoliderar ?current .
-    #?current :konsoliderasAv ?konsolidering .
     ?konsolidering a ?rev_type;
         dct:identifier ?rev_identifier;
         dct:issued ?rev_issued .
 
     ?andrande :andrar ?current .
-    #?current :andrasAv ?andrande .
     ?andrande a ?rev_type;
         dct:identifier ?rev_identifier;
         :ikrafttradandedatum ?rev_ikrafttradandedatum .
 
     ?upphavande :upphaver ?current .
-    #?current :upphavsAv ?upphavande .
     ?upphavande a ?rev_type;
         dct:identifier ?rev_identifier;
         :ikrafttradandedatum ?rev_ikrafttradandedatum .
 
 } WHERE {
 
+    #FILTER(?current = <$CURRENT>)
 
     {
 
@@ -57,16 +54,16 @@ CONSTRUCT {
 
     } UNION {
 
-        ?g a awol:Entry;
+        ?entry a awol:Entry;
             foaf:primaryTopic ?current;
             awol:updated ?entryUpdated .
         OPTIONAL {
-            ?g awol:content ?content .
-            ?content ?content_p ?content_o .
+            ?entry awol:content ?content .
+            ?content awol:type ?mediaType .
         }
         OPTIONAL {
-            ?g iana:alternate ?alternate .
-            ?alternate ?alternate_p ?alternate_o .
+            ?entry iana:alternate ?alternate .
+            ?alternate awol:type ?mediaType .
         }
 
     } UNION {
