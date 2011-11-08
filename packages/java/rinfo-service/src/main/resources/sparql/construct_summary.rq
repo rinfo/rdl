@@ -1,4 +1,5 @@
 PREFIX : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX bibo: <http://purl.org/ontology/bibo/>
@@ -47,7 +48,8 @@ CONSTRUCT {
     } UNION {
 
         ?current ?curr_p ?curr_o .
-        FILTER(?curr_p in (dct:publisher,
+        FILTER(?curr_p in (rdf:type,
+                            dct:publisher,
                             :forfattningssamling,
                             :utrSerie,
                             :rattsfallspublikation,
