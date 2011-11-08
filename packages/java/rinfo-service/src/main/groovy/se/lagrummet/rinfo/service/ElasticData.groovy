@@ -87,10 +87,27 @@ class ElasticData {
                 }
             }
 
-            def mapping = sharedMappings + ["properties": propMap]
+            def mappingData = [
+                date_detection: sharedMappings.date_detection,
+                dynamic_templates: sharedMappings.dynamic_templates.clone()
+            ]
+            // Create dynamic templates for each known term to ensured indexing
+            // of nested items.
+            propMap.each { term, mapping ->
+                mappingData.dynamic_templates << [
+                    (docType + "_" + term): [
+                        match: term,
+                        mapping: mapping
+                    ]
+                ]
+            }
+            // We need explicit mappings as well to ensure that we can search
+            // for terms not yet used in instance data (e.g. for the facets
+            // view)
+            mappingData["properties"] = propMap
 
             indices.preparePutMapping(indexName).setType(docType).setSource(
-                (docType): mapping
+                (docType): mappingData
             ).execute().actionGet()
         }
     }
