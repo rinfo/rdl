@@ -50,19 +50,28 @@ class DataFinder extends Finder {
 
     @Override
     ServerResource find(Request request, Response response) {
-        final requestPath = request.attributes["path"]
+        final path = request.attributes["path"]
+        int dollarAt = path.indexOf('$')
+        final requestPath = dollarAt > -1?
+                path.substring(0, dollarAt) + "#" + path.substring(dollarAt + 1, path.size()) :
+                path
+        final resourceUri = baseUri + requestPath
 
         return new ServerResource() {
 
             @Get("n3|ttl|txt")
             Representation asN3() {
-                //return getRepr(MediaType.TEXT_RDF_N3)
+                //return getRepr(MediaType.APPLICATION_RDF_TURTLE)
                 return getRepr(MediaType.TEXT_PLAIN, "application/x-turtle")
             }
 
-            @Get("rdf|xml")
+            @Get("rdf")
             Representation asRdfXml() {
-                //return getRepr(requestPath, MediaType.APPLICATION_RDF_XML)
+                return getRepr(MediaType.APPLICATION_RDF_XML)
+            }
+
+            @Get("xml")
+            Representation asXml() {
                 return getRepr(MediaType.TEXT_XML,
                         MediaType.APPLICATION_RDF_XML.toString())
             }
@@ -77,7 +86,6 @@ class DataFinder extends Finder {
             }
 
             def getRepr(mediaType, mediaTypeStr) {
-                def resourceUri = baseUri + requestPath
                 def itemRepo = getRichRDF(resourceUri)
                 if (itemRepo == null) {
                     setStatus(Status.CLIENT_ERROR_NOT_FOUND)
