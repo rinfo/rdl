@@ -43,7 +43,7 @@
 # fortsätter publicera i samma författningssamling (som väl inte ges
 # ut fysiskt). Därför finns ingen ny :Rattsfallspublikation i
 # ../serie/rf.n3
-<http://rinfo.lagrummet.se/org/mark-_och-miljoeoeverdomstolen>
+<http://rinfo.lagrummet.se/org/mark-_och_miljoeoeverdomstolen>
     a foaf:Organization;
     foaf:name "Mark- och miljööverdomstolen"@sv;
     rdfs:seeAlso <http://rinfo.lagrummet.se/org/miljoeoeverdomstolen> .
