@@ -111,9 +111,9 @@
                   </a>
                 </td>
                 <td>{{if $value.matches && matches.title}}{{html matches.title}}{{else}}${title}{{/if}}
-                  {{if $value.matches && matches.content}}
+                  {{if $value.matches && matches.text}}
                     <p class="excerpt">
-                      {{each matches.content}}<small>[...]{{html $value}}[...]</small><br />{{/each}}
+                      {{each matches.text}}<small>[...]{{html $value}}[...]</small><br />{{/each}}
                     </p>
                   {{/if}}
                 </td>
