@@ -64,6 +64,11 @@ class ServiceApplication extends Application {
 
         router.attach("/view", new SparqlTreeRouter(ctx, components.repository))
 
+        router.attach("/api/labels",
+                new DataFinder(ctx, components.repository,
+                    components.jsonLdSettings, components.dataAppBaseUri + "api/labels",
+                    "/sparql/construct_labels.rq"))
+
         router.attach("/{path}/data",
                 new DataFinder(ctx, components.repository,
                     components.jsonLdSettings, components.dataAppBaseUri,

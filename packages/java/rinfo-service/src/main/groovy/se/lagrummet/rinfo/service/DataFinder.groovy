@@ -50,7 +50,7 @@ class DataFinder extends Finder {
 
     @Override
     ServerResource find(Request request, Response response) {
-        final path = request.attributes["path"]
+        final path = request.attributes["path"] ?: ""
         int dollarAt = path.indexOf('$')
         final requestPath = dollarAt > -1?
                 path.substring(0, dollarAt) + "#" + path.substring(dollarAt + 1, path.size()) :
