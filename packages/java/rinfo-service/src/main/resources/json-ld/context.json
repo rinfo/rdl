@@ -29,6 +29,7 @@
   "Organization": "http://xmlns.com/foaf/0.1/Organization",
   "Person": "http://xmlns.com/foaf/0.1/Person",
   "name": "http://xmlns.com/foaf/0.1/name",
+  "topic": "http://xmlns.com/foaf/0.1/topic",
   "primaryTopic": "http://xmlns.com/foaf/0.1/primaryTopic",
   "prefLabel": "http://www.w3.org/2004/02/skos/core#prefLabel",
   "altLabel": "http://www.w3.org/2004/02/skos/core#altLabel",
