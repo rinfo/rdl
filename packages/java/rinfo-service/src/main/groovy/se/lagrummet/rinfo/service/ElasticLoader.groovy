@@ -157,9 +157,9 @@ class ElasticLoader {
     }
 
     void setContent(data, contentText, mediaType) {
-        data['document'] = [
-            'content_type': mediaType,
-            'content': contentText
+        data['hasFormat'] = [
+            'format': mediaType,
+            'text': contentText
         ]
     }
 
