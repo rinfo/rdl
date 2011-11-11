@@ -33,7 +33,7 @@ class ElasticQuerySpec extends Specification {
                 "(Some thing) AND (identifier:SFS)"; true })
     }
 
-    def "should date range queries"() {
+    def "should filter on date range queries"() {
         given:
         def srb = Mock(SearchRequestBuilder)
         def ref = new Reference("/-/publ?min-updated=2008-01-01")
@@ -44,6 +44,20 @@ class ElasticQuerySpec extends Specification {
             def r = toJson(it).filtered.filter.range.updated
             assert r.from == "2008-01-01"
             assert r.to == null
+            true
+        })
+    }
+
+    def "should filter on not exists"() {
+        given:
+        def srb = Mock(SearchRequestBuilder)
+        def ref = new Reference("/-/publ?exists-references.iri=false")
+        when:
+        elQuery.prepareElasticSearch(srb, ref, "publ", showTerms)
+        then:
+        1 * srb.setQuery({
+            def json = toJson(it)
+            assert json.filtered?.filter?.not?.filter?.exists?.field == 'references.iri'
             true
         })
     }

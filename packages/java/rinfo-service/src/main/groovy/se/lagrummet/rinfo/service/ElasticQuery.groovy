@@ -111,6 +111,7 @@ class ElasticQuery {
         def terms = [:]
         def ranges = [:]
         def optionals = new HashSet()
+        def exists = [:]
         def page = 0
         if (docType) {
             srb.setTypes(docType)
@@ -147,6 +148,8 @@ class ElasticQuery {
                 pageSize = value as int
             } else if (name == statsParamKey) {
                 addStats = true
+            } else if (name.startsWith('exists-')) {
+                exists[name.substring(7)] = (value != "false" && value != "0")
             } else {
                 def ifExists = false
                 if (name.startsWith('ifExists-')) {
@@ -193,30 +196,39 @@ class ElasticQuery {
             QueryBuilders.matchAllQuery()
 
         List<FilterBuilder> filterBuilders = []
+
         ranges.each { key, item ->
-            def rqb = FilterBuilders.rangeFilter(key)
+            def rfb = FilterBuilders.rangeFilter(key)
             if (item.year) {
-                rqb.gte(item.year)
-                rqb.lt(((item.year as int) + 1) as String)
+                rfb.gte(item.year)
+                rfb.lt(((item.year as int) + 1) as String)
             } else {
                 if (item.minEx) {
-                    rqb.gt(item.minEx)
+                    rfb.gt(item.minEx)
                 } else if (item.min) {
-                    rqb.gte(item.min)
+                    rfb.gte(item.min)
                 }
                 if (item.maxEx) {
-                    rqb.lt(item.maxEx)
+                    rfb.lt(item.maxEx)
                 } else if (item.max) {
-                    rqb.lte(item.max)
+                    rfb.lte(item.max)
                 }
             }
             if (key in optionals) {
-                rqb = FilterBuilders.orFilter(
+                rfb = FilterBuilders.orFilter(
                         FilterBuilders.notFilter(FilterBuilders.existsFilter(key)),
-                        rqb)
+                        rfb)
             }
-            filterBuilders << rqb
+            filterBuilders << rfb
             if (!showTerms.contains(key)) srb.addFields(key) //key.replaceFirst(/\..+/, ".*")
+        }
+
+        exists.each { key, value ->
+            def efb = FilterBuilders.existsFilter(key)
+            if (!value) {
+                efb = FilterBuilders.notFilter(efb)
+            }
+            filterBuilders << efb
         }
 
         for (fb in filterBuilders) {
