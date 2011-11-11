@@ -1,0 +1,123 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix awol: <http://bblfish.net/work/atom-owl/2006-06-06/#> .
+@prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
+@base <http://rinfo.lagrummet.se/publ/sfs/> .
+
+
+
+# Gällande 2011-11-11
+# URL: /-/publ?max-ikrafttradandedatum=2011-11-11&ifExists-minEx-rev.upphaver.ikrafttradandedatum=2011-11-11
+# Resultat: -
+
+# Gällande 2017-01-03 (dagen då lagen träder i kraft)
+# URL: /-/publ?max-ikrafttradandedatum=2017-01-03&ifExists-minEx-rev.upphaver.ikrafttradandedatum=2017-01-03
+# 2017:1
+
+# Gällande 2017-02-03 (dagen då ändring 2 träder i kraft)
+# URL: /-/publ?max-ikrafttradandedatum=2017-02-03&ifExists-minEx-rev.upphaver.ikrafttradandedatum=2017-02-03
+# 2017:1, 2017:2
+
+# Gällande 2019-01-03 (dagen då upphävningen träder i kraft)
+# URL: /-/publ?max-ikrafttradandedatum=2019-01-03&ifExists-minEx-rev.upphaver.ikrafttradandedatum=2019-01-03
+# 2017:2, 2017:3, 2019:1
+
+# Gällande 2019-01-03 (dagen då upphävningen träder i kraft), enbart grundföreskrifter
+# URL: /-/publ?max-ikrafttradandedatum=2019-01-03&ifExists-minEx-rev.upphaver.ikrafttradandedatum=2019-01-03&notExists-andrar.iri&notExists-upphaver.iri
+# -
+
+
+<2017:1/entry#context> a awol:Entry; foaf:primaryTopic <2017:1> .
+<2017:1> a :Lag;
+    dct:identifier "SFS 2017:1";
+    dct:title """Lag (2017:1) om förbud;"""@sv;
+    :forfattningssamling </serie/fs/sfs>;
+    :arsutgava "2017"; :lopnummer "1";
+    dct:publisher </org/regeringskansliet>;
+    :beslutadAv </org/regeringskansliet>;
+    :beslutsdatum "2017-01-01"^^xsd:date;
+    :utkomFranTryck "2017-01-02"^^xsd:date;
+    :ikrafttradandedatum "2017-01-03"^^xsd:date;
+    :paragraf <2017:4#p_1> .
+
+<2017:1/konsolidering/2017-01-04/entry#context> a awol:Entry; foaf:primaryTopic <2017:1/konsolidering/2017-01-04> .
+<2017:1/konsolidering/2017-01-04> a :KonsolideradGrundforfattning;
+    dct:identifier "SFS 2017:1 lydelse enligt SFS 2017:1"@sv;
+    dct:title """Lag (2017:1) om förbud;"""@sv;
+    dct:issued "2017-01-04"^^xsd:date;
+    :konsoliderar <2017:1>;
+    :konsolideringsunderlag <2017:1> .
+
+
+<2017:2/entry#context> a awol:Entry; foaf:primaryTopic <2017:2> .
+<2017:2> a :Lag;
+    dct:identifier "SFS 2017:2";
+    dct:title """Lag (2017:2) om ändring i lagen (2017:1) om förbud;"""@sv;
+    :forfattningssamling </serie/fs/sfs>;
+    :arsutgava "2017"; :lopnummer "2";
+    dct:publisher </org/regeringskansliet>;
+    :beslutadAv </org/regeringskansliet>;
+    :beslutsdatum "2017-02-01"^^xsd:date;
+    :utkomFranTryck "2017-02-02"^^xsd:date;
+    :ikrafttradandedatum "2017-02-03"^^xsd:date;
+    :andrar <2017:1>;
+    :paragraf <2017:2#p_2> .
+<2017:2#p_2> a :Paragraf; :paragrafnummer "2"; :inforsI <2017:1> .
+
+<2017:1/konsolidering/2017-02-04/entry#context> a awol:Entry; foaf:primaryTopic <2017:1/konsolidering/2017-02-04> .
+<2017:1/konsolidering/2017-02-04> a :KonsolideradGrundforfattning;
+    dct:identifier "SFS 2017:1 lydelse enligt SFS 2017:2"@sv;
+    dct:title """Lag (2017:1) om förbud;"""@sv;
+    dct:issued "2017-02-04"^^xsd:date;
+    :konsoliderar <2017:1>;
+    :konsolideringsunderlag <2017:1>, <2017:2> .
+
+
+<2017:3/entry#context> a awol:Entry; foaf:primaryTopic <2017:3> .
+<2017:3> a :Lag;
+    dct:identifier "SFS 2017:3";
+    dct:title """Lag (2017:3) om ändring i lagen (2017:2) om ändring i lagen (2017:1) om förbud;"""@sv;
+    :forfattningssamling </serie/fs/sfs>;
+    :arsutgava "2017"; :lopnummer "3";
+    dct:publisher </org/regeringskansliet>;
+    :beslutadAv </org/regeringskansliet>;
+    :beslutsdatum "2017-03-01"^^xsd:date;
+    :utkomFranTryck "2017-03-02"^^xsd:date;
+    :ikrafttradandedatum "2017-03-03"^^xsd:date;
+    :andrar <2017:2>;
+    :paragraf <2017:3#p_2> .
+<2017:3#p_2> a :Paragraf; :paragrafnummer "2"; :andrar <2017:2#p_2> .
+
+<2017:1/konsolidering/2017-03-04/entry#context> a awol:Entry; foaf:primaryTopic <2017:1/konsolidering/2017-03-04> .
+<2017:1/konsolidering/2017-03-04> a :KonsolideradGrundforfattning;
+    dct:identifier "SFS 2017:1 lydelse enligt SFS 2017:3"@sv;
+    dct:title """Lag (2017:1) om förbud;"""@sv;
+    dct:issued "2017-03-04"^^xsd:date;
+    :konsoliderar <2017:1>;
+    :konsolideringsunderlag <2017:1>, <2017:2>, <2017:3> .
+
+
+<2019:1/entry#context> a awol:Entry; foaf:primaryTopic <2019:1> .
+<2019:1> a :Lag;
+    dct:identifier "SFS 2019:1";
+    dct:title """Lag (2019:1) om upphävande av lagen (2017:1) om förbud;"""@sv;
+    :forfattningssamling </serie/fs/sfs>;
+    :arsutgava "2019"; :lopnummer "1";
+    dct:publisher </org/regeringskansliet>;
+    :beslutadAv </org/regeringskansliet>;
+    :beslutsdatum "2019-01-01"^^xsd:date;
+    :utkomFranTryck "2019-01-02"^^xsd:date;
+    :ikrafttradandedatum "2019-01-03"^^xsd:date;
+    :upphaver <2017:1>;
+    :paragraf <2019:1#p_1> .
+
+<2017:1/konsolidering/2019-01-04/entry#context> a awol:Entry; foaf:primaryTopic <2017:1/konsolidering/2019-01-04> .
+<2017:1/konsolidering/2019-01-04> a :KonsolideradGrundforfattning;
+    dct:identifier "SFS 2017:1 lydelse enligt SFS 2019:1"@sv;
+    dct:title """Lag (2017:1) om förbud;"""@sv;
+    dct:issued "2019-01-04"^^xsd:date;
+    :konsoliderar <2017:1>;
+    :konsolideringsunderlag <2017:1>, <2017:2>, <2017:3>, <2019:1> .
+
+
