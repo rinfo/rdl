@@ -67,7 +67,7 @@ class ServiceApplication extends Application {
         router.attach("/var/common",
                 new DataFinder(ctx, components.repository,
                     components.jsonLdSettings, components.dataAppBaseUri + "var/common",
-                    "/sparql/construct_labels.rq"))
+                    "/sparql/construct_common.rq"))
 
         router.attach("/{path}/data",
                 new DataFinder(ctx, components.repository,
