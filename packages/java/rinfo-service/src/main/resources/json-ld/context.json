@@ -5,10 +5,16 @@
   "@vocab": "http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#",
   "@language": "sv",
   "xsd": "http://www.w3.org/2001/XMLSchema#",
+
   "date": "http://www.w3.org/2001/XMLSchema#date",
   "dateTime": "http://www.w3.org/2001/XMLSchema#dateTime",
   "anyURI": "http://www.w3.org/2001/XMLSchema#anyURI",
   "string": "http://www.w3.org/2001/XMLSchema#string",
+
+  "Property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property",
+  "Class":  "http://www.w3.org/2002/07/owl#Class",
+  "ObjectProperty":  "http://www.w3.org/2002/07/owl#ObjectProperty",
+  "DatatypeProperty":  "http://www.w3.org/2002/07/owl#DatatypeProperty",
 
   "label": "http://www.w3.org/2000/01/rdf-schema#label",
   "comment": "http://www.w3.org/2000/01/rdf-schema#comment",
