@@ -24,7 +24,7 @@
 # 2017:2, 2017:3, 2019:1
 
 # Gällande 2019-01-03 (dagen då upphävningen träder i kraft), enbart grundföreskrifter
-# URL: /-/publ?max-ikrafttradandedatum=2019-01-03&ifExists-minEx-rev.upphaver.ikrafttradandedatum=2019-01-03&notExists-andrar.iri&notExists-upphaver.iri
+# URL: /-/publ?max-ikrafttradandedatum=2019-01-03&ifExists-minEx-rev.upphaver.ikrafttradandedatum=2019-01-03&exists-andrar.iri=false&exists-upphaver.iri=false
 # -
 
 
