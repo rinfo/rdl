@@ -50,7 +50,11 @@ CONSTRUCT {
                             :forfattningssamling,
                             :utrSerie,
                             :rattsfallspublikation,
-                            :allmannaRadSerie))
+                            :allmannaRadSerie,
+                            :andrar,
+                            :ersatter,
+                            :upphaver,
+                            :konsoliderar))
 
     } UNION {
 
