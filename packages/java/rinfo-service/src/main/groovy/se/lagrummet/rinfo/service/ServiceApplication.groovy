@@ -64,9 +64,9 @@ class ServiceApplication extends Application {
 
         router.attach("/view", new SparqlTreeRouter(ctx, components.repository))
 
-        router.attach("/api/labels",
+        router.attach("/var/common",
                 new DataFinder(ctx, components.repository,
-                    components.jsonLdSettings, components.dataAppBaseUri + "api/labels",
+                    components.jsonLdSettings, components.dataAppBaseUri + "var/common",
                     "/sparql/construct_labels.rq"))
 
         router.attach("/{path}/data",
@@ -75,7 +75,7 @@ class ServiceApplication extends Application {
                     "/sparql/construct_relrev_data.rq")
             ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
 
-        router.attach("/{path}/listitem",
+        router.attach("/{path}/summary",
                 new DataFinder(ctx, components.repository,
                     components.jsonLdSettings, components.dataAppBaseUri,
                     "/sparql/construct_summary.rq")
