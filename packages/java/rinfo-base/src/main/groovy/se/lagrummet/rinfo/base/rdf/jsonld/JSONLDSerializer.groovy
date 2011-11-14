@@ -45,7 +45,7 @@ class JSONLDSerializer {
     Map createJSON(Description description, String rootIri=null) {
         def item = [:]
         if (description.about != null && !description.about.startsWith("_:")) {
-            item[context.subjectKey] = description.about
+            item[context.subjectKey] = toKey(description.about, true)
         }
         if (rootIri == description.about) {
             return item
@@ -73,6 +73,10 @@ class JSONLDSerializer {
     }
 
     String toKey(String iri) {
+        return toKey(iri, this.keepUnmapped)
+    }
+
+    String toKey(String iri, boolean keepUnmapped) {
         def key = context.toKey(iri)
         return (key != null)? key : keepUnmapped? iri : null
     }
