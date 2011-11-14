@@ -85,6 +85,19 @@ class JSONLDSerializerSpec extends Specification {
         data.bday == ["@literal": "1970-01-01", "@datatype": "xsd:date"]
     }
 
+    def "should use term as IRI if defined"() {
+        given:
+        def docTypeIri = "${FOAF}Document"
+        def context = new JSONLDContext('Document': docTypeIri)
+        def serializer = new JSONLDSerializer(context)
+        and:
+        describer.newDescription(docTypeIri).addRel("rdf:type", "rdfs:Class")
+        when:
+        def data = serializer.toJSON(repo, docTypeIri)
+        then:
+        data['@subject'] == 'Document'
+    }
+
     def "should support current coerce key"() {
         given:
         def context = new JSONLDContext(
@@ -152,7 +165,7 @@ class JSONLDSerializerSpec extends Specification {
         then:
         serializer.context.vocab == FOAF
         data['a'] == 'Person'
-        data['type']['@subject'] == "${FOAF}Person"
+        data['type']['@subject'] == "Person"
     }
 
     // TODO: coerce @rev...
