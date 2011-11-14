@@ -18,7 +18,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <groovy.version>1.8.1</groovy.version>
     <restlet.version>2.0.9</restlet.version>
-    <sesame.version>2.5.0</sesame.version>
+    <sesame.version>2.6.0</sesame.version>
     <elasticsearch.version>0.17.7</elasticsearch.version>
     <tika.version>0.9</tika.version>
     <jackson.version>1.8.1</jackson.version>
