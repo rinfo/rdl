@@ -1,3 +1,4 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX bibo: <http://purl.org/ontology/bibo/>
 PREFIX dct: <http://purl.org/dc/terms/>
@@ -9,8 +10,7 @@ CONSTRUCT {
     ?s ?p ?o .
     ?current ?curr_p ?curr_o .
 
-    ?relitem a ?reltype;
-        ?relprop ?reltext .
+    ?relitem ?relprop ?relobj .
 
     ?reldoc rpubl:paragraf ?relitem .
     ?relchapter rpubl:paragraf ?relitem .
@@ -55,9 +55,8 @@ CONSTRUCT {
     } UNION {
 
         ?current ?rel ?relitem .
-        ?relitem ?relprop ?reltext .
-        FILTER( isLiteral(?reltext) )
-        OPTIONAL { ?relitem a ?reltype . }
+        ?relitem ?relprop ?relobj .
+        FILTER( ?relprop = rdf:type || isLiteral(?relobj) )
 
         # TODO:IMPROVE: generalize...
         # NOTE: this part is a bit slow:
@@ -92,8 +91,8 @@ CONSTRUCT {
         FILTER(
             ?type != foaf:Organization &&
             ?type != bibo:Collection &&
-            ?supertype != bibo:Collection &&
-            ?supersupertype != bibo:Collection)
+            (!BOUND(?supertype) || ?supertype != bibo:Collection) &&
+            (!BOUND(?supersupertype) || ?supersupertype != bibo:Collection))
 
         # TODO:IMPROVE: generalize...
         # - follow revitems upward to containers and describe those
