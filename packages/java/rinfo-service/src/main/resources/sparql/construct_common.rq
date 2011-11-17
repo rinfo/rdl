@@ -1,5 +1,4 @@
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX owl:  <http://www.w3.org/2002/07/owl#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
@@ -10,7 +9,6 @@ CONSTRUCT {
         foaf:topic ?s .
 
     ?s a ?type .
-    ?s rdfs:label ?label .
     ?s foaf:name ?name .
     ?s skos:prefLabel ?prefLabel .
     ?s skos:altLabel ?altLabel .
@@ -25,14 +23,6 @@ CONSTRUCT {
 
         ?s a foaf:Organization, ?type .
         ?s foaf:name ?name .
-
-    } UNION {
-
-        ?s a ?type;
-            rdfs:isDefinedBy ?vocab; #[ a owl:Ontology ];
-            rdfs:label ?label .
-        #FILTER(?type in (owl:Class, rdf:Property))
-        FILTER(langMatches(lang(?label), "sv"))
 
     } UNION {
 
