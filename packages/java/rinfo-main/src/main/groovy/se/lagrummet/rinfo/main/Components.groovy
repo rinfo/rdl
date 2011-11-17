@@ -179,7 +179,7 @@ public class Components {
             for (lockedEntry in depot.iterateLockedEntries()) {
                 logger.info("Found locked depot entry: <${lockedEntry}>. " +
                         "Rolling it back.")
-                //lockedEntry.rollback()
+                lockedEntry.rollback()
             }
             logger.info("Done in ${new Date().time - start} ms.")
 
