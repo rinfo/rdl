@@ -5,6 +5,7 @@ a.sort {
 
 dl.data > dt {
   float: left;
+  overflow: hidden;
   text-overflow: ellipsis;
   width: 14em;
 }
@@ -15,7 +16,7 @@ dl.data > dd {
 }
 
 dl.data > dd dl.data > dt {
-  width: 11em;
+  width: 10em;
 }
 
 dl.data > dd dl > dd {

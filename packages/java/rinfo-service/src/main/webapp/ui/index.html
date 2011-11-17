@@ -6,6 +6,10 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="bootstrap.min.css" />
     <link rel="stylesheet" href="main.css" />
+    <!--
+    <link rel="glossary" href="/var/terms" type="application/json" />
+    <link rel="prefetch" href="/var/common" type="application/json" />
+    -->
     <script src="jquery-1.6.4.min.js"></script>
     <script src="jquery.tmpl.min.js"></script>
     <script src="bootstrap-modal.js"></script>
@@ -83,7 +87,7 @@
           <ul>
             <li class="prev ${results.prev? '' : 'disabled'}">
               <a href="#${results.prev}">&larr; F&ouml;reg&aring;ende</a></li>
-            <li class="active"><a href="#${results.current}">${start} &ndash; ${end}</a></li>
+              <li class="active"><a href="#${results.current}">${start} &ndash; ${end} / ${totalResults}</a></li>
             <li class="next ${results.next? '' : 'disabled'}">
               <a href="#${results.next}">N&auml;sta &rarr;</a></li>
           </ul>
@@ -117,7 +121,7 @@
                     </p>
                   {{/if}}
                 </td>
-                <td>${type}</td>
+                <td>${termLabel(type)}</td>
               </tr>
             {{/each}}
           </tbody>
@@ -142,32 +146,38 @@
     </script>
 
     <script id="dataTemplate" type="text/x-jquery-tmpl">
+      <p>
+        {{if obj.iri}}
+          <a class="svc" href="#${toServiceRef(obj.iri)}">&lt;${obj.iri}&gt;</a>
+        {{/if}}
+        {{if obj.type}}
+          <strong><em>&mdash; ${termLabel(obj.type)}</em></strong>
+        {{/if}}
+      </p>
       <dl class="data">
         {{each(key, value) obj}}
-        <dt>${key}</dt>
-        <dd>
-          {{if typeof value === 'string'}}
-            {{if key === 'iri'}}
-              <a class="svc" href="#${toServiceRef(value)}">${value}</a>
-            {{else}}
-              ${value}
-            {{/if}}
-          {{else value.length !== undefined}}
-            <ul>
-              {{each(i, it) value}}
-              <li>
-                {{if typeof it === 'string'}}
-                  ${it}
-                {{else}}
-                  {{tmpl({obj: it}) '#dataTemplate'}}
-                {{/if}}
-              </li>
-              {{/each}}
-            </ul>
-          {{else}}
-            {{tmpl({obj: value}) '#dataTemplate'}}
+          {{if key !== 'iri' && key !== 'type'}}
+            <dt>${termLabel(key)}</dt>
+            <dd>
+              {{if typeof value === 'string'}}
+                ${value}
+              {{else value.length !== undefined}}
+                <ul>
+                  {{each(i, it) value}}
+                  <li>
+                    {{if typeof it === 'string'}}
+                      ${it}
+                    {{else}}
+                      {{tmpl({obj: it}) '#dataTemplate'}}
+                    {{/if}}
+                  </li>
+                  {{/each}}
+                </ul>
+              {{else}}
+                {{tmpl({obj: value}) '#dataTemplate'}}
+              {{/if}}
+            </dd>
           {{/if}}
-        </dd>
         {{/each}}
       </dl>
     </script>
