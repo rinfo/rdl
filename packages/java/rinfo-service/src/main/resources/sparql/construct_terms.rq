@@ -1,0 +1,43 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
+
+CONSTRUCT {
+
+    ?page a foaf:Document;
+        foaf:topic ?s .
+
+    ?s a ?type .
+    ?s rdfs:label ?label .
+    ?s rdfs:comment ?comment .
+    ?s owl:inverseOf ?invS . ?invS rdfs:label ?invLabel .
+
+} WHERE {
+
+
+    BIND(?current as ?page)
+
+    FILTER(isIRI(?s))
+
+    ?s a ?type; #FILTER(?type in (owl:Class, rdf:Property))
+        rdfs:isDefinedBy ?vocab . #[ a owl:Ontology ];
+
+    {
+        ?s rdfs:label ?label .
+        FILTER(langMatches(lang(?label), "sv"))
+
+        OPTIONAL { ?s rdfs:comment ?comment . }
+        FILTER(!bound(?comment) || langMatches(lang(?comment), "sv"))
+
+    } UNION {
+
+        ?s owl:inverseOf ?invS .
+        ?invS rdfs:label ?invLabel .
+        FILTER(isBlank(?invS))
+
+        FILTER(!bound(?invLabel) || langMatches(lang(?invLabel), "sv"))
+
+    }
+
+}
