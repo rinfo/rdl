@@ -30,7 +30,9 @@ class ElasticQuery {
     def pageParamKey = '_page'
     def pageSizeParamKey = '_pageSize'
     def statsParamKey = '_stats'
-    def facetStatsSegment = "stats"
+
+    def segmentWildcard = "*"
+    def facetStatsSubSegment = "stats"
 
     ElasticQuery(ElasticData elasticData, String serviceAppBaseUrl) {
         this.elasticData = elasticData
@@ -39,14 +41,31 @@ class ElasticQuery {
     }
 
     Map search(String docType, Reference ref) {
+        boolean onlyStats = false
+        int splitAt = docType.indexOf(';')
+        if (splitAt > -1) {
+            onlyStats = docType.substring(splitAt+1) == facetStatsSubSegment
+            docType = docType.substring(0, splitAt)
+        }
+        if (docType == segmentWildcard) {
+            docType = null
+        }
         def srb = newSearchRequestBuilder()
-        return (docType == facetStatsSegment)?
-            getElasticStats(srb, ref) :
+        return onlyStats?
+            getElasticStats(srb, docType, ref) :
             searchElastic(srb, docType, ref)
     }
 
     SearchRequestBuilder newSearchRequestBuilder() {
         return elasticData.client.prepareSearch(elasticData.indexName)
+    }
+
+    def getElasticStats(SearchRequestBuilder srb, String docType, Reference ref) {
+        //def qb = QueryBuilders.matchAllQuery()
+        //srb.setQuery(qb)
+        prepareElasticSearch(srb, ref, docType, Collections.emptyList(), false, true)
+        SearchResponse esRes = srb.execute().actionGet()
+        return buildStats(esRes)
     }
 
     Map searchElastic(SearchRequestBuilder srb, String docType, Reference ref) {
@@ -90,14 +109,6 @@ class ElasticQuery {
             data.statistics = buildStats(esRes)
         }
         return data
-    }
-
-    def getElasticStats(SearchRequestBuilder srb, Reference ref) {
-        //def qb = QueryBuilders.matchAllQuery()
-        //srb.setQuery(qb)
-        prepareElasticSearch(srb, ref, null, Collections.emptyList(), false, true)
-        SearchResponse esRes = srb.execute().actionGet()
-        return buildStats(esRes)
     }
 
     Map prepareElasticSearch(SearchRequestBuilder srb, Reference ref,
