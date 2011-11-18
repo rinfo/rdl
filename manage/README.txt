@@ -225,7 +225,7 @@ Then delete the entire elasticsearch index by calling::
 Then regenerate the elasticsearch index from the Sesame repo combined with
 extracted texts::
 
-    $ ~/mgr_work/common/bin/run_webapp_tool.sh /opt/tomcat/webapps/rinfo-service/ rinfo.service.cmd.GenElastic rinfo ~/elastic_text_extracts
+    $ ~/mgr_work/common/bin/run_webapp_tool.sh /opt/tomcat/webapps/rinfo-service/ rinfo.service.cmd.GenElastic rinfo-service.properties ~/elastic_text_extracts
 
 (These usually complete in about 30 minutes. It's recommended to run these in
 e.g. a screen session to ensure that loss of connection doesn't abort the
