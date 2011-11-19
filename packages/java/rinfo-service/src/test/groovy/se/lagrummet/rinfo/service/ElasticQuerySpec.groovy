@@ -62,9 +62,37 @@ class ElasticQuerySpec extends Specification {
         })
     }
 
-    private toJson(qb) {
-        new JsonSlurper().parseText(new String(qb.buildAsBytes()))
+    // TODO: ifExists
+
+    def "should support OR:able query items"() {
+        given:
+        def ref = new Reference("/-/publ?q=thing&or-title=SFS&or-identifier=SFS")
+        def srb = Mock(SearchRequestBuilder)
+        def qs = null
+        when:
+        elQuery.prepareElasticSearch(srb, ref, "publ", showTerms)
+        then:
+        1 * srb.setQuery({ assert toJson(it).query_string.query ==
+                "(thing) AND ((identifier:SFS) OR (title:SFS))"; true })
     }
+
+    def "should support OR:able filter items"() {
+        given:
+        def srb = Mock(SearchRequestBuilder)
+        def ref = new Reference("/-/publ?or-min-published=2008-01-01&or-min-issued=2008-01-01")
+        when:
+        elQuery.prepareElasticSearch(srb, ref, "publ", showTerms)
+        then:
+        1 * srb.setQuery({
+            def f = toJson(it).filtered.filter
+            assert f.or.filters[0].range.published.from == "2008-01-01"
+            assert f.or.filters[1].range.issued.from == "2008-01-01"
+            true
+        })
+    }
+
+
+    //"should support OR:able combined query and filter items"?
 
     @Unroll
     def "can escape queries"() {
@@ -146,6 +174,10 @@ class ElasticQuerySpec extends Specification {
         item.parts == ["Part 1", "Part 2"]
         item.rel.id == "rel.1"
         item.rel.label == "Rel 1"
+    }
+
+    private toJson(qb) {
+        new JsonSlurper().parseText(new String(qb.buildAsBytes()))
     }
 
 }
