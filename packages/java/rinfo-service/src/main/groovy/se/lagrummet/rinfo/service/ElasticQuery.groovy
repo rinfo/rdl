@@ -118,25 +118,28 @@ class ElasticQuery {
             addStats=false,
             pageSize=defaultPageSize) {
         def queryForm = ref.getQueryAsForm(UTF_8)
-        def q = null
         def terms = [:]
         def ranges = [:]
         def optionals = new HashSet()
+        def orAbles = new HashSet()
         def exists = [:]
         def page = 0
         if (docType) {
             srb.setTypes(docType)
         }
         srb.addFields(showTerms as String[])
-        for (name in queryForm.names) {
-            def value = queryForm.getFirstValue(name)
+        for (queryName in queryForm.names) {
+            def queryItem = toQueryItem(queryName)
+            def value = queryForm.getFirstValue(queryItem.name)
             if (value == null) {
                 continue
             }
+            def term = queryItem.term
+            if (queryItem.optOr) {
+                orAbles << term
+            }
             value = escapeQueryTexts? escapeQueryString(value) : value.replace(":", "\\:")
-            if (name == 'q') {
-                q = value
-            } else if (name == sortParamKey) {
+            if (queryItem.sortKey) {
                 value?.split(",").each {
                     def sortTerm = it
                     def sortOrder = SortOrder.ASC
@@ -153,52 +156,50 @@ class ElasticQuery {
                     srb.addSort(field, sortOrder)
                     if (!showTerms.contains(sortTerm)) srb.addFields(sortTerm)
                 }
-            } else if (name == pageParamKey) {
+            } else if (queryItem.pageKey) {
                 page = value as int
-            } else if (name == pageSizeParamKey) {
+            } else if (queryItem.pageSizeKey) {
                 pageSize = value as int
-            } else if (name == statsParamKey) {
+            } else if (queryItem.statsKey) {
                 addStats = true
-            } else if (name.startsWith('exists-')) {
-                exists[name.substring(7)] = (value != "false" && value != "0")
+            } else if (queryItem.existsKey) {
+                exists[term] = (value != "false" && value != "0")
             } else {
-                def ifExists = false
-                if (name.startsWith('ifExists-')) {
-                    name = name.substring(9)
-                    ifExists = true
-                }
-                if (name.startsWith('year-')) {
-                    name = name.substring(5)
-                    ranges.get(name, [:]).year = value
-                } else if (name.startsWith('minEx-')) {
-                    name = name.substring(6)
-                    ranges.get(name, [:]).minEx = value
-                } else if (name.startsWith('min-')) {
-                    name = name.substring(4)
-                    ranges.get(name, [:]).min = value
-                } else if (name.startsWith('maxEx-')) {
-                    name = name.substring(6)
-                    ranges.get(name, [:]).maxEx = value
-                } else if (name.startsWith('max-')) {
-                    name = name.substring(4)
-                    ranges.get(name, [:]).max = value
+                if (queryItem.yearKey) {
+                    ranges.get(term, [:]).year = value
+                } else if (queryItem.minExKey) {
+                    ranges.get(term, [:]).minEx = value
+                } else if (queryItem.minKey) {
+                    ranges.get(term, [:]).min = value
+                } else if (queryItem.maxExKey) {
+                    ranges.get(term, [:]).maxEx = value
+                } else if (queryItem.maxKey) {
+                    ranges.get(term, [:]).max = value
                 } else {
-                    terms[name] = queryForm.getValuesArray(name).collect {
+                    terms[term] = queryForm.getValuesArray(queryItem.name).collect {
                         escapeQueryString(it)
                     }
                 }
-                if (ifExists) {
-                    optionals << name
+                if (queryItem.optIfExists) {
+                    optionals << term
                 }
             }
         }
         def matches = []
-        if (q) {
-            matches << q
+        def orMatches = []
+        terms.each { term, values ->
+            def expression = values.collect {
+                    (term == 'q')? it : "${term}:${it}"
+                }.join(" ")
+            if (term in orAbles) {
+                orMatches << expression
+            } else {
+                matches << expression
+            }
+            if (!showTerms.contains(term)) srb.addFields(term)
         }
-        terms.each { name, values ->
-            matches << values.collect { "${name}:${it}" }.join(" ")
-            if (!showTerms.contains(name)) srb.addFields(name)
+        if (orMatches) {
+            matches << orMatches.collect { "(${it})" }.join(' OR ')
         }
         def elasticQStr = matches.collect { "(${it})" }.join(' AND ')
 
@@ -207,9 +208,10 @@ class ElasticQuery {
             QueryBuilders.matchAllQuery()
 
         List<FilterBuilder> filterBuilders = []
+        List<FilterBuilder> orFilterBuilders = []
 
-        ranges.each { key, item ->
-            def rfb = FilterBuilders.rangeFilter(key)
+        ranges.each { term, item ->
+            def rfb = FilterBuilders.rangeFilter(term)
             if (item.year) {
                 rfb.gte(item.year)
                 rfb.lt(((item.year as int) + 1) as String)
@@ -225,21 +227,29 @@ class ElasticQuery {
                     rfb.lte(item.max)
                 }
             }
-            if (key in optionals) {
+            if (term in optionals) {
                 rfb = FilterBuilders.orFilter(
-                        FilterBuilders.notFilter(FilterBuilders.existsFilter(key)),
+                        FilterBuilders.notFilter(FilterBuilders.existsFilter(term)),
                         rfb)
             }
-            filterBuilders << rfb
-            if (!showTerms.contains(key)) srb.addFields(key) //key.replaceFirst(/\..+/, ".*")
+            if (term in orAbles) {
+                orFilterBuilders << rfb
+            } else {
+                filterBuilders << rfb
+            }
+            if (!showTerms.contains(term)) srb.addFields(term) //term.replaceFirst(/\..+/, ".*")
         }
 
-        exists.each { key, value ->
-            def efb = FilterBuilders.existsFilter(key)
+        exists.each { term, value ->
+            def efb = FilterBuilders.existsFilter(term)
             if (!value) {
                 efb = FilterBuilders.notFilter(efb)
             }
             filterBuilders << efb
+        }
+
+        if (orFilterBuilders) {
+            filterBuilders << FilterBuilders.orFilter(orFilterBuilders as FilterBuilder[])
         }
 
         for (fb in filterBuilders) {
@@ -255,7 +265,7 @@ class ElasticQuery {
             prepareStats(srb)
         }
 
-        if (q) { // free text query
+        if ('q' in terms) { // free text query
             srb.setHighlighterPreTags('<em class="match">')
             srb.setHighlighterPostTags('</em>')
             // TODO: extract fields with matchable text content to config (ElasticData)
@@ -274,6 +284,56 @@ class ElasticQuery {
             queryString: ref.query ?: '',
             addStats: addStats
         ]
+    }
+
+    def toQueryItem(final String name) {
+        def item = [
+            name: name,
+            term: null,
+            optOr: false,
+            optIfExists: false
+        ]
+        if (name == sortParamKey) {
+            item.sortKey = true
+        } else if (name == pageParamKey) {
+            item.pageKey = true
+        } else if (name == pageSizeParamKey) {
+            item.pageSizeKey = true
+        } else if (name == statsParamKey) {
+            item.statsKey = true
+        } else if (name.startsWith('exists-')) {
+            item.existsKey = true
+            item.term = name.substring(7)
+        } else {
+            def term = name
+            if (term.startsWith('or-')) {
+                term = name.substring(3)
+                item.optOr = true
+            }
+            if (term.startsWith('ifExists-')) {
+                term = term.substring(9)
+                item.optIfExists = true
+            }
+            if (term.startsWith('year-')) {
+                item.yearKey = true
+                item.term = term.substring(5)
+            } else if (term.startsWith('minEx-')) {
+                item.minExKey = true
+                item.term = term.substring(6)
+            } else if (term.startsWith('min-')) {
+                item.minKey = true
+                item.term = term.substring(4)
+            } else if (term.startsWith('maxEx-')) {
+                item.maxExKey = true
+                item.term = term.substring(6)
+            } else if (term.startsWith('max-')) {
+                item.maxKey = true
+                item.term = term.substring(4)
+            } else {
+                item.term = term
+            }
+        }
+        return item
     }
 
     String escapeQueryString(String qs) {
