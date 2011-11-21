@@ -464,6 +464,12 @@ http://rinfo.lagrummet.se/publ/rf/rk/2009:4 > rk-2009-4.pdf</b>
         avsnitt 5.1).
       </p>
       <p>
+        Observera att bas-URL för nedanstående sökexempel är:
+      </p>
+      <pre>
+http://service.lagrummet.se/
+      </pre>
+      <p>
         <b>Generella frågor:</b> <code>q</code> är den generella
         frågeparametern. Den söker i samtliga parametrar samt
         textkroppen. Exempel (returnerar alla dokument som i titel,
@@ -471,7 +477,7 @@ http://rinfo.lagrummet.se/publ/rf/rk/2009:4 > rk-2009-4.pdf</b>
         "ekonom"):
       </p>
       <pre>
-http://service.lagrummet.se/-/publ?q=ekonom*
+/-/publ?q=ekonom*
       </pre>
       <p>
         <b>Fritextsökning i fält:</b> Vissa dokumentegenskaper kan
@@ -483,13 +489,13 @@ http://service.lagrummet.se/-/publ?q=ekonom*
         innehåller texten "djur"):
       </p>
       <pre>
-http://service.lagrummet.se/-/publ?title=*djur*
+/-/publ?title=*djur*
       </pre>
       <p>
         <b>Dokumenttyp:</b> Med parametern <code>type</code> (som kan anges flera gånger) kan man avgränsa frågan till en eller flera dokumenttyper. Se nedan under "Tillgängliga parametrar" för hur hela listan av möjliga dokumenttyper kan fås. Exempel (returnerar alla dokument av typen <code>Lag</code> eller <code>Forordning</code>):
       </p>
       <pre>
-http://service.lagrummet.se/-/publ?type=Lag&amp;type=Forordning
+/-/publ?type=Lag&amp;type=Forordning
       </pre>
       <p>
         <b>Publikationssamling:</b> De flesta dokument i
@@ -513,28 +519,109 @@ http://service.lagrummet.se/-/publ?type=Lag&amp;type=Forordning
         <li><code>utredningsserie</code></li>
       </ul>
       <p>
-        Finansinspektionens författningssamling (FFFS) har URI:n
-        <code>http://rinfo.lagrummet.se/serie/fs/fffs</code>. Exempel
-        (returnerar alla dokument i FFFS):
+        Finansinspektionens författningssamling (FFFS) har t.ex. URI:n
+        <code>http://rinfo.lagrummet.se/serie/fs/fffs</code>, så en sökning på
+        alla dokument i FFFS blir således:
       </p>
       <pre>
-http://service.lagrummet.se/-/publ?forfattningssamling.iri=
-"http://rinfo.lagrummet.se/serie/fs/fffs"
+/-/publ?forfattningssamling.iri=http://rinfo.lagrummet.se/serie/fs/fffs
       </pre>
       <p>
-        (OBS att parametervärdet måste omslutas av '"' om värdet
-        innehåller ':'). Likvärdigt men kortare exempel som matchar
-        alla dokument vars forfattningssamling slutar på
-        <code>/fffs</code>:
+        Likvärdigt men kortare exempel som matchar alla dokument vars
+        forfattningssamling slutar på <code>/fffs</code>:
       </p>
       <pre>
-http://service.lagrummet.se/-/publ?forfattningssamling.iri=*/fffs
+/-/publ?forfattningssamling.iri=*/fffs
+      </pre>
+      <p>
+        <b>Filtrering på förekomst av en viss egenskap:</b> För att inkludera
+        eller exkludera dokument baserat på förekomsten av en viss exenskap
+        oavsett värde kan en parameter prefixad med <code>exists-</code> anges.
+        Värdet ska då anges som en boolean, d.v.s. <code>true</code> eller
+        <code>false</code>.
+        Nedanstående exempel söker på alla dokument vilka <em>inte</em>
+        hänvisar till andra dokument med egenskaperna <code>andrar</code> eller
+        <code>upphaver</code>:
+      </p>
+      <pre>
+/-/publ.json?exists-andrar.iri=false&amp;exists-upphaver.iri=false
+      </pre>
+      <p>
+        <b>Filtrering på datum:</b> Genom att prefixa datumparametrar med
+        speciella nyckelord går det att avgränsa sökningen inom specifika
+        tidsangivelser. Datum ska anges på formen <code>YYYY-MM-DD</code>.
+        Följande prefix är definierade:
+      </p>
+      <dl>
+        <dt><code>minEx-</code></dt>
+        <dd>Datumet för den angivna parametern måste vara större än (senare än)
+          det angivna datumet (<code>Ex</code> står för "exclusive").</dd>
+        <dt><code>min-</code></dt>
+        <dd>Datumet för den angivna parametern måste vara större än eller lika
+          med det angivna datumet.</dd>
+        <dt><code>maxEx-</code></dt>
+        <dd>Datumet för den angivna parametern måste vara mindre än (tidigare
+          än) det angivna datumet.</dd>
+        <dt><code>max-</code></dt>
+        <dd>Datumet för den angivna parametern måste vara mindre än eller lika
+          med det angivna datumet.</dd>
+      </dl>
+      <p>Det går även att förenkla avgränsningen till inom ett specifikt år
+        genom att använda prefixet <code>year-</code>.
+      </p>
+      <p>
+        <b>Villkorlig filtrering på datum:</b> Genom att prefixa en filtering
+        med <code>ifExists-</code> kan man exkludera resultat till ett visst
+        datumomfång förutsatt att datumegenskapen existerar.
+      </p>
+      <p>
+        Nedanstående exempel använder sig av en kombination av mekanismerna
+        ovan för att söka på <em>grundförfattingar som var ikraft första
+          januari 2011</em>:
+      </p>
+      <pre>
+/-/publ.json?max-ikrafttradandedatum=2011-01-01&amp;
+    ifExists-minEx-rev.upphaver.ikrafttradandedatum=2011-01-01&amp;
+    exists-andrar.iri=false&amp;
+    exists-upphaver.iri=false
+      </pre>
+      <p>Detta åstadkoms genom att kräva följande av matchande dokument:</p>
+      <ul>
+        <li><em>Ikraftträdandedatumet</em> inte får vara större än den första
+          januari 2011:
+          <br />
+          <code>max-ikrafttradandedatum=2011-01-01</code></li>
+        <li>
+          <em>Ikraftträdandedatumet för något som upphäver dokumentet</em>
+          måste vara större än samma datum, om något sådant existerar:
+          <br />
+          <code>ifExists-minEx-rev.upphaver.ikrafttradandedatum=2011-01-01</code></li>
+        <li>Exkludera dokument som <em>ändrar</em> andra dokument:
+          <br />
+          <code>exists-andrar.iri=false</code></li>
+        <li>Exkludera dokument som <em>upphäver</em> andra dokument:
+          <br />
+          <code>exists-upphaver.iri=false</code></li>
+      </ul>
+      <p>
+        <b>Alternativa matchningar:</b> Alla egenskaper som prefixas med
+        <code>or-</code> grupperas tillsammans så att enbart en av dem måste
+        matcha. Detta kan användas för att t.ex. söka samtidigt på
+        <em>antingen</em> beslutsdatum och utfärdandedatum inom ett visst år:
+      </p>
+      <pre>
+/-/publ?q=&amp;or-year-beslutsdatum=1991&amp;or-year-utfardandedatum=1991
       </pre>
       <p><b>Sortering:</b> Många av de parametrar som man kan avgränsa
-      sökningen på kan också användas för att sortera sökresultaten. Parametern <code>_sort</code> används, med parametervärdet satt till det parameter man vill sortera på. Sorteringen är vanligen i stigande ordning, men kan fås i fallande ordning om parametervärdet föregås av ett '-'. Exempel (alla dokument i FFFS, sorterat i fallande beslutsdatumordning):
+      sökningen på kan också användas för att sortera sökresultaten. Parametern
+      <code>_sort</code> används, med parametervärdet satt till den parameter
+      man vill sortera på. Sorteringen är vanligen i stigande ordning, men kan
+      fås i fallande ordning om parametervärdet föregås av ett minustecken
+      (<code>-</code>). Exempel (alla dokument i FFFS, sorterat i fallande
+      beslutsdatumordning):
       </p>
       <pre>
-http://service.lagrummet.se/-/publ?forfattningssamling.iri=*/fffs&amp;_sort=-beslutsdatum
+/-/publ?forfattningssamling.iri=*/fffs&amp;_sort=-beslutsdatum
       </pre>
       <p>
         <b>Paginering:</b> Om inget annat anges returneras endast de
@@ -548,7 +635,7 @@ http://service.lagrummet.se/-/publ?forfattningssamling.iri=*/fffs&amp;_sort=-bes
         träffar på en sida ändras från 50. Exempel (Listar dokument 21-40 i FFFS):
       </p>
       <pre>
-http://service.lagrummet.se/-/publ?forfattningssamling.iri=*/fffs&amp;_pageSize=20&amp;_page=1
+/-/publ?forfattningssamling.iri=*/fffs&amp;_pageSize=20&amp;_page=1
       </pre>
       <p>
         Nycklarna <code>prev</code> och <code>next</code> i resultatet
@@ -556,18 +643,23 @@ http://service.lagrummet.se/-/publ?forfattningssamling.iri=*/fffs&amp;_pageSize=
         för just den sökningen.
       </p>
       <p>
-        <b>Tillgängliga parametrar:</b> De "fasta" värden som kan
-        användas för ovanstående parametrar beror på vilken mängd
-        dokument som för tillfället finns inladdat i
-        rättsdatalagret. Från nedanstående vy kan man utläsa vilka
-        parametrar och möjliga värden som finns (notera att vissa
-        parametrar med fritextvärden, som <code>q</code>,
-        <code>title</code> och <code>identifier</code>, inte finns med
-        i nedanstående):
+        <b>Listor av tillgängliga värden:</b> De "fasta" värden som kan
+        användas för ovanstående parametrar beror på vilken mängd dokument som
+        för tillfället finns inladdat i rättsdatalagret. Från nedanstående vy
+        kan man utläsa vilka parametrar och möjliga värden som finns (notera
+        att vissa parametrar med fritextvärden, som <code>q</code>,
+        <code>title</code> och <code>identifier</code>, inte finns med i
+        nedanstående):
       </p>
-
       <pre>
-http://service.lagrummet.se/-/stats
+/-/publ;stats
+      </pre>
+      <p>
+        Det går även att inkludera listor på möjliga värden <em>inom</em> ett
+        visst sökresultat (för att stödja s.k. "facetterad" sökning).
+      </p>
+      <pre>
+/-/publ?type=Myndighetsforeskrift&amp;_stats=on
       </pre>
 
       <h3>5.3 Verktyg för sökning, bläddring och dokumentvisning</h3>
