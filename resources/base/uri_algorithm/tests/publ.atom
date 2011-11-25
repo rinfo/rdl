@@ -229,6 +229,21 @@ g        </content>
     </entry>
 
     <entry>
+        <!-- Om både sidnumret och löpnumret är angivet ska sidnumret ha
+             företräde (om referatet är utgivet i NJA) -->
+        <id>http://rinfo.lagrummet.se/publ/rf/nja/2005/s_523</id>
+        <summary>Rättsfallsreferat utgivet i Nytt Juridiskt Arkiv</summary>
+        <content type="application/rdf+xml">
+            <rpubl:Rattsfallsreferat>
+                <rpubl:rattsfallspublikation rdf:resource="http://rinfo.lagrummet.se/serie/rf/nja"/>
+                <rpubl:arsutgava>2005</rpubl:arsutgava>
+                <rpubl:lopnummer>57</rpubl:lopnummer>
+                <rpubl:sidnummer>523</rpubl:sidnummer>
+            </rpubl:Rattsfallsreferat>
+        </content>
+    </entry>
+
+    <entry>
       <!-- Äldre referens från HD på formen "NJA 1913 B 418" -->
       <id>http://rinfo.lagrummet.se/publ/rf/nja/1913/not/b_418</id>
       <summary>Rättsfallsnotis utgiven i Nytt Juridiskt Arkiv</summary>
