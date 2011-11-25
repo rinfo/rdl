@@ -145,6 +145,10 @@ public class URIMinter {
             }
             Collections.sort(results, new Comparator<MintResult>() {
                 public int compare(MintResult a, MintResult b) {
+                    int prioCmp = b.getPriority() - a.getPriority();
+                    if (prioCmp != 0) {
+                        return prioCmp;
+                    }
                     return -1 * a.getMatchCount().compareTo(b.getMatchCount());
                 }
             });
@@ -183,6 +187,7 @@ public class URIMinter {
         String uriTemplate;
         String relToBase;
         String relFromBase;
+        int priority = 0;
         List<CoinBinding> bindings = new ArrayList<CoinBinding>();
 
         CoinTemplate(CoinURISpace space, Description desc) {
@@ -191,6 +196,10 @@ public class URIMinter {
             uriTemplate = desc.getString("coin:uriTemplate");
             relToBase = desc.getObjectUri("coin:relToBase");
             relFromBase = desc.getObjectUri("coin:relFromBase");
+            Object givenPriority = desc.getNative("coin:priority");
+            if (givenPriority != null) {
+                priority = ((java.math.BigInteger) givenPriority).intValue();
+            }
             for (Description cmp : desc.getRels("coin:binding")) {
                 bindings.add(new CoinBinding(this, cmp));
             }
@@ -210,7 +219,7 @@ public class URIMinter {
                     }
                 }
                 if (!ok)
-                    return new MintResult(null, matchCount, rulesSize);
+                    return new MintResult(null, matchCount, rulesSize, priority);
             }
             Map<String, String> matches = new HashMap<String, String>();
             for (CoinBinding binding : bindings) {
@@ -223,7 +232,7 @@ public class URIMinter {
             String uri = (matchCount == rulesSize)?
                 buildUri(determineBase(desc), matches) :
                 null;
-            return new MintResult(uri, matchCount, rulesSize);
+            return new MintResult(uri, matchCount, rulesSize, priority);
         }
 
         String determineBase(Description desc) {

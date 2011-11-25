@@ -56,6 +56,8 @@ public class RDFLiteral {
                 return literal.floatValue();
             else if (dt.equals(XMLSchema.INT))
                 return literal.intValue();
+            else if (dt.equals(XMLSchema.INTEGER))
+                return literal.integerValue();
             else if (dt.equals(XMLSchema.LONG))
                 return literal.longValue();
             else if (dt.equals(XMLSchema.SHORT))
