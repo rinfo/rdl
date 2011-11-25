@@ -8,6 +8,10 @@ Getting Started
 
 See ``manage/running_rinfo_locally.txt``.
 
+General Management
+========================================================================
+
+See ``manage/README.txt``.
 
 Contents
 ========================================================================
