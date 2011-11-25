@@ -168,6 +168,7 @@
             ]
     ], [
         coin:uriTemplate "/publ/rf/{serie}/{arsutgava}/s_{sidnummer}";
+        coin:priority 1;
         coin:binding [ coin:variable "serie";
                 coin:property rpubl:rattsfallspublikation;
                 coin:slugFrom :abbrSlug;
