@@ -149,6 +149,9 @@
       <p>
         {{if obj.iri}}
           <a class="svc" href="#${toServiceRef(obj.iri)}">&lt;${obj.iri}&gt;</a>
+          <!--
+          <a class="label info" href="${toServiceRef(obj.iri)}">JSON</a>
+          -->
         {{/if}}
         {{if obj.type}}
           <strong><em>&mdash; ${termLabel(obj.type)}</em></strong>
