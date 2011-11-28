@@ -1,5 +1,6 @@
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
 PREFIX bibo: <http://purl.org/ontology/bibo/>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
@@ -42,6 +43,12 @@ CONSTRUCT {
     ?revpara ?paraRefRev ?inrefitem .
 
 } WHERE {
+
+    # NOTE: if support for sameAs of documents is needed, this will work
+    # (provided that all occurrences of ?current in the construct above this
+    # and the query below this are replaced with ?actual).
+    #OPTIONAL { ?actual owl:sameAs ?current }
+    #FILTER(BOUND(?actual) || ?actual = ?current)
 
     {
 
