@@ -47,6 +47,7 @@ CONSTRUCT {
         ?current ?curr_p ?curr_o .
         FILTER(?curr_p in (rdf:type,
                             dct:publisher,
+                            :departement,
                             :forfattningssamling,
                             :utrSerie,
                             :rattsfallspublikation,
@@ -54,7 +55,13 @@ CONSTRUCT {
                             :andrar,
                             :ersatter,
                             :upphaver,
-                            :konsoliderar))
+                            :konsoliderar,
+                            :lagrum,
+                            :bemyndigande,
+                            :genomforDirektiv,
+                            :forarbete,
+                            :foreslarAndringAv,
+                            :utgarFran))
 
     } UNION {
 
