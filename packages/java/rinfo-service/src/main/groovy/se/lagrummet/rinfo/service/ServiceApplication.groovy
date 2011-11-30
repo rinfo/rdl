@@ -82,7 +82,7 @@ class ServiceApplication extends Application {
                     "/sparql/construct_relrev_data.rq")
             ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
 
-        router.attach("/{path}/summary",
+        router.attach("/{path}/index",
                 new DataFinder(ctx, components.repository,
                     components.jsonLdSettings, components.dataAppBaseUri,
                     "/sparql/construct_summary.rq")
