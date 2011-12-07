@@ -16,8 +16,8 @@ client = new TransportClient().addTransportAddress(
 
 def runQuery(startIndex, itemsPerPage) {
     def srb = client.prepareSearch(indexName)
-    def qb = QueryBuilders.queryString("document.content:*")
-    srb.addFields("iri", "document.content", "document.content_type")
+    def qb = QueryBuilders.queryString("hasFormat.text:*")
+    srb.addFields("iri", "hasFormat.text", "hasFormat.format")
     srb.setQuery(qb)
     srb.setFrom(startIndex)
     srb.setSize(itemsPerPage)
@@ -27,19 +27,19 @@ def runQuery(startIndex, itemsPerPage) {
 void handleResults(esRes) {
     esRes.hits.hits.each {
         def iri = it.fields.iri.value
-        def content = it.fields['document.content'].value
-        def mediaType = it.fields['document.content_type'].value
-        println "<${iri}> (${content.size()} bytes)"
-        saveContent(iri, content, mediaType)
+        def text = it.fields['hasFormat.text'].value
+        def mediaType = it.fields['hasFormat.format'].value
+        println "<${iri}> (${text.size()} bytes)"
+        saveContent(iri, text, mediaType)
     }
 }
 
-void saveContent(iri, content, mediaType) {
+void saveContent(iri, text, mediaType) {
     def path = new URI(iri).path[1..-1].replace(":", "/_3A_") +
             '/' + mediaExt[mediaType] + '.txt'
     new File(textDir, path).with {
         if (!parentFile.directory) parentFile.mkdirs()
-        setText(content, "UTF-8")
+        setText(text, "UTF-8")
     }
 }
 
