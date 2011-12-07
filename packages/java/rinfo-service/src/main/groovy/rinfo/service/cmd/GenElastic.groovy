@@ -66,7 +66,11 @@ class GenElastic {
                         entry.setContent(new IRI(data.file.toURI()), data.mediaType)
                     }
                 }
-                eLoader.create(conn, entry, null)
+                try {
+                    eLoader.create(conn, entry, null)
+                } catch (Exception e) {
+                    e.printStackTrace()
+                }
 
             }
             println "Done. Indexed ${i} objects."
