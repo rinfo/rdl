@@ -2,9 +2,11 @@ package se.lagrummet.rinfo.base.rdf;
 
 import java.util.*;
 
+import org.openrdf.OpenRDFException;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
+import org.openrdf.repository.util.RDFInserter;
 import org.openrdf.model.Statement;
 import org.openrdf.model.BNode;
 import org.openrdf.model.Literal;
@@ -53,6 +55,21 @@ public class Describer {
 
     public RepositoryConnection getConnection() {
         return conn;
+    }
+
+    void addFromConnection(RepositoryConnection otherConn) {
+        addFromConnection(otherConn, false);
+    }
+
+    void addFromConnection(RepositoryConnection otherConn, boolean preserveBNodeIDs) {
+        try {
+            RDFInserter inserter =  new RDFInserter(conn);
+            inserter.enforceContext(contextRefs);
+            inserter.setPreserveBNodeIDs(preserveBNodeIDs);
+            otherConn.export(inserter);
+        } catch (OpenRDFException e) {
+            throw new DescriptionException(e);
+        }
     }
 
     public void close() {
