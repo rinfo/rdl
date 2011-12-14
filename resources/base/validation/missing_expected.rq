@@ -1,0 +1,35 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX sch: <http://purl.org/net/schemarama#>
+
+CONSTRUCT {
+
+    [] a sch:Warning;
+        rdfs:isDefinedBy <http://rinfo.lagrummet.se/sys/validation/missing_expected.rq>;
+        sch:message "Resurs [1]: inget värde angivet för egenskap [2] (ska vara minst [3])."@sv;
+        sch:implicated (?thing ?baseprop ?cardinality);
+        dct:source ?context .
+
+} WHERE {
+
+    ?restr a owl:Restriction;
+        owl:onProperty ?baseprop;
+        (owl:minCardinality | owl:cardinality) ?cardinality .
+
+    FILTER(?cardinality > 0)
+
+    GRAPH ?context {
+        ?thing a ?type .
+    }
+
+    ?type rdfs:subClassOf+ ?restr .
+
+    FILTER NOT EXISTS {
+        ?prop rdfs:subPropertyOf* ?baseprop .
+        GRAPH ?context {
+            ?thing ?prop ?value .
+        }
+    }
+
+}

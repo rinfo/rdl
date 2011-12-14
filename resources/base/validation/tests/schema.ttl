@@ -1,0 +1,28 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix : <http://example.org/def/vocab#> .
+@prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
+
+# TODO: split in two tests (one with range, one with allValuesFrom)
+dct:created a owl:DatatypeProperty; rdfs:range xsd:date .
+
+:Document a rdfs:Class;
+    rdfs:subClassOf [ a owl:Restriction;
+            owl:onProperty dct:created;
+            owl:allValuesFrom xsd:date
+        ];
+    rdfs:subClassOf [ a owl:Restriction;
+            owl:onProperty dct:title;
+            owl:minCardinality 1
+        ];
+    rdfs:isDefinedBy : .
+
+:token a rdf:Property; rdfs:isDefinedBy : .
+
+:changes a owl:ObjectProperty; rdfs:isDefinedBy : .
+
+rpubl:andrar a owl:ObjectProperty; rdfs:isDefinedBy rpubl: .
+

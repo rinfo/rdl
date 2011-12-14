@@ -1,0 +1,4 @@
+@prefix : <http://example.org/def/vocab#> .
+
+<http://example.org/publ/missing_expected> a :Document .
+

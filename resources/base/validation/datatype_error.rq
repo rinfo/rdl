@@ -1,0 +1,47 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX sch: <http://purl.org/net/schemarama#>
+
+CONSTRUCT {
+
+    [] a sch:Error;
+        rdfs:isDefinedBy <http://rinfo.lagrummet.se/sys/validation/datatype_error.rq>;
+        sch:message "Resurs [1]: egenskap [2] med värde [3] matchar inte angiven datatyp [4]."@sv;
+        sch:implicated (?thing ?prop ?repr ?datatype);
+        dct:source ?context .
+
+} WHERE {
+
+    GRAPH ?context {
+        ?thing ?prop ?value .
+    }
+    FILTER(isLiteral(?value))
+    BIND(datatype(?value) as ?datatype)
+    FILTER(bound(?datatype) && ?datatype != xsd:string)
+    BIND(str(?value) as ?repr)
+    BIND(COALESCE(
+                # Crude value check since Sesame doesn't check on coercion...
+                IF(?datatype = xsd:date, COALESCE(
+                        IF(month(?value) > 12, ?FAIL,
+                            IF(day(?value) > 31, ?FAIL,
+                                ?value))),
+                    IF(?datatype = xsd:dateTime, COALESCE(
+                            IF(month(?value) > 12, ?FAIL,
+                                IF(day(?value) > 31, ?FAIL,
+                                    IF(hours(?value) > 24, ?FAIL,
+                                        IF(minutes(?value) >= 60, ?FAIL,
+                                            IF(seconds(?value) >= 60, ?FAIL,
+                                                ?value)))))),
+                #IF(?datatype = xsd:date, xsd:dateTime(concat(?repr, 'T00:00:00')),#)
+                    #IF(?datatype = xsd:dateTime, xsd:dateTime(?repr),#)
+                        IF(?datatype = xsd:boolean, xsd:boolean(?repr),
+                            IF(?datatype = xsd:double, xsd:double(?repr),
+                                IF(?datatype = xsd:float, xsd:float(?repr),
+                                    IF(?datatype = xsd:decimal, xsd:decimal(?repr),
+                                        IF(?datatype = xsd:integer, xsd:integer(?repr),
+                                            ?FAIL)))))))) as ?coerced)
+    FILTER(!bound(?coerced))
+
+}

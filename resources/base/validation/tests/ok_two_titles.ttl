@@ -1,0 +1,6 @@
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix : <http://example.org/def/vocab#> .
+
+<http://example.org/publ/ok_two_titles> a :Document;
+    dct:title "a title"@en, "en titel"@sv .
+

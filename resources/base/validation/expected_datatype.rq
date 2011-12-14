@@ -1,0 +1,40 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX sch: <http://purl.org/net/schemarama#>
+
+CONSTRUCT {
+
+    [] a sch:Error;
+        rdfs:isDefinedBy <http://rinfo.lagrummet.se/sys/validation/expected_datatype.rq>;
+        sch:message "Resurs [1]: egenskap [2] med värde [3] förväntas ha värden av datatyp [4]."@sv;
+        sch:implicated (?thing ?prop ?value ?expectedDatatype);
+        dct:source ?context .
+
+} WHERE {
+
+    GRAPH ?context {
+        ?thing ?prop ?value .
+        OPTIONAL {
+            ?thing a ?type .
+        }
+    }
+    BIND(datatype(?value) as ?datatype)
+
+    OPTIONAL {
+      ?prop a owl:DatatypeProperty;
+        rdfs:range ?expectedDatatype .
+    }
+    OPTIONAL {
+      FILTER(isLiteral(?value))
+      ?type rdfs:subClassOf* [ a owl:Restriction;
+          owl:onProperty ?prop;
+          owl:allValuesFrom ?expectedDatatype
+        ] .
+    }
+    FILTER(BOUND(?expectedDatatype))
+    FILTER(?expectedDatatype != rdfs:Literal)
+
+    FILTER(!BOUND(?datatype) || ?datatype != ?expectedDatatype)
+
+}

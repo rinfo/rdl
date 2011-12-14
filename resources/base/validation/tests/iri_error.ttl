@@ -1,0 +1,7 @@
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix : <http://example.org/def/vocab#> .
+
+<http://example.org/publ/iri_error> a :Document;
+    dct:title "en titel"@sv;
+    dct:references <HTTP:// error(> .
+
