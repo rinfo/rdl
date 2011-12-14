@@ -167,6 +167,17 @@ public class RDFUtil {
     public static void serialize(Repository repo, String mediaType,
             OutputStream outStream, boolean pretty, Resource... contexts)
             throws RDFHandlerException, RepositoryException, IOException {
+        RepositoryConnection conn = repo.getConnection();
+        try {
+            serialize(conn, mediaType, outStream, pretty, contexts);
+        } finally {
+            conn.close();
+        }
+    }
+
+    public static void serialize(RepositoryConnection conn, String mediaType,
+            OutputStream outStream, boolean pretty, Resource... contexts)
+            throws RDFHandlerException, RepositoryException, IOException {
         RDFFormat format = RDFFormat.forMIMEType(mediaType);
         RDFWriter writer = null;
         if (pretty && format.equals(RDFFormat.RDFXML)) {
@@ -177,12 +188,7 @@ public class RDFUtil {
             writer = factory.getWriter(outStream);
         }
         try {
-            RepositoryConnection conn = repo.getConnection();
-            try {
-                conn.export(writer, contexts);
-            } finally {
-                conn.close();
-            }
+            conn.export(writer, contexts);
         } finally {
             if (writer instanceof Closeable) {
                 ((Closeable)writer).close();
