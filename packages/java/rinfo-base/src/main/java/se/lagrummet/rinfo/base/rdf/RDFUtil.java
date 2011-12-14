@@ -21,6 +21,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.openrdf.OpenRDFException;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Namespace;
 import org.openrdf.model.Resource;
@@ -134,11 +135,19 @@ public class RDFUtil {
     }
 
     public static void addToRepo(Repository targetRepo, Repository repoToAdd)
-            throws RepositoryException {
+            throws OpenRDFException {
+        addToRepo(targetRepo, repoToAdd, false);
+    }
+
+    public static void addToRepo(Repository targetRepo, Repository repoToAdd,
+            boolean preserveBNodeIDs)
+            throws OpenRDFException {
         RepositoryConnection targetConn = targetRepo.getConnection();
         RepositoryConnection connToAdd = repoToAdd.getConnection();
         try {
-            targetConn.add(connToAdd.getStatements(null, null, null, false));
+            RDFInserter inserter =  new RDFInserter(targetConn);
+            inserter.setPreserveBNodeIDs(preserveBNodeIDs);
+            connToAdd.export(inserter);
         } finally {
             targetConn.close();
             connToAdd.close();
