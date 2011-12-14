@@ -183,82 +183,86 @@
 
     <xsl:template mode="property" match="*|@*">
         <xsl:element namespace="{namespace-uri(.)}" name="{name(.)}">
-            <xsl:choose>
-                <xsl:when test="@rdf:parseType='Collection'">
-                    <xsl:for-each select="*">
-                        <li>
-                            <xsl:choose>
-                                <xsl:when test="@rdf:about">
-                                    <xsl:attribute name="ref">
-                                        <xsl:call-template name="normalize-uri">
-                                            <xsl:with-param name="uri" select="@rdf:about"/>
-                                        </xsl:call-template>
-                                    </xsl:attribute>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:call-template name="resourcebody"/>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </li>
-                    </xsl:for-each>
-                </xsl:when>
-                <xsl:when test="rdf:List/rdf:first | rdf:Description/rdf:first">
-                    <xsl:apply-templates mode="rdflist" select="*/rdf:first"/>
-                </xsl:when>
-                <xsl:when test="*/@rdf:about">
-                    <xsl:attribute name="ref">
-                        <xsl:call-template name="normalize-uri">
-                            <xsl:with-param name="uri" select="*/@rdf:about"/>
-                        </xsl:call-template>
-                    </xsl:attribute>
-                </xsl:when>
-                <xsl:when test="@rdf:resource">
-                    <xsl:attribute name="ref">
-                        <xsl:call-template name="normalize-uri">
-                            <xsl:with-param name="uri" select="@rdf:resource"/>
-                        </xsl:call-template>
-                    </xsl:attribute>
-                </xsl:when>
-                <xsl:when test="@rdf:nodeID">
-                    <xsl:call-template name="output-bnode-in-property"/>
-                </xsl:when>
-                <xsl:when test="@rdf:parseType='Resource'">
-                    <xsl:apply-templates mode="type" select="rdf:type"/>
-                    <xsl:apply-templates mode="property" select="*|@*"/>
-                </xsl:when>
-                <xsl:when test="@rdf:parseType='Literal'">
-                    <xsl:attribute name="fmt">xml</xsl:attribute>
-                    <xsl:copy-of select="node()"/>
-                </xsl:when>
-                <xsl:when test="@rdf:datatype">
-                    <xsl:attribute name="fmt">datatype</xsl:attribute>
-                    <xsl:call-template name="element-from-uri">
-                        <xsl:with-param name="uri" select="@rdf:datatype"/>
-                        <xsl:with-param name="body">
-                            <xsl:value-of select="."/>
-                        </xsl:with-param>
-                    </xsl:call-template>
-                </xsl:when>
-                <xsl:when test="key('bnode', */@rdf:nodeID)">
-                    <xsl:for-each select="key('bnode', */@rdf:nodeID)">
-                        <xsl:call-template name="output-bnode-in-property"/>
-                    </xsl:for-each>
-                </xsl:when>
-                <xsl:when test="*[not(@rdf:about)]">
-                    <xsl:for-each select="*[not(@rdf:about)]">
-                        <xsl:call-template name="resourcebody"/>
-                    </xsl:for-each>
-                </xsl:when>
-                <!-- plain/language literals -->
-                <xsl:otherwise>
-                    <xsl:variable name="lang" select="(ancestor-or-self::*/@xml:lang)[last()]"/>
-                    <xsl:if test="$lang and $lang != ''">
-                        <xsl:attribute name="xml:lang"><xsl:value-of select="$lang"/></xsl:attribute>
-                    </xsl:if>
-                    <xsl:apply-templates/>
-                </xsl:otherwise>
-            </xsl:choose>
+            <xsl:call-template name="propertybody"/>
         </xsl:element>
+    </xsl:template>
+
+    <xsl:template name="propertybody">
+        <xsl:choose>
+            <xsl:when test="@rdf:parseType='Collection'">
+                <xsl:for-each select="*">
+                    <li>
+                        <xsl:choose>
+                            <xsl:when test="@rdf:about">
+                                <xsl:attribute name="ref">
+                                    <xsl:call-template name="normalize-uri">
+                                        <xsl:with-param name="uri" select="@rdf:about"/>
+                                    </xsl:call-template>
+                                </xsl:attribute>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:call-template name="resourcebody"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </li>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:when test="rdf:List/rdf:first | rdf:Description/rdf:first">
+                <xsl:apply-templates mode="rdflist" select="*/rdf:first"/>
+            </xsl:when>
+            <xsl:when test="*/@rdf:about">
+                <xsl:attribute name="ref">
+                    <xsl:call-template name="normalize-uri">
+                        <xsl:with-param name="uri" select="*/@rdf:about"/>
+                    </xsl:call-template>
+                </xsl:attribute>
+            </xsl:when>
+            <xsl:when test="@rdf:resource">
+                <xsl:attribute name="ref">
+                    <xsl:call-template name="normalize-uri">
+                        <xsl:with-param name="uri" select="@rdf:resource"/>
+                    </xsl:call-template>
+                </xsl:attribute>
+            </xsl:when>
+            <xsl:when test="@rdf:nodeID">
+                <xsl:call-template name="output-bnode-in-property"/>
+            </xsl:when>
+            <xsl:when test="@rdf:parseType='Resource'">
+                <xsl:apply-templates mode="type" select="rdf:type"/>
+                <xsl:apply-templates mode="property" select="*|@*"/>
+            </xsl:when>
+            <xsl:when test="@rdf:parseType='Literal'">
+                <xsl:attribute name="fmt">xml</xsl:attribute>
+                <xsl:copy-of select="node()"/>
+            </xsl:when>
+            <xsl:when test="@rdf:datatype">
+                <xsl:attribute name="fmt">datatype</xsl:attribute>
+                <xsl:call-template name="element-from-uri">
+                    <xsl:with-param name="uri" select="@rdf:datatype"/>
+                    <xsl:with-param name="body">
+                        <xsl:value-of select="."/>
+                    </xsl:with-param>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="key('bnode', */@rdf:nodeID)">
+                <xsl:for-each select="key('bnode', */@rdf:nodeID)">
+                    <xsl:call-template name="output-bnode-in-property"/>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:when test="*[not(@rdf:about)]">
+                <xsl:for-each select="*[not(@rdf:about)]">
+                    <xsl:call-template name="resourcebody"/>
+                </xsl:for-each>
+            </xsl:when>
+            <!-- plain/language literals -->
+            <xsl:otherwise>
+                <xsl:variable name="lang" select="(ancestor-or-self::*/@xml:lang)[last()]"/>
+                <xsl:if test="$lang and $lang != ''">
+                    <xsl:attribute name="xml:lang"><xsl:value-of select="$lang"/></xsl:attribute>
+                </xsl:if>
+                <xsl:apply-templates/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <xsl:template name="output-bnode-in-property">
@@ -299,12 +303,11 @@
                     </xsl:attribute>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:for-each select="*">
-                        <xsl:call-template name="resourcebody"/>
-                    </xsl:for-each>
+                    <xsl:call-template name="propertybody"/>
                 </xsl:otherwise>
             </xsl:choose>
         </li>
+        <!-- TODO: rdf:rest might vert well use a nodeID ref! -->
         <xsl:apply-templates select="../rdf:rest/*/rdf:first" mode="rdflist"/>
     </xsl:template>
 
