@@ -25,6 +25,7 @@ import se.lagrummet.rinfo.base.URIMinter
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 import se.lagrummet.rinfo.main.storage.CollectorLog
+import se.lagrummet.rinfo.main.storage.ErrorLevel
 import se.lagrummet.rinfo.main.storage.EntryRdfValidatorHandler
 import se.lagrummet.rinfo.main.storage.FeedCollectScheduler
 import se.lagrummet.rinfo.main.storage.FeedCollector
@@ -49,8 +50,8 @@ public class Components {
         DEPOT_BASE_URI("rinfo.depot.baseUri"),
         DEPOT_BASE_DIR("rinfo.depot.baseDir"),
         SOURCE_FEEDS_ENTRY_ID("rinfo.main.storage.sourceFeedsEntryId"),
-        RDF_CHECK_BASE_PATH("rinfo.main.rdfcheck.basePath"),
-        RDF_CHECKER_VOCAB_ENTRY_IDS("rinfo.main.checker.vocabEntryIds"),
+        CHECKER_CHECKED_BASE_PATH("rinfo.main.checker.checkedBasePath"),
+        CHECKER_VOCAB_ENTRY_IDS("rinfo.main.checker.vocabEntryIds"),
         URIMINTER_ENTRY_ID("rinfo.main.uriMinter.uriSpaceEntryId"),
         URIMINTER_URI_SPACE_URI("rinfo.main.uriMinter.uriSpaceUri"),
         ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets", false),
@@ -58,7 +59,8 @@ public class Components {
         COLLECTOR_LOG_DATA_DIR("rinfo.main.collector.logDataDir"),
         COMPLETE_FEEDS_ID_INDEX_DIR("rinfo.main.collector.completeFeedsIndexDir"),
         SYSTEM_BASE_URI("rinfo.main.collectorLog.systemBaseUri"),
-        ENTRY_DATASET_URI("rinfo.main.collectorLog.entryDatasetUri");
+        ENTRY_DATASET_URI("rinfo.main.collectorLog.entryDatasetUri"),
+        STOP_ON_ERROR_LEVEL("rinfo.main.checker.stopOnErrorLevel");
 
         public final String value;
         public final boolean requiredValue = false;
@@ -135,7 +137,8 @@ public class Components {
 
     protected void setupStorage() {
         storage = new Storage(createDepot(), collectorLog,
-                createCompleteFeedEntryIdIndex())
+                createCompleteFeedEntryIdIndex(),
+                ErrorLevel.valueOf(config.getString(ConfigKey.STOP_ON_ERROR_LEVEL.value)))
     }
 
     protected void setupFeedCollector() {
@@ -209,7 +212,7 @@ public class Components {
     private Collection<StorageHandler> createStorageHandlers() {
         def storageHandlers = new ArrayList<StorageHandler>()
         storageHandlers.add(createSourceFeedsConfigHandler())
-        //TODO: storageHandlers.add(createEntryRdfValidatorHandler())
+        storageHandlers.add(createEntryRdfValidatorHandler())
         return storageHandlers
     }
 
@@ -221,8 +224,8 @@ public class Components {
 
     private StorageHandler createEntryRdfValidatorHandler() {
         return new EntryRdfValidatorHandler(
-                config.getString(ConfigKey.RDF_CHECK_BASE_PATH.value),
-                config.getList(ConfigKey.RDF_CHECKER_VOCAB_ENTRY_IDS.value),
+                config.getString(ConfigKey.CHECKER_CHECKED_BASE_PATH.value),
+                config.getList(ConfigKey.CHECKER_VOCAB_ENTRY_IDS.value),
                 config.getString(ConfigKey.URIMINTER_ENTRY_ID.value),
                 config.getString(ConfigKey.URIMINTER_URI_SPACE_URI.value))
     }

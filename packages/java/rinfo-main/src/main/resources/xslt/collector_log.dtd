@@ -10,5 +10,6 @@
     xmlns:ax CDATA #FIXED "http://buzzword.org.uk/rdf/atomix#"
     xmlns:ov CDATA #FIXED "http://open.vocab.org/terms/"
     xmlns:tl CDATA #FIXED "http://purl.org/NET/c4dm/timeline.owl#"
+    xmlns:sch CDATA #FIXED "http://purl.org/net/schemarama#"
     xmlns:rc CDATA #FIXED "http://rinfo.lagrummet.se/ns/2008/10/collector#"
 >

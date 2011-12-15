@@ -165,10 +165,11 @@ class StorageSessionSpec extends Specification {
 
     private makeStorageSession(depot, depotSession, handlers, admin=false) {
         depot.openSession() >> depotSession
+        depotSession.getDepot() >> depot
         def collectorLog = new CollectorLog(repo)
         collectorLog.systemBaseUri = "http://example.org/system/"
         collectorLog.entryDatasetUri = "http://example.org/dataset/"
-        def storage = new Storage(depot, collectorLog, null)
+        def storage = new Storage(depot, collectorLog, null, ErrorLevel.WARNING)
         storage.storageHandlers = handlers
         storage.startup()
         return storage.openSession(new StorageCredentials(admin))

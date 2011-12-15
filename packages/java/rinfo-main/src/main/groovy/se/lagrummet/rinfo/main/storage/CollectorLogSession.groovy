@@ -80,6 +80,10 @@ class CollectorLogSession implements Closeable {
         updateCollectInfo()
     }
 
+    void logFeedPageError(Exception e, URL pageUrl) {
+        // TODO: we need a source dataset to link to...
+    }
+
     void initializeCollect(String feedId) {
         // TODO:? resdesign to save collect and *each page* results as RDF to file
         // - requires init to make a dir for current collect
@@ -134,24 +138,45 @@ class CollectorLogSession implements Closeable {
         updateCollectInfo()
     }
 
-    void logError(Exception error, Date timestamp, Feed sourceFeed, Entry sourceEntry) {
+    ErrorLevel logError(Exception error, Date timestamp, Feed sourceFeed, Entry sourceEntry) {
         Description errorDesc = null
+        def errorLevel = ErrorLevel.EXCEPTION
         if (error instanceof SourceCheckException) {
             // TODO: we should change current check procedure per source
             // to *collector*, (from current use in SourceContent)
+            //def documentInfo = "type=${src.mediaType};lang=${src.lang};slug=${src.enclosedUriPath}"
             if (error.failedCheck == SourceContent.Check.MD5) {
                 errorDesc = currentDescriber.newDescription(null, "rc:ChecksumError")
                 def src = (RemoteSourceContent) error.sourceContent
                 errorDesc.addLiteral("rc:document", src.urlPath, "xsd:anyURI")
-                //def documentInfo = "type=${src.mediaType};lang=${src.lang};slug=${src.enclosedUriPath}"
                 errorDesc.addLiteral("rc:givenMd5", error.givenValue)
                 errorDesc.addLiteral("rc:computedMd5", error.realValue)
+            } else if (error.failedCheck == SourceContent.Check.LENGTH) {
+                errorDesc = currentDescriber.newDescription(null, "rc:LengthError")
+                def src = (RemoteSourceContent) error.sourceContent
+                errorDesc.addLiteral("rc:document", src.urlPath, "xsd:anyURI")
+                errorDesc.addLiteral("rc:givenLength", error.givenValue)
+                errorDesc.addLiteral("rc:computedLength", error.realValue)
             }
-            // TODO: length
+            errorLevel = ErrorLevel.ERROR
         } else if (error instanceof IdentifyerMismatchException) {
             errorDesc = currentDescriber.newDescription(null, "rc:IdentifyerError")
             errorDesc.addLiteral("rc:givenUri", error.givenUri)
             errorDesc.addLiteral("rc:computedUri", error.computedUri)
+            errorLevel = ErrorLevel.ERROR
+        } else if (error instanceof SchemaReportException) {
+            def report = error.report
+            errorLevel = report.hasErrors? ErrorLevel.ERROR : ErrorLevel.WARNING
+            errorDesc = currentDescriber.newDescription(null, "rc:DescriptionError")
+            def errorConn = report.connection
+            def errorDescriber = newDescriber(errorConn, false)
+            ["sch:Error", "sch:Warning"].each {
+                errorDescriber.getByType(it).each {
+                    errorDesc.addRel("rc:reports", it.about)
+                }
+            }
+            currentDescriber.addFromConnection(errorConn, true)
+            report.close()
         }
         if (errorDesc == null) {
             errorDesc = currentDescriber.newDescription(null, "rc:Error")
@@ -160,6 +185,7 @@ class CollectorLogSession implements Closeable {
         errorDesc.addLiteral("tl:at", dateTime(new Date()))
         def sourceEntryDesc = makeSourceEntryDesc(sourceEntry)
         errorDesc.addRel("iana:via", sourceEntryDesc.about)
+        return errorLevel
     }
 
     private Description makeSourceEntryDesc(sourceEntry) {
@@ -192,12 +218,18 @@ class CollectorLogSession implements Closeable {
     }
 
     protected Describer newDescriber(boolean storePrefixes, String... contexts) {
+        return newDescriber(conn, true, contexts)
+    }
+
+    protected Describer newDescriber(RepositoryConnection conn,
+            boolean storePrefixes, String... contexts) {
         def desc = new Describer(conn, storePrefixes, contexts)
         return desc.setPrefix("dct", "http://purl.org/dc/terms/").
             //setPrefix("prv", "http://purl.org/net/provenance/ns#")
             setPrefix("awol", "http://bblfish.net/work/atom-owl/2006-06-06/#").
             setPrefix("iana", "http://www.iana.org/assignments/relation/").
             setPrefix("tl", "http://purl.org/NET/c4dm/timeline.owl#").
+            setPrefix("sch", "http://purl.org/net/schemarama#").
             setPrefix("rx", "http://www.w3.org/2008/09/rx#").
             setPrefix("ax", "http://buzzword.org.uk/rdf/atomix#").
             setPrefix("ov", "http://open.vocab.org/terms/").

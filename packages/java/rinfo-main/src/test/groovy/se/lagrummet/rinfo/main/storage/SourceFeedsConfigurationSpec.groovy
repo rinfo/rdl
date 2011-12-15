@@ -2,7 +2,7 @@ package se.lagrummet.rinfo.main.storage
 
 import spock.lang.*
 
-import se.lagrummet.rinfo.store.depot.Depot
+import se.lagrummet.rinfo.store.depot.DepotSession
 import se.lagrummet.rinfo.store.depot.DepotContent
 import se.lagrummet.rinfo.store.depot.DepotEntry
 
@@ -21,7 +21,7 @@ class SourceFeedsConfigurationSpec extends Specification {
         def sourceFeedsConfigHandler = new SourceFeedsConfigHandler(
                 collectScheduler, sourceFeedsEntryId)
         def session = new StorageSession(new StorageCredentials(true),
-                Mock(Depot), [], Mock(CollectorLogSession), null)
+                Mock(DepotSession), [], Mock(CollectorLogSession), null, ErrorLevel.WARNING)
 
         when: "an entry with expected id is created"
         sourceFeedsConfigHandler.onModified(session, mockSourcesEntry(), true)
@@ -35,7 +35,7 @@ class SourceFeedsConfigurationSpec extends Specification {
         def sourceFeedsConfigHandler = new SourceFeedsConfigHandler(
                 null, sourceFeedsEntryId)
         def session = new StorageSession(new StorageCredentials(false),
-                Mock(Depot), [], Mock(CollectorLogSession), null)
+                Mock(DepotSession), [], Mock(CollectorLogSession), null, ErrorLevel.WARNING)
 
         when: "an entry with expected id is created"
         sourceFeedsConfigHandler.onModified(session, mockSourcesEntry(), true)

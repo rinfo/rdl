@@ -99,6 +99,10 @@
       </tr>
     </xsl:template>
 
+    <!-- TODO:
+         ov:DeletedEntry
+    -->
+
     <xsl:template match="*[a/rc:ChecksumError]" mode="trow">
       <xsl:param name="pos"/>
       <tr class="error">
@@ -114,6 +118,26 @@
             <dd><xsl:value-of select="rc:givenMd5"/></dd>
             <dt>Beräknad MD5:</dt>
             <dd><xsl:value-of select="rc:computedMd5"/></dd>
+          </dl>
+        </td>
+      </tr>
+    </xsl:template>
+
+    <xsl:template match="*[a/rc:LengthError]" mode="trow">
+      <xsl:param name="pos"/>
+      <tr class="error">
+        <td class="position"><xsl:value-of select="$pos"/></td>
+        <td><xsl:apply-templates select="tl:at"/></td>
+        <td class="status">Fel storlek</td>
+        <td><xsl:apply-templates select="iana:via/awol:id"/></td>
+        <td>
+          <dl class="lone">
+            <dt>Dokument:</dt>
+            <dd><xsl:value-of select="rc:document"/></dd>
+            <dt>Angiven filstorlek:</dt>
+            <dd><xsl:value-of select="rc:givenLength"/></dd>
+            <dt>Beräknad filstorlek:</dt>
+            <dd><xsl:value-of select="rc:computedLength"/></dd>
           </dl>
         </td>
       </tr>
@@ -137,6 +161,54 @@
       </tr>
     </xsl:template>
 
+    <xsl:template match="*[a/rc:DescriptionError]" mode="trow">
+      <xsl:param name="pos"/>
+      <tr class="error">
+        <td class="position"><xsl:value-of select="$pos"/></td>
+        <td><xsl:apply-templates select="tl:at"/></td>
+        <td class="status">Beskrivningsfel</td>
+        <td><xsl:apply-templates select="iana:via/awol:id"/></td>
+        <td>
+          <ul>
+            <xsl:for-each select="rc:reports">
+              <li>
+                <dl>
+                  <dt>
+                    <xsl:choose>
+                      <xsl:when test="a/sch:Error">Fel</xsl:when>
+                      <xsl:when test="a/sch:Warning">Varning</xsl:when>
+                      <xsl:otherwise>
+                        <xsl:value-of select="local-name(a/*)"/>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:text>:</xsl:text>
+                  </dt>
+                  <dd>
+                    <xsl:value-of select="sch:message"/>
+                    <ol>
+                      <xsl:for-each select="sch:implicated/li">
+                        <li>
+                          <xsl:apply-templates select="." mode="repr"/>
+                        </li>
+                      </xsl:for-each>
+                    </ol>
+                  </dd>
+                  <!--<dt>Källfil:</dt>
+                  <dd><xsl:value-of select="dct:source"/></dd>-->
+                  <dt>Testdefintion:</dt>
+                  <dd>
+                    <xsl:for-each select="rdfs:isDefinedBy/@ref">
+                      <a href="{.}"><xsl:apply-templates select="."/></a>
+                    </xsl:for-each>
+                  </dd>
+                </dl>
+              </li>
+            </xsl:for-each>
+          </ul>
+        </td>
+      </tr>
+    </xsl:template>
+
     <xsl:template match="*[a/rc:Error]" mode="trow">
       <xsl:param name="pos"/>
       <tr class="error">
@@ -150,12 +222,24 @@
       </tr>
     </xsl:template>
 
-    <!-- TODO:
-         ov:DeletedEntry
-    -->
-
     <xsl:template match="@ref | xsd:anyURI">
       <code><xsl:value-of select="."/></code>
+    </xsl:template>
+
+    <xsl:template match="*" mode="repr">
+      <xsl:choose>
+        <xsl:when test="@ref">
+          <xsl:apply-templates select="@ref"/>
+        </xsl:when>
+        <xsl:when test="@fmt = 'datatype'">
+          <code><xsl:value-of select="*"/></code>
+          <xsl:text>^^</xsl:text>
+          <xsl:value-of select="name(*)"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <code><xsl:value-of select="."/></code>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:template>
 
     <xsl:template match="xsd:dateTime">

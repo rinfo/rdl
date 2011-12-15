@@ -71,13 +71,23 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
 
     @Override
     public boolean hasVisitedArchivePage(URL pageUrl) {
-        // TODO:? never visit pageUrl being an already visited archive page?
+        // TODO:IMPROVE? return true if archive page in collector log?
+        // And/or do a conditional get based on logged *complete* feed URL
         return false
     }
 
     @Override
     public CompleteFeedEntryIdIndex getCompleteFeedEntryIdIndex() {
         return storageSession.getCompleteFeedEntryIdIndex()
+    }
+
+    @Override
+    public URL readFeedPage(URL url) throws IOException {
+        try {
+            return super.readFeedPage(url)
+        } catch (Exception e) {
+            storageSession.onPageError(e, url)
+        }
     }
 
     @Override

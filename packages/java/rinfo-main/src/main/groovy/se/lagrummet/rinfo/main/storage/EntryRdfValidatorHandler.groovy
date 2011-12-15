@@ -12,7 +12,6 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.base.URIMinter
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.base.rdf.checker.RDFChecker
-import se.lagrummet.rinfo.base.rdf.checker.SchemaInfoTool
 
 
 class EntryRdfValidatorHandler implements StorageHandler {
@@ -49,30 +48,33 @@ class EntryRdfValidatorHandler implements StorageHandler {
     }
 
     void configureRdfChecker(StorageSession storageSession, DepotEntry currentEntry=null) {
-        def config = null
-        def mapper = new ObjectMapper()
-        def inStream = getClass().getResourceAsStream("/rdf-checker-config.json")
-        try {
-            config = mapper.readValue(inStream, Map)
-        } finally {
-            inStream.close()
-        }
-        def tool = new SchemaInfoTool()
         def repo = RDFUtil.createMemoryRepository()
-        for (URI entryId : vocabEntryIds) {
-            if (currentEntry != null && currentEntry.getId() == entryId) {
+        for (URI vocabEntryId : vocabEntryIds) {
+            if (currentEntry != null && currentEntry.getId() == vocabEntryId) {
                 RDFUtil.addToRepo(repo, EntryRdfReader.readRdf(currentEntry, true))
             } else {
-                DepotEntry depotEntry = storageSession.getDepot().getEntry(entryId)
+                DepotEntry depotEntry = storageSession.getDepot().getEntry(vocabEntryId)
                 if (depotEntry != null) {
                     RDFUtil.addToRepo(repo, EntryRdfReader.readRdf(depotEntry, true))
                 }
             }
         }
-        def data = tool.getSchemaData(repo)
-        tool.extendSchemaData(data, [config])
-        this.rdfChecker = new RDFChecker()
-        rdfChecker.schemaInfo.configure(data)
+        rdfChecker = new RDFChecker(repo)
+        //def queries = []
+        // TODO: get from validationEntryId instead of from hardwired rq files
+        //if (currentEntry != null && currentEntry.getId() == validationEntryId) {
+        //    queries << EntryReader.getEnclosures().collect { it.text }
+        //}
+        def queries = [
+            "iri_error", "datatype_error", "no_class", "unknown_class",
+            "unknown_property", "missing_expected", "expected_datatype",
+            "expected_lang", "unexpected_uri_pattern", "from_future",
+            "improbable_future", "improbable_past", "spurious_whitespace"
+        ].collect {
+            getClass().getResourceAsStream("/validation/${it}.rq").getText("utf-8")
+        }
+        //
+        rdfChecker.setTestQueries(queries)
     }
 
     void onModified(StorageSession storageSession, DepotEntry depotEntry,
@@ -126,9 +128,8 @@ class EntryRdfValidatorHandler implements StorageHandler {
             return
         }
         def report = rdfChecker.check(repo, subjectUri.toString())
-        if (!report.ok) {
-            // TODO: new exception carrying individual reports
-            throw new Exception("RDFValidationError: ${report.items.join('\n')}")
+        if (!report.empty) {
+            throw new SchemaReportException(report)
         }
     }
 
