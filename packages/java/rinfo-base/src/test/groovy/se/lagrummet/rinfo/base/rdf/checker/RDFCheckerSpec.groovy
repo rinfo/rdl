@@ -1,5 +1,6 @@
 package se.lagrummet.rinfo.base.rdf.checker
 
+import org.openrdf.model.vocabulary.RDF
 import org.openrdf.query.QueryLanguage
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 
@@ -92,6 +93,27 @@ class RDFCheckerSpec extends Specification {
         def conn = report.getConnection()
         then:
         conn.size() == 0
+    }
+
+    def "report properties"() {
+        given:
+        def repo = RDFUtil.createMemoryRepository()
+        def conn = repo.getConnection()
+        def vf = conn.valueFactory
+        def report = new Report(conn, checker.errorType)
+        expect:
+        report.empty
+        ! report.hasErrors
+        when:
+        conn.add(vf.createBNode(), RDF.TYPE, vf.createBNode())
+        then:
+        ! report.empty
+        ! report.hasErrors
+        when:
+        conn.add(vf.createBNode(), RDF.TYPE, checker.errorType)
+        then:
+        ! report.empty
+        report.hasErrors
     }
 
     private queryToResultList(conn, query, bindings) {

@@ -1,5 +1,7 @@
 package se.lagrummet.rinfo.base.rdf.checker
 
+import org.openrdf.model.URI
+import org.openrdf.model.impl.URIImpl
 import org.openrdf.query.QueryLanguage
 import org.openrdf.repository.Repository
 import org.openrdf.repository.RepositoryConnection
@@ -12,6 +14,7 @@ class RDFChecker {
 
     Repository repository
     List<String> testQueries
+    URI errorType = new URIImpl("http://purl.org/net/schemarama#Error")
 
     RDFChecker() {
         this(RDFUtil.createMemoryRepository())
@@ -49,7 +52,7 @@ class RDFChecker {
             def prepQuery = conn.prepareGraphQuery(QueryLanguage.SPARQL, query)
             prepQuery.evaluate(new RDFInserter(reportConn))
         }
-        return new Report(reportConn)
+        return new Report(reportConn, errorType)
     }
 
 }
