@@ -17,10 +17,12 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.sail.memory.MemoryStore;
 
 import se.lagrummet.rinfo.store.depot.Depot;
+import se.lagrummet.rinfo.store.depot.DepotSession;
 import se.lagrummet.rinfo.store.depot.FileDepot;
 import se.lagrummet.rinfo.store.depot.SourceContent;
 
 import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex;
+import se.lagrummet.rinfo.main.storage.ErrorLevel;
 import se.lagrummet.rinfo.main.storage.FeedCollector;
 import se.lagrummet.rinfo.main.storage.FeedCollectorSession;
 import se.lagrummet.rinfo.main.storage.StorageSession;
@@ -77,7 +79,8 @@ public class Checker {
         coLog.setEntryDatasetUri(entryDatasetUri);
         StorageCredentials credentials = new StorageCredentials(adminSource);
         LaxStorageSession storageSession = new LaxStorageSession(
-                credentials, depot, handlers, coLog.openSession());
+                credentials,
+                depot.openSession(), handlers, coLog.openSession());
         storageSession.setMaxEntries(maxEntries);
         FeedCollectorSession collectSession = new OneFeedCollectorSession(
                 FeedCollector.createDefaultClient(), storageSession);
@@ -135,11 +138,12 @@ public class Checker {
         private int visitedEntries = 0;
 
         public LaxStorageSession(StorageCredentials credentials,
-                Depot depot,
+                DepotSession depotSession,
                 Collection<StorageHandler> storageHandlers,
                 CollectorLogSession collectorLogSession) {
-            super(credentials, depot, storageHandlers, collectorLogSession,
-                    new NoopFeedEntryIdIndex());
+            super(credentials, depotSession, storageHandlers,
+                    collectorLogSession, new NoopFeedEntryIdIndex(),
+                    ErrorLevel.NONE);
         }
 
         public boolean storeEntry(Feed sourceFeed, Entry sourceEntry,
@@ -148,9 +152,8 @@ public class Checker {
                 return false;
             }
             visitedEntries++;
-            super.storeEntry(
+            return super.storeEntry(
                     sourceFeed, sourceEntry, contents, enclosures);
-            return true; // never break on error
         }
     }
 

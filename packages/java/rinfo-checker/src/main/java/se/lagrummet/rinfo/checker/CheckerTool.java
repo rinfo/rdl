@@ -26,7 +26,7 @@ public class CheckerTool {
         try {
             Repository logRepo = checker.checkFeed(feedUrl);
             String mtype = "application/rdf+xml";
-            RDFUtil.serialize(logRepo, mtype, System.out);
+            RDFUtil.serialize(logRepo, mtype, System.out, true);
         } finally {
             checker.shutdown();
         }

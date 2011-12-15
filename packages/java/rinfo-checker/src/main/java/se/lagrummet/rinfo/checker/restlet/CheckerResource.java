@@ -62,7 +62,7 @@ public class CheckerResource extends Resource {
             checker.setHandlers(handlers);
             try {
                 Repository logRepo = checker.checkFeed(feedUrl);
-                final InputStream ins = RDFUtil.toInputStream(logRepo, "application/rdf+xml", false);
+                final InputStream ins = RDFUtil.toInputStream(logRepo, "application/rdf+xml", true);
                 getResponse().setEntity(new WriterRepresentation(MediaType.TEXT_HTML) {
                     public void write(Writer writer) throws IOException {
                         try {
