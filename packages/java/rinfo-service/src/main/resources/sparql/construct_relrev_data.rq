@@ -27,6 +27,10 @@ CONSTRUCT {
         ?rev ?current;
         ?revprop ?revtext .
 
+    ?revrevitem a ?revrevtype;
+        ?revrev ?revitem;
+        ?revrevprop ?revrevtext .
+
     ?revdoc rpubl:paragraf ?revitem .
     ?revchapter rpubl:paragraf ?revitem .
     ?revdoc rpubl:kapitel ?revchapter .
@@ -65,7 +69,7 @@ CONSTRUCT {
         ?relitem ?relprop ?relobj .
         FILTER( ?relprop = rdf:type || isLiteral(?relobj) )
 
-        # TODO:IMPROVE: generalize...
+        # IMPROVE: generalize...
         # NOTE: this part is a bit slow:
         OPTIONAL {
             {
@@ -84,27 +88,29 @@ CONSTRUCT {
 
     } UNION {
 
-        ?revitem ?rev ?current; ?revprop ?revtext .
-        FILTER( isLiteral(?revtext) )
-        OPTIONAL { ?revitem a ?revtype . }
-
-        # Don't get revs if ?current may have lots of "parts"...
-        # TODO: optimize!
+        # Skip if ?current is of a ?type known to have lots of revs
         ?current a ?type .
-        OPTIONAL {
-            ?type rdfs:subClassOf ?supertype .
-            OPTIONAL { ?supertype rdfs:subClassOf ?supersupertype . }
+        FILTER NOT EXISTS {
+            ?type rdfs:subClassOf* ?basetype .
+            FILTER(?basetype in (foaf:Organization, bibo:Collection))
         }
-        FILTER(
-            ?type != foaf:Organization &&
-            ?type != bibo:Collection &&
-            (!BOUND(?supertype) || ?supertype != bibo:Collection) &&
-            (!BOUND(?supersupertype) || ?supersupertype != bibo:Collection))
 
-        # TODO:IMPROVE: generalize...
-        # - follow revitems upward to containers and describe those
-        # - filter scovo:Item?
-        # - don't get (isPartOf?) rev for collections
+        ?revitem ?rev ?current .
+
+        {
+            ?revitem ?revprop ?revtext .
+            FILTER(isLiteral(?revtext))
+            OPTIONAL { ?revitem a ?revtype . }
+        } UNION {
+            ?revrevitem ?revrev ?revitem;
+                ?revrevprop ?revrevtext .
+            FILTER (?revrev = rpubl:referatAvDomstolsavgorande &&
+                    isLiteral(?revrevtext) )
+            OPTIONAL { ?revrevitem a ?revrevtype . }
+        }
+
+        # IMPROVE: generalize to follow any revitems upward to "containers" and
+        # describe those.
         # NOTE: this part is a bit slow:
         OPTIONAL {
             {
