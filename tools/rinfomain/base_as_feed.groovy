@@ -67,8 +67,8 @@ def main() {
     }
 
     def base = opt.b ?: "../../resources/base/"
-    def sources = opt.s ?: null
-    def outdir = opt.o ?: "../../_build/rinfo-admin"
+    def outdir = opt.o ?: "/opt/work/rinfo/testsources/www"
+    def sources = opt.s ?: outdir
     def localBase = opt.l ?: ""
     def markComplete = !opt.nocomplete
     assert outdir != null

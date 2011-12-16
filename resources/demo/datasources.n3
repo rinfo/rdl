@@ -5,25 +5,25 @@
 <tag:lagrummet.se,2009:rinfo> a void:Dataset;
     dct:source
         # Actual feeds
-	<tag:boverket.se,2009:rinfo:feed>,
-       <tag:vagledandeavgoranden.dom.se,2011:rinfo:feed>,
+	#<tag:boverket.se,2009:rinfo:feed>,
+	<tag:vagledandeavgoranden.dom.se,2011:rinfo:feed>,
     
 	# Depot-based feeds
-        <tag:regeringen.se,2009:rinfo:dataset:sfs>,
-        <tag:regeringen.se,2009:rinfo:dataset:prop>,
-        <tag:regeringen.se,2009:rinfo:dataset:sou>,
-        <tag:regeringen.se,2009:rinfo:dataset:ds>,
+        #<tag:regeringen.se,2009:rinfo:dataset:sfs>,
+        #<tag:regeringen.se,2009:rinfo:dataset:prop>,
+        #<tag:regeringen.se,2009:rinfo:dataset:sou>,
+        #<tag:regeringen.se,2009:rinfo:dataset:ds>,
    	# <tag:dom.se,2009:rinfo:dataset:dv>,
 
 	# FST-based feeds
-        <tag:domstol.se,2009:rinfo:feed>,
-        <tag:finansinspektionen.se,2009:rinfo:feed>,
-        <tag:www.elsakerhetsverket.se,2011:rinfo:feed>,
-	<tag:www.swedac.se,2011:rinfo:feed>,
+        # <tag:domstol.se,2009:rinfo:feed>,
+        # <tag:finansinspektionen.se,2009:rinfo:feed>,
+        # <tag:www.elsakerhetsverket.se,2011:rinfo:feed>,
+	# <tag:www.swedac.se,2011:rinfo:feed>,
 	
 	# Scraped feeds
-        <tag:fst.lagrummet.se,2011:scraper:nfs:news:main.atom>,
-        <tag:fst.lagrummet.se,2011:scraper:sjvfs:news:main.atom>;
+        # <tag:fst.lagrummet.se,2011:scraper:nfs:news:main.atom>,
+        # <tag:fst.lagrummet.se,2011:scraper:sjvfs:news:main.atom>;
 
     dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
     iana:current <http://rinfo.lagrummet.se/feed/current> .
@@ -36,7 +36,7 @@
 
 <tag:vagledandeavgoranden.dom.se,2011:rinfo:feed> a void:Dataset;
     dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
-    iana:current <http://test.vagledandeavgoranden.dom.se/lagrummet/atom/index.atom> .
+    iana:current <https://www.vagledandeavgoranden.dom.se/lagrummet/atom/index.atom> .
 
 # Depot-based feeds
     
