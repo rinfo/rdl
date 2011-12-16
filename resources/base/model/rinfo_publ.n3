@@ -516,13 +516,15 @@
     rdfs:range :Forfattning;
     owl:inverseOf [ rdfs:label "Konsoliderad av"@sv ]; .
 
-:konsolideringsunderlag a rdf:Property;
+:konsolideringsunderlag a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
     rdfs:label "Konsolideringsunderlag"@sv;
     rdfs:comment """Information om vilka dokument, inklusive ursprungsdokumentet,
                     som ingått i konsolideringsunderlaget. Kan t.ex. utgå från en
                     tidigare konsoliderad version. Samling med referenser till
                     dokument."""@sv;
+    rdfs:domain :KonsolideradGrundforfattning;
+    rdfs:range [ owl:unionOf (:Forfattning :KonsolideradGrundforfattning)];
     owl:inverseOf [ rdfs:label "Konsolideringsunderlag för"@sv ]; .
 
 
