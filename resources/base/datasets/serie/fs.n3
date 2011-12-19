@@ -3,14 +3,14 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix dct: <http://purl.org/dc/terms/> .
-@prefix prism: <http://prismstandard.org/namespaces/1.2/basic/> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 @prefix : <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
 #=======================================================================
 
 # Synka även med ../org/myndigheter.n3 och ../../base/sys/uri/slugs.n3.
 
-# TODO: Assign prism:issn <urn:ISSN:0000-0000>;
+# TODO: Assign bibo:issn <urn:ISSN:0000-0000>;
 
 <http://rinfo.lagrummet.se/serie/fs/01fs> a :Forfattningssamling;
     skos:altLabel "01FS"@sv;
