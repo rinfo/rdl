@@ -24,6 +24,7 @@ CONSTRUCT {
         dct:identifier ?revdoc_id .
 
     ?revitem a ?revtype;
+        dct:publisher ?revpublisher;
         ?rev ?current;
         ?revprop ?revtext .
 
@@ -67,7 +68,7 @@ CONSTRUCT {
 
         ?current ?rel ?relitem .
         ?relitem ?relprop ?relobj .
-        FILTER( ?relprop = rdf:type || isLiteral(?relobj) )
+        FILTER(?relprop in (rdf:type, dct:publisher) || isLiteral(?relobj))
 
         # IMPROVE: generalize...
         # NOTE: this part is a bit slow:
@@ -101,6 +102,7 @@ CONSTRUCT {
             ?revitem ?revprop ?revtext .
             FILTER(isLiteral(?revtext))
             OPTIONAL { ?revitem a ?revtype . }
+            OPTIONAL { ?revitem dct:publisher ?revpublisher . }
         } UNION {
             ?revrevitem ?revrev ?revitem;
                 ?revrevprop ?revrevtext .
