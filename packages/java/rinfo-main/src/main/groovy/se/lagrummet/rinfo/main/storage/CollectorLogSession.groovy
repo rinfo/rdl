@@ -81,7 +81,19 @@ class CollectorLogSession implements Closeable {
     }
 
     void logFeedPageError(Exception e, URL pageUrl) {
-        // TODO: we need a source dataset to link to...
+        def tstamp = new Date()
+        // TODO: we need a source dataset to use...
+        def collectedFeedUri = createCollectedFeedUri("", tstamp, pageUrl.toString())
+        if (currentDescriber == null) {
+            currentDescriber = newDescriber(collectedFeedUri)
+        }
+        def pageErrorDesc = currentDescriber.newDescription(null, "rc:PageError")
+        if (e.message) {
+            pageErrorDesc.addLiteral("rdf:value", e.message)
+        }
+        pageErrorDesc.addRel("dct:source", pageUrl.toString())
+        pageErrorDesc.addLiteral("tl:at", dateTime(tstamp))
+        //collectDesc.addRel("iana:via", pageErrorDesc.about)
     }
 
     void initializeCollect(String feedId) {
@@ -225,7 +237,7 @@ class CollectorLogSession implements Closeable {
             boolean storePrefixes, String... contexts) {
         def desc = new Describer(conn, storePrefixes, contexts)
         return desc.setPrefix("dct", "http://purl.org/dc/terms/").
-            //setPrefix("prv", "http://purl.org/net/provenance/ns#")
+            setPrefix("prv", "http://purl.org/net/provenance/ns#").
             setPrefix("awol", "http://bblfish.net/work/atom-owl/2006-06-06/#").
             setPrefix("iana", "http://www.iana.org/assignments/relation/").
             setPrefix("tl", "http://purl.org/NET/c4dm/timeline.owl#").

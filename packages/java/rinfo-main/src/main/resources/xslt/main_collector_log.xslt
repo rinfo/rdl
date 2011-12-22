@@ -18,6 +18,7 @@
                 <xsl:if test="not(resource[a/rc:Collect]/iana:via)">
                     <xsl:apply-templates select="resource[a/awol:Feed]"/>
                 </xsl:if>
+                <xsl:apply-templates select="resource[a/rc:PageError]"/>
             </body>
         </html>
     </xsl:template>

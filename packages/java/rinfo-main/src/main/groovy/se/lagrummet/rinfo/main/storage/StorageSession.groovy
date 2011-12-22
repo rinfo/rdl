@@ -149,11 +149,11 @@ class StorageSession {
             depotSession.rollbackPending()
             def gotErrorLevel =
                     logSession.logError(e, timestamp, sourceFeed, sourceEntry)
-            return shouldContinue(gotErrorLevel)
+            return shouldContinueOnError(gotErrorLevel)
         }
     }
 
-    boolean shouldContinue(gotErrorLevel) {
+    boolean shouldContinueOnError(gotErrorLevel) {
         return (gotErrorLevel < stopOnErrorLevel)
     }
 

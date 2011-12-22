@@ -82,11 +82,13 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
     }
 
     @Override
-    public URL readFeedPage(URL url) throws IOException {
+    public URL readFeedPage(URL pageUrl) throws IOException {
         try {
-            return super.readFeedPage(url)
+            return super.readFeedPage(pageUrl)
         } catch (Exception e) {
-            storageSession.onPageError(e, url)
+            logger.error("Critical error when processing feed page: " + pageUrl, e)
+            handlePageError(e, pageUrl)
+            return null
         }
     }
 
@@ -95,8 +97,8 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
             List<Entry> effectiveEntries, Map<IRI, AtomDate> deletedMap) {
         logger.info("Processing feed page: <${pageUrl}> (id <${feed.id}>)")
 
-        storageSession.beginPage(pageUrl, feed)
         try {
+            storageSession.beginPage(pageUrl, feed)
             deleteFromMarkers(feed, deletedMap)
             for (entry in effectiveEntries) {
                 try {
@@ -110,13 +112,20 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
                     }
                 } catch (Exception e) {
                     // NOTE: storageSession should handle (log and report) errors.
-                    logger.error("Critical error when storing entry: "+entry, e)
+                    logger.error("Critical error when storing entry: " + entry, e)
                     throw e
                 }
             }
+        } catch (Exception e) {
+            handlePageError(e, pageUrl)
         } finally {
             storageSession.endPage(pageUrl)
         }
+    }
+
+    protected void handlePageError(Exception e, URL pageUrl) {
+        storageSession.onPageError(e, pageUrl)
+        logger.error("Error reading feed page <"+ pageUrl +">", e)
     }
 
     protected void deleteFromMarkers(Feed sourceFeed, Map<IRI, AtomDate> deletedMap) {

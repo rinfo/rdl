@@ -15,6 +15,7 @@
             <body>
               <h1>RInfo Checker: insamlingskontroll</h1>
                 <xsl:apply-templates select="resource[a/rc:Collect]"/>
+                <xsl:apply-templates select="resource[a/rc:PageError]"/>
             </body>
         </html>
     </xsl:template>
