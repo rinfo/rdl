@@ -6,7 +6,7 @@
                 exclude-result-prefixes="xi">
 
   <xsl:param name="docdate"/>
-  <xsl:param name="svnversion"/>
+  <!-- <xsl:param name="svnversion"/> -->
   <xsl:param name="root" select="'../'"/>
   <xsl:param name="show-formats" select="false()"/>
 
@@ -34,15 +34,17 @@
           <table>
             <tr>
               <th>DATUM</th>
-              <th>VERSION</th>
+              <!--<th>VERSION</th>-->
             </tr>
             <tr>
               <td id="docdate">
                 <xsl:value-of select="$docdate"/>
               </td>
+	      <!--
               <td id="svnversion">
                 <xsl:value-of select="$svnversion"/>
               </td>
+	      -->
             </tr>
           </table>
         </div>

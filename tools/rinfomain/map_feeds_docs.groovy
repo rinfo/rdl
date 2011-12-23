@@ -178,13 +178,15 @@ def makeSourcesRdf(writer, buildDir, feedPaths, publicServer) {
 
 //========================================
 
-if (args.length < 2) {
-    println "Usage: groovy <script> <documentation-dir> <build-dir>"
-    System.exit 0
-}
-def docsDir = args[0]
-def buildDir = args[1]
-def publicServer = args[2]
+//if (args.length < 2) {
+//    println "Usage: groovy <script> <documentation-dir> <build-dir>"
+//    System.exit 0
+//}
+
+def docsDir = args.length > 0 ? args[0] : "../../documentation"
+def buildDir = args.length > 1 ? args[1] : "/opt/work/rinfo/testsources/www"
+def publicServer = args.length > 2 ? args[2] : "http://localhost:8280"
+
 createServableSources(buildDir, publicServer,
         "${docsDir}/exempel/documents/publ", "${docsDir}/exempel/feeds")
 

@@ -32,22 +32,35 @@ Setting up the environment
 Sesame
 ------------------------------------------------------------------------
 
-You need a Java webapp container (e.g. Tomcat) to run the Sesame RDF Repository
-server (expected to run at ``http://localhost:8080/openrdf-sesame/``).
+You need a Java webapp container (e.g. Tomcat) to run the Sesame RDF
+Repository server (aka openrdf-sesame). This server is expected to run
+at ``http://localhost:8080/openrdf-sesame/``.
 
-Package sesame::
+To build the sesame packages::
 
   $ cd packages/java/rinfo-sesame-http/
   $ mvn package
 
-Then copy ``openrdf-sesame.war`` and ``sesame-workbench.war`` in
-``target/dependency`` to the container (e.g. ``$TOMCAT_HOME/webapps``).
+Then copy ``openrdf-sesame.war`` and (optionally)
+``sesame-workbench.war`` found in ``target/dependency`` to the
+container (e.g. ``$TOMCAT_HOME/webapps``).
+
+On a linux system, unless you have configured anything else,
+$TOMCAT_HOME is probably set to /var/lib/tomcat6/
+
+Note: Tomcat is not really needed when running the services
+standalone. See below under rinfo-service for an alternative way of
+running the openrdf-sesame through through mvn and jetty.
 
 ElasticSearch
 ------------------------------------------------------------------------
 
-Download and install ElasticSearch by following the instuctions at
+Download and install ElasticSearch by following the instructions at
 <http://www.elasticsearch.org/>.
+
+(For the time being, you need version 0.17.7, the very latest versions
+don't work with the elasticsearch client lib that mvn pulls down from
+the remote repositories)
 
 Start an instance by running the ``elasticsearch`` command (commonly in the bin
 directory of the installation)::
@@ -73,10 +86,11 @@ And run with (choose the config file location to your liking)::
 Data directories
 ------------------------------------------------------------------------
 
-These directories needs to be writable by the user used to run maven and groovy.
+These directories must exist and be writable by the user used to run
+maven and groovy. At start, they should be empty.
 
-* /opt/work/rinfo/ => EMPTY!
-* /opt/work/rinfo/depots/rinfo/ => EMPTY!
+* /opt/work/rinfo/
+* /opt/work/rinfo/depots/rinfo/
 
 The RInfo Applications
 ------------------------------------------------------------------------
@@ -86,32 +100,65 @@ Install the shared rinfo packages to your local maven repo by::
   $ cd packages/java
   $ mvn install
 
+(``mvn install`` also runs all regression tests. If these fail for
+some reason, the install process will not continue. See
+packages/java/README.txt for hints on how to proceeed).
+
 Now you are ready to start up:
 
 * Create and serve integration test data:
 
-  example-store
-      serving some example data.
+  These steps will result in a web service that offers a feed of base
+  data resources (RDF ontologies, basic RDF descriptions of shared
+  resources such as organizations, and a list of other feeds that
+  contain document and metadata) know as "the admin feed".
 
-  base prototype feed
-      for base data (models, containers; organization, feeds).
+  In addition, the same web service offers (in separate feeds) some
+  example data (PDF documents and RDF metadata about them).
 
-  These can be served by running::
+  The web service is simply a small web server that serves static
+  files from a particular directory.
+
+  These can be served by the following steps::
 
     $ cd tools/rinfomain/
-    $ ./map_feeds_and_base.sh
+    $ groovy map_feeds_docs.groovy
+
+  This creates a number of atom feed files, RDF files and document
+  files (in PDF) under ``/opt/work/rinfo/testsources/www``. These are
+  created from example files present in ``../../documentation``
+
+    $ groovy base_as_feed.groovy
+
+  This creates files for the admin feed from the resources found in
+  ``../../resources/base`` and the content feeds that now are present in
+  ``/opt/work/rinfo/testsources/www``. The admin feed files are likewise
+  created in ``/opt/work/rinfo/testsources/www``.
+
     $ groovy serve_folder.groovy
 
+  This serves up the directory ``/opt/work/rinfo/testsources/www``
   Go to <http://localhost:8280/feed/current> to verify that it contains a
-  valid feed. This is basically an admin feed for the main application and
-  a couple of test sources.
+  valid feed. This contains the admin feed for the main application and
+  a couple of test sources that the previous steps created.
+
+  (These three scripts all take assorted command line flags if you
+  wish to read resources and examples from other paths, or if you want
+  to create the resulting files somewhere else. Read the source for
+  details.)
 
 * Start local instance of the RInfo system:
 
   rinfo-main
-      Collects from the sources defined for development mode (a base/admin
-      prototype feed and example suppliers) and supplies the main data feed.
 
+      Collects from the sources defined for development mode (a
+      base/admin prototype feed and example suppliers) and supplies
+      the main data feed. In order to do anything useful, rinfo-main
+      needs a web service that contains the admin feed. The address of
+      the admin feed is contained in the applications properties file,
+      (normally ``src/environments/dev-unix/rinfo-main.properties``),
+      see the property ``rinfo.main.collector.adminFeedUrl``.
+      
       Go to the application package and run it::
 
         $ cd packages/java/rinfo-main/
@@ -154,17 +201,28 @@ Now you are ready to start up:
         $ mvn jetty:run -Plocal
 
       Verify that rinfo-main is up and running by going to
-      http://localhost:8180/feed/current which should contain a valid feed.
+      http://localhost:8180/feed/current which should contain a valid
+      feed. You can also verify that data has been collected by
+      looking in the directories under `
+      ``/opt/work/rinfo/depots/rinfo/depot/``, particularly ``publ``
+      and ``feed``.
 
       Additional information can be found in:
       ``../packages/java/rinfo-main/README.txt``.
 
   rinfo-service
-      Collects from rinfo-main into the sesame RDF repo, making data available
-      for its data views. In order to run rinfo-service you need to first have
-      openrdf-sesame started. It can be started by running "mvn jetty:run-war"
-      in the rinfo-sesame-http directory. After that you can start rinfo-service
-      by running "mvn jetty:run" from the rinfo-service directory.
+
+      Collects data from rinfo-main into the sesame RDF repo, making
+      data available for its data views. In order to run rinfo-service
+      you need to first have a running sesame server started. This can
+      be done either by running openrdf-sesame in a Tomcat server, as
+      described above, or by running running "mvn jetty:run-war" in
+      the rinfo-sesame-http directory. After that you can start
+      rinfo-service by running "mvn jetty:run" from the rinfo-service
+      directory.
+
+      You also need to have elasticsearch running. See instructions
+      above.
       
       To populate rinfo-service with data you must trigger a collect of
       rinfo-main::
@@ -187,6 +245,20 @@ Now you are ready to start up:
       ``../packages/java/rinfo-service/README.txt``.
 
 
+Starting out clean
+========================================================================
+
+[How to wipe rinfo-main, elasticsearch and sesame]
+
+1. rinfo-main: rm -r /opt/work/rinfo/depots/rinfo
+
+Adding source feeds
+========================================================================
+
+[How to add a source feed to the admin feed, and collect it]
+
+1. Edit /opt/work/rinfo/testsources/www/sys/sources/rdf.rdf 
+      
 In Depth
 ========================================================================
 
