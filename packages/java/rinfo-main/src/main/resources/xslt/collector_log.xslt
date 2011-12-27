@@ -29,27 +29,19 @@
           <dt>Stopp:</dt>
           <dd><xsl:apply-templates select="."/></dd>
         </xsl:for-each>
-        <!-- TODO: Xalan doesn't support date:difference !
-        <dt>Tid:</dt>
-        <dd>
-          <xsl:variable name="dur" select="date:difference(tl:start, tl:end)"/>
-          <xsl:variable name="hours"
-                        select="substring-before(substring-after($dur, 'P'), 'T')"/>
-          <xsl:if test="$hours">
-            <xsl:value-of select="$hours"/>
-            <xsl:text>timmar </xsl:text>
-          </xsl:if>
-          <xsl:value-of select="substring-before(substring-after($dur, 'T'), 'M')"/>
-          <xsl:text> min </xsl:text>
-          <xsl:variable name="fullsecs"
-                        select="substring-before(substring-after($dur, 'M'), 'S')"/>
-          <xsl:value-of select="substring-before($fullsecs, '.')"/>
-          <xsl:text> s</xsl:text>
-        </dd>
-        -->
+        <xsl:for-each select="dct:source">
+          <dt>Startkälla:</dt>
+          <dd>
+            <xsl:apply-templates select="iana:current/@ref"/>
+            <br />
+            <xsl:text> (ID: </xsl:text>
+            <xsl:apply-templates select="dct:identifier"/>
+            <xsl:text>)</xsl:text>
+          </dd>
+        </xsl:for-each>
       </dl>
       <xsl:for-each select="iana:via">
-        <xsl:apply-templates select="key('rel', ./@ref)"/>
+        <xsl:apply-templates select=". | key('rel', ./@ref)"/>
       </xsl:for-each>
     </div>
   </xsl:template>

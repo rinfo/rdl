@@ -47,6 +47,7 @@ class StorageSession {
         this.logSession = logSession
         this.completeFeedEntryIdIndex = completeFeedEntryIdIndex
         this.stopOnErrorLevel = stopOnErrorLevel
+        logSession.start(credentials)
     }
 
     Depot getDepot() {

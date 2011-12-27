@@ -9,7 +9,9 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 
 class SourceFeedsConfigurationSpec extends Specification {
 
-    def sourceFeedsEntryId = "http://example.org/sources"
+    def systemDatasetUri = new URI("http://example.org/dataset")
+    def configurationEntryId = systemDatasetUri
+
     def sourceFeedUrls = [
         new URL("http://dom.se/dvfs/feed/current"),
         new URL("http://regeringen.se/sfs/feed/current"),
@@ -19,8 +21,8 @@ class SourceFeedsConfigurationSpec extends Specification {
         setup: "configure handler with entry id"
         def collectScheduler = new FeedCollectScheduler(null)
         def sourceFeedsConfigHandler = new SourceFeedsConfigHandler(
-                collectScheduler, sourceFeedsEntryId)
-        def session = new StorageSession(new StorageCredentials(true),
+                collectScheduler, configurationEntryId, systemDatasetUri)
+        def session = new StorageSession(new StorageCredentials(null, true),
                 Mock(DepotSession), [], Mock(CollectorLogSession), null, ErrorLevel.WARNING)
 
         when: "an entry with expected id is created"
@@ -33,8 +35,8 @@ class SourceFeedsConfigurationSpec extends Specification {
     def "Source feed entry must come from admin session"() {
         setup: "non-admin credentials"
         def sourceFeedsConfigHandler = new SourceFeedsConfigHandler(
-                null, sourceFeedsEntryId)
-        def session = new StorageSession(new StorageCredentials(false),
+                null, configurationEntryId, systemDatasetUri)
+        def session = new StorageSession(new StorageCredentials(null, false),
                 Mock(DepotSession), [], Mock(CollectorLogSession), null, ErrorLevel.WARNING)
 
         when: "an entry with expected id is created"
@@ -46,11 +48,11 @@ class SourceFeedsConfigurationSpec extends Specification {
 
     private mockSourcesEntry() {
         DepotEntry entry = Mock()
-        entry.getId() >> new URI(sourceFeedsEntryId)
+        entry.getId() >> configurationEntryId
         entry.getMimeType() >> "application/rdf+xml"
         entry.findContents() >> [
                 new DepotContent(new File("src/test/resources/source_feeds.rdf"),
-                    "${sourceFeedsEntryId}/rdf", "application/rdf+xml"),
+                    "${configurationEntryId}/rdf", "application/rdf+xml"),
             ]
         return entry
     }

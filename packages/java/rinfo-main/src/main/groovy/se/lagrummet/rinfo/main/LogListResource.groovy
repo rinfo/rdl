@@ -34,7 +34,7 @@ class LogListResource extends Resource {
             def logSession = collectorLog.openSession()
             Feed feed = Abdera.getInstance().newFeed()
 
-            feed.setId(collectorLog.systemBaseUri + "log")
+            feed.setId(collectorLog.reportBaseUri + "#feed")
             try {
                 for (collect in logSession.newDescriber().getByType("rc:Collect")) {
                     Entry entry = feed.insertEntry()

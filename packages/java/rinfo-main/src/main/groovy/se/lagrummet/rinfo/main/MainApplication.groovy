@@ -39,7 +39,7 @@ class MainApplication extends Application {
         def router = new Router(getContext())
         router.attach("/collector",
                 new Finder(getContext(), CollectorHandler)).setMatchingMode(MODE_EQUALS)
-        router.attach("/system/log/",
+        router.attach("/sys/report/",
                 new Finder(getContext(), LogListResource)).setMatchingMode(MODE_EQUALS)
 
         ContextAccess.setLogToXhtml(getContext(), new GritTransformer(

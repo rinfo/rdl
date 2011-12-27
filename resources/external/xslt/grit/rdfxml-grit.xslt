@@ -273,7 +273,7 @@
         <xsl:choose>
             <xsl:when test="$ref-count &lt; 2 and not($selfref)">
                 <xsl:for-each select="key('bnode', @rdf:nodeID)">
-                    <xsl:if test=". != $thisNode">
+                    <xsl:if test=". != $thisNode or last() = 1">
                         <xsl:call-template name="resourcebody"/>
                     </xsl:if>
                 </xsl:for-each>

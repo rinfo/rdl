@@ -30,7 +30,7 @@ public class Storage {
 
     public void startup() {
         StorageSession storageSession = openSession(
-                new StorageCredentials(true));
+                new StorageCredentials(null, true));
         try {
             for (StorageHandler handler : storageHandlers) {
                 handler.onStartup(storageSession);

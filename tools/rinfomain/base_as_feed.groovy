@@ -39,7 +39,7 @@ GRIT_XSLT = "../../resources/external/xslt/grit/rdfxml-grit.xslt"
 MODEL_XSLT = "../../resources/external/xslt/vocab/grit_to_xhtml.xslt"
 
 FEED_META = [
-    feedUri: "http://admin.lagrummet.se/base/feed",
+    feedId: "tag:lagrummet.se,2010:rinfo:admin",
     feedTitle: "RInfo Base Data",
     publicBaseUri: "http://rinfo.lagrummet.se"
 ]
@@ -137,7 +137,7 @@ def collectItems(baseUri, base, sources) {
             sourceFile = new File(sourceFile, "sys/sources.rdf")
         addItem simpleItem(baseUri, "sys/sources", sourceFile)
     } else {
-        addItem simpleItem(baseUri, "sys/sources",
+        addItem simpleItem(baseUri, "sys/dataset",
                 new File(base, "datasets/sources.n3"))
     }
 
@@ -377,7 +377,7 @@ Map createAtomCollection(feedMeta, feedPathConf, items, markComplete=true) {
     def collection = [:]
 
     def feed = Abdera.instance.newFeed()
-    feed.id = feedMeta.feedUri
+    feed.id = feedMeta.feedId
     feed.setTitle(feedMeta.feedTitle)
     if (markComplete)
         FeedPagingHelper.setComplete(feed, true)

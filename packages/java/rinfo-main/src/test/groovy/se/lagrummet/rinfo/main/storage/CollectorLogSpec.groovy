@@ -20,9 +20,8 @@ class CollectorLogSpec extends Specification {
     def setupSpec() {
         def repo = new SailRepository(new MemoryStore())
         repo.initialize()
-        collectorLog = new CollectorLog(repo)
-        collectorLog.systemBaseUri = "http://example.org/system/"
-        collectorLog.entryDatasetUri = "http://example.org/dataset/"
+        collectorLog = new CollectorLog(repo,
+                "http://example.org/report/", "http://example.org/dataset/")
     }
 
     def setup() {
@@ -31,6 +30,8 @@ class CollectorLogSpec extends Specification {
         def feedPageUrl = new URL("http://data.example.org/feed/current.atom")
         sourceFeed.setId("tag:example.org,2009:publ")
         sourceFeed.setUpdated(new Date())
+        logSession.start(new StorageCredentials(
+                    new CollectorSource(sourceFeed.id.toURI(), feedPageUrl), false))
         logSession.logFeedPageVisit(feedPageUrl, sourceFeed)
     }
 
@@ -68,13 +69,13 @@ class CollectorLogSpec extends Specification {
         when:
         logSession.logUpdatedEntry(sourceFeed, sourceEntry, depotEntry)
         then:
-        def entryDesc = logSession.currentDescriber.subjects(
+        def entryDesc = logSession.state.pageDescriber.subjects(
                 "rx:primarySubject", entryId).find {
                     it.getNative("awol:updated") == createTime
                 }
         entryDesc.getNative("awol:published") == createTime
         entryDesc.getNative("awol:updated") == createTime
-        entryDesc.getRel("dct:isPartOf").about == collectorLog.entryDatasetUri.toString()
+        entryDesc.getRel("dct:isPartOf").about == collectorLog.systemDatasetUri.toString()
 
         //and:
         //// TODO: seems good to bundle get-/setViaEntry and EntryRdfReader as

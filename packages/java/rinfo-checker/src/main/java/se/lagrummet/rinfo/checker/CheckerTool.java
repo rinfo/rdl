@@ -12,14 +12,14 @@ import se.lagrummet.rinfo.main.storage.EntryRdfValidatorHandler;
 
 public class CheckerTool {
 
-    static String systemBaseUri = "http://rinfo.lagrummet.se/system/";
-    static String entryDatasetUri = "tag:lagrummet.se,2009:rinfo";
+    static String reportBaseUri = "http://rinfo.lagrummet.se/sys/report/";
+    static String entryDatasetUri = "http://rinfo.lagrummet.se/sys/dataset";
 
     public static void main(String[] args) throws Exception {
         List<StorageHandler> handlers = new ArrayList<StorageHandler>();
         String feedUrl = args[0];
         URL adminFeedUrl = new URL("http://admin.lagrummet.se/feed/current.atom");
-        Checker checker = new Checker(systemBaseUri, entryDatasetUri);
+        Checker checker = new Checker(reportBaseUri, entryDatasetUri);
         checker.setMaxEntries(10);
         initializeHandlers(adminFeedUrl, handlers);
         checker.setHandlers(handlers);
@@ -44,7 +44,7 @@ public class CheckerTool {
                 "http://rinfo.lagrummet.se/sys/uri",
                 "http://rinfo.lagrummet.se/sys/uri/space#");
         handlers.add(rdfValidatorHandler);
-        Checker adminChecker = new Checker(systemBaseUri, entryDatasetUri);
+        Checker adminChecker = new Checker(reportBaseUri, entryDatasetUri);
         adminChecker.setHandlers(handlers);
         // TODO: read just the URIMinter config directly <http://rinfo.lagrummet.se/sys/uri>?
         try {

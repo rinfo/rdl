@@ -13,10 +13,12 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
 
     private final Logger logger = LoggerFactory.getLogger(FeedCollectScheduler.class)
 
+    private URI adminFeedId
     private URL adminFeedUrl
-    private Collection<URL> publicSourceFeedUrls
 
-    private Collection<URL> sourceFeedUrls
+    private Map<URL, CollectorSource> otherSourcesByFeedUrl = Collections.emptyMap()
+
+    private Collection<URL> sourceFeedUrls = Collections.emptyList()
 
     Runnable batchCompletedCallback
 
@@ -24,45 +26,57 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
 
     FeedCollectScheduler(FeedCollector feedCollector) {
         this.feedCollector = feedCollector
-        this.sourceFeedUrls = Collections.emptyList()
     }
 
     @Override
-    public Collection<URL> getSourceFeedUrls() {
-        return sourceFeedUrls
+    public Collection<URL> getSourceFeedUrls() { return sourceFeedUrls }
+
+    public URI getAdminFeedId() { return adminFeedId }
+
+    public void setAdminFeedId(Object adminFeedId) {
+        this.adminFeedId =
+            adminFeedId instanceof URI? adminFeedId : new URI(adminFeedId)
     }
 
-    public URL getAdminFeedUrl() {
-        return adminFeedUrl
-    }
+    public URL getAdminFeedUrl() { return adminFeedUrl }
 
     public void setAdminFeedUrl(URL adminFeedUrl) {
         this.adminFeedUrl = adminFeedUrl
         refreshSourceFeedUrls()
     }
 
-    public Collection<URL> getPublicSourceFeedUrls() {
-        return publicSourceFeedUrls
+    public Collection<CollectorSource> getSources() {
+        return otherSourcesByFeedUrl.values()
     }
 
-    public void setPublicSourceFeedUrls(Collection<URL> publicSourceFeedUrls) {
-        this.publicSourceFeedUrls = publicSourceFeedUrls
+    public void setSources(Collection<CollectorSource> sources) {
+        this.otherSourcesByFeedUrl = new HashMap<URL, CollectorSource>()
+        for (source in sources) {
+            otherSourcesByFeedUrl.put(source.currentFeed, source)
+        }
         refreshSourceFeedUrls()
     }
 
     @Override
     protected void collectFeed(URL feedUrl, boolean lastInBatch) {
-        def credentials = newStorageCredentials(feedUrl)
+        def credentials = getStorageCredentials(feedUrl)
         feedCollector.readFeed(feedUrl, credentials)
-        // TODO:? Ok to ping after each collect?
-        // Else, use if (lastInBatch && ...) to only run after last batch run.
         if (batchCompletedCallback != null) {
             batchCompletedCallback.run()
         }
     }
 
-    protected StorageCredentials newStorageCredentials(URL feedUrl) {
-        return new StorageCredentials(feedUrl.equals(adminFeedUrl))
+    protected StorageCredentials getStorageCredentials(URL feedUrl) {
+        if (feedUrl.equals(adminFeedUrl)) {
+            return new StorageCredentials(
+                    new CollectorSource(adminFeedId, adminFeedUrl), true)
+        } else {
+            def source = otherSourcesByFeedUrl.get(feedUrl)
+            if (source == null) {
+                return null
+            }
+            return new StorageCredentials(source, false)
+        }
     }
 
     private void refreshSourceFeedUrls() {
@@ -77,14 +91,12 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     }
 
     private void updateSourceFeedUrls() {
-        Collection<URL> mergedSources = new ArrayList<URL>()
+        Collection<URL> mergedUrls = new ArrayList<URL>()
         if (adminFeedUrl != null) {
-            mergedSources.add(adminFeedUrl)
+            mergedUrls.add(adminFeedUrl)
         }
-        if (publicSourceFeedUrls != null) {
-            mergedSources.addAll(publicSourceFeedUrls)
-        }
-        this.sourceFeedUrls = Collections.unmodifiableList(mergedSources)
+        mergedUrls.addAll(otherSourcesByFeedUrl.keySet())
+        this.sourceFeedUrls = Collections.unmodifiableList(mergedUrls)
     }
 
 }

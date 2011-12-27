@@ -30,12 +30,13 @@ import se.lagrummet.rinfo.main.storage.StorageCredentials;
 import se.lagrummet.rinfo.main.storage.StorageHandler;
 import se.lagrummet.rinfo.main.storage.CollectorLog;
 import se.lagrummet.rinfo.main.storage.CollectorLogSession;
+import se.lagrummet.rinfo.main.storage.CollectorSource;
 
 
 public class Checker {
 
     Repository logRepo = new SailRepository(new MemoryStore());
-    String systemBaseUri;
+    String reportBaseUri;
     String entryDatasetUri;
 
     Depot depot;
@@ -49,9 +50,9 @@ public class Checker {
     public int getMaxEntries() { return maxEntries; }
     public void setMaxEntries(int maxEntries) { this.maxEntries = maxEntries; }
 
-    public Checker(String systemBaseUri,
+    public Checker(String reportBaseUri,
             String entryDatasetUri) throws Exception {
-        this.systemBaseUri = systemBaseUri;
+        this.reportBaseUri = reportBaseUri;
         this.entryDatasetUri = entryDatasetUri;
         tempDir = createTempDir();
         depot = new FileDepot(new URI("http://rinfo.lagrummet.se"), tempDir);
@@ -74,10 +75,11 @@ public class Checker {
     }
 
     public Repository checkFeed(URL feedUrl, boolean adminSource) throws Exception {
-        CollectorLog coLog = new CollectorLog(logRepo);
-        coLog.setSystemBaseUri(systemBaseUri);
-        coLog.setEntryDatasetUri(entryDatasetUri);
-        StorageCredentials credentials = new StorageCredentials(adminSource);
+        CollectorLog coLog = new CollectorLog(logRepo, reportBaseUri, entryDatasetUri);
+        URI sourceId = new URI("tag:"+ feedUrl.getHost() +",1900:unknown:feed");
+        StorageCredentials credentials = new StorageCredentials(
+                new CollectorSource(sourceId, feedUrl),
+                adminSource);
         LaxStorageSession storageSession = new LaxStorageSession(
                 credentials,
                 depot.openSession(), handlers, coLog.openSession());

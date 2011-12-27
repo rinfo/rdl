@@ -7,18 +7,20 @@ class CollectorLog {
 
     private Repository repo
 
-    String systemBaseUri
-    String entryDatasetUri
+    String reportBaseUri
+    String systemDatasetUri
 
     CollectorLog() { }
 
-    CollectorLog(Repository repo) {
+    CollectorLog(Repository repo, String reportBaseUri, String systemDatasetUri) {
         this.repo = repo
+        this.reportBaseUri = reportBaseUri
+        this.systemDatasetUri = systemDatasetUri
     }
 
     CollectorLogSession openSession() {
-        assert systemBaseUri != null
-        assert entryDatasetUri != null
+        assert reportBaseUri != null
+        assert systemDatasetUri != null
         return new CollectorLogSession(this, repo.getConnection())
     }
 

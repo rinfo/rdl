@@ -16,11 +16,14 @@ class SourceFeedsConfigHandler implements StorageHandler {
     FeedCollectScheduler collectScheduler
 
     URI configurationEntryId
+    URI systemDatasetUri
 
     public SourceFeedsConfigHandler(FeedCollectScheduler collectScheduler,
-            String configurationEntryId) {
+            URI configurationEntryId,
+            URI systemDatasetUri) {
         this.collectScheduler = collectScheduler
-        this.configurationEntryId = new URI(configurationEntryId)
+        this.configurationEntryId = configurationEntryId
+        this.systemDatasetUri = systemDatasetUri
     }
 
     void onStartup(StorageSession storageSession) throws Exception {
@@ -38,27 +41,33 @@ class SourceFeedsConfigHandler implements StorageHandler {
         }
         def credentials = storageSession.getCredentials()
         if (!credentials.isAdmin()) {
-            throw new Exception(
-                    "Not allowed to configure sources: not an admin session!")
-            // TODO: throw new NotAllowedException(credentials)
+            throw new NotAllowedException(
+                    "Not allowed to configure sources: not an admin source!", credentials)
         }
-        def feedUrls = new ArrayList<URL>()
+        def sources = new ArrayList<CollectorSource>()
         Repository repo = EntryRdfReader.readRdf(depotEntry)
         def conn = repo.getConnection()
         try {
             def desc = new Describer(conn).
                     setPrefix("dct", "http://purl.org/dc/terms/").
                     setPrefix("iana", "http://www.iana.org/assignments/relation/")
-            def dataset = desc.findDescription("tag:lagrummet.se,2009:rinfo")
+            def dataset = desc.findDescription(systemDatasetUri.toString())
+            if (dataset == null) {
+                logger.warn("Found no sources for <"+ systemDatasetUri +"> in "+
+                        configurationEntryId)
+                return
+            }
             for (source in dataset.getRels("dct:source")) {
-                feedUrls.add(new URL(source.getObjectUri("iana:current")))
+                sources.add(new CollectorSource(
+                            new URI(source.getString("dct:identifier")),
+                            new URL(source.getObjectUri("iana:current"))))
             }
         } finally {
             conn.close()
         }
-        logger.debug("Setting public source feed urls, from " +
-                configurationEntryId+", to: ${feedUrls}")
-        collectScheduler.setPublicSourceFeedUrls(feedUrls)
+        logger.debug("Setting public sources , from " +
+                configurationEntryId + ", to: ${sources}")
+        collectScheduler.setSources(sources)
     }
 
     void onDelete(StorageSession storageSession, DepotEntry depotEntry)

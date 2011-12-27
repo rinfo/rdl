@@ -50,6 +50,8 @@ public class Components {
         DEPOT_BASE_URI("rinfo.depot.baseUri"),
         DEPOT_BASE_DIR("rinfo.depot.baseDir"),
         SOURCE_FEEDS_ENTRY_ID("rinfo.main.storage.sourceFeedsEntryId"),
+        SYSTEM_DATASET_URI("rinfo.main.storage.datasetUri"),
+        REPORT_BASE_URI("rinfo.main.storage.reportBaseUri"),
         CHECKER_CHECKED_BASE_PATH("rinfo.main.checker.checkedBasePath"),
         CHECKER_VOCAB_ENTRY_IDS("rinfo.main.checker.vocabEntryIds"),
         URIMINTER_ENTRY_ID("rinfo.main.uriMinter.uriSpaceEntryId"),
@@ -58,8 +60,6 @@ public class Components {
         PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
         COLLECTOR_LOG_DATA_DIR("rinfo.main.collector.logDataDir"),
         COMPLETE_FEEDS_ID_INDEX_DIR("rinfo.main.collector.completeFeedsIndexDir"),
-        SYSTEM_BASE_URI("rinfo.main.collectorLog.systemBaseUri"),
-        ENTRY_DATASET_URI("rinfo.main.collectorLog.entryDatasetUri"),
         STOP_ON_ERROR_LEVEL("rinfo.main.checker.stopOnErrorLevel");
 
         public final String value;
@@ -131,8 +131,9 @@ public class Components {
     }
 
     private void setupCollectorLog() {
-        collectorLog = new CollectorLog(createRegistryRepo())
-        configure(collectorLog, "rinfo.main.collectorLog")
+        collectorLog = new CollectorLog(createRegistryRepo(),
+                config.getString(ConfigKey.REPORT_BASE_URI.value),
+                config.getString(ConfigKey.SYSTEM_DATASET_URI.value))
     }
 
     protected void setupStorage() {
@@ -219,7 +220,8 @@ public class Components {
     private StorageHandler createSourceFeedsConfigHandler() {
         return new SourceFeedsConfigHandler(
                 collectScheduler,
-                config.getString(ConfigKey.SOURCE_FEEDS_ENTRY_ID.value))
+                new URI(config.getString(ConfigKey.SOURCE_FEEDS_ENTRY_ID.value)),
+                new URI(config.getString(ConfigKey.SYSTEM_DATASET_URI.value)))
     }
 
     private StorageHandler createEntryRdfValidatorHandler() {
