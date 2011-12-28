@@ -58,6 +58,14 @@ reload the admin data.
 
 Setting Up the Integration Environment from Scratch
 ========================================================================
+Note: These instructions work pretty well for setting up a real
+staging/demo (or production server) as well. Substitute target.demo
+(or target.prod) for target.integration below.
+
+In some cases, scripts under /etc/init.d for starting and stopping the
+tomcat and elasticsearch services fail when run on the target system
+from fabric. In these cases, the alternative is to log into the target
+system and manually running e.g. "sudo /etc/init.d/tomcat start".
 
 The integration environment is supposed to be run as a virtual server
 on your local computer. It can host all rinfo applications. In the
