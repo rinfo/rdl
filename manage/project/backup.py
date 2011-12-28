@@ -6,7 +6,8 @@ import re, os
 
 @runs_once
 def configure():
-    env.hosts = [_get_svn_host()]
+    # env.hosts = [_get_svn_host()]
+    env.hosts = ['dev.lagrummet.se']
     env.bakuser = 'rinfo'
     env.bak_base = "/var/local/backups"
     env.svn_base = "/var/local/svn"
