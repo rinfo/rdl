@@ -25,37 +25,76 @@ import se.lagrummet.rinfo.store.depot.SourceCheckException
 class CollectorLogSession implements Closeable {
 
     private String collectedLogsBaseUri
-    private String entryDatasetUri
+    private String systemDatasetUri
     private RepositoryConnection conn
 
-    // TODO:IMPROVE: wrap in CurrentState..
-    private Description collectDesc
-    Describer currentDescriber
-    private String currentFeedUri
+    private SessionState state
 
 
     CollectorLogSession(CollectorLog collectorLog, RepositoryConnection conn) {
-        this.collectedLogsBaseUri = collectorLog.getSystemBaseUri() + "log/collect"
-        this.entryDatasetUri = collectorLog.getEntryDatasetUri()
+        this.collectedLogsBaseUri = collectorLog.reportBaseUri + "collect"
+        this.systemDatasetUri = collectorLog.systemDatasetUri
         this.conn = conn
+    }
+
+    void start(StorageCredentials credentials) {
+        if (credentials.source == null) {
+            return
+        }
+        state = initializeCollect(credentials.source)
     }
 
     void close() {
         conn.close()
     }
 
-    void logFeedPageVisit(URL pageUrl, Feed feed) {
-        def feedId = feed.id.toString()
-        if (collectDesc == null) {
-            initializeCollect(feedId)
+
+    SessionState initializeCollect(CollectorSource source) {
+        // TODO:? resdesign to save collect and *each page* results as RDF to file
+        // - requires init to make a dir for current collect
+        def feedId = source.feedId.toString()
+        def desc = newDescriber(false)
+        // Wipe old (collectContextUri AND related feedPageCtxts):
+        def deletedOldCollect = false
+        for (feedAbout in desc.subjectUrisByLiteral("awol:id", feedId)) {
+            if (!deletedOldCollect) {
+                for (oldCollectUri in desc.subjectUris("iana:via", feedAbout)) {
+                    conn.clear(desc.toRef(oldCollectUri))
+                    deletedOldCollect = true
+                    break
+                }
+            }
+            conn.clear(desc.toRef(feedAbout))
         }
+        def startTime = new Date()
+        def state = new SessionState()
+        state.currentFeedId = feedId
+        def collectUri = createCollectUri(feedId, startTime)
+        state.collectDesc = newDescriber(collectUri).newDescription(collectUri, "rc:Collect")
+        state.collectDesc.addLiteral("tl:start", dateTime(startTime))
+        def sourceDesc = state.collectDesc.addRel("dct:source")
+        sourceDesc.addRel("iana:current", source.currentFeed.toString())
+        sourceDesc.addLiteral("dct:identifier", feedId, "xsd:anyURI")
+        source
+        return state
+    }
+
+    void updateCollectInfo() {
+        state.collectDesc.remove("tl:end")
+        state.collectDesc.addLiteral("tl:end", dateTime(new Date()))
+    }
+
+
+    void logFeedPageVisit(URL pageUrl, Feed feed) {
+        // TODO: assert state.currentFeedId == feedId
+        def feedId = feed.id.toString()
 
         def feedUpdated = feed.getUpdated()
         def collectedFeedUri = createCollectedFeedUri(feedId, feedUpdated, pageUrl.toString())
-        currentDescriber = newDescriber(collectedFeedUri)
-        def feedDesc = currentDescriber.newDescription(collectedFeedUri, "awol:Feed")
+        state.pageDescriber = newDescriber(collectedFeedUri)
+        def feedDesc = state.pageDescriber.newDescription(collectedFeedUri, "awol:Feed")
 
-        collectDesc.addRel("iana:via", feedDesc.about)
+        state.collectDesc.addRel("iana:via", feedDesc.about)
 
         feedDesc.addLiteral("awol:id", feedId)
         feedDesc.addLiteral("awol:updated", feedUpdated)
@@ -75,98 +114,108 @@ class CollectorLogSession implements Closeable {
             feedDesc.addRel("iana:next-archive", FeedPagingHelper.getNextArchive(feed).toString())
 
         // TODO: log HTTP headers for ETag/Modified-Since ...?
-        currentFeedUri = feedDesc.about
+        state.currentFeedUri = feedDesc.about
 
         updateCollectInfo()
     }
 
-    void initializeCollect(String feedId) {
-        // TODO:? resdesign to save collect and *each page* results as RDF to file
-        // - requires init to make a dir for current collect
-
-        def desc = newDescriber(false)
-        // wipe old (collectContextUri AND related feedPageCtxts)..
-        def deletedOldCollect = false
-        for (feedAbout in desc.subjectUrisByLiteral("awol:id", feedId)) {
-            if (!deletedOldCollect) {
-                for (oldCollectUri in desc.subjectUris("iana:via", feedAbout)) {
-                    conn.clear(desc.toRef(oldCollectUri))
-                    deletedOldCollect = true
-                    break
-                }
-            }
-            conn.clear(desc.toRef(feedAbout))
+    void logFeedPageError(Exception e, URL pageUrl) {
+        def tstamp = new Date()
+        if (state.pageDescriber == null) {
+            def collectedFeedUri = createCollectedFeedUri(
+                    state.currentFeedId, tstamp, pageUrl.toString())
+            state.pageDescriber = newDescriber(collectedFeedUri)
         }
-        def startTime = new Date()
-        def collectUri = createCollectUri(feedId, startTime)
-        collectDesc = newDescriber(collectUri).newDescription(collectUri, "rc:Collect")
-        //collectDesc.addLiteral("rdfs:label", "Collect of <"+feedId+">")
-        collectDesc.addLiteral("tl:start", dateTime(startTime))
-    }
-
-    void updateCollectInfo() {
-        collectDesc.remove("tl:end")
-        collectDesc.addLiteral("tl:end", dateTime(new Date()))
+        def pageErrorDesc = state.pageDescriber.newDescription(null, "rc:PageError")
+        if (e.message) {
+            pageErrorDesc.addLiteral("rdf:value", e.message)
+        }
+        pageErrorDesc.addRel("dct:source", pageUrl.toString())
+        pageErrorDesc.addLiteral("tl:at", dateTime(tstamp))
+        state.collectDesc.addRel("iana:via", pageErrorDesc.about)
     }
 
 
     void logUpdatedEntry(Feed sourceFeed, Entry sourceEntry, DepotEntry depotEntry) {
         def sourceEntryDesc = makeSourceEntryDesc(sourceEntry)
-        def entryDesc = currentDescriber.newDescription(null, "awol:Entry")
+        def entryDesc = state.pageDescriber.newDescription(null, "awol:Entry")
         entryDesc.addLiteral("awol:published", dateTime(depotEntry.getPublished()))
         entryDesc.addLiteral("awol:updated", dateTime(depotEntry.getUpdated()))
         entryDesc.addRel("rx:primarySubject", sourceEntry.getId().toString())
-        entryDesc.addRel("dct:isPartOf", entryDatasetUri)
+        entryDesc.addRel("dct:isPartOf", systemDatasetUri)
         entryDesc.addRel("iana:via", sourceEntryDesc.about)
         updateCollectInfo()
     }
 
     void logDeletedEntry(Feed sourceFeed, URI sourceEntryId, Date sourceEntryDeleted,
             DepotEntry depotEntry) {
-        def deleted = currentDescriber.newDescription(null, "ov:DeletedEntry")
+        def deleted = state.pageDescriber.newDescription(null, "ov:DeletedEntry")
         // TODO: record sourceEntryDeleted:
         //def sourceDeletedEntryDesc = makeSourceDeletedEntryDesc(sourceEntryDeleted)
         //deleted.addRel("iana:via", sourceDeletedEntryDesc.about)
         deleted.addRel("rx:primarySubject", sourceEntryId.toString())
         deleted.addLiteral("tl:at", dateTime(depotEntry.getUpdated()))
-        deleted.addRel("dct:isPartOf", entryDatasetUri)
-        deleted.addRel("iana:via", currentFeedUri)
+        deleted.addRel("dct:isPartOf", systemDatasetUri)
+        deleted.addRel("iana:via", state.currentFeedUri)
         updateCollectInfo()
     }
 
-    void logError(Exception error, Date timestamp, Feed sourceFeed, Entry sourceEntry) {
+    ErrorLevel logError(Exception error, Date timestamp, Feed sourceFeed, Entry sourceEntry) {
         Description errorDesc = null
+        def errorLevel = ErrorLevel.EXCEPTION
         if (error instanceof SourceCheckException) {
             // TODO: we should change current check procedure per source
             // to *collector*, (from current use in SourceContent)
+            //def documentInfo = "type=${src.mediaType};lang=${src.lang};slug=${src.enclosedUriPath}"
             if (error.failedCheck == SourceContent.Check.MD5) {
-                errorDesc = currentDescriber.newDescription(null, "rc:ChecksumError")
+                errorDesc = state.pageDescriber.newDescription(null, "rc:ChecksumError")
                 def src = (RemoteSourceContent) error.sourceContent
                 errorDesc.addLiteral("rc:document", src.urlPath, "xsd:anyURI")
-                //def documentInfo = "type=${src.mediaType};lang=${src.lang};slug=${src.enclosedUriPath}"
                 errorDesc.addLiteral("rc:givenMd5", error.givenValue)
                 errorDesc.addLiteral("rc:computedMd5", error.realValue)
+            } else if (error.failedCheck == SourceContent.Check.LENGTH) {
+                errorDesc = state.pageDescriber.newDescription(null, "rc:LengthError")
+                def src = (RemoteSourceContent) error.sourceContent
+                errorDesc.addLiteral("rc:document", src.urlPath, "xsd:anyURI")
+                errorDesc.addLiteral("rc:givenLength", error.givenValue)
+                errorDesc.addLiteral("rc:computedLength", error.realValue)
             }
-            // TODO: length
+            errorLevel = ErrorLevel.ERROR
         } else if (error instanceof IdentifyerMismatchException) {
-            errorDesc = currentDescriber.newDescription(null, "rc:IdentifyerError")
+            errorDesc = state.pageDescriber.newDescription(null, "rc:IdentifyerError")
             errorDesc.addLiteral("rc:givenUri", error.givenUri)
             errorDesc.addLiteral("rc:computedUri", error.computedUri)
+            errorLevel = ErrorLevel.ERROR
+        } else if (error instanceof SchemaReportException) {
+            def report = error.report
+            errorLevel = report.hasErrors? ErrorLevel.ERROR : ErrorLevel.WARNING
+            errorDesc = state.pageDescriber.newDescription(null, "rc:DescriptionError")
+            def errorConn = report.connection
+            def errorDescriber = newDescriber(errorConn, false)
+            ["sch:Error", "sch:Warning"].each {
+                errorDescriber.getByType(it).each {
+                    errorDesc.addRel("rc:reports", it.about)
+                }
+            }
+            state.pageDescriber.addFromConnection(errorConn, true)
+            report.close()
         }
         if (errorDesc == null) {
-            errorDesc = currentDescriber.newDescription(null, "rc:Error")
+            errorDesc = state.pageDescriber.newDescription(null, "rc:Error")
             errorDesc.addLiteral("rdf:value", error.getMessage() ?: "[empty error message]")
         }
         errorDesc.addLiteral("tl:at", dateTime(new Date()))
         def sourceEntryDesc = makeSourceEntryDesc(sourceEntry)
         errorDesc.addRel("iana:via", sourceEntryDesc.about)
+        updateCollectInfo()
+        return errorLevel
     }
 
     private Description makeSourceEntryDesc(sourceEntry) {
-        def sourceEntryDesc = currentDescriber.newDescription(null, "awol:Entry")
+        def sourceEntryDesc = state.pageDescriber.newDescription(null, "awol:Entry")
         sourceEntryDesc.addLiteral("awol:id", sourceEntry.getId().toURI())
         sourceEntryDesc.addLiteral("awol:updated", dateTime(sourceEntry.getUpdated()))
-        sourceEntryDesc.addRel("awol:source", currentFeedUri)
+        sourceEntryDesc.addRel("awol:source", state.currentFeedUri)
         return sourceEntryDesc
     }
 
@@ -192,16 +241,29 @@ class CollectorLogSession implements Closeable {
     }
 
     protected Describer newDescriber(boolean storePrefixes, String... contexts) {
+        return newDescriber(conn, true, contexts)
+    }
+
+    protected Describer newDescriber(RepositoryConnection conn,
+            boolean storePrefixes, String... contexts) {
         def desc = new Describer(conn, storePrefixes, contexts)
         return desc.setPrefix("dct", "http://purl.org/dc/terms/").
-            //setPrefix("prv", "http://purl.org/net/provenance/ns#")
+            setPrefix("prv", "http://purl.org/net/provenance/ns#").
             setPrefix("awol", "http://bblfish.net/work/atom-owl/2006-06-06/#").
             setPrefix("iana", "http://www.iana.org/assignments/relation/").
             setPrefix("tl", "http://purl.org/NET/c4dm/timeline.owl#").
+            setPrefix("sch", "http://purl.org/net/schemarama#").
             setPrefix("rx", "http://www.w3.org/2008/09/rx#").
             setPrefix("ax", "http://buzzword.org.uk/rdf/atomix#").
             setPrefix("ov", "http://open.vocab.org/terms/").
             setPrefix("rc", "http://rinfo.lagrummet.se/ns/2008/10/collector#")
+    }
+
+    class SessionState {
+        String currentFeedId
+        Description collectDesc
+        Describer pageDescriber
+        String currentFeedUri
     }
 
 }

@@ -23,6 +23,7 @@ import se.lagrummet.rinfo.base.rdf.RDFUtil;
 import se.lagrummet.rinfo.main.storage.StorageHandler;
 
 import se.lagrummet.rinfo.checker.Checker;
+import se.lagrummet.rinfo.checker.CheckerTool;
 
 
 public class CheckerResource extends Resource {
@@ -46,23 +47,19 @@ public class CheckerResource extends Resource {
             Form form = getRequest().getEntityAsForm();
             String feedUrl = form.getFirstValue("feedUrl");
             String maxEntriesStr = form.getFirstValue("maxEntries");
-            int maxEntries = !StringUtils.isEmpty(maxEntriesStr) ? Integer.parseInt(maxEntriesStr) : -1;
-            List<StorageHandler> handlers =
-                (List<StorageHandler>) getContext().getAttributes().get("handlers");
-            String systemBaseUri =
-                (String) getContext().getAttributes().get("systemBaseUri");
-            String entryDatasetUri =
-                (String) getContext().getAttributes().get("entryDatasetUri");
+            int maxEntries = !StringUtils.isEmpty(maxEntriesStr)?
+                Integer.parseInt(maxEntriesStr) : -1;
+
+            CheckerTool checkerTool =
+                (CheckerTool) getContext().getAttributes().get("checkerTool");
+            Checker checker = checkerTool.createChecker();
+            checker.setMaxEntries(maxEntries);
 
             final GritTransformer logXhtmlTransformer =
                 (GritTransformer) getContext().getAttributes().get("logXhtmlTransformer");
-
-            Checker checker = new Checker(systemBaseUri, entryDatasetUri);
-            checker.setMaxEntries(maxEntries);
-            checker.setHandlers(handlers);
             try {
                 Repository logRepo = checker.checkFeed(feedUrl);
-                final InputStream ins = RDFUtil.toInputStream(logRepo, "application/rdf+xml", false);
+                final InputStream ins = RDFUtil.toInputStream(logRepo, "application/rdf+xml", true);
                 getResponse().setEntity(new WriterRepresentation(MediaType.TEXT_HTML) {
                     public void write(Writer writer) throws IOException {
                         try {

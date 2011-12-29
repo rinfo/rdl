@@ -1,0 +1,29 @@
+BASE <http://rinfo.lagrummet.se/sys/validation/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX sch: <http://purl.org/net/schemarama#>
+
+CONSTRUCT {
+
+    [] a sch:Error;
+        rdfs:isDefinedBy <iri_error.rq>;
+        sch:message "Identifierare [1] är ingen korrekt IRI."@sv;
+        sch:implicated (?iri);
+        dct:source ?context .
+
+} WHERE {
+
+    GRAPH ?context {
+        {
+            ?iri ?p ?o .
+        } UNION {
+            ?s ?p ?iri .
+        }
+    }
+    FILTER(isIri(?iri))
+    BIND(str(?iri) as ?repr)
+    FILTER(!regex(?repr, "^[a-z-]+://?[^\\s()<>]+$"))
+
+}

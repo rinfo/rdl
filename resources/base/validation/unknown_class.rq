@@ -1,0 +1,25 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX sch: <http://purl.org/net/schemarama#>
+
+CONSTRUCT {
+
+    [] a sch:Warning;
+        rdfs:isDefinedBy <http://rinfo.lagrummet.se/sys/validation/unknown_class.rq>;
+        sch:message "Resurs [1]: okänd klass [2]"@sv;
+        sch:implicated (?thing ?class);
+        dct:source ?context .
+
+} WHERE {
+    GRAPH ?context {
+        ?thing a ?class .
+    }
+    FILTER NOT EXISTS {
+        {
+            ?class a rdfs:Class
+        } UNION {
+            ?class a owl:Class
+        }
+    }
+}

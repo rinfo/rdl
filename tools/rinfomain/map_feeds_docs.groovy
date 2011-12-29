@@ -95,7 +95,7 @@ def createServableSources(buildDir, publicServer, docsBase, feedBase) {
         feedPaths << feedPath
     }
 
-    def f = new File(buildDir+"/sys/sources.rdf")
+    def f = new File(buildDir+"/sys/dataset.rdf")
     ant.mkdir(dir:f.parentFile)
     def writer = new FileWriter(f)
     makeSourcesRdf(writer, buildDir, feedPaths, publicServer)
@@ -159,14 +159,16 @@ def makeSourcesRdf(writer, buildDir, feedPaths, publicServer) {
             'xmlns:dct':"http://purl.org/dc/terms/",
             'xmlns:void':"http://rdfs.org/ns/void#",
             'xmlns:iana':"http://www.iana.org/assignments/relation/") {
-        'void:Dataset'('rdf:about':"tag:lagrummet.se,2009:rinfo") {
+        'void:Dataset'('rdf:about': "http://rinfo.lagrummet.se/sys/dataset") {
             feedPaths.each { feedPath ->
                 'dct:source' {
                     def feedBase = (feedPath =~ /(.+)\/.*/)[0][1]
                     def orgSlug = feedBase.replace('.se', '')
                     def orgUri = "http://rinfo.lagrummet.se/org/${orgSlug}"
-                    'void:Dataset'('rdf:about':"tag:${feedBase},2009:rinfo") {
+                    'rdf:Description' {
                         'dct:publisher'('rdf:resource':orgUri)
+                        'dct:identifier'('rdf:datatype': "http://www.w3.org/2001/XMLSchema#anyURI",
+                            "tag:${feedBase},2009:rinfo")
                         'iana:current'('rdf:resource':"${publicServer}/${feedPath}")
                     }
                 }

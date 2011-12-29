@@ -7,7 +7,7 @@
     <!ENTITY vann "http://purl.org/vocab/vann/" >
     <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
     <!ENTITY bibo "http://purl.org/ontology/bibo/" >
-    <!ENTITY skos "http://www.w3.org/2008/05/skos#" >
+    <!ENTITY skos "http://www.w3.org/2004/02/skos/core#" >
     <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
     <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
     <!ENTITY event "http://purl.org/NET/c4dm/event.owl#" >
@@ -33,7 +33,7 @@
      xmlns:foaf="http://xmlns.com/foaf/0.1/"
      xmlns:prism="http://prismstandard.org/namespaces/1.2/basic/"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
-     xmlns:skos="http://www.w3.org/2008/05/skos#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
      xmlns:event="http://purl.org/NET/c4dm/event.owl#"
      xmlns:ns="http://www.w3.org/2003/06/sw-vocab-status/ns#"
      xmlns:degrees="&bibo;degrees/"

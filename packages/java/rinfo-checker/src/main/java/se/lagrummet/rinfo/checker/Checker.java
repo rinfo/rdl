@@ -17,10 +17,12 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.sail.memory.MemoryStore;
 
 import se.lagrummet.rinfo.store.depot.Depot;
+import se.lagrummet.rinfo.store.depot.DepotSession;
 import se.lagrummet.rinfo.store.depot.FileDepot;
 import se.lagrummet.rinfo.store.depot.SourceContent;
 
 import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex;
+import se.lagrummet.rinfo.main.storage.ErrorLevel;
 import se.lagrummet.rinfo.main.storage.FeedCollector;
 import se.lagrummet.rinfo.main.storage.FeedCollectorSession;
 import se.lagrummet.rinfo.main.storage.StorageSession;
@@ -28,13 +30,15 @@ import se.lagrummet.rinfo.main.storage.StorageCredentials;
 import se.lagrummet.rinfo.main.storage.StorageHandler;
 import se.lagrummet.rinfo.main.storage.CollectorLog;
 import se.lagrummet.rinfo.main.storage.CollectorLogSession;
+import se.lagrummet.rinfo.main.storage.CollectorSource;
 
 
 public class Checker {
 
     Repository logRepo = new SailRepository(new MemoryStore());
-    String systemBaseUri;
+    String reportBaseUri;
     String entryDatasetUri;
+    Set<URI> relevantEntries = new HashSet<URI>();
 
     Depot depot;
     File tempDir;
@@ -47,9 +51,9 @@ public class Checker {
     public int getMaxEntries() { return maxEntries; }
     public void setMaxEntries(int maxEntries) { this.maxEntries = maxEntries; }
 
-    public Checker(String systemBaseUri,
+    public Checker(String reportBaseUri,
             String entryDatasetUri) throws Exception {
-        this.systemBaseUri = systemBaseUri;
+        this.reportBaseUri = reportBaseUri;
         this.entryDatasetUri = entryDatasetUri;
         tempDir = createTempDir();
         depot = new FileDepot(new URI("http://rinfo.lagrummet.se"), tempDir);
@@ -72,13 +76,16 @@ public class Checker {
     }
 
     public Repository checkFeed(URL feedUrl, boolean adminSource) throws Exception {
-        CollectorLog coLog = new CollectorLog(logRepo);
-        coLog.setSystemBaseUri(systemBaseUri);
-        coLog.setEntryDatasetUri(entryDatasetUri);
-        StorageCredentials credentials = new StorageCredentials(adminSource);
+        CollectorLog coLog = new CollectorLog(logRepo, reportBaseUri, entryDatasetUri);
+        URI sourceId = new URI("tag:"+ feedUrl.getHost() +",1900:unknown:feed");
+        StorageCredentials credentials = new StorageCredentials(
+                new CollectorSource(sourceId, feedUrl),
+                adminSource);
         LaxStorageSession storageSession = new LaxStorageSession(
-                credentials, depot, handlers, coLog.openSession());
-        storageSession.setMaxEntries(maxEntries);
+                credentials,
+                depot.openSession(), handlers, coLog.openSession());
+        storageSession.relevantEntries = relevantEntries;
+        storageSession.maxEntries = maxEntries;
         FeedCollectorSession collectSession = new OneFeedCollectorSession(
                 FeedCollector.createDefaultClient(), storageSession);
         collectSession.readFeed(feedUrl);
@@ -128,18 +135,19 @@ public class Checker {
 
     public static class LaxStorageSession extends StorageSession {
 
-        private int maxEntries = -1;
-        public int getMaxEntries() { return maxEntries; }
-        public void setMaxEntries(int maxEntries) { this.maxEntries = maxEntries; }
+        Set<URI> relevantEntries;
+
+        int maxEntries = -1;
 
         private int visitedEntries = 0;
 
         public LaxStorageSession(StorageCredentials credentials,
-                Depot depot,
+                DepotSession depotSession,
                 Collection<StorageHandler> storageHandlers,
                 CollectorLogSession collectorLogSession) {
-            super(credentials, depot, storageHandlers, collectorLogSession,
-                    new NoopFeedEntryIdIndex());
+            super(credentials, depotSession, storageHandlers,
+                    collectorLogSession, new NoopFeedEntryIdIndex(),
+                    ErrorLevel.NONE);
         }
 
         public boolean storeEntry(Feed sourceFeed, Entry sourceEntry,
@@ -147,10 +155,20 @@ public class Checker {
             if (maxEntries > -1 && visitedEntries == maxEntries) {
                 return false;
             }
+            URI entryUri = null;
+            try {
+                entryUri = sourceEntry.getId().toURI();
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+            if (relevantEntries.size() > 0 &&
+                    !relevantEntries.contains(entryUri)) {
+                //System.out.println("Skipping irrelevant entry: " + entryUri);
+                return true;
+            }
             visitedEntries++;
-            super.storeEntry(
+            return super.storeEntry(
                     sourceFeed, sourceEntry, contents, enclosures);
-            return true; // never break on error
         }
     }
 

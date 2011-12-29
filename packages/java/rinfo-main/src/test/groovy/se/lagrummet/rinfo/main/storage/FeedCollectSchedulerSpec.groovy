@@ -10,10 +10,11 @@ class FeedCollectSchedulerSpec extends Specification {
         def collectScheduler = new FeedCollectScheduler(null)
         when:
         collectScheduler.adminFeedUrl = adminUrl
-        collectScheduler.publicSourceFeedUrls = publicUrls
+        collectScheduler.sources = sourceUrls.collect {
+                new CollectorSource(it.toURI(), it) }
         then:
         def adminUrls = adminUrl? [adminUrl] : []
-        collectScheduler.sourceFeedUrls == adminUrls + publicUrls
+        collectScheduler.sourceFeedUrls == adminUrls + sourceUrls
         where:
         adminUrl << [
             null,
@@ -21,7 +22,7 @@ class FeedCollectSchedulerSpec extends Specification {
             new URL("http://localhost/admin"),
             null,
         ]
-        publicUrls << [
+        sourceUrls << [
             [new URL("http://localhost/pub/1"), new URL("http://localhost/pub/2")],
             [new URL("http://localhost/pub/1"), new URL("http://localhost/pub/2")],
             [],
@@ -33,29 +34,37 @@ class FeedCollectSchedulerSpec extends Specification {
         setup:
         def collectScheduler = new FeedCollectScheduler(null)
         def adminUrl = new URL("http://localhost/admin")
+        def otherUrl = new URL("http://localhost/pub/1")
+        def unknownUrl = new URL("http://localhost/pub/2")
+        when:
         collectScheduler.adminFeedUrl = adminUrl
-        expect:
-        collectScheduler.newStorageCredentials(adminUrl).isAdmin() == true
-        collectScheduler.newStorageCredentials(
-                new URL("http://localhost/pub/1")).isAdmin() == false
+        collectScheduler.sources = [new CollectorSource(null, otherUrl)]
+        then:
+        collectScheduler.getStorageCredentials(adminUrl).isAdmin() == true
+        collectScheduler.getStorageCredentials(otherUrl).isAdmin() == false
+        collectScheduler.getStorageCredentials(unknownUrl) == null
     }
 
     def "collect scheduler should restart and use new sourceFeedUrls"() {
         setup:
         def collectScheduler = new TestScheduler()
-        collectScheduler.publicSourceFeedUrls = (1..100).collect {
-                new URL("http://localhost/old/${it}")
+        collectScheduler.sources = (1..100).collect {
+                def url = new URL("http://localhost/old/${it}")
+                new CollectorSource(url.toURI(), url)
             }
         collectScheduler.startup()
         def wasStarted = collectScheduler.isStarted()
         Thread.sleep 1
 
         when:
-        def newSources = [new URL("http://example.org/new")]
-        collectScheduler.publicSourceFeedUrls = newSources
+        def newSources = [
+                new CollectorSource(new URI("tag:example.org,2011:feed"),
+                        new URL("http://example.org/new"))
+            ]
+        collectScheduler.sources = newSources
 
         then:
-        collectScheduler.sourceFeedUrls == newSources
+        collectScheduler.sourceFeedUrls == newSources.collect { it.currentFeed }
         collectScheduler.isStarted() == wasStarted == true
     }
 

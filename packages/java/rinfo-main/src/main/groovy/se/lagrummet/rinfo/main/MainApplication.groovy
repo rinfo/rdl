@@ -30,6 +30,7 @@ class MainApplication extends Application {
 
         def configBuilder = new DefaultConfigurationBuilder(CONFIG_FILE_NAME)
         components = new Components(configBuilder.getConfiguration())
+        components.bootstrap()
         ContextAccess.setCollectScheduler(getContext(), components.getCollectScheduler())
         ContextAccess.setCollectorLog(getContext(), components.getCollectorLog())
     }
@@ -39,12 +40,12 @@ class MainApplication extends Application {
         def router = new Router(getContext())
         router.attach("/collector",
                 new Finder(getContext(), CollectorHandler)).setMatchingMode(MODE_EQUALS)
-        router.attach("/system/log/",
+        router.attach("/sys/report/",
                 new Finder(getContext(), LogListResource)).setMatchingMode(MODE_EQUALS)
 
         ContextAccess.setLogToXhtml(getContext(), new GritTransformer(
                     newTemplates(getClass(), "/xslt/main_collector_log.xslt")));
-        def tplt = router.attach("/system/log/collect/{contextPath}",
+        def tplt = router.attach("/sys/report/collect/{contextPath}",
                 new Finder(getContext(), CollectResource)).getTemplate()
         tplt.getVariables().put("contextPath", new Variable(Variable.TYPE_URI_PATH))
         tplt.setMatchingMode(MODE_STARTS_WITH)

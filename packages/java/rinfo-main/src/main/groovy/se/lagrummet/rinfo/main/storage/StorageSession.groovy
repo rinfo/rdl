@@ -28,24 +28,34 @@ class StorageSession {
     public static final String VIA_META_RESOURCE = "collector-via.entry"
 
     StorageCredentials credentials
-    Depot depot
     Collection<StorageHandler> storageHandlers =
             new ArrayList<StorageHandler>()
     DepotSession depotSession
     CollectorLogSession logSession
     CompleteFeedEntryIdIndex completeFeedEntryIdIndex
+    ErrorLevel stopOnErrorLevel
 
     StorageSession(StorageCredentials credentials,
-            Depot depot,
+            DepotSession depotSession,
             Collection<StorageHandler> storageHandlers,
             CollectorLogSession logSession,
-            CompleteFeedEntryIdIndex completeFeedEntryIdIndex) {
+            CompleteFeedEntryIdIndex completeFeedEntryIdIndex,
+            ErrorLevel stopOnErrorLevel) {
         this.credentials = credentials
-        this.depot = depot
         this.storageHandlers = storageHandlers
-        this.depotSession = depot.openSession()
+        this.depotSession = depotSession
         this.logSession = logSession
         this.completeFeedEntryIdIndex = completeFeedEntryIdIndex
+        this.stopOnErrorLevel = stopOnErrorLevel
+        logSession.start(credentials)
+    }
+
+    Depot getDepot() {
+        return depotSession.getDepot()
+    }
+
+    DepotEntry getEntryOrDeletedEntry(URI entryId) {
+        return getDepot().getEntryOrDeletedEntry(entryId)
     }
 
     void close() {
@@ -63,9 +73,13 @@ class StorageSession {
     void endPage(URL pageUrl) {
     }
 
+    void onPageError(Exception e, URL pageUrl) {
+        logSession.logFeedPageError(e, pageUrl)
+    }
+
     boolean hasCollected(Entry sourceEntry) {
         return hasCollected(sourceEntry,
-                depot.getEntryOrDeletedEntry(sourceEntry.getId().toURI()))
+                getEntryOrDeletedEntry(sourceEntry.getId().toURI()))
     }
 
     boolean hasCollected(Entry sourceEntry, DepotEntry depotEntry) {
@@ -78,7 +92,7 @@ class StorageSession {
 
         URI entryId = sourceEntry.getId().toURI()
         logger.info("Examining entry <${entryId}>..")
-        DepotEntry depotEntry = depot.getEntryOrDeletedEntry(entryId)
+        DepotEntry depotEntry = getEntryOrDeletedEntry(entryId)
 
         // NOTE: Needed since even if hasCollected is true (via stopOnEntry),
         // there may be several entries with the same timestamp.
@@ -124,28 +138,28 @@ class StorageSession {
             return true
 
         } catch (Exception e) {
-            /* TODO: explicit handling (and logging) of different errors:
+            /* TODO: explicit handling (and logging) of more errors:
                 - retriable:
                     java.net.SocketException
-
-                - source errors (report and log):
+                -  more source errors (report and log):
                     javax.net.ssl.SSLPeerUnverifiedException
                     MissingRdfContentException
-                    IdentifyerMismatchException
                     DuplicateDepotEntryException
-                    SourceCheckException (from SourceContent#writeTo), ...
-
-               Index the ok ones, *rollback* last depotEntry and *report error*!
             */
             logger.error("Error storing entry:", e)
             depotSession.rollbackPending()
-            logSession.logError(e, timestamp, sourceFeed, sourceEntry)
-            return false
+            def gotErrorLevel =
+                    logSession.logError(e, timestamp, sourceFeed, sourceEntry)
+            return shouldContinueOnError(gotErrorLevel)
         }
     }
 
+    boolean shouldContinueOnError(gotErrorLevel) {
+        return (gotErrorLevel < stopOnErrorLevel)
+    }
+
     void deleteEntry(Feed sourceFeed, URI entryId, Date sourceDeletedDate) {
-        DepotEntry depotEntry = depot.getEntryOrDeletedEntry(entryId)
+        DepotEntry depotEntry = getEntryOrDeletedEntry(entryId)
         // TODO:? could this mean we have an error causing loss of collector metadata?
         if (depotEntry == null) {
             logger.warn("Could not delete entry, missing <${entryId}>.")
@@ -198,7 +212,6 @@ class StorageSession {
             viaEntryOutStream.close()
         }
     }
-
 
     protected static boolean sourceIsNotAnUpdate(Entry sourceEntry,
             DepotEntry depotEntry) {

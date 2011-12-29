@@ -7,6 +7,8 @@ import java.net.URI;
 
 public interface DepotSession {
 
+    Depot getDepot();
+
     DepotEntry createEntry(URI entryUri, Date created,
             List<SourceContent> contents)
             throws DepotReadException, DepotWriteException;

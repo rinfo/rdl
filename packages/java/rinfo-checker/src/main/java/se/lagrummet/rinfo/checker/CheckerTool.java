@@ -6,44 +6,67 @@ import java.util.*;
 
 import org.openrdf.repository.Repository;
 
+import org.apache.commons.configuration.DefaultConfigurationBuilder;
+
 import se.lagrummet.rinfo.base.rdf.RDFUtil;
+import se.lagrummet.rinfo.main.Components;
+import static se.lagrummet.rinfo.main.Components.ConfigKey;
 import se.lagrummet.rinfo.main.storage.StorageHandler;
 import se.lagrummet.rinfo.main.storage.EntryRdfValidatorHandler;
 
 public class CheckerTool {
 
-    static String systemBaseUri = "http://rinfo.lagrummet.se/system/";
-    static String entryDatasetUri = "tag:lagrummet.se,2009:rinfo";
-    static List<StorageHandler> handlers = new ArrayList<StorageHandler>();
+    public String reportBaseUri;
+    public String entryDatasetUri;
+    public String adminFeedUrl;
 
-    public static void main(String[] args) throws Exception {
-        String feedUrl = args[0];
-        Checker checker = new Checker(systemBaseUri, entryDatasetUri);
-        checker.setMaxEntries(10);
-        checker.setHandlers(handlers);
+    List<StorageHandler> handlers = new ArrayList<StorageHandler>();
+
+    public CheckerTool() throws Exception {
+        Components components = new Components(
+                new DefaultConfigurationBuilder("config.xml").getConfiguration());
+        this.reportBaseUri = components.configString(ConfigKey.REPORT_BASE_URI);
+        this.entryDatasetUri = components.configString(ConfigKey.SYSTEM_DATASET_URI);
+        this.adminFeedUrl = components.configString(ConfigKey.ADMIN_FEED_URL);
+        initializeHandlers(components);
+    }
+
+    void initializeHandlers(Components components) throws Exception {
+        EntryRdfValidatorHandler rdfValidatorHandler =
+            components.createEntryRdfValidatorHandler();
+        handlers.add(rdfValidatorHandler);
+        Checker adminChecker = createChecker();
+        adminChecker.relevantEntries.addAll(rdfValidatorHandler.getVocabEntryIds());
+        adminChecker.relevantEntries.add(rdfValidatorHandler.getValidationEntryId());
+        adminChecker.relevantEntries.add(rdfValidatorHandler.getUriSpaceEntryId());
         try {
-            Repository logRepo = checker.checkFeed(feedUrl);
-            String mtype = "application/rdf+xml";
-            RDFUtil.serialize(logRepo, mtype, System.out);
+            adminChecker.checkFeed(new URL(adminFeedUrl), true);
         } finally {
-            checker.shutdown();
+            adminChecker.shutdown();
         }
     }
 
-    static void initializeHandlers() throws Exception {
-        EntryRdfValidatorHandler uriMinterHandler = new EntryRdfValidatorHandler(
-                "/publ/",
-                "http://rinfo.lagrummet.se/sys/uri",
-                "http://rinfo.lagrummet.se/sys/uri/space#");
-        handlers.add(uriMinterHandler);
-        Checker adminChecker = new Checker(systemBaseUri, entryDatasetUri);
-        adminChecker.setHandlers(handlers);
-        // TODO: read just the URIMinter config directly <http://rinfo.lagrummet.se/sys/uri>?
-        URL adminFeedUrl = new URL("http://admin.lagrummet.se/feed/current.atom");
+    public Checker createChecker() throws Exception {
+        Checker checker = new Checker(reportBaseUri, entryDatasetUri);
+        checker.setHandlers(handlers);
+        return checker;
+    }
+
+    public static void main(String[] args) throws Exception {
+        if (args.length < 1) {
+            System.out.println("Usage: CMD <feedUrl>");
+            System.exit(0);
+        }
+        String feedUrl = args[0];
+
+        Checker checker = new CheckerTool().createChecker();
+        checker.setMaxEntries(10);
         try {
-            adminChecker.checkFeed(adminFeedUrl, true);
+            Repository logRepo = checker.checkFeed(feedUrl);
+            String mtype = "application/rdf+xml";
+            RDFUtil.serialize(logRepo, mtype, System.out, true);
         } finally {
-            adminChecker.shutdown();
+            checker.shutdown();
         }
     }
 

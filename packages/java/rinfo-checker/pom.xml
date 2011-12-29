@@ -78,22 +78,42 @@
       </plugin>
 
       <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals><goal>run</goal></goals>
+            <configuration>
+              <tasks>
+                <!-- NOTE: only needed for running exec:java with the right
+                     environment. For the webapp we specifically add this via
+                     webResources (see plugin config below), to be independent
+                     of this copy. -->
+                <copy todir="${project.build.outputDirectory}">
+                  <fileset file="${basedir}/../rinfo-main/src/environments/${environment}/*.properties"/>
+                </copy>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <warName>${project.artifactId}-${environment}</warName>
-          <!--
           <webResources>
             <resource>
               <filtering>false</filtering>
-              <directory>src/environments/${environment}</directory>
+              <directory>${basedir}/../rinfo-main/src/environments/${environment}</directory>
               <targetPath>WEB-INF/classes</targetPath>
               <includes>
                 <include>**/*</include>
               </includes>
             </resource>
           </webResources>
-          -->
         </configuration>
       </plugin>
 
@@ -105,7 +125,7 @@
           <scanIntervalSeconds>10</scanIntervalSeconds>
           <webAppConfig>
             <contextPath>/</contextPath>
-            <extraClasspath>${basedir}/../log-config/dev</extraClasspath>
+            <extraClasspath>${basedir}/../rinfo-main/src/environments/${environment};${basedir}/../log-config/dev</extraClasspath>
           </webAppConfig>
           <connectors>
             <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">

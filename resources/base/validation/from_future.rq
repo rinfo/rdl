@@ -1,0 +1,27 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX sch: <http://purl.org/net/schemarama#>
+
+CONSTRUCT {
+
+    [] a sch:Warning;
+        rdfs:isDefinedBy <http://rinfo.lagrummet.se/sys/validation/from_future.rq>;
+        sch:message "Resurs [1]: egenskap [2] med datum [3] ligger i framtiden."@sv;
+        sch:implicated (?thing ?prop ?value);
+        dct:source ?context .
+
+} WHERE {
+    GRAPH ?context {
+        ?thing ?prop ?value .
+        FILTER(?prop in (dct:created))
+        BIND(year(now()) as ?year)
+        BIND(month(now()) as ?month)
+        FILTER(!(
+            year(?value) < ?year ||
+            year(?value) = ?year && (month(?value) < ?month ||
+            month(?value) = ?month && day(?value) <= day(now())
+            )
+        ))
+    }
+}

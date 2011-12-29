@@ -1,0 +1,82 @@
+@base <http://rinfo.lagrummet.se/sys/validation/> .
+@prefix sch: <http://purl.org/net/schemarama#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+
+<> a sch:TestCase;
+    dct:title "Struktur- och innehållskontroll av rättsinformation"@sv;
+    dct:description "En uppsättning tester som verifierar olika detaljer i beskrivningar av svensk rättsinformation."@sv;
+    sch:groups (<#vocabs> <#rinfo>) .
+
+<#vocabs> a sch:TestGroup;
+    dct:title "Vokabulärkontroll av rättsinformation"@sv;
+    dct:description "Kontrollerar användningen av vokabulär avseende använda klasser och egenskaper samt förväntade datatyper."@sv;
+    sch:tests (<no_class.rq>
+               <unknown_class.rq>
+               <unknown_property.rq>
+               <missing_expected.rq>
+               <expected_datatype.rq>
+               <expected_lang.rq>) .
+
+<#rinfo> a sch:TestGroup;
+    dct:title "Kontroll av specifika värden och länkar i rättsinformation"@sv;
+    dct:description "Kontrollerar specifika värden såsom rubriker, länkar och datum mot normativa regler för dessa."@sv;
+    sch:tests (<unexpected_uri_pattern.rq>
+               <improbable_future.rq>
+               <improbable_past.rq>
+               <from_future.rq>
+               <spurious_whitespace.rq>) .
+
+<datatype_error.rq> a sch:Test;
+    dct:title "Fel datatyp"@sv;
+    dct:description "Angivet värde matchar inte angiven datatyp."@sv .
+
+<no_class.rq> a sch:Test;
+    dct:title "Resursen saknar klass."@sv;
+    dct:description "Den primärt intressanta resursen har ingen angiven klass."@sv .
+
+<unknown_class.rq> a sch:Test;
+    dct:title "Okänd klass"@sv;
+    dct:description "En resurs typad med en (för systemet) okänd klass."@sv .
+
+<unknown_property.rq> a sch:Test;
+    dct:title "Okänd egenskap"@sv;
+    dct:description "En resurs beskriven med en (för systemet) okänd egenskap/relation."@sv .
+
+<missing_expected.rq> a sch:Test;
+    dct:title ""@sv;
+    dct:description ""@sv .
+
+<expected_datatype.rq> a sch:Test;
+    dct:title ""@sv;
+    dct:description ""@sv .
+
+<expected_lang.rq> a sch:Test;
+    dct:title ""@sv;
+    dct:description ""@sv .
+
+<unexpected_uri_pattern.rq> a sch:Test;
+    dct:title ""@sv;
+    dct:description ""@sv .
+
+<improbable_future.rq> a sch:Test;
+    dct:title ""@sv;
+    dct:description ""@sv .
+
+<improbable_past.rq> a sch:Test;
+    dct:title ""@sv;
+    dct:description ""@sv .
+
+<from_future.rq> a sch:Test;
+    dct:title ""@sv;
+    dct:description ""@sv .
+
+<spurious_whitespace.rq> a sch:Test;
+    dct:title ""@sv;
+    dct:description ""@sv .
+
+#@prefix void: <http://rdfs.org/ns/void#> .
+#[] a void:Dataset;
+#    void:vocabulary rpubl:, dct:, foaf:;
+#    void:uriSpace "http://rinfo.lagrummet.se/publ/";
+#    void:uriRegexPattern "http://rinfo.lagrummet.se/publ/[0-9a-z\-]+fs/[1-9][0-9/]+:\\w+" .
+

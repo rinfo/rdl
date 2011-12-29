@@ -39,7 +39,7 @@ GRIT_XSLT = "../../resources/external/xslt/grit/rdfxml-grit.xslt"
 MODEL_XSLT = "../../resources/external/xslt/vocab/grit_to_xhtml.xslt"
 
 FEED_META = [
-    feedUri: "http://admin.lagrummet.se/base/feed",
+    feedId: "tag:lagrummet.se,2010:rinfo:admin",
     feedTitle: "RInfo Base Data",
     publicBaseUri: "http://rinfo.lagrummet.se"
 ]
@@ -131,13 +131,21 @@ def collectItems(baseUri, base, sources) {
             new File(base, "sys/uri/slugs.n3")
         ])
 
+    addItem simpleItem(baseUri, "sys/validation",
+            new File(base, "validation/index.ttl"),
+            listFiles("${base}/validation", ["rq"]).collect {[
+                    href: "/sys/validation/${it.name}",
+                    writeTo: createFileWriter(it),
+                    mediaType: "application/sparql-query"
+                ]})
+
     if (sources) {
         def sourceFile = new File(sources)
         if (sourceFile.directory)
-            sourceFile = new File(sourceFile, "sys/sources.rdf")
-        addItem simpleItem(baseUri, "sys/sources", sourceFile)
+            sourceFile = new File(sourceFile, "sys/dataset.rdf")
+        addItem simpleItem(baseUri, "sys/dataset", sourceFile)
     } else {
-        addItem simpleItem(baseUri, "sys/sources",
+        addItem simpleItem(baseUri, "sys/dataset",
                 new File(base, "datasets/sources.n3"))
     }
 
@@ -150,7 +158,7 @@ def collectItems(baseUri, base, sources) {
 }
 
 
-def simpleItem(baseUri, uriPath, File file) {
+def simpleItem(baseUri, uriPath, File file, enclosures=null) {
     def itemUri = baseUri+"/"+uriPath
     return [
         uri: itemUri,
@@ -159,7 +167,7 @@ def simpleItem(baseUri, uriPath, File file) {
             writeTo: createRdfWriter(file, null),
             mediaType: "application/rdf+xml"
         ],
-        enclosures: null
+        enclosures: enclosures
     ]
 }
 
@@ -178,8 +186,9 @@ def modelItem(baseUri, File file) {
     assert modelUriStr.startsWith(baseUri)
     def htmlReprSlug = modelUriStr.replaceAll(
             /${baseUri}(.+?)[#\/]?$/) { match, slug -> "${slug}/xhtml" }
+    def modelDocUri = modelUriStr.replaceFirst(/#.*$/, '') // strip trailing fragment
     return [
-        uri: modelUri as String,
+        uri: modelDocUri.toString(),
         updated: new Date(file.lastModified()),
         content: [
             writeTo: createRdfWriter(file, repo),
@@ -309,7 +318,7 @@ def mediaItem(itemUri, content, mediaIitems) {
  * Either uses the file as-is and closes the repo, or returns a lazy serializer..
  */
 Closure createRdfWriter(file, repo=null) {
-    if (file.name.endsWith(".n3")) {
+    if (file.name.endsWith(".n3") || file.name.endsWith(".ttl")) {
         if (repo == null) {
             repo = RDFUtil.createMemoryRepository()
             RDFUtil.loadDataFromFile(repo, file)
@@ -377,7 +386,7 @@ Map createAtomCollection(feedMeta, feedPathConf, items, markComplete=true) {
     def collection = [:]
 
     def feed = Abdera.instance.newFeed()
-    feed.id = feedMeta.feedUri
+    feed.id = feedMeta.feedId
     feed.setTitle(feedMeta.feedTitle)
     if (markComplete)
         FeedPagingHelper.setComplete(feed, true)

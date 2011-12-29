@@ -1,0 +1,8 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix : <http://example.org/def/vocab#> .
+
+<http://example.org/publ/improbable_past> a :Document;
+    dct:title "en titel"@sv;
+    dct:issued "1011-01-10"^^xsd:date .
+

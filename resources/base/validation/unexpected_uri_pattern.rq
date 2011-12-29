@@ -1,0 +1,25 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX sch: <http://purl.org/net/schemarama#>
+PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
+
+CONSTRUCT {
+
+    [] a sch:Warning;
+        rdfs:isDefinedBy <http://rinfo.lagrummet.se/sys/validation/unexpected_uri_pattern.rq>;
+        sch:message "Resurs [1]: relation [2] med URI [3] följer inte förväntad form."@sv;
+        sch:implicated (?thing ?rel ?ref);
+        dct:source ?context .
+
+} WHERE {
+    GRAPH ?context {
+        ?thing ?rel ?ref .
+    }
+
+    #?rel rdfs:isDefinedBy rpubl: .
+    FILTER(?rel in (rpubl:andrar, rpubl:upphaver))
+    #FILTER(!isIRI(?ref)) # TODO: separate "expected_iri" test?
+    FILTER(!regex(str(?ref), "http://rinfo\\.lagrummet\\.se/publ/[0-9a-z\\-]+fs/[1-9][0-9/]+:\\w+"))
+
+}

@@ -1,0 +1,26 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX sch: <http://purl.org/net/schemarama#>
+
+CONSTRUCT {
+
+    [] a sch:Warning;
+        rdfs:isDefinedBy <http://rinfo.lagrummet.se/sys/validation/unknown_property.rq>;
+        sch:message "Resurs [1]: okänd egenskap [2]"@sv;
+        sch:implicated (?thing ?prop);
+        dct:source ?context .
+
+} WHERE {
+    GRAPH ?context {
+        ?thing ?prop ?value .
+    }
+    FILTER NOT EXISTS {
+        ?prop a ?proptype .
+        FILTER(?proptype in (rdf:Property,
+                    owl:ObjectProperty,
+                    owl:DatatypeProperty,
+                    owl:FunctionalProperty))
+    }
+}

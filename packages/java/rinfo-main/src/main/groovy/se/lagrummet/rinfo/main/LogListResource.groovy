@@ -34,7 +34,7 @@ class LogListResource extends Resource {
             def logSession = collectorLog.openSession()
             Feed feed = Abdera.getInstance().newFeed()
 
-            feed.setId(collectorLog.systemBaseUri + "log")
+            feed.setId(collectorLog.reportBaseUri + "#feed")
             try {
                 for (collect in logSession.newDescriber().getByType("rc:Collect")) {
                     Entry entry = feed.insertEntry()
@@ -47,9 +47,12 @@ class LogListResource extends Resource {
                     for (via in collect.getRels("iana:via")) {
                         //if (via.getRel("iana:self").equals(via.getRel("iana:current")))
                         //    ... mark as "latest"
-                        def enclosure = entry.addLink(new URI(via.getAbout()).getPath(),
-                                "enclosure", "application/rdf+xml", null, null, -1)
-                        enclosure.setAttributeValue("modified", via.getString("awol:updated"))
+                        def viaUrl = via.getAbout()
+                        if (!viaUrl.startsWith("_")) {
+                            entry.addLink(new URI(viaUrl).getPath(),
+                                    "enclosure", "application/rdf+xml", null, null, -1
+                                ).setAttributeValue("modified", via.getString("awol:updated"))
+                        }
                         if (forFeedId == null) {
                             forFeedId = via.getString("awol:id")
                         }
