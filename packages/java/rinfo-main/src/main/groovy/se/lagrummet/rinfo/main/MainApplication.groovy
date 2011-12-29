@@ -45,7 +45,7 @@ class MainApplication extends Application {
 
         ContextAccess.setLogToXhtml(getContext(), new GritTransformer(
                     newTemplates(getClass(), "/xslt/main_collector_log.xslt")));
-        def tplt = router.attach("/system/log/collect/{contextPath}",
+        def tplt = router.attach("/sys/report/collect/{contextPath}",
                 new Finder(getContext(), CollectResource)).getTemplate()
         tplt.getVariables().put("contextPath", new Variable(Variable.TYPE_URI_PATH))
         tplt.setMatchingMode(MODE_STARTS_WITH)
