@@ -1,3 +1,4 @@
+@base <http://rinfo.lagrummet.se/sys/validation/> .
 @prefix sch: <http://purl.org/net/schemarama#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 
