@@ -37,7 +37,7 @@ class FeedUpdatePingNotifyer implements Runnable {
                 def response = client.handle(request)
                 try {
                     println response.status
-                    println response.entity.text
+                    println response.entity?.text
                 } finally {
                     response.release()
                 }

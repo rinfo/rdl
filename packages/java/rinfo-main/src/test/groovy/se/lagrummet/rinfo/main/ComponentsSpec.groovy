@@ -23,6 +23,7 @@ class ComponentsSpec extends Specification {
         when:
         def configBuilder = new DefaultConfigurationBuilder("config.xml")
         def components = new Components(configBuilder.getConfiguration())
+        components.bootstrap()
         then:
         components.storage instanceof Storage
         components.collectScheduler instanceof FeedCollectScheduler

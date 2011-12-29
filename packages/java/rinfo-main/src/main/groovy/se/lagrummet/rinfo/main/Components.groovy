@@ -35,11 +35,11 @@ import se.lagrummet.rinfo.main.storage.SourceFeedsConfigHandler
 
 
 /**
- * This is the dependency injection hub, creating and sewing together all
+ * This is the dependency injection hub, creating and stitching together all
  * components of the application. It is the sole entry point for all low-level
  * configuration. The only exceptions are:
  * <ul>
- * <li>If a library uses hard-wired config locartions (e.g. logging).</li>
+ * <li>If a library uses hard-wired config locations (e.g. logging).</li>
  * <li>If behaviour is configured from the domain (such as collected (external)
  *     data sources).</li>
  * </ul>
@@ -54,8 +54,10 @@ public class Components {
         REPORT_BASE_URI("rinfo.main.storage.reportBaseUri"),
         CHECKER_CHECKED_BASE_PATH("rinfo.main.checker.checkedBasePath"),
         CHECKER_VOCAB_ENTRY_IDS("rinfo.main.checker.vocabEntryIds"),
+        VALIDATION_ENTRY_ID("rinfo.main.checker.validationEntryId"),
         URIMINTER_ENTRY_ID("rinfo.main.uriMinter.uriSpaceEntryId"),
         URIMINTER_URI_SPACE_URI("rinfo.main.uriMinter.uriSpaceUri"),
+        ADMIN_FEED_URL("rinfo.main.collector.adminFeedUrl"),
         ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets", false),
         PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
         COLLECTOR_LOG_DATA_DIR("rinfo.main.collector.logDataDir"),
@@ -63,7 +65,7 @@ public class Components {
         STOP_ON_ERROR_LEVEL("rinfo.main.checker.stopOnErrorLevel");
 
         public final String value;
-        public final boolean requiredValue = false;
+        public final boolean requiredValue = false; // TODO: true
         private ConfigKey(String value) { this.value = value; }
         private ConfigKey(String value, boolean requiredValue) {
             this.value = value;
@@ -87,11 +89,6 @@ public class Components {
     public Components(Configuration config) {
         this.config = config
         checkConfig()
-        setupCollectorLog()
-        setupStorage()
-        setupFeedCollector()
-        setupCollectScheduler()
-        setupStorageHandlers()
     }
 
     public Configuration getConfig() { return config; }
@@ -100,10 +97,19 @@ public class Components {
     public FeedCollectScheduler getCollectScheduler() { return collectScheduler; }
     public FeedCollector getFeedCollector() { return feedCollector; }
 
+    void bootstrap() {
+        setupCollectorLog()
+        setupStorage()
+        setupFeedCollector()
+        setupCollectScheduler()
+        setupStorageHandlers()
+    }
+
     public void startup() {
         storage.startup()
         collectScheduler.startup()
     }
+
     public void shutdown() {
         try {
             collectScheduler.shutdown()
@@ -111,16 +117,12 @@ public class Components {
             storage.shutdown()
         }
     }
-    protected void configure(Object bean, String subsetPrefix) {
-        BeanUtils.populate(bean,
-                new ConfigurationMap(config.subset(subsetPrefix)))
-    }
 
     protected void checkConfig() throws ConfigurationException {
         List<String> missingKeys = new ArrayList<String>();
         for (ConfigKey cKey : ConfigKey.values()) {
             if (!config.containsKey(cKey.toString()) ||
-                cKey.requiredValue && StringUtils.isEmpty(config.getString(cKey.toString()))) {
+                cKey.requiredValue && StringUtils.isEmpty(configString(cKey))) {
                 missingKeys.add(cKey.toString());
             }
         }
@@ -130,16 +132,25 @@ public class Components {
         }
     }
 
+    protected void configure(Object bean, String subsetPrefix) {
+        BeanUtils.populate(bean,
+                new ConfigurationMap(config.subset(subsetPrefix)))
+    }
+
+    String configString(ConfigKey key) {
+        return config.getString(key.value);
+    }
+
     private void setupCollectorLog() {
         collectorLog = new CollectorLog(createRegistryRepo(),
-                config.getString(ConfigKey.REPORT_BASE_URI.value),
-                config.getString(ConfigKey.SYSTEM_DATASET_URI.value))
+                configString(ConfigKey.REPORT_BASE_URI),
+                configString(ConfigKey.SYSTEM_DATASET_URI))
     }
 
     protected void setupStorage() {
         storage = new Storage(createDepot(), collectorLog,
                 createCompleteFeedEntryIdIndex(),
-                ErrorLevel.valueOf(config.getString(ConfigKey.STOP_ON_ERROR_LEVEL.value)))
+                ErrorLevel.valueOf(configString(ConfigKey.STOP_ON_ERROR_LEVEL)))
     }
 
     protected void setupFeedCollector() {
@@ -150,7 +161,7 @@ public class Components {
         collectScheduler = new FeedCollectScheduler(feedCollector)
         configure(collectScheduler, "rinfo.main.collector")
         def publicSubscriptionFeed = new URL(
-                config.getString(ConfigKey.PUBLIC_SUBSCRIPTION_FEED.value))
+                configString(ConfigKey.PUBLIC_SUBSCRIPTION_FEED))
         def onCompletePingTargets = new ArrayList<URL>()
         for (String s : config.getList(
                     ConfigKey.ON_COMPLETE_PING_TARGETS.value)) {
@@ -166,7 +177,7 @@ public class Components {
         storage.setStorageHandlers(createStorageHandlers())
     }
 
-    private Depot createDepot() {
+    Depot createDepot() {
         Depot depot = new FileDepot()
         configure(depot, "rinfo.depot")
         depot.initialize()
@@ -194,15 +205,15 @@ public class Components {
         return depot
     }
 
-    private CompleteFeedEntryIdIndex createCompleteFeedEntryIdIndex() {
-        def completeFeedsIdIndexDir = new File(config.getString(
-                ConfigKey.COMPLETE_FEEDS_ID_INDEX_DIR.value))
+    CompleteFeedEntryIdIndex createCompleteFeedEntryIdIndex() {
+        def completeFeedsIdIndexDir = new File(configString(
+                ConfigKey.COMPLETE_FEEDS_ID_INDEX_DIR))
         ensureDir(completeFeedsIdIndexDir)
         return new CompleteFeedEntryIdIndexFSImpl(completeFeedsIdIndexDir);
     }
 
-    private Repository createRegistryRepo() {
-        def dataDirPath = config.getString(ConfigKey.COLLECTOR_LOG_DATA_DIR.value)
+    Repository createRegistryRepo() {
+        def dataDirPath = configString(ConfigKey.COLLECTOR_LOG_DATA_DIR)
         def dataDir = new File(dataDirPath)
         ensureDir(dataDir)
         def repo = new SailRepository(new NativeStore(dataDir))
@@ -210,26 +221,27 @@ public class Components {
         return repo
     }
 
-    private Collection<StorageHandler> createStorageHandlers() {
+    Collection<StorageHandler> createStorageHandlers() {
         def storageHandlers = new ArrayList<StorageHandler>()
         storageHandlers.add(createSourceFeedsConfigHandler())
         storageHandlers.add(createEntryRdfValidatorHandler())
         return storageHandlers
     }
 
-    private StorageHandler createSourceFeedsConfigHandler() {
+    SourceFeedsConfigHandler createSourceFeedsConfigHandler() {
         return new SourceFeedsConfigHandler(
                 collectScheduler,
-                new URI(config.getString(ConfigKey.SOURCE_FEEDS_ENTRY_ID.value)),
-                new URI(config.getString(ConfigKey.SYSTEM_DATASET_URI.value)))
+                new URI(configString(ConfigKey.SOURCE_FEEDS_ENTRY_ID)),
+                new URI(configString(ConfigKey.SYSTEM_DATASET_URI)))
     }
 
-    private StorageHandler createEntryRdfValidatorHandler() {
+    EntryRdfValidatorHandler createEntryRdfValidatorHandler() {
         return new EntryRdfValidatorHandler(
-                config.getString(ConfigKey.CHECKER_CHECKED_BASE_PATH.value),
+                configString(ConfigKey.CHECKER_CHECKED_BASE_PATH),
                 config.getList(ConfigKey.CHECKER_VOCAB_ENTRY_IDS.value),
-                config.getString(ConfigKey.URIMINTER_ENTRY_ID.value),
-                config.getString(ConfigKey.URIMINTER_URI_SPACE_URI.value))
+                configString(ConfigKey.VALIDATION_ENTRY_ID),
+                configString(ConfigKey.URIMINTER_ENTRY_ID),
+                configString(ConfigKey.URIMINTER_URI_SPACE_URI))
     }
 
     private void ensureDir(File dir) {

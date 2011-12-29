@@ -30,6 +30,7 @@ class MainApplication extends Application {
 
         def configBuilder = new DefaultConfigurationBuilder(CONFIG_FILE_NAME)
         components = new Components(configBuilder.getConfiguration())
+        components.bootstrap()
         ContextAccess.setCollectScheduler(getContext(), components.getCollectScheduler())
         ContextAccess.setCollectorLog(getContext(), components.getCollectorLog())
     }
