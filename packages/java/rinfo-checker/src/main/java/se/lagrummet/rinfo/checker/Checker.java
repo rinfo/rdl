@@ -38,6 +38,7 @@ public class Checker {
     Repository logRepo = new SailRepository(new MemoryStore());
     String reportBaseUri;
     String entryDatasetUri;
+    Set<URI> relevantEntries = new HashSet<URI>();
 
     Depot depot;
     File tempDir;
@@ -83,7 +84,8 @@ public class Checker {
         LaxStorageSession storageSession = new LaxStorageSession(
                 credentials,
                 depot.openSession(), handlers, coLog.openSession());
-        storageSession.setMaxEntries(maxEntries);
+        storageSession.relevantEntries = relevantEntries;
+        storageSession.maxEntries = maxEntries;
         FeedCollectorSession collectSession = new OneFeedCollectorSession(
                 FeedCollector.createDefaultClient(), storageSession);
         collectSession.readFeed(feedUrl);
@@ -133,9 +135,9 @@ public class Checker {
 
     public static class LaxStorageSession extends StorageSession {
 
-        private int maxEntries = -1;
-        public int getMaxEntries() { return maxEntries; }
-        public void setMaxEntries(int maxEntries) { this.maxEntries = maxEntries; }
+        Set<URI> relevantEntries;
+
+        int maxEntries = -1;
 
         private int visitedEntries = 0;
 
@@ -152,6 +154,17 @@ public class Checker {
                 List<SourceContent> contents, List<SourceContent> enclosures) {
             if (maxEntries > -1 && visitedEntries == maxEntries) {
                 return false;
+            }
+            URI entryUri = null;
+            try {
+                entryUri = sourceEntry.getId().toURI();
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+            if (relevantEntries.size() > 0 &&
+                    !relevantEntries.contains(entryUri)) {
+                //System.out.println("Skipping irrelevant entry: " + entryUri);
+                return true;
             }
             visitedEntries++;
             return super.storeEntry(

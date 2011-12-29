@@ -21,48 +21,16 @@ import se.lagrummet.rinfo.checker.Checker;
 import se.lagrummet.rinfo.checker.CheckerTool;
 
 
-/* TODO:
-
-Goals:
- - based on collector code in rinfo-main
- - services:
-   - check feed by url: run (partial?) collect (one page: follow no archive?)
-   - check rdf by url: run handlers.. or feed-uri + "just entry X"?
-   - check feed *source* (body)): attrs per entry (not in collector? add-hoc "validate"?)
-
-Suggested changes in rinfo-main,-depot,-collector:
-
- - make CollectorLog an interface? At least configurable..
-   - this checker log needs both collected+collect+errors
-   - "normal" skips collected (stored in main feed)
-     .. in that mode, we'd need to combine depot feed (as collect success log) + checkLog
-
- - StorageSession (subclass?):
-   - dummyDepot(Backend)
-     - in-mem *Backend*?
-     - or no depot? write to "null steam" to make datachecks? pdf:s? check some?
-  - def checkLog = new CheckDataCollectorLog
-
-*/
 public class CheckerApplication extends Application {
 
     private String mediaDirUrl = "war:///media/";
     private List<StorageHandler> handlers = new ArrayList<StorageHandler>();
 
-    // domain-specific config
-    String systemBaseUri = "http://rinfo.lagrummet.se/system/";
-    String entryDatasetUri = "tag:lagrummet.se,2009:rinfo";
-
-    String adminFeedUrlSource = "http://admin.lagrummet.se/feed/current.atom";
-
     @Override
     public Restlet createInboundRoot() {
         try {
-            URL adminFeedUrl = new URL(adminFeedUrlSource);
-            CheckerTool.initializeHandlers(adminFeedUrl, handlers);
-            getContext().getAttributes().putIfAbsent("handlers", handlers);
-            getContext().getAttributes().putIfAbsent("systemBaseUri", systemBaseUri);
-            getContext().getAttributes().putIfAbsent("entryDatasetUri", entryDatasetUri);
+            getContext().getAttributes().putIfAbsent("checkerTool",
+                    new CheckerTool());
             // TODO: set mediabase param
             GritTransformer logXhtmlTransformer = new GritTransformer(
                     newTemplates(CheckerApplication.class, "/xslt/checker_collector_log.xslt"));
