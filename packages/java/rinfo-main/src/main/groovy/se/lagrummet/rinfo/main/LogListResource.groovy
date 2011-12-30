@@ -10,9 +10,7 @@ import org.restlet.resource.Resource
 import org.restlet.resource.ResourceException
 import org.restlet.representation.Variant
 
-import org.apache.abdera.Abdera
-import org.apache.abdera.model.Entry
-import org.apache.abdera.model.Feed
+import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 import se.lagrummet.rinfo.main.storage.CollectorLog
 
@@ -21,56 +19,41 @@ class LogListResource extends Resource {
 
     private CollectorLog collectorLog
 
+    static final CONSTRUCT_INDEX_RQ = """
+        PREFIX iana: <http://www.iana.org/assignments/relation/>
+        PREFIX rc: <http://rinfo.lagrummet.se/ns/2008/10/collector#>
+
+        CONSTRUCT WHERE {
+            ?rc a rc:Collect;
+                ?rcprop ?rcvalue .
+            ?rc iana:via ?via .
+            ?via ?viaprop ?viavalue .
+        } """
+
     public LogListResource(Context context, Request request, Response response) {
         super(context, request, response)
         collectorLog = ContextAccess.getCollectorLog(context)
-        getVariants().add(new Variant(MediaType.APPLICATION_ATOM_XML))
+        getVariants().add(new Variant(MediaType.APPLICATION_RDF_XML))
     }
 
     @Override
     public Representation represent(Variant variant) throws ResourceException {
-        if (MediaType.APPLICATION_ATOM_XML.equals(variant.getMediaType())) {
-            // TODO:? not session, just get a prefix-preset describer...
-            def logSession = collectorLog.openSession()
-            Feed feed = Abdera.getInstance().newFeed()
-
-            feed.setId(collectorLog.reportBaseUri + "#feed")
-            try {
-                for (collect in logSession.newDescriber().getByType("rc:Collect")) {
-                    Entry entry = feed.insertEntry()
-                    entry.setUpdated(collect.getNative("tl:end"))
-                    entry.setPublished(collect.getNative("tl:start"))
-                    entry.setId(collect.getAbout())
-                    def link = entry.addLink(new URI(collect.getAbout()).getPath(),
-                            "alternate", "application/rdf+xml", null, null, -1)
-                    def forFeedId = null
-                    for (via in collect.getRels("iana:via")) {
-                        //if (via.getRel("iana:self").equals(via.getRel("iana:current")))
-                        //    ... mark as "latest"
-                        def viaUrl = via.getAbout()
-                        if (!viaUrl.startsWith("_")) {
-                            entry.addLink(new URI(viaUrl).getPath(),
-                                    "enclosure", "application/rdf+xml", null, null, -1
-                                ).setAttributeValue("modified", via.getString("awol:updated"))
-                        }
-                        if (forFeedId == null) {
-                            forFeedId = via.getString("awol:id")
-                        }
-                    }
-                    if (forFeedId != null) {
-                        entry.setTitle(forFeedId)
-                    }
-                }
-            } finally {
-                logSession.close()
-            }
-            def byteOut = new ByteArrayOutputStream()
-            feed.writeTo("prettyxml", byteOut)
-            return new InputRepresentation(
-                    new ByteArrayInputStream(byteOut.toByteArray()),
-                    MediaType.APPLICATION_ATOM_XML)
+        def conn = collectorLog.repo.getConnection()
+        def outRepo = null
+        try {
+            outRepo = RDFUtil.constructQuery(conn, CONSTRUCT_INDEX_RQ)
+        } finally {
+            conn.close()
         }
-        return null
+        if (outRepo == null) {
+            return null
+        }
+        def ins = RDFUtil.toInputStream(outRepo, "application/rdf+xml", false)
+        if (MediaType.APPLICATION_RDF_XML.equals(variant.getMediaType())) {
+            return new InputRepresentation(ins, MediaType.APPLICATION_RDF_XML)
+        } else {
+            return null
+        }
     }
 
 }

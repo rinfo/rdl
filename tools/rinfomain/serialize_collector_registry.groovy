@@ -1,17 +1,4 @@
-
-@Grapes([
-    @Grab('org.openrdf.sesame:sesame-repository-api:2.3.0'),
-    @Grab('org.openrdf.sesame:sesame-repository-sail:2.3.0'),
-    @Grab('org.openrdf.sesame:sesame-sail-memory:2.3.0'),
-    @Grab('org.openrdf.sesame:sesame-queryparser-sparql:2.3.0'),
-    @Grab('org.openrdf.sesame:sesame-rio-api:2.3.0'),
-    @Grab('org.openrdf.sesame:sesame-rio-rdfxml:2.3.0'),
-    @Grab('org.openrdf.sesame:sesame-rio-turtle:2.3.0'),
-    @Grab('org.openrdf.sesame:sesame-rio-n3:2.3.0'),
-    //@Grab('org.slf4j:slf4j-api:1.5.0'),
-    //@Grab('org.slf4j:slf4j-jcl:1.5.0'),
-    @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT')
-])
+@Grab(group='se.lagrummet.rinfo', module='rinfo-base', version='1.0-SNAPSHOT')
 import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.nativerdf.NativeStore
 

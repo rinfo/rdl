@@ -5,7 +5,7 @@ import org.openrdf.repository.Repository
 
 class CollectorLog {
 
-    private Repository repo
+    Repository repo
 
     String reportBaseUri
     String systemDatasetUri
