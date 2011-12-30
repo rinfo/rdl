@@ -24,15 +24,22 @@ import se.lagrummet.rinfo.store.depot.SourceCheckException
  */
 class CollectorLogSession implements Closeable {
 
-    private String collectedLogsBaseUri
+    private String reportBaseUri
     private String systemDatasetUri
     private RepositoryConnection conn
 
     private SessionState state
 
+    class SessionState {
+        String currentFeedId
+        Description collectDesc
+        Describer pageDescriber
+        String currentFeedUri
+    }
+
 
     CollectorLogSession(CollectorLog collectorLog, RepositoryConnection conn) {
-        this.collectedLogsBaseUri = collectorLog.reportBaseUri + "collect"
+        this.reportBaseUri = collectorLog.reportBaseUri
         this.systemDatasetUri = collectorLog.systemDatasetUri
         this.conn = conn
     }
@@ -77,6 +84,18 @@ class CollectorLogSession implements Closeable {
         sourceDesc.addLiteral("dct:identifier", feedId, "xsd:anyURI")
         source
         return state
+    }
+
+    String createCollectUri(String feedId, Date date) {
+        //def timestamp = RDFLiteral.parseValue(dateTime(date)).toString()
+        //def token = md5Hex(feedId + '@' + timestamp)
+        return reportBaseUri + feedId +"/latest"
+    }
+
+    String createCollectedFeedUri(String feedId, Date updated, String url) {
+        //def timestamp = RDFLiteral.parseValue(dateTime(updated)).toString()
+        //def token = md5Hex(feedId + '@'+timestamp + '/' + url)
+        return reportBaseUri + feedId +"/latest" + new URL(url).path
     }
 
     void updateCollectInfo() {
@@ -220,18 +239,6 @@ class CollectorLogSession implements Closeable {
     }
 
 
-    String createCollectUri(String feedId, Date date) {
-        def timestamp = RDFLiteral.parseValue(dateTime(date)).toString()
-        def token = md5Hex(feedId + '@' + timestamp)
-        return "${collectedLogsBaseUri}/${token}"
-    }
-
-    String createCollectedFeedUri(String feedId, Date updated, String url) {
-        def timestamp = RDFLiteral.parseValue(dateTime(updated)).toString()
-        def token = md5Hex(feedId + '@'+timestamp + '/' + url)
-        return "${collectedLogsBaseUri}/feed/${token}"
-    }
-
     GregorianCalendar dateTime(Date time) {
         return RDFLiteral.toGCal(time, "GMT");
     }
@@ -257,13 +264,6 @@ class CollectorLogSession implements Closeable {
             setPrefix("ax", "http://buzzword.org.uk/rdf/atomix#").
             setPrefix("ov", "http://open.vocab.org/terms/").
             setPrefix("rc", "http://rinfo.lagrummet.se/ns/2008/10/collector#")
-    }
-
-    class SessionState {
-        String currentFeedId
-        Description collectDesc
-        Describer pageDescriber
-        String currentFeedUri
     }
 
 }

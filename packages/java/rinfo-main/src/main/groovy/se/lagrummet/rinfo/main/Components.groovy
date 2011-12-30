@@ -57,6 +57,7 @@ public class Components {
         VALIDATION_ENTRY_ID("rinfo.main.checker.validationEntryId"),
         URIMINTER_ENTRY_ID("rinfo.main.uriMinter.uriSpaceEntryId"),
         URIMINTER_URI_SPACE_URI("rinfo.main.uriMinter.uriSpaceUri"),
+        ADMIN_FEED_ID("rinfo.main.collector.adminFeedId"),
         ADMIN_FEED_URL("rinfo.main.collector.adminFeedUrl"),
         ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets", false),
         PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
@@ -64,8 +65,8 @@ public class Components {
         COMPLETE_FEEDS_ID_INDEX_DIR("rinfo.main.collector.completeFeedsIndexDir"),
         STOP_ON_ERROR_LEVEL("rinfo.main.checker.stopOnErrorLevel");
 
-        public final String value;
-        public final boolean requiredValue = false; // TODO: true
+        public String value;
+        public boolean requiredValue = true;
         private ConfigKey(String value) { this.value = value; }
         private ConfigKey(String value, boolean requiredValue) {
             this.value = value;
@@ -160,6 +161,8 @@ public class Components {
     protected void setupCollectScheduler() {
         collectScheduler = new FeedCollectScheduler(feedCollector)
         configure(collectScheduler, "rinfo.main.collector")
+        //collectScheduler.adminFeedId = new URI(configString(ConfigKey.ADMIN_FEED_ID))
+        //collectScheduler.adminFeedUrl = new URL(configString(ConfigKey.ADMIN_FEED_URL))
         def publicSubscriptionFeed = new URL(
                 configString(ConfigKey.PUBLIC_SUBSCRIPTION_FEED))
         def onCompletePingTargets = new ArrayList<URL>()

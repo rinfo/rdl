@@ -29,10 +29,7 @@ class CollectResource extends Resource {
         def contextPath = request.getAttributes().get("contextPath")
         logger.info("contextPath = <${contextPath}>")
         if (contextPath != null) {
-            collectContextUri = "${collectorLog.reportBaseUri}collect/${contextPath}"
-                    //"http://rinfo.lagrummet.se" +
-                    //request.getResourceRef().getPath().toString()
-                    //"/"+request.getResourceRef().getRelativeRef().getPath().toString()
+            collectContextUri = "${collectorLog.reportBaseUri}${contextPath}"
             getVariants().add(new Variant(MediaType.APPLICATION_RDF_XML))
             getVariants().add(new Variant(MediaType.TEXT_HTML))
         }

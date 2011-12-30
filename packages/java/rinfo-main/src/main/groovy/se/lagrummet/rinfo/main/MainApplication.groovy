@@ -40,19 +40,18 @@ class MainApplication extends Application {
         def router = new Router(getContext())
         router.attach("/collector",
                 new Finder(getContext(), CollectorHandler)).setMatchingMode(MODE_EQUALS)
-        router.attach("/sys/report/",
-                new Finder(getContext(), LogListResource)).setMatchingMode(MODE_EQUALS)
 
+        router.attach(new URL(components.collectorLog.reportBaseUri).path,
+                new Finder(getContext(), LogListResource)).setMatchingMode(MODE_EQUALS)
         ContextAccess.setLogToXhtml(getContext(), new GritTransformer(
                     newTemplates(getClass(), "/xslt/main_collector_log.xslt")));
-        def tplt = router.attach("/sys/report/collect/{contextPath}",
+        def tplt = router.attach("/sys/report/{contextPath}",
                 new Finder(getContext(), CollectResource)).getTemplate()
         tplt.getVariables().put("contextPath", new Variable(Variable.TYPE_URI_PATH))
         tplt.setMatchingMode(MODE_STARTS_WITH)
 
         router.attach("/", new Redirector(getContext(), "{rh}/feed/current", 
                 Redirector.MODE_CLIENT_TEMPORARY))
-        
         router.attachDefault(
                 new DepotFinder(getContext(), components.getStorage().getDepot()))
         return router

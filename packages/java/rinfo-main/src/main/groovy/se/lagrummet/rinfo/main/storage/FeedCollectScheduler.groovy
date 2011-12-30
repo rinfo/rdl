@@ -33,9 +33,8 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
 
     public URI getAdminFeedId() { return adminFeedId }
 
-    public void setAdminFeedId(Object adminFeedId) {
-        this.adminFeedId =
-            adminFeedId instanceof URI? adminFeedId : new URI(adminFeedId)
+    public void setAdminFeedId(URI adminFeedId) {
+        this.adminFeedId = adminFeedId
     }
 
     public URL getAdminFeedUrl() { return adminFeedUrl }
