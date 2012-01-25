@@ -167,6 +167,8 @@ def makeSourcesRdf(writer, buildDir, feedPaths, publicServer) {
                     def orgUri = "http://rinfo.lagrummet.se/org/${orgSlug}"
                     'rdf:Description' {
                         'dct:publisher'('rdf:resource':orgUri)
+                        // TODO: change feedPaths to feedPathIdMap and get id
+                        // from feed instead (to avoid getting out of sync).
                         'dct:identifier'('rdf:datatype': "http://www.w3.org/2001/XMLSchema#anyURI",
                             "tag:${feedBase},2009:rinfo")
                         'iana:current'('rdf:resource':"${publicServer}/${feedPath}")
