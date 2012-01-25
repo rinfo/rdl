@@ -7,13 +7,13 @@
     <xsl:param name="mediabase" select="'media'"/>
 
     <xsl:template match="/graph">
-        <html>
+        <html lang="sv">
             <head>
-                <title>RInfo Main: systemlogg</title>
+                <title>RInfo Main: insamlingsrapport</title>
                 <link rel="stylesheet" type="text/css" href="{$mediabase}/collector_log.css" />
             </head>
             <body>
-              <h1>RInfo Main: systemlogg</h1>
+              <h1>RInfo Main: insamlingsrapport</h1>
                 <xsl:apply-templates select="resource[a/rc:Collect]"/>
                 <xsl:if test="not(resource[a/rc:Collect]/iana:via)">
                     <xsl:apply-templates select="resource[a/awol:Feed]"/>
