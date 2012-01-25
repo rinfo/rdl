@@ -74,9 +74,3 @@
     dct:title ""@sv;
     dct:description ""@sv .
 
-#@prefix void: <http://rdfs.org/ns/void#> .
-#[] a void:Dataset;
-#    void:vocabulary rpubl:, dct:, foaf:;
-#    void:uriSpace "http://rinfo.lagrummet.se/publ/";
-#    void:uriRegexPattern "http://rinfo.lagrummet.se/publ/[0-9a-z\-]+fs/[1-9][0-9/]+:\\w+" .
-
