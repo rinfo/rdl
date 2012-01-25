@@ -242,6 +242,7 @@
     skos:altLabel "FIFS"@sv;
     skos:prefLabel "Fiskeriverkets författningssamling"@sv;
     dct:publisher <http://rinfo.lagrummet.se/org/fiskeriverket>;
+    # TODO:? dct:publisher <http://rinfo.lagrummet.se/org/statens_jordbruksverk>;
     rdfs:seeAlso <http://www.fiskeriverket.se/service/fifs.106.1e7cbf241100bb6ff0b80001315.html> .
 
 <http://rinfo.lagrummet.se/serie/fs/fkfs> a :Forfattningssamling;
@@ -319,6 +320,12 @@
     dct:publisher <http://rinfo.lagrummet.se/org/konkurrensverket>;
     rdfs:seeAlso <http://www.kkv.se/t/Page____299.aspx> .
 
+<http://rinfo.lagrummet.se/serie/fs/kls> a :Forfattningssamling;
+    skos:altLabel "KLS"@sv;
+    skos:prefLabel "Kungliga lantbruksstyrelsens författningssamling"@sv;
+    # TODO: tidigare <http://rinfo.lagrummet.se/org/"kungliga_lantbruksstyrelsen>;
+    dct:publisher <http://rinfo.lagrummet.se/org/statens_jordbruksverk> .
+
 <http://rinfo.lagrummet.se/serie/fs/kovfs> a :Forfattningssamling;
     skos:altLabel "KOVFS"@sv;
     skos:prefLabel "Konsumentverkets författningssamling"@sv;
@@ -338,6 +345,12 @@
     skos:prefLabel "Kriminalvårdens författningssamling"@sv;
     dct:publisher <http://rinfo.lagrummet.se/org/kriminalvaarden>;
     rdfs:seeAlso <http://www.kvv.se/templates/KVV_InfoMaterialListing____3464.aspx> .
+
+<http://rinfo.lagrummet.se/serie/fs/lbs> a :Forfattningssamling;
+    skos:altLabel "LBS"@sv;
+    # TODO: skos:prefLabel också Lantbruksstyrelsens författningssamling?
+    # TODO: tidigare <http://rinfo.lagrummet.se/org/lantbruksstyrelsen>;
+    dct:publisher <http://rinfo.lagrummet.se/org/statens_jordbruksverk>. 
 
 <http://rinfo.lagrummet.se/serie/fs/lfnfs> a :Forfattningssamling;
     skos:altLabel "LFNFS"@sv;
@@ -374,6 +387,12 @@
     skos:prefLabel "Lantmäteriverkets författningssamling"@sv;
     owl:sameAs <http://rinfo.lagrummet.se/serie/fs/lmfs>;
     rdfs:comment "Numera benämnd Lantmäteriet författningssamling (LMFS)"@sv .
+
+<http://rinfo.lagrummet.se/serie/fs/lsfs> a :Forfattningssamling;
+    skos:altLabel "LSFS"@sv;
+    skos:prefLabel "Lantbruksstyrelsens författningssamling"@sv;
+    # TODO: skos:prefLabel tidigare <http://rinfo.lagrummet.se/org/lantbruksstyrelsen>;
+    dct:publisher <http://rinfo.lagrummet.se/org/statens_jordbruksverk>. 
 
 <http://rinfo.lagrummet.se/serie/fs/lvfs> a :Forfattningssamling;
     skos:altLabel "LVFS"@sv;
@@ -661,6 +680,7 @@
     skos:altLabel "DFS"@sv;
     skos:prefLabel "Djurskyddsmyndighetens författningssamling"@sv;
     dct:publisher <http://rinfo.lagrummet.se/org/djurskyddsmyndigheten>;
+    # TODO:? dct:publisher <http://rinfo.lagrummet.se/org/statens_jordbruksverk>;
     rdfs:seeAlso <http://www.djurskyddsmyndigheten.se/Steria/templates/Page.aspx?id=482>;
     rdfs:comment "Har tagits över av jordbruksverkets författningssamling (SJVFS)"@sv .
 
@@ -676,6 +696,7 @@
     skos:prefLabel "Verket för förvaltningsutvecklings (Verva) författningssamling"@sv;
     # Vi anger verva, inte RK, som publisher eftersom det var verva
     # som stod bakom VERVAFS när den fanns.
+    # TODO: är det verkligen korrekt? Vi ska ange det som gäller i nuet.
     dct:publisher <http://rinfo.lagrummet.se/org/verva>;
     # dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
     rdfs:seeAlso <http://www.verva.se/web/t/Page____490.aspx> .
