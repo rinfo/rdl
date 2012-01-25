@@ -58,6 +58,7 @@ reload the admin data.
 
 Setting Up the Integration Environment from Scratch
 ========================================================================
+
 Note: These instructions work pretty well for setting up a real
 staging/demo (or production server) as well. Substitute target.demo
 (or target.prod) for target.integration below.
