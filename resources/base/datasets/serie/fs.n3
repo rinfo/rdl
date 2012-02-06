@@ -464,6 +464,12 @@
     dct:publisher <http://rinfo.lagrummet.se/org/riksarkivet>;
     rdfs:seeAlso <http://www.ra.se/ra/foreskrifter.html> .
 
+<http://rinfo.lagrummet.se/serie/fs/ra-ms> a :Forfattningssamling;
+    skos:altLabel "RA-MS"@sv;
+    skos:prefLabel "Riksarkivets myndighetsspecifika författningssamling"@sv;
+    dct:publisher <http://rinfo.lagrummet.se/org/riksarkivet>;
+    rdfs:seeAlso <http://www.ra.se/ra/foreskrifter.html> .
+
 <http://rinfo.lagrummet.se/serie/fs/rgkfs> a :Forfattningssamling;
     skos:altLabel "RGKFS"@sv;
     skos:prefLabel "Riksgäldskontorets författningssamling"@sv;
