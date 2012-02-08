@@ -29,9 +29,7 @@ class JSONLDSerializer {
         try {
             def description = describer.findDescription(resourceIri)
             item = (description != null)? createJSON(description) : [:]
-            if (addRevs) {
-                addRevsToItem(item, resourceIri, describer)
-            }
+            addRevsToItem(item, resourceIri, describer)
         } finally {
             describer.close()
         }
@@ -121,13 +119,20 @@ class JSONLDSerializer {
     }
 
     void addRevsToItem(Map item, String resourceIri, Describer describer) {
-        def revItems = getRevData(describer, resourceIri)
+        addRevsToItem(item, resourceIri, describer, new HashSet<String>())
+    }
+
+    void addRevsToItem(Map item, String resourceIri, Describer describer, Set revPath) {
+        if (!addRevs) {
+            return
+        }
+        def revItems = getRevData(describer, resourceIri, revPath)
         if (revItems) {
             item[context.revKey] = revItems
         }
     }
 
-    Map getRevData(Describer describer, String resourceIri) {
+    Map getRevData(Describer describer, String resourceIri, Set revPath) {
         def revItems = [:]
         def revTriples = describer.triples(null, null, resourceIri)
         for (triple in revTriples) {
@@ -142,8 +147,9 @@ class JSONLDSerializer {
                 itemsByKey = revItems[key] = []
             }
             def item = createJSON(describer.newDescription(triple.subject), resourceIri)
-            if (addRevs) {
-                addRevsToItem(item, triple.subject, describer)
+            if (!revPath.contains(triple.subject)) {
+                revPath << triple.subject
+                addRevsToItem(item, triple.subject, describer, revPath)
             }
             itemsByKey << item
         }
