@@ -12,6 +12,7 @@ import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.QueryStringQueryBuilder
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.facet.FacetBuilders
 import org.elasticsearch.search.facet.datehistogram.DateHistogramFacet
@@ -190,7 +191,7 @@ class ElasticQuery {
         terms.each { term, values ->
             def expression = values.collect {
                     (term == 'q')? it : "${term}:${it}"
-                }.join(" ")
+                }.join(" OR ")
             if (term in orAbles) {
                 orMatches << expression
             } else {
@@ -204,7 +205,8 @@ class ElasticQuery {
         def elasticQStr = matches.collect { "(${it})" }.join(' AND ')
 
         QueryBuilder qb = (matches)?
-            QueryBuilders.queryString(elasticQStr) :
+            QueryBuilders.queryString(elasticQStr).
+                defaultOperator(QueryStringQueryBuilder.Operator.AND) :
             QueryBuilders.matchAllQuery()
 
         List<FilterBuilder> filterBuilders = []
