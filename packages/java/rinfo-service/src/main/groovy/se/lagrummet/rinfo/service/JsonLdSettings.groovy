@@ -35,7 +35,7 @@ class JsonLdSettings {
 
     protected void setupTermSettings() {
         keywordTerms = ["iri", "type"] as HashSet
-        boostTermMap = ["identifier": 4.0, "title": 2.0]
+        boostTermMap = ["identifier": 20.0, "title": 10.0]
 
         def xsdString = XSD + "string"
         def xsdDate = XSD + "date"
