@@ -14,7 +14,11 @@ Basically runs the same collector and verification mechanisms as RInfo Main.
 Usage
 ========================================================================
 
-Running standalone::
+Running webapp::
 
-    $ mvn exec:java -Dexec.mainClass=se.lagrummet.rinfo.checker.restlet.CheckerApplication -Dexec.args="8182 src/main/webapp/media/""
+    $ mvn jetty:run
+
+Running standalone tool::
+
+    $ mvn exec:java -Pdev-unix -Dexec.mainClass=se.lagrummet.rinfo.checker.CheckerTool -Dexec.args="FEED_URL"
 
