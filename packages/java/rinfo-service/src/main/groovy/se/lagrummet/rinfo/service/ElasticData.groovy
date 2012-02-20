@@ -23,12 +23,12 @@ class ElasticData {
             [
                 "resource_iri": [
                     "match": "iri",
-                    "mapping": ["type": "string", "index": "not_analyzed"]
+                    "mapping": ["type": "string", "index": "not_analyzed", "include_in_all": false]
                 ],
             ], [
                 "resource_type": [
                     "match": "type",
-                    "mapping": ["type": "string", "index": "not_analyzed"]
+                    "mapping": ["type": "string", "index": "not_analyzed", "include_in_all": false]
                 ]
             ]
         ]
@@ -76,14 +76,20 @@ class ElasticData {
                 } else if (term in jsonLdSettings.dateTerms) {
                     propMap[term] = ["type": "date", "format": "dateOptionalTime"]
                 } else if (term in jsonLdSettings.plainStringTerms) {
+                    // TODO: only boost on "top level" (or reduce on depth)!
                     float boost = jsonLdSettings.boostTermMap[term] ?: 1.0
                     propMap[term] = [
                         "type": "multi_field",
                         "fields": [
                             (term): ["type": "string", "index": "analyzed", "boost": boost],
-                            "raw": ["type": "string", "index": "not_analyzed", "boost": boost]
+                            "raw": ["type": "string", "index": "not_analyzed", "include_in_all": true, "boost": boost]
                         ]
                     ]
+                } else {
+                    Float boost = jsonLdSettings.boostTermMap[term]
+                    if (boost) {
+                        propMap[term] = ["type": "string", "index": "analyzed", "boost": boost]
+                    }
                 }
             }
 
