@@ -147,10 +147,14 @@ class StorageSession {
                     DuplicateDepotEntryException
             */
             logger.error("Error storing entry:", e)
-            depotSession.rollbackPending()
             def gotErrorLevel =
                     logSession.logError(e, timestamp, sourceFeed, sourceEntry)
-            return shouldContinueOnError(gotErrorLevel)
+            if (shouldContinueOnError(gotErrorLevel)) {
+                return true
+            } else {
+                depotSession.rollbackPending()
+                return false
+            }
         }
     }
 
