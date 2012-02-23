@@ -678,6 +678,38 @@ http://service.lagrummet.se/
       <pre>
 <a href="http://service.lagrummet.se/ui/">http://service.lagrummet.se/ui/</a>
       </pre>
+
+      <h3>5.4 </h3>
+      <p>
+        Liksom för dokument finns det sök- och bläddringsbara index för de
+        organisationer och dokumentserier som ingår i systemet. Dessa nås via:
+      </p>
+      <pre>
+/-/org?_pageSize=1000
+      </pre>
+      <p>
+        respektive:
+      </p>
+      <pre>
+/-/serie?_pageSize=1000
+      </pre>
+      <p>
+        (<code>_pageSize</code> är högt satt här för att visa hur man hämtar
+        hem fullständiga listor. Det är idag inte sannolikt att dessa uppgår
+        till fler än 1000. Om så ändå skulle ske i framtiden kommer förstås
+        resultatlistan att vara försedd med pagineringslänkar så att detta är
+        explicit.)
+      </p>
+
+      <h3>5.5 Kompletterande resurslistor</h3>
+      <p>
+          En komplett lista med etiketter för resurstyper och egenskaper som
+          ingår i systemet går att nå på:
+      </p>
+      <pre>
+/var/terms.json
+      </pre>
+
     </div>
   </body>
 </html>
