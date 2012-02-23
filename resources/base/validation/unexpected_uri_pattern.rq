@@ -17,7 +17,7 @@ CONSTRUCT {
         ?thing ?rel ?ref .
     }
 
-    #?rel rdfs:isDefinedBy rpubl: .
+    #?rel a owl:ObjectProperty; rdfs:isDefinedBy rpubl: .
     FILTER(?rel in (rpubl:andrar, rpubl:upphaver))
     #FILTER(!isIRI(?ref)) # TODO: separate "expected_iri" test?
     FILTER(!regex(str(?ref), "http://rinfo\\.lagrummet\\.se/publ/[0-9a-z\\-]+fs/[1-9][0-9/]+:\\w+"))
