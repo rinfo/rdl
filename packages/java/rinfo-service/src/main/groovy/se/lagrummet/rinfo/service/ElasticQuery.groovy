@@ -247,7 +247,11 @@ class ElasticQuery {
             if (!value) {
                 efb = FilterBuilders.notFilter(efb)
             }
-            filterBuilders << efb
+            if (term in orAbles) {
+                orFilterBuilders << efb
+            } else {
+                filterBuilders << efb
+            }
         }
 
         if (orFilterBuilders) {
@@ -303,16 +307,16 @@ class ElasticQuery {
             item.pageSizeKey = true
         } else if (name == statsParamKey) {
             item.statsKey = true
-        } else if (name.startsWith('exists-')) {
-            item.existsKey = true
-            item.term = name.substring(7)
         } else {
             def term = name
             if (term.startsWith('or-')) {
-                term = name.substring(3)
+                term = term.substring(3)
                 item.optOr = true
             }
-            if (term.startsWith('ifExists-')) {
+            if (term.startsWith('exists-')) {
+                item.existsKey = true
+                term = term.substring(7)
+            } else if (term.startsWith('ifExists-')) {
                 term = term.substring(9)
                 item.optIfExists = true
             }
