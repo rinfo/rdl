@@ -18,6 +18,12 @@ CONSTRUCT {
 
     ?current ?curr_p ?curr_o .
 
+    ?grund dct:identifier ?grund_identifier .
+    ?grundupphavande
+        :upphaver ?grund;
+        dct:identifier ?grundupphavande_identifier;
+        :ikrafttradandedatum ?grundupphavande_ikraft .
+
     ?konsolidering :konsoliderar ?current .
     ?konsolidering a ?rev_type;
         dct:identifier ?rev_identifier;
@@ -25,6 +31,11 @@ CONSTRUCT {
 
     ?andrande :andrar ?current .
     ?andrande a ?rev_type;
+        dct:identifier ?rev_identifier;
+        :ikrafttradandedatum ?rev_ikrafttradandedatum .
+
+    ?omtryck :omtryckAv ?current .
+    ?omtryck a ?rev_type;
         dct:identifier ?rev_identifier;
         :ikrafttradandedatum ?rev_ikrafttradandedatum .
 
@@ -66,6 +77,17 @@ CONSTRUCT {
 
     } UNION {
 
+        ?current (:konsoliderar|:omtryckAv) ?grund .
+        ?grund dct:identifier ?grund_identifier .
+        OPTIONAL {
+            ?grundupphavande
+                :upphaver ?grund;
+                dct:identifier ?grundupphavande_identifier;
+                :ikrafttradandedatum ?grundupphavande_ikraft .
+        }
+
+    } UNION {
+
         ?entry a awol:Entry;
             foaf:primaryTopic ?current;
             awol:updated ?entryUpdated .
@@ -82,9 +104,8 @@ CONSTRUCT {
 
         ?konsolidering :konsoliderar ?current;
             a ?rev_type;
-            dct:identifier ?rev_identifier;
-            dct:issued ?rev_issued .
-
+            dct:identifier ?rev_identifier .
+        ?konsolidering dct:issued ?rev_issued .
         FILTER NOT EXISTS {
             ?konsolidering2 :konsoliderar ?current;
                 dct:issued ?rev_issued2 .
@@ -96,12 +117,21 @@ CONSTRUCT {
         ?andrande :andrar ?current;
             a ?rev_type;
             dct:identifier ?rev_identifier .
-        OPTIONAL {
-            ?andrande :ikrafttradandedatum ?rev_ikrafttradandedatum .
-        }
-
+        OPTIONAL { ?andrande :ikrafttradandedatum ?rev_ikrafttradandedatum . }
         FILTER NOT EXISTS {
             ?andrande2 :andrar ?current;
+                :ikrafttradandedatum ?rev_ikrafttradandedatum2 .
+            FILTER(?rev_ikrafttradandedatum2 > ?rev_ikrafttradandedatum)
+        }
+
+    } UNION {
+
+        ?omtryck :omtryckAv ?current;
+            a ?rev_type;
+            dct:identifier ?rev_identifier .
+        OPTIONAL { ?omtryck :ikrafttradandedatum ?rev_ikrafttradandedatum . }
+        FILTER NOT EXISTS {
+            ?omtryck2 :omtryckAv ?current;
                 :ikrafttradandedatum ?rev_ikrafttradandedatum2 .
             FILTER(?rev_ikrafttradandedatum2 > ?rev_ikrafttradandedatum)
         }
@@ -111,9 +141,7 @@ CONSTRUCT {
         ?upphavande :upphaver ?current;
             a ?rev_type;
             dct:identifier ?rev_identifier .
-        OPTIONAL {
-            ?upphavande :ikrafttradandedatum ?rev_ikrafttradandedatum .
-        }
+        OPTIONAL { ?upphavande :ikrafttradandedatum ?rev_ikrafttradandedatum . }
 
     }
 
