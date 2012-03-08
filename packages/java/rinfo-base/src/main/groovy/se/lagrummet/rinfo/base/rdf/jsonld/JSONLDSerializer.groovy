@@ -27,41 +27,48 @@ class JSONLDSerializer {
         def describer = new Describer(repo.getConnection())
         def item = null
         try {
+            def itemPath = new HashSet<String>()
             def description = describer.findDescription(resourceIri)
-            item = (description != null)? createJSON(description) : [:]
-            addRevsToItem(item, resourceIri, describer)
+            if (description != null) {
+                item = createJSON(description, itemPath)
+            } else {
+                item = [:]
+                addRevsToItem(item, resourceIri, describer, itemPath)
+            }
         } finally {
             describer.close()
         }
         return item.size() > 0? item : null
     }
 
-    Map createJSON(Description description, String rootIri=null) {
+    Map createJSON(Description description, Set itemPath) {
         def item = [:]
-        if (description.about != null && !description.about.startsWith("_:")) {
-            item[context.subjectKey] = toKey(description.about, true)
+        def about = description.about
+        if (about != null && !about.startsWith("_:")) {
+            item[context.subjectKey] = toKey(about, true)
         }
-        if (rootIri == description.about) {
-            return item
-        }
-        description.propertyValuesMap.each { prop, values ->
-            if (prop == RDF_TYPE) {
-                def typeTokens = values.collect { toKey(it) }.findAll { it }
-                if (typeTokens) {
-                    item[context.typeKey] = reduceValues(context.typeKey, typeTokens)
+        if (!itemPath.contains(about)) {
+            itemPath << about
+            description.propertyValuesMap.each { prop, values ->
+                if (prop == RDF_TYPE) {
+                    def typeTokens = values.collect { toKey(it) }.findAll { it }
+                    if (typeTokens) {
+                        item[context.typeKey] = reduceValues(context.typeKey, typeTokens)
+                    }
+                    // NOTE: we don't stop for type here, since you might want
+                    // *both* a type token and data about type...
                 }
-                // NOTE: we don't stop for type here, since you might want
-                // *both* a type token and data about type...
+                def key = toKey(prop)
+                if (!key) {
+                    return
+                }
+                def result = values.collect {
+                    valueToJSON(description.describer, key, it, itemPath)
+                }
+                boolean asSet = context.keyTermMap[key]?.isSet
+                item[key] = asSet? result : reduceValues(key, result)
             }
-            def key = toKey(prop)
-            if (!key) {
-                return
-            }
-            def result = values.collect {
-                valueToJSON(description.describer, key, it, rootIri ?: description.about)
-            }
-            boolean asSet = context.keyTermMap[key]?.isSet
-            item[key] = asSet? result : reduceValues(key, result)
+            addRevsToItem(item, about, description.describer, itemPath)
         }
         return item
     }
@@ -75,13 +82,13 @@ class JSONLDSerializer {
         return (key != null)? key : keepUnmapped? iri : null
     }
 
-    Object valueToJSON(Describer describer, String key, Object value, String rootIri=null) {
+    Object valueToJSON(Describer describer, String key, Object value, Set itemPath) {
         // TODO: improve coerce mechanics (support @iri, @list...)
         def term = context.keyTermMap[key]
         if (value instanceof RDFLiteral) {
             return toJSONLiteral(value, term?.datatype)
         } else {
-            return createJSON(describer.newDescription(value), rootIri)
+            return createJSON(describer.newDescription(value), itemPath)
         }
     }
 
@@ -118,21 +125,16 @@ class JSONLDSerializer {
         }
     }
 
-    void addRevsToItem(Map item, String resourceIri, Describer describer) {
-        addRevsToItem(item, resourceIri, describer, new HashSet<String>())
-    }
-
-    void addRevsToItem(Map item, String resourceIri, Describer describer, Set revPath) {
-        if (!addRevs) {
+    void addRevsToItem(Map item, String resourceIri, Describer describer, Set itemPath) {
+        if (!addRevs)
             return
-        }
-        def revItems = getRevData(describer, resourceIri, revPath)
+        def revItems = getRevData(describer, resourceIri, itemPath)
         if (revItems) {
             item[context.revKey] = revItems
         }
     }
 
-    Map getRevData(Describer describer, String resourceIri, Set revPath) {
+    Map getRevData(Describer describer, String resourceIri, Set itemPath) {
         def revItems = [:]
         def revTriples = describer.triples(null, null, resourceIri)
         for (triple in revTriples) {
@@ -140,18 +142,18 @@ class JSONLDSerializer {
             if (!key) {
                 continue
             }
-            def itemsByKey = null
-            if (key in revItems) {
-                itemsByKey = revItems[key]
-            } else {
-                itemsByKey = revItems[key] = []
+            def items = []
+            if (!itemPath.contains(triple.subject)) {
+                def item = createJSON(describer.newDescription(triple.subject), itemPath)
+                items << item
             }
-            def item = createJSON(describer.newDescription(triple.subject), resourceIri)
-            if (!revPath.contains(triple.subject)) {
-                revPath << triple.subject
-                addRevsToItem(item, triple.subject, describer, revPath)
+            if (items) {
+                if (key in revItems) {
+                    revItems[key].addAll(items)
+                } else {
+                    revItems[key] = items
+                }
             }
-            itemsByKey << item
         }
         return revItems
     }
