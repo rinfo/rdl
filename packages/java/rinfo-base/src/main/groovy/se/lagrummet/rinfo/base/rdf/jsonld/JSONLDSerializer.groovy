@@ -68,7 +68,6 @@ class JSONLDSerializer {
                 boolean asSet = context.keyTermMap[key]?.isSet
                 item[key] = asSet? result : reduceValues(key, result)
             }
-            def revItemPath = itemPath.clone()
             addRevsToItem(item, about, description.describer, itemPath, viaKey)
         }
         return item
@@ -144,8 +143,9 @@ class JSONLDSerializer {
                 continue
             }
             def items = []
-            if (!itemPath.contains(triple.subject)) {
-                def item = createJSON(describer.newDescription(triple.subject), itemPath, key)
+            def revItemPath = itemPath.clone()
+            if (!revItemPath.contains(triple.subject)) {
+                def item = createJSON(describer.newDescription(triple.subject), revItemPath, key)
                 items << item
             }
             if (items) {

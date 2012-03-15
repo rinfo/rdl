@@ -25,6 +25,7 @@ class JSONLDSerializerSpec extends Specification {
         person.addLiteral("foaf:bday", "1970-01-01", "xsd:date")
         person.addLiteral("foaf:name", "Some One")
         def homepage = person.addRel("foaf:homepage", homepageIRI)
+        person.addRel("rdfs:seeAlso", homepageIRI)
         homepage.addType("foaf:Document")
     }
 
@@ -207,6 +208,25 @@ class JSONLDSerializerSpec extends Specification {
         def data = serializer.toJSON(repo, nullIRI)
         then:
         data['@rev']['knows'][0]['@subject'] == personIRI
+    }
+
+    def "should create copy of data linked with different terms"() {
+        given:
+        def context = new JSONLDContext("foaf": FOAF, "rdfs": Describer.RDFS_NS)
+        and:
+        def serializer = new JSONLDSerializer(context, false, true)
+        when:
+        def person = serializer.toJSON(repo, personIRI)
+        then:
+        person['@subject'] == personIRI
+        person['foaf:homepage']['@subject'] == homepageIRI
+        person['rdfs:seeAlso']['@subject'] == homepageIRI
+        when:
+        def homepage = serializer.toJSON(repo, homepageIRI)
+        then:
+        homepage['@subject'] == homepageIRI
+        homepage['@rev']['foaf:homepage']?.getAt(0)?.get('@subject') == personIRI
+        homepage['@rev']['rdfs:seeAlso']?.getAt(0)?.get('@subject') == personIRI
     }
 
 }
