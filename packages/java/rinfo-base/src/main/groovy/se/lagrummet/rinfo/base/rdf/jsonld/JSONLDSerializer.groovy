@@ -30,10 +30,10 @@ class JSONLDSerializer {
             def itemPath = new HashSet<String>()
             def description = describer.findDescription(resourceIri)
             if (description != null) {
-                item = createJSON(description, itemPath)
+                item = createJSON(description, itemPath, null)
             } else {
                 item = [:]
-                addRevsToItem(item, resourceIri, describer, itemPath)
+                addRevsToItem(item, resourceIri, describer, itemPath, null)
             }
         } finally {
             describer.close()
@@ -41,7 +41,7 @@ class JSONLDSerializer {
         return item.size() > 0? item : null
     }
 
-    Map createJSON(Description description, Set itemPath) {
+    Map createJSON(Description description, Set itemPath, String viaKey) {
         def item = [:]
         def about = description.about
         if (about != null && !about.startsWith("_:")) {
@@ -68,7 +68,8 @@ class JSONLDSerializer {
                 boolean asSet = context.keyTermMap[key]?.isSet
                 item[key] = asSet? result : reduceValues(key, result)
             }
-            addRevsToItem(item, about, description.describer, itemPath)
+            def revItemPath = itemPath.clone()
+            addRevsToItem(item, about, description.describer, itemPath, viaKey)
         }
         return item
     }
@@ -88,7 +89,7 @@ class JSONLDSerializer {
         if (value instanceof RDFLiteral) {
             return toJSONLiteral(value, term?.datatype)
         } else {
-            return createJSON(describer.newDescription(value), itemPath)
+            return createJSON(describer.newDescription(value), itemPath, key)
         }
     }
 
@@ -125,26 +126,26 @@ class JSONLDSerializer {
         }
     }
 
-    void addRevsToItem(Map item, String resourceIri, Describer describer, Set itemPath) {
+    void addRevsToItem(Map item, String resourceIri, Describer describer, Set itemPath, String viaKey) {
         if (!addRevs)
             return
-        def revItems = getRevData(describer, resourceIri, itemPath)
+        def revItems = getRevData(describer, resourceIri, itemPath, viaKey)
         if (revItems) {
             item[context.revKey] = revItems
         }
     }
 
-    Map getRevData(Describer describer, String resourceIri, Set itemPath) {
+    Map getRevData(Describer describer, String resourceIri, Set itemPath, String viaKey) {
         def revItems = [:]
         def revTriples = describer.triples(null, null, resourceIri)
         for (triple in revTriples) {
             def key = toKey(triple.property)
-            if (!key) {
+            if (!key || key == viaKey) {
                 continue
             }
             def items = []
             if (!itemPath.contains(triple.subject)) {
-                def item = createJSON(describer.newDescription(triple.subject), itemPath)
+                def item = createJSON(describer.newDescription(triple.subject), itemPath, key)
                 items << item
             }
             if (items) {
