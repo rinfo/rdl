@@ -3,10 +3,11 @@
   "publ": {
     "type": "Rattsinformationsdokument",
     "iri": null,
-    "identifier": null,
-    "title": null,
+    "identifier": {"_boost": 100},
+    "title": {"_boost": 20},
 
     "malnummer": null,
+    "diarienummer": null,
 
     "utfardandedatum": null,
     "beslutsdatum": null,
