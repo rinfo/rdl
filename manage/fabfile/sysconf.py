@@ -33,6 +33,13 @@ def configure_server():
     configure_sites()
 
 
+@runs_once
+def _sync_workdir():
+    for confdir in [p.join(env.manageroot, "sysconf", "common"),
+                    p.join(env.manageroot, "sysconf", env.target)]:
+        rsync_project(env.mgr_workdir, confdir, exclude=".*", delete=True)
+
+
 @task
 def sync_static_web():
     _sync_workdir()
@@ -76,12 +83,6 @@ def install_init_d(name):
         if sudo("cp -vu init.d/%s /etc/init.d/" % name):
             sudo("chmod 0755 /etc/init.d/%s" % name)
             sudo("update-rc.d %s defaults" % name)
-
-@runs_once
-def _sync_workdir():
-    for confdir in [p.join(env.manageroot, "sysconf", "common"),
-                    p.join(env.manageroot, "sysconf", env.target)]:
-        rsync_project(env.mgr_workdir, confdir, exclude=".*", delete=True)
 
 
 ##
