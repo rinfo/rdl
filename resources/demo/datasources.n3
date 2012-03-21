@@ -22,6 +22,11 @@
             iana:current <https://www.vagledandeavgoranden.dom.se/lagrummet/atom/index.atom>;
             dct:identifier "tag:vagledandeavgoranden.dom.se,2011:rinfo:feed"^^xsd:anyURI;
             dct:format "application/atom+xml"
+        ], [
+            dct:publisher <http://rinfo.lagrummet.se/org/naturvaardsverket>;
+            iana:current <http://www.naturvardsverket.se/Cb/NFS-container/Forfattningssamlingens-Postforteckning-ATOM/>;
+            dct:identifier "tag:naturvardsverket.se,2011:rinfo:feed"^^xsd:anyURI;
+            dct:format "application/atom+xml"
         ],
         # Depot-based feeds
         [
@@ -45,6 +50,7 @@
             dct:identifier "tag:regeringen.se,2009:rinfo:dataset:ds"^^xsd:anyURI;
             dct:format "application/atom+xml"
         ], [
+            # TODO: isn't this replaced by the official vagledandeavgoranden above?
             dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
             iana:current <http://dv.demo.lagrummet.se/feed/current>;
             dct:identifier "tag:dom.se,2009:rinfo:dataset:dv"^^xsd:anyURI;
@@ -79,11 +85,6 @@
         ],
         # Scraped feeds
         [
-            dct:publisher <http://rinfo.lagrummet.se/org/naturvaardsverket>;
-            iana:current <https://fst.lagrummet.se/scraper/nfs/news/main.atom>;
-            dct:identifier "tag:fst.lagrummet.se,2011:scraper:nfs:news:main.atom"^^xsd:anyURI;
-            dct:format "application/atom+xml"
-        ], [
             dct:publisher <http://rinfo.lagrummet.se/org/statens_jordbruksverk>;
             iana:current <https://fst.lagrummet.se/scraper/sjvfs/news/main.atom>;
             dct:identifier "tag:fst.lagrummet.se,2011:scraper:sjvfs:news:main.atom"^^xsd:anyURI;
