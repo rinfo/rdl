@@ -4,7 +4,6 @@ from fabric.contrib.files import *
 from fabric.contrib.project import rsync_project
 from fabfile.target import _needs_targetenv
 from fabfile.app import _deploy_war
-from fabfile.app import admin
 from fabfile.util import venv
 from os import path as p
 
@@ -89,20 +88,12 @@ def refresh(dataset, force="0"):
     _can_handle_dataset(dataset)
     download(dataset, force)
     create_depot(dataset)
-    upload(dataset)
-    dataset_war(dataset)
-
+    deploy_dataset(dataset)
 
 @task
-@roles('admin')
-def demo_admin():
-    """
-    Create and deploy a static admin webapp configured for the demo datasets.
-    """
-    adminbuild = p.join(env.demodata_dir, "rinfo-admin-demo")
-    sources = p.join(env.projectroot, "resources", env.target, "datasources.n3")
-    admin.package(sources, adminbuild)
-    admin.deploy(adminbuild)
+def deploy_dataset(dataset):
+    upload(dataset)
+    dataset_war(dataset)
 
 
 #def full_demo_deploy():
@@ -110,7 +101,8 @@ def demo_admin():
 #    for dataset in chain(lagen_nu_datasets, riksdagen_se_datasets):
 #        # TODO:? env.role = dataset
 #        demo_refresh(dataset)
-#    demo_admin()
+#    from fabfile.app import admin
+#    admin.all()
 
 
 def _mkdir_keep_prev(dir_path):
@@ -138,4 +130,3 @@ def _transform_riksdagen_data(dataset):
             " %(demodata_dir)s/%(dataset)s-raw %(demodata_dir)s/%(dataset)s" % venv())
 
 
-__all__ = tuple(key for key in globals() if key != 'admin')

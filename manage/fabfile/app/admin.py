@@ -1,5 +1,5 @@
-from os import sep
 import sys
+from os import sep, path as p
 from fabric.api import *
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
@@ -8,7 +8,8 @@ from fabfile.target import _needs_targetenv
 from fabfile.util import venv, fullpath
 
 
-env.adminbuild = sep.join((env.builddir, 'rinfo-admin'))
+def get_build_dir():
+    return sep.join((env.builddir, env.target, 'rinfo-admin'))
 
 
 @task
@@ -21,31 +22,24 @@ def setup():
        sudo("chown %(user)s %(admin_webroot)s" % env)
 
 @task
-def package(sources=None, outdir=None):
+def package():
     """
     Package the admin feed files into a servable directory.
     """
-    # make sure adminbuild dir is not the default (to avoid deploying
-    # experimental sources to prod)
-    if sources:
-        assert outdir and fullpath(outdir) != fullpath(env.adminbuild)
-        sources = fullpath(sources)
-        outdir = fullpath(outdir)
-    sourceopt = ("-s %s" % sources) if sources else ""
-    outdiropt ="-o %s" % (outdir or env.adminbuild)
+    tg_sources = p.join(env.projectroot, "resources", env.target, "datasources.n3")
+    sourceopt = "-s " + fullpath(tg_sources) if p.exists(tg_sources) else ""
+    outdiropt ="-o " + fullpath(get_build_dir())
     local("cd %(toolsdir)s/rinfomain && groovy base_as_feed.groovy "
             " -b %(baseresources)s %(sourceopt)s %(outdiropt)s" % venv())
 
 @task
 @roles('admin')
-def deploy(builddir=None):
+def deploy():
     """Deploy the admin feed to target env."""
     setup()
-    builddir = builddir or env.adminbuild
+    builddir = get_build_dir()
     if sys.platform == 'win32':
-        # There is no native rsync for windows, only the cygwin
-        # version. We must convert the windows-style path of
-        # builddir to a cygwin-style equivalent
+        # Support cygwin rsync on windows:
         build_path = cygpath(slashed(builddir))
     else:
         build_path = slashed(builddir)
