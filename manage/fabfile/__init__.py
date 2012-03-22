@@ -41,7 +41,7 @@ env.roledefs = {
     'admin': [],
     'service': [],
     'checker': [],
-    'demo': [],
+    'demosource': [],
 }
 
 ##

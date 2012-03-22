@@ -63,7 +63,7 @@ def demo():
         'service': ['demo.lagrummet.se'],
         'checker': ['demo.lagrummet.se'],
         'admin': ['demo.lagrummet.se'],
-        'demo': ['demo.lagrummet.se'],
+        'demosource': ['demo.lagrummet.se'],
     }
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -79,7 +79,7 @@ def demo():
     env.apache_sites = {
         'main': ['rinfo-main', 'admin'],
         'service': ['service'],
-        'demo': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+        'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
         'checker': ['checker'],
     }
     env.apache_jk_tomcat = True
@@ -107,7 +107,7 @@ def integration():
         'checker': ['rinfo-checker'],
         'doc': ['rinfo-integration'],
         'admin': ['rinfo-integration'],
-        'demo': ['rinfo-integration'],
+        'demosource': ['rinfo-integration'],
     }
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -121,7 +121,7 @@ def integration():
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
     env.apache_sites = {
-        'demo': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+        'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
         'main': ['rinfo-main', 'admin'],
         'service': ['service'],
         'checker': ['checker'],

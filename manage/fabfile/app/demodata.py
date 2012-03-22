@@ -45,7 +45,7 @@ def create_depot(dataset):
         _transform_riksdagen_data(dataset)
 
 @task
-@roles('demo')
+@roles('demosource')
 def upload(dataset):
     """Upload the transformed demo data depot to the demo server."""
     _can_handle_dataset(dataset)
@@ -63,7 +63,7 @@ def build_dataset_war(dataset):
             "mvn -Ddataset=%(dataset)s -Ddemodata-root=%(demo_data_root)s clean package" % venv(), capture=False)
 
 #@task
-@roles('demo')
+@roles('demosource')
 def deploy_dataset_war(dataset):
     """Deploy a demo webapp for the given uploaded dataset."""
     _can_handle_dataset(dataset)
@@ -73,7 +73,7 @@ def deploy_dataset_war(dataset):
             "%(dataset)s-demodata-supply" % venv())
 
 @task
-@roles('demo')
+@roles('demosource')
 def dataset_war(dataset):
     """Package and deploy a demo webapp for the given uploaded dataset."""
     build_dataset_war(dataset)
