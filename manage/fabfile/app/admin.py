@@ -22,11 +22,12 @@ def setup():
        sudo("chown %(user)s %(admin_webroot)s" % env)
 
 @task
-def package():
+def package(source=None):
     """
     Package the admin feed files into a servable directory.
     """
-    tg_sources = p.join(env.projectroot, "resources", env.target, "datasources.n3")
+    source = source or env.target
+    tg_sources = p.join(env.projectroot, "resources", source, "datasources.n3")
     sourceopt = "-s " + fullpath(tg_sources) if p.exists(tg_sources) else ""
     outdiropt ="-o " + fullpath(get_build_dir())
     local("cd %(toolsdir)s/rinfomain && groovy base_as_feed.groovy "
@@ -47,9 +48,9 @@ def deploy():
 
 @task
 @roles('admin')
-def all():
+def all(source=None):
     """Package and deploy the admin feed."""
-    package()
+    package(source)
     deploy()
 
 @task
