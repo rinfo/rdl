@@ -346,12 +346,13 @@
     rdfs:range xsd:date; .
 
 :omtryckAv a owl:ObjectProperty;
-    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf dct:isVersionOf;
     rdfs:domain :FSDokument;
     rdfs:range :FSDokument;
     rdfs:label "Omtryck av"@sv;
     rdfs:comment "Referens till vad omtrycket avser, t.ex. en förordning."@sv;
-    owl:inverseOf [ rdfs:label "Har omtryck"@sv ]; .
+    owl:inverseOf [ rdfs:label "Har omtryck"@sv ];
+    rdfs:isDefinedBy : .
 
 
 #---------------------------------------
@@ -522,12 +523,13 @@
 
 
 :konsoliderar a owl:ObjectProperty, owl:FunctionalProperty;
-    rdfs:isDefinedBy : ;
+    rdfs:subPropertyOf dct:isVersionOf;
     rdfs:label "Konsoliderar"@sv;
     rdfs:comment "Information om vilket ursprungsdokument som konsolideras."@sv;
     rdfs:domain :KonsolideradGrundforfattning;
     rdfs:range :Forfattning;
-    owl:inverseOf [ rdfs:label "Konsoliderad av"@sv ]; .
+    owl:inverseOf [ rdfs:label "Konsoliderad av"@sv ];
+    rdfs:isDefinedBy : .
 
 :konsolideringsunderlag a owl:ObjectProperty;
     rdfs:isDefinedBy : ;
