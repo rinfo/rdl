@@ -1,21 +1,12 @@
-<html lang="sv"
-      prefix="rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
-              xsd: http://www.w3.org/2001/XMLSchema#
-              dc: http://purl.org/dc/terms/"
-      vocab="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
-  <head resource="" typeof="Forordning">
-    <!-- IMPORTANT: This is an experimental representation using RDFa 1.1 in
-    HTML5. These formats are currently (December 2011) still under development. -->
+<!DOCTYPE html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
     <base href="http://rinfo.lagrummet.se/publ/sfs/1999:175" />
-    <link property="dc:publisher" href="http://rinfo.lagrummet.se/org/regeringskansliet" />
-    <link property="beslutadAv" href="http://rinfo.lagrummet.se/org/regeringskansliet" />
-    <link property="forarbete" href="http://rinfo.lagrummet.se/publ/ds/1998:10" />
-    <link property="upphaver" href="http://rinfo.lagrummet.se/publ/sfs/1980:628" />
-    <meta property="arsutgava" content="1999" lang="" />
-    <meta property="lopnummer" content="175" lang="" />
     <title>Rättsinformationsförordning</title>
   </head>
-  <body>
+  <body vocab="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#"
+        resource="" typeof="Forordning">
     <header role="banner">
       <h1>
         <a property="forfattningssamling"
@@ -24,19 +15,24 @@
       <div class="logo">
         <img src="/media/img/sfs-logo.svg" />
       </div>
+      <link property="dc:publisher" href="http://rinfo.lagrummet.se/org/regeringskansliet" />
+      <link property="beslutadAv" href="http://rinfo.lagrummet.se/org/regeringskansliet" />
+      <link property="forarbete" href="http://rinfo.lagrummet.se/publ/ds/1998:10" />
       <div style="clear:both;"></div>
     </header>
     <article>
       <header class="meta">
-        <h2 property="dc:identifier" lang="">SFS 1999:175</h2>
+        <h2 property="dc:identifier" lang="">SFS <span
+            property="arsutgava">1999</span>:<span
+            property="lopnummer">175</span></h2>
         <p>
           Utkom från trycket
-          <time property="utkomFranTryck" value="1999-04-13">den 13 april 1999</time>
+          <time property="utkomFranTryck" datetime="1999-04-13">den 13 april 1999</time>
         </p>
       </header>
       <h1 property="dc:title">Rättsinformationsförordning;</h1>
       <p>
-        utfärdad <time property="utfardandedatum" value="1999-03-25">den 25 mars 1999</time>.
+        utfärdad <time property="utfardandedatum" datetime="1999-03-25">den 25 mars 1999</time>.
       </p>
       <p>Regeringen föreskriver följande.</p>
       <section>
@@ -367,15 +363,18 @@
       <section property="overgangsbestammelsetext" datatype="rdf:XMLLiteral">
         <ol>
           <li>
-            1. Denna förordning träder i kraft den 1 maj 1999. Skyldigheten
-            att genom rättsinformationssystemet göra sådan information
-            som avses i 3–8 §§ tillgänglig inträder den 1 juli
-            2000. För länsstyrelser inträder dock skyldigheten den 1
-            januari 2001.
+            1. Denna förordning träder i kraft
+            <time property="ikrafttradandedatum"
+                  datetime="1999-05-01">den 1 maj 1999</time>.
+            Skyldigheten att genom rättsinformationssystemet göra sådan
+            information som avses i 3–8 §§ tillgänglig inträder den 1 juli
+            2000. För länsstyrelser inträder dock skyldigheten den 1 januari
+            2001.
           </li>
           <li>
-            2. Genom denna förordning upphävs förordningen (1980:628) om
-            rättsdatasystemet.
+            2. Genom denna förordning upphävs <a property="upphaver"
+              href="http://rinfo.lagrummet.se/publ/sfs/1980:628">förordningen
+              (1980:628) om rättsdatasystemet</a>.
           </li>
         </ol>
       </section>
