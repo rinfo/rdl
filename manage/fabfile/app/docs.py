@@ -1,5 +1,5 @@
-from __future__ import with_statement
-from fabric.api import env, local, roles, task
+from fabric.api import *
+from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
 from fabfile.util import slashed, cygpath
 from fabfile.target import _needs_targetenv
@@ -12,12 +12,18 @@ def build():
 
 @task
 @roles('doc')
-def deploy():
+def setup():
     _needs_targetenv()
+    if not exists(env.docs_webroot):
+       sudo("mkdir %(docs_webroot)s" % env)
+       sudo("chown %(user)s %(docs_webroot)s" % env)
+
+@task
+@roles('doc')
+def deploy():
+    setup()
+    build_path = slashed(env.docbuild)
     if sys.platform == 'win32':
-        build_path = cygpath(slashed(env.docbuild))
-    else:
-        build_path = slashed(env.docbuild)
-    rsync_project(env.docs_webroot, build_path,
-            exclude=".*", delete=True)
+        build_path = cygpath(build_path)
+    rsync_project(env.docs_webroot, build_path, exclude=".*", delete=True)
 
