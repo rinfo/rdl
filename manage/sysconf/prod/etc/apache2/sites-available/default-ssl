@@ -1,6 +1,6 @@
 <IfModule mod_ssl.c>
 <VirtualHost _default_:443>
-	ServerNAme rinfo.lagrummet.se
+	ServerName rinfo.lagrummet.se
 	ServerAdmin webmaster@localhost
 	
 	DocumentRoot /var/www/
