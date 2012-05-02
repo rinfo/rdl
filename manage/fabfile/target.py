@@ -82,15 +82,8 @@ def demo():
         'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
         'checker': ['checker'],
     }
-    env.apache_jk_tomcat = True
     # Tomcat
-    env.tomcat_version = "6.0.33"
-    env.tomcat = "/opt/tomcat"
-    env.tomcat_webapps = "%(tomcat)s/webapps"%env
-    env.tomcat_start = '/etc/init.d/tomcat start'
-    env.tomcat_stop = '/etc/init.d/tomcat stop'
-    env.tomcat_user = 'tomcat'
-    env.tomcat_group = 'tomcat'
+    _tomcat_env()
 
 # Integration is a virtual environment that you could setup on your own computer
 # See README.txt for more information
@@ -126,15 +119,8 @@ def integration():
         'service': ['service'],
         'checker': ['checker'],
     }
-    env.apache_jk_tomcat = True
     # Tomcat
-    env.tomcat_version = "6.0.33"
-    env.tomcat = "/opt/tomcat"
-    env.tomcat_webapps = "%(tomcat)s/webapps"%env
-    env.tomcat_start = '/etc/init.d/tomcat start'
-    env.tomcat_stop = '/etc/init.d/tomcat stop'
-    env.tomcat_user = 'tomcat'
-    env.tomcat_group = 'tomcat'
+    _tomcat_env()
 
 @targetenv
 def prod():
@@ -165,9 +151,12 @@ def prod():
         'service': ['service'],
         'checker': ['checker'],
     }
-    env.apache_jk_tomcat = True
     # Tomcat
-    env.tomcat_version = "6.0.33"
+    _tomcat_env()
+
+def _tomcat_env():
+    env.apache_jk_tomcat = True
+    env.tomcat_version = "7.0.26"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
     env.tomcat_start = '/etc/init.d/tomcat start'
