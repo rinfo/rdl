@@ -19,9 +19,13 @@ import org.apache.http.params.HttpProtocolParams
 public class FeedCollector {
 
     Storage storage
+    int httpTimeoutSeconds
+    static int DEFAULT_HTTP_TIMEOUT_SECONDS
 
-    public FeedCollector(Storage storage) {
+    public FeedCollector(Storage storage,
+            httpTimeoutSeconds=DEFAULT_HTTP_TIMEOUT_SECONDS) {
         this.storage = storage
+        this.httpTimeoutSeconds = httpTimeoutSeconds
     }
 
     public void readFeed(URL url, StorageCredentials credentials) {
@@ -34,10 +38,14 @@ public class FeedCollector {
     }
 
     public HttpClient createClient() {
-        return createDefaultClient()
+        return createDefaultClient(httpTimeoutSeconds)
     }
 
     public static HttpClient createDefaultClient() {
+        createDefaultClient(DEFAULT_HTTP_TIMEOUT_SECONDS)
+    }
+
+    public static HttpClient createDefaultClient(int httpTimeoutSeconds) {
 
         // TODO:? httpClient.setHttpRequestRetryHandler(...) // no use case demands it..
 
@@ -55,7 +63,9 @@ public class FeedCollector {
         def socketFactory = new SSLSocketFactory(trustStore)
         */
         def socketFactory = SSLSocketFactory.getSocketFactory()
-        def httpClient = new DefaultHttpClient()
+        def httpParams = new BasicHttpParams()
+        HttpConnectionParams.setConnectionTimeout(httpParams, httpTimeoutSeconds * 1000) // millisecs
+        def httpClient = new DefaultHttpClient(httpParams)
         httpClient.connectionManager.schemeRegistry.register(
                 new Scheme("https", socketFactory, 443))
         return httpClient

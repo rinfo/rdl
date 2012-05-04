@@ -57,6 +57,7 @@ public class Components {
         VALIDATION_ENTRY_ID("rinfo.main.checker.validationEntryId"),
         URIMINTER_ENTRY_ID("rinfo.main.uriMinter.uriSpaceEntryId"),
         URIMINTER_URI_SPACE_URI("rinfo.main.uriMinter.uriSpaceUri"),
+        COLLECTOR_HTTP_TIMEOUT_SECONDS("rinfo.main.collector.http.timeoutSeconds"),
         ADMIN_FEED_ID("rinfo.main.collector.adminFeedId"),
         ADMIN_FEED_URL("rinfo.main.collector.adminFeedUrl"),
         ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets", false),
@@ -155,7 +156,8 @@ public class Components {
     }
 
     protected void setupFeedCollector() {
-        feedCollector = new FeedCollector(storage)
+        feedCollector = new FeedCollector(storage,
+                config.getInt(ConfigKey.COLLECTOR_HTTP_TIMEOUT_SECONDS.value))
     }
 
     protected void setupCollectScheduler() {
