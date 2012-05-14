@@ -347,7 +347,7 @@ def rewriteLagenNuNTLines(lines) {
 
         line = replaceOnce(line, "<${RINFO}ref/sfs>", "<${RINFO}serie/fs/sfs>")
         line = replaceOnce(line, "<${RINFO}ref/fs", "<${RINFO}serie/fs")
-        line = replaceOnce(line, "<${RINFO}ref/rff", "<${RINFO}serie/rff")
+        line = replaceOnce(line, "<${RINFO}ref/rff", "<${RINFO}serie/rf")
 
         line = replaceOnce(line, "<${LAGENNNU}paragrafnummer>", "<${RPUBL}paragrafnummer>")
         line = replaceOnce(line, "<${LEGACY_PUBL}forfattningsamling>", "<${RPUBL}forfattningssamling>")
