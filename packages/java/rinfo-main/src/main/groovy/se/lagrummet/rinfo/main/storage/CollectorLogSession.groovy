@@ -221,7 +221,8 @@ class CollectorLogSession implements Closeable {
         }
         if (errorDesc == null) {
             errorDesc = state.pageDescriber.newDescription(null, "rc:Error")
-            errorDesc.addLiteral("rdf:value", error.getMessage() ?: "[empty error message]")
+            def repr = error.cause?.toString() ?: error.toString() ?: "[N/A]"
+            errorDesc.addLiteral("rdf:value", repr)
         }
         errorDesc.addLiteral("tl:at", dateTime(new Date()))
         def sourceEntryDesc = makeSourceEntryDesc(sourceEntry)
