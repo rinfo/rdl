@@ -203,7 +203,7 @@ class CollectorLogSession implements Closeable {
         } else if (error instanceof IdentifyerMismatchException) {
             errorDesc = state.pageDescriber.newDescription(null, "rc:IdentifyerError")
             errorDesc.addLiteral("rc:givenUri", error.givenUri)
-            errorDesc.addLiteral("rc:computedUri", error.computedUri)
+            errorDesc.addLiteral("rc:computedUri", error.computedUri ?: "")
             errorLevel = ErrorLevel.ERROR
         } else if (error instanceof SchemaReportException) {
             def report = error.report
