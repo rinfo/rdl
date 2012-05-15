@@ -50,29 +50,29 @@ class MediaType {
 
 def download(URL remoteurl,File localfile) {
     if (localfile.exists())
-	return
-    
+        return
+
     localdir = new File(localfile.parent)
     if (!localdir.exists())
-	localdir.mkdirs()
+        localdir.mkdirs()
     def out = new BufferedOutputStream(new FileOutputStream(localfile))
     out << remoteurl.openStream()
 }
 
-					  
 
-def transform(File infile, File outfile)  { 	   
+
+def transform(File infile, File outfile)  {
     scriptFile = new File(this.class.protectionDomain.codeSource.location.toURI())
     tFactory = TransformerFactory.newInstance()
     transformer = tFactory.newTransformer(new StreamSource(
-					      new File(scriptFile.parent, "xht2-to-xhtml.xslt")))
+                                              new File(scriptFile.parent, "xht2-to-xhtml.xslt")))
 
     def out = new BufferedOutputStream(new FileOutputStream(outfile))
-    try { 
-	transformer.transform(new StreamSource(infile),
-			      new StreamResult(outfile))
+    try {
+        transformer.transform(new StreamSource(infile),
+                              new StreamResult(outfile))
     } finally {
-	out.close()
+        out.close()
     }
 }
 
@@ -90,79 +90,79 @@ def createDepotFromTriples(URI baseUri, File rdfSource, File depotDir, debug=fal
 
     def session = depot.openSession()
     try {
-	println "# Grouping triples"
+        println "# Grouping triples"
         uriTripleGroups.each { key, lines ->
             def results = convertLagenNuTripleGroups(key, lines)
             results.each { uri, ntStr ->
                 def docRepo = ntStringtoRepo(ntStr)
-		// println "Handling ${uri}"
+                // println "Handling ${uri}"
                 if (debug) {
                     println "# DEBUG - RDF for <${uri}>:"
                     RDFUtil.serialize(docRepo, RDFUtil.TURTLE,
                             new BufferedOutputStream(System.out) { void close() { println() } },
-				      true)
-		} else {
+                                      true)
+                } else {
                     otherSources = []
                     // Download PDF or XHT2 documents (for XHT2,
                     // transform to XHTML 1.1 w/ XSLT) so we have some
                     // document data to play with.
                     m = (uri =~ /\/publ\/(\w+)\/(\d+):([^\/]+)/)
-		    def coll, year, no
-		    if (m) { 
-			coll = m[0][1]
-			year = m[0][2]
-			no   = m[0][3]
-		    } else {
-			m = (uri =~ /\/publ\/rf\/(\w+)\/(\d+)(:|\/)([^\/]+)/)
-			if (m) { 
-			    coll = m[0][1]
-			    year = m[0][2]
-			    no   = m[0][4]
-			}
-		    }
-		    try { 
-			if (uri =~ /konsolidering\/\d+-\d+-\d+$/) {
-			    def fname = new File(workDir, "dl/kons/${year}/${no}.xht2")
-			    def outFname = new File(workDir, "dl/kons/${year}/${no}.xhtml")
-			    def url = new URL("https://lagen.nu/${year}:${no}.xht2")
-			    println "# Downloading XHT2 from ${url} to ${fname}"
-			    download(url,fname)
-			    transform(fname,outFname)
-			    otherSources << new SourceContent(outFname, MediaType.HTML, "sv")
-			    // TODO: Transform XHT2 into a simpler XHTML 1.1 file
-			} else if (uri =~ /\/sfs\/\d+:/) {
-			    if ((year.toInteger() > 1998) ||
-				(year.toInteger() == 1998 && no.toInteger() > 305)) {
-				def yy = year[2..3]
-				def padno = String.format('%04d',no.toInteger())
-				def fname = new File(workDir, "dl/sfs/${year}/${no}.pdf")
-				def url  = new URL("http://62.95.69.3/SFSdoc/${yy}/${yy}${padno}.PDF")
-				println "# Downloading XHT2 from ${url} to ${fname}"
-				download(url,fname)
-				otherSources << new SourceContent(fname, MediaType.PDF, "sv")
-			    }
+                    def coll, year, no
+                    if (m) {
+                        coll = m[0][1]
+                        year = m[0][2]
+                        no   = m[0][3]
+                    } else {
+                        m = (uri =~ /\/publ\/rf\/(\w+)\/(\d+)(:|\/)([^\/]+)/)
+                        if (m) {
+                            coll = m[0][1]
+                            year = m[0][2]
+                            no   = m[0][4]
+                        }
+                    }
+                    try {
+                        if (uri =~ /konsolidering\/\d+-\d+-\d+$/) {
+                            def fname = new File(workDir, "dl/kons/${year}/${no}.xht2")
+                            def outFname = new File(workDir, "dl/kons/${year}/${no}.xhtml")
+                            def url = new URL("https://lagen.nu/${year}:${no}.xht2")
+                            println "# Downloading XHT2 from ${url} to ${fname}"
+                            download(url,fname)
+                            transform(fname,outFname)
+                            otherSources << new SourceContent(outFname, MediaType.HTML, "sv")
+                            // TODO: Transform XHT2 into a simpler XHTML 1.1 file
+                        } else if (uri =~ /\/sfs\/\d+:/) {
+                            if ((year.toInteger() > 1998) ||
+                                (year.toInteger() == 1998 && no.toInteger() > 305)) {
+                                def yy = year[2..3]
+                                def padno = String.format('%04d',no.toInteger())
+                                def fname = new File(workDir, "dl/sfs/${year}/${no}.pdf")
+                                def url  = new URL("http://62.95.69.3/SFSdoc/${yy}/${yy}${padno}.PDF")
+                                println "# Downloading XHT2 from ${url} to ${fname}"
+                                download(url,fname)
+                                otherSources << new SourceContent(fname, MediaType.PDF, "sv")
+                            }
 
-			} else if (uri =~ /\/rf\//) {
-			    def fname = new File(workDir, "dl/dom/${coll}/${year}/${no}.xht2")
-			    def outFname = new File(workDir, "dl/dom/${coll}/${year}/${no}.xhtml")
-			    def url
-			    if (uri =~ /\/nja\//) {
-				no = no.substring(2)
-				url = new URL("https://lagen.nu/dom/${coll}/${year}s${no}.xht2")
-			    } else {
-				url = new URL("https://lagen.nu/dom/${coll}/${year}:${no}.xht2")
-			    }
-			    println "# Downloading XHT2 from ${url} to ${fname}"
-			    download(url,fname)
-			    transform(fname,outFname)
-			    otherSources << new SourceContent(outFname, MediaType.HTML, "sv")
-			}
-		    } catch (java.io.FileNotFoundException e) {
-			println "# Downloading failed, creating entry without source document"
-		    }
-		    if (uri.startsWith("http://rinfo.lagrummet.se/")) { 
-			createEntry(session, new URI(uri), docRepo, otherSources)
-		    }
+                        } else if (uri =~ /\/rf\//) {
+                            def fname = new File(workDir, "dl/dom/${coll}/${year}/${no}.xht2")
+                            def outFname = new File(workDir, "dl/dom/${coll}/${year}/${no}.xhtml")
+                            def url
+                            if (uri =~ /\/nja\//) {
+                                no = no.substring(2)
+                                url = new URL("https://lagen.nu/dom/${coll}/${year}s${no}.xht2")
+                            } else {
+                                url = new URL("https://lagen.nu/dom/${coll}/${year}:${no}.xht2")
+                            }
+                            println "# Downloading XHT2 from ${url} to ${fname}"
+                            download(url,fname)
+                            transform(fname,outFname)
+                            otherSources << new SourceContent(outFname, MediaType.HTML, "sv")
+                        }
+                    } catch (java.io.FileNotFoundException e) {
+                        println "# Downloading failed, creating entry without source document"
+                    }
+                    if (uri.startsWith("http://rinfo.lagrummet.se/")) {
+                        createEntry(session, new URI(uri), docRepo, otherSources)
+                    }
                 }
                 docRepo.shutDown()
             }
@@ -206,13 +206,13 @@ def createEntry(session, uri, docRepo, otherSources) {
       date = new Date()
     }
     previousDate = date
-    
+
     try {
         def rdfContent = new SourceContent(inStream, RDFXML_MEDIA_TYPE)
-	sources = [rdfContent]
-	otherSources.each{
-	    sources << it
-	}
+        sources = [rdfContent]
+        otherSources.each{
+            sources << it
+        }
         println "# Creating entry <$uri>"
         session.createEntry(uri, date, sources)
     } finally {
