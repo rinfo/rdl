@@ -256,6 +256,8 @@ def convertLagenNuTripleGroups(String key, List<String> lines) {
     def newLines = rewriteLagenNuNTLines(lines)
     newLines = flipPartOfTriples(newLines)
 
+    addYearAndSerialNr(newLines)
+
 
     def typeTriplePosition = newLines.findIndexOf { it.startsWith("<${uri}> <${RDF.TYPE}> ") }
 
@@ -365,7 +367,6 @@ def rewriteLagenNuNTLines(lines) {
     }
 }
 
-
 def flipPartOfTriples(lines) {
     return lines.collect {
         def partOfTriple = /(<[^>]+>) <${DCT}isPartOf> (<[^>]+>) \./
@@ -379,6 +380,21 @@ def flipPartOfTriples(lines) {
             //println "DEBUG: couldn't flip: ${it}"
             null
     }.findAll { it }
+}
+
+def addYearAndSerialNr(lines) {
+    def idTriple = lines.find { it =~ "identifier>" }
+    if (!idTriple)
+        return
+    def m = (idTriple =~ /(\S+) <${DCT}identifier> "\w+ (\d+):([^" ]+)"/)
+    if (!m)
+        return
+    def g = m[0]
+    def uri = g[1]
+    def year = g[2]
+    def serialNr = g[3]
+    lines << "${uri} <${RPUBL}arsutgava> \"${year}\" ."
+    lines << "${uri} <${RPUBL}lopnummer> \"${serialNr}\" ."
 }
 
 
@@ -411,12 +427,11 @@ def isLaw(lines) {
 
 /*=============================== main ===============================*/
 
-try {
-    println "# Starting..."
-    createDepotFromTriples(new URI(RINFO), new File(args[0]), new File(args[1]),
-            "-debug" in args)
-} catch (IndexOutOfBoundsException e) {
+if (args.length < 2) {
     println "Usage: <rdf-source> <depot-dir>"
     System.exit 0
 }
+println "# Starting..."
+createDepotFromTriples(new URI(RINFO), new File(args[0]), new File(args[1]),
+        "-debug" in args)
 
