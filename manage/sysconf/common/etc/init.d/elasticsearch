@@ -16,12 +16,11 @@ ES_MAX_MEM=2g
 DAEMON=$ES_HOME/bin/elasticsearch
 NAME=elasticsearch
 DESC=elasticsearch
-PID_FILE=/var/run/$NAME.pid
-LOG_DIR=/var/log/$NAME
-DATA_DIR=/var/lib/$NAME
+CONFIG_FILE=$ES_HOME/config/elasticsearch.yml
+PID_FILE=$ES_HOME/var/$NAME.pid
+LOG_DIR=$ES_HOME/var/log/$NAME
+DATA_DIR=$ES_HOME/var/data/$NAME
 WORK_DIR=/tmp/$NAME
-#CONFIG_FILE=/etc/$NAME/elasticsearch.yml
-CONFIG_FILE=/$ES_HOME/config/elasticsearch.yml
 DAEMON_OPTS="-p $PID_FILE -Des.config=$CONFIG_FILE -Des.path.home=$ES_HOME -Des.path.logs=$LOG_DIR -Des.path.data=$DATA_DIR -Des.path.work=$WORK_DIR"
 
 
