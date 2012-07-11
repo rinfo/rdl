@@ -264,7 +264,6 @@ This is an example of how to delete all data from the integration
 environment. Run all of these commands on the integration environment::
 
    $ sudo /etc/init.d/tomcat stop
-   $ sudo rm -rf /opt/rinfo/rdf/*
    $ sudo rm -rf /opt/rinfo/store/*
 
 If you also want to delete the demo data::
