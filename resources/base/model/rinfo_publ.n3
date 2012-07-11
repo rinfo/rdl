@@ -331,7 +331,7 @@
     rdfs:label "Beslutsdatum"@sv;
     rdfs:comment "Datum då innehållet i dokumentet beslutades."@sv;
     # TODO: se anv. i Restriction:s
-    rdfs:domain [ owl:unionOf (:Tillkannagivande :Cirkular :Myndighetsforeskrift :Forarbete) ];
+    rdfs:domain [ owl:unionOf (:Tillkannagivande :Cirkular :Myndighetsforeskrift :Forarbete :AllmannaRad) ];
     rdfs:range xsd:date; .
 
 # Enligt JuDep 070906 är dessa ekvivalenta.
@@ -367,6 +367,11 @@
         [ a owl:Restriction;
             owl:onProperty :beslutadAv;
             owl:minCardinality 1
+    #    ];
+    #rdfs:subClassOf
+    #    [ a owl:Restriction;
+    #        owl:onProperty :ikrafttradanderegel;
+    #        owl:minCardinality 1
         ] .
 
 
