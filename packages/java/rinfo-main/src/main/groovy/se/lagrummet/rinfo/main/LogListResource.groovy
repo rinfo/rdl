@@ -6,10 +6,12 @@ import org.restlet.Request
 import org.restlet.Response
 import org.restlet.representation.InputRepresentation
 import org.restlet.representation.Representation
+import org.restlet.representation.WriterRepresentation
 import org.restlet.resource.Resource
 import org.restlet.resource.ResourceException
 import org.restlet.representation.Variant
 
+import se.lagrummet.rinfo.base.rdf.GritTransformer
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 import se.lagrummet.rinfo.main.storage.CollectorLog
@@ -18,6 +20,7 @@ import se.lagrummet.rinfo.main.storage.CollectorLog
 class LogListResource extends Resource {
 
     private CollectorLog collectorLog
+    private CollectDataRepresenter representer
 
     static final CONSTRUCT_INDEX_RQ = """
         PREFIX iana: <http://www.iana.org/assignments/relation/>
@@ -33,7 +36,8 @@ class LogListResource extends Resource {
     public LogListResource(Context context, Request request, Response response) {
         super(context, request, response)
         collectorLog = ContextAccess.getCollectorLog(context)
-        getVariants().add(new Variant(MediaType.APPLICATION_RDF_XML))
+        representer = new CollectDataRepresenter(ContextAccess.getLogToXhtml(context))
+        variants.addAll(representer.variants)
     }
 
     @Override
@@ -48,12 +52,7 @@ class LogListResource extends Resource {
         if (outRepo == null) {
             return null
         }
-        def ins = RDFUtil.toInputStream(outRepo, "application/rdf+xml", false)
-        if (MediaType.APPLICATION_RDF_XML.equals(variant.getMediaType())) {
-            return new InputRepresentation(ins, MediaType.APPLICATION_RDF_XML)
-        } else {
-            return null
-        }
+        return representer.represent(outRepo, variant)
     }
 
 }

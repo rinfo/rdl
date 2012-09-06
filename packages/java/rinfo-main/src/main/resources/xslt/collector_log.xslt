@@ -5,6 +5,7 @@
                 xmlns:date="http://exslt.org/dates-and-times"
                 exclude-result-prefixes="xsd dct iana rx awol tl rc">
 
+  <xsl:param name="base-url" select="'http://rinfo.lagrummet.se/'"/>
   <xsl:param name="mediabase" select="'media'"/>
 
   <xsl:key name="rel" match="/graph/resource" use="@uri"/>
@@ -72,33 +73,43 @@
         <dd><xsl:apply-templates select="iana:self/@ref"/></dd>
         <dt>Uppdaterad:</dt>
         <dd><xsl:apply-templates select="awol:updated"/></dd>
-        <dt>Antal poster:</dt>
-        <dd><xsl:value-of select="$collect-count"/></dd>
-        <xsl:variable name="sucess-count"
-                      select="count($collected/parent::resource[a/awol:Entry])"/>
-        <xsl:if test="$collect-count != $sucess-count">
-          <dt class="error">Antal fel:</dt>
-          <dd class="error">
-            <xsl:value-of select="$collect-count - $sucess-count"/>
-          </dd>
-        </xsl:if>
+        <xsl:choose>
+          <xsl:when test="$collected">
+            <dt>Antal poster:</dt>
+            <dd><xsl:value-of select="$collect-count"/></dd>
+            <xsl:variable name="sucess-count"
+                          select="count($collected/parent::resource[a/awol:Entry])"/>
+            <xsl:if test="$collect-count != $sucess-count">
+              <dt class="error">Antal fel:</dt>
+              <dd class="error">
+                <xsl:value-of select="$collect-count - $sucess-count"/>
+              </dd>
+            </xsl:if>
+          </xsl:when>
+          <xsl:otherwise>
+            <dt>Detaljer:</dt>
+            <dd><a href="/{substring-after(@uri, $base-url)}">Insamlingsrapport</a></dd>
+          </xsl:otherwise>
+        </xsl:choose>
       </dl>
-      <h4>Poster</h4>
-      <table class="report">
-        <tr>
-          <th class="position">#</th>
-          <th class="dateTime">Tidpunkt</th>
-          <th class="status">Status</th>
-          <th class="uri">ID</th>
-          <th class="info">Information</th>
-        </tr>
-        <xsl:for-each select="$collected">
-          <xsl:sort select="awol:updated | tl:at" order="descending"/>
-          <xsl:apply-templates select="parent::resource" mode="trow">
-            <xsl:with-param name="pos" select="$collect-count + 1 - position()"/>
-          </xsl:apply-templates>
-        </xsl:for-each>
-      </table>
+      <xsl:if test="$collected">
+        <h4>Poster</h4>
+        <table class="report">
+          <tr>
+            <th class="position">#</th>
+            <th class="dateTime">Tidpunkt</th>
+            <th class="status">Status</th>
+            <th class="uri">ID</th>
+            <th class="info">Information</th>
+          </tr>
+          <xsl:for-each select="$collected">
+            <xsl:sort select="awol:updated | tl:at" order="descending"/>
+            <xsl:apply-templates select="parent::resource" mode="trow">
+              <xsl:with-param name="pos" select="$collect-count + 1 - position()"/>
+            </xsl:apply-templates>
+          </xsl:for-each>
+        </table>
+      </xsl:if>
     </div>
   </xsl:template>
 
