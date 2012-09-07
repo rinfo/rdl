@@ -54,13 +54,13 @@ public class CheckerTool {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
-            System.out.println("Usage: CMD <feedUrl>");
+            System.out.println("Usage: CMD <feedUrl> |maxEntries]");
             System.exit(0);
         }
         String feedUrl = args[0];
 
         Checker checker = new CheckerTool().createChecker();
-        checker.setMaxEntries(10);
+        checker.setMaxEntries((args.length > 1)? Integer.parseInt(args[1]) : 10);
         try {
             Repository logRepo = checker.checkFeed(feedUrl);
             String mtype = "application/rdf+xml";
