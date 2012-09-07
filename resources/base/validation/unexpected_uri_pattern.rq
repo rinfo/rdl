@@ -8,7 +8,7 @@ CONSTRUCT {
 
     [] a sch:Warning;
         rdfs:isDefinedBy <http://rinfo.lagrummet.se/sys/validation/unexpected_uri_pattern.rq>;
-        sch:message "Resurs [1]: relation [2] med URI [3] följer inte förväntad form."@sv;
+        sch:message "Resurs [1] har en relation [2] med oväntad form på länken: [3]."@sv;
         sch:implicated (?thing ?rel ?ref);
         dct:source ?context .
 
