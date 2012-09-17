@@ -5,7 +5,7 @@
     xmlns:xsd CDATA #FIXED "http://www.w3.org/2001/XMLSchema#"
     xmlns:dct CDATA #FIXED "http://purl.org/dc/terms/"
     xmlns:iana CDATA #FIXED "http://www.iana.org/assignments/relation/"
-    xmlns:rx CDATA #FIXED "http://www.w3.org/2008/09/rx#"
+    xmlns:foaf CDATA #FIXED "http://xmlns.com/foaf/0.1/"
     xmlns:awol CDATA #FIXED "http://bblfish.net/work/atom-owl/2006-06-06/#"
     xmlns:ax CDATA #FIXED "http://buzzword.org.uk/rdf/atomix#"
     xmlns:ov CDATA #FIXED "http://open.vocab.org/terms/"

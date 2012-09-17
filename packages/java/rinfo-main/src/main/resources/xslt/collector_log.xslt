@@ -3,7 +3,7 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 extension-element-prefixes="date"
                 xmlns:date="http://exslt.org/dates-and-times"
-                exclude-result-prefixes="xsd dct iana rx awol tl rc">
+                exclude-result-prefixes="xsd dct iana foaf awol tl rc">
 
   <xsl:param name="base-url" select="'http://rinfo.lagrummet.se/'"/>
   <xsl:param name="mediabase" select="'media'"/>
@@ -56,7 +56,12 @@
         <dt>Källa:</dt>
         <dd><xsl:apply-templates select="dct:source/@ref"/></dd>
         <dt>Meddelande</dt>
-        <xsl:value-of select="rdf:value"/>
+        <p>
+          <xsl:text>Systemfel vid sidinläsning. Var vänlig att validera sidan. Teknisk orsak:</xsl:text>
+        </p>
+        <p>
+          <xsl:value-of select="rdf:value"/>
+        </p>
       </dl>
     </div>
   </xsl:template>
@@ -119,7 +124,7 @@
       <td class="position"><xsl:value-of select="$pos"/></td>
       <td><xsl:apply-templates select="awol:updated"/></td>
       <td class="status">OK</td>
-      <td><xsl:apply-templates select="rx:primarySubject/@ref"/></td>
+      <td><xsl:apply-templates select="foaf:primaryTopic/@ref"/></td>
       <td></td>
     </tr>
   </xsl:template>
@@ -133,7 +138,7 @@
     <tr class="error">
       <td class="position"><xsl:value-of select="$pos"/></td>
       <td><xsl:apply-templates select="tl:at"/></td>
-      <td class="status">Fel MD5-summa</td>
+      <td class="status">Felaktig MD5-summa</td>
       <td><xsl:apply-templates select="iana:via/awol:id"/></td>
       <td>
         <dl class="lone">
@@ -153,7 +158,7 @@
     <tr class="error">
       <td class="position"><xsl:value-of select="$pos"/></td>
       <td><xsl:apply-templates select="tl:at"/></td>
-      <td class="status">Fel storlek</td>
+      <td class="status">Felaktig filstorlek</td>
       <td><xsl:apply-templates select="iana:via/awol:id"/></td>
       <td>
         <dl class="lone">
@@ -176,6 +181,12 @@
       <td class="status">URI-fel</td>
       <td><xsl:apply-templates select="iana:via/awol:id"/></td>
       <td>
+        <xsl:choose>
+          <xsl:when test="rc:computedUri = ''">
+            <xsl:text>Otillräcklig data för att matcha postens angivna URI.</xsl:text>
+          </xsl:when>
+          <xsl:otherwise>Postens angivna URI matchar inte data.</xsl:otherwise>
+        </xsl:choose>
         <dl class="lone">
           <dt>Angiven URI:</dt>
           <dd><xsl:value-of select="rc:givenUri"/></dd>
@@ -191,7 +202,16 @@
     <tr class="error">
       <td class="position"><xsl:value-of select="$pos"/></td>
       <td><xsl:apply-templates select="tl:at"/></td>
-      <td class="status">Beskrivningsfel</td>
+      <td class="status">
+        <xsl:choose>
+          <xsl:when test="count(a/sch:Error) > 1">
+            <xsl:text>Felktig information i RDF:en</xsl:text>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:text>Problem i RDF:en</xsl:text>
+          </xsl:otherwise>
+        </xsl:choose>
+      </td>
       <td><xsl:apply-templates select="iana:via/awol:id"/></td>
       <td>
         <ul>
@@ -209,18 +229,24 @@
                   <xsl:text>:</xsl:text>
                 </dt>
                 <dd>
-                  <xsl:value-of select="sch:message"/>
-                  <ol>
-                    <xsl:for-each select="sch:implicated/li">
-                      <li>
-                        <xsl:apply-templates select="." mode="repr"/>
-                      </li>
-                    </xsl:for-each>
-                  </ol>
+                  <xsl:variable name="msg" select="concat('[0]', sch:message)"/>
+                  <xsl:variable name="items" select="sch:implicated/li"/>
+                  <xsl:if test="not($items)">
+                    <xsl:value-of select="$msg"/>
+                  </xsl:if>
+                  <xsl:for-each select="$items">
+                    <xsl:variable name="prev-ref" select="concat('[', position() - 1, ']')"/>
+                    <xsl:variable name="ref" select="concat('[', position(), ']')"/>
+                    <xsl:value-of select="substring-before(
+                                  substring-after($msg, $prev-ref), $ref)"/>
+                    <xsl:apply-templates select="." mode="repr"/>
+                  </xsl:for-each>
+                  <xsl:variable name="last-ref" select="concat('[', count($items), ']')"/>
+                  <xsl:value-of select="substring-after($msg, $last-ref)"/>
                 </dd>
                 <!--<dt>Källfil:</dt>
                 <dd><xsl:apply-templates select="dct:source/@ref"/></dd>-->
-                <dt>Testdefintion:</dt>
+                <dt>Testdefinition:</dt>
                 <dd>
                   <xsl:for-each select="rdfs:isDefinedBy/@ref">
                     <a href="{.}"><xsl:apply-templates select="."/></a>
@@ -255,6 +281,9 @@
     <xsl:choose>
       <xsl:when test="@ref">
         <xsl:apply-templates select="@ref"/>
+      </xsl:when>
+      <xsl:when test="@fmt = 'datatype' and (xsd:integer | xsd:double)">
+        <code><xsl:value-of select="*"/></code>
       </xsl:when>
       <xsl:when test="@fmt = 'datatype'">
         <code><xsl:value-of select="*"/></code>

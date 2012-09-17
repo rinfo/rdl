@@ -70,7 +70,7 @@ class CollectorLogSpec extends Specification {
         logSession.logUpdatedEntry(sourceFeed, sourceEntry, depotEntry)
         then:
         def entryDesc = logSession.state.pageDescriber.subjects(
-                "rx:primarySubject", entryId).find {
+                "foaf:primaryTopic", entryId).find {
                     it.getNative("awol:updated") == createTime
                 }
         entryDesc.getNative("awol:published") == createTime

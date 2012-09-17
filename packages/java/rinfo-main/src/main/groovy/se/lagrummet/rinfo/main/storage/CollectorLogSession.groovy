@@ -160,7 +160,7 @@ class CollectorLogSession implements Closeable {
         def entryDesc = state.pageDescriber.newDescription(null, "awol:Entry")
         entryDesc.addLiteral("awol:published", dateTime(depotEntry.getPublished()))
         entryDesc.addLiteral("awol:updated", dateTime(depotEntry.getUpdated()))
-        entryDesc.addRel("rx:primarySubject", sourceEntry.getId().toString())
+        entryDesc.addRel("foaf:primaryTopic", sourceEntry.getId().toString())
         entryDesc.addRel("dct:isPartOf", systemDatasetUri)
         entryDesc.addRel("iana:via", sourceEntryDesc.about)
         updateCollectInfo()
@@ -172,7 +172,7 @@ class CollectorLogSession implements Closeable {
         // TODO: record sourceEntryDeleted:
         //def sourceDeletedEntryDesc = makeSourceDeletedEntryDesc(sourceEntryDeleted)
         //deleted.addRel("iana:via", sourceDeletedEntryDesc.about)
-        deleted.addRel("rx:primarySubject", sourceEntryId.toString())
+        deleted.addRel("foaf:primaryTopic", sourceEntryId.toString())
         deleted.addLiteral("tl:at", dateTime(depotEntry.getUpdated()))
         deleted.addRel("dct:isPartOf", systemDatasetUri)
         deleted.addRel("iana:via", state.currentFeedUri)
@@ -261,7 +261,7 @@ class CollectorLogSession implements Closeable {
             setPrefix("iana", "http://www.iana.org/assignments/relation/").
             setPrefix("tl", "http://purl.org/NET/c4dm/timeline.owl#").
             setPrefix("sch", "http://purl.org/net/schemarama#").
-            setPrefix("rx", "http://www.w3.org/2008/09/rx#").
+            setPrefix("foaf", "http://xmlns.com/foaf/0.1/").
             setPrefix("ax", "http://buzzword.org.uk/rdf/atomix#").
             setPrefix("ov", "http://open.vocab.org/terms/").
             setPrefix("rc", "http://rinfo.lagrummet.se/ns/2008/10/collector#")
