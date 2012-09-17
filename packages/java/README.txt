@@ -26,6 +26,12 @@ Test application for serving demo data:
 * demodata-supply/README.txt
 
 
+Implementation
+========================================================================
+
+This Java implementation is largely written in Groovy
+<http://groovy.codehaus.org/>.
+
 Setup
 ========================================================================
 
@@ -63,11 +69,25 @@ accidentally committing odd settings.) Example::
     $ cp src/environments/dev-unix/*.properties src/environments/local/
     $ mvn -Plocal <...>
 
+
+Libraries and Frameworks
+========================================================================
+
+The main dependencies of the RInfo Java implenentation are:
+
+* The Sesame RDF Framework and Repository <http://www.openrdf.org/>
+* The Abdera Atom API <http://abdera.apache.org/>
+* The Restlet Web API Framework <http://www.restlet.org/>
+
+
 Maven Usage
 ========================================================================
 
 Testing
 -------
+
+Unit tests are written in Groovy using the
+`Spock test framework <http://spockframework.org/>`_.
 
 The commands should be run in the directory where the pom.xml resides for a
 module or application.::

@@ -20,5 +20,5 @@ Running webapp::
 
 Running standalone tool::
 
-    $ mvn exec:java -Pdev-unix -Dexec.mainClass=se.lagrummet.rinfo.checker.CheckerTool -Dexec.args="FEED_URL"
+    $ mvn exec:java -Pdev-unix -Dcatalina.home=target/fake-catalina-home -Dexec.mainClass=se.lagrummet.rinfo.checker.CheckerTool -Dexec.args="FEED_URL OPT_MAX_ENTRIES"
 
