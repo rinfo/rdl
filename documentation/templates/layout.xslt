@@ -91,6 +91,17 @@
     </xsl:copy>
   </xsl:template>
 
+  <xsl:template match="h:p[@id='contactinfo']">
+    <xsl:copy>
+      Om du har några frågor med anledning av detta dokument eller
+      angående rättsinformationsprojektet i stort, kontakta gärna
+      <span vocab="http://schema.org/" property="provider" typeof="Person">
+        <span property="name">Heléne Lundgren</span>
+        på <code property="email">helene.lundgren@dom.se</code>.
+      </span>
+    </xsl:copy>
+  </xsl:template>
+
   <xsl:template match="*|@*">
     <xsl:copy><xsl:apply-templates select="@*|node()"/></xsl:copy>
   </xsl:template>
