@@ -1,0 +1,21 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <http://rinfo.lagrummet.se/ns/2008/10/collector#> .
+
+
+:Error a owl:Class .
+
+:LengthError a owl:Class .
+:givenLength a owl:DatatypeProperty .
+:computedLength a owl:DatatypeProperty .
+
+:ChecksumError a owl:Class .
+:givenMd5 a owl:DatatypeProperty .
+:computedMd5 a owl:DatatypeProperty .
+
+:IdentifyerError a owl:Class .
+:givenUri a owl:DatatypeProperty .
+:computedUri a owl:DatatypeProperty .
+
+:DescriptionError a owl:Class .
+:reports a owl:ObjectProperty .
+
