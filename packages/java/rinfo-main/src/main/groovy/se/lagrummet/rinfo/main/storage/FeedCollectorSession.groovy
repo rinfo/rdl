@@ -168,7 +168,7 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
     protected SourceContent getMainContent(Entry sourceEntry) {
         def contentElem = sourceEntry.getContentElement()
         // TODO:? skip all inline content? Allow at least inline RDF?
-        if (contentElem.getSrc() == null) {
+        if (contentElem == null || contentElem.getSrc() == null) {
             return null
         }
         def contentUrlPath = contentElem.getResolvedSrc().toString()
