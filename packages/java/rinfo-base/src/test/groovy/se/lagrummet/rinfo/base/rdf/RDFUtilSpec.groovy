@@ -51,4 +51,23 @@ class RDFUtilSpec extends Specification {
         assert newRepoConn.hasStatement(newURI, RDFS.SEEALSO, newSubURI, false)
     }
 
+    def "should parse RDFa"() {
+        given:
+        def repo = RDFUtil.createMemoryRepository()
+        def conn = repo.getConnection()
+        def loc = "src/test/resources/rdf/rdfa.xhtml"
+        def stream = new FileInputStream(loc)
+        and:
+        def dcTitle = conn.valueFactory.createURI("http://purl.org/dc/terms/title")
+        def theTitle = conn.valueFactory.createLiteral("The Title")
+        def otherTitle = conn.valueFactory.createLiteral("Other Title")
+        when:
+        RDFUtil.loadDataFromStream(conn, stream, loc, "application/xhtml+xml")
+        then:
+        RDFUtil.one(conn, null, dcTitle, theTitle)
+        !RDFUtil.one(conn, null, dcTitle, otherTitle)
+        cleanup:
+        conn.close()
+    }
+
 }

@@ -41,6 +41,8 @@ import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.util.RDFInserter;
 import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFParserFactory;
+import org.openrdf.rio.RDFParserRegistry;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.RDFWriter;
@@ -49,6 +51,8 @@ import org.openrdf.rio.RDFWriterRegistry;
 import org.openrdf.rio.rdfxml.util.RDFXMLPrettyWriter;
 import org.openrdf.sail.memory.MemoryStore;
 
+import rdfa.adapter.sesame.RDFaParserFactory;
+
 
 public class RDFUtil {
 
@@ -56,6 +60,12 @@ public class RDFUtil {
 
     public static final String TURTLE = "application/x-turtle";
     public static final String RDF_XML = "application/rdf+xml";
+
+    static final RDFParserFactory RDFA_PARSER_FACTORY;
+    static {
+        RDFA_PARSER_FACTORY = new RDFaParserFactory();
+        RDFParserRegistry.getInstance().add(RDFA_PARSER_FACTORY);
+    }
 
 
     // Repo-level operations
@@ -118,19 +128,33 @@ public class RDFUtil {
     }
 
     public static void loadDataFromStream(Repository repo,
-            InputStream stream, String baseUri, String mediaType)
+            InputStream stream, String baseUri, String mediaType,
+            Resource... contexts)
             throws IOException, RDFParseException, RepositoryException {
-        // TODO: more formats, e.g. RDFa (opt. guess from url?)
-        RDFFormat format = RDFFormat.forMIMEType(mediaType);
         RepositoryConnection conn = repo.getConnection();
         try {
+            loadDataFromStream(conn, stream, baseUri, mediaType, contexts);
+        } finally {
+            conn.close();
+        }
+    }
+
+    public static void loadDataFromStream(RepositoryConnection conn,
+            InputStream stream, String baseUri, String mediaType,
+            Resource... contexts)
+            throws IOException, RDFParseException, RepositoryException {
+        RDFFormat format = RDFFormat.forMIMEType(mediaType);
+        if (format == null &&
+                (mediaType.equals("application/xhtml+xml") ||
+                 mediaType.equals("text/html"))) {
+            format = RDFA_PARSER_FACTORY.getRDFFormat();
+        }
+        try {
             conn.setAutoCommit(false);
-            conn.add(stream, baseUri, format);
+            conn.add(stream, baseUri, format, contexts);
             conn.commit();
         } catch (RepositoryException e) {
             conn.rollback();
-        } finally {
-            conn.close();
         }
     }
 

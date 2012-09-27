@@ -95,6 +95,17 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>clojars</id>
+      <name>clojars.org</name>
+      <url>http://clojars.org/repo</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
   </repositories>
 
   <!-- for codenarc-maven-plugin
@@ -353,6 +364,12 @@
         <groupId>org.openrdf.sesame</groupId>
         <artifactId>sesame-repository-manager</artifactId>
         <version>${sesame.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>rdfa</groupId>
+        <artifactId>rdfa-sesame</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
       </dependency>
 
       <dependency>
