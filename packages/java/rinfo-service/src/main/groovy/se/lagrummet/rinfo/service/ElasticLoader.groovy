@@ -1,6 +1,6 @@
 package se.lagrummet.rinfo.service
 
-import groovy.util.logging.Slf4j as Log
+import groovy.util.logging.Commons as Log
 
 import org.elasticsearch.client.Client
 import org.elasticsearch.action.WriteConsistencyLevel

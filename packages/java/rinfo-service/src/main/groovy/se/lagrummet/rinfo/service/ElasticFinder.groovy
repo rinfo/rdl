@@ -1,6 +1,7 @@
 package se.lagrummet.rinfo.service
 
-import groovy.util.logging.Slf4j as Log
+import groovy.transform.CompileStatic
+import groovy.util.logging.Commons as Log
 
 import org.restlet.Context
 import static org.restlet.data.CharacterSet.UTF_8
@@ -19,12 +20,13 @@ import org.codehaus.jackson.map.ObjectMapper
 import org.codehaus.jackson.map.SerializationConfig
 
 
+@CompileStatic
 @Log
 class ElasticFinder extends Finder {
 
     ElasticQuery elasticQuery
 
-    def jsonMapper
+    ObjectMapper jsonMapper
 
     ElasticFinder(Context context, ElasticQuery elasticQuery) {
         super(context)
@@ -50,7 +52,7 @@ class ElasticFinder extends Finder {
         return toResource(data, status)
     }
 
-    def toResource(final Map data, final Status status=null) {
+    ServerResource toResource(final Map data, final Status status=null) {
         if (data == null)
             return null
         return new ServerResource() {

@@ -5,8 +5,8 @@ import static se.lagrummet.rinfo.main.storage.ErrorLevel.*
 
 class ErrorLevelSpec extends Specification {
 
-    @Unroll({"checking error level ${stopOnLevel}"})
-    def "should stop on error level"() {
+    @Unroll
+    def "should stop on error level #stopOnLevel"() {
         expect:
         continueOnLevelMap.each { gotErrorLevel, shouldContinue ->
             assert (gotErrorLevel < stopOnLevel) == shouldContinue

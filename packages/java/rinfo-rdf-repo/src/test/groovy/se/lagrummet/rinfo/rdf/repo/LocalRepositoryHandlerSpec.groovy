@@ -16,8 +16,8 @@ public class LocalRepositoryHandlerSpec extends Specification {
   static String TEST_DATA_DIR = "target/sesame-test-data"
   static String TEST_REPO_ID = "rinfo-test"
   
-  @Unroll({"Test of repositories of different types (#storeType, #inferenceType)"})
-  def "Test of repositories of different types "() {
+  @Unroll
+  def "Test of repositories of different types (#storeType, #inferenceType)"() {
     given: "A new local repository"
     def handler = new LocalRepositoryHandler(TEST_DATA_DIR, TEST_REPO_ID, storeType, inferenceType)
     handler.initialize()

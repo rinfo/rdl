@@ -1,6 +1,6 @@
 package se.lagrummet.rinfo.service
 
-import groovy.util.logging.Slf4j as Log
+import groovy.util.logging.Commons as Log
 
 import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDContext
 import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDSerializer

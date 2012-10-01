@@ -1,6 +1,7 @@
 package se.lagrummet.rinfo.service
 
-import groovy.util.logging.Slf4j as Log
+import groovy.transform.CompileStatic
+import groovy.util.logging.Commons as Log
 
 import static org.restlet.data.CharacterSet.UTF_8
 import org.restlet.data.Reference
@@ -41,6 +42,7 @@ class ElasticQuery {
         this.serviceAppBaseUrl = serviceAppBaseUrl
     }
 
+    @CompileStatic
     Map search(String docType, Reference ref) {
         boolean onlyStats = false
         int splitAt = docType.indexOf(';')
@@ -61,7 +63,8 @@ class ElasticQuery {
         return elasticData.client.prepareSearch(elasticData.indexName)
     }
 
-    def getElasticStats(SearchRequestBuilder srb, String docType, Reference ref) {
+    //@CompileStatic
+    Map getElasticStats(SearchRequestBuilder srb, String docType, Reference ref) {
         //def qb = QueryBuilders.matchAllQuery()
         //srb.setQuery(qb)
         prepareElasticSearch(srb, ref, docType, Collections.emptyList(), false, true)
@@ -69,13 +72,14 @@ class ElasticQuery {
         return buildStats(esRes)
     }
 
+    //@CompileStatic
     Map searchElastic(SearchRequestBuilder srb, String docType, Reference ref) {
         def showTerms = jsonLdSettings.listFramesData[docType]?.keySet()
         if (!showTerms) {
             return null
         }
 
-        def prepSearch = null
+        Map prepSearch = null
         SearchResponse esRes = null
         try {
             prepSearch = prepareElasticSearch(srb, ref, docType, showTerms)

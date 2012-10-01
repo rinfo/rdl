@@ -33,9 +33,8 @@ class AtomizerSpec extends Specification {
         atomizer.feedSkeleton == feed
     }
 
-    @Unroll({"""get and set checksums where
- writeLegacy: #writeLegacy, readLegacy: #readLegacy"""})
-    def "should get and set checksums"() {
+    @Unroll
+    def "should get and set checksums where writeLegacy: #writeLegacy, readLegacy: #readLegacy"() {
         given:
         def entry = Abdera.instance.newEntry()
         entry.setContent(new IRI("http://localhost/text/1"), "text/plain")

@@ -121,8 +121,8 @@ class FileDepotReadSpec extends Specification {
         thrown(DepotUriException)
     }
 
-    @Unroll({"should fail on <#path>"})
-    def "should disallow non absolute or full uri paths"() {
+    @Unroll
+    def "should disallow non absolute or full uri path: <#path>"() {
         when:
         def entry = depot.getEntry(path)
         then:

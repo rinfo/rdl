@@ -48,8 +48,8 @@ class RDFCheckerSpec extends Specification {
         checker.setTestQueries(queries)
     }
 
-    @Unroll({"checking resource $name"})
-    def "problematic data"() {
+    @Unroll
+    def "problematic data in resource #name"() {
         given:
         def iri = "http://example.org/publ/${name}"
         def file = new File(baseDir, "tests/${name}.ttl")
