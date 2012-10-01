@@ -10,7 +10,6 @@ import org.openrdf.model.impl.ValueFactoryImpl
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.vocabulary.XMLSchema
 import org.openrdf.repository.RepositoryConnection
-import org.openrdf.rio.RDFFormat
 
 import org.apache.abdera.model.Entry
 
@@ -47,8 +46,10 @@ class RepoEntry {
 
     static final CONTEXT_SUFFIX = "/entry#context"
 
-    // TODO: try to parse RDFa as well
-    def loadableRdfMimeTypes = ["application/rdf+xml"]
+    def loadableRdfMimeTypes = [
+        "application/rdf+xml",
+        "application/xhtml+xml"
+    ]
 
     SesameLoader loader
     RepositoryConnection conn
@@ -202,7 +203,7 @@ class RepoEntry {
         logger.info("Loading RDF from <${url}>")
         def inStream = loader.getResponseAsInputStream(url)
         try {
-          conn.add(inStream, url, RDFFormat.forMIMEType(mediaType), ctx)
+          RDFUtil.loadDataFromStream(conn, inStream, url, mediaType, ctx)
         } finally {
           inStream.close()
         }

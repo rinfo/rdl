@@ -12,7 +12,7 @@ class EntryRdfReader {
 
     static List RDF_MIME_TYPES = [
         "application/rdf+xml",
-        // "application/xhtml+xml" TODO: scan for RDFa
+        "application/xhtml+xml"
     ]
 
     static Repository readRdf(DepotEntry depotEntry) {
@@ -51,7 +51,7 @@ class EntryRdfReader {
 
     static Repository rdfContentToRepository(DepotContent content) {
         Repository repo = RDFUtil.createMemoryRepository()
-        // TODO:IMPROVE: pass logical depot as baseURI?
+        // TODO:IMPROVE: pass content.depotUriPath as baseURI?
         RDFUtil.loadDataFromFile(repo, content.file, content.mediaType)
         return repo
     }
