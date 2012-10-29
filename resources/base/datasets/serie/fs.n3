@@ -322,8 +322,8 @@
 
 <http://rinfo.lagrummet.se/serie/fs/kls> a :Forfattningssamling;
     skos:altLabel "KLS"@sv;
-    skos:prefLabel "Kungliga lantbruksstyrelsens författningssamling"@sv;
-    # TODO: tidigare <http://rinfo.lagrummet.se/org/"kungliga_lantbruksstyrelsen>;
+    skos:prefLabel "Kungliga Lantbruksstyrelsens kungörelser"@sv;
+    # TODO: tidigare <http://rinfo.lagrummet.se/org/kungliga_lantbruksstyrelsen>;
     dct:publisher <http://rinfo.lagrummet.se/org/statens_jordbruksverk> .
 
 <http://rinfo.lagrummet.se/serie/fs/kovfs> a :Forfattningssamling;
@@ -348,7 +348,7 @@
 
 <http://rinfo.lagrummet.se/serie/fs/lbs> a :Forfattningssamling;
     skos:altLabel "LBS"@sv;
-    # TODO: skos:prefLabel också Lantbruksstyrelsens författningssamling?
+    skos:prefLabel "Lantbruksstyrelsens föreskrifter"@sv;
     # TODO: tidigare <http://rinfo.lagrummet.se/org/lantbruksstyrelsen>;
     dct:publisher <http://rinfo.lagrummet.se/org/statens_jordbruksverk>. 
 
