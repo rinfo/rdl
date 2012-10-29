@@ -432,7 +432,7 @@
     skos:prefLabel "Naturvårdsverkets författningssamling"@sv;
     dct:publisher <http://rinfo.lagrummet.se/org/naturvaardsverket>;
     rdfs:comment "Utnyttjas också av Kustbevakningen."@sv;
-    rdfs:seeAlso <http://www.naturvardsverket.se/index.php3?main=/dokument/lagar/foreskri/snfs.htm> .
+    rdfs:seeAlso <http://www.naturvardsverket.se/Start/Lagar-och-styrning/Foreskrifter-och-allmanna-rad/> .
 
 <http://rinfo.lagrummet.se/serie/fs/nutfs> a :Forfattningssamling;
     skos:altLabel "NUTFS"@sv;
@@ -550,6 +550,14 @@
     skos:prefLabel "Skatteverkets författningssamling"@sv;
     dct:publisher <http://rinfo.lagrummet.se/org/skatteverket>;
     rdfs:seeAlso <http://www.skatteverket.se/rsvlagrum/index.html> .
+
+<http://rinfo.lagrummet.se/serie/fs/snfs> a :Forfattningssamling;
+    skos:altLabel "SNFS"@sv;
+    skos:prefLabel "Statens naturvårdsverks författningssamling"@sv;
+    dct:publisher <http://rinfo.lagrummet.se/org/naturvaardsverket>;
+    # TODO: owl:sameAs? Only name is new?
+    dct:isReplacedBy <http://rinfo.lagrummet.se/serie/fs/nfs>;
+    rdfs:comment "Har ersatts av NFS (ny beteckning efter myndighetens namnbyte)."@sv .
 
 <http://rinfo.lagrummet.se/serie/fs/sosfs> a :Forfattningssamling;
     skos:altLabel "SOSFS"@sv;
