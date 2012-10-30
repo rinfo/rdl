@@ -321,18 +321,21 @@ class FileDepotWriteSpec extends Specification {
 
     def "should create entry and check md5 and length"() {
         setup:
-        def id = new URI("http://example.org/publ/CHECK/added_1")
+        def id = new URI("http://example.org/publ/CHECK/${slug}")
         when:
         def srcContent = new SourceContent(
                 tdu.exampleEntryFile("content-en.pdf"), "application/pdf", "en")
         srcContent.datachecks[SourceContent.Check.LENGTH] = new Long(24014)
-        srcContent.datachecks[SourceContent.Check.MD5] =
-                "eff60b86aaaac3a1fde5affc07a27006"
+        srcContent.datachecks[SourceContent.Check.MD5] = checksum
         def session = depot.openSession()
         session.createEntry(id, nextDate(), [srcContent])
         session.close()
         then:
         notThrown(SourceCheckException)
+        where:
+        slug        | checksum
+        "added_1"   | "eff60b86aaaac3a1fde5affc07a27006"
+        "added_2"   | "EFF60B86AAAAC3A1FDE5AFFC07A27006"
     }
 
     def "should fail create entry on bad md5"() {

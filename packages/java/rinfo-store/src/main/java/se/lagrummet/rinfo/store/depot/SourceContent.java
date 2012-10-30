@@ -140,13 +140,12 @@ public class SourceContent {
         return outStream;
     }
 
-    private void checkGiven(Check check, Object real) {
-        Object given = datachecks.get(check);
+    private void checkGiven(Check kind, Object given, Object real) {
         if (given == null) {
             return;
         }
         if (!real.equals(given)) {
-            throw new SourceCheckException(this, check, given, real);
+            throw new SourceCheckException(this, kind, given, real);
         }
     }
 
@@ -162,7 +161,7 @@ public class SourceContent {
         }
 
         private void checkLength() throws IOException {
-            checkGiven(Check.LENGTH, getByteCount());
+            checkGiven(Check.LENGTH, datachecks.get(Check.LENGTH), getByteCount());
         }
 
     }
@@ -182,7 +181,8 @@ public class SourceContent {
         private void checkMd5() throws IOException {
             MessageDigest digest = getMessageDigest();
             String hexDigest = new String(Hex.encodeHex(digest.digest()));
-            checkGiven(Check.MD5, hexDigest);
+            String givenChecksum = ((String) datachecks.get(Check.MD5)).toLowerCase();
+            checkGiven(Check.MD5, givenChecksum, hexDigest);
         }
 
     }
