@@ -1,5 +1,5 @@
 ########################################################################
-README - Setup
+README - Management
 ########################################################################
 
 Prerequisites
@@ -24,42 +24,79 @@ Or, for a nice, nested view of the namespaces:
 
     $ fab -lFnested
 
-To build the admin data, run:
 
-    $ fab app.admin.package
+Deployment
+========================================================================
 
-This creates a directory hierarchy containing RDF and XHTML data,
-based on the RDF files located in resources/base. This contains the
-model (ontology), uri patterns, URIs for organizations and other
-resources.
+Version Control
+------------------------------------------------------------------------
 
-To deploy this to production, do:
+To make a *production* release, first cut a release properly.
 
-    $ fab taget.prod app.admin.deploy
+The source code in Git is manager according to the principles of *git flow*: 
+<https://github.com/nvie/gitflow>. The principal procedure is:
 
-This rsync's the resulting directory hierarchy to the correct place in the
-production environment (substitute taget.prod with target.dev_unix if you want to
-deploy them to your own local development environment, or target.demo if you want
-to deploy them to the demo/staging environment)
+    $ git flow release start $(date "+%y%m%d") # to name by date
+    # ... bump application version numbers if necessary
+    $ git flow release finish
 
-Ping rinfo-main to load this data immediately by running:
+Build and Deploy
+------------------------------------------------------------------------
+
+Make sure your code repository is clean and that you stand in the *master* 
+branch.
+
+Go to manage/ and run any or all of the following, depending on what to 
+release.
+
+* Deploy Admin data:
+
+    $ fab target.prod app.admin.all
+
+* Deploy Main:
+
+    $ fab target.prod app.main.all
+
+* Deploy Checker:
+
+    $ fab target.prod app.checker.all
+
+* Install ElasticSearch *unless already installed*:
+
+    $ fab target.prod app.service.install_elasticsearch
+    $ fab target.prod app.service.start_elasticsearch
+
+* Deploy Sesame (should only update to new version if necessary):
+
+    $ fab target.prod app.service.deploy_sesame
+
+* Deploy Service:
+
+    $ fab target.prod app.service.all
+
+Ping Main to load Admin data immediately by running:
 
     $ fab target.prod app.admin.ping_main
 
-This sends a "ping" request to the rinfo-main server, causing it to
-reload the admin data.
 
-Setting Up the Integration Environment from Scratch
+Working With An Environment from Scratch
 ========================================================================
 
-Note: These instructions work pretty well for setting up a real
-staging/demo (or production server) as well. Substitute target.demo
-(or target.prod) for target.integration below.
+Important: All instructions below pertain to the management of an Integration 
+environment. But these instructions work pretty well for setting up a real
+staging/demo (or production server) as well.
 
-In some cases, scripts under /etc/init.d for starting and stopping the
+To do so, substitute target.demo (or target.prod) for target.integration below. 
+You may also skip portions where applicable, such as for setting up servers and 
+managing host names.
+
+Set Up The Server
+------------------------------------------------------------------------
+
+(In some cases, scripts under /etc/init.d for starting and stopping the
 tomcat and elasticsearch services fail when run on the target system
 from fabric. In these cases, the alternative is to log into the target
-system and manually running e.g. "sudo /etc/init.d/tomcat start".
+system and manually running e.g. "sudo /etc/init.d/tomcat start".)
 
 The integration environment is supposed to be run as a virtual server
 on your local computer. It can host all rinfo applications. In the
@@ -124,6 +161,9 @@ standing in the directory rinfo-trunk/manage
 The virtual server should now be ready for the deployment of the applications
 and the demo data.
 
+Create and Deploy Demo Data (only for local and integration environment)
+------------------------------------------------------------------------
+
 Deploy demo data from lagen.nu (very time consuming on first run, downloading
 all the data):
 
@@ -143,11 +183,29 @@ Deploy demo data from riksdagen.se (downloading may take a couple of hours):
       $ fab target.integration -Rmain app.demodata.refresh:sou
       $ fab target.integration -Rmain app.demodata.refresh:ds
 
+Deploy Admin Data
+------------------------------------------------------------------------
+
+To build the admin data configured with the *demo* dataset, run (on your local 
+computer):
+
+    $ fab app.admin.package:source=demo
+
+This creates a directory hierarchy containing RDF and XHTML data,
+based on the RDF files located in resources/base. This contains the
+model (ontology), uri patterns, URIs for organizations and other
+resources.
+
 Deploy admin feed:
 
-   * Run on your local computer::
+      $ fab target.integration app.admin.deploy
 
-      $ fab target.integration app.admin.all:source=demo
+This rsync's the resulting directory hierarchy to the correct place in the
+target environment (here integration).
+
+
+Deploy The Applications
+------------------------------------------------------------------------
 
 Deploy main:
 
@@ -234,7 +292,7 @@ Data Tools Bundled with the Web Apps
 A script is provided to enable the running of certain diagnostic and
 maintenance tools which are bundled with the deployed web applications.
 
-These can be run on any deploy target server.
+These can be run on any deployed target server.
 
 Regenerate The ElasticSearch Index
 ------------------------------------------------------------------------
@@ -277,6 +335,9 @@ To clear all data from the service backends, do:
 
 Development Environment
 ========================================================================
+
+For details on manual steps when running a local setup (during development), 
+see ``manage/running_rinfo_locally.txt``.
 
 For continuous integration see ``project/ci/README.txt``.
 
