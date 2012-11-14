@@ -12,7 +12,7 @@ def targetenv(f):
     available target environments. It does so by adding the decorated function
     to the targetenvs list which is used by the _needs_targetenv function.
     """
-    targetenvs.append(f)
+    targetenvs.append("target." + f.__name__)
     return task(f)
 
 def _needs_targetenv():
