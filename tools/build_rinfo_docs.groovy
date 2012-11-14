@@ -2,8 +2,9 @@
 @GrabExclude('javax.servlet:servlet-api')
 @Grab('com.lowagie:itext:2.0.8')
 @Grab('org.xhtmlrenderer:core-renderer:R8pre2')
-// Note: when using Option B (re READEME.txt, the pathing jar
+// Note: when using Option B (see README.txt, the pathing jar
 // option), these need to be commented out.
+@Grab('rdfa:rdfa-sesame:0.1.0-SNAPSHOT')
 @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT')
 @Grab('xml-apis:xml-apis:1.3.04')
 @Grab('xerces:xercesImpl:2.9.1')
