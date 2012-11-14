@@ -367,11 +367,11 @@
         [ a owl:Restriction;
             owl:onProperty :beslutadAv;
             owl:minCardinality 1
-    #    ];
-    #rdfs:subClassOf
-    #    [ a owl:Restriction;
-    #        owl:onProperty :ikrafttradanderegel;
-    #        owl:minCardinality 1
+        ];
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :ikrafttradanderegel;
+            owl:minCardinality 1
         ] .
 
 
@@ -1003,22 +1003,34 @@
             owl:maxCardinality 1
         ]; .
 
-# I några rättsfallspublikationer har det under vissa perioder
-# publicerars notiser av *olika slag* -- NJA har använt notisserierna A,
-# B och C (numera använder man enbart en notisserie som ibland kallas
-# N), RH har använt bland annat "Fi", "I", "S, "K" (hänvisar
-# förmodligen till olika departement/rättsområden) och "Aa", "Ab",
-# "Ba" (oklart vad detta hänvisar till).
-:notisserie a owl:DatatypeProperty; # Ska nog formellt vara
-                                    # ObjectProperty, men vi kommer
-                                    # inte kunna lista alla olika
-                                    # serier såsom vi har gjort för
-                                    # publikationssamlingar
+# I några rättsfallspublikationer har det under vissa perioder publicerars
+# notiser av *olika slag* -- NJA har använt notisserierna A, B och C (numera
+# använder man enbart en notisserie som ibland kallas N), RH har använt bland
+# annat "Fi", "I", "S, "K" (hänvisar till olika departement), "Aa" (domar i
+# skattemål), "Ab" (övriga domar), "Ba" (beslut i skattemål), "Bb" (övriga
+# beslut).
+#
+# TODO:
+# Ska nog formellt vara ObjectProperty, men vi kommer inte kunna lista alla
+# olika notisserier (d.v.s. definiera URIer för dem) såsom vi har gjort för
+# publikationssamlingar.
+#
+# Alternativet är att en notisserie anges som en bnode och etikett, likt:
+#    <...> a :Rattsfallsnotis;
+#        :notisserie [ skos:altLabel "Fi"@sv ] .
+#
+# Detta ställer dock krav på URI-hantering för dessa (som baseras på
+# bl.a. notisserie)!
+#
+#:notisserie a owl:ObjectProperty, owl:FunctionalProperty;
+:notisserie a owl:DatatypeProperty;
     rdfs:isDefinedBy : ;
+    #rdfs:subPropertyOf :publikationssamling;
     rdfs:label "Notisserie"@sv;
     rdfs:comment """Anger vilken notisserie som notisen eventuellt tillhör."""@sv;
     rdfs:domain :Rattsfallsnotis;
     rdfs:range rdfs:Literal;
+    #rdfs:range :Publikationssamling;
     rdfs:isDefinedBy : .
 
 
