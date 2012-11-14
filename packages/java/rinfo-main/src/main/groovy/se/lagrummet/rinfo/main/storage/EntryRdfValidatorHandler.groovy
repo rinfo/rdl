@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory
 
 import org.openrdf.repository.Repository
 
-import org.codehaus.jackson.map.ObjectMapper
-
 import se.lagrummet.rinfo.store.depot.DepotEntry
 
 import se.lagrummet.rinfo.base.URIMinter
