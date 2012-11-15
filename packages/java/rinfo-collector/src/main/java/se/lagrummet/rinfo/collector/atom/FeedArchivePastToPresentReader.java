@@ -11,10 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import org.apache.http.client.HttpClient;
 
-import org.apache.abdera.model.AtomDate;
-import org.apache.abdera.model.Feed;
-import org.apache.abdera.model.Entry;
+import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
+import org.apache.abdera.model.AtomDate;
+import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Feed;
 
 import org.apache.abdera.ext.history.FeedPagingHelper;
 
@@ -336,7 +337,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
             tempFileUri = tempFile.toURI();
             OutputStream outStream = new FileOutputStream(tempFile);
             try {
-                feed.writeTo(outStream);
+                Abdera.getInstance().getWriter().writeTo(feed, outStream);
             } finally {
                 outStream.close();
             }

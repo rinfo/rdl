@@ -131,6 +131,14 @@ class FeedArchivePastToPresentReaderSpec extends Specification {
         map.size() == 2
     }
 
+    def "should handle charsets properly"() {
+        given:
+        def reader = new CollectReader()
+        expect:
+        reader.readFeed(new URL("${baseUrl}/windows-1252.atom"))
+        reader.effectiveEntries.size() == 1
+    }
+
 }
 
 class CollectReader extends FeedArchivePastToPresentReader {

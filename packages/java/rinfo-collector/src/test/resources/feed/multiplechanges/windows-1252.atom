@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="Windows-1252" standalone="no"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>tag:komdir.regeringen.se,2009:rinfo:feed</id>
+  <title>Kommittédirektiv</title>
+  <updated>2012-11-15T13:31:22Z</updated>
+  <author>
+    <name>Regeringskansliet</name>
+    <uri>http://www.regeringen.se/</uri>
+    <email>rinfo@regeringen.se</email>
+  </author>
+  <entry>
+    <id>http://rinfo.lagrummet.se/publ/dir/1987:1</id>
+    <updated>2000-11-06T09:17:55Z</updated>
+    <published>2000-11-06T09:17:55Z</published>
+    <title>1987:1 Avveckling av myndigheter inom utbildningsområdet m.m.</title>
+    <summary></summary>
+    <content src="/1987/1987_1.xml" type="application/xhtml+xml" />
+  </entry>
+</feed>
