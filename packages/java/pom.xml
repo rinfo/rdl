@@ -17,6 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <groovy.version>2.0.4</groovy.version>
+    <greclipse.version>2.7.0-01</greclipse.version>
     <restlet.version>2.0.9</restlet.version>
     <sesame.version>2.6.10</sesame.version>
     <elasticsearch.version>0.18.7</elasticsearch.version>
@@ -516,7 +517,7 @@
             <dependency>
               <groupId>org.codehaus.groovy</groupId>
               <artifactId>groovy-eclipse-compiler</artifactId>
-              <version>2.7.0-01</version>
+              <version>${greclipse.version}</version>
             </dependency>
           </dependencies>
         </plugin>
