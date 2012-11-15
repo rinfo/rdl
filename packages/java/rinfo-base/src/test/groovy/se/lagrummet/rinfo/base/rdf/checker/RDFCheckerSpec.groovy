@@ -92,6 +92,7 @@ class RDFCheckerSpec extends Specification {
         report = checker.check(data, iri)
         def conn = report.getConnection()
         then:
+        if (conn.size()) dumpData("should be ok", conn)
         conn.size() == 0
     }
 
