@@ -7,7 +7,6 @@ import org.apache.abdera.model.Entry
 
 class AtomDetailsSpec extends Specification {
 
-    /* FIXME: Works with Abdera trunk, which is in no mvn repo yet (2009-10)!
     def "should handle links with unescaped colon in path"() {
         setup:
         def feedFile = new File("src/test/resources/feed/index.atom")
@@ -26,6 +25,5 @@ class AtomDetailsSpec extends Specification {
             }
         }
     }
-    */
 
 }
