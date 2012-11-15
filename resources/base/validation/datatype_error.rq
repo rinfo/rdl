@@ -1,3 +1,4 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl:  <http://www.w3.org/2002/07/owl#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -19,7 +20,7 @@ CONSTRUCT {
     }
     FILTER(isLiteral(?value))
     BIND(datatype(?value) as ?datatype)
-    FILTER(bound(?datatype) && ?datatype != xsd:string)
+    FILTER(bound(?datatype) && ?datatype NOT IN (xsd:string, rdf:langString))
     BIND(str(?value) as ?repr)
     BIND(COALESCE(
                 # Crude value check since Sesame doesn't check on coercion...
@@ -34,8 +35,8 @@ CONSTRUCT {
                                         IF(minutes(?value) >= 60, ?FAIL,
                                             IF(seconds(?value) >= 60, ?FAIL,
                                                 ?value)))))),
-                #IF(?datatype = xsd:date, xsd:dateTime(concat(?repr, 'T00:00:00')),#)
-                    #IF(?datatype = xsd:dateTime, xsd:dateTime(?repr),#)
+                #IF(?datatype = xsd:date, xsd:dateTime(concat(?repr, 'T00:00:00')),
+                    #IF(?datatype = xsd:dateTime, xsd:dateTime(?repr),
                         IF(?datatype = xsd:boolean, xsd:boolean(?repr),
                             IF(?datatype = xsd:double, xsd:double(?repr),
                                 IF(?datatype = xsd:float, xsd:float(?repr),
