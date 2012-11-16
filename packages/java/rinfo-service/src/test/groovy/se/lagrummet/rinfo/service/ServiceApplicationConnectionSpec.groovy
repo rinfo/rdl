@@ -14,8 +14,9 @@ import org.restlet.routing.VirtualHost
 import org.openrdf.repository.Repository
 import org.openrdf.repository.RepositoryConnection
 import org.openrdf.repository.event.RepositoryListener
+import org.openrdf.repository.event.base.RepositoryConnectionListenerAdapter
 import se.lagrummet.rinfo.service.util.FeedApplication
-import se.lagrummet.rinfo.service.util.RepoConnectionListener
+
 import spock.lang.Specification
 
 /**
@@ -119,10 +120,10 @@ class ServiceApplicationConnectionSpec extends Specification {
 /**
  * Listener for checking if concurrent connections are opened to repository.
  */
-class RListener extends RepoConnectionListener implements RepositoryListener {
+class RListener extends RepositoryConnectionListenerAdapter implements RepositoryListener {
 
-     def noofConnections = 0
-     def isConcurrent = false
+    def noofConnections = 0
+    def isConcurrent = false
 
     void initialize(Repository repo) { }
     void setDataDir(Repository repo, File dataDir) { }
