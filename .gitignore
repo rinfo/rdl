@@ -1,2 +1,5 @@
 *.pyc
 /_build
+.idea/
+.idea_modules/
+target
