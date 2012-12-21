@@ -8,7 +8,7 @@ import org.restlet.data.Reference
 
 import org.elasticsearch.action.search.SearchPhaseExecutionException
 import org.elasticsearch.action.search.SearchResponse
-import org.elasticsearch.client.action.search.*
+import org.elasticsearch.action.search.SearchRequestBuilder
 import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.QueryBuilder

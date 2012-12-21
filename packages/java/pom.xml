@@ -20,7 +20,7 @@
     <greclipse.version>2.7.0-01</greclipse.version>
     <restlet.version>2.0.9</restlet.version>
     <sesame.version>2.6.10</sesame.version>
-    <elasticsearch.version>0.18.7</elasticsearch.version>
+    <elasticsearch.version>0.19.9</elasticsearch.version>
     <tika.version>0.9</tika.version>
     <jackson.version>1.8.1</jackson.version>
     <stringtemplate.version>3.2.1</stringtemplate.version>
