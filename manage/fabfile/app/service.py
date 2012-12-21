@@ -138,7 +138,7 @@ def install_elasticsearch():
         sysconf.install_init_d("elasticsearch")
 
 def fetch_elasticsearch():
-    elastic_version = "0.18.7"
+    elastic_version = "0.19.9"
     workdir_elastic = "%(mgr_workdir)s/elastic_pkg" % env
     mkdirpath(workdir_elastic)
     elastic_distfile = "elasticsearch-%(elastic_version)s.tar.gz" % vars()
