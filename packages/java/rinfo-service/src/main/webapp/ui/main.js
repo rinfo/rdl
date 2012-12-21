@@ -25,7 +25,7 @@ $(function () {
     return false;
   });
 
-  $('#resultsView a:link, a.svc:link, a.sort:link').live('click', function () {
+  $('#resultsView a[href], a.svc, a.sort').live('click', function () {
     var serviceRef = $(this).attr('href').substring(1);
     if (serviceRef) {
       window.location.hash = serviceRef;
