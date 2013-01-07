@@ -20,7 +20,8 @@
     <greclipse.version>2.7.0-01</greclipse.version>
     <restlet.version>2.0.9</restlet.version>
     <sesame.version>2.6.10</sesame.version>
-    <elasticsearch.version>0.19.9</elasticsearch.version>
+    <elasticsearch.version>0.20.2</elasticsearch.version>
+    <spatial4j.version>0.3</spatial4j.version>
     <tika.version>0.9</tika.version>
     <jackson.version>1.8.1</jackson.version>
     <stringtemplate.version>3.2.1</stringtemplate.version>
@@ -442,6 +443,11 @@
         <groupId>org.elasticsearch</groupId>
         <artifactId>elasticsearch</artifactId>
         <version>${elasticsearch.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.spatial4j</groupId>
+        <artifactId>spatial4j</artifactId>
+        <version>${spatial4j.version}</version>
       </dependency>
 
       <dependency>
