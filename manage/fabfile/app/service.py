@@ -1,4 +1,4 @@
-from __future__ import with_statement
+import re
 from fabric.api import *
 from fabric.contrib.files import exists
 from fabfile.util import venv, mkdirpath
@@ -138,7 +138,10 @@ def install_elasticsearch():
         sysconf.install_init_d("elasticsearch")
 
 def fetch_elasticsearch():
-    elastic_version = "0.19.9"
+    with open("%(java_packages)s/pom.xml" % env) as pom:
+        for l in pom:
+            for elastic_version in re.findall('<elasticsearch.version>([^<]+)</', l):
+                break
     workdir_elastic = "%(mgr_workdir)s/elastic_pkg" % env
     mkdirpath(workdir_elastic)
     elastic_distfile = "elasticsearch-%(elastic_version)s.tar.gz" % vars()
