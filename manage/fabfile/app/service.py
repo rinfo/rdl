@@ -147,7 +147,7 @@ def fetch_elasticsearch():
     elastic_distfile = "elasticsearch-%(elastic_version)s.tar.gz" % vars()
     with cd(workdir_elastic):
         if not exists(elastic_distfile):
-            run("wget https://github.com/downloads/elasticsearch/elasticsearch/%s" % elastic_distfile)
+            run("wget http://download.elasticsearch.org/elasticsearch/elasticsearch/%s" % elastic_distfile)
     return elastic_version, "%(workdir_elastic)s/%(elastic_distfile)s" % vars()
 
 @task
