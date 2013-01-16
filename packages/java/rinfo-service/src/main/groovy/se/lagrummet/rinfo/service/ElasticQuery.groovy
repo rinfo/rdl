@@ -398,7 +398,7 @@ class ElasticQuery {
             item.describedby = makeServiceLink(item.iri)
         }
         hit.highlightFields.each { key, hlf ->
-            item.get('matches', [:])[key] = hlf.fragments
+            item.get('matches', [:])[key] = hlf.fragments.collect { it.toString() }
         }
         return item
     }
