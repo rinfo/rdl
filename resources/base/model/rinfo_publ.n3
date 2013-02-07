@@ -360,6 +360,8 @@
 :Forfattning a owl:Class;
     rdfs:isDefinedBy : ;
     rdfs:label "Författning"@sv;
+    # TODO: ange även alternativa/äldre benämningar, t.ex.:
+    skos:altLabel "Kungörelse"@sv;
     rdfs:comment "En text som innehåller generella, bindande rättsregler (såsom lag, förordning eller föreskrift)  utgiven i någon författningssamling."@sv;
     protege:abstract "true";
     rdfs:subClassOf :FSDokument;
