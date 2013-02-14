@@ -52,6 +52,7 @@ class CollectorLogSession implements Closeable {
     }
 
     void close() {
+        state.collectDesc.addLiteral("prov:endedAtTime", dateTime(new Date()))
         conn.close()
     }
 
@@ -60,29 +61,28 @@ class CollectorLogSession implements Closeable {
         // TODO:? resdesign to save collect and *each page* results as RDF to file
         // - requires init to make a dir for current collect
         def feedId = source.feedId.toString()
-        def desc = newDescriber(false)
+        def describer = newDescriber(false)
         // Wipe old (collectContextUri AND related feedPageCtxts):
         def deletedOldCollect = false
-        for (feedAbout in desc.subjectUrisByLiteral("awol:id", feedId)) {
+        for (activityDesc in describer.subjects("prov:wasInfluencedBy", feedId)) {
             if (!deletedOldCollect) {
-                for (oldCollectUri in desc.subjectUris("iana:via", feedAbout)) {
-                    conn.clear(desc.toRef(oldCollectUri))
+                for (oldCollectUri in activityDesc.objectUris("prov:used")) {
+                    conn.clear(describer.toRef(oldCollectUri))
                     deletedOldCollect = true
                     break
                 }
             }
-            conn.clear(desc.toRef(feedAbout))
+            conn.clear(describer.toRef(feedAbout))
         }
         def startTime = new Date()
         def state = new SessionState()
         state.currentFeedId = feedId
         def collectUri = createCollectUri(feedId, startTime)
-        state.collectDesc = newDescriber(collectUri).newDescription(collectUri, "rc:Collect")
-        state.collectDesc.addLiteral("tl:start", dateTime(startTime))
-        def sourceDesc = state.collectDesc.addRel("dct:source")
-        sourceDesc.addRel("iana:current", source.currentFeed.toString())
-        sourceDesc.addLiteral("dct:identifier", feedId, "xsd:anyURI")
-        source
+        state.collectDesc = newDescriber(collectUri).newDescription(collectUri,
+                "prov:Activity")
+        state.collectDesc.addLiteral("prov:startedAtTime", dateTime(startTime))
+        state.collectDesc.addRel("prov:wasInfluencedBy", feedId)
+        //state.collectDesc.addRel("prov:wasAssociatedWith", source.agentUri)
         return state
     }
 
@@ -98,14 +98,8 @@ class CollectorLogSession implements Closeable {
         return reportBaseUri + feedId +"/latest" + new URL(url).path
     }
 
-    void updateCollectInfo() {
-        state.collectDesc.remove("tl:end")
-        state.collectDesc.addLiteral("tl:end", dateTime(new Date()))
-    }
-
-
     void logFeedPageVisit(URL pageUrl, Feed feed) {
-        // TODO: assert state.currentFeedId == feedId
+        assert state.currentFeedId == feedId
         def feedId = feed.id.toString()
 
         def feedUpdated = feed.getUpdated()
@@ -113,7 +107,7 @@ class CollectorLogSession implements Closeable {
         state.pageDescriber = newDescriber(collectedFeedUri)
         def feedDesc = state.pageDescriber.newDescription(collectedFeedUri, "awol:Feed")
 
-        state.collectDesc.addRel("iana:via", feedDesc.about)
+        state.collectDesc.addRel("prov:used", feedDesc.about)
 
         feedDesc.addLiteral("awol:id", feedId)
         feedDesc.addLiteral("awol:updated", feedUpdated)
@@ -134,8 +128,6 @@ class CollectorLogSession implements Closeable {
 
         // TODO: log HTTP headers for ETag/Modified-Since ...?
         state.currentFeedUri = feedDesc.about
-
-        updateCollectInfo()
     }
 
     void logFeedPageError(Exception e, URL pageUrl) {
@@ -149,9 +141,9 @@ class CollectorLogSession implements Closeable {
         if (e.message) {
             pageErrorDesc.addLiteral("rdf:value", e.message)
         }
-        pageErrorDesc.addRel("dct:source", pageUrl.toString())
-        pageErrorDesc.addLiteral("tl:at", dateTime(tstamp))
-        state.collectDesc.addRel("iana:via", pageErrorDesc.about)
+        pageErrorDesc.addRel("prov:wasDerivedFrom", pageUrl.toString())
+        pageErrorDesc.addLiteral("prov:atTime", dateTime(tstamp))
+        state.collectDesc.addRel("prov:generated", pageErrorDesc.about)
     }
 
 
@@ -162,8 +154,7 @@ class CollectorLogSession implements Closeable {
         entryDesc.addLiteral("awol:updated", dateTime(depotEntry.getUpdated()))
         entryDesc.addRel("foaf:primaryTopic", sourceEntry.getId().toString())
         entryDesc.addRel("dct:isPartOf", systemDatasetUri)
-        entryDesc.addRel("iana:via", sourceEntryDesc.about)
-        updateCollectInfo()
+        entryDesc.addRel("prov:wasQuotedFrom", sourceEntryDesc.about)
     }
 
     void logDeletedEntry(Feed sourceFeed, URI sourceEntryId, Date sourceEntryDeleted,
@@ -171,12 +162,11 @@ class CollectorLogSession implements Closeable {
         def deleted = state.pageDescriber.newDescription(null, "ov:DeletedEntry")
         // TODO: record sourceEntryDeleted:
         //def sourceDeletedEntryDesc = makeSourceDeletedEntryDesc(sourceEntryDeleted)
-        //deleted.addRel("iana:via", sourceDeletedEntryDesc.about)
+        //deleted.addRel("prov:wasQuotedFrom", sourceDeletedEntryDesc.about)
         deleted.addRel("foaf:primaryTopic", sourceEntryId.toString())
-        deleted.addLiteral("tl:at", dateTime(depotEntry.getUpdated()))
+        deleted.addLiteral("prov:atTime", dateTime(depotEntry.getUpdated()))
         deleted.addRel("dct:isPartOf", systemDatasetUri)
-        deleted.addRel("iana:via", state.currentFeedUri)
-        updateCollectInfo()
+        deleted.addRel("prov:wasDerivedFrom", state.currentFeedUri)
     }
 
     ErrorLevel logError(Exception error, Date timestamp, Feed sourceFeed, Entry sourceEntry) {
@@ -224,10 +214,9 @@ class CollectorLogSession implements Closeable {
             def repr = error.cause?.toString() ?: error.toString() ?: "[N/A]"
             errorDesc.addLiteral("rdf:value", repr)
         }
-        errorDesc.addLiteral("tl:at", dateTime(new Date()))
+        errorDesc.addLiteral("prov:atTime", dateTime(new Date()))
         def sourceEntryDesc = makeSourceEntryDesc(sourceEntry)
-        errorDesc.addRel("iana:via", sourceEntryDesc.about)
-        updateCollectInfo()
+        errorDesc.addRel("prov:wasDerivedFrom", sourceEntryDesc.about)
         return errorLevel
     }
 
@@ -256,10 +245,9 @@ class CollectorLogSession implements Closeable {
             boolean storePrefixes, String... contexts) {
         def desc = new Describer(conn, storePrefixes, contexts)
         return desc.setPrefix("dct", "http://purl.org/dc/terms/").
-            setPrefix("prv", "http://purl.org/net/provenance/ns#").
+            setPrefix("prov", "http://www.w3.org/ns/prov#").
             setPrefix("awol", "http://bblfish.net/work/atom-owl/2006-06-06/#").
             setPrefix("iana", "http://www.iana.org/assignments/relation/").
-            setPrefix("tl", "http://purl.org/NET/c4dm/timeline.owl#").
             setPrefix("sch", "http://purl.org/net/schemarama#").
             setPrefix("foaf", "http://xmlns.com/foaf/0.1/").
             setPrefix("ax", "http://buzzword.org.uk/rdf/atomix#").
