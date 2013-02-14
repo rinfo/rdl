@@ -735,9 +735,13 @@
     rdfs:isDefinedBy : ;
     rdfs:label "Departement"@sv;
     rdfs:comment """Anger ansvarigt departement."""@sv;
-    rdfs:domain [ owl:unionOf (:Lag :Forordning
-                               :Utredningsbetankande :Proposition
-                               :Kommittedirektiv) ];
+    rdfs:domain [ owl:unionOf (# :Forfattning
+                               :Lag :Forordning
+                               # :Forarbete
+                               :Utredningsbetankande
+                               :Kommittedirektiv
+                               :Proposition
+                               :Skrivelse) ];
     rdfs:range foaf:Organization; .
 
 
@@ -788,6 +792,24 @@
             owl:onProperty :utgarFran;
             owl:allValuesFrom :Utredningsbetankande
         ]; .
+
+
+#---------------------------------------
+
+:Skrivelse a owl:Class;
+    rdfs:isDefinedBy : ;
+    rdfs:label "Skrivelse"@sv;
+    rdfs:comment """En skrivelse från regeringen eller riksdagen, med information om t.ex. ett beslut."""@sv;
+    rdfs:subClassOf :Rattsinformationsdokument;
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :arsutgava;
+            owl:maxCardinality 1
+        ],
+        [ a owl:Restriction;
+            owl:onProperty :lopnummer;
+            owl:maxCardinality 1
+        ] .
 
 
 ##
