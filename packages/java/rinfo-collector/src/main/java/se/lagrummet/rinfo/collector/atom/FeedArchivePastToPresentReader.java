@@ -2,9 +2,11 @@ package se.lagrummet.rinfo.collector.atom;
 
 import java.io.*;
 import java.util.*;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import javax.activation.MimeType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.AtomDate;
+import org.apache.abdera.model.Content;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 
@@ -34,9 +37,11 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
     private final Logger logger = LoggerFactory.getLogger(
             FeedArchivePastToPresentReader.class);
 
-    private LinkedList<FeedReference> feedTrail;
-    private Map<IRI, AtomDate> entryModificationMap;
-    private Entry knownStoppingEntry;
+    protected LinkedList<FeedReference> feedTrail;
+    protected Map<IRI, AtomDate> entryModificationMap;
+    protected Entry knownStoppingEntry;
+
+    protected FeedReference feedOfFeeds;
 
     public FeedArchivePastToPresentReader() {
         super();
@@ -54,7 +59,14 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
     }
 
     @Override
-    public void afterTraversal() throws URISyntaxException {
+    public void afterTraversal() throws URISyntaxException, IOException {
+        if (feedOfFeeds != null) {
+            try {
+                processFeedOfFeeds(feedOfFeeds.openFeed());
+            } finally {
+                feedOfFeeds.close();
+            }
+        }
         for (FeedReference feedRef : feedTrail) {
             try {
                 try {
@@ -160,12 +172,54 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
         }
     }
 
+    protected boolean isFeedOfFeeds(Feed feed) {
+        for (Entry entry : feed.getEntries()) {
+            return isFeedContent(entry.getContentElement());
+        }
+        return false;
+    }
+
+    protected boolean isFeedContent(Content content) {
+        if (content == null || content.getSrc() == null) {
+            return false;
+        }
+        MimeType mt = content.getMimeType();
+        return mt != null &&
+            mt.getBaseType().equals("application/atom+xml") &&
+            mt.getParameter("type").equals("feed");
+    }
+
+    protected void processFeedOfFeeds(Feed feed) throws IOException {
+        for (Entry entry : feed.getEntries()) {
+            Content content = entry.getContentElement();
+            if (!isFeedContent(content))
+                continue;
+            // TODO: if entry id is known and updated isYoungerThan lastUpdated: continue
+            URL subFeedUrl = null;
+            try {
+                subFeedUrl = content.getResolvedSrc().toURL();
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+            readFeedPage(subFeedUrl);
+        }
+    }
+
     @Override
     public boolean processFeedPage(URL pageUrl, Feed feed) throws Exception {
         // TODO:?
         //if (!pageUrl.equals(subscriptionUrl)) {
         //    assert FeedPagingHelper.isArchive(feed);
         //}
+
+        if (feedOfFeeds == null && feedTrail.size() == 0) {
+            if (isFeedOfFeeds(feed)) {
+                feedOfFeeds = new FeedReference(pageUrl, feed);
+                return false;
+            }
+        }
 
         feedTrail.addFirst(new FeedReference(pageUrl, feed));
         feed = feed.sortEntriesByUpdated(true);
@@ -251,7 +305,6 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
     public CompleteFeedEntryIdIndex getCompleteFeedEntryIdIndex() {
         throw new UnsupportedOperationException("No support for complete feed indexing.");
     }
-
 
     Map<IRI, AtomDate> computeDeletedFromComplete(Feed feed) {
         Set<IRI> collectedEntryIds = getCompleteFeedEntryIdIndex().
