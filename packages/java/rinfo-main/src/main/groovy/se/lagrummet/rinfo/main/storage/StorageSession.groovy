@@ -18,7 +18,7 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.SourceContent
 import se.lagrummet.rinfo.store.depot.DuplicateDepotEntryException
 
-import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex
+import se.lagrummet.rinfo.collector.atom.FeedEntryDataIndex
 
 
 class StorageSession {
@@ -32,20 +32,20 @@ class StorageSession {
             new ArrayList<StorageHandler>()
     DepotSession depotSession
     CollectorLogSession logSession
-    CompleteFeedEntryIdIndex completeFeedEntryIdIndex
+    FeedEntryDataIndex feedEntryDataIndex
     ErrorLevel stopOnErrorLevel
 
     StorageSession(StorageCredentials credentials,
             DepotSession depotSession,
             Collection<StorageHandler> storageHandlers,
             CollectorLogSession logSession,
-            CompleteFeedEntryIdIndex completeFeedEntryIdIndex,
+            FeedEntryDataIndex feedEntryDataIndex,
             ErrorLevel stopOnErrorLevel) {
         this.credentials = credentials
         this.storageHandlers = storageHandlers
         this.depotSession = depotSession
         this.logSession = logSession
-        this.completeFeedEntryIdIndex = completeFeedEntryIdIndex
+        this.feedEntryDataIndex = feedEntryDataIndex
         this.stopOnErrorLevel = stopOnErrorLevel
         logSession.start(credentials)
     }
