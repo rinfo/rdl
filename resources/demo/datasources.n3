@@ -82,6 +82,11 @@
             iana:current <https://fst.lagrummet.se/ra/feed/>;
             dct:identifier "tag:riksarkivet.se,2012:rinfo:feed"^^xsd:anyURI;
             dct:format "application/atom+xml"
+        ], [
+            dct:publisher <http://rinfo.lagrummet.se/org/foersaekringskassan>;
+            iana:current <https://fst.lagrummet.se/fkfs/feed/>;
+            dct:identifier "tag:forsakringskassan.se,2013:rinfo:feed"^^xsd:anyURI;
+            dct:format "application/atom+xml"
         ],
         # Scraped feeds
         [
