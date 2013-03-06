@@ -67,6 +67,9 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                 Feed rootFeed = feedOfFeeds.openFeed();
                 fofId = rootFeed.getId();
                 fofMap = getFeedEntryDataIndex().getEntryDataForCompleteFeedId(fofId);
+                if (fofMap == null) {
+                    fofMap = new LinkedHashMap<IRI, AtomDate>();
+                }
                 processFeedOfFeeds(rootFeed);
             } finally {
                 feedOfFeeds.close();
@@ -146,7 +149,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                     storeNewFeedEntryDataIndex(feed);
                 }
 
-                if (fofMap != null) {
+                if (fofId != null) {
                     fofMap.put(feed.getId(), feed.getUpdatedElement().getValue());
                     getFeedEntryDataIndex().storeEntryDataForCompleteFeedId(fofId, fofMap);
                 }
@@ -215,11 +218,10 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
         AtomDate updated = entry.getUpdatedElement().getValue();
         AtomDate lastUpdated = (fofMap != null)?
                 fofMap.get(entry.getId()) : null;
-        if (updated == null || lastUpdated == null) {
-            return;
-        }
-        if (isYoungerThanOrEquals(lastUpdated.getDate(), updated.getDate())) {
-            return;
+        if (updated != null && lastUpdated != null) {
+            if (!isYoungerThan(updated.getDate(), lastUpdated.getDate())) {
+                return;
+            }
         }
         URL subFeedUrl = null;
         try {
@@ -380,10 +382,6 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
 
     public static boolean isYoungerThan(Date date, Date thanDate) {
         return date.compareTo(thanDate) > 0;
-    }
-
-    public static boolean isYoungerThanOrEquals(Date date, Date thanDate) {
-        return date.compareTo(thanDate) >= 0;
     }
 
     public static boolean isOlderThan(Date date, Date thanDate) {
