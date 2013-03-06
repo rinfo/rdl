@@ -74,20 +74,5 @@ class DefaultArchiveReader extends FeedArchivePastToPresentReader {
 
 
 class CompleteFeedAwareReader extends DefaultArchiveReader {
-    FeedEntryDataIndex feedEntryDataIndex
-
-    CompleteFeedAwareReader() {
-        feedEntryDataIndex = new FeedEntryDataIndex() {
-                def feedEntryDataMap = [:]
-                Map<IRI, AtomDate> getEntryDataForCompleteFeedId(IRI feedId) {
-                    return feedEntryDataMap[feedId]
-                }
-                void storeEntryDataForCompleteFeedId(IRI feedId,
-                        Map<IRI, AtomDate> entryData) {
-                    feedEntryDataMap[feedId] = entryData
-                }
-            }
-    }
-
+    FeedEntryDataIndex feedEntryDataIndex = new FeedEntryDataIndexMemImpl()
 }
-
