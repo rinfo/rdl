@@ -109,8 +109,9 @@ class EntryRdfValidatorHandler implements StorageHandler {
     }
 
     void validate(DepotEntry depotEntry) {
+        def repo = EntryRdfReader.readRdf(depotEntry)
         try {
-            validate(EntryRdfReader.readRdf(depotEntry), depotEntry.getId())
+            validate(repo, depotEntry.getId())
         } finally {
           repo.shutDown()
         }
@@ -127,7 +128,8 @@ class EntryRdfValidatorHandler implements StorageHandler {
             return
         }
         def uriResultMap = uriMinter.computeUris(repo)
-        def uriStr = uriResultMap[subjectUri.toString()]?.get(0)?.uri
+        def uriResults = uriResultMap[subjectUri.toString()]
+        def uriStr = (uriResults && uriResults.size() > 0)? uriResults[0].uri : null
         if (uriStr == null) {
             // TODO: throw new UnknownSubjectException(subjectUri)?
             for (results in uriResultMap.values()) {
