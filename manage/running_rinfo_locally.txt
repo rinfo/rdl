@@ -119,21 +119,28 @@ Now you are ready to start up:
   The web service is simply a small web server that serves static
   files from a particular directory.
 
-  These can be served by the following steps::
+  These can be created and served by the following steps::
 
     $ cd tools/rinfomain/
-    $ groovy map_feeds_docs.groovy
+    $ ./map_feeds_and_base.sh
 
-  This creates a number of atom feed files, RDF files and document
-  files (in PDF) under ``/opt/work/rinfo/testsources/www``. These are
-  created from example files present in ``../../documentation``
+  Under hood, the ``map_feeds_and_base.sh`` script runs two groovy scripts with
+  some present parameters for destination file paths.
 
-    $ groovy base_as_feed.groovy
+  map_feeds_docs.groovy
 
-  This creates files for the admin feed from the resources found in
-  ``../../resources/base`` and the content feeds that now are present in
-  ``/opt/work/rinfo/testsources/www``. The admin feed files are likewise
-  created in ``/opt/work/rinfo/testsources/www``.
+    This creates a number of atom feed files, RDF files and document files (in
+    PDF) under ``/opt/work/rinfo/testsources/www``. These are created from
+    example files present in ``../../documentation``
+
+  base_as_feed.groovy
+
+    This creates files for the admin feed from the resources found in
+    ``../../resources/base`` and the content feeds that now are present in
+    ``/opt/work/rinfo/testsources/www``. The admin feed files are likewise
+    created in ``/opt/work/rinfo/testsources/www``.
+
+  Once these files are created, serve these using:
 
     $ groovy serve_folder.groovy
 
@@ -203,7 +210,7 @@ Now you are ready to start up:
       Verify that rinfo-main is up and running by going to
       http://localhost:8180/feed/current which should contain a valid
       feed. You can also verify that data has been collected by
-      looking in the directories under `
+      looking in the directories under
       ``/opt/work/rinfo/depots/rinfo/depot/``, particularly ``publ``
       and ``feed``.
 
