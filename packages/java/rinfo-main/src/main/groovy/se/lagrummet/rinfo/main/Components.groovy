@@ -62,6 +62,7 @@ class Components {
         URIMINTER_ENTRY_ID("rinfo.main.uriMinter.uriSpaceEntryId"),
         URIMINTER_URI_SPACE_URI("rinfo.main.uriMinter.uriSpaceUri"),
         COLLECTOR_HTTP_TIMEOUT_SECONDS("rinfo.main.collector.http.timeoutSeconds"),
+        COLLECTOR_HTTP_ALLOW_SELF_SIGNED("rinfo.main.collector.http.allowSelfSigned"),
         ADMIN_FEED_ID("rinfo.main.collector.adminFeedId"),
         ADMIN_FEED_URL("rinfo.main.collector.adminFeedUrl"),
         ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets", false),
@@ -162,6 +163,9 @@ class Components {
     protected void setupFeedCollector() {
         feedCollector = new FeedCollector(storage,
                 config.getInt(ConfigKey.COLLECTOR_HTTP_TIMEOUT_SECONDS.value))
+        if (config.getBoolean(ConfigKey.COLLECTOR_HTTP_ALLOW_SELF_SIGNED.value)) {
+            feedCollector.allowSelfSigned = true
+        }
     }
 
     protected void setupCollectScheduler() {

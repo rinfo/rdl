@@ -8,9 +8,10 @@ import org.apache.http.conn.scheme.PlainSocketFactory
 import org.apache.http.conn.scheme.Scheme
 import org.apache.http.conn.scheme.SchemeRegistry
 import org.apache.http.conn.ssl.SSLSocketFactory
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy
 import org.apache.http.impl.client.DefaultHttpClient
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
 import org.apache.http.impl.conn.SingleClientConnManager
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
 import org.apache.http.params.BasicHttpParams
 import org.apache.http.params.HttpConnectionParams
 import org.apache.http.params.HttpParams
@@ -20,7 +21,8 @@ public class FeedCollector {
 
     Storage storage
     int httpTimeoutSeconds
-    static int DEFAULT_HTTP_TIMEOUT_SECONDS
+    boolean allowSelfSigned = false
+    static int DEFAULT_HTTP_TIMEOUT_SECONDS = 0
 
     public FeedCollector(Storage storage,
             httpTimeoutSeconds=DEFAULT_HTTP_TIMEOUT_SECONDS) {
@@ -38,14 +40,14 @@ public class FeedCollector {
     }
 
     public HttpClient createClient() {
-        return createDefaultClient(httpTimeoutSeconds)
+        return createDefaultClient(httpTimeoutSeconds, allowSelfSigned)
     }
 
     public static HttpClient createDefaultClient() {
-        createDefaultClient(DEFAULT_HTTP_TIMEOUT_SECONDS)
+        createDefaultClient(DEFAULT_HTTP_TIMEOUT_SECONDS, false)
     }
 
-    public static HttpClient createDefaultClient(int httpTimeoutSeconds) {
+    public static HttpClient createDefaultClient(int httpTimeoutSeconds, boolean allowSelfSigned) {
 
         // TODO:? httpClient.setHttpRequestRetryHandler(...) // no use case demands it..
 
@@ -62,7 +64,11 @@ public class FeedCollector {
         }
         def socketFactory = new SSLSocketFactory(trustStore)
         */
-        def socketFactory = SSLSocketFactory.getSocketFactory()
+
+        def socketFactory = allowSelfSigned?
+                new SSLSocketFactory(new TrustSelfSignedStrategy()) :
+                SSLSocketFactory.getSocketFactory()
+
         def httpParams = new BasicHttpParams()
         HttpConnectionParams.setConnectionTimeout(httpParams, httpTimeoutSeconds * 1000) // millisecs
         def httpClient = new DefaultHttpClient(httpParams)
