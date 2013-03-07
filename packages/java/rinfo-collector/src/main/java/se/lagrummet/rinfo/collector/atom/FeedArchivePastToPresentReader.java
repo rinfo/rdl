@@ -80,7 +80,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                 Feed feed = feedRef.openFeed();
                 feed = feed.sortEntriesByUpdated(/*new_first=*/false);
 
-                // TODO: must not have paged feed links! Fail if so.
+                // IMPROVE: must not have paged feed links! Fail if so.
                 //
                 // Also fail if feed is already known but only now was
                 // marked as complete.. (Otherwise collector must construct
@@ -104,7 +104,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                     Date entryUpdated = entry.getUpdated();
                     if (deletedMap.containsKey(entryId)) {
                         if (isYoungerThan(deletedMap.get(entryId).getDate(), entryUpdated)) {
-                            // TODO:? only if deleted is youngest, not same-age?
+                            // IMPROVE: only if deleted is youngest, not same-age?
                             // Also, ignore deleted as now, or do delete and re-add?
                             continue;
                         } else {
@@ -130,8 +130,8 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                     }
                 }
 
-                // TODO: not necessary if incremental logging is used. See
-                // also the TODO after processFeedPageInOrder call.
+                // IMPROVE: not necessary if incremental logging is used. See
+                // also the IMPROVE after processFeedPageInOrder call.
                 if (completeFeed) {
                     storeIntermediateFeedEntryDataIndex(feed);
                 }
@@ -139,7 +139,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                 processFeedPageInOrder(feedRef.getFeedUrl(), feed,
                         effectiveEntries, deletedMap);
 
-                // TODO: don't do this here? Should impl take care of doing this
+                // IMPROVE: don't do this here? Should impl take care of doing this
                 // in a granular, storage-specific way? Like:
                 // - make sure or assume that all in new feed older than
                 //   knownStoppingEntry are stored,
@@ -236,7 +236,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
 
     @Override
     public boolean processFeedPage(URL pageUrl, Feed feed) throws Exception {
-        // TODO:?
+        // IMPROVE:?
         //if (!pageUrl.equals(subscriptionUrl)) {
         //    assert FeedPagingHelper.isArchive(feed);
         //}
@@ -256,9 +256,9 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
             putUriDateIfNewOrYoungest(entryModificationMap, item.getKey(), item.getValue());
         }
 
-        // FIXME:? needs to scan the rest with the same updated stamp before
+        // TODO:? needs to scan the rest with the same updated stamp before
         // stopping (even if this means following more pages back in time?)?
-        // TODO: It would thus also be wise to mark/remove entries in feedTrail
+        // IMPROVE: It would thus also be wise to mark/remove entries in feedTrail
         // which have been visited (so the subclass don't have to check this
         // twice).
         for (Entry entry : feed.getEntries()) {
