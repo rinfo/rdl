@@ -8,9 +8,10 @@ import org.apache.commons.io.FileUtils;
 
 import org.apache.http.client.HttpClient;
 
-import org.apache.abdera.model.Feed;
-import org.apache.abdera.model.Entry;
 import org.apache.abdera.i18n.iri.IRI;
+import org.apache.abdera.model.AtomDate;
+import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Feed;
 
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.sail.SailRepository;
@@ -21,7 +22,7 @@ import se.lagrummet.rinfo.store.depot.DepotSession;
 import se.lagrummet.rinfo.store.depot.FileDepot;
 import se.lagrummet.rinfo.store.depot.SourceContent;
 
-import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex;
+import se.lagrummet.rinfo.collector.atom.FeedEntryDataIndex;
 import se.lagrummet.rinfo.main.storage.ErrorLevel;
 import se.lagrummet.rinfo.main.storage.FeedCollector;
 import se.lagrummet.rinfo.main.storage.FeedCollectorSession;
@@ -173,11 +174,11 @@ public class Checker {
     }
 
 
-    public static class NoopFeedEntryIdIndex implements CompleteFeedEntryIdIndex {
-        public Set<IRI> getEntryIdsForCompleteFeedId(IRI feedId) {
+    public static class NoopFeedEntryIdIndex implements FeedEntryDataIndex {
+        public Map<IRI, AtomDate> getEntryDataForCompleteFeedId(IRI feedId) {
             return null;
         }
-        public void storeEntryIdsForCompleteFeedId(IRI feedId, Set<IRI> entryIds) {
+        public void storeEntryDataForCompleteFeedId(IRI feedId, Map<IRI, AtomDate> entryData) {
             ;
         }
     }

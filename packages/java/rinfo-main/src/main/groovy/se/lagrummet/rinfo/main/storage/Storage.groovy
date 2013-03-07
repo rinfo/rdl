@@ -3,7 +3,7 @@ package se.lagrummet.rinfo.main.storage;
 import org.openrdf.repository.Repository;
 
 import se.lagrummet.rinfo.store.depot.Depot;
-import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex;
+import se.lagrummet.rinfo.collector.atom.FeedEntryDataIndex;
 
 
 public class Storage {
@@ -11,16 +11,16 @@ public class Storage {
     private Depot depot;
     private Collection<StorageHandler> storageHandlers;
     private CollectorLog collectorLog;
-    private CompleteFeedEntryIdIndex completeFeedEntryIdIndex;
+    private FeedEntryDataIndex feedEntryDataIndex;
     private ErrorLevel stopOnErrorLevel;
 
     public Storage(Depot depot,
             CollectorLog collectorLog,
-            CompleteFeedEntryIdIndex completeFeedEntryIdIndex,
+            FeedEntryDataIndex feedEntryDataIndex,
             ErrorLevel stopOnErrorLevel) {
         this.depot = depot;
         this.collectorLog = collectorLog;
-        this.completeFeedEntryIdIndex = completeFeedEntryIdIndex;
+        this.feedEntryDataIndex = feedEntryDataIndex;
         this.stopOnErrorLevel = stopOnErrorLevel
     }
 
@@ -52,7 +52,7 @@ public class Storage {
         return new StorageSession(credentials, depot.openSession(),
                 storageHandlers,
                 collectorLog.openSession(),
-                completeFeedEntryIdIndex,
+                feedEntryDataIndex,
                 stopOnErrorLevel);
     }
 

@@ -21,8 +21,8 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.depot.LockedDepotEntryException
 
-import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex
-import se.lagrummet.rinfo.collector.atom.fs.CompleteFeedEntryIdIndexFSImpl
+import se.lagrummet.rinfo.collector.atom.FeedEntryDataIndex
+import se.lagrummet.rinfo.collector.atom.fs.FeedEntryDataIndexFSImpl
 
 import se.lagrummet.rinfo.base.URIMinter
 import se.lagrummet.rinfo.base.rdf.RDFUtil
@@ -155,7 +155,7 @@ class Components {
 
     protected void setupStorage() {
         storage = new Storage(createDepot(), collectorLog,
-                createCompleteFeedEntryIdIndex(),
+                createFeedEntryDataIndex(),
                 ErrorLevel.valueOf(configString(ConfigKey.STOP_ON_ERROR_LEVEL)))
     }
 
@@ -215,11 +215,11 @@ class Components {
         return depot
     }
 
-    CompleteFeedEntryIdIndex createCompleteFeedEntryIdIndex() {
+    FeedEntryDataIndex createFeedEntryDataIndex() {
         def completeFeedsIdIndexDir = new File(configString(
                 ConfigKey.COMPLETE_FEEDS_ID_INDEX_DIR))
         ensureDir(completeFeedsIdIndexDir)
-        return new CompleteFeedEntryIdIndexFSImpl(completeFeedsIdIndexDir);
+        return new FeedEntryDataIndexFSImpl(completeFeedsIdIndexDir);
     }
 
     Repository createRegistryRepo() {

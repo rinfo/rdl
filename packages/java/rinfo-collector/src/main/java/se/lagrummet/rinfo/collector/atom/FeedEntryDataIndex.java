@@ -1,8 +1,10 @@
 package se.lagrummet.rinfo.collector.atom;
 
 import java.util.*;
+import java.io.IOException;
 
 import org.apache.abdera.i18n.iri.IRI;
+import org.apache.abdera.model.AtomDate;
 
 
 /**
@@ -11,7 +13,7 @@ import org.apache.abdera.i18n.iri.IRI;
  * according to <a href="http://tools.ietf.org/html/rfc5005#section-2">RFC
  * 5005: Feed Paging and Archiving, section 2</a>.
  */
-public interface CompleteFeedEntryIdIndex {
+public interface FeedEntryDataIndex {
 
     /**
      * Must return id:s for all previously collected entries from a feed with
@@ -20,11 +22,8 @@ public interface CompleteFeedEntryIdIndex {
      * are to be deleted (i.e. any id in the returned collection which is
      * missing in the currently collected feed).
      */
-    Set<IRI> getEntryIdsForCompleteFeedId(IRI feedId);
+    Map<IRI, AtomDate> getEntryDataForCompleteFeedId(IRI feedId);
 
-    // TODO: two-step: set, [process], commit? Or granular:
-    // addCollectedEntyId(IRI feedId, IRI entryId)
-    // removeCollectedEntyId(IRI feedId, IRI entryId)
-    void storeEntryIdsForCompleteFeedId(IRI feedId, Set<IRI> entryIds);
+    void storeEntryDataForCompleteFeedId(IRI feedId, Map<IRI, AtomDate> entryData);
 
 }

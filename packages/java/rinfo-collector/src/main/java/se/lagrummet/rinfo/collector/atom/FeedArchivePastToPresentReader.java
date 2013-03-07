@@ -2,9 +2,11 @@ package se.lagrummet.rinfo.collector.atom;
 
 import java.io.*;
 import java.util.*;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import javax.activation.MimeType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.AtomDate;
+import org.apache.abdera.model.Content;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 
@@ -34,9 +37,11 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
     private final Logger logger = LoggerFactory.getLogger(
             FeedArchivePastToPresentReader.class);
 
-    private LinkedList<FeedReference> feedTrail;
-    private Map<IRI, AtomDate> entryModificationMap;
-    private Entry knownStoppingEntry;
+    protected LinkedList<FeedReference> feedTrail;
+    protected Map<IRI, AtomDate> entryModificationMap;
+    protected Entry knownStoppingEntry;
+
+    protected FeedReference feedOfFeeds;
 
     public FeedArchivePastToPresentReader() {
         super();
@@ -54,85 +59,103 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
     }
 
     @Override
-    public void afterTraversal() throws URISyntaxException {
+    public void afterTraversal() throws URISyntaxException, IOException {
+        IRI fofId = null;
+        Map<IRI, AtomDate> fofMap = null;
+        if (feedOfFeeds != null) {
+            try {
+                Feed rootFeed = feedOfFeeds.openFeed();
+                fofId = rootFeed.getId();
+                fofMap = getFeedEntryDataIndex().getEntryDataForCompleteFeedId(fofId);
+                if (fofMap == null) {
+                    fofMap = new LinkedHashMap<IRI, AtomDate>();
+                }
+                processFeedOfFeeds(rootFeed);
+            } finally {
+                feedOfFeeds.close();
+            }
+        }
         for (FeedReference feedRef : feedTrail) {
             try {
-                try {
-                    Feed feed = feedRef.openFeed();
-                    feed = feed.sortEntriesByUpdated(/*new_first=*/false);
+                Feed feed = feedRef.openFeed();
+                feed = feed.sortEntriesByUpdated(/*new_first=*/false);
 
-                    // TODO: must not have paged feed links! Fail if so.
-                    //
-                    // Also fail if feed is already known but only now was
-                    // marked as complete.. (Otherwise collector must construct
-                    // complete source+entry index).
-                    //
-                    // .. not at all necessary to use this pastToPresent
-                    // two-pass logic on complete feeds - there will be only
-                    // one feedRef in feedTrail!
-                    // Could possibly also use the complete state to simplify
-                    // the stopOnEntry mechanism? Remember, we need all to make
-                    // a complete diff. Another reason to separate "archive
-                    // reading" from "complete reading"...
-                    boolean completeFeed = FeedPagingHelper.isComplete(feed);
+                // IMPROVE: must not have paged feed links! Fail if so.
+                //
+                // Also fail if feed is already known but only now was
+                // marked as complete.. (Otherwise collector must construct
+                // complete source+entry index).
+                //
+                // .. not at all necessary to use this pastToPresent
+                // two-pass logic on complete feeds - there will be only
+                // one feedRef in feedTrail!
+                // Could possibly also use the complete state to simplify
+                // the stopOnEntry mechanism? Remember, we need all to make
+                // a complete diff. Another reason to separate "archive
+                // reading" from "complete reading"...
+                boolean completeFeed = FeedPagingHelper.isComplete(feed);
 
-                    Map<IRI, AtomDate> deletedMap = (completeFeed)?
-                            computeDeletedFromComplete(feed) : getDeletedMarkers(feed);
+                Map<IRI, AtomDate> deletedMap = (completeFeed)?
+                        computeDeletedFromComplete(feed) : getDeletedMarkers(feed);
 
-                    List<Entry> effectiveEntries = new ArrayList<Entry>();
-                    for (Entry entry: feed.getEntries()) {
-                        IRI entryId = entry.getId();
-                        Date entryUpdated = entry.getUpdated();
-                        if (deletedMap.containsKey(entryId)) {
-                            if (isYoungerThan(deletedMap.get(entryId).getDate(), entryUpdated)) {
-                                // TODO:? only if deleted is youngest, not same-age?
-                                // Also, ignore deleted as now, or do delete and re-add?
-                                continue;
-                            } else {
-                                deletedMap.remove(entryId);
-                            }
-                        }
-                        AtomDate youngestAtomDate = entryModificationMap.get(
-                                entryId);
-                        boolean notSeenOrYoungestOfSeen =
-                                youngestAtomDate == null ||
-                                youngestAtomDate.getDate().equals(entryUpdated);
-                        if (notSeenOrYoungestOfSeen) {
-                            boolean knownOrOlderThanKnown =
-                                knownStoppingEntry != null && (
-                                    entryId.equals(
-                                        knownStoppingEntry.getId()) ||
-                                    isOlderThan(entryUpdated,
-                                        knownStoppingEntry.getUpdated()));
-                            if (knownOrOlderThanKnown) {
-                                continue;
-                            }
-                            effectiveEntries.add(entry);
+                List<Entry> effectiveEntries = new ArrayList<Entry>();
+                for (Entry entry: feed.getEntries()) {
+                    IRI entryId = entry.getId();
+                    Date entryUpdated = entry.getUpdated();
+                    if (deletedMap.containsKey(entryId)) {
+                        if (isYoungerThan(deletedMap.get(entryId).getDate(), entryUpdated)) {
+                            // IMPROVE: only if deleted is youngest, not same-age?
+                            // Also, ignore deleted as now, or do delete and re-add?
+                            continue;
+                        } else {
+                            deletedMap.remove(entryId);
                         }
                     }
-
-                    // TODO: not necessary if incremental logging is used. See
-                    // also the TODO after processFeedPageInOrder call.
-                    if (completeFeed)
-                        storeIntermediateCompleteFeedEntryIdIndex(feed);
-
-                    processFeedPageInOrder(feedRef.getFeedUrl(), feed,
-                            effectiveEntries, deletedMap);
-
-                    // TODO: don't do this here? Should impl take care of doing this
-                    // in a granular, storage-specific way? Like:
-                    // - make sure or assume that all in new feed older than
-                    //   knownStoppingEntry are stored,
-                    // - remove all deleted and
-                    // - add new to entry index for feed..
-                    if (completeFeed)
-                        storeNewCompleteFeedEntryIdIndex(feed);
-
-                } finally {
-                    feedRef.close();
+                    AtomDate youngestAtomDate = entryModificationMap.get(
+                            entryId);
+                    boolean notSeenOrYoungestOfSeen =
+                            youngestAtomDate == null ||
+                            youngestAtomDate.getDate().equals(entryUpdated);
+                    if (notSeenOrYoungestOfSeen) {
+                        boolean knownOrOlderThanKnown =
+                            knownStoppingEntry != null && (
+                                entryId.equals(
+                                    knownStoppingEntry.getId()) ||
+                                isOlderThan(entryUpdated,
+                                    knownStoppingEntry.getUpdated()));
+                        if (knownOrOlderThanKnown) {
+                            continue;
+                        }
+                        effectiveEntries.add(entry);
+                    }
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+
+                // IMPROVE: not necessary if incremental logging is used. See
+                // also the IMPROVE after processFeedPageInOrder call.
+                if (completeFeed) {
+                    storeIntermediateFeedEntryDataIndex(feed);
+                }
+
+                processFeedPageInOrder(feedRef.getFeedUrl(), feed,
+                        effectiveEntries, deletedMap);
+
+                // IMPROVE: don't do this here? Should impl take care of doing this
+                // in a granular, storage-specific way? Like:
+                // - make sure or assume that all in new feed older than
+                //   knownStoppingEntry are stored,
+                // - remove all deleted and
+                // - add new to entry index for feed..
+                if (completeFeed) {
+                    storeNewFeedEntryDataIndex(feed);
+                }
+
+                if (fofId != null) {
+                    fofMap.put(feed.getId(), feed.getUpdatedElement().getValue());
+                    getFeedEntryDataIndex().storeEntryDataForCompleteFeedId(fofId, fofMap);
+                }
+
+            } finally {
+                feedRef.close();
             }
         }
     }
@@ -160,24 +183,82 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
         }
     }
 
+    protected boolean isFeedOfFeeds(Feed feed) {
+        for (Entry entry : feed.getEntries()) {
+            return isFeedContent(entry.getContentElement());
+        }
+        return false;
+    }
+
+    protected boolean isFeedContent(Content content) {
+        if (content == null || content.getSrc() == null) {
+            return false;
+        }
+        MimeType mt = content.getMimeType();
+        return mt != null &&
+            mt.getBaseType().equals("application/atom+xml") &&
+            mt.getParameter("type").equals("feed");
+    }
+
+    protected void processFeedOfFeeds(Feed feed) throws IOException {
+        Map<IRI, AtomDate> fofMap = getFeedEntryDataIndex().
+                getEntryDataForCompleteFeedId(feed.getId());
+        feed = feed.sortEntriesByUpdated(/*new_first=*/true);
+        for (Entry entry : feed.getEntries()) {
+            Content content = entry.getContentElement();
+            if (!isFeedContent(content)) {
+                continue;
+            }
+            processSubFeedEntry(fofMap, entry);
+        }
+    }
+
+    private void processSubFeedEntry(Map<IRI, AtomDate> fofMap, Entry entry)
+            throws IOException {
+        AtomDate updated = entry.getUpdatedElement().getValue();
+        AtomDate lastUpdated = (fofMap != null)?
+                fofMap.get(entry.getId()) : null;
+        if (updated != null && lastUpdated != null) {
+            if (!isYoungerThan(updated.getDate(), lastUpdated.getDate())) {
+                return;
+            }
+        }
+        URL subFeedUrl = null;
+        try {
+            subFeedUrl = entry.getContentElement().getResolvedSrc().toURL();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        readFeedPage(subFeedUrl);
+    }
+
     @Override
     public boolean processFeedPage(URL pageUrl, Feed feed) throws Exception {
-        // TODO:?
+        // IMPROVE:?
         //if (!pageUrl.equals(subscriptionUrl)) {
         //    assert FeedPagingHelper.isArchive(feed);
         //}
 
+        if (feedOfFeeds == null && feedTrail.size() == 0) {
+            if (isFeedOfFeeds(feed)) {
+                feedOfFeeds = new FeedReference(pageUrl, feed);
+                return false;
+            }
+        }
+
         feedTrail.addFirst(new FeedReference(pageUrl, feed));
-        feed = feed.sortEntriesByUpdated(true);
+        feed = feed.sortEntriesByUpdated(/*new_first=*/true);
 
         Map<IRI, AtomDate> deletedMap = getDeletedMarkers(feed);
         for (Map.Entry<IRI, AtomDate> item : deletedMap.entrySet()) {
             putUriDateIfNewOrYoungest(entryModificationMap, item.getKey(), item.getValue());
         }
 
-        // FIXME:? needs to scan the rest with the same updated stamp before
+        // TODO:? needs to scan the rest with the same updated stamp before
         // stopping (even if this means following more pages back in time?)?
-        // TODO: It would thus also be wise to mark/remove entries in feedTrail
+        // IMPROVE: It would thus also be wise to mark/remove entries in feedTrail
         // which have been visited (so the subclass don't have to check this
         // twice).
         for (Entry entry : feed.getEntries()) {
@@ -243,24 +324,23 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
     }
 
     /**
-     * Optional getter for a {@link CompleteFeedEntryIdIndex}, used if an
+     * Optional getter for a {@link FeedEntryDataIndex}, used if an
      * encountered feed is marked as <em>complete</em>. See that interface for
      * details.
      * @throws UnsupportedOperationException by default.
      */
-    public CompleteFeedEntryIdIndex getCompleteFeedEntryIdIndex() {
+    public FeedEntryDataIndex getFeedEntryDataIndex() {
         throw new UnsupportedOperationException("No support for complete feed indexing.");
     }
 
-
     Map<IRI, AtomDate> computeDeletedFromComplete(Feed feed) {
-        Set<IRI> collectedEntryIds = getCompleteFeedEntryIdIndex().
-                getEntryIdsForCompleteFeedId(feed.getId());
+        Map<IRI, AtomDate> collectedEntryData = getFeedEntryDataIndex().
+                getEntryDataForCompleteFeedId(feed.getId());
         Set<IRI> deletedIris = new HashSet<IRI>();
-        if (collectedEntryIds == null) {
+        if (collectedEntryData == null) {
             return Collections.emptyMap();
         }
-        deletedIris.addAll(collectedEntryIds);
+        deletedIris.addAll(collectedEntryData.keySet());
         for (Entry entry: feed.getEntries()) {
             deletedIris.remove(entry.getId());
         }
@@ -278,26 +358,26 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
      * This list will contain entries not yet stored, but also not yet deleted,
      * which guarantees that a new diff will not miss anything to be deleted.
      */
-    void storeIntermediateCompleteFeedEntryIdIndex(Feed feed) {
-        Set<IRI> allEntryIds = getCompleteFeedEntryIdIndex().
-                getEntryIdsForCompleteFeedId(feed.getId());
-        if (allEntryIds == null) {
-            allEntryIds = new HashSet<IRI>();
+    void storeIntermediateFeedEntryDataIndex(Feed feed) {
+        Map<IRI, AtomDate> allEntryData = getFeedEntryDataIndex().
+                getEntryDataForCompleteFeedId(feed.getId());
+        if (allEntryData == null) {
+            allEntryData = new HashMap<IRI, AtomDate>();
         }
         for (Entry entry: feed.getEntries()) {
-            allEntryIds.add(entry.getId());
+            allEntryData.put(entry.getId(), entry.getUpdatedElement().getValue());
         }
-        getCompleteFeedEntryIdIndex().storeEntryIdsForCompleteFeedId(
-                feed.getId(), allEntryIds);
+        getFeedEntryDataIndex().storeEntryDataForCompleteFeedId(
+                feed.getId(), allEntryData);
     }
 
-    void storeNewCompleteFeedEntryIdIndex(Feed feed) {
-        Set<IRI> entryIds = new HashSet<IRI>();
+    void storeNewFeedEntryDataIndex(Feed feed) throws IOException {
+        Map<IRI, AtomDate> entryMap = new HashMap<IRI, AtomDate>();
         for (Entry entry: feed.getEntries()) {
-            entryIds.add(entry.getId());
+            entryMap.put(entry.getId(), entry.getUpdatedElement().getValue());
         }
-        getCompleteFeedEntryIdIndex().storeEntryIdsForCompleteFeedId(
-                feed.getId(), entryIds);
+        getFeedEntryDataIndex().storeEntryDataForCompleteFeedId(
+                feed.getId(), entryMap);
     }
 
     public static boolean isYoungerThan(Date date, Date thanDate) {

@@ -14,7 +14,7 @@ import org.apache.abdera.i18n.iri.IRI
 import se.lagrummet.rinfo.store.depot.Atomizer
 import se.lagrummet.rinfo.store.depot.SourceContent
 
-import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex
+import se.lagrummet.rinfo.collector.atom.FeedEntryDataIndex
 import se.lagrummet.rinfo.collector.atom.FeedArchivePastToPresentReader
 
 
@@ -77,8 +77,8 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
     }
 
     @Override
-    public CompleteFeedEntryIdIndex getCompleteFeedEntryIdIndex() {
-        return storageSession.getCompleteFeedEntryIdIndex()
+    public FeedEntryDataIndex getFeedEntryDataIndex() {
+        return storageSession.getFeedEntryDataIndex()
     }
 
     @Override
