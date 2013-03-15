@@ -294,6 +294,15 @@ maintenance tools which are bundled with the deployed web applications.
 
 These can be run on any deployed target server.
 
+Regenerate The Main Atom Feed Archive
+------------------------------------------------------------------------
+
+To regenerate the atom feed archive from its contained entries, run::
+
+    $ sudo -u tomcat ~/mgr_work/common/bin/run_webapp_tool.sh /opt/tomcat/webapps/rinfo-main/ se.lagrummet.rinfo.store.depot.FileDepotCmdTool rinfo-main-common.properties rinfo.depot index
+
+This might take a couple of minutes for a depot of about 8 Gb in size (on a commodity virtual server, as of 2011).
+
 Regenerate The ElasticSearch Index
 ------------------------------------------------------------------------
 
