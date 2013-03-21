@@ -60,7 +60,6 @@ class RepoEntry {
     org.openrdf.model.URI entryUri
     Literal entryIdLiteral
     Literal entryUpdatedLiteral
-    EntryStats entryStats
 
     private Entry entry
 
@@ -85,7 +84,6 @@ class RepoEntry {
         this.entryUri = vf.createURI(idStr)
         this.entryIdLiteral = vf.createLiteral(idStr, XMLSchema.ANYURI)
         this.entryUpdatedLiteral = RDFUtil.createDateTime(vf, updated)
-        this.entryStats = new EntryStats(conn, idStr, getContext().stringValue())
     }
 
     Resource getContext() {
@@ -131,7 +129,6 @@ class RepoEntry {
             processContents()
             conn.commit() // TODO: either load into mem first, or do something
                           // if addStatistics fails...
-            entryStats.addStatistics()
         } catch (Exception e) {
             conn.rollback()
             throw e
@@ -142,7 +139,6 @@ class RepoEntry {
     void delete() {
         // TODO: throw error if already deleted or missing?
         try {
-            entryStats.removeStatistics()
             clearContext()
             // TODO:? add the tombstone as a marker (e.g. for isCollected during collect)?
             //addTombstoneContext()

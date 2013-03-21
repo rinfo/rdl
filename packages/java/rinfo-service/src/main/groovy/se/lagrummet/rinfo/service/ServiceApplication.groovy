@@ -64,8 +64,6 @@ class ServiceApplication extends Application {
 
         router.attach("/collector", new Finder(ctx, RDFLoaderHandler))
 
-        router.attach("/view", new SparqlTreeRouter(ctx, components.repository))
-
         router.attach("/var/terms",
                 new DataFinder(ctx, components.repository,
                     components.jsonLdSettings, components.dataAppBaseUri + "var/terms",

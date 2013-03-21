@@ -24,7 +24,6 @@
     <spatial4j.version>0.3</spatial4j.version>
     <tika.version>0.9</tika.version>
     <jackson.version>1.8.1</jackson.version>
-    <stringtemplate.version>3.2.1</stringtemplate.version>
   </properties>
 
   <organization>
@@ -425,12 +424,6 @@
             <artifactId>gossip</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.antlr</groupId>
-        <artifactId>stringtemplate</artifactId>
-        <version>${stringtemplate.version}</version>
       </dependency>
 
       <dependency>
