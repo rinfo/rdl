@@ -36,7 +36,7 @@ To make a *production* release, first cut a release properly.
 The source code in Git is manager according to the principles of *git flow*: 
 <https://github.com/nvie/gitflow>. The principal procedure is:
 
-    $ git flow release start $(date "+%y%m%d") # to name by date
+    $ git flow release start $(date "+%Y-%m-%d") # to name by date
     # ... bump application version numbers if necessary
     $ git flow release finish
 
@@ -44,7 +44,12 @@ Build and Deploy
 ------------------------------------------------------------------------
 
 Make sure your code repository is clean and that you stand in the *master* 
-branch.
+branch (or preferably on a release tag)::
+
+    $ git checkout master # or a release tag
+    $ git status
+    # On branch master
+    nothing to commit (working directory clean)
 
 Go to manage/ and run any or all of the following, depending on what to 
 release.
@@ -301,7 +306,8 @@ To regenerate the atom feed archive from its contained entries, run::
 
     $ sudo -u tomcat ~/mgr_work/common/bin/run_webapp_tool.sh /opt/tomcat/webapps/rinfo-main/ se.lagrummet.rinfo.store.depot.FileDepotCmdTool rinfo-main-common.properties rinfo.depot index
 
-This might take a couple of minutes for a depot of about 8 Gb in size (on a commodity virtual server, as of 2011).
+This might take a couple of minutes for a depot of about 8 Gb in size (on a
+commodity virtual server, as of 2011).
 
 Regenerate The ElasticSearch Index
 ------------------------------------------------------------------------
