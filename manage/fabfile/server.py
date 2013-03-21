@@ -42,22 +42,23 @@ def restart_all():
     sudo("/etc/init.d/apache2 start")
 
 @contextlib.contextmanager
-def _managed_tomcat_restart(wait=5, headless=False):
+def _managed_tomcat_restart(wait=5, headless=False, force_start=False):
     _needs_targetenv()
-    result = sudo("%(tomcat_stop)s" % env, shell=not headless)
-    if result.failed:
-        raise OSError(result)
+    result = sudo("%(tomcat_stop)s" % env, shell=not headless, warn_only=True)
+    do_start = force_start or not result.failed
     yield
-    print "... restarting in",
-    for i in range(wait, 0, -1):
-        print "%d..." % i,
-        time.sleep(1)
-    print
-    sudo("%(tomcat_start)s" % env, shell=not headless)
+    if do_start:
+        print "... restarting in",
+        for i in range(wait, 0, -1):
+            print "%d..." % i,
+            time.sleep(1)
+        print
+        sudo("%(tomcat_start)s" % env, shell=not headless)
 
 @task
 def restart_tomcat():
-    with _managed_tomcat_restart(): pass
+    with _managed_tomcat_restart(force_start=True):
+        pass
 
 @task
 def restart_apache():
