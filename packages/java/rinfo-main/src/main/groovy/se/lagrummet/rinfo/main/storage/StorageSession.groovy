@@ -146,13 +146,14 @@ class StorageSession {
                     MissingRdfContentException
                     DuplicateDepotEntryException
             */
-            logger.error("Error storing entry:", e)
             def gotErrorLevel =
                     logSession.logError(e, timestamp, sourceFeed, sourceEntry)
             if (shouldContinueOnError(gotErrorLevel)) {
+                logger.warn("Storing entry with problem: "+ e +"; details: "+ e.getMessage())
                 return true
             } else {
                 depotSession.rollbackPending()
+                logger.error("Error storing entry:", e)
                 return false
             }
         }
