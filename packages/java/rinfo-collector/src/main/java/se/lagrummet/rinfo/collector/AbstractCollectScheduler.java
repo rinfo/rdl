@@ -62,7 +62,7 @@ public abstract class AbstractCollectScheduler {
         return timeUnit.toString();
     }
     public void setTimeUnitName(String timeUnitName) {
-        this.timeUnit = TimeUnit.valueOf(timeUnitName);
+        this.timeUnit = TimeUnit.valueOf(timeUnitName.toUpperCase());
     }
 
     public boolean isStarted() {
