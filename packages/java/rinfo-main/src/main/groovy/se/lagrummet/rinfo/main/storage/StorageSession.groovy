@@ -118,11 +118,11 @@ class StorageSession {
             } else {
                 // NOTE: If source has been collected but appears as newly published:
                 if (!(sourceEntry.getUpdated() > sourceEntry.getPublished())) {
-                    logger.error("Collected entry <"+sourceEntry.getId() +
+                    logger.warn("Collected entry <"+sourceEntry.getId() +
                             "> exists as <"+entryId +
                             "> but does not appear as updated. Source:" +
                             sourceEntry)
-                    // FIXME: remove or enable:
+                    // NOTE: could treat this as an illegal publication practise..
                     //throw new DuplicateDepotEntryException(depotEntry);
                 }
                 logger.info("Updating entry <${entryId}>.")
