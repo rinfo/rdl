@@ -264,12 +264,12 @@ public class FileDepotEntry implements DepotEntry {
         List<DepotContent> enclosures = new ArrayList<DepotContent>();
         for (File file : entryDir.listFiles(PUBLIC_FILE_FILTER)) {
             if (file.isFile()) {
-                enclosures.add( enclosedDepotContent(file) );
-            } else if (file.isDirectory()) {
+                enclosures.add(enclosedDepotContent(file));
+            } else if (file.isDirectory() && !isEntryDir(file)) {
                 for (File subfile : ((Collection<File>)FileUtils.listFiles(file,
                         HiddenFileFilter.VISIBLE,
                         NON_ENTRY_DIR_FILTER))) {
-                    enclosures.add( enclosedDepotContent(subfile) );
+                    enclosures.add(enclosedDepotContent(subfile));
                 }
             }
         }
@@ -682,21 +682,25 @@ public class FileDepotEntry implements DepotEntry {
         File enclosuresDir = getMovedEnclosuresDir(destDir);
         for (File file : entryDir.listFiles(PUBLIC_FILE_FILTER)) {
             if (file.isDirectory() && containsSubEntry(file)) {
-                /* TODO: This doesn't roll of *any* path leading to a
-                sub-entry! Is that ok? I believe so (alt. is forking..)..
-                .. although an entry can then "shadow" old enclosures..
-                .. We could assert "clean path" in create? */
+                /* NOTE: This doesn't roll off *any* path leading to a
+                sub-entry! I believe this is ok (alt. would be forking trees).
+                Drawback is that an entry can "shadow" old enclosures.
+                This might be prevented by ensuring a "clean path" in create.
+                */
                 continue;
             }
             FileUtils.moveToDirectory(file, enclosuresDir, false);
-            // TODO:IMPROVE: removeEmptyTrail(file.getParentFile())?
+            // IMPROVE: removeEmptyTrail(file.getParentFile())?
         }
     }
 
     protected boolean containsSubEntry(File dir) {
+        if (isEntryDir(dir)) {
+            return true;
+        }
         boolean foundSubEntry = false;
         for (File child : dir.listFiles(PUBLIC_FILE_FILTER)) {
-            if (foundSubEntry || isEntryDir(child)) {
+            if (foundSubEntry) {
                 return true;
             } else if (child.isDirectory()) {
                 foundSubEntry = containsSubEntry(child);
