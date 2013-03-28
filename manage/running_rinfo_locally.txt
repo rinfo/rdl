@@ -17,8 +17,6 @@ To use the various instrumental tools used you also need:
 
 * Groovy 2.0+ - <http://groovy.codehaus.org/Download>
 
-  - See ``../tools/README.txt``.
-
 * Python 2.7+ - <http://www.python.org/download/>
 
   - For management (such as deployment): see ``README.txt``.
@@ -94,6 +92,13 @@ maven and groovy. At start, they should be empty.
 
 The RInfo Applications
 ------------------------------------------------------------------------
+
+To run tools for building admin data and documentation, you need to configure
+your local environment for them. See:
+
+  - ``../tools/README.txt``
+
+For details on setting this up.
 
 Install the shared rinfo packages to your local maven repo by::
 
