@@ -373,12 +373,9 @@ public class FileDepotEntry implements DepotEntry {
         return new File(entryContentDir, LOCKED_FILE_NAME);
     }
 
-    /* TODO:? To call when modified (to re-read props from manifest..)
-    protected void resetState() { manifest = null; entryUriPath = null; }
-    */
 
+    //== TODO: factor out the above into immutable DepotEntryView base class?
 
-    //==== TODO: above in DepotEntryView base class? ====
 
     public void create(Date createTime, List<SourceContent> sourceContents)
             throws DepotWriteException {
@@ -554,7 +551,7 @@ public class FileDepotEntry implements DepotEntry {
                 lock();
             File rollOffDir = newRollOffDir();
             rollOffToDir(rollOffDir);
-            // TODO:IMPROVE: use a "HistoryEntry" and "update" from that?
+            // IMPROVE: use a "HistoryEntry" and "update" from that?
             File historyDir = DatePathUtil.youngestEntryHistoryDir(
                     entryContentDir);
             restoreFromRollOff(historyDir);
@@ -660,7 +657,7 @@ public class FileDepotEntry implements DepotEntry {
         // NOTE: this means existing content not in the update is removed.
         //      - *including enclosures*
 
-        /* TODO:IMPROVE: use an entryContentDir to keep structure (boxed
+        /* IMPROVE: use an entryContentDir to keep structure (boxed
         content, enclosures) similar to regular entries (for a possible
         HistoryEntry)? But see iterateEntries (it scans for
         entryContentDir name..)! */

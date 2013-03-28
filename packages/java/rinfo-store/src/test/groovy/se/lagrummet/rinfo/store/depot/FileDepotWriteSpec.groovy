@@ -12,11 +12,6 @@ class FileDepotWriteSpec extends Specification {
     }
     def cleanupSpec() { tdu.deleteTempDepot() }
 
-    def setup() {
-        // TODO: mock cleaner interface, assert incoming!
-        //depot.atomizer = Mock(Atomizer)
-    }
-
     @Shared currentDate =  new Date()
     private nextDate() {
         currentDate = new Date(currentDate.time+1000)
