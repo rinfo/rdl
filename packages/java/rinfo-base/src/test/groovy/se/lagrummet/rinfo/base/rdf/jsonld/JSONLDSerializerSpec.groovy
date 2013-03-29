@@ -36,7 +36,7 @@ class JSONLDSerializerSpec extends Specification {
     def "should serialize RDF as JSON"() {
         given:
         def context = new JSONLDContext(
-            iri: "@subject",
+            iri: "@id",
             type: "@type",
             foaf: FOAF,
             name: "${FOAF}name",
@@ -83,7 +83,7 @@ class JSONLDSerializerSpec extends Specification {
         when:
         def data = serializer.toJSON(repo, personIRI)
         then:
-        data.bday == ["@literal": "1970-01-01", "@datatype": "xsd:date"]
+        data.bday == ["@value": "1970-01-01", "@type": "xsd:date"]
     }
 
     def "should use term as IRI if defined"() {
@@ -96,31 +96,15 @@ class JSONLDSerializerSpec extends Specification {
         when:
         def data = serializer.toJSON(repo, docTypeIri)
         then:
-        data['@subject'] == 'Document'
+        data['@id'] == 'Document'
     }
 
-    def "should support current coerce key"() {
+    def "should support type coercion"() {
         given:
         def context = new JSONLDContext(
             xsd: XSD,
             "@vocab": FOAF,
-            "bday": "${FOAF}bday",
-            "@coerce": ["bday": "xsd:date"]
-        )
-        and:
-        def serializer = new JSONLDSerializer(context)
-        when:
-        def data = serializer.toJSON(repo, personIRI)
-        then:
-        data.bday == "1970-01-01"
-    }
-
-    def "should support experimental combined form"() {
-        given:
-        def context = new JSONLDContext(
-            xsd: XSD,
-            "@vocab": FOAF,
-            "bday": ["bday": "xsd:date"]
+            "bday": ["@id": "${FOAF}bday", "@type": "xsd:date"]
         )
         and:
         def serializer = new JSONLDSerializer(context)
@@ -131,16 +115,16 @@ class JSONLDSerializerSpec extends Specification {
     }
 
     // TODO: coerce @iri
-    //          "@coerce": ["homepage": "@iri"]
+    //          "@coerce": ["@id": "homepage", "@type": "@iri"]
 
     // TODO: coerce @list
-    //          "@coerce": ["bibo:authorList": "@list"]
+    //          "@coerce": ["@id": "bibo:authorList", "@type": "@list"]
 
-    def "should use experimental '@set' coerce to always make a list"() {
+    def "should use '@set' to always make an array"() {
         given:
         def otherIRI = "http://example.org/person/other#self"
         def context = new JSONLDContext(
-            knows: ["${FOAF}knows": "@set"]
+            knows: ["@id": "${FOAF}knows", "@container": "@set"]
         )
         def serializer = new JSONLDSerializer(context)
         describer.findDescription(personIRI).addRel("foaf:knows", otherIRI)
@@ -148,7 +132,7 @@ class JSONLDSerializerSpec extends Specification {
         def data = serializer.toJSON(repo, personIRI)
         then:
         data.knows instanceof List
-        data.knows[0]['@subject'] == otherIRI
+        data.knows[0]['@id'] == otherIRI
     }
 
     def "should add both type token and type data if specified"() {
@@ -166,12 +150,12 @@ class JSONLDSerializerSpec extends Specification {
         then:
         serializer.context.vocab == FOAF
         data['a'] == 'Person'
-        data['type']['@subject'] == "Person"
+        data['type']['@id'] == "Person"
     }
 
-    // TODO: coerce @rev...
+    // TODO: coerce @reverse...
 
-    def "should support experimental '@rev' notation"() {
+    def "should support experimental '@reverse' notation"() {
         given:
         def context = new JSONLDContext(
             homepage: "${FOAF}homepage"
@@ -180,12 +164,12 @@ class JSONLDSerializerSpec extends Specification {
         when: "serializing homepage"
         def hpData = serializer.toJSON(repo, homepageIRI)
         and:
-        def rev = hpData['@rev']
+        def rev = hpData['@reverse']
         then: "data should contain reverse relation to person"
         rev.homepage.size() == 1
-        rev.homepage[0]['@subject'] == personIRI
+        rev.homepage[0]['@id'] == personIRI
         and: "roto resource in reverse item only contains subject"
-        rev.homepage[0].homepage == ['@subject': homepageIRI]
+        rev.homepage[0].homepage == ['@id': homepageIRI]
     }
 
     def "should return null if missing data about resource"() {
@@ -207,7 +191,7 @@ class JSONLDSerializerSpec extends Specification {
         when:
         def data = serializer.toJSON(repo, nullIRI)
         then:
-        data['@rev']['knows'][0]['@subject'] == personIRI
+        data['@reverse']['knows'][0]['@id'] == personIRI
     }
 
     def "should create copy of data linked with different terms"() {
@@ -218,15 +202,15 @@ class JSONLDSerializerSpec extends Specification {
         when:
         def person = serializer.toJSON(repo, personIRI)
         then:
-        person['@subject'] == personIRI
-        person['foaf:homepage']['@subject'] == homepageIRI
-        person['rdfs:seeAlso']['@subject'] == homepageIRI
+        person['@id'] == personIRI
+        person['foaf:homepage']['@id'] == homepageIRI
+        person['rdfs:seeAlso']['@id'] == homepageIRI
         when:
         def homepage = serializer.toJSON(repo, homepageIRI)
         then:
-        homepage['@subject'] == homepageIRI
-        homepage['@rev']['foaf:homepage']?.getAt(0)?.get('@subject') == personIRI
-        homepage['@rev']['rdfs:seeAlso']?.getAt(0)?.get('@subject') == personIRI
+        homepage['@id'] == homepageIRI
+        homepage['@reverse']['foaf:homepage']?.getAt(0)?.get('@id') == personIRI
+        homepage['@reverse']['rdfs:seeAlso']?.getAt(0)?.get('@id') == personIRI
     }
 
 }
