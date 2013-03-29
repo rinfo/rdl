@@ -136,7 +136,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                     storeIntermediateFeedEntryDataIndex(feed);
                 }
 
-                processFeedPageInOrder(feedRef.getFeedUrl(), feed,
+                boolean ok = processFeedPageInOrder(feedRef.getFeedUrl(), feed,
                         effectiveEntries, deletedMap);
 
                 // IMPROVE: don't do this here? Should impl take care of doing this
@@ -149,7 +149,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                     storeNewFeedEntryDataIndex(feed);
                 }
 
-                if (fofId != null) {
+                if (ok && fofId != null) {
                     fofMap.put(feed.getId(), feed.getUpdatedElement().getValue());
                     getFeedEntryDataIndex().storeEntryDataForCompleteFeedId(fofId, fofMap);
                 }
@@ -304,8 +304,9 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
      *
      * @param deletedMap A map of tombstones (given in one of the forms
      *        supported by {@link getDeletedMarkers}).
+     * @return whether all items were properly processed or not.
      */
-    public abstract void processFeedPageInOrder(URL pageUrl, Feed feed,
+    public abstract boolean processFeedPageInOrder(URL pageUrl, Feed feed,
             List<Entry> effectiveEntries, Map<IRI, AtomDate> deletedMap);
 
     /**

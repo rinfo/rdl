@@ -150,11 +150,12 @@ class CollectReader extends FeedArchivePastToPresentReader {
     def knownArchive
 
     @Override
-    void processFeedPageInOrder(URL pageUrl, Feed feed,
+    boolean processFeedPageInOrder(URL pageUrl, Feed feed,
             List<Entry> effectiveEntries, Map<IRI, AtomDate> deleteds) {
         visitedPages << pageUrl
         for (entry in effectiveEntries) this.effectiveEntries << entry
         for (deleted in deleteds.entrySet()) this.deleteds << deleted
+        return true
     }
 
     @Override

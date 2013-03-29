@@ -51,12 +51,13 @@ class SesameLoader extends FeedArchivePastToPresentReader {
         return repoEntry.isCollected()
     }
 
-    void processFeedPageInOrder(URL pageUrl, Feed feed,
+    boolean processFeedPageInOrder(URL pageUrl, Feed feed,
             List<Entry> effectiveEntries, Map<IRI, AtomDate> deletedMap) {
         deleteFromMarkers(feed, deletedMap)
         for (Entry entry : effectiveEntries) {
             create(entry)
         }
+        return true
     }
 
     protected void deleteFromMarkers(Feed sourceFeed, Map<IRI, AtomDate> deletedMap) {
