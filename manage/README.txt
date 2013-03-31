@@ -36,7 +36,7 @@ To make a *production* release, first cut a release properly.
 The source code in Git is manager according to the principles of *git flow*: 
 <https://github.com/nvie/gitflow>. The principal procedure is:
 
-    $ git flow release start $(date "+%Y-%m-%d") # to name by date
+    $ git flow release start rel-$(date "+%Y%m%d")-1
     # ... bump application version numbers if necessary
     $ git flow release finish
 
