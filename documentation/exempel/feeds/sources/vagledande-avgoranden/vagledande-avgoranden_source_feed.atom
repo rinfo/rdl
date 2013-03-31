@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
-      xmlns:le="http://purl.org/atompub/link-extensions/1.0"
       xml:lang="sv">
   <!--
      Denna postförteckning är uttryckt i Atom Syndication Format. Se 

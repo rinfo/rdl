@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
-      xmlns:le="http://purl.org/atompub/link-extensions/1.0"
       xml:lang="sv">
   <!--
      Denna postförteckning är uttryckt i Atom Syndication Format. Se 
@@ -146,7 +145,7 @@
       rättsinformationsdokumentet på ett av Rättsinformationssystemet godkänt 
       format.
 
-      le:md5-attributet ska innehålla en checksumma på
+      hash-attributet ska innehålla en checksumma på
       XHTML-dokumentet enligt MD5-standarden.
     -->
   </entry>
