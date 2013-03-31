@@ -22,13 +22,13 @@
     <summary></summary>
     <content src="https://www.slv.se/upload/dokument/lagstiftning/2005-2006/2006_22.pdf"
              type="application/pdf"
-             le:md5="d9e80c3be6905c44dd2f0c637bbac97c"/>
+             hash="md5:d9e80c3be6905c44dd2f0c637bbac97c"/>
     <link rel="alternate" href="https://www.slv.se/rattsinformation/getdata/id=2006-22"
           type="application/rdf+xml"
-          length="2298" le:md5="b8dbdb77b3226dd06475786f117a510b"/>
+          length="2298" hash="md5:b8dbdb77b3226dd06475786f117a510b"/>
     <link rel="enclosure" href="http://www.slv.se/upload/lagstiftning/2005-2006/2006_22bil1.pdf"
           type="application/pdf"
           dct:isFormatOf="http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga_1"
-          length="1168037" le:md5="321d5e327433b0099f8eb5768fcf28aa"/>
+          length="1168037" hash="md5:321d5e327433b0099f8eb5768fcf28aa"/>
   </entry>
 </feed>

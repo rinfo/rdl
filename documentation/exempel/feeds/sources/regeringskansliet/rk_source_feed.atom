@@ -168,7 +168,7 @@
 
     <content src="https://sfs.regeringen.se/publikationer/foreskrifter/SFS-2000_80.pdf"
              type="application/pdf"
-             le:md5="3d0e39ad852d6e29ca3087ffae39d3ab"/>
+             hash="md5:3d0e39ad852d6e29ca3087ffae39d3ab"/>
     <!-- Viktig!
 
       En primär representation ska representera det faktiska 
@@ -186,7 +186,7 @@
     <link rel="alternate"
           href="https://sfs.regeringen.se/publikationer/foreskrifter/SFS-2000_80.rdf"
           type="application/rdf+xml"
-          length="1341" le:md5="f5aeadafd5ed138c2cf07c0acc3a152e"/>
+          length="1341" hash="md5:f5aeadafd5ed138c2cf07c0acc3a152e"/>
     <!-- Viktig!
 
       Exakt en representation som innehåller serialiserad RDF måste finnas för 
@@ -213,7 +213,7 @@
     <summary></summary>
     <content src="https://sfs.regeringen.se/publikationer/foreskrifter/SFS-1899_bih_40_s_3.rdf"
              type="application/rdf+xml"
-             le:md5="b2b58364ca5e5d4c9308cc10530e235e"/>
+             hash="md5:b2b58364ca5e5d4c9308cc10530e235e"/>
   </entry>
 
   <entry>
@@ -232,10 +232,10 @@
     <summary></summary>
     <content src="https://sfs.regeringen.se/publikationer/foreskrifter/SFS-1999_175.pdf"
              type="application/pdf"
-             le:md5="65fcddc0fa5792ee39d5689615ca7bbc"/>
+             hash="md5:65fcddc0fa5792ee39d5689615ca7bbc"/>
     <link rel="alternate" href="https://sfs.regeringen.se/publikationer/foreskrifter/SFS-1999_175.rdf"
           type="application/rdf+xml"
-          length="1659" le:md5="71563df04def779e151bfb9dce0a0b15"/>
+          length="1659" hash="md5:71563df04def779e151bfb9dce0a0b15"/>
   </entry>
 
 </feed>

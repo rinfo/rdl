@@ -139,7 +139,7 @@
 
     <content src="https://www.rattsinfosok.dom.se/lagrummet/filer/12044.pdf"
              type="application/pdf"
-             le:md5="3c5fc4bdc3306ae6541e97b89dbf4d16"/>
+             hash="md5:3c5fc4bdc3306ae6541e97b89dbf4d16"/>
     <!-- Viktig!
 
       En primär representation ska representera det faktiska 
@@ -152,7 +152,7 @@
     
     <link rel="alternate" href="https://www.rattsinfosok.dom.se/lagrummet/rdf/12044-ref.rdf"
           type="application/rdf+xml"
-          length="2249" le:md5="0d82be1dbfe4a9346ecbcdc0e7a68795"/>
+          length="2249" hash="md5:0d82be1dbfe4a9346ecbcdc0e7a68795"/>
     <!-- Viktig!
 
       Exakt en representation som innehåller serialiserad RDF måste finnas för 
@@ -180,7 +180,7 @@
     
     <link rel="alternate" href="https://www.rattsinfosok.dom.se/lagrummet/rdf/12044-kort.rdf"
              type="application/rdf+xml"
-             length="4022" le:md5="617055907212406ce8d34545efb130ef"/>
+             length="4022" hash="md5:617055907212406ce8d34545efb130ef"/>
   </entry>
 
   <entry>
@@ -191,7 +191,7 @@
     <content/>
     <link rel="alternate" href="https://www.rattsinfosok.dom.se/lagrummet/rdf/12363-kort.rdf"
              type="application/rdf+xml"
-             length="2589" le:md5="617055907212406ce8d34545efb130ef"/>
+             length="2589" hash="md5:617055907212406ce8d34545efb130ef"/>
   </entry>
 
 

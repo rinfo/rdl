@@ -40,17 +40,17 @@
     <subtitle>Vervas föreskrift om statliga myndigheters arbete med säkert elektroniskt informationsutbyte</subtitle>
     <summary>Föreskrift om statliga myndigheters arbete med säkert elektroniskt informationsutbyten ...</summary>
     <content type="application/pdf" src="/publ/vervafs/2007/2/data.pdf"
-             le:md5="a2c705219d41b8bb2340dea4d635b3ad"/>
+             hash="md5:a2c705219d41b8bb2340dea4d635b3ad"/>
     <link rel="alternate" href="/publ/vervafs/2007/2/data.rdf" type="application/rdf+xml"
-          length="3111" le:md5="3592ad457b1abd90f6074bf411fc0aa0"/>
+          length="3111" hash="md5:3592ad457b1abd90f6074bf411fc0aa0"/>
     <!--
     <link rel="alternate" href="/publ/vervafs/2007/2/data.xhtml" hreflang="sv" type="application/xhtml+xml"
-          length="12345" le:md5="7b7fc831c784e78926aec193ff8d399b"/>
+          length="12345" hash="md5:7b7fc831c784e78926aec193ff8d399b"/>
     -->
     <link rel="enclosure" href="/publ/vervafs/2007/2/AR_1.pdf"
           type="application/pdf"
           dct:isFormatOf="http://rinfo.lagrummet.se/publ/vervafs/2007:2/ar_1"
-          length="65244" le:md5="c40ce477f6ad95ad818d148852b0a5e1"/>
+          length="65244" hash="md5:c40ce477f6ad95ad818d148852b0a5e1"/>
   </entry>
 
   <entry>
@@ -61,17 +61,17 @@
     <subtitle>Vervas föreskrifter om statliga myndigheters elektroniska fakturor</subtitle>
     <summary>Föreskrift och allmänna råd som pdf-filer Föreskrifter om statliga myndigheters elektroniska ...</summary>
     <content type="application/pdf" src="/publ/vervafs/2007/1/data.pdf"
-             le:md5="c7d1e46c87388ae926d02d4fd8e51754"/>
+             hash="md5:c7d1e46c87388ae926d02d4fd8e51754"/>
     <link rel="alternate" href="/publ/vervafs/2007/1/data.rdf" type="application/rdf+xml"
-          length="2216" le:md5="37eb83dc9a1ab2ed795b4d052d40f87e"/>
+          length="2216" hash="md5:37eb83dc9a1ab2ed795b4d052d40f87e"/>
     <!--
     <link rel="alternate" href="/publ/vervafs/2007/1/data.xhtml" hreflang="sv" type="application/xhtml+xml"
-          length="12345" le:md5="db2ab4bb25c4bd825604023f019ec033"/>
+          length="12345" hash="md5:db2ab4bb25c4bd825604023f019ec033"/>
     -->
     <link rel="enclosure" href="/publ/vervafs/2007/1/AR_1.pdf"
           type="application/pdf"
           dct:isFormatOf="http://rinfo.lagrummet.se/publ/vervafs/2007:1/ar_1"
-          length="77173" le:md5="f141eadbb30b47838ca888e26bc7fa4b"/>
+          length="77173" hash="md5:f141eadbb30b47838ca888e26bc7fa4b"/>
   </entry>
 
 </feed>

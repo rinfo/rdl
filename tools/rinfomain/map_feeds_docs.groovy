@@ -30,7 +30,8 @@ def createServableSources(buildDir, publicServer, docsBase, feedBase) {
                 println "[Bad length for <${fpath}>] expected ${atomElt.length} != ${file.length()}"
             }
         }
-        def expectedMd5 = atomElt.getAttributeValue(Atomizer.LINK_EXT_MD5)
+        def expectedMd5 = atomElt.getAttributeValue(Atomizer.LINK_EXT_MD5) ?:
+                atomElt.getAttributeValue("hash")?.replaceFirst(/^md5:/, "")
         if (expectedMd5) {
             def realMd5 = DigestUtils.md5Hex(FileUtils.readFileToByteArray(file))
             if (expectedMd5 != realMd5) {
