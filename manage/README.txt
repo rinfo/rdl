@@ -83,6 +83,15 @@ Ping Main to load Admin data immediately by running:
 
     $ fab target.prod app.admin.ping_main
 
+* Update documentation:
+
+    $ fab app.docs.build
+    $ fab target.prod app.docs.deploy
+
+* Update static files (e.g. index.html and robots.txt):
+
+    $ fab target.prod -Rmain sysconf.sync_static_web
+
 
 Working With An Environment from Scratch
 ========================================================================
