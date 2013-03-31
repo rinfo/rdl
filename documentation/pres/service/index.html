@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<!--
+  Copyright 2010 Google Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  Original slides: Marcin Wichary (mwichary@google.com)
+  Modifications: Ernest Delgado (ernestd@google.com)
+                 Alex Russell (slightlyoff@chromium.org)
+
+  landslide modifications: Adam Zapletal (adamzap@gmail.com)
+                           Nicolas Perriault (nperriault@gmail.com)
+-->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>RInfo Service</title>
+    <!-- Styles -->
+    
+    <link rel="stylesheet" media="print" href="../themes/tango/css/print.css">
+    <link rel="stylesheet" media="screen, projection" href="../themes/tango/css/screen.css">
+    
+    
+    <!-- /Styles -->
+    <!-- Javascripts -->
+    
+    <script type="text/javascript" src="../themes/tango/js/slides.js"></script>
+    
+    
+    <!-- /Javascripts -->
+</head>
+<body>
+  <div id="blank"></div>
+  <div class="presentation">
+    <div id="current_presenter_notes">
+      <div id="presenter_note"></div>
+    </div>
+    <div class="slides">
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide">
+          <div class="inner">
+            
+            <header><h1>RInfo Service</h1></header>
+            
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              1/14
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide">
+          <div class="inner">
+            
+            <header><h1>Index</h1></header>
+            
+            
+            <section><ul>
+<li>Läser rättsdatalagrets Atom-flöde</li>
+<li>Indexerar respektive post</li>
+</ul>
+<style>
+body { font-size: 23px; }
+.err { border: none; }
+</style></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              2/14
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide">
+          <div class="inner">
+            
+            <header><h1>Serve</h1></header>
+            
+            
+            <section><ul>
+<li>Exponerar varje resurs med berikad (kontextuell) data</li>
+<li>På formaten:<ul>
+<li>JSON-LD</li>
+<li>Turtle</li>
+<li>RDF/XML</li>
+</ul>
+</li>
+</ul></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              3/14
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide">
+          <div class="inner">
+            
+            <header><h1>Rika poster</h1></header>
+            
+            
+            <section><ul>
+<li>Quad-store (Sesame 2.6)</li>
+<li>SPARQL 1.1</li>
+<li><strike><code>DESCRIBE? CBD?</code></strike></li>
+<li><code>CONSTRUCT</code> med domänspecifika behov</li>
+</ul></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              4/14
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide has_code">
+          <div class="inner">
+            
+            <header><h1>Domänspecifika vyer</h1></header>
+            
+            
+            <section><div class="highlight"><pre><span class="lineno"> 1</span> <span class="c">#...</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="err">} UNION</span>{<span class="nv"></span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="nv">    ?current</span><span class="o"> a </span><span class="nv">?type </span>.
+<span class="lineno"> 6</span>     <span class="err">FILTER NOT EXISTS {</span><span class="nv"></span>
+<span class="lineno"> 7</span> <span class="nv">        ?type</span><span class="o"> rdfs:subClassOf</span><span class="err">* </span><span class="nv">?basetype </span>.
+<span class="lineno"> 8</span>         <span class="k">FILTER</span>(<span class="nv">?basetype </span><span class="na">in </span>(<span class="na">foaf:Organization</span><span class="err">,</span><span class="na"> bibo:Collection</span>))
+<span class="lineno"> 9</span>     }
+<span class="lineno">10</span> 
+<span class="lineno">11</span> <span class="err">    ?revitem ?rev ?current .</span>{<span class="nv"></span>
+<span class="lineno">12</span> <span class="nv">        ?revitem ?revprop ?revtext </span>.
+<span class="lineno">13</span>         <span class="k">FILTER</span>(<span class="na">isLiteral</span>(<span class="nv">?revtext</span>))
+<span class="lineno">14</span> <span class="err">        OPTIONAL</span>{<span class="nv"> ?revitem</span><span class="o"> a </span><span class="nv">?revtype </span>. }
+<span class="lineno">15</span> <span class="err">        OPTIONAL</span>{<span class="nv"> ?revitem</span><span class="o"> dct:publisher </span><span class="nv">?revpublisher </span>. }
+<span class="lineno">16</span> <span class="err">    } UNION</span>{<span class="nv"></span>
+<span class="lineno">17</span> <span class="nv">        ?revrevitem ?revrev ?revitem</span>;
+<span class="lineno">18</span>             <span class="nv">?revrevprop ?revrevtext </span>.
+<span class="lineno">19</span>         <span class="k">FILTER </span>(<span class="nv">?revrev </span><span class="o">= </span><span class="na">rpubl:referatAvDomstolsavgorande </span><span class="o">&amp;&amp;</span>
+<span class="lineno">20</span> <span class="o">                </span><span class="na">isLiteral</span>(<span class="nv">?revrevtext</span>) )
+<span class="lineno">21</span> <span class="err">        OPTIONAL</span>{<span class="nv"> ?revrevitem</span><span class="o"> a </span><span class="nv">?revrevtype </span>. }
+<span class="lineno">22</span> <span class="err">    }</span><span class="c"></span>
+<span class="lineno">23</span> 
+<span class="lineno">24</span> <span class="c">#...</span>
+</pre></div>
+</section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              5/14
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide">
+          <div class="inner">
+            
+            <header><h1>.. disconnect...</h1></header>
+            
+            
+            <section><pre><code>http://rinfo.lagrummet.se/publ/sfs/1999:175
+
+http://service.lagrummet.se/publ/sfs/1999:175/data
+</code></pre></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              6/14
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide">
+          <div class="inner">
+            
+            <header><h1>Query API</h1></header>
+            
+            
+            <section><ul>
+<li>För varje entry skapas en indexpost (JSON-LD)</li>
+<li>Denna indexeras i ElasticSearch (bygger på Lucene)</li>
+<li>Bläddring/filtrering/sökning (JSON-LD)</li>
+</ul></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              7/14
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide has_code">
+          <div class="inner">
+            
+            
+            <section><div class="highlight"><pre><span class="lineno"> 1</span> <span class="p">{</span>
+<span class="lineno"> 2</span>   <span class="s2">&quot;@context&quot;</span> <span class="o">:</span> <span class="s2">&quot;/json-ld/context.json&quot;</span><span class="p">,</span>
+<span class="lineno"> 3</span>   <span class="s2">&quot;startIndex&quot;</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="lineno"> 4</span>   <span class="s2">&quot;itemsPerPage&quot;</span> <span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
+<span class="lineno"> 5</span>   <span class="s2">&quot;totalResults&quot;</span> <span class="o">:</span> <span class="mi">34</span><span class="p">,</span>
+<span class="lineno"> 6</span>   <span class="s2">&quot;duration&quot;</span> <span class="o">:</span> <span class="s2">&quot;PT0.074S&quot;</span><span class="p">,</span>
+<span class="lineno"> 7</span>   <span class="s2">&quot;current&quot;</span> <span class="o">:</span> <span class="s2">&quot;/-/publ?q=RA-FS&amp;_stats=on&amp;_page=0&amp;_pageSize=10&quot;</span><span class="p">,</span>
+<span class="lineno"> 8</span>   <span class="s2">&quot;next&quot;</span> <span class="o">:</span> <span class="s2">&quot;/-/publ?q=RA-FS&amp;_stats=on&amp;_page=1&amp;_pageSize=10&quot;</span><span class="p">,</span>
+<span class="lineno"> 9</span>   <span class="s2">&quot;items&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">{</span>
+<span class="lineno">10</span>     <span class="s2">&quot;identifier&quot;</span> <span class="o">:</span> <span class="s2">&quot;RA-FS 1991:1&quot;</span><span class="p">,</span>
+<span class="lineno">11</span>     <span class="s2">&quot;title&quot;</span> <span class="o">:</span> <span class="s2">&quot;Riksarkivets föreskrifter och allmänna råd om arkiv hos statliga myndigheter&quot;</span><span class="p">,</span>
+<span class="lineno">12</span>     <span class="s2">&quot;beslutsdatum&quot;</span> <span class="o">:</span> <span class="s2">&quot;1991-05-23&quot;</span><span class="p">,</span>
+<span class="lineno">13</span>     <span class="s2">&quot;utkomFranTryck&quot;</span> <span class="o">:</span> <span class="s2">&quot;1991-06-25&quot;</span><span class="p">,</span>
+<span class="lineno">14</span>     <span class="s2">&quot;ikrafttradandedatum&quot;</span> <span class="o">:</span> <span class="s2">&quot;1991-07-01&quot;</span><span class="p">,</span>
+<span class="lineno">15</span>     <span class="s2">&quot;type&quot;</span> <span class="o">:</span> <span class="s2">&quot;Myndighetsforeskrift&quot;</span><span class="p">,</span>
+<span class="lineno">16</span>     <span class="s2">&quot;forfattningssamling&quot;</span> <span class="o">:</span> <span class="p">{</span><span class="s2">&quot;iri&quot;</span> <span class="o">:</span> <span class="s2">&quot;http://rinfo.lagrummet.se/serie/fs/ra-fs&quot;</span><span class="p">},</span>
+<span class="lineno">17</span>     <span class="s2">&quot;iri&quot;</span> <span class="o">:</span> <span class="s2">&quot;http://rinfo.lagrummet.se/publ/ra-fs/1991:1&quot;</span><span class="p">,</span>
+<span class="lineno">18</span>     <span class="s2">&quot;publisher&quot;</span> <span class="o">:</span> <span class="p">{</span><span class="s2">&quot;iri&quot;</span> <span class="o">:</span> <span class="s2">&quot;http://rinfo.lagrummet.se/org/riksarkivet&quot;</span><span class="p">},</span>
+<span class="lineno">19</span>     <span class="s2">&quot;describedby&quot;</span> <span class="o">:</span> <span class="s2">&quot;http://service.demo.lagrummet.se/publ/ra-fs/1991:1/data.json&quot;</span>
+<span class="lineno">20</span>   <span class="p">},</span> <span class="p">{</span>
+<span class="lineno">21</span>     <span class="p">...</span>
+</pre></div>
+</section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              8/14
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide">
+          <div class="inner">
+            
+            <header><h1><code>http://service.lagrummet.se/-/</code></h1></header>
+            
+            
+            <section><pre><code>/-/publ?q=eko*
+
+/-/publ?title=*djur*
+
+/-/publ?type=Lag&amp;type=Forordning
+
+/-/publ?publisher.iri=*/finansinspektionen
+</code></pre></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              9/14
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide">
+          <div class="inner">
+            
+            
+            <section><p>Grundförfattningar som var ikraft första januari 2011:</p>
+<pre><code>/-/publ.json?max-ikrafttradandedatum=2011-01-01&amp;
+    ifExists-minEx-rev.upphaver.ikrafttradandedatum=2011-01-01&amp;
+    exists-andrar.iri=false&amp;
+    exists-upphaver.iri=false
+</code></pre></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              10/14
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide">
+          <div class="inner">
+            
+            
+            <section><p>Sortering och paginering:</p>
+<pre><code>/-/publ?forfattningssamling.iri=*/fffs&amp;_sort=-beslutsdatum
+
+/-/publ?forfattningssamling.iri=*/fffs&amp;_pageSize=20&amp;_page=1
+</code></pre></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              11/14
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide">
+          <div class="inner">
+            
+            
+            <section><p>Facetter:</p>
+<pre><code>/-/publ;stats
+
+/-/publ?type=Myndighetsforeskrift&amp;_stats=on
+</code></pre></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              12/14
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide has_code">
+          <div class="inner">
+            
+            
+            <section><div class="highlight"><pre><span class="lineno"> 1</span> <span class="s2">&quot;statistics&quot;</span> <span class="o">:</span> <span class="p">{</span>
+<span class="lineno"> 2</span>     <span class="s2">&quot;type&quot;</span> <span class="o">:</span> <span class="s2">&quot;DataSet&quot;</span><span class="p">,</span>
+<span class="lineno"> 3</span>     <span class="s2">&quot;slices&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">{</span>
+<span class="lineno"> 4</span>     <span class="s2">&quot;dimension&quot;</span> <span class="o">:</span> <span class="s2">&quot;type&quot;</span><span class="p">,</span>
+<span class="lineno"> 5</span>     <span class="s2">&quot;observations&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">{</span>
+<span class="lineno"> 6</span>         <span class="s2">&quot;term&quot;</span> <span class="o">:</span> <span class="s2">&quot;Proposition&quot;</span><span class="p">,</span>
+<span class="lineno"> 7</span>         <span class="s2">&quot;count&quot;</span> <span class="o">:</span> <span class="mi">27</span>
+<span class="lineno"> 8</span>     <span class="p">},</span> <span class="p">{</span>
+<span class="lineno"> 9</span>         <span class="s2">&quot;term&quot;</span> <span class="o">:</span> <span class="s2">&quot;Myndighetsforeskrift&quot;</span><span class="p">,</span>
+<span class="lineno">10</span>         <span class="s2">&quot;count&quot;</span> <span class="o">:</span> <span class="mi">4</span>
+<span class="lineno">11</span>     <span class="p">},</span> <span class="p">{</span>
+<span class="lineno">12</span>         <span class="s2">&quot;term&quot;</span> <span class="o">:</span> <span class="s2">&quot;Forordning&quot;</span><span class="p">,</span>
+<span class="lineno">13</span>         <span class="s2">&quot;count&quot;</span> <span class="o">:</span> <span class="mi">2</span>
+<span class="lineno">14</span>     <span class="p">},</span> <span class="p">{</span>
+<span class="lineno">15</span>         <span class="s2">&quot;term&quot;</span> <span class="o">:</span> <span class="s2">&quot;Rattsfallsreferat&quot;</span><span class="p">,</span>
+<span class="lineno">16</span>         <span class="s2">&quot;count&quot;</span> <span class="o">:</span> <span class="mi">1</span>
+<span class="lineno">17</span>     <span class="p">}</span> <span class="p">]</span>
+<span class="lineno">18</span>     <span class="p">},</span> <span class="p">{</span>
+<span class="lineno">19</span>     <span class="s2">&quot;dimension&quot;</span> <span class="o">:</span> <span class="s2">&quot;utkomFranTryck&quot;</span><span class="p">,</span>
+<span class="lineno">20</span>     <span class="s2">&quot;observations&quot;</span> <span class="o">:</span> <span class="p">[</span> <span class="p">{</span>
+<span class="lineno">21</span>         <span class="s2">&quot;year&quot;</span> <span class="o">:</span> <span class="mi">1991</span><span class="p">,</span>
+<span class="lineno">22</span>         <span class="s2">&quot;count&quot;</span> <span class="o">:</span> <span class="mi">1</span>
+<span class="lineno">23</span>     <span class="p">},</span> <span class="p">{</span>
+<span class="lineno">24</span>         <span class="s2">&quot;year&quot;</span> <span class="o">:</span> <span class="mi">1998</span><span class="p">,</span>
+<span class="lineno">25</span>         <span class="s2">&quot;count&quot;</span> <span class="o">:</span> <span class="mi">1</span>
+<span class="lineno">26</span>         <span class="p">...</span>
+</pre></div>
+</section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              13/14
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide">
+          <div class="inner">
+            
+            <header><h1>API-utforskare</h1></header>
+            
+            
+            <section><p><a href="http://service.demo.lagrummet.se/ui/">http://service.demo.lagrummet.se/ui/</a></p></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              14/14
+            </aside>
+          </footer>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+  <div id="toc" class="sidebar hidden">
+    <h2>Table of Contents</h2>
+    <table>
+      <caption>Table of Contents</caption>
+      
+      <tr id="toc-row-1">
+        <th><a href="#slide1">RInfo Service</a></th>
+        <td><a href="#slide1">1</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-2">
+        <th><a href="#slide2">Index</a></th>
+        <td><a href="#slide2">2</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-3">
+        <th><a href="#slide3">Serve</a></th>
+        <td><a href="#slide3">3</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-4">
+        <th><a href="#slide4">Rika poster</a></th>
+        <td><a href="#slide4">4</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-5">
+        <th><a href="#slide5">Domänspecifika vyer</a></th>
+        <td><a href="#slide5">5</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-6">
+        <th><a href="#slide6">.. disconnect...</a></th>
+        <td><a href="#slide6">6</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-7">
+        <th><a href="#slide7">Query API</a></th>
+        <td><a href="#slide7">7</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-8">
+        <th><a href="#slide8">-</a></th>
+        <td><a href="#slide8">8</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-9">
+        <th><a href="#slide9"><code>http://service.lagrummet.se/-/</code></a></th>
+        <td><a href="#slide9">9</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-10">
+        <th><a href="#slide10">-</a></th>
+        <td><a href="#slide10">10</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-11">
+        <th><a href="#slide11">-</a></th>
+        <td><a href="#slide11">11</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-12">
+        <th><a href="#slide12">-</a></th>
+        <td><a href="#slide12">12</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-13">
+        <th><a href="#slide13">-</a></th>
+        <td><a href="#slide13">13</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-14">
+        <th><a href="#slide14">API-utforskare</a></th>
+        <td><a href="#slide14">14</a></td>
+      </tr>
+      
+      
+    </table>
+  </div>
+  
+  <div id="help" class="sidebar hidden">
+    <h2>Help</h2>
+    <table>
+      <caption>Help</caption>
+      <tr>
+        <th>Table of Contents</th>
+        <td>t</td>
+      </tr>
+      <tr>
+        <th>Exposé</th>
+        <td>ESC</td>
+      </tr>
+      <tr>
+        <th>Full screen slides</th>
+        <td>e</td>
+      </tr>
+      <tr>
+        <th>Presenter View</th>
+        <td>p</td>
+      </tr>
+      <tr>
+        <th>Source Files</th>
+        <td>s</td>
+      </tr>
+      <tr>
+        <th>Slide Numbers</th>
+        <td>n</td>
+      </tr>
+      <tr>
+        <th>Toggle screen blanking</th>
+        <td>b</td>
+      </tr>
+      <tr>
+        <th>Show/hide slide context</th>
+        <td>c</td>
+      </tr>
+      <tr>
+        <th>Notes</th>
+        <td>2</td>
+      </tr>
+      <tr>
+        <th>Help</th>
+        <td>h</td>
+      </tr>
+    </table>
+  </div>
+  <script>main()</script>
+</body>
+</html>
