@@ -103,38 +103,49 @@ class EntryRdfValidatorHandler implements StorageHandler {
         }
     }
 
-    protected void loadUriMinterData(DepotEntry depotEntry) {
+    void loadUriMinterData(DepotEntry depotEntry) {
         uriMinter = new URIMinter(
                 EntryRdfReader.readRdf(depotEntry, true), uriSpaceUri)
     }
 
-    protected void validate(DepotEntry depotEntry) {
-        Repository repo = EntryRdfReader.readRdf(depotEntry)
+    void validate(DepotEntry depotEntry) {
+        def repo = EntryRdfReader.readRdf(depotEntry)
         try {
-            URI subjectUri = depotEntry.getId()
-            hasExpectedUri(subjectUri, repo)
-            checkRdf(subjectUri, repo)
-        } catch (Exception e) {
-            throw e
+            validate(repo, depotEntry.getId())
         } finally {
           repo.shutDown()
         }
     }
 
-    protected void hasExpectedUri(URI subjectUri, Repository repo) {
+    void validate(Repository repo, URI subjectUri) {
+        hasExpectedUri(subjectUri, repo)
+        checkRdf(subjectUri, repo)
+    }
+
+    void hasExpectedUri(URI subjectUri, Repository repo) {
         if (uriMinter == null) {
             logger.warn("No URIMinter available.")
             return
         }
-        // TODO: supply entry uri to exclude "false matches"?
-        def uriStr = uriMinter.computeUri(repo)
+        def uriResultMap = uriMinter.computeUris(repo)
+        def uriResults = uriResultMap[subjectUri.toString()]
+        def uriStr = (uriResults && uriResults.size() > 0)? uriResults[0].uri : null
+        if (uriStr == null) {
+            // TODO: throw new UnknownSubjectException(subjectUri)?
+            for (results in uriResultMap.values()) {
+                for (result in results) {
+                    uriStr = result.uri
+                    break
+                }
+            }
+        }
         def computedUri = uriStr != null? new URI(uriStr) : null
         if (!subjectUri.equals(computedUri)) {
             throw new IdentifyerMismatchException(subjectUri, computedUri)
         }
     }
 
-    protected void checkRdf(URI subjectUri, Repository repo) {
+    void checkRdf(URI subjectUri, Repository repo) {
         if (rdfChecker == null) {
             logger.warn("No RDFChecker available.")
             return

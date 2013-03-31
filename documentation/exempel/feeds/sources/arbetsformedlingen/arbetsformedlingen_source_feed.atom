@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
-      xmlns:le="http://purl.org/atompub/link-extensions/1.0"
       xml:lang="sv">
 
   <!--
@@ -171,7 +170,7 @@
 
     <content src="https://www.arbetsformedlingen.se/regelbok/dokument/amsfs_pdf/a088.pdf"
              type="application/pdf"
-             le:md5="94e28a507cc513293ba87dc5cf487d56"/>
+             hash="md5:94e28a507cc513293ba87dc5cf487d56"/>
     <!-- Viktig!
 
       En primär representation ska representera det faktiska 
@@ -185,7 +184,7 @@
 
     <link rel="alternate" href="https://www.arbetsformedlingen.se/regelbok/showrdf?doc=2008-8"
           type="application/rdf+xml"
-          length="1962" le:md5="0516b3937e75b84186fd87ebf5c18a6b"/>
+          length="1962" hash="md5:0516b3937e75b84186fd87ebf5c18a6b"/>
     <!-- Viktig!
 
       Exakt en representation som innehåller serialiserad RDF måste finnas för 
@@ -211,11 +210,11 @@
     <summary></summary>
     <content src="https://www.arbetsformedlingen.se/regelbok/dokument/amsfs_pdf/a0728.pdf"
              type="application/pdf"
-             le:md5="d6c3a0201d2ccaad26bba4e46cda6aae"/>
+             hash="md5:d6c3a0201d2ccaad26bba4e46cda6aae"/>
     <link rel="alternate"
           href="https://www.arbetsformedlingen.se/regelbok/showrdf?doc=2007-28"
           type="application/rdf+xml"
-          length="1646" le:md5="aead260391513a229b86af23d83ea9d5"/>
+          length="1646" hash="md5:aead260391513a229b86af23d83ea9d5"/>
   </entry>
 
   <entry>
@@ -226,11 +225,11 @@
     <summary></summary>
     <content src="https://www.arbetsformedlingen.se/regelbok/dokument/amsfs_pdf/a072.pdf"
              type="application/pdf"
-             le:md5="d3f124d52c511b229f519c82b69c8e1f"/>
+             hash="md5:d3f124d52c511b229f519c82b69c8e1f"/>
     <link rel="alternate"
           href="https://www.arbetsformedlingen.se/regelbok/showrdf?doc=2007-2"
           type="application/rdf+xml"
-          length="1721" le:md5="32a92f2cc4d5224a5bdc116089a3e0b1"/>
+          length="1721" hash="md5:32a92f2cc4d5224a5bdc116089a3e0b1"/>
   </entry>
 
 </feed>

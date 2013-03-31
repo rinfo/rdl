@@ -45,7 +45,7 @@ class JSONLDSerializer {
         def item = [:]
         def about = description.about
         if (about != null && !about.startsWith("_:")) {
-            item[context.subjectKey] = toKey(about, true)
+            item[context.idKey] = toKey(about, true)
         }
         if (!itemPath.contains(about)) {
             itemPath << about
@@ -98,7 +98,7 @@ class JSONLDSerializer {
             if (value.lang == null || value.lang == context.lang) {
                 return value.toString()
             } else {
-                return [(context.LITERAL_KEY): value.toString(),
+                return [(context.VALUE_KEY): value.toString(),
                         (context.LANG_KEY): value.lang]
             }
         }
@@ -112,8 +112,8 @@ class JSONLDSerializer {
         } else if (isBool || isNumber) {
             return value.toNativeValue()
         } else {
-            return [(context.LITERAL_KEY): value.toString(),
-                    (context.DATATYPE_KEY): toKey(dt)]
+            return [(context.VALUE_KEY): value.toString(),
+                    (context.TYPE_KEY): toKey(dt)]
         }
     }
 

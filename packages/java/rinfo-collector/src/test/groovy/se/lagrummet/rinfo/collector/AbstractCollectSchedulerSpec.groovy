@@ -19,7 +19,7 @@ class AbstractCollectSchedulerSpec extends Specification {
         collectScheduler = new ManagedDummyScheduler(
             initialDelay: 0,
             scheduleInterval: -1,
-            timeUnitName: "MILLISECONDS",
+            timeUnitName: "milliseconds",
             sourceFeedUrls: SOURCE_FEEDS.collect { it.url }
         )
     }

@@ -129,12 +129,12 @@
               Archiving</a>
          </li>
          <li>
-           (Internet-draft) <a 
-             href="http://tools.ietf.org/html/draft-snell-atompub-tombstones-06">The 
+           RFC 6721: <a 
+             href="http://tools.ietf.org/html/rfc6721">The 
              Atom "deleted-entry" Element</a>
          </li>
          <li>
-           (Internet-draft) <a href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02">Atom
+           (Internet-draft) <a href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-09">Atom
              Link Extensions</a>
          </li>
       </ul>
@@ -188,7 +188,6 @@
         <code class="xml"><![CDATA[
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
-      xmlns:le="http://purl.org/atompub/link-extensions/1.0"
       xml:lang="sv">
 
   <id>tag:riksarkivet.se,2009:rinfo:feed</id>
@@ -223,11 +222,11 @@
     <content type="application/pdf"
         src=
       "https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2006-06.pdf"
-        le:md5="3c5fc4bdc3306ae6541e97b89dbf4d16"/>
+        hash="md5:3c5fc4bdc3306ae6541e97b89dbf4d16"/>
     <link rel="alternate"
         type="application/rdf+xml"
         href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2006-6"
-        length="2317" le:md5="e4e242a358b72405fdbf5ba8bc044b1a"/>
+        length="2317" hash="md5:e4e242a358b72405fdbf5ba8bc044b1a"/>
   </entry>
 
   <entry>
@@ -240,11 +239,11 @@
     <content type="application/pdf"
           src=
         "https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
-          le:md5="ca68b77f41ad2231586cf3e4d7970629"/>
+          hash="md5:ca68b77f41ad2231586cf3e4d7970629"/>
     <link rel="alternate"
         type="application/rdf+xml"
         href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
-        length="2414" le:md5="8051c695ef087fcc1183e51694c9c8c1"/>
+        length="2414" hash="md5:8051c695ef087fcc1183e51694c9c8c1"/>
   </entry>
 
 </feed>
@@ -449,12 +448,12 @@
     <content type="application/pdf"
           src=
         "https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
-          le:md5="ca68b77f41ad2231586cf3e4d7970629"/>
+          hash="md5:ca68b77f41ad2231586cf3e4d7970629"/>
     <link rel="alternate"
           type="application/rdf+xml"
           href=
             "https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
-          length="2414" le:md5="8051c695ef087fcc1183e51694c9c8c1"/>
+          length="2414" hash="md5:8051c695ef087fcc1183e51694c9c8c1"/>
   </entry>
           ]]></code>
         </div>
@@ -542,7 +541,7 @@
     <content type="application/pdf"
           src=
         "https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
-          le:md5="ca68b77f41ad2231586cf3e4d7970629"/>
+          hash="md5:ca68b77f41ad2231586cf3e4d7970629"/>
           ]]></code>
         </div>
         <p>
@@ -573,7 +572,7 @@
           href=
             "https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
           type="application/rdf+xml"
-          length="2414" le:md5="8051c695ef087fcc1183e51694c9c8c1"/>
+          length="2414" hash="md5:8051c695ef087fcc1183e51694c9c8c1"/>
           ]]></code>
         </div>
         <p>
@@ -593,10 +592,41 @@
           Som angivet i exemplen ovan ska respektive länkad resurs
           vara annoterad med storlek, mediatyp och en kontrollsumma i
           MD5. Se <a
-          href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02#section-3.1">Atom
-          Link Extensions, sektion 3.1</a> för beskrivning av
-          länk-attributet för MD5-kontrollsumma.
+          href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-09#section-3.2">Atom
+          Link Extensions, sektion 3.2</a> för specifikationen av
+          länk-attributet för kontrollsummor.
         </p>
+        <div class="alert">
+          <p>Denna specifikation förlitar sig på
+            <a href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-09">Atom Link Extensions</a>
+            för att ange checksummor. Denna är ännu en I-D, vilket inte
+            garanterar en stabil specifikation. Sedan systemet specades har denna
+            förändrats. Den tidigare formen på checksummor, specificerad i den nu
+            osboleta
+            <a href="http://tools.ietf.org/html/draft-snell-atompub-link-extensions-02">revision 2 av Atom Link Extensions</a>,
+            såg ut likt följande:
+          </p>
+          <div class="syntax">
+            <code class="xml"><![CDATA[
+  <feed ...
+        xmlns:le="http://purl.org/atompub/link-extensions/1.0">
+    ...
+      <content type="..." src="..."
+               le:md5="d41d8cd98f00b204e9800998ecf8427e"/>
+            ]]></code>
+          </div>
+          <p>Denna är nu ändrad till:</p>
+          <div class="syntax">
+            <code class="xml"><![CDATA[
+      <content type="..." src="..."
+               hash="md5:d41d8cd98f00b204e9800998ecf8427e"/>
+            ]]></code>
+          </div>
+          <p>För att vara bakåtkompatibel stödjer inhämtningen båda dessa former.
+            Även om denna I-D ännu inte har blivit en RFC förväntas den inte
+            ändras substantiellt längre. Därför rekommenderas denna nya
+            form.</p>
+        </div>
         <h4>3.3.7. Bilagor</h4>
         <p>
           Enclosures representerar någon slags extern bilaga till den primära 
@@ -619,7 +649,7 @@
           dct:isFormatOf=
               "http://rinfo.lagrummet.se/publ/livsfs/2006:22#bilaga_1"
           length="1168037"
-          le:md5="1115651b5e8380aff8d"/>
+          hash="md5:1115651b5e8380aff8d"/>
           ]]></code>
         </div>
         <p>

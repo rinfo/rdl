@@ -19,7 +19,6 @@ CONSTRUCT {
             ?thing a ?type .
         }
     }
-    BIND(datatype(?value) as ?datatype)
 
     OPTIONAL {
       ?prop a owl:DatatypeProperty;
@@ -35,6 +34,7 @@ CONSTRUCT {
     FILTER(BOUND(?expectedDatatype))
     FILTER(?expectedDatatype != rdfs:Literal)
 
+    BIND(datatype(?value) as ?datatype)
     FILTER(!BOUND(?datatype) || ?datatype != ?expectedDatatype)
 
 }

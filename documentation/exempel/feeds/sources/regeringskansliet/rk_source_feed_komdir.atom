@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
-    xmlns:le="http://purl.org/atompub/link-extensions/1.0"
     xml:lang="sv">
 
     <!--
@@ -140,7 +139,7 @@
 
         <content src="http://www.sou.gov.se/kommittedirektiv/2009/dir2009_71.xhtml"
             type="application/xhtml+xml"
-            le:md5="47527fb26a401eec8e51ecfc7f17b89c"/>
+            hash="md5:00ccfad859d3c7fcd1a834e0ee451edb"/>
         <!-- Viktig!
 
         En primär representation ska representera det faktiska 
@@ -152,7 +151,7 @@
         <link rel="alternate"
             href="http://www.sou.gov.se/kommittedirektiv/2009/dir2009_71.rdf"
             type="application/rdf+xml"
-            length="2405" le:md5="024a8688a8d53e401f93700471f02886"/>
+            length="2405" hash="md5:024a8688a8d53e401f93700471f02886"/>
         <!-- Viktig!
 
         Exakt en representation som innehåller serialiserad RDF måste finnas för 
@@ -164,7 +163,7 @@
         <link rel="alternate"
             href="http://www.sou.gov.se/kommittedirektiv/2009/dir2009_71.pdf"
             type="application/pdf"
-            length="126785" le:md5="fc1c519d96cf7f74debecf98d66c4b91"/>
+            length="126785" hash="md5:fc1c519d96cf7f74debecf98d66c4b91"/>
         <!-- 
         Referens till ytterligare dokumentrepresentation, i detta fall i PDF/A-format.
         -->

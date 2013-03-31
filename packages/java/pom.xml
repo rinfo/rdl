@@ -20,10 +20,10 @@
     <greclipse.version>2.7.0-01</greclipse.version>
     <restlet.version>2.0.9</restlet.version>
     <sesame.version>2.6.10</sesame.version>
-    <elasticsearch.version>0.18.7</elasticsearch.version>
+    <elasticsearch.version>0.20.2</elasticsearch.version>
+    <spatial4j.version>0.3</spatial4j.version>
     <tika.version>0.9</tika.version>
     <jackson.version>1.8.1</jackson.version>
-    <stringtemplate.version>3.2.1</stringtemplate.version>
   </properties>
 
   <organization>
@@ -190,7 +190,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
-        <version>4.0.3</version>
+        <version>4.2.3</version>
       </dependency>
 
       <dependency>
@@ -427,12 +427,6 @@
       </dependency>
 
       <dependency>
-        <groupId>org.antlr</groupId>
-        <artifactId>stringtemplate</artifactId>
-        <version>${stringtemplate.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.codehaus.jackson</groupId>
         <artifactId>jackson-mapper-asl</artifactId>
         <version>${jackson.version}</version>
@@ -442,6 +436,11 @@
         <groupId>org.elasticsearch</groupId>
         <artifactId>elasticsearch</artifactId>
         <version>${elasticsearch.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.spatial4j</groupId>
+        <artifactId>spatial4j</artifactId>
+        <version>${spatial4j.version}</version>
       </dependency>
 
       <dependency>
@@ -456,7 +455,7 @@
       <dependency>
         <groupId>org.spockframework</groupId>
         <artifactId>spock-core</artifactId>
-        <version>0.7-groovy-2.0-SNAPSHOT</version>
+        <version>1.0-groovy-2.0-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
       <dependency>

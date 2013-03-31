@@ -4,6 +4,7 @@
 
 # Rättsinformationsdokumentstyper
 rpubl:Proposition :abbrSlug "prop" .
+rpubl:Skrivelse :abbrSlug "skr" .
 rpubl:Forordningsmotiv :abbrSlug "fm" .
 rpubl:Kommittedirektiv :abbrSlug "dir" .
 rpubl:InternationellOverenskommelse :abbrSlug "so" .

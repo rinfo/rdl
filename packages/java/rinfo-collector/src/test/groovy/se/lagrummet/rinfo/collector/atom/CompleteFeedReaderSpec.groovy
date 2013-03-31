@@ -57,7 +57,7 @@ class CompleteFeedReaderSpec extends Specification {
 class DefaultArchiveReader extends FeedArchivePastToPresentReader {
     def entryMap = [:]
     @Override
-    void processFeedPageInOrder(URL pageUrl, Feed feed,
+    boolean processFeedPageInOrder(URL pageUrl, Feed feed,
             List<Entry> effectiveEntries, Map<IRI, AtomDate> deleteds) {
         deleteds.keySet().each {
             entryMap.remove it
@@ -65,6 +65,7 @@ class DefaultArchiveReader extends FeedArchivePastToPresentReader {
         effectiveEntries.each {
             entryMap[it.id] = it.updatedElement.value
         }
+        return true
     }
     @Override
     boolean stopOnEntry(Entry entry) {
@@ -74,21 +75,5 @@ class DefaultArchiveReader extends FeedArchivePastToPresentReader {
 
 
 class CompleteFeedAwareReader extends DefaultArchiveReader {
-    CompleteFeedEntryIdIndex completeFeedEntryIdIndex
-
-    CompleteFeedAwareReader() {
-        completeFeedEntryIdIndex = new CompleteFeedEntryIdIndex() {
-                def feedEntryIdsMap = [:]
-                public Set<IRI> getEntryIdsForCompleteFeedId(IRI feedId) {
-                    return feedEntryIdsMap[feedId]
-                }
-                public void storeEntryIdsForCompleteFeedId(
-                        IRI feedId, Set<IRI> entryIds) {
-                    feedEntryIdsMap[feedId] = entryIds
-                }
-
-            }
-    }
-
+    FeedEntryDataIndex feedEntryDataIndex = new FeedEntryDataIndexMemImpl()
 }
-

@@ -1,6 +1,6 @@
 @Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
-@Grab('org.restlet.jse:org.restlet:2.0.1')
-@Grab('org.restlet.jee:org.restlet.ext.servlet:2.0.1')
+@Grab('org.restlet.jse:org.restlet:2.0.9')
+@Grab('org.restlet.jee:org.restlet.ext.servlet:2.0.9')
 import org.apache.abdera.Abdera
 import org.apache.abdera.model.Feed
 import org.apache.abdera.model.Link
@@ -30,7 +30,8 @@ def createServableSources(buildDir, publicServer, docsBase, feedBase) {
                 println "[Bad length for <${fpath}>] expected ${atomElt.length} != ${file.length()}"
             }
         }
-        def expectedMd5 = atomElt.getAttributeValue(Atomizer.LINK_EXT_MD5)
+        def expectedMd5 = atomElt.getAttributeValue(Atomizer.LINK_EXT_MD5) ?:
+                atomElt.getAttributeValue("hash")?.replaceFirst(/^md5:/, "")
         if (expectedMd5) {
             def realMd5 = DigestUtils.md5Hex(FileUtils.readFileToByteArray(file))
             if (expectedMd5 != realMd5) {

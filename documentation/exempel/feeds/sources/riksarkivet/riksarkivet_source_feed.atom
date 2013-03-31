@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
-      xmlns:le="http://purl.org/atompub/link-extensions/1.0"
       xml:lang="sv">
 
   <!--
@@ -173,7 +172,7 @@
 
     <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2006-06.pdf"
              type="application/pdf"
-             le:md5="3c5fc4bdc3306ae6541e97b89dbf4d16"/>
+             hash="md5:3c5fc4bdc3306ae6541e97b89dbf4d16"/>
     <!-- Viktig!
 
       En primär representation ska representera det faktiska 
@@ -190,7 +189,7 @@
 
     <link rel="alternate" href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2006-6"
           type="application/rdf+xml"
-          length="2398" le:md5="ec2c4fab215dfa281279ac5ca253b50f"/>
+          length="2398" hash="md5:ec2c4fab215dfa281279ac5ca253b50f"/>
     <!-- Viktig!
 
       Exakt en representation som innehåller serialiserad RDF måste finnas för 
@@ -216,11 +215,11 @@
     <summary></summary>
     <content src="https://www.statensarkiv.se/Sve/RAFS/Filer/ra-fs-2004-02.pdf"
              type="application/pdf"
-             le:md5="ca68b77f41ad2231586cf3e4d7970629"/>
+             hash="md5:ca68b77f41ad2231586cf3e4d7970629"/>
     <link rel="alternate"
           href="https://www.statensarkiv.se/Sve/RAFS/showrdf?doc=2004-2"
           type="application/rdf+xml"
-          length="2493" le:md5="af7e5154dc653296506564d0b038697c"/>
+          length="2493" hash="md5:af7e5154dc653296506564d0b038697c"/>
   </entry>
 
 </feed>

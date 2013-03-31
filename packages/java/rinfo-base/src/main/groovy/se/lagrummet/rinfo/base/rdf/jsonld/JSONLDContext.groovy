@@ -8,22 +8,18 @@ class JSONLDContext {
     static final CONTEXT_KEY = "@context"
     static final VOCAB_KEY = "@vocab"
     static final BASE_KEY = "@base"
-    static final LANG_KEY = "@language"
-    static final IRI_KEY = "@iri"
-    static final SUBJECT_KEY = "@subject" // DEPRECATED?
+    static final ID_KEY = "@id"
     static final TYPE_KEY = "@type"
-    static final LITERAL_KEY = "@literal"
-    static final DATATYPE_KEY = "@datatype"
-    static final REV_KEY = "@rev" // EXPERIMENTAL
+    static final VALUE_KEY = "@value"
+    static final LANG_KEY = "@language"
+    static final REV_KEY = "@reverse"
+    static final CONTAINER_KEY = "@container"
+    static final LIST_KEY = "@list"
+    static final SET_KEY = "@set"
 
-    static final TOKENS = [
-            SUBJECT_KEY, IRI_KEY, TYPE_KEY, LITERAL_KEY, DATATYPE_KEY, REV_KEY
+    static final KEY_TOKENS = [
+            ID_KEY, TYPE_KEY, VALUE_KEY, REV_KEY
         ] as HashSet
-
-    static final LIST_COERCE = "@list"
-    static final SET_COERCE = "@set" // EXPERIMENTAL
-    static final REV_COERCE = REV_KEY // EXPERIMENTAL
-    static final COERCE_KEY = "@coerce"
 
     def iriTermMap = [:]
     def keyTermMap = [:]
@@ -34,7 +30,7 @@ class JSONLDContext {
     def lang = null
 
     JSONLDContext(Object data) {
-        TOKENS.each {
+        KEY_TOKENS.each {
             tokenMap[it] = it
         }
         parseContextData(data)
@@ -44,8 +40,8 @@ class JSONLDContext {
         return keyTermMap.values()
     }
 
-    String getSubjectKey() {
-        return tokenMap[SUBJECT_KEY]
+    String getIdKey() {
+        return tokenMap[ID_KEY]
     }
 
     String getTypeKey() {
@@ -62,77 +58,63 @@ class JSONLDContext {
         contexts.each {
             if (it instanceof String) {
                 throw new RuntimeException(
-                        "External context reference unsupported.") // TODO
+                        "External context reference is unsupported.")
             }
-            Map<String, List<String>> coerceMap = [:]
-            addRule(VOCAB_KEY, it[VOCAB_KEY], coerceMap)
+            if (VOCAB_KEY in it) {
+                addRule(VOCAB_KEY, it[VOCAB_KEY], it)
+            }
             it.each { key, value ->
-                addRule(key, value, coerceMap)
-            }
-            completeCoercions(coerceMap)
-        }
-    }
-
-    void completeCoercions(Map coerceMap) {
-        coerceMap.each { key, obj ->
-            def rules = (obj instanceof List)? obj : [obj]
-            def term = keyTermMap[key]
-            if (term == null) {
-                term = new Term(vocab + key, key)
-                addTerm(term)
-            }
-            for (rule in rules) {
-                if (rule == LIST_COERCE) {
-                    term.isList = true
-                    assert term.isSet == false
-                } else if (rule == SET_COERCE) {
-                    term.isSet = true
-                    assert term.isList == false
-                } else if (rule == REV_COERCE) {
-                    term.isRev = true
-                } else {
-                    term.datatype = resolve(rule)
-                }
+                addRule(key, value, it)
             }
         }
     }
 
-    void addRule(String key, value, coerceMap) {
+    void addRule(String key, value, contextData) {
         if (key == VOCAB_KEY) {
             vocab = value
         } else if (key == BASE_KEY) {
             base = value
         } else if (key == LANG_KEY) {
             lang = value
-        } else if (key == COERCE_KEY) {
-            coerceMap.putAll(value)
-        } else if (value in TOKENS) {
+        } else if (value in KEY_TOKENS) {
             tokenMap[value] = key
+        } else if (value instanceof Map) {
+            def iri = resolve(value[ID_KEY] ?: value[REV_KEY])
+            def term = new Term(iri, key)
+            def container = value[CONTAINER_KEY]
+            term.isList = container == LIST_KEY
+            term.isSet = container == SET_KEY
+            assert !term.isSet || !term.isList
+            term.isRev = REV_KEY in value
+            term.datatype = resolve(value[TYPE_KEY], contextData)
+            addTerm(term)
         } else {
-            if (value instanceof Map) {
-                def entry = value.entrySet().toList()[0]
-                def iri = resolve(entry.key)
-                def coercion = entry.value
-                addTerm(new Term(iri, key))
-                coerceMap[key] = coercion
-            } else {
-                def iri = resolve(value)
-                addTerm(new Term(iri, key))
-            }
+            def iri = resolve(value)
+            addTerm(new Term(iri, key))
         }
     }
 
     void addTerm(Term term) {
-        iriTermMap[term.iri] = term
+        if (term.iri == null) {
+            def stored = keyTermMap[term.key]
+            if (stored) {
+                iriTermMap.remove(stored.iri)
+            }
+        } else {
+            iriTermMap[term.iri] = term
+        }
         keyTermMap[term.key] = term
     }
 
-    String resolve(String ref) {
+    String resolve(String ref, Map contextData=null) {
+        if (ref == null) {
+            return null
+        }
         def colonAt = ref.indexOf(':')
         if (colonAt > -1) {
             def beforeColon = ref.substring(0, colonAt)
             if (beforeColon =~ /^[a-z][a-z0-9]*$/) { // curie or protocol
-                def pfx = keyTermMap[beforeColon]
+                def pfx = keyTermMap[beforeColon] ?: contextData?.get(beforeColon)
                 if (pfx) {
                     return pfx.iri + ref.substring(colonAt+1)
                 } else {

@@ -82,7 +82,7 @@ class ElasticData {
                         "type": "multi_field",
                         "fields": [
                             (term): ["type": "string", "index": "analyzed", "boost": boost],
-                            "raw": ["type": "string", "index": "not_analyzed", "include_in_all": true, "boost": boost]
+                            "raw": ["type": "string", "index": "not_analyzed", "include_in_all": true]//, "boost": boost]
                         ]
                     ]
                 } else {

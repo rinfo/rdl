@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
-      xmlns:le="http://purl.org/atompub/link-extensions/1.0"
       xml:lang="sv">
   <!--
      Denna postförteckning är uttryckt i Atom Syndication Format. Se 
@@ -139,14 +138,14 @@
 
     <content src="https://rinfo.regeringen.se/sfst/1999:175/2009-11-20.xhtml"
              type="application/xhtml+xml"
-             le:md5="518ae4b8357d92d959850461a9cc56e4"/>
+             hash="md5:518ae4b8357d92d959850461a9cc56e4"/>
     <!-- Viktig!
 
       En primär representation ska representera det faktiska 
       rättsinformationsdokumentet på ett av Rättsinformationssystemet godkänt 
       format.
 
-      le:md5-attributet ska innehålla en checksumma på
+      hash-attributet ska innehålla en checksumma på
       XHTML-dokumentet enligt MD5-standarden.
     -->
   </entry>
@@ -161,7 +160,7 @@
     </summary>
     <content src="https://rinfo.regeringen.se/sfst/2000:1335/2006-12-22.xhtml"
              type="application/xhtml+xml"
-             le:md5="b606a838e3113238e0948f33e40381e9"/>
+             hash="md5:b606a838e3113238e0948f33e40381e9"/>
   </entry>
 
 </feed>

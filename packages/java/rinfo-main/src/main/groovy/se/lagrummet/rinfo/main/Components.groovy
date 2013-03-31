@@ -1,5 +1,7 @@
 package se.lagrummet.rinfo.main
 
+//import groovy.transform.CompileStatic
+
 import org.apache.commons.beanutils.BeanUtils
 import org.apache.commons.configuration.Configuration
 import org.apache.commons.configuration.ConfigurationMap
@@ -15,11 +17,12 @@ import org.openrdf.sail.nativerdf.NativeStore
 
 import se.lagrummet.rinfo.store.depot.BeanUtilsURIConverter
 import se.lagrummet.rinfo.store.depot.Depot
+import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.depot.LockedDepotEntryException
 
-import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex
-import se.lagrummet.rinfo.collector.atom.fs.CompleteFeedEntryIdIndexFSImpl
+import se.lagrummet.rinfo.collector.atom.FeedEntryDataIndex
+import se.lagrummet.rinfo.collector.atom.fs.FeedEntryDataIndexFSImpl
 
 import se.lagrummet.rinfo.base.URIMinter
 import se.lagrummet.rinfo.base.rdf.RDFUtil
@@ -44,9 +47,10 @@ import se.lagrummet.rinfo.main.storage.SourceFeedsConfigHandler
  *     data sources).</li>
  * </ul>
  */
-public class Components {
+//@CompileStatic // TODO: enable when greclipse 2.7.1 is released
+class Components {
 
-    public static enum ConfigKey {
+    static enum ConfigKey {
         DEPOT_BASE_URI("rinfo.depot.baseUri"),
         DEPOT_BASE_DIR("rinfo.depot.baseDir"),
         SOURCE_FEEDS_ENTRY_ID("rinfo.main.storage.sourceFeedsEntryId"),
@@ -58,6 +62,7 @@ public class Components {
         URIMINTER_ENTRY_ID("rinfo.main.uriMinter.uriSpaceEntryId"),
         URIMINTER_URI_SPACE_URI("rinfo.main.uriMinter.uriSpaceUri"),
         COLLECTOR_HTTP_TIMEOUT_SECONDS("rinfo.main.collector.http.timeoutSeconds"),
+        COLLECTOR_HTTP_ALLOW_SELF_SIGNED("rinfo.main.collector.http.allowSelfSigned"),
         ADMIN_FEED_ID("rinfo.main.collector.adminFeedId"),
         ADMIN_FEED_URL("rinfo.main.collector.adminFeedUrl"),
         ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets", false),
@@ -66,14 +71,14 @@ public class Components {
         COMPLETE_FEEDS_ID_INDEX_DIR("rinfo.main.collector.completeFeedsIndexDir"),
         STOP_ON_ERROR_LEVEL("rinfo.main.checker.stopOnErrorLevel");
 
-        public String value;
-        public boolean requiredValue = true;
+        String value;
+        boolean requiredValue = true;
         private ConfigKey(String value) { this.value = value; }
         private ConfigKey(String value, boolean requiredValue) {
             this.value = value;
             this.requiredValue = requiredValue;
         }
-        public String toString() { return value; }
+        String toString() { return value; }
     }
 
     private Configuration config
@@ -88,16 +93,16 @@ public class Components {
 
     private final Logger logger = LoggerFactory.getLogger(Components.class)
 
-    public Components(Configuration config) {
+    Components(Configuration config) {
         this.config = config
         checkConfig()
     }
 
-    public Configuration getConfig() { return config; }
-    public Storage getStorage() { return storage; }
-    public CollectorLog getCollectorLog() { return collectorLog; }
-    public FeedCollectScheduler getCollectScheduler() { return collectScheduler; }
-    public FeedCollector getFeedCollector() { return feedCollector; }
+    Configuration getConfig() { return config; }
+    Storage getStorage() { return storage; }
+    CollectorLog getCollectorLog() { return collectorLog; }
+    FeedCollectScheduler getCollectScheduler() { return collectScheduler; }
+    FeedCollector getFeedCollector() { return feedCollector; }
 
     void bootstrap() {
         setupCollectorLog()
@@ -107,12 +112,12 @@ public class Components {
         setupStorageHandlers()
     }
 
-    public void startup() {
+    void startup() {
         storage.startup()
         collectScheduler.startup()
     }
 
-    public void shutdown() {
+    void shutdown() {
         try {
             collectScheduler.shutdown()
         } finally {
@@ -151,13 +156,16 @@ public class Components {
 
     protected void setupStorage() {
         storage = new Storage(createDepot(), collectorLog,
-                createCompleteFeedEntryIdIndex(),
+                createFeedEntryDataIndex(),
                 ErrorLevel.valueOf(configString(ConfigKey.STOP_ON_ERROR_LEVEL)))
     }
 
     protected void setupFeedCollector() {
         feedCollector = new FeedCollector(storage,
                 config.getInt(ConfigKey.COLLECTOR_HTTP_TIMEOUT_SECONDS.value))
+        if (config.getBoolean(ConfigKey.COLLECTOR_HTTP_ALLOW_SELF_SIGNED.value)) {
+            feedCollector.allowSelfSigned = true
+        }
     }
 
     protected void setupCollectScheduler() {
@@ -196,7 +204,8 @@ public class Components {
 
             def start = new Date().time
             logger.info("Checking depot consistency..")
-            for (lockedEntry in depot.iterateLockedEntries()) {
+            for (def iter = depot.iterateLockedEntries(); iter.hasNext();) {
+                def lockedEntry = iter.next()
                 logger.info("Found locked depot entry: <${lockedEntry}>. " +
                         "Rolling it back.")
                 lockedEntry.rollback()
@@ -210,11 +219,11 @@ public class Components {
         return depot
     }
 
-    CompleteFeedEntryIdIndex createCompleteFeedEntryIdIndex() {
+    FeedEntryDataIndex createFeedEntryDataIndex() {
         def completeFeedsIdIndexDir = new File(configString(
                 ConfigKey.COMPLETE_FEEDS_ID_INDEX_DIR))
         ensureDir(completeFeedsIdIndexDir)
-        return new CompleteFeedEntryIdIndexFSImpl(completeFeedsIdIndexDir);
+        return new FeedEntryDataIndexFSImpl(completeFeedsIdIndexDir);
     }
 
     Repository createRegistryRepo() {

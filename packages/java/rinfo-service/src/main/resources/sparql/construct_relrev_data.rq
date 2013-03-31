@@ -1,9 +1,10 @@
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl:  <http://www.w3.org/2002/07/owl#>
-PREFIX bibo: <http://purl.org/ontology/bibo/>
+PREFIX void: <http://rdfs.org/ns/void#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX bibo: <http://purl.org/ontology/bibo/>
 PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
 
 CONSTRUCT {
@@ -91,10 +92,9 @@ CONSTRUCT {
 
         # Skip if ?current is of a ?type known to have lots of revs
         ?current a ?type .
-        FILTER NOT EXISTS {
-            ?type rdfs:subClassOf* ?basetype .
-            FILTER(?basetype in (foaf:Organization, bibo:Collection))
-        }
+        FILTER(?type not in (foaf:Organization, bibo:Collection))
+        ?type rdfs:subClassOf+ ?basetype .
+        FILTER(?basetype not in (foaf:Organization, bibo:Collection))
 
         ?revitem ?rev ?current .
 
@@ -143,6 +143,14 @@ CONSTRUCT {
 
         ?revdoc a ?revdoctype;
             dct:identifier ?revdoc_id .
+
+    } UNION {
+
+        ?current a foaf:Organization .
+        ?revitem a ?revtype; ?rev ?current .
+        ?revtype rdfs:subClassOf ?revbasetype .
+        FILTER(?revtype = void:Dataset || ?revbasetype = rpubl:Publikationssamling)
+        ?revitem ?revprop ?revtext .
 
     }
 

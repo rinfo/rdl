@@ -1,6 +1,6 @@
 package se.lagrummet.rinfo.service
 
-import org.elasticsearch.client.action.search.SearchRequestBuilder
+import org.elasticsearch.action.search.SearchRequestBuilder
 import org.elasticsearch.search.SearchHit
 import org.restlet.data.Reference
 
@@ -177,7 +177,7 @@ class ElasticQuerySpec extends Specification {
     }
 
     private toJson(qb) {
-        new JsonSlurper().parseText(new String(qb.buildAsBytes()))
+        new JsonSlurper().parseText(qb.buildAsBytes().toUtf8())
     }
 
 }

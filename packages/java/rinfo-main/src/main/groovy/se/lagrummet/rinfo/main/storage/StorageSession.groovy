@@ -18,7 +18,7 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.SourceContent
 import se.lagrummet.rinfo.store.depot.DuplicateDepotEntryException
 
-import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex
+import se.lagrummet.rinfo.collector.atom.FeedEntryDataIndex
 
 
 class StorageSession {
@@ -32,20 +32,20 @@ class StorageSession {
             new ArrayList<StorageHandler>()
     DepotSession depotSession
     CollectorLogSession logSession
-    CompleteFeedEntryIdIndex completeFeedEntryIdIndex
+    FeedEntryDataIndex feedEntryDataIndex
     ErrorLevel stopOnErrorLevel
 
     StorageSession(StorageCredentials credentials,
             DepotSession depotSession,
             Collection<StorageHandler> storageHandlers,
             CollectorLogSession logSession,
-            CompleteFeedEntryIdIndex completeFeedEntryIdIndex,
+            FeedEntryDataIndex feedEntryDataIndex,
             ErrorLevel stopOnErrorLevel) {
         this.credentials = credentials
         this.storageHandlers = storageHandlers
         this.depotSession = depotSession
         this.logSession = logSession
-        this.completeFeedEntryIdIndex = completeFeedEntryIdIndex
+        this.feedEntryDataIndex = feedEntryDataIndex
         this.stopOnErrorLevel = stopOnErrorLevel
         logSession.start(credentials)
     }
@@ -118,11 +118,11 @@ class StorageSession {
             } else {
                 // NOTE: If source has been collected but appears as newly published:
                 if (!(sourceEntry.getUpdated() > sourceEntry.getPublished())) {
-                    logger.error("Collected entry <"+sourceEntry.getId() +
+                    logger.warn("Collected entry <"+sourceEntry.getId() +
                             "> exists as <"+entryId +
                             "> but does not appear as updated. Source:" +
                             sourceEntry)
-                    // FIXME: remove or enable:
+                    // NOTE: could treat this as an illegal publication practise..
                     //throw new DuplicateDepotEntryException(depotEntry);
                 }
                 logger.info("Updating entry <${entryId}>.")
@@ -146,13 +146,14 @@ class StorageSession {
                     MissingRdfContentException
                     DuplicateDepotEntryException
             */
-            logger.error("Error storing entry:", e)
             def gotErrorLevel =
                     logSession.logError(e, timestamp, sourceFeed, sourceEntry)
             if (shouldContinueOnError(gotErrorLevel)) {
+                logger.warn("Storing entry with problem: "+ e +"; details: "+ e.getMessage())
                 return true
             } else {
                 depotSession.rollbackPending()
+                logger.error("Error storing entry:", e)
                 return false
             }
         }

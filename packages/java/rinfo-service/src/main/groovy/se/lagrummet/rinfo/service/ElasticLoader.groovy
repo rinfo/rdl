@@ -4,7 +4,7 @@ import groovy.util.logging.Commons as Log
 
 import org.elasticsearch.client.Client
 import org.elasticsearch.action.WriteConsistencyLevel
-import org.elasticsearch.client.action.index.IndexRequestBuilder
+import org.elasticsearch.action.index.IndexRequestBuilder
 
 import org.openrdf.repository.Repository
 import org.openrdf.repository.RepositoryConnection

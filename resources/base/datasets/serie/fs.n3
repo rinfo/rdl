@@ -683,9 +683,9 @@
     # rdfs:seeAlso <...>;
     rdfs:comment "Har tagits över av Arbetsförmedlingens författningssamling (AFFS)"@sv .
 
-<http://rinfo.lagrummet.se/serie/fs/bfs> a :Forfattningssamling;
-    skos:altLabel "BFS"@sv;
-    skos:prefLabel "Bankinspektionens författningssamling"@sv;
+<http://rinfo.lagrummet.se/serie/fs/bffs> a :Forfattningssamling;
+    skos:altLabel "BFFS"@sv;
+    skos:prefLabel "Bankinspektionens och försäkringsinspektionens författningssamling"@sv;
     dct:publisher <http://rinfo.lagrummet.se/org/bankinspektionen>;
     # rdfs:seeAlso <...>;
     rdfs:comment "Har tagits över av Finansinspektionens författningssamling (FFFS)"@sv .

@@ -14,7 +14,7 @@ import org.apache.abdera.i18n.iri.IRI
 import se.lagrummet.rinfo.store.depot.Atomizer
 import se.lagrummet.rinfo.store.depot.SourceContent
 
-import se.lagrummet.rinfo.collector.atom.CompleteFeedEntryIdIndex
+import se.lagrummet.rinfo.collector.atom.FeedEntryDataIndex
 import se.lagrummet.rinfo.collector.atom.FeedArchivePastToPresentReader
 
 
@@ -77,8 +77,8 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
     }
 
     @Override
-    public CompleteFeedEntryIdIndex getCompleteFeedEntryIdIndex() {
-        return storageSession.getCompleteFeedEntryIdIndex()
+    public FeedEntryDataIndex getFeedEntryDataIndex() {
+        return storageSession.getFeedEntryDataIndex()
     }
 
     @Override
@@ -93,10 +93,11 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
     }
 
     @Override
-    public void processFeedPageInOrder(URL pageUrl, Feed feed,
+    public boolean processFeedPageInOrder(URL pageUrl, Feed feed,
             List<Entry> effectiveEntries, Map<IRI, AtomDate> deletedMap) {
         logger.info("Processing feed page: <${pageUrl}> (id <${feed.id}>)")
 
+        boolean ok = true;
         try {
             storageSession.beginPage(pageUrl, feed)
             deleteFromMarkers(feed, deletedMap)
@@ -105,13 +106,14 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
                     List<SourceContent> contents = new ArrayList<SourceContent>()
                     List<SourceContent> enclosures = new ArrayList<SourceContent>()
                     fillContentsAndEnclosures(entry, contents, enclosures)
-                    def ok = storageSession.storeEntry(
+                    ok = storageSession.storeEntry(
                             feed, entry, contents, enclosures)
                     if (!ok) {
                         break
                     }
                 } catch (Exception e) {
                     // NOTE: storageSession should handle (log and report) errors.
+                    ok = false;
                     logger.error("Critical error when storing entry: " + entry, e)
                     throw e
                 }
@@ -121,6 +123,7 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
         } finally {
             storageSession.endPage(pageUrl)
         }
+        return ok;
     }
 
     protected void handlePageError(Exception e, URL pageUrl) {

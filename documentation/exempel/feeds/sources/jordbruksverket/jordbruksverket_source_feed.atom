@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
-	xmlns:le="http://purl.org/atompub/link-extensions/1.0"
-	xmlns:rae="http://rinfo.lagrummet.se/ns/2009/09/atom-extensions#"
 	xml:lang="sv">
 
 	<id>tag:jordbruksverket.se,2009:rinfo:feed</id>
@@ -27,11 +25,11 @@
 		<!-- länk till PDF-versionen (med korrekt md5-summa för PDF-filen) -->
 		<content src="https://www.jordbruksverket.se/download/18.424d259d1214272440980003829/2009-044.pdf"
 			type="application/pdf"
-			le:md5="09b1bd77110d42a001a536850ca8c66d"/>
+			hash="md5:09b1bd77110d42a001a536850ca8c66d"/>
 		<!-- länk till metadataposten (påhittad i detta exempel) -->
 		<link rel="alternate" href="https://www.jordbruksverket.se/dokument/juridik/2009/SJVFS-2009_44.rdf"
 			type="application/rdf+xml"
-			length="2956" le:md5="094afba69afa1d0f2867f498bd86f0e0"/>
+			length="2956" hash="md5:094afba69afa1d0f2867f498bd86f0e0"/>
 	</entry>
 
 	<entry>
@@ -44,10 +42,10 @@
 		<!-- länk till PDF-versionen av grundförfattningen (kunde vi inte hitta på webbplatsen)-->
 		<content src="http://www.jordbruksverket.se/download/18.26424bf71212ecc74b08000993/2009-026.pdf"
 			type="application/pdf"
-			le:md5="9d83a5d63599283f1b5dab35a9482e4a"/>
+			hash="md5:9d83a5d63599283f1b5dab35a9482e4a"/>
 		<!-- länken till var man kan hämta metadataposten (påhittad)-->
 		<link rel="alternate" href="https://www.jordbruksverket.se/dokument/juridik/2009/SJVFS-2009_26.rdf"
 			type="application/rdf+xml"
-			length="3136" le:md5="953ad5035d143381aba346d4e6d502aa"/>
+			length="3136" hash="md5:953ad5035d143381aba346d4e6d502aa"/>
 	</entry>
 </feed>

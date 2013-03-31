@@ -12,11 +12,6 @@ class FileDepotWriteSpec extends Specification {
     }
     def cleanupSpec() { tdu.deleteTempDepot() }
 
-    def setup() {
-        // TODO: mock cleaner interface, assert incoming!
-        //depot.atomizer = Mock(Atomizer)
-    }
-
     @Shared currentDate =  new Date()
     private nextDate() {
         currentDate = new Date(currentDate.time+1000)
@@ -249,7 +244,42 @@ class FileDepotWriteSpec extends Specification {
         def enclosures = entry.findEnclosures()
         then:
         enclosures.size() == 0
-        // TODO: verify *not* moving encls in nested entries!
+    }
+
+    def "should keep nested entry when updating entry"() {
+        setup:
+        def id = new URI("http://example.org/publ/UPD/updated_4")
+        def nestedId = new URI("http://example.org/publ/UPD/updated_4/nested_1")
+        when:
+        def session = depot.openSession()
+        session.createEntry(id, nextDate(),
+                [new SourceContent(tdu.exampleEntryFile("content.rdf"),
+                            "application/rdf+xml")],
+                [new SourceContent(tdu.exampleFile("icon.png"),
+                            null, null, "icon_1.png"),
+                 new SourceContent(tdu.exampleFile("icon.png"),
+                            null, null, "sub/icon_2.png")])
+        session.createEntry(nestedId, nextDate(),
+                [new SourceContent(tdu.exampleEntryFile("content.rdf"),
+                            "application/rdf+xml")],
+                [new SourceContent(tdu.exampleFile("icon.png"),
+                            null, null, "icon_3.png"),
+                new SourceContent(tdu.exampleFile("icon.png"),
+                            null, null, "sub/icon_4.png")])
+        and:
+        session.update(depot.getEntry(id), nextDate(), [
+                new SourceContent(tdu.exampleEntryFile("content.rdf"),
+                            "application/rdf+xml"),
+            ])
+        session.close()
+        then:
+        def entry = depot.getEntry(id)
+        entry.findContents("application/rdf+xml").size() == 1
+        entry.findEnclosures().size() == 0
+        and:
+        def nestedEntry = depot.getEntry(nestedId)
+        nestedEntry.findContents("application/rdf+xml").size() == 1
+        nestedEntry.findEnclosures().size() == 2
     }
 
     def "should delete entry"() {
