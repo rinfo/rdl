@@ -88,7 +88,7 @@ public class Checker {
         storageSession.relevantEntries = relevantEntries;
         storageSession.maxEntries = maxEntries;
         FeedCollectorSession collectSession = new OneFeedCollectorSession(
-                FeedCollector.createDefaultClient(), storageSession);
+                FeedCollector.createDefaultClient(true), storageSession);
         collectSession.readFeed(feedUrl);
         collectSession.shutdown();
         return logRepo;

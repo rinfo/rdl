@@ -47,6 +47,10 @@ public class FeedCollector {
         createDefaultClient(DEFAULT_HTTP_TIMEOUT_SECONDS, false)
     }
 
+    public static HttpClient createDefaultClient(boolean allowSelfSigned) {
+        createDefaultClient(DEFAULT_HTTP_TIMEOUT_SECONDS, allowSelfSigned)
+    }
+
     public static HttpClient createDefaultClient(int httpTimeoutSeconds, boolean allowSelfSigned) {
 
         // TODO:? httpClient.setHttpRequestRetryHandler(...) // no use case demands it..
