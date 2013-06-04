@@ -9,6 +9,7 @@ import org.apache.http.conn.scheme.Scheme
 import org.apache.http.conn.scheme.SchemeRegistry
 import org.apache.http.conn.ssl.SSLSocketFactory
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy
+import org.apache.http.conn.ssl.TrustStrategy
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.impl.conn.SingleClientConnManager
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
@@ -16,6 +17,9 @@ import org.apache.http.params.BasicHttpParams
 import org.apache.http.params.HttpConnectionParams
 import org.apache.http.params.HttpParams
 import org.apache.http.params.HttpProtocolParams
+
+import java.security.cert.CertificateException
+import java.security.cert.X509Certificate
 
 public class FeedCollector {
 
@@ -70,7 +74,8 @@ public class FeedCollector {
         */
 
         def socketFactory = allowSelfSigned?
-                new SSLSocketFactory(new TrustSelfSignedStrategy()) :
+                //new SSLSocketFactory(new TrustSelfSignedStrategy()) :
+                new SSLSocketFactory(new TrustAll()) :
                 SSLSocketFactory.getSocketFactory()
 
         def httpParams = new BasicHttpParams()
@@ -79,6 +84,13 @@ public class FeedCollector {
         httpClient.connectionManager.schemeRegistry.register(
                 new Scheme("https", socketFactory, 443))
         return httpClient
+    }
+
+    static class TrustAll implements TrustStrategy {
+        @Override
+        boolean isTrusted(X509Certificate[] x509Certificates, String authType) throws CertificateException {
+            return true;
+        }
     }
 
 }
