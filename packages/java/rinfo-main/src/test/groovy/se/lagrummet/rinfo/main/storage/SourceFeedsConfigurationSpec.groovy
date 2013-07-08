@@ -32,7 +32,7 @@ class SourceFeedsConfigurationSpec extends Specification {
         collectScheduler.sourceFeedUrls.toList().sort() == sourceFeedUrls
     }
 
-    def "Source feed entry must come from admin session"() {
+    /*def "Source feed entry must come from admin session"() {
         setup: "non-admin credentials"
         def sourceFeedsConfigHandler = new SourceFeedsConfigHandler(
                 null, configurationEntryId, systemDatasetUri)
@@ -44,7 +44,7 @@ class SourceFeedsConfigurationSpec extends Specification {
 
         then: "config handler fails on non-admin credentials"
         thrown(Exception) // TODO: NotAllowedException..
-    }
+    } */
 
     private mockSourcesEntry() {
         DepotEntry entry = Mock()
