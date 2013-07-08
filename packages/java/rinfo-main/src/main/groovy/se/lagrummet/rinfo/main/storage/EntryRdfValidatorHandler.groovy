@@ -127,19 +127,26 @@ class EntryRdfValidatorHandler implements StorageHandler {
             logger.warn("No URIMinter available.")
             return
         }
+        logger.warn("subjectUri='"+subjectUri+"'")
         def uriResultMap = uriMinter.computeUris(repo)
+        logger.warn("uriResultMap.size="+(uriResultMap!=null?""+uriResultMap.size():"-"))
+        for (String key : uriResultMap.keySet())
+            logger.warn("uriResultMap["+key+"]='"+uriResultMap.get(key)+"'")
         def uriResults = uriResultMap[subjectUri.toString()]
+        logger.warn("uriResults.size="+(uriResults!=null?""+uriResults.size():"-"))
         def uriStr = (uriResults && uriResults.size() > 0)? uriResults[0].uri : null
         if (uriStr == null) {
-            // TODO: throw new UnknownSubjectException(subjectUri)?
-            for (results in uriResultMap.values()) {
+            throw new UnknownSubjectException(subjectUri)
+            /*for (results in uriResultMap.values()) {
                 for (result in results) {
                     uriStr = result.uri
                     break
                 }
-            }
+            } */
         }
         def computedUri = uriStr != null? new URI(uriStr) : null
+        if (!computedUri)
+            throw new UnableToComputeValidationURI(subjectUri)
         if (!subjectUri.equals(computedUri)) {
             throw new IdentifyerMismatchException(subjectUri, computedUri)
         }
