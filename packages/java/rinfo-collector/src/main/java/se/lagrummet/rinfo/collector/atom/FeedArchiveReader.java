@@ -2,10 +2,12 @@
 package se.lagrummet.rinfo.collector.atom;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,17 +175,30 @@ public abstract class FeedArchiveReader {
      * @return InputStream, or null if the response didn't enclose an entity.
      */
     public InputStream getResponseAsInputStream(URL url) throws IOException {
-        return getResponseAsInputStream(url.toString());
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        try {
+            TrustModifier.relaxHostChecking(urlConnection);
+        } catch (KeyManagementException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (KeyStoreException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        urlConnection.setRequestMethod("GET");
+        return urlConnection.getInputStream();
+        //return getResponseAsInputStream(url.toString());
     }
 
     public InputStream getResponseAsInputStream(String url) throws IOException {
-        HttpGet urlGet = new HttpGet(url);
+        return getResponseAsInputStream(new URL(url));
+/*        HttpGet urlGet = new HttpGet(url);
         HttpResponse response = getClient().execute(urlGet);
         HttpEntity entity = response.getEntity();
         if (entity == null) {
             return null;
         }
-        return entity.getContent();
+        return entity.getContent();*/
     }
 
 }
