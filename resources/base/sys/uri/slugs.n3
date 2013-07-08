@@ -23,7 +23,7 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/org/hovraetten_foer_nedre_norrland> :abbrSlug "hnn" .
 <http://rinfo.lagrummet.se/org/hovraetten_foer_oevre_norrland> :abbrSlug "hon" .
 <http://rinfo.lagrummet.se/org/miljoeoeverdomstolen> :abbrSlug "mod" .
-<http://rinfo.lagrummet.se/org/mark-_och-miljoeoeverdomstolen> :abbrSlug "mmd" .
+<http://rinfo.lagrummet.se/org/mark-_och_miljoeoeverdomstolen> :abbrSlug "mmd" .
 <http://rinfo.lagrummet.se/org/hoegsta_foervaltningsdomstolen> :abbrSlug "hfd" .
 <http://rinfo.lagrummet.se/org/regeringsraetten> :abbrSlug "regr" .
 <http://rinfo.lagrummet.se/org/kammarraetten_i_stockholm> :abbrSlug "kst" .
