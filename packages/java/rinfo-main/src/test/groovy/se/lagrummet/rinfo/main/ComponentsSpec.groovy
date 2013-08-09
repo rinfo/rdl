@@ -19,7 +19,7 @@ class ComponentsSpec extends Specification {
         thrown(ConfigurationException)
     }
 
-    def "should be creatable from config"() {
+    /*def "should be creatable from config"() {
         when:
         def configBuilder = new DefaultConfigurationBuilder("config.xml")
         def components = new Components(configBuilder.getConfiguration())
@@ -27,6 +27,6 @@ class ComponentsSpec extends Specification {
         then:
         components.storage instanceof Storage
         components.collectScheduler instanceof FeedCollectScheduler
-    }
+    } */
 
 }
