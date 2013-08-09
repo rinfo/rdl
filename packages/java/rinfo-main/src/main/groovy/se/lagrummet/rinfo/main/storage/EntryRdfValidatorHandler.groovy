@@ -135,6 +135,9 @@ class EntryRdfValidatorHandler implements StorageHandler {
         def uriResults = uriResultMap[subjectUri.toString()]
         logger.warn("uriResults.size="+(uriResults!=null?""+uriResults.size():"-"))
         def uriStr = (uriResults && uriResults.size() > 0)? uriResults[0].uri : null
+        //todo check results for partial matches and present error messages with suggestions
+        //Exception IncompleteMatchException(partial matches) -One or more MintResult.java-
+        //Make sure uri is available in MintResult.java
         if (uriStr == null) {
             throw new UnknownSubjectException(subjectUri)
             /*for (results in uriResultMap.values()) {
