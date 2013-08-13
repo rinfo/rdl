@@ -1,7 +1,7 @@
 from fabric.api import *
 from fabric.contrib.files import exists
 from fabfile.util import venv
-from fabfile.app import local_lib_rinfo_pkg, _deploy_war
+from fabfile.app import local_lib_rinfo_pkg, _deploy_war, _deploy_war_norestart
 from fabfile.target import _needs_targetenv
 
 ##
@@ -30,7 +30,7 @@ def setup():
 @roles('checker')
 def deploy(headless="0"):
     setup()
-    _deploy_war("%(java_packages)s/rinfo-checker/target/rinfo-checker-%(target)s.war"%env,
+    _deploy_war_norestart("%(java_packages)s/rinfo-checker/target/rinfo-checker-%(target)s.war"%env,
             "rinfo-checker", int(headless))
 
 @task

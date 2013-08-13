@@ -16,4 +16,10 @@ def _deploy_war(localwar, warname, headless=False):
         run("rm -rf %(tomcat_webapps)s/%(warname)s/" % venv())
         run("unzip -q %(dist_dir)s/%(warname)s.war -d %(tomcat_webapps)s/%(warname)s" % venv())
         #run("chmod -R go-w %(tomcat_webapps)s/%(warname)s" % venv())
+        #run("cp %(dist_dir)s/%(warname)s.war %(tomcat_webapps)s/." % venv())
+
+def _deploy_war_norestart(localwar, warname, headless=False):
+    _needs_targetenv()
+    rsync_project("%(dist_dir)s/%(warname)s.war" % venv(), localwar, '--progress')
+    run("cp %(dist_dir)s/%(warname)s.war %(tomcat_webapps)s/." % venv())
 
