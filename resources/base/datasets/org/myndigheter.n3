@@ -69,6 +69,10 @@
     a foaf:Organization;
     foaf:name "Energimarknadsinspektionen"@sv .
 
+<http://rinfo.lagrummet.se/org/exempelmyndigheten>
+    a foaf:Organization;
+    foaf:name "Exempelmyndigheten"@sv .
+
 <http://rinfo.lagrummet.se/org/finansinspektionen>
     a foaf:Organization;
     foaf:name "Finansinspektionen"@sv .

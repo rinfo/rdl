@@ -218,6 +218,11 @@
     dct:publisher <http://rinfo.lagrummet.se/org/elsaekerhetsverket>;
     rdfs:seeAlso <http://www.elsakerhetsverket.se/vanstermeny/foreskrifter.4.964130fe7b18648b80001451.html> .
 
+<http://rinfo.lagrummet.se/serie/fs/emfs> a :Forfattningssamling;
+    skos:altLabel "EMFS"@sv;
+    skos:prefLabel "Exempelmyndigheten författningssamling"@sv;
+    dct:publisher <http://rinfo.lagrummet.se/org/exempelmyndigheten>;
+    rdfs:comment "Detta är ett exempel på en fiktiv myndighet som endast är ämnat för test"@sv .
 
 <http://rinfo.lagrummet.se/serie/fs/fffs> a :Forfattningssamling;
     skos:altLabel "FFFS"@sv;

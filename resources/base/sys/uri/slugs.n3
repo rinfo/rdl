@@ -74,6 +74,7 @@ rpubl:InternationellOverenskommelse :abbrSlug "so" .
 <http://rinfo.lagrummet.se/serie/fs/difs> :abbrSlug "difs" .
 <http://rinfo.lagrummet.se/serie/fs/dvfs> :abbrSlug "dvfs" .
 <http://rinfo.lagrummet.se/serie/fs/elsaek-fs> :abbrSlug "elsaek-fs" .
+<http://rinfo.lagrummet.se/serie/fs/emfs> :abbrSlug "emfs" .
 <http://rinfo.lagrummet.se/serie/fs/fffs> :abbrSlug "fffs" .
 <http://rinfo.lagrummet.se/serie/fs/ffs> :abbrSlug "ffs" .
 <http://rinfo.lagrummet.se/serie/fs/fhifs> :abbrSlug "fhifs" .
