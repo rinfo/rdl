@@ -28,7 +28,7 @@ rm -rf /opt/tomcat/webapps/*
 
 # Create the tomcat group and user (if they don't already exist)
 id -g ${tomcat_group} > /dev/null 2>&1 || groupadd ${tomcat_group}
-id ${tomcat_user} > /dev/null 2>&1 || useradd ${tomcat_user} -d /opt/tomcat/ -s /bin/false -r
+id ${tomcat_user} > /dev/null 2>&1 || useradd ${tomcat_user} -d /opt/tomcat/ -s /bin/false -r -g ${tomcat_group}
 
 # Add the tomcat and the rinfo user to the tomcat group
 usermod -a -G ${tomcat_group} ${tomcat_user}
