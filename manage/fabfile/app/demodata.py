@@ -9,15 +9,17 @@ from os import path as p
 
 
 env.java_opts = 'JAVA_OPTS="-Xms512m -Xmx1024m"'
-env.demodata_dir = "/opt/work/rinfo/demodata"
+# env.demodata_dir = "/opt/work/rinfo/demodata"
+env.demodata_dir = "/tmp/rinfo-work/rinfo/demodata"
 env.demodata_tools = p.join(env.projectroot, "tools", "demodata")
 
 
 lagen_nu_datasets = ('sfs', 'dv')
 riksdagen_se_datasets = ('prop', 'sou', 'ds')
+exempelmyndigheten_datasets = ('emfs')
 
 def _can_handle_dataset(dataset):
-    if not any(dataset in ds for ds in (lagen_nu_datasets, riksdagen_se_datasets)):
+    if not any(dataset in ds for ds in (lagen_nu_datasets, riksdagen_se_datasets, exempelmyndigheten_datasets)):
         raise ValueError("Undefined dataset %r" % dataset)
 
 
@@ -33,6 +35,8 @@ def download(dataset, force="1"):
             _download_lagen_nu_data(dataset)
         elif dataset in riksdagen_se_datasets:
             _download_riksdagen_data(dataset)
+        elif dataset in exempelmyndigheten_datasets:
+            _copy_local_repo(dataset)
 
 @task
 def create_depot(dataset):
@@ -104,6 +108,14 @@ def deploy_dataset(dataset):
 #    from fabfile.app import admin
 #    admin.all()
 
+@task
+def deploy_testfeed(dataset='emfs'):
+    create_depot(dataset)
+    _copy_local_repo(dataset)
+    build_dataset_war(dataset)
+    upload(dataset)
+    dataset_war(dataset)
+
 
 def _mkdir_keep_prev(dir_path):
     if p.isdir("%s-prev"%dir_path):
@@ -129,4 +141,5 @@ def _transform_riksdagen_data(dataset):
     local("%(java_opts)s groovy %(demodata_tools)s/data_riksdagen_se/depot_from_data_riksdagen_se.groovy "
             " %(demodata_dir)s/%(dataset)s-raw %(demodata_dir)s/%(dataset)s" % venv())
 
-
+def _copy_local_repo(dataset):
+    local("cp -r ../../documentation/exempel/documents/publ/Forfattningar/EMFS/* %(demodata_dir)s/%(dataset)s" % venv())
