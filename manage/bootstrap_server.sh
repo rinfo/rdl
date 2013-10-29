@@ -21,11 +21,7 @@ else
 	git checkout $2
 fi
 cd manage/fabfile
-if [ -z "$3" ]; then
-	fab target.integration sysconf.install_server:hosts=$1
-else
-	fab target.$3 sysconf.install_server:hosts=$1
-fi
 
+fab target.testfeed -R demosource sysconf.install_server sysconf.config_server app.demodata.deploy_testfeed server.reload_apache
 
 
