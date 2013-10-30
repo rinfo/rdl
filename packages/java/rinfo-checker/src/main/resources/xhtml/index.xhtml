@@ -3,11 +3,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>RInfo Checker: insamlingskontroll</title>
-        <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <link rel="stylesheet" type="text/css" href="media/collector_log.css" />
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+        <script type = "text/javascript">
+          $(document).ready(function(){
+            $("#html-form").submit(function() {
+              $.post($("#html-form").attr("action"), $("#html-form").serialize(), function(data){
+                $('#target').html(data);
+              });
+              return false;
+            });
+          });
+        </script>
+
     </head>
     <body>
         <h1>RInfo Checker</h1>
-        <form method="POST">
+        <form id="html-form" action="" method="POST">
             <fieldset>
                 <legend>
                     <label for="feedUrl">Källa (Atom-flöde):</label>
@@ -32,5 +46,6 @@
                 </p>
             </fieldset>
         </form>
+        <div id="target"></div>
     </body>
 </html>
