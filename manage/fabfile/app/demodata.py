@@ -111,8 +111,6 @@ def deploy_dataset(dataset):
 @task
 def deploy_testfeed(dataset='emfs'):
     create_depot(dataset)
-    _mkdir_keep_prev("%(demodata_dir)s/%(dataset)s/publ/%(dataset)s" % venv())
-    _mkdir_keep_prev("%(demodata_dir)s/%(dataset)s/feed" % venv())
     _copy_local_repo(dataset)
     build_dataset_war(dataset)
     upload(dataset)
@@ -144,7 +142,7 @@ def _transform_riksdagen_data(dataset):
             " %(demodata_dir)s/%(dataset)s-raw %(demodata_dir)s/%(dataset)s" % venv())
 
 def _copy_local_repo(dataset):
-    local("cp -r ../../documentation/exempel/documents/publ/Forfattningar/EMFS/* %(demodata_dir)s/%(dataset)s/publ/%(dataset)s" % venv())
-    local("cp -r ../../documentation/exempel/feeds/sources/exempelmyndigheten/exempelmyndigheten_source_feed.atom %(demodata_dir)s/%(dataset)s/feed/index.atom" % venv())
+    local("cp -r ../../documentation/exempel/documents/publ/Forfattningar/EMFS/2011/* %(demodata_dir)s/%(dataset)s/%(dataset)s" % venv())
+    local("cp -r ../../documentation/exempel/feeds/sources/exempelmyndigheten/exempelmyndigheten_source_feed.atom %(demodata_dir)s/%(dataset)s/feed.atom" % venv())
 
 

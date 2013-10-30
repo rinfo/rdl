@@ -21,11 +21,11 @@
         <published>2012-02-24T20:05:11Z</published>
         <title xml:lang="sv">Exempelmyndighetens föreskrifter och allmänna råd om information som gäller försäkring och tjänstepension;</title>
         <summary xml:lang="sv"></summary>
-        <content src="/emfs/dokument/foreskrift/EMFS-2011_39.pdf"
+        <content src="EMFS-2011_39.pdf"
             type="application/pdf"
             hash="md5:e5b87b76a096333ceb3718ca7ba982a9"/>
         <link rel="alternate"
-            href="/exempelmyndigheten.se/Forfattningar/EMFS/2011/EMFS-2011_39.rdf"
+            href="EMFS-2011_39.rdf"
             type="application/rdf+xml"
             length="2100" hash="md5:ba817ef08d6f48b164c397c69fabc1e2"/>
     </entry>
@@ -36,11 +36,11 @@
         <published>2012-02-24T20:04:50Z</published>
         <title xml:lang="sv">Föreskrifter om ändring i Exempelmyndighetens föreskrifter (FFFS 2007:16) om värdepappersrörelse;</title>
         <summary xml:lang="sv"></summary>
-        <content src="/emfs/dokument/foreskrift/EMFS-2011_41.pdf"
+        <content src="EMFS-2011_41.pdf"
             type="application/pdf"
             hash="md5:dc2505c172e1fc6f25124c6b716e9857"/>
         <link rel="alternate"
-            href="/exempelmyndigheten.se/Forfattningar/EMFS/2011/EMFS-2011_41.rdf"
+            href="EMFS-2011_41.rdf"
             type="application/rdf+xml"
             length="1423" hash="md5:e722ad23121a52b4a4b0f150b66bc4c4"/>
     </entry>
