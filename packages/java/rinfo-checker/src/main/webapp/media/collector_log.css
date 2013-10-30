@@ -70,6 +70,11 @@ dd.error {
     color: #f00;
 }
 
+dt.success,
+dd.success {
+    color: #5AB109;
+}
+
 table {
     background-color: #eee;
     border: solid 0.8pt #000000;

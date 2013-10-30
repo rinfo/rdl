@@ -7,6 +7,7 @@
 
   <xsl:param name="base-url" select="'http://rinfo.lagrummet.se/'"/>
   <xsl:param name="mediabase" select="'media'"/>
+  <xsl:param name="show-successful-entries" select="false()"/>
 
   <xsl:key name="rel" match="/graph/resource" use="@uri"/>
   <xsl:variable name="r" select="/graph/resource"/>
@@ -84,6 +85,8 @@
             <dd><xsl:value-of select="$collect-count"/></dd>
             <xsl:variable name="sucess-count"
                           select="count($collected/parent::resource[a/awol:Entry])"/>
+            <dt class="success">Antal rätt:</dt>
+            <dd class="success"><xsl:value-of select="$sucess-count"/></dd>
             <xsl:if test="$collect-count != $sucess-count">
               <dt class="error">Antal fel:</dt>
               <dd class="error">
@@ -97,7 +100,9 @@
           </xsl:otherwise>
         </xsl:choose>
       </dl>
-      <xsl:if test="$collected">
+      <xsl:if test="$collected and
+                    ($collect-count - count($collected/parent::resource[a/awol:Entry]) > 0
+                    or $show-successful-entries)">
         <h4>Poster</h4>
         <table class="report">
           <tr>
@@ -119,14 +124,16 @@
   </xsl:template>
 
   <xsl:template match="*[a/awol:Entry]" mode="trow">
-    <xsl:param name="pos"/>
-    <tr class="entry">
-      <td class="position"><xsl:value-of select="$pos"/></td>
-      <td><xsl:apply-templates select="awol:updated"/></td>
-      <td class="status">OK</td>
-      <td><xsl:apply-templates select="foaf:primaryTopic/@ref"/></td>
-      <td></td>
-    </tr>
+      <xsl:param name="pos"/>
+        <xsl:if test="$show-successful-entries">
+            <tr class="entry">
+              <td class="position"><xsl:value-of select="$pos"/></td>
+              <td><xsl:apply-templates select="awol:updated"/></td>
+              <td class="status">OK</td>
+              <td><xsl:apply-templates select="foaf:primaryTopic/@ref"/></td>
+              <td></td>
+            </tr>
+        </xsl:if>
   </xsl:template>
 
   <!-- TODO:
