@@ -145,6 +145,6 @@ def _transform_riksdagen_data(dataset):
 
 def _copy_local_repo(dataset):
     local("cp -r ../../documentation/exempel/documents/publ/Forfattningar/EMFS/* %(demodata_dir)s/%(dataset)s/publ/%(dataset)s" % venv())
-    local("cp -r ../../documentation/exempel/feeds/exempelmyndigheten/exempelmyndigheten_source_feed.atom %(demodata_dir)s/%(dataset)s/feed/index.atom" % venv())
+    local("cp -r ../../documentation/exempel/feeds/sources/exempelmyndigheten/exempelmyndigheten_source_feed.atom %(demodata_dir)s/%(dataset)s/feed/index.atom" % venv())
 
 
