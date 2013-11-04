@@ -17,12 +17,14 @@ env.demodata_tools = p.join(env.projectroot, "tools", "demodata")
 
 lagen_nu_datasets = ('sfs', 'dv')
 riksdagen_se_datasets = ('prop', 'sou', 'ds')
-exempel_datasets = ({'emfs':['Forfattningar/EMFS/2011','exempelmyndigheten/exempelmyndigheten_source_feed.atom']})
+exempel_datasets = ('emfs')
+
+exempel_datasets_values = ({exempel_datasets[0]:['Forfattningar/EMFS/2011','exempelmyndigheten/exempelmyndigheten_source_feed.atom']})
 
 
 
 def _can_handle_dataset(dataset):
-    if not any(dataset in ds for ds in (lagen_nu_datasets, riksdagen_se_datasets, exempel_datasets.keys())):
+    if not any(dataset in ds for ds in (lagen_nu_datasets, riksdagen_se_datasets, exempel_datasets)):
         raise ValueError("Undefined dataset %r" % dataset)
 
 
@@ -38,7 +40,7 @@ def download(dataset, force="1"):
             _download_lagen_nu_data(dataset)
         elif dataset in riksdagen_se_datasets:
             _download_riksdagen_data(dataset)
-        elif dataset in exempel_datasets.keys():
+        elif dataset in exempel_datasets:
             _copy_local_repo(dataset)
 
 @task
@@ -126,8 +128,8 @@ def deploy_testfeed(dataset='emfs'):
 
 @task
 def deploy_all_testfeeds():
-    for key in exempel_datasets.keys():
-        deploy_testfeed(exempel_datasets[key])
+    for key in exempel_datasets:
+        deploy_testfeed(exempel_datasets_values[key])
 
 
 def _mkdir_keep_prev(dir_path):
