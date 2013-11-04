@@ -121,7 +121,7 @@ def deploy_testfeed(dataset):
     for lookup in dataset.keys():
         key = lookup
     create_depot(key)
-    _copy_local_repo(dataset)
+    _copy_local_repo(dataset[key])
     build_dataset_war(key)
     upload(key)
     deploy_dataset_war(key, restart=False)
