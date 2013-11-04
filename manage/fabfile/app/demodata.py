@@ -18,7 +18,7 @@ env.demodata_tools = p.join(env.projectroot, "tools", "demodata")
 lagen_nu_datasets = ('sfs', 'dv')
 riksdagen_se_datasets = ('prop', 'sou', 'ds')
 
-exempel_datasets = ({'emfs': ['Forfattningar/EMFS/2011','exempelmyndigheten/exempelmyndigheten_source_feed.atom']})
+exempel_datasets = [{'emfs': ['Forfattningar/EMFS/2011','exempelmyndigheten/exempelmyndigheten_source_feed.atom']}]
 exempel_datasets_keys = ('emfs')
 
 def _can_handle_dataset(dataset):
