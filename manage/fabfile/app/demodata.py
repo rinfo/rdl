@@ -121,7 +121,7 @@ def deploy_testfeed(dataset):
     for lookup in dataset.keys():
         key = lookup
     create_depot(key)
-    _copy_local_repo(dataset[key])
+    _copy_local_repo(key, dataset[key])
     build_dataset_war(key)
     upload(key)
     deploy_dataset_war(key, restart=False)
@@ -156,10 +156,10 @@ def _transform_riksdagen_data(dataset):
     local("%(java_opts)s groovy %(demodata_tools)s/data_riksdagen_se/depot_from_data_riksdagen_se.groovy "
             " %(demodata_dir)s/%(dataset)s-raw %(demodata_dir)s/%(dataset)s" % venv())
 
-def _copy_local_repo(dataset_value):
+def _copy_local_repo(dataset_key, dataset_value):
     rdf_example_path = dataset_value[0]
     atom_example_subpath_and_file = dataset_value[1]
-    local('cp -r ../../documentation/exempel/documents/publ/' + rdf_example_path + '/* %(demodata_dir)s/%(dataset)s' % venv())
-    local('cp -r ../../documentation/exempel/feeds/sources/' + atom_example_subpath_and_file + ' %(demodata_dir)s/%(dataset)s/feed.atom' % venv())
+    local('cp -r ../../documentation/exempel/documents/publ/' + rdf_example_path + '/* %(demodata_dir)s/%(dataset_key)s' % venv())
+    local('cp -r ../../documentation/exempel/feeds/sources/' + atom_example_subpath_and_file + ' %(demodata_dir)s/%(dataset_key)s/feed.atom' % venv())
 
 
