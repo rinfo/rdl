@@ -13,7 +13,7 @@
         <uri>http://www.exempelmyndigheten.se/</uri>
         <email>lagrum@exempelmyndigheten.se</email>
     </author>
-    <link href="fst.lagrummet.se/emfs/feed/" rel="self"/>
+    <link href="http://testfeed.lagrummet.se" rel="self"/>
     
     <entry>
         <id>http://rinfo.lagrummet.se/publ/emfs/2011:39</id>
