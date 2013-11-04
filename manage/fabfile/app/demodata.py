@@ -17,14 +17,12 @@ env.demodata_tools = p.join(env.projectroot, "tools", "demodata")
 
 lagen_nu_datasets = ('sfs', 'dv')
 riksdagen_se_datasets = ('prop', 'sou', 'ds')
-exempel_datasets = ('emfs')
 
-exempel_datasets_values = ({exempel_datasets[0]:['Forfattningar/EMFS/2011','exempelmyndigheten/exempelmyndigheten_source_feed.atom']})
-
-
+exempel_datasets = ({'emfs': ['Forfattningar/EMFS/2011','exempelmyndigheten/exempelmyndigheten_source_feed.atom']})
+exempel_datasets_keys = ('emfs')
 
 def _can_handle_dataset(dataset):
-    if not any(dataset in ds for ds in (lagen_nu_datasets, riksdagen_se_datasets, exempel_datasets)):
+    if not any(dataset in ds for ds in (lagen_nu_datasets, riksdagen_se_datasets, exempel_datasets_keys)):
         raise ValueError("Undefined dataset %r" % dataset)
 
 
@@ -40,7 +38,7 @@ def download(dataset, force="1"):
             _download_lagen_nu_data(dataset)
         elif dataset in riksdagen_se_datasets:
             _download_riksdagen_data(dataset)
-        elif dataset in exempel_datasets:
+        elif dataset in exempel_datasets_keys:
             _copy_local_repo(dataset)
 
 @task
@@ -119,17 +117,19 @@ def deploy_dataset(dataset):
 
 
 @task
-def deploy_testfeed(dataset='emfs'):
-    create_depot(dataset)
+def deploy_testfeed(dataset):
+    for lookup in dataset.keys():
+        key = lookup
+    create_depot(key)
     _copy_local_repo(dataset)
-    build_dataset_war(dataset)
-    upload(dataset)
-    deploy_dataset_war(dataset, restart=False)
+    build_dataset_war(key)
+    upload(key)
+    deploy_dataset_war(key, restart=False)
 
 @task
 def deploy_all_testfeeds():
-    for key in exempel_datasets:
-        deploy_testfeed(exempel_datasets_values[key])
+    for dataset in exempel_datasets:
+        deploy_testfeed(dataset)
 
 
 def _mkdir_keep_prev(dir_path):
