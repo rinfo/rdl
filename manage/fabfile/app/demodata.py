@@ -4,6 +4,7 @@ from fabric.contrib.files import *
 from fabric.contrib.project import rsync_project
 from fabfile.target import _needs_targetenv
 from fabfile.app import _deploy_war
+from fabfile.app import _deploy_war_norestart
 from fabfile.util import venv
 from os import path as p
 
@@ -16,10 +17,12 @@ env.demodata_tools = p.join(env.projectroot, "tools", "demodata")
 
 lagen_nu_datasets = ('sfs', 'dv')
 riksdagen_se_datasets = ('prop', 'sou', 'ds')
-exempelmyndigheten_datasets = ('emfs')
+exempel_datasets = ({'emfs':['Forfattningar/EMFS/2011','exempelmyndigheten/exempelmyndigheten_source_feed.atom']})
+
+
 
 def _can_handle_dataset(dataset):
-    if not any(dataset in ds for ds in (lagen_nu_datasets, riksdagen_se_datasets, exempelmyndigheten_datasets)):
+    if not any(dataset in ds for ds in (lagen_nu_datasets, riksdagen_se_datasets, exempel_datasets.keys())):
         raise ValueError("Undefined dataset %r" % dataset)
 
 
@@ -35,7 +38,7 @@ def download(dataset, force="1"):
             _download_lagen_nu_data(dataset)
         elif dataset in riksdagen_se_datasets:
             _download_riksdagen_data(dataset)
-        elif dataset in exempelmyndigheten_datasets:
+        elif dataset in exempel_datasets.keys():
             _copy_local_repo(dataset)
 
 @task
@@ -68,12 +71,16 @@ def build_dataset_war(dataset):
 
 #@task
 @roles('demosource')
-def deploy_dataset_war(dataset):
+def deploy_dataset_war(dataset, restart=True):
     """Deploy a demo webapp for the given uploaded dataset."""
     _can_handle_dataset(dataset)
     if not exists(env.dist_dir):
         run("mkdir %(dist_dir)s"%env)
-    _deploy_war("%(java_packages)s/demodata-supply/target/%(dataset)s-demodata-supply.war" % venv(),
+    if restart:
+        _deploy_war("%(java_packages)s/demodata-supply/target/%(dataset)s-demodata-supply.war" % venv(),
+            "%(dataset)s-demodata-supply" % venv())
+    else:
+        _deploy_war_norestart("%(java_packages)s/demodata-supply/target/%(dataset)s-demodata-supply.war" % venv(),
             "%(dataset)s-demodata-supply" % venv())
 
 @task
@@ -108,13 +115,19 @@ def deploy_dataset(dataset):
 #    from fabfile.app import admin
 #    admin.all()
 
+
 @task
 def deploy_testfeed(dataset='emfs'):
     create_depot(dataset)
     _copy_local_repo(dataset)
     build_dataset_war(dataset)
     upload(dataset)
-    dataset_war(dataset)
+    deploy_dataset_war(dataset, restart=False)
+
+@task
+def deploy_all_testfeeds():
+    for key in exempel_datasets.keys():
+        deploy_testfeed(exempel_datasets[key])
 
 
 def _mkdir_keep_prev(dir_path):
@@ -142,7 +155,9 @@ def _transform_riksdagen_data(dataset):
             " %(demodata_dir)s/%(dataset)s-raw %(demodata_dir)s/%(dataset)s" % venv())
 
 def _copy_local_repo(dataset):
-    local("cp -r ../../documentation/exempel/documents/publ/Forfattningar/EMFS/2011/* %(demodata_dir)s/%(dataset)s" % venv())
-    local("cp -r ../../documentation/exempel/feeds/sources/exempelmyndigheten/exempelmyndigheten_source_feed.atom %(demodata_dir)s/%(dataset)s/feed.atom" % venv())
+    rdf_example_path = dataset[0]
+    atom_example_subpath_and_file = dataset[1]
+    local("cp -r ../../documentation/exempel/documents/publ/" + rdf_example_path + "/* %(demodata_dir)s/%(dataset)s" % venv())
+    local("cp -r ../../documentation/exempel/feeds/sources/" + atom_example_subpath_and_file + " %(demodata_dir)s/%(dataset)s/feed.atom" % venv())
 
 
