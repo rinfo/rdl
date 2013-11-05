@@ -129,6 +129,39 @@ def testfeed():
     # Tomcat
     _tomcat_env()
 
+@targetenv
+def scraped():
+    """Set target env to: demo"""
+    # Name env:
+    env.target = "scraped"
+    # Machines:
+    env.user = 'rinfo'
+    env.roledefs = {
+        'main': ['testfeed.lagrummet.se'],
+        'service': ['testfeed.lagrummet.se'],
+        'checker': ['testfeed.lagrummet.se'],
+        'admin': ['testfeed.lagrummet.se'],
+        'demosource': ['testfeed.lagrummet.se'],
+    }
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+        'checker': ['checker'],
+    }
+    # Tomcat
+    _tomcat_env()
 
 # Integration is a virtual environment that you could setup on your own computer
 # See README.txt for more information

@@ -106,7 +106,6 @@ def deploy_dataset(dataset):
     upload(dataset)
     dataset_war(dataset)
 
-
 #def full_demo_deploy():
 #    from itertools import chain
 #    for dataset in chain(lagen_nu_datasets, riksdagen_se_datasets):
