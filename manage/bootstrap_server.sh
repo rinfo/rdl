@@ -7,9 +7,9 @@ ssh root@$1 useradd rinfo -m -G sudo -s /bin/bash
 ssh root@$1 passwd rinfo 
 
 # Automate login
-ssh root@$1 mkdir /home/rinfo/.ssh
-scp ~/.ssh/id_rsa.pub root@$1:/home/rinfo/.
-ssh root@$1 cat /home/rinfo/id_rsa.pub >> /home/rinfo/.ssh/authorized_keys
-ssh root@$1 rm /home/rinfo/id_rsa.pub
+ssh rinfo@$1 mkdir .ssh
+scp ~/.ssh/id_rsa.pub rinfo@$1:.
+ssh rinfo@$1 cat id_rsa.pub >> .ssh/authorized_keys
+ssh rinfo@$1 rm id_rsa.pub
 
 
