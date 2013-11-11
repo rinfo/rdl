@@ -32,8 +32,8 @@ function addErrorFilters() {
 
     allFilterMatches.reset();
 
-    var filter1 = new Filter({errorType:"missing_expected.rq", title:"Inget v&auml;rde angivet f&ouml;r egenskap"});
-    var filter2 = new Filter({errorType:"datatype_error.rq", title:"Egenskap matchar inte angiven datatyp"});
+    var filter1 = new Filter({pattern:"missing_expected.rq", errorType:1, title:"Inget v&auml;rde angivet f&ouml;r egenskap"});
+    var filter2 = new Filter({pattern:"datatype_error.rq", errorType:2, title:"Egenskap matchar inte angiven datatyp"});
 
     addFilterForError(filter1);
     addFilterForError(filter2);
@@ -48,7 +48,7 @@ function wrapForSliding() {
 }
 
 function addFilterForError(filterType) {
-    var matches = getMatchesForError(filterType.get('errorType'));
+    var matches = getMatchesForError(filterType.get('pattern'));
     var unique_matches = matches.unique();
 
     var i;
@@ -56,12 +56,16 @@ function addFilterForError(filterType) {
         var match = unique_matches[i];
         var match_count = getCount(matches, match);
 
-        var filterMatch = new FilterMatch({errorType:filterType.get('errorType'),
+        var filterMatch = new FilterMatch({
+            pattern:filterType.get('pattern'),
+            errorType:filterType.get('errorType'),
             title:filterType.get('title'),
-            match:match});
+            match:match,
+            isDisplayed:false,
+            id: filterType.get('errorType') + '_' + i});
 
-        var div_object = $("<div id='filtrera' style='margin-bottom:10px;'><div>" + match_count + "st: " + filterType.get('title') + " (" + match + ")</div></div>");
-        var div_button = $("<button>Visa/D&ouml;lj</button>");
+        var div_object = $("<div id='filtrera' style='margin-bottom:10px;'><div>" + filterType.get('title') + " (" + match + ") - " + match_count + "st</div></div>");
+        var div_button = $("<button id='filter_" + filterMatch.get('id') + "'>Visa</button>");
 
         div_button.click(createCallbackForError(filterMatch));
         div_object.append(div_button);
@@ -86,15 +90,14 @@ function getMatchesForError(errorType) {
 function createCallbackForError(filterMatch) {
     return function () {
         filterMatch.toggleVisibility();
-        filterMatch.logToConsole();
     }
 }
 
 function hideAll() {
     console.log("hideAll");
-    console.log(allFilterMatches.models);
 
     allFilterMatches.each(function (filterMatch) {
+        console.log("filterMatch: " + filterMatch.get("title"));
         filterMatch.slideUp();
     });
 }
@@ -125,47 +128,75 @@ function getCount(arr, val) {
 }
 
 var Filter = Backbone.Model.extend({
-    errorType:"",
-    title:"",
-    logToConsole:function () {
-        console.log("errorType: " + this.get("errorType") + ", title: " + this.get("title"));
-    }
-});
+        defaults: {
+            pattern: "Not specified",
+            errorType: 0,
+            title: "Not specified"
+        },
+        initialize: function(){
+            this.logToConsole();
+        },
+        logToConsole:function () {
+            console.log("pattern: " + this.get("pattern") + "," +
+                " errorType: " + this.get("errorType") +
+                ", title: " + this.get("title"));
+        }
+    });
 
 var FilterMatch = Filter.extend({
-    match:"",
-    isDisplayed:true,
-
-    toggleVisibility:function () {
-        if (this.get("isDisplayed")) {
-            this.slideUp();
-        } else {
-            hideAll();
-            this.slideDown();
+        defaults: {
+            match: "Not specified",
+            isDisplayed: false,
+            id: "Not specified"
+        },
+        initialize: function(){
+            this.logToConsole();
+        },
+        logToConsole:function () {
+            console.log("pattern: " + this.get("pattern") +
+                ", errorType: " + this.get("errorType") +
+                ", title: " + this.get("title") +
+                ", match: " + this.get("match") +
+                ", id: " + this.get("id") +
+                ", isDisplayed: " + this.get("isDisplayed"));
+        },
+        toggleVisibility:function () {
+            console.log("pattern: " + this.get("pattern") + "displayed: " + this.get("isDisplayed"));
+            if (this.get("isDisplayed")) {
+                this.slideUp();
+            } else {
+                hideAll();
+                this.slideDown();
+            }
+        },
+        slideUp:function () {
+            var that = this;
+            that.set("isDisplayed", false);
+            console.log("Setting isDisplayed to false for " + that.get("title"))
+            $("tr:has(td:contains(" + that.get("pattern") + "))").each(function () {
+                if ($(this).text().match(that.get("match"))) {
+                    $(this).find('div').slideUp(150);
+                }
+            });
+            this.updateButton();
+        },
+        slideDown:function () {
+            var that = this;
+            that.set("isDisplayed", true);
+            console.log("Setting isDisplayed to true for " + that.get("title"))
+            $("tr:has(td:contains(" + that.get("pattern") + "))").each(function () {
+                if ($(this).text().match(that.get("match"))) {
+                    $(this).find('div').slideDown(150);
+                }
+            });
+            this.updateButton();
+        },
+        updateButton:function () {
+            var that = this;
+            var text = that.get("isDisplayed") ? "D&ouml;lj" : "Visa";
+            $('#filter_'+that.get('id')).html(text);
         }
-    },
-    slideUp:function () {
-        var that = this;
-        that.set("isDisplayed", false);
-        $("tr:has(td:contains(" + that.get("errorType") + "))").each(function () {
-            if ($(this).text().match(that.get("match"))) {
-                $(this).find('div').slideUp(150);
-            }
-        });
-    },
-    slideDown:function () {
-        var that = this;
-        that.set("isDisplayed", true);
-        $("tr:has(td:contains(" + that.get("errorType") + "))").each(function () {
-            if ($(this).text().match(that.get("match"))) {
-                $(this).find('div').slideDown(150);
-            }
-        });
-    },
-    logToConsole:function () {
-        console.log("errorType: " + this.get("errorType") + ", title: " + this.get("title") + ", match: " + this.get("match") + ", isDisplayed: " + this.get("isDisplayed"));
-    }
-});
+    });
 
 var FilterMatchCollection = Backbone.Collection.extend({
     model:FilterMatch
