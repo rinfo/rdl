@@ -9,7 +9,7 @@ ssh root@$1 passwd rinfo
 # Automate login
 ssh rinfo@$1 mkdir .ssh
 scp ~/.ssh/id_rsa.pub rinfo@$1:.
-ssh rinfo@$1 cat id_rsa.pub >> .ssh/authorized_keys
+ssh rinfo@$1 'cat id_rsa.pub >> .ssh/authorized_keys'
 ssh rinfo@$1 rm id_rsa.pub
 
 
