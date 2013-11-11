@@ -11,10 +11,10 @@ mkdir /tmp/install /tmp/install/rinfo
 cd /tmp/install/rinfo
 git clone https://github.com/rinfo/rdl.git
 cd rdl
-if [ -z "$2" ]; then
+if [ -z "$1" ]; then
 	git checkout develop
 else
-	git checkout $2
+	git checkout $1
 fi
 
 cd manage/fabfile
