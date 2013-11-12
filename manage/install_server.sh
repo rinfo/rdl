@@ -15,7 +15,18 @@ fi
 
 cd manage/fabfile
 
-fab target.$2 -R main,service,checker,admin sysconf.install_server sysconf.configure_server app.main.all 
+fab target.$2 -R main,service,checker,admin sysconf.install_server sysconf.configure_server
+fab target.$2 -R main,service,checker,admin app.service.install_elasticsearch
+fab target.$2 -R main,service,checker,admin app.service.start_elasticsearch
+fab target.$2 -R main,service,checker,admin app.service.deploy_sesame
+fab target.$2 -R main,service,checker,admin app.main.all app.checker.all app.admin.all app.service.all
+fab target.$2 -R main,service,checker,admin app.admin.ping_main
+#fab app.docs.build
+#fab target.$2 app.docs.deploy
+fab target.$2 -Rmain sysconf.sync_static_web
+
+
+
 
 
 
