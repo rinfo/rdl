@@ -32,11 +32,9 @@ function addErrorFilters() {
 
     allFilterMatches.reset();
 
-    var filter1 = new Filter({pattern:"missing_expected.rq", errorType:1, title:"Inget v&auml;rde angivet f&ouml;r egenskap"});
-    var filter2 = new Filter({pattern:"datatype_error.rq", errorType:2, title:"Egenskap matchar inte angiven datatyp"});
-
-    addFilterForError(filter1);
-    addFilterForError(filter2);
+    addFilterForError(new Filter({errorType:1, pattern:"missing_expected.rq", subPattern:"publ#", title:"Inget v&auml;rde angivet f&ouml;r egenskap"}));
+    addFilterForError(new Filter({errorType:2, pattern:"datatype_error.rq", subPattern:"publ#", title:"Egenskap matchar inte angiven datatyp"}));
+    addFilterForError(new Filter({errorType:3, pattern:"Postens\\sangivna\\sURI\\smatchar\\sinte\\sdata", subPattern:"", title:"Postens angivna URI matchar inte data"}));
 
     if (allFilterMatches.length == 0) {
         $('.filterBox').hide();
@@ -48,7 +46,7 @@ function wrapForSliding() {
 }
 
 function addFilterForError(filterType) {
-    var matches = getMatchesForError(filterType.get('pattern'));
+    var matches = getMatchesForError(filterType);
     var unique_matches = matches.unique();
 
     var i;
@@ -58,6 +56,7 @@ function addFilterForError(filterType) {
 
         var filterMatch = new FilterMatch({
             pattern:filterType.get('pattern'),
+            subPattern:filterType.get('subPattern'),
             errorType:filterType.get('errorType'),
             title:filterType.get('title'),
             match:match,
@@ -75,14 +74,27 @@ function addFilterForError(filterType) {
     }
 }
 
-function getMatchesForError(errorType) {
+function getMatchesForError(filterType) {
     var matches = [];
+    var pattern = filterType.get('pattern');
 
-    $("dl:contains(" + errorType + ")").each(function () {
-        if ($(this).text().match(/publ#(\S+)/)) {
-            matches.push(RegExp.$1);
-        }
-    })
+    if(isBlank(filterType.get('subPattern'))) {
+        $('table.report').find('tr').each(function () {
+            if ($(this).text().match(pattern)) {
+                var status = $(this).find('td.status').find('div').text();
+                matches.push(status);
+            }
+        });
+    } else {
+        $('table.report').find('tr').find('dl').each(function () {
+            if ($(this).text().match(pattern)) {
+                var subPattern = filterType.get('subPattern') + "(\\S+)";
+                if ($(this).text().match(subPattern)) {
+                    matches.push(RegExp.$1);
+                }
+            }
+        });
+    }
 
     return matches;
 }
@@ -127,17 +139,23 @@ function getCount(arr, val) {
     return ob[val];
 }
 
+function isBlank(str) {
+    return (!str || /^\s*$/.test(str));
+}
+
 var Filter = Backbone.Model.extend({
         defaults: {
-            pattern: "Not specified",
+            pattern: "",
+            subPattern: "",
             errorType: 0,
-            title: "Not specified"
+            title: ""
         },
         initialize: function(){
             this.logToConsole();
         },
         logToConsole:function () {
             console.log("pattern: " + this.get("pattern") + "," +
+                " subPattern: " + this.get("subPattern") +
                 " errorType: " + this.get("errorType") +
                 ", title: " + this.get("title"));
         }
@@ -145,15 +163,16 @@ var Filter = Backbone.Model.extend({
 
 var FilterMatch = Filter.extend({
         defaults: {
-            match: "Not specified",
+            match: "",
             isDisplayed: false,
-            id: "Not specified"
+            id: ""
         },
         initialize: function(){
             this.logToConsole();
         },
         logToConsole:function () {
             console.log("pattern: " + this.get("pattern") +
+                " subPattern: " + this.get("subPattern") +
                 ", errorType: " + this.get("errorType") +
                 ", title: " + this.get("title") +
                 ", match: " + this.get("match") +
@@ -161,7 +180,6 @@ var FilterMatch = Filter.extend({
                 ", isDisplayed: " + this.get("isDisplayed"));
         },
         toggleVisibility:function () {
-            console.log("pattern: " + this.get("pattern") + "displayed: " + this.get("isDisplayed"));
             if (this.get("isDisplayed")) {
                 this.slideUp();
             } else {
@@ -172,9 +190,8 @@ var FilterMatch = Filter.extend({
         slideUp:function () {
             var that = this;
             that.set("isDisplayed", false);
-            console.log("Setting isDisplayed to false for " + that.get("title"))
-            $("tr:has(td:contains(" + that.get("pattern") + "))").each(function () {
-                if ($(this).text().match(that.get("match"))) {
+            $('table.report').find('tr').each(function () {
+                if (hasFilterMatch(this,that)) {
                     $(this).find('div').slideUp(150);
                 }
             });
@@ -183,9 +200,8 @@ var FilterMatch = Filter.extend({
         slideDown:function () {
             var that = this;
             that.set("isDisplayed", true);
-            console.log("Setting isDisplayed to true for " + that.get("title"))
-            $("tr:has(td:contains(" + that.get("pattern") + "))").each(function () {
-                if ($(this).text().match(that.get("match"))) {
+            $('table.report').find('tr').each(function () {
+                if (hasFilterMatch(this,that)) {
                     $(this).find('div').slideDown(150);
                 }
             });
@@ -197,6 +213,11 @@ var FilterMatch = Filter.extend({
             $('#filter_'+that.get('id')).html(text);
         }
     });
+
+function hasFilterMatch(row, filterMatch) {
+    return ($(row).text().match(filterMatch.get("pattern"))
+        && $(row).text().match(filterMatch.get("match")));
+}
 
 var FilterMatchCollection = Backbone.Collection.extend({
     model:FilterMatch
