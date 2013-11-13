@@ -17,11 +17,11 @@
             iana:current <https://rinfo.boverket.se/index.atom>;
             dct:identifier "tag:boverket.se,2009:rinfo:feed"^^xsd:anyURI;
             dct:format "application/atom+xml"
-        ], [
-            dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
-            iana:current <https://www.vagledandeavgoranden.dom.se/lagrummet/atom/index.atom>;
-            dct:identifier "tag:vagledandeavgoranden.dom.se,2011:rinfo:feed"^^xsd:anyURI;
-            dct:format "application/atom+xml"
+#        ], [
+#            dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+#            iana:current <https://www.vagledandeavgoranden.dom.se/lagrummet/atom/index.atom>;
+#            dct:identifier "tag:vagledandeavgoranden.dom.se,2011:rinfo:feed"^^xsd:anyURI;
+#            dct:format "application/atom+xml"
         ], [
             dct:publisher <http://rinfo.lagrummet.se/org/naturvaardsverket>;
             iana:current <http://www.naturvardsverket.se/Cb/NFS-container/Forfattningssamlingens-Postforteckning-ATOM/>;
