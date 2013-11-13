@@ -66,10 +66,10 @@ def demo():
     # Machines:
     env.user = 'rinfo'
     env.roledefs = {
-        'main': ['demo.lagrummet.se'],
-        'service': ['demo.lagrummet.se'],
-        'checker': ['demo.lagrummet.se'],
-        'admin': ['demo.lagrummet.se'],
+        'main': ['rinfo.demo.lagrummet.se'],
+        'service': ['service.demo.lagrummet.se'],
+        'checker': ['checker.demo.lagrummet.se'],
+        'admin': ['admin.demo.lagrummet.se'],
         'demosource': ['demo.lagrummet.se'],
     }
     # Manage
