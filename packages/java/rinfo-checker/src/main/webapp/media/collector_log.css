@@ -149,3 +149,7 @@ tr.error {
 .error .status {
     font-style: italic;
 }
+
+div#filtrera {
+    margin-bottom:10px
+}

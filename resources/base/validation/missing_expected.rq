@@ -7,8 +7,8 @@ CONSTRUCT {
 
     [] a sch:Warning;
         rdfs:isDefinedBy <http://rinfo.lagrummet.se/sys/validation/missing_expected.rq>;
-        sch:message "Resurs [1]: inget värde angivet för egenskap [2] (ska vara minst [3])."@sv;
-        sch:implicated (?thing ?baseprop ?cardinality);
+        sch:message "Saknar obligatoriskt värde för egenskap [1] "@sv;
+        sch:implicated (?baseprop);
         dct:source ?context .
 
 } WHERE {

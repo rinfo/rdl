@@ -253,10 +253,9 @@
                 </dd>
                 <!--<dt>Källfil:</dt>
                 <dd><xsl:apply-templates select="dct:source/@ref"/></dd>-->
-                <dt>Testdefinition:</dt>
                 <dd>
                   <xsl:for-each select="rdfs:isDefinedBy/@ref">
-                    <a href="{.}"><xsl:apply-templates select="."/></a>
+                    <a href="{.}">Testdefinition</a>
                   </xsl:for-each>
                 </dd>
               </dl>

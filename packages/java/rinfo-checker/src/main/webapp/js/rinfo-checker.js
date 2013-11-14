@@ -32,12 +32,17 @@ function addErrorFilters() {
 
     allFilterMatches.reset();
 
-    addFilterForError(new Filter({errorType:1, pattern:"missing_expected.rq", subPattern:"publ#", title:"Inget v&auml;rde angivet f&ouml;r egenskap"}));
-    addFilterForError(new Filter({errorType:2, pattern:"datatype_error.rq", subPattern:"publ#", title:"Egenskap matchar inte angiven datatyp"}));
+    addFilterForError(new Filter({errorType:1, pattern:"Saknar\\sobligatoriskt\\sv.rde\\sf.r\\segenskap", subPattern:"publ#", title:"Saknar obligatoriskt v&auml;rde f&ouml;r egenskap"}));
+    addFilterForError(new Filter({errorType:2, pattern:"V.rdet\\smatchar\\sinte\\sdatatyp\\sf.r\\segenskap", subPattern:"publ#", title:"V&auml;rdet matchar inte datatyp f&ouml;r egenskap"}));
     addFilterForError(new Filter({errorType:3, pattern:"Postens\\sangivna\\sURI\\smatchar\\sinte\\sdata", subPattern:"", title:"Postens angivna URI matchar inte data"}));
+
+    //alert("TODO: göm alla som default!");
 
     if (allFilterMatches.length == 0) {
         $('.filterBox').hide();
+    } else if (allFilterMatches.length > 1) {
+        var reset_button = $("<div id='reset'><button onclick='resetAll()'>&Aring;terst&auml;ll</button></div>");
+        $('div.filter').append(reset_button);
     }
 }
 
@@ -61,9 +66,9 @@ function addFilterForError(filterType) {
             title:filterType.get('title'),
             match:match,
             isDisplayed:false,
-            id: filterType.get('errorType') + '_' + i});
+            id:filterType.get('errorType') + '_' + i});
 
-        var div_object = $("<div id='filtrera' style='margin-bottom:10px;'><div>" + filterType.get('title') + " (" + match + ") - " + match_count + "st</div></div>");
+        var div_object = $("<div id='filtrera'><div>" + filterType.get('title') + ": " + match + " - " + match_count + "st</div></div>");
         var div_button = $("<button id='filter_" + filterMatch.get('id') + "'>Visa</button>");
 
         div_button.click(createCallbackForError(filterMatch));
@@ -78,7 +83,7 @@ function getMatchesForError(filterType) {
     var matches = [];
     var pattern = filterType.get('pattern');
 
-    if(isBlank(filterType.get('subPattern'))) {
+    if (isBlank(filterType.get('subPattern'))) {
         $('table.report').find('tr').each(function () {
             if ($(this).text().match(pattern)) {
                 var status = $(this).find('td.status').find('div').text();
@@ -114,6 +119,15 @@ function hideAll() {
     });
 }
 
+function resetAll() {
+    console.log("showAll");
+
+    allFilterMatches.each(function (filterMatch) {
+        console.log("filterMatch: " + filterMatch.get("title"));
+        filterMatch.reset();
+    });
+}
+
 Array.prototype.unique = function () {
     var arrVal = this;
     var uniqueArr = [];
@@ -144,79 +158,85 @@ function isBlank(str) {
 }
 
 var Filter = Backbone.Model.extend({
-        defaults: {
-            pattern: "",
-            subPattern: "",
-            errorType: 0,
-            title: ""
-        },
-        initialize: function(){
-            this.logToConsole();
-        },
-        logToConsole:function () {
-            console.log("pattern: " + this.get("pattern") + "," +
-                " subPattern: " + this.get("subPattern") +
-                " errorType: " + this.get("errorType") +
-                ", title: " + this.get("title"));
-        }
-    });
+    defaults:{
+        pattern:"",
+        subPattern:"",
+        errorType:0,
+        title:""
+    },
+    initialize:function () {
+        this.logToConsole();
+    },
+    logToConsole:function () {
+        console.log("pattern: " + this.get("pattern") + "," +
+            " subPattern: " + this.get("subPattern") +
+            " errorType: " + this.get("errorType") +
+            ", title: " + this.get("title"));
+    }
+});
 
 var FilterMatch = Filter.extend({
-        defaults: {
-            match: "",
-            isDisplayed: false,
-            id: ""
-        },
-        initialize: function(){
-            this.logToConsole();
-        },
-        logToConsole:function () {
-            console.log("pattern: " + this.get("pattern") +
-                " subPattern: " + this.get("subPattern") +
-                ", errorType: " + this.get("errorType") +
-                ", title: " + this.get("title") +
-                ", match: " + this.get("match") +
-                ", id: " + this.get("id") +
-                ", isDisplayed: " + this.get("isDisplayed"));
-        },
-        toggleVisibility:function () {
-            if (this.get("isDisplayed")) {
-                this.slideUp();
-            } else {
-                hideAll();
-                this.slideDown();
-            }
-        },
-        slideUp:function () {
-            var that = this;
-            that.set("isDisplayed", false);
-            $('table.report').find('tr').each(function () {
-                if (hasFilterMatch(this,that)) {
-                    $(this).find('div').slideUp(150);
-                }
-            });
-            this.updateButton();
-        },
-        slideDown:function () {
-            var that = this;
-            that.set("isDisplayed", true);
-            $('table.report').find('tr').each(function () {
-                if (hasFilterMatch(this,that)) {
-                    $(this).find('div').slideDown(150);
-                }
-            });
-            this.updateButton();
-        },
-        updateButton:function () {
-            var that = this;
-            var text = that.get("isDisplayed") ? "D&ouml;lj" : "Visa";
-            $('#filter_'+that.get('id')).html(text);
+    defaults:{
+        match:"",
+        isDisplayed:false,
+        id:""
+    },
+    initialize:function () {
+        this.logToConsole();
+    },
+    logToConsole:function () {
+        console.log("pattern: " + this.get("pattern") +
+            " subPattern: " + this.get("subPattern") +
+            ", errorType: " + this.get("errorType") +
+            ", title: " + this.get("title") +
+            ", match: " + this.get("match") +
+            ", id: " + this.get("id") +
+            ", isDisplayed: " + this.get("isDisplayed"));
+    },
+    toggleVisibility:function () {
+        if (this.get("isDisplayed")) {
+            this.slideUp();
+        } else {
+            hideAll();
+            this.slideDown();
         }
-    });
+    },
+    slideUp:function () {
+        this.set("isDisplayed", false);
+        slide(this, "up");
+        this.updateButton();
+    },
+    slideDown:function () {
+        this.set("isDisplayed", true);
+        slide(this, "down");
+        this.updateButton();
+    },
+    reset:function () {
+        this.set("isDisplayed", false);
+        slide(this, "down");
+        this.updateButton();
+    },
+    updateButton:function () {
+        var text = this.get("isDisplayed") ? "D&ouml;lj" : "Visa";
+        $('#filter_' + this.get('id')).html(text);
+    }
+});
 
 function hasFilterMatch(row, filterMatch) {
     return ($(row).text().match(filterMatch.get("pattern"))
         && $(row).text().match(filterMatch.get("match")));
+}
+
+function slide(filterMatch, direction) {
+    $('table.report').find('tr').each(function () {
+        if (hasFilterMatch(this, filterMatch)) {
+            if (direction == "up") {
+                $(this).find('div').slideUp(150);
+            } else {
+                $(this).find('div').slideDown(150);
+            }
+        }
+    });
 }
 
 var FilterMatchCollection = Backbone.Collection.extend({
@@ -243,3 +263,17 @@ var spinnerOptions = {
     top:'auto', // Top position relative to parent in px
     left:'auto' // Left position relative to parent in px
 };
+
+//console.log might not be defined for i.e. IE8
+var alertFallback = false;
+if (typeof console === "undefined" || typeof console.log === "undefined") {
+    console = {};
+    if (alertFallback) {
+        console.log = function (msg) {
+            alert(msg);
+        };
+    } else {
+        console.log = function () {
+        };
+    }
+}
