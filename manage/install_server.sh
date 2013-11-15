@@ -23,6 +23,7 @@ fab -p $pwd target.$2 -R main,service,checker,admin app.service.install_elastics
 fab -p $pwd target.$2 -R main,service,checker,admin app.service.start_elasticsearch
 fab -p $pwd target.$2 -R main,service,checker,admin app.service.deploy_sesame
 fab -p $pwd target.$2 -R main,service,checker,admin app.main.all app.checker.all app.admin.all app.service.all
+fab -p $pwd target.$2 -R main,service,checker,admin server.restart_all
 fab -p $pwd target.$2 -R main,service,checker,admin app.admin.ping_main
 #fab -p $pwd app.docs.build
 #fab -p $pwd target.$2 app.docs.deploy
