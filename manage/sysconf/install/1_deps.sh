@@ -16,5 +16,5 @@ sudo apt-get install lsof -y
 sudo apt-get install rsync -y
 
 # java
-sudo apt-get install openjdk-6-jdk -y
+sudo apt-get install openjdk-7-jdk -y
 
