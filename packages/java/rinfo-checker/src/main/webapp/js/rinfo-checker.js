@@ -32,9 +32,10 @@ function addErrorFilters() {
 
     allFilterMatches.reset();
 
-    addFilterForError(new Filter({errorType:1, pattern:"Saknar\\sobligatoriskt\\sv.rde\\sf.r\\segenskap", subPattern:"publ#", title:"Saknar obligatoriskt v&auml;rde f&ouml;r egenskap"}));
-    addFilterForError(new Filter({errorType:2, pattern:"V.rdet\\smatchar\\sinte\\sdatatyp\\sf.r\\segenskap", subPattern:"publ#", title:"V&auml;rdet matchar inte datatyp f&ouml;r egenskap"}));
-    addFilterForError(new Filter({errorType:3, pattern:"Postens\\sangivna\\sURI\\smatchar\\sinte\\sdata", subPattern:"", title:"Postens angivna URI matchar inte data"}));
+    addFilterForError(new Filter({errorType:1, pattern:"Saknar obligatoriskt värde för egenskap", subPattern:"publ#"}));
+    addFilterForError(new Filter({errorType:2, pattern:"Värdet matchar inte datatyp för egenskap", subPattern:"publ#"}));
+    addFilterForError(new Filter({errorType:3, pattern:"Postens angivna URI matchar inte data", subPattern:""}));
+    addFilterForError(new Filter({errorType:4, pattern:"Saknar svenskt språkattribut för egenskap", subPattern:"terms/"}));
 
     removeURIFromCodeElements();
 
@@ -65,12 +66,11 @@ function addFilterForError(filterType) {
             pattern:filterType.get('pattern'),
             subPattern:filterType.get('subPattern'),
             errorType:filterType.get('errorType'),
-            title:filterType.get('title'),
             match:match,
             isDisplayed:false,
             id:filterType.get('errorType') + '_' + i});
 
-        var div_object = $("<div id='filtrera'><div>" + filterType.get('title') + ": " + match + " - " + match_count + "st</div></div>");
+        var div_object = $("<div id='filtrera'><div>" + htmlEscape(filterType.get('pattern')) + ": " + match + " - " + match_count + "st</div></div>");
         var div_button = $("<button id='filter_" + filterMatch.get('id') + "'>Visa</button>");
 
         div_button.click(createCallbackForError(filterMatch));
@@ -83,7 +83,7 @@ function addFilterForError(filterType) {
 
 function getMatchesForError(filterType) {
     var matches = [];
-    var pattern = filterType.get('pattern');
+    var pattern = encodeForRegexPattern(filterType.get('pattern'));
 
     if (isBlank(filterType.get('subPattern'))) {
         $('table.report').find('tr').each(function () {
@@ -133,8 +133,9 @@ function resetAll() {
 function removeURIFromCodeElements() {
     console.log("removeURIFromMessages");
 
-    $('table.report').find('tr').find('code').text(function(i,t) {
-	    return t.replace("http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#", "");
+    $('table.report').find('tr').find('code').text(function (i, t) {
+        return t.replace("http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#","")
+                .replace("http://purl.org/dc/terms/","");
     });
 }
 
@@ -163,16 +164,11 @@ function getCount(arr, val) {
     return ob[val];
 }
 
-function isBlank(str) {
-    return (!str || /^\s*$/.test(str));
-}
-
 var Filter = Backbone.Model.extend({
     defaults:{
         pattern:"",
         subPattern:"",
-        errorType:0,
-        title:""
+        errorType:0
     },
     initialize:function () {
         this.logToConsole();
@@ -180,8 +176,7 @@ var Filter = Backbone.Model.extend({
     logToConsole:function () {
         console.log("pattern: " + this.get("pattern") + "," +
             " subPattern: " + this.get("subPattern") +
-            " errorType: " + this.get("errorType") +
-            ", title: " + this.get("title"));
+            " errorType: " + this.get("errorType"));
     }
 });
 
@@ -198,7 +193,6 @@ var FilterMatch = Filter.extend({
         console.log("pattern: " + this.get("pattern") +
             " subPattern: " + this.get("subPattern") +
             ", errorType: " + this.get("errorType") +
-            ", title: " + this.get("title") +
             ", match: " + this.get("match") +
             ", id: " + this.get("id") +
             ", isDisplayed: " + this.get("isDisplayed"));
@@ -239,8 +233,8 @@ var FilterMatch = Filter.extend({
     },
     _hasFilterMatch:function (row) {
         var that = this;
-        return ($(row).text().match(that.get("pattern"))
-            && $(row).text().match(that.get("match")));
+        return $(row).text().match(encodeForRegexPattern(that.get("pattern")))
+            && $(row).text().match(encodeForRegexPattern(that.get("match")));
     }
 });
 
@@ -281,4 +275,34 @@ if (typeof console === "undefined" || typeof console.log === "undefined") {
         console.log = function () {
         };
     }
+}
+
+function htmlEscape(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/å/g, '&aring;')
+        .replace(/ä/g, '&auml;')
+        .replace(/ö/g, '&ouml;')
+        .replace(/Å/g, '&Aring;')
+        .replace(/Ä/g, '&Auml;')
+        .replace(/Ö/g, '&Ouml;');
+}
+
+function encodeForRegexPattern(str) {
+    return String(str)
+        .replace(/\s/g, '\\s')
+        .replace(/å/g, '.')
+        .replace(/ä/g, '.')
+        .replace(/ö/g, '.')
+        .replace(/Å/g, '.')
+        .replace(/Ä/g, '.')
+        .replace(/Ö/g, '.');
+}
+
+function isBlank(str) {
+    return (!str || /^\s*$/.test(str));
 }
