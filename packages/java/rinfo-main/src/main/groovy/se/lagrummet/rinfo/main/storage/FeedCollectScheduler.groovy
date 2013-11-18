@@ -16,8 +16,7 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     private URI adminFeedId
     private URL adminFeedUrl
 
-    //private Map<URL, CollectorSource> otherSourcesByFeedUrl = Collections.emptyMap()
-    private List<CollectorSource> otherSourcesByFeedUrl = Collections.emptyList()
+    private Map<URL, CollectorSource> otherSourcesByFeedUrl = Collections.emptyMap()
 
     private Collection<URL> sourceFeedUrls = Collections.emptyList()
 
@@ -46,36 +45,16 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     }
 
     public Collection<CollectorSource> getSources() {
-        //return otherSourcesByFeedUrl.values()
-        return otherSourcesByFeedUrl
+        return otherSourcesByFeedUrl.values()
     }
 
     public void setSources(Collection<CollectorSource> sources) {
         logger.trace("sources.size="+sources.size())
-        this.otherSourcesByFeedUrl = new LinkedList<>(); //new HashMap<URL, CollectorSource>()
-        //todo enter 14 but exit 11. Fix please
+        this.otherSourcesByFeedUrl = new HashMap<URL, CollectorSource>()
         for (source in sources) {
-            if (!exists(source))
-                this.otherSourcesByFeedUrl.add(source)
-            //CollectorSource cs = otherSourcesByFeedUrl.put(source.currentFeed, source)
-            //if (cs!=null)
-            //    logger.trace("cs.currentFeed"+(cs.currentFeed.equals(source.currentFeed)?"=":"!=")+"source.currentFeed where cs.currentFeed="+cs.currentFeed+" and source.currentFeed="+source.currentFeed)
+            otherSourcesByFeedUrl.put(source.currentFeed, source)
         }
         refreshSourceFeedUrls()
-    }
-
-    private boolean exists(CollectorSource collectorSource) {
-        for (source in this.otherSourcesByFeedUrl)
-            if (source.currentFeed.toString().equals(collectorSource.currentFeed.toString()))
-                return true;
-        return false;
-    }
-
-    private CollectorSource get(URL url) {
-        for (source in this.otherSourcesByFeedUrl)
-            if (source.currentFeed.toString().equals(url.toString()))
-                return source;
-        return null;
     }
 
     @Override
@@ -92,7 +71,7 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
             return new StorageCredentials(
                     new CollectorSource(adminFeedId, adminFeedUrl), true)
         } else {
-            def source = get(feedUrl)
+            def source = otherSourcesByFeedUrl.get(feedUrl)
             if (source == null) {
                 return null
             }
@@ -112,13 +91,18 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     }
 
     private void updateSourceFeedUrls() {
+        logger.trace("Enter updateSourceFeedUrls()");
         Collection<URL> mergedUrls = new ArrayList<URL>()
 
         if (adminFeedUrl != null) {
             mergedUrls.add(adminFeedUrl)
+            logger.trace("adminFeedUrl="+adminFeedUrl);
         }
-        mergedUrls.addAll(otherSourcesByFeedUrl)
+        logger.trace("otherSourcesByFeedUrl.size="+otherSourcesByFeedUrl.size()+" keyset.size="+otherSourcesByFeedUrl.keySet().size())
+        mergedUrls.addAll(otherSourcesByFeedUrl.keySet())
+        logger.trace("mergedUrls.size="+mergedUrls.size());
         this.sourceFeedUrls = Collections.unmodifiableList(mergedUrls)
+        logger.trace("this.sourceFeedUrls.size="+this.sourceFeedUrls.size());
     }
 
 }
