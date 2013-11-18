@@ -9,7 +9,7 @@ CONSTRUCT {
 
     [] a sch:Error;
         rdfs:isDefinedBy <http://rinfo.lagrummet.se/sys/validation/datatype_error.rq>;
-        sch:message "Värdet matchar inte datatyp för egenskap [1] "@sv;
+        sch:message "Värdet matchar inte datatyp för egenskap: [1] "@sv;
         sch:implicated (?prop);
         dct:source ?context .
 

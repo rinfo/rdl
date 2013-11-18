@@ -36,7 +36,7 @@ function addErrorFilters() {
     addFilterForError(new Filter({errorType:2, pattern:"V.rdet\\smatchar\\sinte\\sdatatyp\\sf.r\\segenskap", subPattern:"publ#", title:"V&auml;rdet matchar inte datatyp f&ouml;r egenskap"}));
     addFilterForError(new Filter({errorType:3, pattern:"Postens\\sangivna\\sURI\\smatchar\\sinte\\sdata", subPattern:"", title:"Postens angivna URI matchar inte data"}));
 
-    //alert("TODO: göm alla som default!");
+    removeURIFromCodeElements();
 
     if (allFilterMatches.length == 0) {
         $('.filterBox').hide();
@@ -128,6 +128,14 @@ function resetAll() {
     });
 }
 
+function removeURIFromCodeElements() {
+    console.log("removeURIFromMessages");
+
+    $('table.report').find('tr').find('code').text(function(i,t) {
+	    return t.replace("http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#", "");
+    });
+}
+
 Array.prototype.unique = function () {
     var arrVal = this;
     var uniqueArr = [];
@@ -203,41 +211,41 @@ var FilterMatch = Filter.extend({
     },
     slideUp:function () {
         this.set("isDisplayed", false);
-        slide(this, "up");
-        this.updateButton();
+        this._slide("up");
+        this._updateButton();
     },
     slideDown:function () {
         this.set("isDisplayed", true);
-        slide(this, "down");
-        this.updateButton();
+        this._slide("down");
+        this._updateButton();
     },
     reset:function () {
         this.set("isDisplayed", false);
-        slide(this, "down");
-        this.updateButton();
+        this._slide("down");
+        this._updateButton();
     },
-    updateButton:function () {
+    _updateButton:function () {
         var text = this.get("isDisplayed") ? "D&ouml;lj" : "Visa";
         $('#filter_' + this.get('id')).html(text);
+    },
+    _slide:function (direction) {
+        var that = this;
+        $('table.report').find('tr').each(function () {
+            if (that._hasFilterMatch(this)) {
+                if (direction == "up") {
+                    $(this).find('div').slideUp(150);
+                } else {
+                    $(this).find('div').slideDown(150);
+                }
+            }
+        });
+    },
+    _hasFilterMatch:function (row) {
+        var that = this;
+        return ($(row).text().match(that.get("pattern"))
+            && $(row).text().match(that.get("match")));
     }
 });
-
-function hasFilterMatch(row, filterMatch) {
-    return ($(row).text().match(filterMatch.get("pattern"))
-        && $(row).text().match(filterMatch.get("match")));
-}
-
-function slide(filterMatch, direction) {
-    $('table.report').find('tr').each(function () {
-        if (hasFilterMatch(this, filterMatch)) {
-            if (direction == "up") {
-                $(this).find('div').slideUp(150);
-            } else {
-                $(this).find('div').slideDown(150);
-            }
-        }
-    });
-}
 
 var FilterMatchCollection = Backbone.Collection.extend({
     model:FilterMatch

@@ -7,7 +7,7 @@ CONSTRUCT {
 
     [] a sch:Warning;
         rdfs:isDefinedBy <http://rinfo.lagrummet.se/sys/validation/missing_expected.rq>;
-        sch:message "Saknar obligatoriskt värde för egenskap [1] "@sv;
+        sch:message "Saknar obligatoriskt värde för egenskap: [1] "@sv;
         sch:implicated (?baseprop);
         dct:source ?context .
 
