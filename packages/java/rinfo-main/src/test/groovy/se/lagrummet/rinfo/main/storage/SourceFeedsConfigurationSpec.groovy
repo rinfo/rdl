@@ -17,8 +17,6 @@ class SourceFeedsConfigurationSpec extends Specification {
         new URL("http://regeringen.se/sfs/feed/current"),
     ]
 
-    //todo fix test /CM
-/*
     def "Collect scheduler gets source feeds from rdf in configured entry"() {
         setup: "configure handler with entry id"
         def collectScheduler = new FeedCollectScheduler(null)
@@ -33,7 +31,6 @@ class SourceFeedsConfigurationSpec extends Specification {
         then: "the collect scheduler gets source feeds from the entry data"
         collectScheduler.sourceFeedUrls.toList().sort() == sourceFeedUrls
     }
-*/
 
     /*def "Source feed entry must come from admin session"() {
         setup: "non-admin credentials"

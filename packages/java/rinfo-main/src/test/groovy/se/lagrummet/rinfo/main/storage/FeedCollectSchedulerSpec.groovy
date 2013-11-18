@@ -5,8 +5,7 @@ import spock.lang.*
 
 class FeedCollectSchedulerSpec extends Specification {
 
-    //todo make tests work!!! /CM
-    /*def "collect scheduler should add adminFeedUrl to sourceFeedUrls"() {
+    def "collect scheduler should add adminFeedUrl to sourceFeedUrls"() {
         setup:
         def collectScheduler = new FeedCollectScheduler(null)
         when:
@@ -67,7 +66,7 @@ class FeedCollectSchedulerSpec extends Specification {
         then:
         collectScheduler.sourceFeedUrls == newSources.collect { it.currentFeed }
         collectScheduler.isStarted() == wasStarted == true
-    } */
+    }
 
     class TestScheduler extends FeedCollectScheduler {
         TestScheduler() { super(null) }
