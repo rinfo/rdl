@@ -49,7 +49,6 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     }
 
     public void setSources(Collection<CollectorSource> sources) {
-        logger.trace("sources.size="+sources.size())
         this.otherSourcesByFeedUrl = new HashMap<URL, CollectorSource>()
         for (source in sources) {
             otherSourcesByFeedUrl.put(source.currentFeed, source)
@@ -91,18 +90,13 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     }
 
     private void updateSourceFeedUrls() {
-        logger.trace("Enter updateSourceFeedUrls()");
         Collection<URL> mergedUrls = new ArrayList<URL>()
 
         if (adminFeedUrl != null) {
             mergedUrls.add(adminFeedUrl)
-            logger.trace("adminFeedUrl="+adminFeedUrl);
         }
-        logger.trace("otherSourcesByFeedUrl.size="+otherSourcesByFeedUrl.size()+" keyset.size="+otherSourcesByFeedUrl.keySet().size())
         mergedUrls.addAll(otherSourcesByFeedUrl.keySet())
-        logger.trace("mergedUrls.size="+mergedUrls.size());
         this.sourceFeedUrls = Collections.unmodifiableList(mergedUrls)
-        logger.trace("this.sourceFeedUrls.size="+this.sourceFeedUrls.size());
     }
 
 }
