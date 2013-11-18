@@ -68,6 +68,19 @@ class FeedCollectSchedulerSpec extends Specification {
         collectScheduler.isStarted() == wasStarted == true
     }
 
+    def "collect scheduler should use all listed sources"() {
+        // This testcase is dependent on *.testfeed.lagrummet.se has an active vritual host. the two hosts points to the same IP addresses
+        setup:
+        def collectScheduler = new TestScheduler()
+        when:
+        collectScheduler.sources = [
+                new CollectorSource(new URI("tag:regeringen.se,2009:rinfo:dataset:sfs"),new URL("http://sfs.testfeed.lagrummet.se/feed/current.atom")),
+                new CollectorSource(new URI("tag:regeringen.se,2009:rinfo:dataset:prop"),new URL("http://prop.testfeed.lagrummet.se/feed/current.atom"))
+        ]
+        then:
+        collectScheduler.sourceFeedUrls.size() == 2
+    }
+
     class TestScheduler extends FeedCollectScheduler {
         TestScheduler() { super(null) }
         protected void collectFeed(URL feedUrl, boolean lastInBatch) {
