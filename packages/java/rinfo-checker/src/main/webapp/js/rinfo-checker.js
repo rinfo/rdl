@@ -44,6 +44,8 @@ function addErrorFilters() {
         var reset_button = $("<div id='reset'><button onclick='resetAll()'>&Aring;terst&auml;ll</button></div>");
         $('div.filter').append(reset_button);
     }
+
+    resetAll();
 }
 
 function wrapForSliding() {
@@ -124,7 +126,7 @@ function resetAll() {
 
     allFilterMatches.each(function (filterMatch) {
         console.log("filterMatch: " + filterMatch.get("title"));
-        filterMatch.reset();
+        filterMatch.slideUp();
     });
 }
 
@@ -216,11 +218,6 @@ var FilterMatch = Filter.extend({
     },
     slideDown:function () {
         this.set("isDisplayed", true);
-        this._slide("down");
-        this._updateButton();
-    },
-    reset:function () {
-        this.set("isDisplayed", false);
         this._slide("down");
         this._updateButton();
     },
