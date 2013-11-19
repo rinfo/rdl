@@ -109,7 +109,7 @@
             <th class="position">#</th>
             <th class="dateTime">Tidpunkt</th>
             <th class="status">Status</th>
-            <th class="uri">ID</th>
+            <th class="uri">URI</th>
             <th class="info">Information</th>
           </tr>
           <xsl:for-each select="$collected">
