@@ -25,6 +25,7 @@ function overrideFormSubmit() {
 }
 
 function addErrorFilters() {
+    removeHeader();
     wrapForSliding();
 
     var filter_div = $("<div class='filterBox'><h3>Filtrera</h3><div class='filter'></div></div>");
@@ -47,6 +48,10 @@ function addErrorFilters() {
     }
 
     resetAll();
+}
+
+function removeHeader() {
+    $('#target').find('h1').first().remove();
 }
 
 function wrapForSliding() {
