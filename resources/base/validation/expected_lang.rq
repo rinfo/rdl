@@ -7,7 +7,7 @@ CONSTRUCT {
 
     [] a sch:Warning;
         rdfs:isDefinedBy <http://rinfo.lagrummet.se/sys/validation/expected_lang.rq>;
-        sch:message "Saknar svenskt språkattribut för egenskap: [1] "@sv;
+        sch:message "Saknar svenskt språkattribut (xml:lang) för egenskap: [1] "@sv;
         sch:implicated (?prop);
         dct:source ?context .
 

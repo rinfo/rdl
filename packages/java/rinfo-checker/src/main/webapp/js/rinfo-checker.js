@@ -35,7 +35,7 @@ function addErrorFilters() {
     addFilterForError(new Filter({errorType:1, pattern:"Saknar obligatoriskt värde för egenskap", subPattern:"publ#"}));
     addFilterForError(new Filter({errorType:2, pattern:"Värdet matchar inte datatyp för egenskap", subPattern:"publ#"}));
     addFilterForError(new Filter({errorType:3, pattern:"Postens angivna URI matchar inte data", subPattern:""}));
-    addFilterForError(new Filter({errorType:4, pattern:"Saknar svenskt språkattribut för egenskap", subPattern:"terms/"}));
+    addFilterForError(new Filter({errorType:4, pattern:"Saknar svenskt språkattribut (xml:lang) för egenskap", subPattern:"terms/"}));
 
     removeURIFromCodeElements();
 
@@ -295,6 +295,8 @@ function htmlEscape(str) {
 function encodeForRegexPattern(str) {
     return String(str)
         .replace(/\s/g, '\\s')
+        .replace(/\(/g, '\\(')
+        .replace(/\)/g, '\\)')
         .replace(/å/g, '.')
         .replace(/ä/g, '.')
         .replace(/ö/g, '.')
