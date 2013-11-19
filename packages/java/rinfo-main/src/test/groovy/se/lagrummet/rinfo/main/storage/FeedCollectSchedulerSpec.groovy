@@ -11,9 +11,9 @@ class FeedCollectSchedulerSpec extends Specification {
         when:
         collectScheduler.adminFeedUrl = adminUrl
         collectScheduler.sources = sourceUrls.collect {
-                new CollectorSource(it.toURI(), it) }
+                new CollectorSource(it, it.toURL()) }
         then:
-        def adminUrls = adminUrl? [adminUrl] : []
+        def adminUrls = adminUrl? [adminUrl.toURI()] : []
         collectScheduler.sourceFeedUrls == adminUrls + sourceUrls
         where:
         adminUrl << [
@@ -23,8 +23,8 @@ class FeedCollectSchedulerSpec extends Specification {
             null,
         ]
         sourceUrls << [
-            [new URL("http://localhost/pub/1"), new URL("http://localhost/pub/2")],
-            [new URL("http://localhost/pub/1"), new URL("http://localhost/pub/2")],
+            [new URI("http://localhost/pub/1"), new URI("http://localhost/pub/2")],
+            [new URI("http://localhost/pub/1"), new URI("http://localhost/pub/2")],
             [],
             [],
         ]
@@ -64,7 +64,7 @@ class FeedCollectSchedulerSpec extends Specification {
         collectScheduler.sources = newSources
 
         then:
-        collectScheduler.sourceFeedUrls == newSources.collect { it.currentFeed }
+        collectScheduler.sourceFeedUrls == newSources.collect { it.currentFeed.toURI() }
         collectScheduler.isStarted() == wasStarted == true
     }
 

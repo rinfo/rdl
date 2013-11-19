@@ -16,9 +16,9 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     private URI adminFeedId
     private URL adminFeedUrl
 
-    private Map<URL, CollectorSource> otherSourcesByFeedUrl = Collections.emptyMap()
+    private Map<URI, CollectorSource> otherSourcesByFeedUrl = Collections.emptyMap()
 
-    private Collection<URL> sourceFeedUrls = Collections.emptyList()
+    private Collection<URI> sourceFeedUrls = Collections.emptyList()
 
     Runnable batchCompletedCallback
 
@@ -29,7 +29,7 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     }
 
     @Override
-    public Collection<URL> getSourceFeedUrls() { return sourceFeedUrls }
+    public Collection<URI> getSourceFeedUrls() { return sourceFeedUrls }
 
     public URI getAdminFeedId() { return adminFeedId }
 
@@ -49,9 +49,9 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     }
 
     public void setSources(Collection<CollectorSource> sources) {
-        this.otherSourcesByFeedUrl = new HashMap<URL, CollectorSource>()
+        this.otherSourcesByFeedUrl = new HashMap<URI, CollectorSource>()
         for (source in sources) {
-            otherSourcesByFeedUrl.put(source.currentFeed, source)
+            otherSourcesByFeedUrl.put(source.currentFeed.toURI(), source)
         }
         refreshSourceFeedUrls()
     }
@@ -70,7 +70,7 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
             return new StorageCredentials(
                     new CollectorSource(adminFeedId, adminFeedUrl), true)
         } else {
-            def source = otherSourcesByFeedUrl.get(feedUrl)
+            def source = otherSourcesByFeedUrl.get(feedUrl.toURI())
             if (source == null) {
                 return null
             }
@@ -90,10 +90,10 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     }
 
     private void updateSourceFeedUrls() {
-        Collection<URL> mergedUrls = new ArrayList<URL>()
+        Collection<URI> mergedUrls = new ArrayList<URI>()
 
         if (adminFeedUrl != null) {
-            mergedUrls.add(adminFeedUrl)
+            mergedUrls.add(adminFeedUrl.toURI())
         }
         mergedUrls.addAll(otherSourcesByFeedUrl.keySet())
         this.sourceFeedUrls = Collections.unmodifiableList(mergedUrls)

@@ -6,14 +6,15 @@ import se.lagrummet.rinfo.collector.AbstractCollectScheduler
 class SesameLoadScheduler extends AbstractCollectScheduler {
 
     ServiceComponents components
-    protected Collection<URL> sourceFeedUrls
+    protected Collection<URI> sourceFeedUrls = new LinkedList<>()
 
-    SesameLoadScheduler(components, sourceFeedUrls) {
+    SesameLoadScheduler(components, Collection<URL> sourceFeedUrls) {
         this.components = components
-        this.sourceFeedUrls = sourceFeedUrls
+        for (source in sourceFeedUrls)
+            this.sourceFeedUrls.add(source.toURI())
     }
 
-    public Collection<URL> getSourceFeedUrls() {
+    public Collection<URI> getSourceFeedUrls() {
         return sourceFeedUrls
     }
 
