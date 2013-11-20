@@ -219,6 +219,11 @@ class CollectorLogSession implements Closeable {
             state.pageDescriber.addFromConnection(errorConn, true)
             report.close()
         }
+        else if (error instanceof UnknownSubjectException) {
+            errorDesc = state.pageDescriber.newDescription(null, "rc:Error")
+            def repr = error.cause?.toString() ?: error.getMessage() ?: "[N/A]"
+            errorDesc.addLiteral("rdf:value", repr)
+        }
         if (errorDesc == null) {
             errorDesc = state.pageDescriber.newDescription(null, "rc:Error")
             def repr = error.cause?.toString() ?: error.toString() ?: "[N/A]"

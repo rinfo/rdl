@@ -37,6 +37,7 @@ function addErrorFilters() {
     addFilterForError(new Filter({errorType:2, pattern:"Värdet matchar inte datatyp för egenskap", subPattern:"publ#"}));
     addFilterForError(new Filter({errorType:3, pattern:"Postens angivna URI matchar inte data", subPattern:""}));
     addFilterForError(new Filter({errorType:4, pattern:"Saknar svenskt språkattribut (xml:lang) för egenskap", subPattern:"terms/"}));
+    addFilterForError(new Filter({errorType:5, pattern:"Kan inte tolka URI:n", subPattern:""}));
 
     removeURIFromCodeElements();
 
@@ -93,8 +94,7 @@ function getMatchesForError(filterType) {
     if (isBlank(filterType.get('subPattern'))) {
         $('table.report').find('tr').each(function () {
             if ($(this).text().match(pattern)) {
-                var status = $(this).find('td.status').find('div').text();
-                matches.push(status);
+                matches.push("");
             }
         });
     } else {

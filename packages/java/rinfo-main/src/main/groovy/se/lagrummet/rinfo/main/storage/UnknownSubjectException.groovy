@@ -6,8 +6,8 @@ class UnknownSubjectException extends Exception {
     URI subject
 
     UnknownSubjectException(URI subject) {
-        super("Unable to understand the URI <"+subject+
-                ">. This could mean the URI contains parts that is not configured in RDL or these parts are misspelled or otherwise incorrect!");
+        super("Kan inte tolka URI:n <"+subject+
+                ">. Detta kan bero på att URI:n innehåller delar som inte är konfigurerade i RDL eller att delarna är felstavade eller på annat sätt felaktiga");
         this.subject = subject
     }
 
