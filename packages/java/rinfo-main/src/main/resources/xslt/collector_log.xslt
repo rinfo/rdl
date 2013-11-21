@@ -192,13 +192,19 @@
           <xsl:when test="rc:computedUri = ''">
             <xsl:text>Otillräcklig data för att matcha postens angivna URI.</xsl:text>
           </xsl:when>
-          <xsl:otherwise>Postens angivna URI matchar inte data.</xsl:otherwise>
+          <xsl:otherwise>Angiven URI matchar inte den URI som beräknats utifrån egenskaper i dokumentet</xsl:otherwise>
         </xsl:choose>
         <dl class="lone">
           <dt>Angiven URI:</dt>
-          <dd><xsl:value-of select="rc:givenUri"/></dd>
+          <dd>
+              <span><xsl:value-of select="rc:commonPrefix"/></span>
+              <span class="diff"><xsl:value-of select="rc:givenUriDiff"/></span>
+          </dd>
           <dt>Beräknad URI:</dt>
-          <dd><xsl:value-of select="rc:computedUri"/></dd>
+          <dd>
+              <span><xsl:value-of select="rc:commonPrefix"/></span>
+              <span class="diff"><xsl:value-of select="rc:computedUriDiff"/></span>
+          </dd>
         </dl>
       </td>
     </tr>
@@ -251,13 +257,14 @@
                   <xsl:variable name="last-ref" select="concat('[', count($items), ']')"/>
                   <xsl:value-of select="substring-after($msg, $last-ref)"/>
                 </dd>
+                <!-- TODO: Samla alla testdefinitioner på gemensam sida istället  -->
                 <!--<dt>Källfil:</dt>
-                <dd><xsl:apply-templates select="dct:source/@ref"/></dd>-->
+                <dd><xsl:apply-templates select="dct:source/@ref"/></dd>
                 <dd>
                   <xsl:for-each select="rdfs:isDefinedBy/@ref">
                     <a href="{.}">Testdefinition</a>
                   </xsl:for-each>
-                </dd>
+                </dd>-->
               </dl>
             </li>
           </xsl:for-each>

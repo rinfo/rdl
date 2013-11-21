@@ -204,6 +204,9 @@ class CollectorLogSession implements Closeable {
             errorDesc = state.pageDescriber.newDescription(null, "rc:IdentifyerError")
             errorDesc.addLiteral("rc:givenUri", error.givenUri)
             errorDesc.addLiteral("rc:computedUri", error.computedUri ?: "")
+            errorDesc.addLiteral("rc:commonPrefix", error.commonPrefix ?: "")
+            errorDesc.addLiteral("rc:givenUriDiff", error.givenUriDiff ?: "")
+            errorDesc.addLiteral("rc:computedUriDiff", error.computedUriDiff ?: "")
             errorLevel = ErrorLevel.ERROR
         } else if (error instanceof SchemaReportException) {
             def report = error.report

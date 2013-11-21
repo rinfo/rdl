@@ -35,7 +35,7 @@ function addErrorFilters() {
 
     addFilterForError(new Filter({errorType:1, pattern:"Saknar obligatoriskt värde för egenskap", subPattern:"publ#"}));
     addFilterForError(new Filter({errorType:2, pattern:"Värdet matchar inte datatyp för egenskap", subPattern:"publ#"}));
-    addFilterForError(new Filter({errorType:3, pattern:"Postens angivna URI matchar inte data", subPattern:""}));
+    addFilterForError(new Filter({errorType:3, pattern:"Angiven URI matchar inte den URI som beräknats utifrån egenskaper i dokumentet", subPattern:""}));
     addFilterForError(new Filter({errorType:4, pattern:"Saknar svenskt språkattribut (xml:lang) för egenskap", subPattern:"terms/"}));
     addFilterForError(new Filter({errorType:5, pattern:"Kan inte tolka URI:n", subPattern:""}));
 

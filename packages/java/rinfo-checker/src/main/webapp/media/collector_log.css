@@ -126,12 +126,12 @@ td.status {
 
 th.uri,
 td.uri {
-    width: 25%;
+    width: 30%;
 }
 
 th.info,
 td.info {
-    width: 52%;
+    width: 48%;
 }
 
 tr.entry {
@@ -152,4 +152,8 @@ tr.error {
 
 div#filtrera {
     margin-bottom:10px
+}
+
+.diff {
+    background-color: #FF885C;
 }
