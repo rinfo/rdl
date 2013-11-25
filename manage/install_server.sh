@@ -22,9 +22,12 @@ fab -p $pwd target.$2 -R main,service,checker,admin sysconf.install_server sysco
 fab -p $pwd target.$2 -R main,service,checker,admin app.service.install_elasticsearch
 fab -p $pwd target.$2 -R main,service,checker,admin app.service.start_elasticsearch
 fab -p $pwd target.$2 -R main,service,checker,admin app.service.deploy_sesame
-fab -p $pwd target.$2 -R main,service,checker,admin app.main.all app.checker.all app.admin.all app.service.all
-fab -p $pwd target.$2 -R main,service,checker,admin server.restart_all
-fab -p $pwd target.$2 -R main,service,checker,admin app.admin.ping_main
+fab -p $pwd target.$2 -R admin app.admin.all
+fab -p $pwd target.$2 -R main app.main.all
+fab -p $pwd target.$2 -R service app.service.all
+fab -p $pwd target.$2 -R checker app.checker.all
+#fab -p $pwd target.$2 -R server.restart_all
+fab -p $pwd target.$2 -R admin app.admin.ping_main
 #fab -p $pwd app.docs.build
 #fab -p $pwd target.$2 app.docs.deploy
 fab -p $pwd target.$2 -Rmain sysconf.sync_static_web
