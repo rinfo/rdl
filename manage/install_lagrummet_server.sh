@@ -18,8 +18,8 @@ cd manage/fabfile
 echo "Enter sudo password: "
 read pwd
 
-fab -p $pwd target.$2 sysconf.install_server sysconf.configure_server
-fab -p $pwd target.$2 sysconf.sync_static_web
+fab -p $pwd target.$2 -R lagrummet sysconf.install_server sysconf.configure_server
+fab -p $pwd target.$2 -R lagrummet sysconf.sync_static_web
 
 
 
