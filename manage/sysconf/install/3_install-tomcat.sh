@@ -25,10 +25,13 @@ pushd /opt/
 
     # Set permissions so that the group (tomcat) can write only to work, temp and logs directory
     # Inspired by: http://www.owasp.org/index.php/Securing_tomcat
-    chmod -R o= apache-tomcat-${version} #others cannot do anything
-    chmod -R g=r,+X apache-tomcat-${version} #tomcat can only read and execute executables and directories
-    chmod -R g+w apache-tomcat-${version}/work apache-tomcat-${version}/temp #tomcat can write only to work and temp
-    chmod -R g=wx apache-tomcat-${version}/logs #tomcat can write, but not read, to logs dir
+    #chmod -R o= apache-tomcat-${version} #others cannot do anything
+    #chmod -R g=r,+X apache-tomcat-${version} #tomcat can only read and execute executables and directories
+    #chmod -R g+w apache-tomcat-${version}/work apache-tomcat-${version}/temp #tomcat can write only to work and temp
+    #chmod -R g=wx apache-tomcat-${version}/logs #tomcat can write, but not read, to logs dir
+
+    chmod -R 774 /opt/tomcat
+
 popd
 
 # Remove the unnecessary default applications
