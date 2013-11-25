@@ -70,7 +70,8 @@ def demo():
         'service': ['service.demo.lagrummet.se'],
         'checker': ['checker.demo.lagrummet.se'],
         'admin': ['admin.demo.lagrummet.se'],
-        'demosource': ['demo.lagrummet.se'],
+        'demosource': ['testfeed.lagrummet.se'],
+        'lagrummet': ['demo.lagrummet.se'],
     }
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -213,6 +214,7 @@ def prod():
         'checker': ['checker.lagrummet.se'],
         'doc': ['dev.lagrummet.se'],
         'admin': ['admin.lagrummet.se'],
+        'lagrummet': ['www.lagrummet.se'],
     }
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
