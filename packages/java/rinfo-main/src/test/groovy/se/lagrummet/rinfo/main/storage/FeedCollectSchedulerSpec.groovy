@@ -11,9 +11,9 @@ class FeedCollectSchedulerSpec extends Specification {
         when:
         collectScheduler.adminFeedUrl = adminUrl
         collectScheduler.sources = sourceUrls.collect {
-                new CollectorSource(it.toURI(), it) }
+                new CollectorSource(it, it.toURL()) }
         then:
-        def adminUrls = adminUrl? [adminUrl] : []
+        def adminUrls = adminUrl? [adminUrl.toURI()] : []
         collectScheduler.sourceFeedUrls == adminUrls + sourceUrls
         where:
         adminUrl << [
@@ -23,8 +23,8 @@ class FeedCollectSchedulerSpec extends Specification {
             null,
         ]
         sourceUrls << [
-            [new URL("http://localhost/pub/1"), new URL("http://localhost/pub/2")],
-            [new URL("http://localhost/pub/1"), new URL("http://localhost/pub/2")],
+            [new URI("http://localhost/pub/1"), new URI("http://localhost/pub/2")],
+            [new URI("http://localhost/pub/1"), new URI("http://localhost/pub/2")],
             [],
             [],
         ]
@@ -64,8 +64,21 @@ class FeedCollectSchedulerSpec extends Specification {
         collectScheduler.sources = newSources
 
         then:
-        collectScheduler.sourceFeedUrls == newSources.collect { it.currentFeed }
+        collectScheduler.sourceFeedUrls == newSources.collect { it.currentFeed.toURI() }
         collectScheduler.isStarted() == wasStarted == true
+    }
+
+    def "collect scheduler should use all listed sources"() {
+        // This testcase is dependent on *.testfeed.lagrummet.se has an active vritual host. the two hosts points to the same IP addresses
+        setup:
+        def collectScheduler = new TestScheduler()
+        when:
+        collectScheduler.sources = [
+                new CollectorSource(new URI("tag:regeringen.se,2009:rinfo:dataset:sfs"),new URL("http://sfs.testfeed.lagrummet.se/feed/current.atom")),
+                new CollectorSource(new URI("tag:regeringen.se,2009:rinfo:dataset:prop"),new URL("http://prop.testfeed.lagrummet.se/feed/current.atom"))
+        ]
+        then:
+        collectScheduler.sourceFeedUrls.size() == 2
     }
 
     class TestScheduler extends FeedCollectScheduler {

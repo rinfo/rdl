@@ -1,0 +1,14 @@
+**********************************
+When re-installing serveral times remeber this
+
+* When new server you must empty [home].ssh/known_host
+* Update target server /etc/hosts with "127.0.0.1 demo.lagrummet.se rinfo.demo.lagrummet.se admin.demo.lagrummet.se service.demo.lagrummet.se checker.demo.lagrummet.se"
+
+* Remeber to update local /etc/hosts with 
+****************************
+109.74.6.151    demo.lagrummet.se
+109.74.6.151    rinfo.demo.lagrummet.se
+109.74.6.151    service.demo.lagrummet.se
+109.74.6.151    checker.demo.lagrummet.se
+109.74.6.151    admin.demo.lagrummet.se
+****************************

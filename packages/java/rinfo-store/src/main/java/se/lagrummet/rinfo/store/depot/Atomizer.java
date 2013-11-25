@@ -23,6 +23,8 @@ import org.apache.abdera.i18n.iri.IRI;
 
 import org.apache.abdera.ext.history.FeedPagingHelper;
 import org.apache.abdera.ext.sharing.SharingHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -30,6 +32,8 @@ import org.apache.abdera.ext.sharing.SharingHelper;
  * including creating archive feeds and inserting updates and deletes.
  */
 public class Atomizer {
+
+    private final Logger logger = LoggerFactory.getLogger(Atomizer.class);
 
     // TODO:? Get from pathHandler?
     public static final String ATOM_ENTRY_MEDIA_TYPE = "application/atom+xml;type=entry";
@@ -208,6 +212,7 @@ public class Atomizer {
 
 
     public Feed newFeed(String uriPath) {
+        logger.trace("newFeed('"+uriPath+"')");
         Feed feed;
         if (feedSkeleton != null) {
             feed = (Feed) feedSkeleton.clone();

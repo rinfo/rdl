@@ -44,7 +44,8 @@ def restart_all():
 @contextlib.contextmanager
 def _managed_tomcat_restart(wait=5, headless=False, force_start=False):
     _needs_targetenv()
-    result = sudo("%(tomcat_stop)s" % env, shell=not headless, warn_only=True)
+    with settings(warn_only=True):
+        result = sudo("%(tomcat_stop)s" % env, shell=not headless)
     do_start = force_start or not result.failed
     yield
     if do_start:

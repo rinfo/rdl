@@ -71,6 +71,11 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                     fofMap = new LinkedHashMap<IRI, AtomDate>();
                 }
                 processFeedOfFeeds(rootFeed);
+            } catch (RuntimeException mapperParsingException) {
+                if (logger!=null)
+                    logger.error("Feed Error! Failed to open feed!",mapperParsingException);
+                mapperParsingException.fillInStackTrace();
+                throw mapperParsingException;
             } finally {
                 feedOfFeeds.close();
             }
@@ -153,7 +158,11 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                     fofMap.put(feed.getId(), feed.getUpdatedElement().getValue());
                     getFeedEntryDataIndex().storeEntryDataForCompleteFeedId(fofId, fofMap);
                 }
-
+            } catch (RuntimeException mapperParsingException) {
+                if (logger!=null)
+                    logger.error("Feed Error! Failed to read feed!",mapperParsingException);
+                mapperParsingException.fillInStackTrace();
+                throw mapperParsingException;
             } finally {
                 feedRef.close();
             }
