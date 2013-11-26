@@ -1,7 +1,9 @@
 from fabric.api import *
 from fabric.contrib.files import exists
 from fabfile.util import venv
-from fabfile.app import local_lib_rinfo_pkg, _deploy_war
+from fabfile.app import local_lib_rinfo_pkg
+from fabfile.app import _deploy_war
+from fabfile.app import _deploy_war_norestart
 from fabfile.target import _needs_targetenv
 
 ##
@@ -38,7 +40,7 @@ def setup():
 def deploy(headless="0"):
     """Deploys the rinfo-main war package to target env."""
     setup()
-    _deploy_war("%(java_packages)s/rinfo-main/target/rinfo-main-%(target)s.war" % env,
+    _deploy_war_norestart("%(java_packages)s/rinfo-main/target/rinfo-main-%(target)s.war" % env,
             "rinfo-main", int(headless))
 
 @task

@@ -4,6 +4,8 @@ from fabric.contrib.files import exists
 from fabfile.util import venv, mkdirpath
 from fabfile import app, sysconf
 from fabfile.target import _needs_targetenv
+from fabfile.app import _deploy_war
+from fabfile.app import _deploy_war_norestart
 
 ##
 # Local build
@@ -40,7 +42,7 @@ def setup():
 def deploy(headless="0"):
     """Deploys the rinfo-service war package to target env."""
     setup()
-    app._deploy_war(
+    _deploy_war_norestart(
             "%(java_packages)s/rinfo-service/target/rinfo-service-%(target)s.war"%env,
             "rinfo-service", int(headless))
 
