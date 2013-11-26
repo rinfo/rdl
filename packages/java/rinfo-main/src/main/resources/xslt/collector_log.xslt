@@ -7,6 +7,7 @@
 
   <xsl:param name="base-url" select="'http://rinfo.lagrummet.se/'"/>
   <xsl:param name="mediabase" select="'media'"/>
+  <xsl:param name="show-successful-entries" select="false()"/>
 
   <xsl:key name="rel" match="/graph/resource" use="@uri"/>
   <xsl:variable name="r" select="/graph/resource"/>
@@ -84,6 +85,8 @@
             <dd><xsl:value-of select="$collect-count"/></dd>
             <xsl:variable name="sucess-count"
                           select="count($collected/parent::resource[a/awol:Entry])"/>
+            <dt class="success">Antal rätt:</dt>
+            <dd class="success"><xsl:value-of select="$sucess-count"/></dd>
             <xsl:if test="$collect-count != $sucess-count">
               <dt class="error">Antal fel:</dt>
               <dd class="error">
@@ -97,14 +100,16 @@
           </xsl:otherwise>
         </xsl:choose>
       </dl>
-      <xsl:if test="$collected">
+      <xsl:if test="$collected and
+                    ($collect-count - count($collected/parent::resource[a/awol:Entry]) > 0
+                    or $show-successful-entries)">
         <h4>Poster</h4>
         <table class="report">
           <tr>
             <th class="position">#</th>
             <th class="dateTime">Tidpunkt</th>
             <th class="status">Status</th>
-            <th class="uri">ID</th>
+            <th class="uri">URI</th>
             <th class="info">Information</th>
           </tr>
           <xsl:for-each select="$collected">
@@ -119,14 +124,16 @@
   </xsl:template>
 
   <xsl:template match="*[a/awol:Entry]" mode="trow">
-    <xsl:param name="pos"/>
-    <tr class="entry">
-      <td class="position"><xsl:value-of select="$pos"/></td>
-      <td><xsl:apply-templates select="awol:updated"/></td>
-      <td class="status">OK</td>
-      <td><xsl:apply-templates select="foaf:primaryTopic/@ref"/></td>
-      <td></td>
-    </tr>
+      <xsl:param name="pos"/>
+        <xsl:if test="$show-successful-entries">
+            <tr class="entry">
+              <td class="position"><xsl:value-of select="$pos"/></td>
+              <td><xsl:apply-templates select="awol:updated"/></td>
+              <td class="status">OK</td>
+              <td><xsl:apply-templates select="foaf:primaryTopic/@ref"/></td>
+              <td></td>
+            </tr>
+        </xsl:if>
   </xsl:template>
 
   <!-- TODO:
@@ -185,13 +192,19 @@
           <xsl:when test="rc:computedUri = ''">
             <xsl:text>Otillräcklig data för att matcha postens angivna URI.</xsl:text>
           </xsl:when>
-          <xsl:otherwise>Postens angivna URI matchar inte data.</xsl:otherwise>
+          <xsl:otherwise>Angiven URI matchar inte den URI som beräknats utifrån egenskaper i dokumentet</xsl:otherwise>
         </xsl:choose>
         <dl class="lone">
           <dt>Angiven URI:</dt>
-          <dd><xsl:value-of select="rc:givenUri"/></dd>
+          <dd>
+              <span><xsl:value-of select="rc:commonPrefix"/></span>
+              <span class="diff"><xsl:value-of select="rc:givenUriDiff"/></span>
+          </dd>
           <dt>Beräknad URI:</dt>
-          <dd><xsl:value-of select="rc:computedUri"/></dd>
+          <dd>
+              <span><xsl:value-of select="rc:commonPrefix"/></span>
+              <span class="diff"><xsl:value-of select="rc:computedUriDiff"/></span>
+          </dd>
         </dl>
       </td>
     </tr>
@@ -244,14 +257,14 @@
                   <xsl:variable name="last-ref" select="concat('[', count($items), ']')"/>
                   <xsl:value-of select="substring-after($msg, $last-ref)"/>
                 </dd>
+                <!-- TODO: Samla alla testdefinitioner på gemensam sida istället  -->
                 <!--<dt>Källfil:</dt>
-                <dd><xsl:apply-templates select="dct:source/@ref"/></dd>-->
-                <dt>Testdefinition:</dt>
+                <dd><xsl:apply-templates select="dct:source/@ref"/></dd>
                 <dd>
                   <xsl:for-each select="rdfs:isDefinedBy/@ref">
-                    <a href="{.}"><xsl:apply-templates select="."/></a>
+                    <a href="{.}">Testdefinition</a>
                   </xsl:for-each>
-                </dd>
+                </dd>-->
               </dl>
             </li>
           </xsl:for-each>

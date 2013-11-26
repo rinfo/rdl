@@ -1,6 +1,10 @@
 package se.lagrummet.rinfo.base.rdf;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang.ArrayUtils;
 
 import javax.xml.transform.Templates;
@@ -24,7 +28,11 @@ public class GritTransformer {
 
     public void writeXhtml(InputStream inputStream, Writer writer)
             throws IOException {
-        TransformerUtil.writeXhtml(inputStream, writer, templates);
+        TransformerUtil.writeXhtml(inputStream, writer, Collections.<String,String>emptyMap(), templates);
     }
 
+    public void writeXhtml(InputStream inputStream, Writer writer, Map<String, String> params)
+            throws IOException {
+        TransformerUtil.writeXhtml(inputStream, writer, params, templates);
+    }
 }

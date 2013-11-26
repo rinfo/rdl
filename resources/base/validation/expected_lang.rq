@@ -7,8 +7,8 @@ CONSTRUCT {
 
     [] a sch:Warning;
         rdfs:isDefinedBy <http://rinfo.lagrummet.se/sys/validation/expected_lang.rq>;
-        sch:message "Resurs [1]: förväntade något värde för egenskap [2] på svenska, fann [3]."@sv;
-        sch:implicated (?thing ?prop ?value);
+        sch:message "Saknar svenskt språkattribut (xml:lang) för egenskap: [1] "@sv;
+        sch:implicated (?prop);
         dct:source ?context .
 
 } WHERE {

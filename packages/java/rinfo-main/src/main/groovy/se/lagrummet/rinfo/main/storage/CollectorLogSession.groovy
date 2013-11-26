@@ -204,6 +204,9 @@ class CollectorLogSession implements Closeable {
             errorDesc = state.pageDescriber.newDescription(null, "rc:IdentifyerError")
             errorDesc.addLiteral("rc:givenUri", error.givenUri)
             errorDesc.addLiteral("rc:computedUri", error.computedUri ?: "")
+            errorDesc.addLiteral("rc:commonPrefix", error.commonPrefix ?: "")
+            errorDesc.addLiteral("rc:givenUriDiff", error.givenUriDiff ?: "")
+            errorDesc.addLiteral("rc:computedUriDiff", error.computedUriDiff ?: "")
             errorLevel = ErrorLevel.ERROR
         } else if (error instanceof SchemaReportException) {
             def report = error.report
@@ -218,6 +221,11 @@ class CollectorLogSession implements Closeable {
             }
             state.pageDescriber.addFromConnection(errorConn, true)
             report.close()
+        }
+        else if (error instanceof UnknownSubjectException) {
+            errorDesc = state.pageDescriber.newDescription(null, "rc:Error")
+            def repr = error.cause?.toString() ?: error.getMessage() ?: "[N/A]"
+            errorDesc.addLiteral("rdf:value", repr)
         }
         if (errorDesc == null) {
             errorDesc = state.pageDescriber.newDescription(null, "rc:Error")

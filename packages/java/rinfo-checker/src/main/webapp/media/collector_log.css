@@ -54,6 +54,14 @@ dl.summary {
     -webkit-border-radius: 4pt;
 }
 
+div.filter {
+    background-color: #eee;
+    border: 0.8pt solid #000000;
+    padding: 4pt;
+    -moz-border-radius: 4pt;
+    -webkit-border-radius: 4pt;
+}
+
 dt {
     clear: left;
     float: left;
@@ -68,6 +76,11 @@ dd {
 dt.error,
 dd.error {
     color: #f00;
+}
+
+dt.success,
+dd.success {
+    color: #5AB109;
 }
 
 table {
@@ -94,18 +107,31 @@ td.position {
     background-color: #eee;
     font-style: italic;
     text-align: center;
+    width: 1%;
 }
 
 td.position {
     text-align: right;
 }
 
-th.dateTime {
-    width: 12.5em;
+th.dateTime,
+td.dateTime {
+    width: 10%;
 }
 
-th.status {
-    width: 8em;
+th.status,
+td.status {
+    width: 12%;
+}
+
+th.uri,
+td.uri {
+    width: 30%;
+}
+
+th.info,
+td.info {
+    width: 48%;
 }
 
 tr.entry {
@@ -124,3 +150,10 @@ tr.error {
     font-style: italic;
 }
 
+div#filtrera {
+    margin-bottom:10px
+}
+
+.diff {
+    background-color: #FF885C;
+}
