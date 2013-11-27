@@ -41,6 +41,9 @@ function addErrorFilters() {
 
     removeURIFromCodeElements();
 
+    createFilterForPostsWithoutErrors();
+    createFilterForUnmatchedRows();
+
     if (allFilterMatches.length == 0) {
         $('.filterBox').hide();
     } else if (allFilterMatches.length > 1) {
@@ -74,6 +77,7 @@ function addFilterForError(filterType) {
             errorType:filterType.get('errorType'),
             match:match,
             isDisplayed:false,
+            rows:[],
             id:filterType.get('errorType') + '_' + i});
 
         var div_object = $("<div id='filtrera'><div>" + htmlEscape(filterType.get('pattern')) + ": " + match + " - " + match_count + "st</div></div>");
@@ -82,6 +86,8 @@ function addFilterForError(filterType) {
         div_button.click(createCallbackForError(filterMatch));
         div_object.append(div_button);
         $('div.filter').append(div_object);
+
+        filterMatch.setupRows();
 
         allFilterMatches.add(filterMatch);
     }
@@ -118,25 +124,116 @@ function createCallbackForError(filterMatch) {
 }
 
 function hideAll() {
-    console.log("hideAll");
+    logToConsole("hideAll");
 
     allFilterMatches.each(function (filterMatch) {
-        console.log("filterMatch: " + filterMatch.get("title"));
+        logToConsole("filterMatch: " + filterMatch.get('rows'));
         filterMatch.slideUp();
     });
 }
 
-function resetAll() {
-    console.log("showAll");
+function createFilterForPostsWithoutErrors() {
+    var rowsWithoutErrors = getRowsWithoutErrors();
 
+    if(rowsWithoutErrors.length > 0) {
+
+        var filterMatch = new FilterMatch({
+            pattern:"Korrekta poster",
+            subPattern:"",
+            errorType:0,
+            match:"",
+            isDisplayed:false,
+            rows:rowsWithoutErrors,
+            id:'rowsWithoutErrors'});
+
+        var div_object = $("<div id='filtrera'><div>" + htmlEscape(filterMatch.get('pattern')) + " - " + rowsWithoutErrors.length + "st</div></div>");
+        var div_button = $("<button id='filter_" + filterMatch.get('id') + "'>Visa</button>");
+
+        div_button.click(createCallbackForError(filterMatch));
+        div_object.append(div_button);
+        $('div.filter').append(div_object);
+
+        allFilterMatches.add(filterMatch);
+    }
+}
+
+function createFilterForUnmatchedRows() {
+    var unmatchedRows = getUnmatchedRows();
+
+    if(unmatchedRows.length > 0) {
+
+        var filterMatch = new FilterMatch({
+            pattern:"Övriga",
+            subPattern:"",
+            errorType:0,
+            match:"",
+            isDisplayed:false,
+            rows:unmatchedRows,
+            id:'unmatchedRows'});
+
+        var div_object = $("<div id='filtrera'><div>" + htmlEscape(filterMatch.get('pattern')) + " - " + unmatchedRows.length + "st</div></div>");
+        var div_button = $("<button id='filter_" + filterMatch.get('id') + "'>Visa</button>");
+
+        div_button.click(createCallbackForError(filterMatch));
+        div_object.append(div_button);
+        $('div.filter').append(div_object);
+
+        allFilterMatches.add(filterMatch);
+    }
+}
+
+function getRowsWithoutErrors() {
+
+    var rowsWithoutErrors = [];
+
+    $('table.report').find('tr').find('.status').find('div').each(function () {
+        var status = $(this).text();
+        if (status == "OK") {
+            var row = $(this).closest('tr').find('.position').find('div').text();
+            rowsWithoutErrors.push(row);
+        }
+    });
+
+    logToConsole("rowsWithoutErrors: " + rowsWithoutErrors);
+
+    return rowsWithoutErrors;
+}
+
+function getUnmatchedRows() {
+
+    var unmatchedRows = [];
+
+    $('table.report').find('tr').find('.position').find('div').each(function () {
+        var row = $(this).text();
+        var isMatched = false;
+
+        allFilterMatches.each(function (filterMatch) {
+            var matchedRows = filterMatch.get('rows');
+
+            if($.inArray(row, matchedRows) > -1) {
+                logToConsole("row: " + row + ", matchedRows: " + matchedRows);
+                isMatched = true;
+            }
+        });
+
+        if(!isMatched) {
+            unmatchedRows.push(row);
+        }
+    });
+
+    logToConsole("unmatchedRows: " + unmatchedRows);
+
+    return unmatchedRows;
+}
+
+function resetAll() {
     allFilterMatches.each(function (filterMatch) {
-        console.log("filterMatch: " + filterMatch.get("title"));
         filterMatch.slideUp();
     });
 }
 
 function removeURIFromCodeElements() {
-    console.log("removeURIFromMessages");
+    logToConsole("removeURIFromMessages");
 
     $('table.report').find('tr').find('code').text(function (i, t) {
         return t.replace("http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#","")
@@ -179,7 +276,7 @@ var Filter = Backbone.Model.extend({
         this.logToConsole();
     },
     logToConsole:function () {
-        console.log("pattern: " + this.get("pattern") + "," +
+        logToConsole("pattern: " + this.get("pattern") + "," +
             " subPattern: " + this.get("subPattern") +
             " errorType: " + this.get("errorType"));
     }
@@ -189,17 +286,19 @@ var FilterMatch = Filter.extend({
     defaults:{
         match:"",
         isDisplayed:false,
-        id:""
+        id:"",
+        rows:[]
     },
     initialize:function () {
         this.logToConsole();
     },
     logToConsole:function () {
-        console.log("pattern: " + this.get("pattern") +
+        logToConsole("pattern: " + this.get("pattern") +
             " subPattern: " + this.get("subPattern") +
             ", errorType: " + this.get("errorType") +
             ", match: " + this.get("match") +
             ", id: " + this.get("id") +
+            ", rows: " + this.get("rows") +
             ", isDisplayed: " + this.get("isDisplayed"));
     },
     toggleVisibility:function () {
@@ -226,13 +325,27 @@ var FilterMatch = Filter.extend({
     },
     _slide:function (direction) {
         var that = this;
+        $('table.report').find('tr').find('.position').find('div').each(function () {
+            var row = $(this).text();
+            if($.inArray(row, that.get('rows')) > -1) {
+                if (direction == "up") {
+                    $(this).closest('tr').find('div').slideUp(150);
+                } else {
+                    $(this).closest('tr').find('div').slideDown(150);
+                }
+            }
+        });
+    },
+    setupRows:function () {
+        logToConsole("setupRow");
+        var that = this;
         $('table.report').find('tr').each(function () {
             if (that._hasFilterMatch(this)) {
-                if (direction == "up") {
-                    $(this).find('div').slideUp(150);
-                } else {
-                    $(this).find('div').slideDown(150);
-                }
+                var row = $(this).find('.position').find('div').text();
+                logToConsole("add row: " + row);
+                var newRows = _.clone(that.get('rows'));
+                newRows.push(row);
+                that.set('rows', newRows);
             }
         });
     },
@@ -279,6 +392,14 @@ if (typeof console === "undefined" || typeof console.log === "undefined") {
     } else {
         console.log = function () {
         };
+    }
+}
+
+var logEnabled = false;
+
+function logToConsole(message) {
+    if (logEnabled) {
+        console.log(message);
     }
 }
 
