@@ -223,9 +223,12 @@ class CollectorLogSession implements Closeable {
             report.close()
         }
         else if (error instanceof UnknownSubjectException) {
-            errorDesc = state.pageDescriber.newDescription(null, "rc:Error")
+            errorDesc = state.pageDescriber.newDescription(null, "rc:UriError")
             def repr = error.cause?.toString() ?: error.getMessage() ?: "[N/A]"
             errorDesc.addLiteral("rdf:value", repr)
+            for(String uriSuggestion : error.uriSuggestions) {
+                 errorDesc.addLiteral("rc:uriSuggestion", uriSuggestion)
+            }
         }
         if (errorDesc == null) {
             errorDesc = state.pageDescriber.newDescription(null, "rc:Error")

@@ -99,6 +99,56 @@ public class URIMinter {
         }
     }
 
+    public Map<String, List<MintResult>> computeSuggestionUris(Repository docRepo)
+            throws Exception {
+        RepositoryConnection conn = docRepo.getConnection();
+        try {
+            Map<String, List<MintResult>> resultMap =
+                    new HashMap<String, List<MintResult>>();
+            Describer describer = newDescriber(conn);
+            for (Description desc : describer.subjects(null, null)) {
+                logger.warn("desc.about='"+desc.getAbout()+"'");
+                List<MintResult> results = space.coinSuggestionUris(desc);
+                logger.warn("results.size='"+results.size()+"'");
+                if (results != null) {
+                    resultMap.put(desc.getAbout(), results);
+                }
+            }
+
+            return bestMatch(resultMap);
+
+        } finally {
+            conn.close();
+        }
+    }
+
+    private Map<String, List<MintResult>> bestMatch(Map<String, List<MintResult>> resultMap) {
+
+        for (Map.Entry<String, List<MintResult>> entry : resultMap.entrySet()) {
+            String uri = entry.getKey();
+            List<MintResult> results = entry.getValue();
+            int highestMatchCount = 0;
+
+            for (MintResult result : results) {
+                if(result.getMatchCount() > highestMatchCount) {
+                    highestMatchCount = result.getMatchCount();
+                }
+            }
+
+            List<MintResult> resultsWithBestMatch = new ArrayList<MintResult>();
+
+            for (MintResult result : results) {
+                if(result.getMatchCount() == highestMatchCount) {
+                    resultsWithBestMatch.add(result);
+                }
+            }
+
+            resultMap.put(uri, resultsWithBestMatch);
+        }
+
+        return resultMap;
+    }
+
 
     static class CoinURISpace {
 
@@ -155,10 +205,12 @@ public class URIMinter {
             logger.warn("desc.about="+desc.getAbout());
             List<MintResult> results = new ArrayList<MintResult>();
             for (CoinTemplate tplt : templates) {
-                //logger.warn("tplt.forType="+tplt.forType+", tplt.uriTemplate="+tplt.uriTemplate);
+                logger.warn("tplt.forType="+tplt.forType+", tplt.uriTemplate="+tplt.uriTemplate);
                 MintResult result = tplt.coinUri(desc);
                 if (result.getUri() != null) {
                     results.add(result);
+                } else {
+                    logger.warn("skipping mintresult="+result.toString());
                 }
             }
             Collections.sort(results, new Comparator<MintResult>() {
@@ -172,6 +224,32 @@ public class URIMinter {
             });
             return results;
         }
+
+        //TODO: merge with coinUrs instead
+        List<MintResult> coinSuggestionUris(Description desc) {
+            logger.warn("desc.about="+desc.getAbout());
+            List<MintResult> results = new ArrayList<MintResult>();
+            for (CoinTemplate tplt : templates) {
+                logger.warn("tplt.forType="+tplt.forType+", tplt.uriTemplate="+tplt.uriTemplate);
+                MintResult result = tplt.coinSuggestionUri(desc);
+                if (result.getUri() != null) {
+                    results.add(result);
+                } else {
+                    logger.warn("skipping mintresult="+result.toString());
+                }
+            }
+            Collections.sort(results, new Comparator<MintResult>() {
+                public int compare(MintResult a, MintResult b) {
+                    int prioCmp = b.getPriority() - a.getPriority();
+                    if (prioCmp != 0) {
+                        return prioCmp;
+                    }
+                    return -1 * a.getMatchCount().compareTo(b.getMatchCount());
+                }
+            });
+            return results;
+        }
+
 
         String translateValue(String value) {
             if (this.lowerCasedTransform)
@@ -253,14 +331,17 @@ public class URIMinter {
                 rulesSize += 1;
                 boolean ok = false;
                 for (Description type : desc.getTypes()) {
+                    logger.warn(type.getAbout() + " är samma som? " + forType);
                     if (type.getAbout().equals(forType)) {
                         matchCount += 1;
                         ok = true;
                         break;
                     }
                 }
-                if (!ok)
+                if (!ok) {
+                    logger.warn("missing forType: " + forType + " return MintResult without uri. desc.getAbout() = " + desc.getAbout() + ", uriTemplate = " + uriTemplate + ", matchcount = " + matchCount + ", rulesSize = " + rulesSize + ", priority = " + priority);
                     return new MintResult(null, matchCount, rulesSize, priority);
+                }
             } else
                 if (trace) logger.warn("missing forType!!!");
 
@@ -300,6 +381,74 @@ public class URIMinter {
             String uri = (matchCount == rulesSize)?
                 buildUri(determineBase(desc), matches) :
                 null;
+            if (trace&&ok) logger.warn("uri="+uri);
+            return new MintResult(uri, matchCount, rulesSize, priority);
+        }
+
+        MintResult coinSuggestionUri(Description desc) {
+
+            final boolean trace = uriTemplate!=null? /*(uriTemplate.equals("/publ/rf/{serie}/{arsutgava}:{lopnummer}")
+                            ||*/ uriTemplate.equals("/publ/dom/{publisher}/{malnummer}/{avgorandedatum}")
+                            /*|| uriTemplate.equals("/publ/{fs}/{arsutgava}:{lopnummer}"))*/:false;
+
+            if (trace) logger.warn("******************* TRACE *******************");
+            if (trace) logger.warn("uri="+desc.getAbout());
+            if (trace) logger.warn("uriTemplate="+uriTemplate);
+            int matchCount = 0;
+            int rulesSize = bindings.size();
+            if (forType != null) {
+                if (trace) logger.warn("forType="+forType);
+                rulesSize += 1;
+                boolean ok = false;
+                for (Description type : desc.getTypes()) {
+                    logger.warn(type.getAbout() + " är samma som? " + forType);
+                    if (type.getAbout().equals(forType)) {
+                        matchCount += 1;
+                        ok = true;
+                        break;
+                    }
+                }
+                if (!ok) {
+                    logger.warn("missing forType: " + forType + " return MintResult without uri. desc.getAbout() = " + desc.getAbout() + ", uriTemplate = " + uriTemplate + ", matchcount = " + matchCount + ", rulesSize = " + rulesSize + ", priority = " + priority);
+                    return new MintResult(null, matchCount, rulesSize, priority);
+                }
+            } else
+                if (trace) logger.warn("missing forType!!!");
+
+            Map<String, String> matches = new HashMap<String, String>();
+            for (final CoinBinding binding : bindings) {
+                final SluggMappings slugMap = getSluggmappingsViaSlugFrom(binding);
+                if (trace) logger.warn("binding.property="+binding.property+", binding.variable="+binding.variable+", binding.slug="+binding.slugFrom);
+                String match = binding.findMatch(desc, new Description.ReverseSlug() {
+                    @Override
+                    public String lookup(String urlStr, Description rel) {
+                        if (trace) logger.warn("ReverseSlug.lookupl("+urlStr+")");
+                        String relAboutSlug = rel!=null?slugMap.get(rel.getAbout()):null;
+                        if (trace) {
+                            if (rel!=null)
+                                logger.warn("ReverseSlug.relAboutSlug("+rel.getAbout()+")="+relAboutSlug);
+                            else
+                                logger.warn("ReverseSlug.relAboutSlug("+null+")");
+                        }
+                        try {
+                            URL url = new URL(urlStr);
+                            String resultSlug = slugMap.get(url.toString());
+                            if (trace) logger.warn("ReverseSlug.url("+url+")="+resultSlug);
+                            return resultSlug;
+                        } catch (MalformedURLException e) {
+                            return urlStr;
+                        }
+                    }
+                });
+                if (trace) logger.warn("match="+match);
+                if (match != null) {
+                    matchCount++;
+                    matches.put(binding.variable, match);
+                }
+            }
+            boolean ok = (matchCount == rulesSize);
+
+            String uri = buildSuggestionUri(determineBase(desc), matches);
             if (trace&&ok) logger.warn("uri="+uri);
             return new MintResult(uri, matchCount, rulesSize, priority);
         }
@@ -355,6 +504,26 @@ public class URIMinter {
             } catch (java.net.URISyntaxException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        String buildSuggestionUri(String base, Map<String, String> matches) {
+            if (base == null)
+                return null;
+            if (uriTemplate == null) {
+                return null; // TODO: one value, fragmentTemplate etc..
+            }
+            String expanded = uriTemplate;
+            expanded = expanded.replace("{+base}", base);
+            for (Map.Entry<String,String> entry : matches.entrySet()) {
+                String var = "{"+entry.getKey()+"}";
+                String value = space.translateValue(entry.getValue());
+                expanded = expanded.replace(var, value);
+            }
+            // TODO: if (expanded.indexOf("{") > -1)
+
+            logger.warn("returning expanded = " + expanded);
+
+            return expanded;
         }
 
     }

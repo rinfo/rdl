@@ -154,6 +154,11 @@ div#filtrera {
     margin-bottom:10px
 }
 
-.diff {
+.highlight {
     background-color: #FF885C;
+}
+
+.italic {
+    font-style: italic;
+    text-decoration: underline;
 }
