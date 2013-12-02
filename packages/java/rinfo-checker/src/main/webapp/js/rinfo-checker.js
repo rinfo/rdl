@@ -34,7 +34,7 @@ function addErrorFilters() {
     allFilterMatches.reset();
 
     addFilterForError(new Filter({errorType:1, pattern:"Saknar obligatoriskt värde för egenskap", subPattern:"publ#"}));
-    addFilterForError(new Filter({errorType:2, pattern:"Värdet matchar inte datatyp för egenskap", subPattern:"publ#"}));
+    addFilterForError(new Filter({errorType:2, pattern:"Värdet .* matchar inte datatyp för egenskap", subPattern:"publ#"}));
     addFilterForError(new Filter({errorType:3, pattern:"Angiven URI matchar inte den URI som beräknats utifrån egenskaper i dokumentet", subPattern:""}));
     addFilterForError(new Filter({errorType:4, pattern:"Saknar svenskt språkattribut (xml:lang) för egenskap", subPattern:"terms/"}));
     addFilterForError(new Filter({errorType:5, pattern:"Kan inte tolka URI:n", subPattern:""}));
@@ -80,7 +80,7 @@ function addFilterForError(filterType) {
             rows:[],
             id:filterType.get('errorType') + '_' + i});
 
-        var div_object = $("<div id='filtrera'><div>" + htmlEscape(filterType.get('pattern')) + ": " + match + " - " + match_count + "st</div></div>");
+        var div_object = $("<div id='filtrera'><div>" + replaceAdditionalChars(htmlEscape(filterType.get('pattern'))) + ": " + match + " - " + match_count + "st</div></div>");
         var div_button = $("<button id='filter_" + filterMatch.get('id') + "'>Visa</button>");
 
         div_button.click(createCallbackForError(filterMatch));
@@ -416,6 +416,11 @@ function htmlEscape(str) {
         .replace(/Å/g, '&Aring;')
         .replace(/Ä/g, '&Auml;')
         .replace(/Ö/g, '&Ouml;');
+}
+
+function replaceAdditionalChars(str) {
+    return String(str)
+        .replace(' .*', '');
 }
 
 function encodeForRegexPattern(str) {
