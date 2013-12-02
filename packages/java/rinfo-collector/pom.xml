@@ -90,6 +90,7 @@
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-eclipse-compiler</artifactId>
         <extensions>true</extensions>
+          <version>${greclipse.version}</version>
       </plugin>
 
     </plugins>
