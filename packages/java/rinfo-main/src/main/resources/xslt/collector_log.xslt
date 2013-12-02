@@ -299,7 +299,7 @@
           <xsl:if test="rc:uriSuggestion">
               <div>
                   <div class="italic">
-                      Hittade följande kandidater:
+                      Följande URI-mallar matchar delvis:
                   </div>
                    <xsl:for-each select="rc:uriSuggestion">
                         <div class="uriSuggestion">
