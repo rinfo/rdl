@@ -198,12 +198,12 @@
           <dt>Angiven URI:</dt>
           <dd>
               <span><xsl:value-of select="rc:commonPrefix"/></span>
-              <span class="diff"><xsl:value-of select="rc:givenUriDiff"/></span>
+              <span class="highlight"><xsl:value-of select="rc:givenUriDiff"/></span>
           </dd>
           <dt>Beräknad URI:</dt>
           <dd>
               <span><xsl:value-of select="rc:commonPrefix"/></span>
-              <span class="diff"><xsl:value-of select="rc:computedUriDiff"/></span>
+              <span class="highlight"><xsl:value-of select="rc:computedUriDiff"/></span>
           </dd>
         </dl>
       </td>
@@ -282,6 +282,32 @@
       <td><xsl:apply-templates select="iana:via/awol:id"/></td>
       <td>
           <xsl:value-of select="rdf:value"/>
+      </td>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="*[a/rc:UriError]" mode="trow">
+    <xsl:param name="pos"/>
+    <tr class="error">
+      <td class="position"><xsl:value-of select="$pos"/></td>
+      <td><xsl:apply-templates select="tl:at"/></td>
+      <td class="status">URI-fel</td>
+      <td><xsl:apply-templates select="iana:via/awol:id"/></td>
+      <td>
+          <div><xsl:value-of select="rdf:value"/></div>
+          <br/>
+          <xsl:if test="rc:uriSuggestion">
+              <div>
+                  <div class="italic">
+                      Följande URI-mallar matchar delvis:
+                  </div>
+                   <xsl:for-each select="rc:uriSuggestion">
+                        <div class="uriSuggestion">
+                            <xsl:apply-templates select="."/>
+                        </div>
+                   </xsl:for-each>
+              </div>
+          </xsl:if>
       </td>
     </tr>
   </xsl:template>

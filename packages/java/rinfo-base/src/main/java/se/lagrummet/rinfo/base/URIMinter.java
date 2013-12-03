@@ -87,7 +87,7 @@ public class URIMinter {
             Describer describer = newDescriber(conn);
             for (Description desc : describer.subjects(null, null)) {
                 logger.warn("desc.about='"+desc.getAbout()+"'");
-                List<MintResult> results = space.coinUris(desc);
+                List<MintResult> results = space.coinUris(desc, false);
                 logger.warn("results.size='"+results.size()+"'");
                 if (results != null) {
                     resultMap.put(desc.getAbout(), results);
@@ -97,6 +97,56 @@ public class URIMinter {
         } finally {
             conn.close();
         }
+    }
+
+    public Map<String, List<MintResult>> computeSuggestionUris(Repository docRepo)
+            throws Exception {
+        RepositoryConnection conn = docRepo.getConnection();
+        try {
+            Map<String, List<MintResult>> resultMap =
+                    new HashMap<String, List<MintResult>>();
+            Describer describer = newDescriber(conn);
+            for (Description desc : describer.subjects(null, null)) {
+                logger.warn("desc.about='"+desc.getAbout()+"'");
+                List<MintResult> results = space.coinUris(desc, true);
+                logger.warn("results.size='"+results.size()+"'");
+                if (results != null) {
+                    resultMap.put(desc.getAbout(), results);
+                }
+            }
+
+            return bestMatch(resultMap);
+
+        } finally {
+            conn.close();
+        }
+    }
+
+    private Map<String, List<MintResult>> bestMatch(Map<String, List<MintResult>> resultMap) {
+
+        for (Map.Entry<String, List<MintResult>> entry : resultMap.entrySet()) {
+            String uri = entry.getKey();
+            List<MintResult> results = entry.getValue();
+            int highestMatchCount = 0;
+
+            for (MintResult result : results) {
+                if(result.getMatchCount() > highestMatchCount) {
+                    highestMatchCount = result.getMatchCount();
+                }
+            }
+
+            List<MintResult> resultsWithBestMatch = new ArrayList<MintResult>();
+
+            for (MintResult result : results) {
+                if(result.getMatchCount() == highestMatchCount) {
+                    resultsWithBestMatch.add(result);
+                }
+            }
+
+            resultMap.put(uri, resultsWithBestMatch);
+        }
+
+        return resultMap;
     }
 
 
@@ -151,14 +201,16 @@ public class URIMinter {
          * Results are ordered by the {@link MintResult#getMatchCount()}
          * property. Higher value leads to earlier (lower) index in list.
          */
-        List<MintResult> coinUris(Description desc) {
+        List<MintResult> coinUris(Description desc, boolean allowSuggestions) {
             logger.warn("desc.about="+desc.getAbout());
             List<MintResult> results = new ArrayList<MintResult>();
             for (CoinTemplate tplt : templates) {
-                //logger.warn("tplt.forType="+tplt.forType+", tplt.uriTemplate="+tplt.uriTemplate);
-                MintResult result = tplt.coinUri(desc);
+                logger.warn("tplt.forType="+tplt.forType+", tplt.uriTemplate="+tplt.uriTemplate);
+                MintResult result = tplt.coinUri(desc, allowSuggestions);
                 if (result.getUri() != null) {
                     results.add(result);
+                } else {
+                    logger.warn("skipping mintresult="+result.toString());
                 }
             }
             Collections.sort(results, new Comparator<MintResult>() {
@@ -237,7 +289,7 @@ public class URIMinter {
             }
         }
 
-        MintResult coinUri(Description desc) {
+        MintResult coinUri(Description desc, boolean allowSuggestion) {
 
             final boolean trace = uriTemplate!=null? /*(uriTemplate.equals("/publ/rf/{serie}/{arsutgava}:{lopnummer}")
                             ||*/ uriTemplate.equals("/publ/dom/{publisher}/{malnummer}/{avgorandedatum}")
@@ -253,14 +305,17 @@ public class URIMinter {
                 rulesSize += 1;
                 boolean ok = false;
                 for (Description type : desc.getTypes()) {
+                    logger.warn(type.getAbout() + " är samma som? " + forType);
                     if (type.getAbout().equals(forType)) {
                         matchCount += 1;
                         ok = true;
                         break;
                     }
                 }
-                if (!ok)
+                if (!ok) {
+                    logger.warn("missing forType: " + forType + " return MintResult without uri. desc.getAbout() = " + desc.getAbout() + ", uriTemplate = " + uriTemplate + ", matchcount = " + matchCount + ", rulesSize = " + rulesSize + ", priority = " + priority);
                     return new MintResult(null, matchCount, rulesSize, priority);
+                }
             } else
                 if (trace) logger.warn("missing forType!!!");
 
@@ -297,9 +352,16 @@ public class URIMinter {
             }
             boolean ok = (matchCount == rulesSize);
 
-            String uri = (matchCount == rulesSize)?
-                buildUri(determineBase(desc), matches) :
-                null;
+            String uri;
+
+            if (allowSuggestion) {
+                uri = buildUri(determineBase(desc), matches, true);
+            } else {
+                uri = (matchCount == rulesSize)?
+                    buildUri(determineBase(desc), matches, false) :
+                    null;
+            }
+
             if (trace&&ok) logger.warn("uri="+uri);
             return new MintResult(uri, matchCount, rulesSize, priority);
         }
@@ -336,7 +398,7 @@ public class URIMinter {
             return space.base;
         }
 
-        String buildUri(String base, Map<String, String> matches) {
+        String buildUri(String base, Map<String, String> matches, boolean allowSuggestion) {
             if (base == null)
                 return null;
             if (uriTemplate == null) {
@@ -350,13 +412,20 @@ public class URIMinter {
                 expanded = expanded.replace(var, value);
             }
             // TODO: if (expanded.indexOf("{") > -1)
-            try {
-                return new java.net.URI(base).resolve(expanded).toString();
-            } catch (java.net.URISyntaxException e) {
-                throw new RuntimeException(e);
+
+            if (allowSuggestion) {
+                logger.warn("returning expanded = " + expanded);
+                return expanded;
+            }
+
+            else {
+                try {
+                    return new java.net.URI(base).resolve(expanded).toString();
+                } catch (java.net.URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
-
     }
 
     static class CoinBinding {

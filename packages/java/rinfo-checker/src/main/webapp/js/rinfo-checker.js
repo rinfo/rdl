@@ -27,6 +27,7 @@ function overrideFormSubmit() {
 function addErrorFilters() {
     removeHeader();
     wrapForSliding();
+    hightlightUriSuggestions();
 
     var filter_div = $("<div class='filterBox'><h3>Filtrera</h3><div class='filter'></div></div>");
     $("h4:contains('Poster')").before(filter_div);
@@ -60,6 +61,25 @@ function removeHeader() {
 
 function wrapForSliding() {
     $('table.report').find('tr').find('td').wrapInner('<div style="display: block;" />');
+}
+
+function hightlightUriSuggestions() {
+    $('div.uriSuggestion').each(function () {
+        var data =$(this).text();
+        var arr = data.split('/');
+        var replace = "";
+        for (i = 0; i < arr.length; i++) {
+            if (arr[i].indexOf("{") >= 0) {
+                replace += "<span class='highlight'>" + arr[i] + "</span>"
+            } else {
+                replace += "<span>" + arr[i] + "</span>"
+            }
+            if (i < arr.length-1 ) {
+                replace += "<span>/</span>"
+            }
+        }
+        $(this).html(replace);
+    });
 }
 
 function addFilterForError(filterType) {

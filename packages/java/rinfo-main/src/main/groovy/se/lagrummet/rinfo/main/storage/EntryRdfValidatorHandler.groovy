@@ -8,6 +8,7 @@ import org.openrdf.repository.Repository
 import se.lagrummet.rinfo.store.depot.DepotEntry
 
 import se.lagrummet.rinfo.base.URIMinter
+import se.lagrummet.rinfo.base.MintResult
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.base.rdf.checker.RDFChecker
 
@@ -139,7 +140,17 @@ class EntryRdfValidatorHandler implements StorageHandler {
         //Exception IncompleteMatchException(partial matches) -One or more MintResult.java-
         //Make sure uri is available in MintResult.java
         if (uriStr == null) {
-            throw new UnknownSubjectException(subjectUri)
+            def uriSuggestionsMap = uriMinter.computeSuggestionUris(repo)
+            for (String key : uriSuggestionsMap.keySet())
+               logger.warn("uriSuggestionsMap["+key+"]='"+uriSuggestionsMap.get(key)+"'")
+
+            List<String> uriSuggestionList = new ArrayList<String>();
+            for (MintResult mintResult : uriSuggestionsMap[subjectUri.toString()]) {
+               uriSuggestionList.add(mintResult.getUri())
+            }
+
+            throw new UnknownSubjectException(subjectUri, uriSuggestionList)
+
             /*for (results in uriResultMap.values()) {
                 for (result in results) {
                     uriStr = result.uri
