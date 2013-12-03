@@ -354,7 +354,8 @@ Closure createFileWriter(file) {
 
 SAX_F = javax.xml.parsers.SAXParserFactory.newInstance()
 SAX_F.setNamespaceAware(true)
-SAX_TF = (SAXTransformerFactory) TransformerFactory.newInstance()
+SAX_TF = (SAXTransformerFactory) TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl",null)
+
 
 InputStream rdfVocabToXhtml(inputStream, outputStream) {
     def reader = SAX_F.newSAXParser().getXMLReader()
