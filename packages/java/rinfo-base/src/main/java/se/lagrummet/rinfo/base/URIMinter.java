@@ -127,18 +127,19 @@ public class URIMinter {
         for (Map.Entry<String, List<MintResult>> entry : resultMap.entrySet()) {
             String uri = entry.getKey();
             List<MintResult> results = entry.getValue();
-            int highestMatchCount = 0;
+            int lowestDiff = Integer.MAX_VALUE;
 
             for (MintResult result : results) {
-                if(result.getMatchCount() > highestMatchCount) {
-                    highestMatchCount = result.getMatchCount();
+                int diff = result.getRulesSize() - result.getMatchCount();
+                if(diff < lowestDiff) {
+                    lowestDiff = diff;
                 }
             }
 
             List<MintResult> resultsWithBestMatch = new ArrayList<MintResult>();
 
             for (MintResult result : results) {
-                if(result.getMatchCount() == highestMatchCount) {
+                if(result.getRulesSize() - result.getMatchCount() == lowestDiff) {
                     resultsWithBestMatch.add(result);
                 }
             }
