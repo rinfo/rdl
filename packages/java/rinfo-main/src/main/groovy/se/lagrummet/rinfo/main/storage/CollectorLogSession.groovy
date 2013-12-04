@@ -205,6 +205,7 @@ class CollectorLogSession implements Closeable {
             errorDesc.addLiteral("rc:givenUri", error.givenUri)
             errorDesc.addLiteral("rc:computedUri", error.computedUri ?: "")
             errorDesc.addLiteral("rc:commonPrefix", error.commonPrefix ?: "")
+            errorDesc.addLiteral("rc:commonSuffix", error.commonSuffix ?: "")
             errorDesc.addLiteral("rc:givenUriDiff", error.givenUriDiff ?: "")
             errorDesc.addLiteral("rc:computedUriDiff", error.computedUriDiff ?: "")
             errorLevel = ErrorLevel.ERROR
