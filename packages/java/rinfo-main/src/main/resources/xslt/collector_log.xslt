@@ -199,11 +199,13 @@
           <dd>
               <span><xsl:value-of select="rc:commonPrefix"/></span>
               <span class="highlight"><xsl:value-of select="rc:givenUriDiff"/></span>
+              <span><xsl:value-of select="rc:commonSuffix"/></span>
           </dd>
           <dt>Beräknad URI:</dt>
           <dd>
               <span><xsl:value-of select="rc:commonPrefix"/></span>
               <span class="highlight"><xsl:value-of select="rc:computedUriDiff"/></span>
+              <span><xsl:value-of select="rc:commonSuffix"/></span>
           </dd>
         </dl>
       </td>
