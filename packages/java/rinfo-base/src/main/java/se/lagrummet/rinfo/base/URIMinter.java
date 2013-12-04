@@ -124,6 +124,8 @@ public class URIMinter {
 
     private Map<String, List<MintResult>> bestMatch(Map<String, List<MintResult>> resultMap) {
 
+        final int requiredMinMatchCount = 1;
+
         for (Map.Entry<String, List<MintResult>> entry : resultMap.entrySet()) {
             String uri = entry.getKey();
             List<MintResult> results = entry.getValue();
@@ -139,7 +141,9 @@ public class URIMinter {
             List<MintResult> resultsWithBestMatch = new ArrayList<MintResult>();
 
             for (MintResult result : results) {
-                if(result.getRulesSize() - result.getMatchCount() == lowestDiff) {
+                int diff = result.getRulesSize() - result.getMatchCount();
+                if(diff == lowestDiff && result.getMatchCount() >= requiredMinMatchCount) {
+                    logger.info("Adding to resultsWithBestMatch, uri: " + result.getUri() + ", rulesSize: " + result.getRulesSize() + ", matchCount: " + result.getMatchCount());
                     resultsWithBestMatch.add(result);
                 }
             }
