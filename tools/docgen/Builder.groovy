@@ -166,7 +166,7 @@ class Builder {
     }
 
     void writeXhtml(doc, outFile) {
-        def t = TransformerFactory.newInstance().newTransformer()
+        def t = TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl",null).newTransformer()
         [   (OutputKeys.METHOD): "xml",
             (OutputKeys.OMIT_XML_DECLARATION): "yes",
             (OutputKeys.DOCTYPE_PUBLIC): "-//W3C//DTD XHTML 1.0 Strict//EN",

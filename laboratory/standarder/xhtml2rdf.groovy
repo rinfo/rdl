@@ -15,6 +15,6 @@ def xsltfile = new FileInputStream(args[1])
 xhtml = xhtmlfile.text.replaceFirst(/<!DOCTYPE[^>]*>/,"")
 xslt = xsltfile.text
 
-def factory = TransformerFactory.newInstance()
+def factory = TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl",null)
 def transformer = factory.newTransformer(new StreamSource(new StringReader(xslt)))
 transformer.transform(new StreamSource(new StringReader(xhtml)), new StreamResult(System.out))
