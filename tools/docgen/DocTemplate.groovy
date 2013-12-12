@@ -37,7 +37,7 @@ class DocTemplate {
         dbf.setXIncludeAware(true)
         docBuilder = dbf.newDocumentBuilder()
         docBuilder.entityResolver = entityResolver
-        tFactory = TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl",null)
+        tFactory = TransformerFactory.newInstance()
     }
 
     /**

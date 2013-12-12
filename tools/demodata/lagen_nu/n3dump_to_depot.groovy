@@ -63,7 +63,7 @@ def download(URL remoteurl,File localfile) {
 
 def transform(File infile, File outfile)  {
     scriptFile = new File(this.class.protectionDomain.codeSource.location.toURI())
-    tFactory = TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl",null)
+    tFactory = TransformerFactory.newInstance()
     transformer = tFactory.newTransformer(new StreamSource(
                                               new File(scriptFile.parent, "xht2-to-xhtml.xslt")))
 

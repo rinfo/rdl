@@ -119,7 +119,7 @@ def eachSourceTimeline(File sourceDir, String suffix, Closure handle) {
 
 
 scriptFile = new File(this.class.protectionDomain.codeSource.location.toURI())
-tFactory = TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl",null)
+tFactory = TransformerFactory.newInstance()
 transformer = tFactory.newTransformer(new StreamSource(
             new File(scriptFile.parent, "dokument-rdf.xslt")))
 

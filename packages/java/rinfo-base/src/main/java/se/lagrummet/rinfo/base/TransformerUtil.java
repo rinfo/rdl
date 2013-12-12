@@ -15,12 +15,13 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLFilter;
+import net.sf.saxon.Filter;
 
 
 public class TransformerUtil {
 
     static SAXTransformerFactory saxTf =
-            (SAXTransformerFactory) TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl",null);
+            (SAXTransformerFactory) TransformerFactory.newInstance();
 
     public static Templates newTemplates(Class baseClass, String xsltPath)
             throws Exception {
@@ -41,6 +42,10 @@ public class TransformerUtil {
                 XMLFilter nextFilter = saxTf.newXMLFilter(tplt);
                 if (filter != null) nextFilter.setParent(filter);
                 filter = nextFilter;
+            }
+            for (Map.Entry<String, String> parameter : params.entrySet()) {
+                // Cast to net.sf.saxon.Filter to be able to set parameters for filter chain
+                ((Filter)filter).getTransformer().setParameter(parameter.getKey(), parameter.getValue());
             }
             Transformer htmlTransformer = saxTf.newTransformer();
             SAXSource transformSource = new SAXSource(filter, new InputSource(inputStream));
