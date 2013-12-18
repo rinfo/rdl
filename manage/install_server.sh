@@ -26,7 +26,7 @@ fab -p $pwd target.$2 -R admin app.admin.all
 fab -p $pwd target.$2 -R main app.main.all
 fab -p $pwd target.$2 -R service app.service.all
 fab -p $pwd target.$2 -R checker app.checker.all
-fab -p $pwd target.$2 -R server.restart_all
+fab -p $pwd target.$2 -R main server.restart_all
 fab -p $pwd target.$2 -R admin app.admin.ping_main
 #fab -p $pwd app.docs.build
 #fab -p $pwd target.$2 app.docs.deploy
