@@ -104,6 +104,8 @@ public abstract class AbstractCollectScheduler {
      * of <code>scheduleInterval</code>, unless it is set to -1.
      */
     public void startup() {
+        logger.info("startup(): Enabling 'org.openrdf.repository.debug'");
+        System.setProperty("org.openrdf.repository.debug", "true");
         feedInProcess.clear();
         feedQueue.clear();
         executorService = newExecutorService();
@@ -192,6 +194,8 @@ public abstract class AbstractCollectScheduler {
 
     private synchronized boolean enqueueCollect(final URL feedUrl) {
         String feedUrlStr = feedUrl.toString();
+        logger.info("Enabling 'org.openrdf.repository.debug'");
+        System.setProperty("org.openrdf.repository.debug", "true");
         if (feedQueue.contains(feedUrlStr)) {
             logger.info("Feed <"+ feedUrlStr +"> is already scheduled for collect.");
             return false;
