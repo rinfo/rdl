@@ -678,6 +678,12 @@
       </properties>
     </profile>
     <profile>
+        <id>test</id>
+        <properties>
+            <environment>test</environment>
+        </properties>
+    </profile>
+    <profile>
       <id>prod</id>
       <properties>
         <environment>prod</environment>
