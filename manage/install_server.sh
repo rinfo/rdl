@@ -30,7 +30,7 @@ fab -p $pwd target.$2 -R main server.restart_all
 fab -p $pwd target.$2 -R admin app.admin.ping_main
 #fab -p $pwd app.docs.build
 #fab -p $pwd target.$2 app.docs.deploy
-fab -p $pwd target.$2 -Rmain sysconf.sync_static_web
+fab -p $pwd target.$2 -R main sysconf.sync_static_web
 
 
 
