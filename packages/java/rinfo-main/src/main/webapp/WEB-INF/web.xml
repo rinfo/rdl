@@ -30,4 +30,8 @@
         <welcome-file>index.xhtml</welcome-file>
     </welcome-file-list>
 
+    <listener>
+		<listener-class>se.lagrummet.se.rinfo.main.AppServletContextListener</listener-class>
+	</listener>
+
 </web-app>
