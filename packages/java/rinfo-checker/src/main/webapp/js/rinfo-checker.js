@@ -9,12 +9,12 @@ function overrideFormSubmit() {
             url:$("#html-form").attr("action"),
             data:$("#html-form").serialize(),
             beforeSend:function () {
-                var target = document.getElementById('target');
-                var spinner = new Spinner(spinnerOptions).spin(target);
+                blockUI();
             },
             success:function (data) {
                 $('#target').html(data);
                 addErrorFilters();
+                unBlockUI();
             },
             error:function (xhr, ajaxOptions, thrownError) {
                 $('#target').html(xhr.responseText);
@@ -382,7 +382,7 @@ var FilterMatchCollection = Backbone.Collection.extend({
 
 var allFilterMatches = new FilterMatchCollection();
 
-var spinnerOptions = {
+var spinner = new Spinner({
     lines:13, // The number of lines to draw
     length:20, // The length of each line
     width:10, // The line thickness
@@ -390,16 +390,16 @@ var spinnerOptions = {
     corners:1, // Corner roundness (0..1)
     rotate:0, // The rotation offset
     direction:1, // 1: clockwise, -1: counterclockwise
-    color:'#000', // #rgb or #rrggbb or array of colors
+    color:'#FFF', // #rgb or #rrggbb or array of colors
     speed:1, // Rounds per second
     trail:60, // Afterglow percentage
     shadow:false, // Whether to render a shadow
     hwaccel:false, // Whether to use hardware acceleration
     className:'spinner', // The CSS class to assign to the spinner
     zIndex:2e9, // The z-index (defaults to 2000000000)
-    top:'auto', // Top position relative to parent in px
+    top:10, // Top position relative to parent in px
     left:'auto' // Left position relative to parent in px
-};
+});
 
 //console.log might not be defined for i.e. IE8
 var alertFallback = false;
@@ -415,7 +415,7 @@ if (typeof console === "undefined" || typeof console.log === "undefined") {
     }
 }
 
-var logEnabled = false;
+var logEnabled = true;
 
 function logToConsole(message) {
     if (logEnabled) {
@@ -458,4 +458,24 @@ function encodeForRegexPattern(str) {
 
 function isBlank(str) {
     return (!str || /^\s*$/.test(str));
+}
+
+function blockUI() {
+    logToConsole("blockUI!");
+    var target = document.getElementById('spinner');
+    spinner.spin(target);
+    $('#spinner').show();
+    $.blockUI({
+        message: $('#spinner'),
+        css: {
+            border: 'none'
+        }
+    });
+}
+
+function unBlockUI() {
+    logToConsole("unBlockUI!");
+    spinner.stop();
+    $('#spinner').hide();
+    $.unblockUI();
 }

@@ -5,6 +5,7 @@ body {
     padding: 0 40pt 0 40pt;
     background: -webkit-gradient(linear, left top, right top, from(#fff), to(#ddd));
     background: -moz-linear-gradient(left, #fff, #ddd);
+    height: 100%;
 }
 
 h1 {
@@ -161,4 +162,10 @@ div#filtrera {
 .italic {
     font-style: italic;
     text-decoration: underline;
+}
+
+#spinner {
+    width: 200px ;
+    margin-left: auto ;
+    margin-right: auto ;
 }
