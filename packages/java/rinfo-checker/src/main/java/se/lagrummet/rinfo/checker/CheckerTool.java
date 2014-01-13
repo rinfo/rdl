@@ -1,6 +1,5 @@
 package se.lagrummet.rinfo.checker;
 
-import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -40,6 +39,7 @@ public class CheckerTool {
         adminChecker.relevantEntries.add(rdfValidatorHandler.getValidationEntryId());
         adminChecker.relevantEntries.add(rdfValidatorHandler.getUriSpaceEntryId());
         try {
+            checkAdminFeedConnection(adminFeedUrl);
             adminChecker.checkFeed(new URL(adminFeedUrl), true);
         } finally {
             adminChecker.shutdown();
@@ -70,4 +70,16 @@ public class CheckerTool {
         }
     }
 
+    private void checkAdminFeedConnection(String adminFeedUrl) throws Exception {
+        try {
+            URL url = new URL(adminFeedUrl);
+            HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+            urlConn.connect();
+            if(urlConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            throw new AdminFeedException("Could not connect to adminFeedUrl: " + adminFeedUrl);
+        }
+    }
 }
