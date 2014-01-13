@@ -18,6 +18,7 @@ function overrideFormSubmit() {
             },
             error:function (xhr, ajaxOptions, thrownError) {
                 $('#target').html(xhr.responseText);
+                unBlockUI();
             }
         });
         return false;
