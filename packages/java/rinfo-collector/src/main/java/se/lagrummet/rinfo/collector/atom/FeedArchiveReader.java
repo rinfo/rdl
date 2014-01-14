@@ -128,7 +128,7 @@ public abstract class FeedArchiveReader {
                 }
             }
         } catch (ParseFeedException e) {
-            logger.error(String.format("Error parsing feed: <%s>", url), e);
+            logger.error(String.format("Error parsing feed: <%s>. Not a valid feed?", url), e);
             throw e;
         } catch (Exception e) {
             logger.error(String.format("Error parsing feed: <%s>", url), e);
@@ -163,7 +163,7 @@ public abstract class FeedArchiveReader {
             Document document = Abdera.getInstance().getParser().parse(inStream, baseUrl.toString());
             feed = (Feed) document.getRoot();
         } catch (Exception e) {
-            throw new ParseFeedException("Kan inte läsa källa: " + baseUrl);
+            throw new ParseFeedException("Kan inte läsa källa. Kontrollera att rätt URL är angiven och att källan är korrekt.");
         }
 
         return feed;
