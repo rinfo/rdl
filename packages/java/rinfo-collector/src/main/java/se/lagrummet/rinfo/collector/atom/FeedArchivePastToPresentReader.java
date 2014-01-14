@@ -21,6 +21,7 @@ import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 
 import org.apache.abdera.ext.history.FeedPagingHelper;
+import se.lagrummet.rinfo.collector.ParseFeedException;
 
 
 /**
@@ -59,7 +60,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
     }
 
     @Override
-    public void afterTraversal() throws URISyntaxException, IOException {
+    public void afterTraversal() throws URISyntaxException, IOException, ParseFeedException {
         IRI fofId = null;
         Map<IRI, AtomDate> fofMap = null;
         if (feedOfFeeds != null) {
@@ -183,7 +184,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
     }
 
     @Override
-    public URL readFeedPage(URL url) throws IOException {
+    public URL readFeedPage(URL url) throws IOException, ParseFeedException {
         if (hasVisitedArchivePage(url)) {
             logger.info("Stopping on visited archive page: <"+url+">");
             return null;
@@ -209,7 +210,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
             mt.getParameter("type").equals("feed");
     }
 
-    protected void processFeedOfFeeds(Feed feed) throws IOException {
+    protected void processFeedOfFeeds(Feed feed) throws IOException, ParseFeedException {
         Map<IRI, AtomDate> fofMap = getFeedEntryDataIndex().
                 getEntryDataForCompleteFeedId(feed.getId());
         feed = feed.sortEntriesByUpdated(/*new_first=*/true);
@@ -223,7 +224,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
     }
 
     private void processSubFeedEntry(Map<IRI, AtomDate> fofMap, Entry entry)
-            throws IOException {
+            throws IOException, ParseFeedException {
         AtomDate updated = entry.getUpdatedElement().getValue();
         AtomDate lastUpdated = (fofMap != null)?
                 fofMap.get(entry.getId()) : null;
@@ -437,7 +438,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
             return feedUrl;
         }
 
-        public Feed openFeed() throws IOException, FileNotFoundException {
+        public Feed openFeed() throws IOException, FileNotFoundException, ParseFeedException {
             tempInStream = new FileInputStream(getTempFile());
             Feed feed = parseFeed(tempInStream, feedUrl);
             return feed;

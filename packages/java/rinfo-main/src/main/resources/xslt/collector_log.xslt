@@ -57,11 +57,12 @@
         <dt>Källa:</dt>
         <dd><xsl:apply-templates select="dct:source/@ref"/></dd>
         <dt>Meddelande</dt>
+        <br/>
         <p>
-          <xsl:text>Systemfel vid sidinläsning. Var vänlig att validera sidan. Teknisk orsak:</xsl:text>
+            <xsl:text>Systemfel vid sidinläsning. Var vänlig att validera sidan. Teknisk orsak:</xsl:text>
         </p>
         <p>
-          <xsl:value-of select="rdf:value"/>
+            <xsl:value-of select="rdf:value"/>
         </p>
       </dl>
     </div>
