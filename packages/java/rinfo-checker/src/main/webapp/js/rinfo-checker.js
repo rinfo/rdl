@@ -49,8 +49,8 @@ function addErrorFilters() {
     if (allFilterMatches.length == 0) {
         $('.filterBox').hide();
     } else if (allFilterMatches.length > 1) {
-        $('div.filter').append(createDivWithButton('hide_all','hideAll()', "Dölj alla"));
-        $('div.filter').append(createDivWithButton('show_all','showAll()', "Visa alla"));
+        $('div.filter').append($("<div id='hide_all'><button onclick='hideAll()'>Dölj alla</button></div>"));
+        $('div.filter').append($("<div id='show_all'><button onclick='showAll()'>Visa alla</button></div>"));
     }
 
     hideAll();
@@ -62,10 +62,6 @@ function removeHeader() {
 
 function wrapForSliding() {
     $('table.report').find('tr').find('td').wrapInner('<div style="display: block;" />');
-}
-
-function createDivWithButton(id, onclick, text) {
-    return $('<div/>', {id: id}).append($('<button/>', { onclick: onclick, text: text }));
 }
 
 function hightlightUriSuggestions() {
