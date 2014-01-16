@@ -35,11 +35,11 @@ function addErrorFilters() {
 
     allFilterMatches.reset();
 
-    addFilterForError(new Filter({errorType:1, pattern:"Saknar obligatoriskt värde för egenskap", subPattern:"publ#"}));
-    addFilterForError(new Filter({errorType:2, pattern:"Värdet .* matchar inte datatyp för egenskap", subPattern:"publ#"}));
-    addFilterForError(new Filter({errorType:3, pattern:"Angiven URI matchar inte den URI som beräknats utifrån egenskaper i dokumentet", subPattern:""}));
-    addFilterForError(new Filter({errorType:4, pattern:"Saknar svenskt språkattribut (xml:lang) för egenskap", subPattern:"terms/"}));
-    addFilterForError(new Filter({errorType:5, pattern:"Kan inte tolka URI:n", subPattern:""}));
+    addFilterForError(new Filter({errorType:ErrorTypes.PROPERTY, pattern:"Saknar obligatoriskt värde för egenskap"}));
+    addFilterForError(new Filter({errorType:ErrorTypes.PROPERTY, pattern:"Värdet .* matchar inte datatyp för egenskap"}));
+    addFilterForError(new Filter({errorType:ErrorTypes.URI, pattern:"Angiven URI matchar inte den URI som beräknats utifrån egenskaper i dokumentet"}));
+    addFilterForError(new Filter({errorType:ErrorTypes.PROPERTY, pattern:"Saknar svenskt språkattribut (xml:lang) för egenskap"}));
+    addFilterForError(new Filter({errorType:ErrorTypes.URI, pattern:"Kan inte tolka URI:n"}));
 
     removeURIFromCodeElements();
 
@@ -94,12 +94,11 @@ function addFilterForError(filterType) {
 
         var filterMatch = new FilterMatch({
             pattern:filterType.get('pattern'),
-            subPattern:filterType.get('subPattern'),
             errorType:filterType.get('errorType'),
             match:match,
             isDisplayed:false,
             rows:[],
-            id:filterType.get('errorType') + '_' + i});
+            id:filterType.get('pattern').hashCode() + '_' + i});
 
         var div_object = $("<div id='filtrera'><div>" + replaceAdditionalChars(htmlEscape(filterType.get('pattern'))) + ": " + match + " - " + match_count + "st</div></div>");
         var div_button = $("<button id='filter_" + filterMatch.get('id') + "'>Visa</button>");
@@ -118,22 +117,44 @@ function getMatchesForError(filterType) {
     var matches = [];
     var pattern = encodeForRegexPattern(filterType.get('pattern'));
 
-    if (isBlank(filterType.get('subPattern'))) {
-        $('table.report').find('tr').each(function () {
-            if ($(this).text().match(pattern)) {
-                matches.push("");
-            }
-        });
-    } else {
-        $('table.report').find('tr').find('dl').each(function () {
-            if ($(this).text().match(pattern)) {
-                var subPattern = filterType.get('subPattern') + "(\\S+)";
-                if ($(this).text().match(subPattern)) {
-                    matches.push(RegExp.$1);
-                }
-            }
-        });
+    switch(filterType.get('errorType')) {
+        case ErrorTypes.PROPERTY:
+            matches = getMatchesForPatternWithProperty(pattern);
+            break;
+        case ErrorTypes.URI:
+            matches = getMatchesForPatternWithURI(pattern);
+            break;
+        default:
+            break;
     }
+
+    return matches;
+}
+
+function getMatchesForPatternWithProperty(pattern) {
+    var matches = [];
+
+    $('table.report').find('tr').find('dl').each(function () {
+        if ($(this).text().match(pattern)) {
+            var matchWithNameSpace = $(this).find('code').text();
+            var matchWithoutNameSpace = matchWithNameSpace
+                                            .trimBeforeLastOccurenceOfChar("/")
+                                            .trimBeforeLastOccurenceOfChar("#");
+            matches.push(matchWithoutNameSpace);
+        }
+    });
+
+    return matches;
+}
+
+function getMatchesForPatternWithURI(pattern) {
+    var matches = [];
+
+    $('table.report').find('tr').each(function () {
+        if ($(this).text().match(pattern)) {
+            matches.push("");
+        }
+    });
 
     return matches;
 }
@@ -165,8 +186,7 @@ function createFilterForPostsWithoutErrors() {
 
         var filterMatch = new FilterMatch({
             pattern:"Korrekta poster",
-            subPattern:"",
-            errorType:0,
+            errorType:ErrorTypes.NONE,
             match:"",
             isDisplayed:false,
             rows:"",
@@ -192,8 +212,7 @@ function createFilterForUnmatchedRows() {
 
         var filterMatch = new FilterMatch({
             pattern:"Övriga",
-            subPattern:"",
-            errorType:0,
+            errorType:ErrorTypes.NONE,
             match:"",
             isDisplayed:false,
             rows:"",
@@ -276,6 +295,22 @@ Array.prototype.unique = function () {
     return uniqueArr;
 }
 
+String.prototype.hashCode = function(){
+    var hash = 0, i, char;
+    if (this.length == 0) return hash;
+    for (i = 0, l = this.length; i < l; i++) {
+        char  = this.charCodeAt(i);
+        hash  = ((hash<<5)-hash)+char;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+};
+
+String.prototype.trimBeforeLastOccurenceOfChar = function(char){
+    var splitResult = this.split(char);
+    return splitResult[splitResult.length-1];
+}
+
 function getCount(arr, val) {
     var ob = {};
     var len = arr.length;
@@ -289,18 +324,18 @@ function getCount(arr, val) {
     return ob[val];
 }
 
+var ErrorTypes = {"NONE" : 0, "PROPERTY" : 1, "URI": 2};
+
 var Filter = Backbone.Model.extend({
     defaults:{
         pattern:"",
-        subPattern:"",
-        errorType:0
+        errorType:ErrorTypes.NONE
     },
     initialize:function () {
         this.logToConsole();
     },
     logToConsole:function () {
         logToConsole("pattern: " + this.get("pattern") + "," +
-            " subPattern: " + this.get("subPattern") +
             " errorType: " + this.get("errorType"));
     }
 });
@@ -318,7 +353,6 @@ var FilterMatch = Filter.extend({
     },
     logToConsole:function () {
         logToConsole("pattern: " + this.get("pattern") +
-            " subPattern: " + this.get("subPattern") +
             ", errorType: " + this.get("errorType") +
             ", match: " + this.get("match") +
             ", id: " + this.get("id") +
@@ -410,11 +444,9 @@ var RowModel = Backbone.Model.extend({
         logToConsole("rowModel created for position: " + this.get("position"));
     },
     hide: function(){
-        logToConsole("model trigger hide!");
         this.trigger("hide");
     },
     show: function(){
-        logToConsole("model trigger show!");
         this.trigger("show");
     }
 });
@@ -427,11 +459,9 @@ var RowView = Backbone.View.extend({
         this.model.bind("show", this.show, this);
     },
     hide: function() {
-        logToConsole("view responded to hide! " + this.$el.text());
         this.$el.hide();
     },
     show: function() {
-        logToConsole("view responded to show! " + this.$el.text());
         this.$el.show();
     }
 });
@@ -475,7 +505,7 @@ if (typeof console === "undefined" || typeof console.log === "undefined") {
     }
 }
 
-var logEnabled = true;
+var logEnabled = false;
 
 function logToConsole(message) {
     if (logEnabled) {
