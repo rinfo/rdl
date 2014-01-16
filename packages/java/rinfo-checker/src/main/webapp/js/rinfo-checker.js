@@ -49,11 +49,11 @@ function addErrorFilters() {
     if (allFilterMatches.length == 0) {
         $('.filterBox').hide();
     } else if (allFilterMatches.length > 1) {
-        var reset_button = $("<div id='reset'><button onclick='resetAll()'>&Aring;terst&auml;ll</button></div>");
-        $('div.filter').append(reset_button);
+        $('div.filter').append(createDivWithButton('hide_all','hideAll()', "Dölj alla"));
+        $('div.filter').append(createDivWithButton('show_all','showAll()', "Visa alla"));
     }
 
-    resetAll();
+    hideAll();
 }
 
 function removeHeader() {
@@ -62,6 +62,10 @@ function removeHeader() {
 
 function wrapForSliding() {
     $('table.report').find('tr').find('td').wrapInner('<div style="display: block;" />');
+}
+
+function createDivWithButton(id, onclick, text) {
+    return $('<div/>', {id: id}).append($('<button/>', { onclick: onclick, text: text }));
 }
 
 function hightlightUriSuggestions() {
@@ -172,10 +176,11 @@ function hideAll() {
     }
 }
 
-function resetAll() {
-    logToConsole("resetAll");
+function showAll() {
+    logToConsole("showAll");
     for (var i = 0, l = allFilterMatches.length; i < l; i++) {
-        allFilterMatches.at(i).hide();
+        allFilterMatches.at(i).show();
+        allFilterMatches.at(i).setDisplayed(false);
     }
 }
 
@@ -368,14 +373,12 @@ var FilterMatch = Filter.extend({
         }
     },
     hide:function () {
-        this.set("isDisplayed", false);
         this._toggleAllRows("hide");
-        this._updateButton();
+        this.setDisplayed(false);
     },
     show:function () {
-        this.set("isDisplayed", true);
         this._toggleAllRows("show");
-        this._updateButton();
+        this.setDisplayed(true);
     },
     setupRows:function () {
         var that = this;
@@ -399,6 +402,11 @@ var FilterMatch = Filter.extend({
             });
         }
     },
+    setDisplayed:function (display) {
+        this.set("isDisplayed", display);
+        var text = display ? "D&ouml;lj" : "Visa";
+        $('#filter_' + this.get('id')).html(text);
+    },
     _toggleAllRows: function (mode) {
         var rowModels = this.get("rows");
         for (var i = 0, l = rowModels.length; i < l; i++) {
@@ -408,10 +416,6 @@ var FilterMatch = Filter.extend({
                 rowModels.at(i).hide();
             }
         }
-    },
-    _updateButton:function () {
-        var text = this.get("isDisplayed") ? "D&ouml;lj" : "Visa";
-        $('#filter_' + this.get('id')).html(text);
     },
     _addRow: function(row, position) {
         var rowModel = new RowModel({
