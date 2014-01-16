@@ -1,6 +1,21 @@
 $(document).ready(function () {
+    setupSubmitButtonEnabler();
     overrideFormSubmit();
 });
+
+function setupSubmitButtonEnabler() {
+    if(!$("#feedUrl").val()) {
+        $("#submitButton").attr("disabled", true);
+    }
+
+    $("#feedUrl").on("change", function() {
+        if(!$("#feedUrl").val()) {
+            $("#submitButton").attr("disabled", true);
+        } else {
+            $("#submitButton").attr("disabled", false);
+        }
+    });
+}
 
 function overrideFormSubmit() {
     $("#html-form").submit(function () {
