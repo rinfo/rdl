@@ -272,7 +272,7 @@ def prod():
 
 def _tomcat_env():
     env.apache_jk_tomcat = True
-    env.tomcat_version = "7.0.47"
+    env.tomcat_version = "7.0.50"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
     env.tomcat_start = '/etc/init.d/tomcat start'
