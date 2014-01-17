@@ -1,6 +1,21 @@
 $(document).ready(function () {
+    setupSubmitButtonEnabler();
     overrideFormSubmit();
 });
+
+function setupSubmitButtonEnabler() {
+    if(!$("#feedUrl").val()) {
+        $("#submitButton").attr("disabled", true);
+    }
+
+    $("#feedUrl").on("change", function() {
+        if(!$("#feedUrl").val()) {
+            $("#submitButton").attr("disabled", true);
+        } else {
+            $("#submitButton").attr("disabled", false);
+        }
+    });
+}
 
 function overrideFormSubmit() {
     $("#html-form").submit(function () {
@@ -9,15 +24,16 @@ function overrideFormSubmit() {
             url:$("#html-form").attr("action"),
             data:$("#html-form").serialize(),
             beforeSend:function () {
-                var target = document.getElementById('target');
-                var spinner = new Spinner(spinnerOptions).spin(target);
+                blockUI();
             },
             success:function (data) {
                 $('#target').html(data);
                 addErrorFilters();
+                unBlockUI();
             },
             error:function (xhr, ajaxOptions, thrownError) {
                 $('#target').html(xhr.responseText);
+                unBlockUI();
             }
         });
         return false;
@@ -34,11 +50,11 @@ function addErrorFilters() {
 
     allFilterMatches.reset();
 
-    addFilterForError(new Filter({errorType:1, pattern:"Saknar obligatoriskt värde för egenskap", subPattern:"publ#"}));
-    addFilterForError(new Filter({errorType:2, pattern:"Värdet .* matchar inte datatyp för egenskap", subPattern:"publ#"}));
-    addFilterForError(new Filter({errorType:3, pattern:"Angiven URI matchar inte den URI som beräknats utifrån egenskaper i dokumentet", subPattern:""}));
-    addFilterForError(new Filter({errorType:4, pattern:"Saknar svenskt språkattribut (xml:lang) för egenskap", subPattern:"terms/"}));
-    addFilterForError(new Filter({errorType:5, pattern:"Kan inte tolka URI:n", subPattern:""}));
+    addFilterForError(new Filter({errorType:ErrorTypes.PROPERTY, pattern:"Saknar obligatoriskt värde för egenskap"}));
+    addFilterForError(new Filter({errorType:ErrorTypes.PROPERTY, pattern:"Värdet .* matchar inte datatyp för egenskap"}));
+    addFilterForError(new Filter({errorType:ErrorTypes.URI, pattern:"Angiven URI matchar inte den URI som beräknats utifrån egenskaper i dokumentet"}));
+    addFilterForError(new Filter({errorType:ErrorTypes.PROPERTY, pattern:"Saknar svenskt språkattribut (xml:lang) för egenskap"}));
+    addFilterForError(new Filter({errorType:ErrorTypes.URI, pattern:"Kan inte tolka URI:n"}));
 
     removeURIFromCodeElements();
 
@@ -48,11 +64,11 @@ function addErrorFilters() {
     if (allFilterMatches.length == 0) {
         $('.filterBox').hide();
     } else if (allFilterMatches.length > 1) {
-        var reset_button = $("<div id='reset'><button onclick='resetAll()'>&Aring;terst&auml;ll</button></div>");
-        $('div.filter').append(reset_button);
+        $('div.filter').append($("<div id='hide_all'><button onclick='hideAll()'>Dölj alla</button></div>"));
+        $('div.filter').append($("<div id='show_all'><button onclick='showAll()'>Visa alla</button></div>"));
     }
 
-    resetAll();
+    hideAll();
 }
 
 function removeHeader() {
@@ -93,12 +109,11 @@ function addFilterForError(filterType) {
 
         var filterMatch = new FilterMatch({
             pattern:filterType.get('pattern'),
-            subPattern:filterType.get('subPattern'),
             errorType:filterType.get('errorType'),
             match:match,
             isDisplayed:false,
             rows:[],
-            id:filterType.get('errorType') + '_' + i});
+            id:filterType.get('pattern').hashCode() + '_' + i});
 
         var div_object = $("<div id='filtrera'><div>" + replaceAdditionalChars(htmlEscape(filterType.get('pattern'))) + ": " + match + " - " + match_count + "st</div></div>");
         var div_button = $("<button id='filter_" + filterMatch.get('id') + "'>Visa</button>");
@@ -117,22 +132,44 @@ function getMatchesForError(filterType) {
     var matches = [];
     var pattern = encodeForRegexPattern(filterType.get('pattern'));
 
-    if (isBlank(filterType.get('subPattern'))) {
-        $('table.report').find('tr').each(function () {
-            if ($(this).text().match(pattern)) {
-                matches.push("");
-            }
-        });
-    } else {
-        $('table.report').find('tr').find('dl').each(function () {
-            if ($(this).text().match(pattern)) {
-                var subPattern = filterType.get('subPattern') + "(\\S+)";
-                if ($(this).text().match(subPattern)) {
-                    matches.push(RegExp.$1);
-                }
-            }
-        });
+    switch(filterType.get('errorType')) {
+        case ErrorTypes.PROPERTY:
+            matches = getMatchesForPatternWithProperty(pattern);
+            break;
+        case ErrorTypes.URI:
+            matches = getMatchesForPatternWithURI(pattern);
+            break;
+        default:
+            break;
     }
+
+    return matches;
+}
+
+function getMatchesForPatternWithProperty(pattern) {
+    var matches = [];
+
+    $('table.report').find('tr').find('dl').each(function () {
+        if ($(this).text().match(pattern)) {
+            var matchWithNameSpace = $(this).find('code').text();
+            var matchWithoutNameSpace = matchWithNameSpace
+                                            .trimBeforeLastOccurenceOfChar("/")
+                                            .trimBeforeLastOccurenceOfChar("#");
+            matches.push(matchWithoutNameSpace);
+        }
+    });
+
+    return matches;
+}
+
+function getMatchesForPatternWithURI(pattern) {
+    var matches = [];
+
+    $('table.report').find('tr').each(function () {
+        if ($(this).text().match(pattern)) {
+            matches.push("");
+        }
+    });
 
     return matches;
 }
@@ -145,11 +182,17 @@ function createCallbackForError(filterMatch) {
 
 function hideAll() {
     logToConsole("hideAll");
+    for (var i = 0, l = allFilterMatches.length; i < l; i++) {
+        allFilterMatches.at(i).hide();
+    }
+}
 
-    allFilterMatches.each(function (filterMatch) {
-        logToConsole("filterMatch: " + filterMatch.get('rows'));
-        filterMatch.slideUp();
-    });
+function showAll() {
+    logToConsole("showAll");
+    for (var i = 0, l = allFilterMatches.length; i < l; i++) {
+        allFilterMatches.at(i).show();
+        allFilterMatches.at(i).setDisplayed(false);
+    }
 }
 
 function createFilterForPostsWithoutErrors() {
@@ -159,11 +202,10 @@ function createFilterForPostsWithoutErrors() {
 
         var filterMatch = new FilterMatch({
             pattern:"Korrekta poster",
-            subPattern:"",
-            errorType:0,
+            errorType:ErrorTypes.NONE,
             match:"",
             isDisplayed:false,
-            rows:rowsWithoutErrors,
+            rows:"",
             id:'rowsWithoutErrors'});
 
         var div_object = $("<div id='filtrera'><div>" + htmlEscape(filterMatch.get('pattern')) + " - " + rowsWithoutErrors.length + "st</div></div>");
@@ -172,6 +214,8 @@ function createFilterForPostsWithoutErrors() {
         div_button.click(createCallbackForError(filterMatch));
         div_object.append(div_button);
         $('div.filter').append(div_object);
+
+        filterMatch.setupRowsFromList(rowsWithoutErrors);
 
         allFilterMatches.add(filterMatch);
     }
@@ -184,11 +228,10 @@ function createFilterForUnmatchedRows() {
 
         var filterMatch = new FilterMatch({
             pattern:"Övriga",
-            subPattern:"",
-            errorType:0,
+            errorType:ErrorTypes.NONE,
             match:"",
             isDisplayed:false,
-            rows:unmatchedRows,
+            rows:"",
             id:'unmatchedRows'});
 
         var div_object = $("<div id='filtrera'><div>" + htmlEscape(filterMatch.get('pattern')) + " - " + unmatchedRows.length + "st</div></div>");
@@ -197,6 +240,8 @@ function createFilterForUnmatchedRows() {
         div_button.click(createCallbackForError(filterMatch));
         div_object.append(div_button);
         $('div.filter').append(div_object);
+
+        filterMatch.setupRowsFromList(unmatchedRows);
 
         allFilterMatches.add(filterMatch);
     }
@@ -228,12 +273,11 @@ function getUnmatchedRows() {
         var isMatched = false;
 
         allFilterMatches.each(function (filterMatch) {
-            var matchedRows = filterMatch.get('rows');
-
-            if($.inArray(row, matchedRows) > -1) {
-                logToConsole("row: " + row + ", matchedRows: " + matchedRows);
-                isMatched = true;
-            }
+            filterMatch.get('rows').each(function (rowModel) {
+                if(row == rowModel.get("position")) {
+                    isMatched = true;
+                }
+            });
         });
 
         if(!isMatched) {
@@ -244,12 +288,6 @@ function getUnmatchedRows() {
     logToConsole("unmatchedRows: " + unmatchedRows);
 
     return unmatchedRows;
-}
-
-function resetAll() {
-    allFilterMatches.each(function (filterMatch) {
-        filterMatch.slideUp();
-    });
 }
 
 function removeURIFromCodeElements() {
@@ -273,6 +311,22 @@ Array.prototype.unique = function () {
     return uniqueArr;
 }
 
+String.prototype.hashCode = function(){
+    var hash = 0, i, char;
+    if (this.length == 0) return hash;
+    for (i = 0, l = this.length; i < l; i++) {
+        char  = this.charCodeAt(i);
+        hash  = ((hash<<5)-hash)+char;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+};
+
+String.prototype.trimBeforeLastOccurenceOfChar = function(char){
+    var splitResult = this.split(char);
+    return splitResult[splitResult.length-1];
+}
+
 function getCount(arr, val) {
     var ob = {};
     var len = arr.length;
@@ -286,18 +340,18 @@ function getCount(arr, val) {
     return ob[val];
 }
 
+var ErrorTypes = {"NONE" : 0, "PROPERTY" : 1, "URI": 2};
+
 var Filter = Backbone.Model.extend({
     defaults:{
         pattern:"",
-        subPattern:"",
-        errorType:0
+        errorType:ErrorTypes.NONE
     },
     initialize:function () {
         this.logToConsole();
     },
     logToConsole:function () {
         logToConsole("pattern: " + this.get("pattern") + "," +
-            " subPattern: " + this.get("subPattern") +
             " errorType: " + this.get("errorType"));
     }
 });
@@ -307,14 +361,14 @@ var FilterMatch = Filter.extend({
         match:"",
         isDisplayed:false,
         id:"",
-        rows:[]
+        rows:""
     },
     initialize:function () {
         this.logToConsole();
+        this.set('rows', new RowCollection());
     },
     logToConsole:function () {
         logToConsole("pattern: " + this.get("pattern") +
-            " subPattern: " + this.get("subPattern") +
             ", errorType: " + this.get("errorType") +
             ", match: " + this.get("match") +
             ", id: " + this.get("id") +
@@ -323,51 +377,68 @@ var FilterMatch = Filter.extend({
     },
     toggleVisibility:function () {
         if (this.get("isDisplayed")) {
-            this.slideUp();
+            this.hide();
         } else {
             hideAll();
-            this.slideDown();
+            this.show();
         }
     },
-    slideUp:function () {
-        this.set("isDisplayed", false);
-        this._slide("up");
-        this._updateButton();
+    hide:function () {
+        this._toggleAllRows("hide");
+        this.setDisplayed(false);
     },
-    slideDown:function () {
-        this.set("isDisplayed", true);
-        this._slide("down");
-        this._updateButton();
-    },
-    _updateButton:function () {
-        var text = this.get("isDisplayed") ? "D&ouml;lj" : "Visa";
-        $('#filter_' + this.get('id')).html(text);
-    },
-    _slide:function (direction) {
-        var that = this;
-        $('table.report').find('tr').find('.position').find('div').each(function () {
-            var row = $(this).text();
-            if($.inArray(row, that.get('rows')) > -1) {
-                if (direction == "up") {
-                    $(this).closest('tr').find('div').slideUp(150);
-                } else {
-                    $(this).closest('tr').find('div').slideDown(150);
-                }
-            }
-        });
+    show:function () {
+        this._toggleAllRows("show");
+        this.setDisplayed(true);
     },
     setupRows:function () {
-        logToConsole("setupRow");
         var that = this;
         $('table.report').find('tr').each(function () {
             if (that._hasFilterMatch(this)) {
-                var row = $(this).find('.position').find('div').text();
-                logToConsole("add row: " + row);
-                var newRows = _.clone(that.get('rows'));
-                newRows.push(row);
-                that.set('rows', newRows);
+                var position = $(this).find('.position').find('div').text();
+                var row = $(this).find('div');
+                that._addRow(row, position);
             }
         });
+    },
+    setupRowsFromList:function (rowsList) {
+        var that = this;
+        for (var i = 0, l = rowsList.length; i < l; i++) {
+            var position = rowsList[i];
+            $('table.report').find('tr').find('.position').find('div').each(function () {
+                if(position == $(this).text()) {
+                    var row = $(this).closest('tr').find('div');
+                    that._addRow(row, position);
+                }
+            });
+        }
+    },
+    setDisplayed:function (display) {
+        this.set("isDisplayed", display);
+        var text = display ? "D&ouml;lj" : "Visa";
+        $('#filter_' + this.get('id')).html(text);
+    },
+    _toggleAllRows: function (mode) {
+        var rowModels = this.get("rows");
+        for (var i = 0, l = rowModels.length; i < l; i++) {
+            if(mode == "show") {
+                rowModels.at(i).show();
+            } else {
+                rowModels.at(i).hide();
+            }
+        }
+    },
+    _addRow: function(row, position) {
+        var rowModel = new RowModel({
+            position: position
+        });
+        var rowView = new RowView({
+            model:rowModel,
+            el:row
+        });
+        var newRows = _.clone(this.get('rows'));
+        newRows.add(rowModel);
+        this.set('rows', newRows);
     },
     _hasFilterMatch:function (row) {
         var that = this;
@@ -380,9 +451,43 @@ var FilterMatchCollection = Backbone.Collection.extend({
     model:FilterMatch
 });
 
+var RowModel = Backbone.Model.extend({
+    defaults:{
+        position:""
+    },
+    initialize: function() {
+        logToConsole("rowModel created for position: " + this.get("position"));
+    },
+    hide: function(){
+        this.trigger("hide");
+    },
+    show: function(){
+        this.trigger("show");
+    }
+});
+
+var RowView = Backbone.View.extend({
+    initialize: function() {
+        logToConsole("rowView created! " + this.$el.text());
+        this.model.view = this;
+        this.model.bind("hide", this.hide, this);
+        this.model.bind("show", this.show, this);
+    },
+    hide: function() {
+        this.$el.hide();
+    },
+    show: function() {
+        this.$el.show();
+    }
+});
+
+var RowCollection = Backbone.Collection.extend({
+    model:RowModel
+});
+
 var allFilterMatches = new FilterMatchCollection();
 
-var spinnerOptions = {
+var spinner = new Spinner({
     lines:13, // The number of lines to draw
     length:20, // The length of each line
     width:10, // The line thickness
@@ -390,16 +495,16 @@ var spinnerOptions = {
     corners:1, // Corner roundness (0..1)
     rotate:0, // The rotation offset
     direction:1, // 1: clockwise, -1: counterclockwise
-    color:'#000', // #rgb or #rrggbb or array of colors
+    color:'#FFF', // #rgb or #rrggbb or array of colors
     speed:1, // Rounds per second
     trail:60, // Afterglow percentage
     shadow:false, // Whether to render a shadow
     hwaccel:false, // Whether to use hardware acceleration
     className:'spinner', // The CSS class to assign to the spinner
     zIndex:2e9, // The z-index (defaults to 2000000000)
-    top:'auto', // Top position relative to parent in px
+    top:10, // Top position relative to parent in px
     left:'auto' // Left position relative to parent in px
-};
+});
 
 //console.log might not be defined for i.e. IE8
 var alertFallback = false;
@@ -458,4 +563,24 @@ function encodeForRegexPattern(str) {
 
 function isBlank(str) {
     return (!str || /^\s*$/.test(str));
+}
+
+function blockUI() {
+    logToConsole("blockUI!");
+    var target = document.getElementById('spinner');
+    spinner.spin(target);
+    $('#spinner').show();
+    $.blockUI({
+        message: $('#spinner'),
+        css: {
+            border: 'none'
+        }
+    });
+}
+
+function unBlockUI() {
+    logToConsole("unBlockUI!");
+    spinner.stop();
+    $('#spinner').hide();
+    $.unblockUI();
 }

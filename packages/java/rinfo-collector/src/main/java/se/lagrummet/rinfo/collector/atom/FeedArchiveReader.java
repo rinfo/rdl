@@ -21,6 +21,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.model.Document;
+import se.lagrummet.rinfo.collector.ParseFeedException;
 
 
 public abstract class FeedArchiveReader {
@@ -107,7 +109,7 @@ public abstract class FeedArchiveReader {
      *
      * @return the previous archive URL, or null to stop climbing.
      */
-    public URL readFeedPage(URL url) throws IOException {
+    public URL readFeedPage(URL url) throws IOException, ParseFeedException {
         logger.info(String.format("Reading Feed <%s> ...", url));
         Feed feed;
         URL followingUrl = null;
@@ -125,7 +127,9 @@ public abstract class FeedArchiveReader {
                     followingUrl = followingHref.toURL();
                 }
             }
-
+        } catch (ParseFeedException e) {
+            logger.error(String.format("Error parsing feed: <%s>. Not a valid feed?", url), e);
+            throw e;
         } catch (Exception e) {
             logger.error(String.format("Error parsing feed: <%s>", url), e);
             throw new RuntimeException(e); /* TODO: stop on error?
@@ -152,9 +156,17 @@ public abstract class FeedArchiveReader {
      */
     public abstract boolean processFeedPage(URL pageUrl, Feed feed) throws Exception;
 
-    public static Feed parseFeed(InputStream inStream, URL baseUrl) {
-        return (Feed) Abdera.getInstance().getParser().parse(
-                inStream, baseUrl.toString()).getRoot();
+    public static Feed parseFeed(InputStream inStream, URL baseUrl) throws ParseFeedException {
+        Feed feed;
+
+        try {
+            Document document = Abdera.getInstance().getParser().parse(inStream, baseUrl.toString());
+            feed = (Feed) document.getRoot();
+        } catch (Exception e) {
+            throw new ParseFeedException("Kan inte läsa källa. Kontrollera att rätt URL är angiven och att källan är korrekt.");
+        }
+
+        return feed;
     }
 
     // TODO: define and make a default impl. (use a single dir, only latest feedUrl/feeId?)
