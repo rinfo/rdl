@@ -46,13 +46,31 @@ dl.lone {
     margin: 0;
 }
 
-dl.summary {
+input.url {
+    width: 85%;
+}
+
+div.summary {
     background-color: #eee;
     border: 0.8pt solid #000000;
     padding: 4pt;
-    width: 36em;
     -moz-border-radius: 4pt;
     -webkit-border-radius: 4pt;
+}
+
+div.summary_left_section {
+	width:75%;
+	float:left;
+	overflow:hidden
+}
+
+div.summary_right_section {
+	width:25%;
+	float:right;
+}
+
+div.clear_both {
+    clear: both;
 }
 
 div.filter {
@@ -67,8 +85,9 @@ div.form_section {
     margin: 5px;
 }
 
-span.submit_button {
+input.submit_button {
     margin-left: 5px;
+    width: 10%;
 }
 
 span.checkbox {
