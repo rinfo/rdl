@@ -63,6 +63,18 @@ div.filter {
     -webkit-border-radius: 4pt;
 }
 
+div.form_section {
+    margin: 5px;
+}
+
+span.submit_button {
+    margin-left: 5px;
+}
+
+span.checkbox {
+    margin-left: 10px;
+}
+
 dt {
     clear: left;
     float: left;
