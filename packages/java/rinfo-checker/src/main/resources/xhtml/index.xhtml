@@ -15,29 +15,30 @@
     <body>
         <h1>RInfo Checker</h1>
         <form id="html-form" action="" method="POST">
-            <fieldset>
-                <legend>
-                    <label for="feedUrl">Källa (Atom-flöde):</label>
-                </legend>
-                <p>
-                    <label for="feedUrl">URL</label>
-                    <input type="text" class="url" name="feedUrl" id="feedUrl"
-                        size="128" />
-                </p>
-                <p>
-                    <label for="feedUrl">Antal poster att undersöka</label>
-                    <input type="text" name="maxEntries" id="maxEntries"
-                        size="3" value="10" />
-                </p>
-                <p>
-                    <label for="feedUrl">Visa även korrekta poster</label>
-                    <input type="checkbox" name="showSuccessfulEntries" id="showSuccessfulEntries"
-                        value="true" />
-                </p>
-                <p>
-                    <input type="submit" value="Check" id="submitButton" />
-                </p>
-            </fieldset>
+						<fieldset>
+								<legend>
+										<label for="feedUrl">Källa (Atom-flöde):</label>
+								</legend>
+								<div class="form_section">
+										<span>
+												<label for="feedUrl">URL</label>
+												<input type="text" class="url" name="feedUrl" id="feedUrl" size="128" />
+										</span>
+										<span class="submit_button">
+												<input type="submit" value="Check" id="submitButton" />
+										</span>
+								</div>
+								<div class="form_section">
+										<span>
+												<label for="feedUrl">Antal poster att undersöka</label>
+												<input type="text" name="maxEntries" id="maxEntries" size="3" value="10" />
+										</span>
+										<span class="checkbox">
+												<label for="feedUrl">Visa även korrekta poster</label>
+												<input type="checkbox" name="showSuccessfulEntries" id="showSuccessfulEntries" value="true" />
+										</span>
+								</div>
+						</fieldset>
         </form>
         <div id="target"></div>
         <div id="spinner"></div>
