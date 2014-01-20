@@ -24,24 +24,33 @@
         </xsl:choose>
         <xsl:text> insamling</xsl:text>
       </h2>
-      <dl class="summary">
-        <dt>Start:</dt>
-        <dd><xsl:apply-templates select="tl:start"/></dd>
-        <xsl:for-each select="tl:end">
-          <dt>Stopp:</dt>
-          <dd><xsl:apply-templates select="."/></dd>
-        </xsl:for-each>
-        <xsl:for-each select="dct:source">
-          <dt>Startkälla:</dt>
-          <dd>
-            <xsl:apply-templates select="iana:current/@ref"/>
-            <br />
-            <xsl:text> (ID: </xsl:text>
-            <xsl:apply-templates select="dct:identifier"/>
-            <xsl:text>)</xsl:text>
-          </dd>
-        </xsl:for-each>
-      </dl>
+      <div class="summary">
+        <div class="summary_left_section">
+          <dl>
+            <xsl:for-each select="dct:source">
+              <dt>Startkälla:</dt>
+              <dd>
+                <xsl:apply-templates select="iana:current/@ref"/>
+                <br />
+                <xsl:text> (ID: </xsl:text>
+                <xsl:apply-templates select="dct:identifier"/>
+                <xsl:text>)</xsl:text>
+              </dd>
+            </xsl:for-each>
+          </dl>
+        </div>
+        <div class="summary_right_section">
+          <dl>
+            <dt>Start:</dt>
+            <dd><xsl:apply-templates select="tl:start"/></dd>
+            <xsl:for-each select="tl:end">
+              <dt>Stopp:</dt>
+              <dd><xsl:apply-templates select="."/></dd>
+            </xsl:for-each>
+          </dl>
+        </div>
+        <div class="clear_both"></div>
+      </div>
       <xsl:for-each select="iana:via">
         <xsl:apply-templates select=". | key('rel', ./@ref)"/>
       </xsl:for-each>
@@ -73,34 +82,44 @@
     <xsl:variable name="collect-count" select="count($collected)"/>
     <div class="source">
       <h3>Feed-källa</h3>
-      <dl class="summary">
-        <dt>Identifierare:</dt>
-        <dd><xsl:apply-templates select="awol:id"/></dd>
-        <dt>Feed-sidans URI:</dt>
-        <dd><xsl:apply-templates select="iana:self/@ref"/></dd>
-        <dt>Uppdaterad:</dt>
-        <dd><xsl:apply-templates select="awol:updated"/></dd>
-        <xsl:choose>
-          <xsl:when test="$collected">
-            <dt>Antal poster:</dt>
-            <dd><xsl:value-of select="$collect-count"/></dd>
-            <xsl:variable name="sucess-count"
-                          select="count($collected/parent::resource[a/awol:Entry])"/>
-            <dt class="success">Antal rätt:</dt>
-            <dd class="success"><xsl:value-of select="$sucess-count"/></dd>
-            <xsl:if test="$collect-count != $sucess-count">
-              <dt class="error">Antal fel:</dt>
-              <dd class="error">
-                <xsl:value-of select="$collect-count - $sucess-count"/>
-              </dd>
-            </xsl:if>
-          </xsl:when>
-          <xsl:otherwise>
-            <dt>Detaljer:</dt>
-            <dd><a href="/{substring-after(@uri, $base-url)}">Insamlingsrapport</a></dd>
+      <div class="summary">
+        <div class="summary_left_section">
+          <dl>
+            <dt>Identifierare:</dt>
+            <dd><xsl:apply-templates select="awol:id"/></dd>
+            <dt>Feed-sidans URI:</dt>
+            <dd><xsl:apply-templates select="iana:self/@ref"/></dd>
+            <dt>Uppdaterad:</dt>
+            <dd><xsl:apply-templates select="awol:updated"/></dd>
+          </dl>
+        </div>
+        <div class="summary_right_section">
+          <dl>
+            <xsl:choose>
+              <xsl:when test="$collected">
+                <dt>Antal poster:</dt>
+                <dd><xsl:value-of select="$collect-count"/></dd>
+                <xsl:variable name="success-count" select="count($collected/parent::resource[a/awol:Entry])"/>
+                <dt class="success">Antal rätt:</dt>
+                <dd class="success">
+                    <xsl:value-of select="$success-count"/>
+                </dd>
+                <xsl:if test="$collect-count != $success-count">
+                  <dt class="error">Antal fel:</dt>
+                  <dd class="error">
+                    <xsl:value-of select="$collect-count - $success-count"/>
+                  </dd>
+                </xsl:if>
+              </xsl:when>
+            <xsl:otherwise>
+              <dt>Detaljer:</dt>
+              <dd><a href="/{substring-after(@uri, $base-url)}">Insamlingsrapport</a></dd>
           </xsl:otherwise>
         </xsl:choose>
-      </dl>
+          </dl>
+        </div>
+        <div class="clear_both"></div>
+      </div>
       <xsl:if test="$collected and
                     ($collect-count - count($collected/parent::resource[a/awol:Entry]) > 0
                     or $show-successful-entries)">
