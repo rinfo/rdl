@@ -64,8 +64,7 @@ function addErrorFilters() {
     if (allFilterMatches.length == 0) {
         $('.filterBox').hide();
     } else if (allFilterMatches.length > 1) {
-        $('div.filter').append($("<div id='hide_all'><button onclick='hideAll()'>Dölj alla</button></div>"));
-        $('div.filter').append($("<div id='show_all'><button onclick='showAll()'>Visa alla</button></div>"));
+        addHideShowAllButtons();
     }
 
     hideAll();
@@ -98,6 +97,15 @@ function hightlightUriSuggestions() {
     });
 }
 
+function addHideShowAllButtons() {
+    $('div.filter').prepend(
+        $("<div class='hide_show_all'>" +
+            "<span id='show_all'><button onclick='showAll()'>Visa alla</button></span>" +
+            "<span id='hide_all'><button onclick='hideAll()'>Dölj alla</button></span>" +
+        "</div>")
+    );
+}
+
 function addFilterForError(filterType) {
     var matches = getMatchesForError(filterType);
     var unique_matches = matches.unique();
@@ -115,12 +123,8 @@ function addFilterForError(filterType) {
             rows:[],
             id:filterType.get('pattern').hashCode() + '_' + i});
 
-        var div_object = $("<div id='filtrera'><div>" + replaceAdditionalChars(htmlEscape(filterType.get('pattern'))) + ": " + match + " - " + match_count + "st</div></div>");
-        var div_button = $("<button id='filter_" + filterMatch.get('id') + "'>Visa</button>");
-
-        div_button.click(createCallbackForError(filterMatch));
-        div_object.append(div_button);
-        $('div.filter').append(div_object);
+        var title = replaceAdditionalChars(htmlEscape(filterType.get('pattern'))) + ": " + match + " - " + match_count + "st";
+        addButtonForFilterMatch(title, filterMatch);
 
         filterMatch.setupRows();
 
@@ -174,6 +178,17 @@ function getMatchesForPatternWithURI(pattern) {
     return matches;
 }
 
+function addButtonForFilterMatch(title, filterMatch) {
+    var div = $("<div id='filtrera'></div>");
+    var title = $("<span>" + title + "</span>");
+    var button = $("<span class='filtermatch_button'><button id='filter_" + filterMatch.get('id') + "'>Visa</button></span>");
+    button.click(createCallbackForError(filterMatch));
+
+    div.append(button);
+    div.append(title);
+    $('div.filter').append(div);
+}
+
 function createCallbackForError(filterMatch) {
     return function () {
         filterMatch.toggleVisibility();
@@ -208,12 +223,8 @@ function createFilterForPostsWithoutErrors() {
             rows:"",
             id:'rowsWithoutErrors'});
 
-        var div_object = $("<div id='filtrera'><div>" + htmlEscape(filterMatch.get('pattern')) + " - " + rowsWithoutErrors.length + "st</div></div>");
-        var div_button = $("<button id='filter_" + filterMatch.get('id') + "'>Visa</button>");
-
-        div_button.click(createCallbackForError(filterMatch));
-        div_object.append(div_button);
-        $('div.filter').append(div_object);
+        var title = htmlEscape(filterMatch.get('pattern')) + " - " + rowsWithoutErrors.length + "st";
+        addButtonForFilterMatch(title, filterMatch);
 
         filterMatch.setupRowsFromList(rowsWithoutErrors);
 
@@ -234,12 +245,8 @@ function createFilterForUnmatchedRows() {
             rows:"",
             id:'unmatchedRows'});
 
-        var div_object = $("<div id='filtrera'><div>" + htmlEscape(filterMatch.get('pattern')) + " - " + unmatchedRows.length + "st</div></div>");
-        var div_button = $("<button id='filter_" + filterMatch.get('id') + "'>Visa</button>");
-
-        div_button.click(createCallbackForError(filterMatch));
-        div_object.append(div_button);
-        $('div.filter').append(div_object);
+        var title = htmlEscape(filterMatch.get('pattern')) + " - " + unmatchedRows.length + "st";
+        addButtonForFilterMatch(title, filterMatch);
 
         filterMatch.setupRowsFromList(unmatchedRows);
 
