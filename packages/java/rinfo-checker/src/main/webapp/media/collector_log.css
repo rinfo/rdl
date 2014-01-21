@@ -200,3 +200,11 @@ div#filtrera {
     margin-left: auto ;
     margin-right: auto ;
 }
+
+div.hide_show_all {
+    margin-bottom: 10px;
+}
+
+span.filtermatch_button {
+    margin-right: 5px;
+}
