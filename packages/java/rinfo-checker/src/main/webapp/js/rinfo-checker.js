@@ -56,6 +56,7 @@ function addErrorFilters() {
     addFilterForError(new Filter({errorType:ErrorTypes.PROPERTY, pattern:"Saknar svenskt språkattribut (xml:lang) för egenskap"}));
     addFilterForError(new Filter({errorType:ErrorTypes.URI, pattern:"Kan inte tolka URI:n"}));
     addFilterForError(new Filter({errorType:ErrorTypes.PROPERTY, pattern:"Okänd egenskap"}));
+    addFilterForError(new Filter({errorType:ErrorTypes.URI, pattern:"Angiven identifierare är ingen korrekt IRI"}));
 
     removeURIFromCodeElements();
 
