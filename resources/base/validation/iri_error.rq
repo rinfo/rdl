@@ -9,7 +9,7 @@ CONSTRUCT {
 
     [] a sch:Error;
         rdfs:isDefinedBy <iri_error.rq>;
-        sch:message "Identifierare [1] är ingen korrekt IRI."@sv;
+        sch:message "Angiven identifierare är ingen korrekt IRI: [1]"@sv;
         sch:implicated (?iri);
         dct:source ?context .
 

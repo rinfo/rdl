@@ -6,10 +6,10 @@ PREFIX sch: <http://purl.org/net/schemarama#>
 
 CONSTRUCT {
 
-    [] a sch:Warning;
+    [] a sch:Error;
         rdfs:isDefinedBy <http://rinfo.lagrummet.se/sys/validation/unknown_property.rq>;
-        sch:message "Resurs [1]: okänd egenskap [2]"@sv;
-        sch:implicated (?thing ?prop);
+        sch:message "Okänd egenskap [1]"@sv;
+        sch:implicated (?prop);
         dct:source ?context .
 
 } WHERE {
