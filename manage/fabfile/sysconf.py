@@ -112,7 +112,7 @@ def install_tomcat():
     fetch_tomcat_dist()
     workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
     with cd(workdir_tomcat):
-        sudo("bash %(mgr_workdir)s/install/3_install-tomcat.sh %(tomcat_version)s %(tomcat_user)s %(tomcat_group)s %(user)s" % env)
+        sudo("bash %(mgr_workdir)s/install/3_install-tomcat.sh %(tomcat_version)s %(tomcat_user)s %(tomcat_group)s %(user)s %(mgr_workdir)s" % env)
     install_init_d("tomcat")
 
 def fetch_tomcat_dist():

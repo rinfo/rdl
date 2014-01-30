@@ -4,6 +4,7 @@ version=$1
 tomcat_user=$2
 tomcat_group=$3
 rinfo_user=$4
+mgr_work_dir=$5
 
 # Create the tomcat group and user (if they don't already exist)
 id -g ${tomcat_group} > /dev/null 2>&1 || groupadd ${tomcat_group}
@@ -16,7 +17,7 @@ usermod -a -G ${tomcat_group} ${rinfo_user}
 tar xzf apache-tomcat-${version}.tar.gz
 mv apache-tomcat-${version} /opt/
 mv /opt/apache-tomcat-${version}/conf/server.xml /opt/apache-tomcat-${version}/conf/server.old.xml
-mv server.xml /opt/apache-tomcat-${version}/conf/.
+mv ${mgr_work_dir}/install/server.xml /opt/apache-tomcat-${version}/conf/.
 pushd /opt/
     test -h tomcat && rm tomcat
     ln -s apache-tomcat-${version} tomcat
