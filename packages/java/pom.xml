@@ -683,6 +683,12 @@
             <environment>test</environment>
         </properties>
     </profile>
+      <profile>
+          <id>skrapat</id>
+          <properties>
+              <environment>skrapat</environment>
+          </properties>
+      </profile>
     <profile>
       <id>prod</id>
       <properties>

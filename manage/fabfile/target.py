@@ -128,6 +128,40 @@ def test():
     # Tomcat
     _tomcat_env()
 
+@targetenv
+def skrapat():
+    """Set target env to: Skrapat"""
+    # Name env:
+    env.target = "skrapat"
+    # Machines:
+    env.user = 'rinfo'
+    env.roledefs = {
+        'main': ['rinfo.skrapat.lagrummet.se'],
+        'service': ['service.skrapat.lagrummet.se'],
+        'checker': ['checker.skrapat.lagrummet.se'],
+        'admin': ['admin.skrapat.lagrummet.se'],
+        'demosource': ['testfeed.lagrummet.se'],
+        'lagrummet': ['skrapat.lagrummet.se'],
+    }
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'checker': ['checker'],
+    }
+    # Tomcat
+    _tomcat_env()
+
 
 @targetenv
 def testfeed():
@@ -272,6 +306,7 @@ def prod():
 
 def _tomcat_env():
     env.apache_jk_tomcat = True
+    # when change version of tomcat, must check server.xml (../../sysconf/common/tomcat/server.xml)
     env.tomcat_version = "7.0.50"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
