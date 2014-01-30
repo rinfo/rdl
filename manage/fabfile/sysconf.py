@@ -93,6 +93,7 @@ def _prepare_mgr_work():
     _needs_targetenv()
     mkdirpath("%(mgr_workdir)s/install" % env)
     put(p.join(env.manageroot, "sysconf", "install", "*.sh"), "%(mgr_workdir)s/install" % env)
+    put(p.join(env.manageroot, "sysconf", "common", "tomcat", "server.xml"), "%(mgr_workdir)s/install" % env)
     mkdirpath("%(mgr_workdir)s/tomcat_pkg" % env)
 
 @task
