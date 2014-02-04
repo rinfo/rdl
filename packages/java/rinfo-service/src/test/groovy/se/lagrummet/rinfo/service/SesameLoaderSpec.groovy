@@ -8,6 +8,9 @@ import org.openrdf.model.vocabulary.RDFS
 import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.memory.MemoryStore
 
+import org.elasticsearch.index.mapper.MapperParsingException
+import se.lagrummet.rinfo.service.ElasticLoader
+
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 import spock.lang.*
@@ -103,6 +106,21 @@ class SesameLoaderSpec extends Specification {
 
         cleanup:
         conn.close()
+    }
+
+    def "should catch MapperParserException if parse error"() {
+        given:
+        ElasticLoader elasticLoader = Mock()
+        elasticLoader.create(_,_,_) >> {
+           throw new MapperParsingException("some parse error")
+        }
+        def loader = new SesameLoader(repo, elasticLoader)
+
+        when:
+        loader.readFeed(new URL("${baseUrl}/1-init.atom"))
+
+        then:
+        notThrown(MapperParsingException) // since caught by create()
     }
 
 }
