@@ -10,6 +10,7 @@ import org.openrdf.model.impl.ValueFactoryImpl
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.vocabulary.XMLSchema
 import org.openrdf.repository.RepositoryConnection
+import org.openrdf.rio.RDFParseException;
 
 import org.apache.abdera.model.Entry
 
@@ -129,6 +130,8 @@ class RepoEntry {
             processContents()
             conn.commit() // TODO: either load into mem first, or do something
                           // if addStatistics fails...
+        } catch (RDFParseException e) {
+            logger.warn("RDFParseException caught for entry <" + this.entry.getId()  + ">. Details: " + e.getMessage());
         } catch (Exception e) {
             conn.rollback()
             throw e
