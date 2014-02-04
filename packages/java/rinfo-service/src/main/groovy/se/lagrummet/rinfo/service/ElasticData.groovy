@@ -74,7 +74,7 @@ class ElasticData {
             for (term in frame.keySet()) {
                 if (term in jsonLdSettings.refTerms) {
                 } else if (term in jsonLdSettings.dateTerms) {
-                    propMap[term] = ["type": "date", "format": "dateOptionalTime"]
+                    propMap[term] = ["type": "date", "format": "dateOptionalTime", "ignore_malformed": "true"]
                 } else if (term in jsonLdSettings.plainStringTerms) {
                     // TODO: only boost on "top level" (or reduce on depth)!
                     float boost = jsonLdSettings.boostTermMap[term] ?: 1.0
