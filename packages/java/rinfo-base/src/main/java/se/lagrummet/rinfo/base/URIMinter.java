@@ -27,7 +27,7 @@ public class URIMinter {
             "/uriminter/unicodebasechars-scandinavian.json";
 
     public URIMinter(Repository repo, String spaceUri) {
-        logger.warn("spaceUri=" + spaceUri);
+        logger.trace("spaceUri=" + spaceUri);
         try {
             RepositoryConnection conn = repo.getConnection();
             try {
@@ -86,9 +86,9 @@ public class URIMinter {
                     new HashMap<String, List<MintResult>>();
             Describer describer = newDescriber(conn);
             for (Description desc : describer.subjects(null, null)) {
-                logger.warn("desc.about='"+desc.getAbout()+"'");
+                logger.trace("desc.about='"+desc.getAbout()+"'");
                 List<MintResult> results = space.coinUris(desc, false);
-                logger.warn("results.size='"+results.size()+"'");
+                logger.trace("results.size='"+results.size()+"'");
                 if (results != null) {
                     resultMap.put(desc.getAbout(), results);
                 }
@@ -107,9 +107,9 @@ public class URIMinter {
                     new HashMap<String, List<MintResult>>();
             Describer describer = newDescriber(conn);
             for (Description desc : describer.subjects(null, null)) {
-                logger.warn("desc.about='"+desc.getAbout()+"'");
+                logger.trace("desc.about='"+desc.getAbout()+"'");
                 List<MintResult> results = space.coinUris(desc, true);
-                logger.warn("results.size='"+results.size()+"'");
+                logger.trace("results.size='"+results.size()+"'");
                 if (results != null) {
                     resultMap.put(desc.getAbout(), results);
                 }
@@ -143,7 +143,7 @@ public class URIMinter {
             for (MintResult result : results) {
                 int diff = result.getRulesSize() - result.getMatchCount();
                 if(diff == lowestDiff && result.getMatchCount() >= requiredMinMatchCount) {
-                    logger.info("Adding to resultsWithBestMatch, uri: " + result.getUri() + ", rulesSize: " + result.getRulesSize() + ", matchCount: " + result.getMatchCount());
+                    logger.trace("Adding to resultsWithBestMatch, uri: " + result.getUri() + ", rulesSize: " + result.getRulesSize() + ", matchCount: " + result.getMatchCount());
                     resultsWithBestMatch.add(result);
                 }
             }
@@ -176,16 +176,16 @@ public class URIMinter {
             for (Description tdesc : desc.getRels("coin:template")) {
                 templates.add(new CoinTemplate(this, tdesc));
             }
-            logger.warn(">>>>>>>>>>>>>>>>>>>>>>> SlugMappings");
+            logger.trace(">>>>>>>>>>>>>>>>>>>>>>> SlugMappings");
             for (String key : slugMappings.keySet()) {
                 Map<String, String> stringStringMap = slugMappings.get(key);
-                logger.warn(" - mappings for key '"+key+"'");
+                logger.trace(" - mappings for key '"+key+"'");
                 for (String key2 : stringStringMap.keySet()) {
                     String value = stringStringMap.get(key2);
-                    logger.warn(key2+"="+value);
+                    logger.trace(key2+"="+value);
                 }
             }
-            logger.warn("<<<<<<<<<<<<<<<<<<<<<<< SlugMappings");
+            logger.trace("<<<<<<<<<<<<<<<<<<<<<<< SlugMappings");
             Description slugTransl = desc.getRel("coin:slugTransform");
             if (slugTransl != null) {
               for (Description transform : slugTransl.getRels("coin:apply")) {
@@ -207,15 +207,15 @@ public class URIMinter {
          * property. Higher value leads to earlier (lower) index in list.
          */
         List<MintResult> coinUris(Description desc, boolean allowSuggestions) {
-            logger.warn("desc.about="+desc.getAbout());
+            logger.trace("desc.about="+desc.getAbout());
             List<MintResult> results = new ArrayList<MintResult>();
             for (CoinTemplate tplt : templates) {
-                logger.warn("tplt.forType="+tplt.forType+", tplt.uriTemplate="+tplt.uriTemplate);
+                logger.trace("tplt.forType="+tplt.forType+", tplt.uriTemplate="+tplt.uriTemplate);
                 MintResult result = tplt.coinUri(desc, allowSuggestions);
                 if (result.getUri() != null) {
                     results.add(result);
                 } else {
-                    logger.warn("skipping mintresult="+result.toString());
+                    logger.trace("skipping mintresult="+result.toString());
                 }
             }
             Collections.sort(results, new Comparator<MintResult>() {
@@ -258,7 +258,7 @@ public class URIMinter {
             if (stringStringMap==null) {
                 stringStringMap = new HashMap<String, String>();
                 slugMappings.put(slugFrom, stringStringMap);
-                logger.warn("Created SluggMappings for "+slugFrom+" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
+                logger.trace("Created SluggMappings for "+slugFrom+" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
             }
             return stringStringMap;
         }
@@ -286,11 +286,11 @@ public class URIMinter {
             if (givenPriority != null) {
                 priority = ((java.math.BigInteger) givenPriority).intValue();
             }
-            logger.warn("%%%%%%%%%%%%% uriTemplate='"+uriTemplate+"' %%%%%%%%%%%%%%%%%");
+            logger.trace("%%%%%%%%%%%%% uriTemplate='"+uriTemplate+"' %%%%%%%%%%%%%%%%%");
             for (Description cmp : desc.getRels("coin:binding")) {
                 CoinBinding binding = new CoinBinding(this, cmp);
                 bindings.add(binding);
-                logger.warn("binding.property="+binding.property+", binding.variable="+binding.variable+", binding.slug="+binding.slugFrom);
+                logger.trace("binding.property="+binding.property+", binding.variable="+binding.variable+", binding.slug="+binding.slugFrom);
             }
         }
 
@@ -300,17 +300,17 @@ public class URIMinter {
                             ||*/ uriTemplate.equals("/publ/dom/{publisher}/{malnummer}/{avgorandedatum}")
                             /*|| uriTemplate.equals("/publ/{fs}/{arsutgava}:{lopnummer}"))*/:false;
 
-            if (trace) logger.warn("******************* TRACE *******************");
-            if (trace) logger.warn("uri="+desc.getAbout());
-            if (trace) logger.warn("uriTemplate="+uriTemplate);
+            if (trace) logger.trace("******************* TRACE *******************");
+            if (trace) logger.trace("uri="+desc.getAbout());
+            if (trace) logger.trace("uriTemplate="+uriTemplate);
             int matchCount = 0;
             int rulesSize = bindings.size();
             if (forType != null) {
-                if (trace) logger.warn("forType="+forType);
+                if (trace) logger.trace("forType="+forType);
                 rulesSize += 1;
                 boolean ok = false;
                 for (Description type : desc.getTypes()) {
-                    logger.warn(type.getAbout() + " är samma som? " + forType);
+                    logger.trace(type.getAbout() + " är samma som? " + forType);
                     if (type.getAbout().equals(forType)) {
                         matchCount += 1;
                         ok = true;
@@ -318,38 +318,38 @@ public class URIMinter {
                     }
                 }
                 if (!ok) {
-                    logger.warn("missing forType: " + forType + " return MintResult without uri. desc.getAbout() = " + desc.getAbout() + ", uriTemplate = " + uriTemplate + ", matchcount = " + matchCount + ", rulesSize = " + rulesSize + ", priority = " + priority);
+                    logger.trace("missing forType: " + forType + " return MintResult without uri. desc.getAbout() = " + desc.getAbout() + ", uriTemplate = " + uriTemplate + ", matchcount = " + matchCount + ", rulesSize = " + rulesSize + ", priority = " + priority);
                     return new MintResult(null, matchCount, rulesSize, priority);
                 }
             } else
-                if (trace) logger.warn("missing forType!!!");
+                if (trace) logger.trace("missing forType!!!");
 
             Map<String, String> matches = new HashMap<String, String>();
             for (final CoinBinding binding : bindings) {
                 final SluggMappings slugMap = getSluggmappingsViaSlugFrom(binding);
-                if (trace) logger.warn("binding.property="+binding.property+", binding.variable="+binding.variable+", binding.slug="+binding.slugFrom);
+                if (trace) logger.trace("binding.property="+binding.property+", binding.variable="+binding.variable+", binding.slug="+binding.slugFrom);
                 String match = binding.findMatch(desc, new Description.ReverseSlug() {
                     @Override
                     public String lookup(String urlStr, Description rel) {
-                        if (trace) logger.warn("ReverseSlug.lookupl("+urlStr+")");
+                        if (trace) logger.trace("ReverseSlug.lookupl("+urlStr+")");
                         String relAboutSlug = rel!=null?slugMap.get(rel.getAbout()):null;
                         if (trace) {
                             if (rel!=null)
-                                logger.warn("ReverseSlug.relAboutSlug("+rel.getAbout()+")="+relAboutSlug);
+                                logger.trace("ReverseSlug.relAboutSlug("+rel.getAbout()+")="+relAboutSlug);
                             else
-                                logger.warn("ReverseSlug.relAboutSlug("+null+")");
+                                logger.trace("ReverseSlug.relAboutSlug("+null+")");
                         }
                         try {
                             URL url = new URL(urlStr);
                             String resultSlug = slugMap.get(url.toString());
-                            if (trace) logger.warn("ReverseSlug.url("+url+")="+resultSlug);
+                            if (trace) logger.trace("ReverseSlug.url("+url+")="+resultSlug);
                             return resultSlug;
                         } catch (MalformedURLException e) {
                             return urlStr;
                         }
                     }
                 });
-                if (trace) logger.warn("match="+match);
+                if (trace) logger.trace("match="+match);
                 if (match != null) {
                     matchCount++;
                     matches.put(binding.variable, match);
@@ -367,7 +367,7 @@ public class URIMinter {
                     null;
             }
 
-            if (trace&&ok) logger.warn("uri="+uri);
+            if (trace&&ok) logger.trace("uri="+uri);
             return new MintResult(uri, matchCount, rulesSize, priority);
         }
 
@@ -378,14 +378,14 @@ public class URIMinter {
             return new SluggMappingsImpl(space.getSluggMappings(binding.slugFrom)){
                 @Override
                 public void put(String about, String info) {
-                    logger.warn("slugMappings.put("+about+","+info+")");
+                    logger.trace("slugMappings.put("+about+","+info+")");
                     super.put(about, info);
                     super.put(info, about);
                 }
 
                 @Override
                 public String get(String about) {
-                    logger.warn("slugMappings.get("+about+")="+super.get(about));
+                    logger.trace("slugMappings.get("+about+")="+super.get(about));
                     return super.get(about);
                 }
             };
@@ -419,7 +419,7 @@ public class URIMinter {
             // TODO: if (expanded.indexOf("{") > -1)
 
             if (allowSuggestion) {
-                logger.warn("returning expanded = " + expanded);
+                logger.trace("returning expanded = " + expanded);
                 return expanded;
             }
 
