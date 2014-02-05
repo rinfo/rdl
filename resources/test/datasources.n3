@@ -22,7 +22,6 @@
         ];
     dct:source
         [
-            #iana:current <http://dvsfs.ministry.se/SFS/Res/index.atom>;
             iana:current <http://testfeed.lagrummet.se/SFS/index.atom>;
             dct:identifier "tag:sfs.regeringen.se,2009:rinfo:feed"^^xsd:anyURI;
             dct:format "application/atom+xml";
@@ -32,19 +31,24 @@
         #    dct:identifier "tag:komdir.regeringen.se,2009:rinfo:feed"^^xsd:anyURI;
         #    dct:format "application/atom+xml";
         #    dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>
-        ], [
-            iana:current <https://www.vagledandeavgoranden.dom.se/lagrummet/atom/index.atom>;
-            dct:identifier "tag:vagledandeavgoranden.dom.se,2011:rinfo:feed"^^xsd:anyURI;
-            dct:format "application/atom+xml";
-            dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>
+        #], [
+        #    iana:current <https://www.vagledandeavgoranden.dom.se/lagrummet/atom/index.atom>;
+        #    dct:identifier "tag:vagledandeavgoranden.dom.se,2011:rinfo:feed"^^xsd:anyURI;
+        #    dct:format "application/atom+xml";
+        #    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>
         ], [
             iana:current <https://rinfo.boverket.se/index.atom>;
             dct:identifier "tag:boverket.se,2009:rinfo:feed"^^xsd:anyURI;
             dct:format "application/atom+xml";
             dct:publisher <http://rinfo.lagrummet.se/org/boverket>
         ], [
-            iana:current <http://www.naturvardsverket.se/Cb/NFS-container/Forfattningssamlingens-Postforteckning-ATOM/>;
-            dct:identifier "tag:naturvardsverket.se,2011:rinfo:feed"^^xsd:anyURI;
-            dct:format "application/atom+xml";
-            dct:publisher <http://rinfo.lagrummet.se/org/naturvaardsverket>
+            iana:current <http://testfeed.lagrummet.se/feed.atom>;
+            dct:identifier "tag:exempelmyndigheten.se,2009:rinfo:feed"^^xsd:anyURI;
+            dct:format "application/rdf+xml";
+            dct:publisher <http://rinfo.lagrummet.se/org/exempelmyndigheten>
+        #], [
+        #    iana:current <http://www.naturvardsverket.se/Cb/NFS-container/Forfattningssamlingens-Postforteckning-ATOM/>;
+        #    dct:identifier "tag:naturvardsverket.se,2011:rinfo:feed"^^xsd:anyURI;
+        #    dct:format "application/atom+xml";
+        #    dct:publisher <http://rinfo.lagrummet.se/org/naturvaardsverket>
         ] .
