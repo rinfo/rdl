@@ -128,13 +128,13 @@ class EntryRdfValidatorHandler implements StorageHandler {
             logger.warn("No URIMinter available.")
             return
         }
-        logger.warn("subjectUri='"+subjectUri+"'")
+        logger.trace("subjectUri='"+subjectUri+"'")
         def uriResultMap = uriMinter.computeUris(repo)
-        logger.warn("uriResultMap.size="+(uriResultMap!=null?""+uriResultMap.size():"-"))
+        logger.trace("uriResultMap.size="+(uriResultMap!=null?""+uriResultMap.size():"-"))
         for (String key : uriResultMap.keySet())
-            logger.warn("uriResultMap["+key+"]='"+uriResultMap.get(key)+"'")
+            logger.trace("uriResultMap["+key+"]='"+uriResultMap.get(key)+"'")
         def uriResults = uriResultMap[subjectUri.toString()]
-        logger.warn("uriResults.size="+(uriResults!=null?""+uriResults.size():"-"))
+        logger.trace("uriResults.size="+(uriResults!=null?""+uriResults.size():"-"))
         def uriStr = (uriResults && uriResults.size() > 0)? uriResults[0].uri : null
         //todo check results for partial matches and present error messages with suggestions
         //Exception IncompleteMatchException(partial matches) -One or more MintResult.java-
@@ -142,7 +142,7 @@ class EntryRdfValidatorHandler implements StorageHandler {
         if (uriStr == null) {
             def uriSuggestionsMap = uriMinter.computeSuggestionUris(repo)
             for (String key : uriSuggestionsMap.keySet())
-               logger.warn("uriSuggestionsMap["+key+"]='"+uriSuggestionsMap.get(key)+"'")
+               logger.trace("uriSuggestionsMap["+key+"]='"+uriSuggestionsMap.get(key)+"'")
 
             List<String> uriSuggestionList = new ArrayList<String>();
             for (MintResult mintResult : uriSuggestionsMap[subjectUri.toString()]) {
