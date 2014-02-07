@@ -13,10 +13,9 @@ class ErrorLevelSpec extends Specification {
         }
         where:
         stopOnLevel | continueOnLevelMap
-        NONE        | [(WARNING): true, (ERROR): true, (EXCEPTION): true]
         WARNING     | [(WARNING): false, (ERROR): false, (EXCEPTION): false]
         ERROR       | [(WARNING): true, (ERROR): false, (EXCEPTION): false]
         EXCEPTION   | [(WARNING): true, (ERROR): true, (EXCEPTION): false]
-
+        NONE        | [(WARNING): true, (ERROR): true, (EXCEPTION): true]
     }
 }
