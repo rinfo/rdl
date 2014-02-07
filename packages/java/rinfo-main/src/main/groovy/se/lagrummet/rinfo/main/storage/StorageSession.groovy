@@ -149,11 +149,11 @@ class StorageSession {
             def gotErrorLevel =
                     logSession.logError(e, timestamp, sourceFeed, sourceEntry)
             if (shouldContinueOnError(gotErrorLevel)) {
-                logger.warn("Storing entry with problem: "+ e +"; details: "+ e.getMessage())
+                logger.warn("Storing entry <${entryId}> with problem: "+ e +"; details: "+ e.getMessage())
                 return true
             } else {
                 depotSession.rollbackPending()
-                logger.error("Error storing entry:", e)
+                logger.error("Error storing entry <${entryId}>. Caused by: ", e)
                 return false
             }
         }
