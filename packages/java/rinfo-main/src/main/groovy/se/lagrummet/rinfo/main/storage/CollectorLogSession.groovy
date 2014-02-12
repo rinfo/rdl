@@ -230,7 +230,6 @@ class CollectorLogSession implements Closeable {
             for(String uriSuggestion : error.uriSuggestions) {
                  errorDesc.addLiteral("rc:uriSuggestion", uriSuggestion)
             }
-            errorLevel = ErrorLevel.ERROR
         }
         if (errorDesc == null) {
             errorDesc = state.pageDescriber.newDescription(null, "rc:Error")
