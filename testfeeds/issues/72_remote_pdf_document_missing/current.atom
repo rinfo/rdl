@@ -1,0 +1,24 @@
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:at="http://purl.org/atompub/tombstones/1.0" xmlns:dct="http://purl.org/dc/terms/" xmlns:fh="http://purl.org/syndication/history/1.0">
+
+    <id>tag:exempelmyndigheten.se,2009:rinfo:feed</id>
+    <updated>2012-02-24T20:05:11Z</updated>
+    <fh:complete />
+    <title type="text" xml:lang="sv">Flöde för Exempelmyndighetens författningssamling</title>
+    <author>
+        <name>Erik Exempelson</name>
+        <uri>http://www.exempelmyndigheten.se/</uri>
+        <email>lagrum@exempelmyndigheten.se</email>
+    </author>
+    <link href="current.atom" rel="self" />
+    
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/emfs/2011:39</id>
+        <updated>2012-02-24T20:05:11Z</updated>
+        <published>2012-02-24T20:05:11Z</published>
+        <title type="text" xml:lang="sv">Exempelmyndighetens föreskrifter och allmänna råd om information som gäller försäkring och tjänstepension;</title>
+        <summary type="text" xml:lang="sv" />
+        <link rel="alternate" href="EMFS-2011_39.rdf" type="application/rdf+xml" length="2100" hash="md5:ba817ef08d6f48b164c397c69fabc1e2" />
+        <content src="http://localhost:8281/some_missing_pdf.pdf" type="application/pdf" hash="md5:f9d5a7e92c5c44911b4e447d94910dc4"/>
+    </entry>
+    
+</feed>
