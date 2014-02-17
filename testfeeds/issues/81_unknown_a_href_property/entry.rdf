@@ -5,8 +5,8 @@
 	<published>2012-02-24T20:05:11Z</published>
 	<title type="text">http://rinfo.lagrummet.se/publ/emfs/2011:39</title>
 	<summary type="text"/>
-	<link href="http://testfeed.lagrummet.se/issues/81_unknown_a_href_property/entry.rdf" rel="self"/>
-	<content type="application/rdf+xml" src="http://testfeed.lagrummet.se/issues/81_unknown_a_href_property/EMFS-2011_39.rdf" hash="md5:fab93adad637cb5921d364939d3207a3"/>
+	<link href="http://localhost:8281/issues/81_unknown_a_href_property/entry.rdf" rel="self"/>
+	<content type="application/rdf+xml" src="http://localhost:8281/issues/81_unknown_a_href_property/EMFS-2011_39.rdf" hash="md5:fab93adad637cb5921d364939d3207a3"/>
 	<source>
 		<id>tag:lagrummet.se,2009:rinfo</id>
 		<title type="text" xml:lang="sv">R&#xC3;&#xA4;ttsinformationssystemets k&#xC3;&#xA4;lldata</title>
