@@ -14,6 +14,7 @@ class ElasticData {
 
     Client client
     String indexName
+    String ignoreMalformed
 
     JsonLdSettings jsonLdSettings
 
@@ -34,15 +35,16 @@ class ElasticData {
         ]
     ]
 
-    ElasticData(String host, int port, String indexName, JsonLdSettings jsonLdSettings) {
+    ElasticData(String host, int port, String indexName, JsonLdSettings jsonLdSettings, String ignoreMalformed) {
         this(new TransportClient().addTransportAddress(
-                new InetSocketTransportAddress(host, port)), indexName, jsonLdSettings)
+                new InetSocketTransportAddress(host, port)), indexName, jsonLdSettings, ignoreMalformed)
     }
 
-    ElasticData(Client client, String indexName, JsonLdSettings jsonLdSettings) {
+    ElasticData(Client client, String indexName, JsonLdSettings jsonLdSettings, String ignoreMalformed) {
         this.client = client
         this.indexName = indexName
         this.jsonLdSettings = jsonLdSettings
+        this.ignoreMalformed = ignoreMalformed
     }
 
     String getFieldForSort(String term) {
@@ -74,7 +76,7 @@ class ElasticData {
             for (term in frame.keySet()) {
                 if (term in jsonLdSettings.refTerms) {
                 } else if (term in jsonLdSettings.dateTerms) {
-                    propMap[term] = ["type": "date", "format": "dateOptionalTime", "ignore_malformed": "true"]
+                    propMap[term] = ["type": "date", "format": "dateOptionalTime", "ignore_malformed": ignoreMalformed]
                 } else if (term in jsonLdSettings.plainStringTerms) {
                     // TODO: only boost on "top level" (or reduce on depth)!
                     float boost = jsonLdSettings.boostTermMap[term] ?: 1.0

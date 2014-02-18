@@ -113,7 +113,8 @@ class ServiceComponents {
         def host = esConf.getString("host")
         def port = esConf.getInt("port")
         def indexName = esConf.getString("index")
-        return new ElasticData(host, port, indexName, jsonLdSettings)
+        def ignoreMalformed = esConf.getString("ignore_malformed")
+        return new ElasticData(host, port, indexName, jsonLdSettings, ignoreMalformed)
     }
 
     private def createElasticLoader() {
