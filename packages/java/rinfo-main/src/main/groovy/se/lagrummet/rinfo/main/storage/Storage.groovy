@@ -12,21 +12,17 @@ public class Storage {
     private Collection<StorageHandler> storageHandlers;
     private CollectorLog collectorLog;
     private FeedEntryDataIndex feedEntryDataIndex;
-    private ErrorLevel stopOnErrorLevel;
 
     public Storage(Depot depot,
             CollectorLog collectorLog,
-            FeedEntryDataIndex feedEntryDataIndex,
-            ErrorLevel stopOnErrorLevel) {
+            FeedEntryDataIndex feedEntryDataIndex) {
         this.depot = depot;
         this.collectorLog = collectorLog;
         this.feedEntryDataIndex = feedEntryDataIndex;
-        this.stopOnErrorLevel = stopOnErrorLevel
     }
 
     public Depot getDepot() { return depot; }
     public Depot getCollectorLog() { return collectorLog; }
-    public ErrorLevel getStopOnErrorLevel() { return stopOnErrorLevel; }
 
     public void startup() {
         StorageSession storageSession = openSession(
@@ -52,8 +48,7 @@ public class Storage {
         return new StorageSession(credentials, depot.openSession(),
                 storageHandlers,
                 collectorLog.openSession(),
-                feedEntryDataIndex,
-                stopOnErrorLevel);
+                feedEntryDataIndex);
     }
 
     public void shutdown() {

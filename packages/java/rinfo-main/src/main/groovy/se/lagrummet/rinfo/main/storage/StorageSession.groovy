@@ -33,20 +33,17 @@ class StorageSession {
     DepotSession depotSession
     CollectorLogSession logSession
     FeedEntryDataIndex feedEntryDataIndex
-    ErrorLevel stopOnErrorLevel
 
     StorageSession(StorageCredentials credentials,
             DepotSession depotSession,
             Collection<StorageHandler> storageHandlers,
             CollectorLogSession logSession,
-            FeedEntryDataIndex feedEntryDataIndex,
-            ErrorLevel stopOnErrorLevel) {
+            FeedEntryDataIndex feedEntryDataIndex) {
         this.credentials = credentials
         this.storageHandlers = storageHandlers
         this.depotSession = depotSession
         this.logSession = logSession
         this.feedEntryDataIndex = feedEntryDataIndex
-        this.stopOnErrorLevel = stopOnErrorLevel
         logSession.start(credentials)
     }
 
@@ -146,21 +143,25 @@ class StorageSession {
                     MissingRdfContentException
                     DuplicateDepotEntryException
             */
-            def gotErrorLevel =
+            def gotErrorAction =
                     logSession.logError(e, timestamp, sourceFeed, sourceEntry)
-            if (shouldContinueOnError(gotErrorLevel)) {
-                logger.warn("Storing entry <${entryId}> with problem: "+ e +"; details: "+ e.getMessage())
-                return true
-            } else {
-                depotSession.rollbackPending()
-                logger.error("Error storing entry <${entryId}>. Caused by: ", e)
-                return false
+
+            switch (gotErrorAction) {
+                case ErrorAction.SKIPANDCONTINUE:
+                    logger.warn("Skipping entry <${entryId}> but collect continues. Caused by: " + e + "; details: "+ e.getMessage())
+                    depotSession.rollbackPending()
+                    return true
+                case ErrorAction.STOREANDCONTINUE:
+                    logger.warn("Storing entry <${entryId}> with problem but collect continues. Caused by: " + e + "; details: "+ e.getMessage())
+                    return true
+                case ErrorAction.SKIPANDHALT:
+                    logger.error("Error storing entry <${entryId}> and stopping collect. Caused by: " + e + "; details: "+ e.getMessage())
+                    depotSession.rollbackPending()
+                    return false
+                default:
+                    throw new IllegalStateException("Unknown ErrorAction: " + gotErrorAction + ". Caused by: " + e + "; details: "+ e.getMessage())
             }
         }
-    }
-
-    boolean shouldContinueOnError(gotErrorLevel) {
-        return (gotErrorLevel < stopOnErrorLevel)
     }
 
     void deleteEntry(Feed sourceFeed, URI entryId, Date sourceDeletedDate) {

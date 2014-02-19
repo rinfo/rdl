@@ -179,9 +179,9 @@ class CollectorLogSession implements Closeable {
         updateCollectInfo()
     }
 
-    ErrorLevel logError(Exception error, Date timestamp, Feed sourceFeed, Entry sourceEntry) {
+    ErrorAction logError(Exception error, Date timestamp, Feed sourceFeed, Entry sourceEntry) {
         Description errorDesc = null
-        def errorLevel = ErrorLevel.EXCEPTION
+        def errorAction = ErrorAction.SKIPANDHALT
         if (error instanceof SourceCheckException) {
             // TODO: we should change current check procedure per source
             // to *collector*, (from current use in SourceContent)
@@ -199,7 +199,7 @@ class CollectorLogSession implements Closeable {
                 errorDesc.addLiteral("rc:givenLength", error.givenValue)
                 errorDesc.addLiteral("rc:computedLength", error.realValue)
             }
-            errorLevel = ErrorLevel.ERROR
+            errorAction = ErrorAction.SKIPANDHALT
         } else if (error instanceof IdentifyerMismatchException) {
             errorDesc = state.pageDescriber.newDescription(null, "rc:IdentifyerError")
             errorDesc.addLiteral("rc:givenUri", error.givenUri)
@@ -208,10 +208,10 @@ class CollectorLogSession implements Closeable {
             errorDesc.addLiteral("rc:commonSuffix", error.commonSuffix ?: "")
             errorDesc.addLiteral("rc:givenUriDiff", error.givenUriDiff ?: "")
             errorDesc.addLiteral("rc:computedUriDiff", error.computedUriDiff ?: "")
-            errorLevel = ErrorLevel.ERROR
+            errorAction = ErrorAction.SKIPANDHALT
         } else if (error instanceof SchemaReportException) {
             def report = error.report
-            errorLevel = report.hasErrors? ErrorLevel.ERROR : ErrorLevel.WARNING
+            errorAction = report.hasErrors? ErrorAction.SKIPANDHALT : ErrorAction.STOREANDCONTINUE
             errorDesc = state.pageDescriber.newDescription(null, "rc:DescriptionError")
             def errorConn = report.connection
             def errorDescriber = newDescriber(errorConn, false)
@@ -230,6 +230,7 @@ class CollectorLogSession implements Closeable {
             for(String uriSuggestion : error.uriSuggestions) {
                  errorDesc.addLiteral("rc:uriSuggestion", uriSuggestion)
             }
+            errorAction = ErrorAction.SKIPANDCONTINUE
         }
         if (errorDesc == null) {
             errorDesc = state.pageDescriber.newDescription(null, "rc:Error")
@@ -240,7 +241,7 @@ class CollectorLogSession implements Closeable {
         def sourceEntryDesc = makeSourceEntryDesc(sourceEntry)
         errorDesc.addRel("iana:via", sourceEntryDesc.about)
         updateCollectInfo()
-        return errorLevel
+        return errorAction
     }
 
     private Description makeSourceEntryDesc(sourceEntry) {
