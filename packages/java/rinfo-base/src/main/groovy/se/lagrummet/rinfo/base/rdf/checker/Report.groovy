@@ -3,6 +3,8 @@ package se.lagrummet.rinfo.base.rdf.checker
 import org.openrdf.model.URI
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.repository.RepositoryConnection
+import org.openrdf.repository.RepositoryResult
+import org.openrdf.model.Statement
 
 class Report implements Closeable {
 
@@ -27,4 +29,17 @@ class Report implements Closeable {
         return connection.hasStatement(null, RDF.TYPE, errorType, false)
     }
 
+    List<Statement> getAllStatements() {
+        def allStatements = new ArrayList<Statement>();
+        RepositoryResult<Statement> result = connection.getStatements(null, null, null, false)
+        try {
+            while (result.hasNext()) {
+                allStatements.add(result.next())
+            }
+        } finally {
+            result.close()
+        }
+
+        return allStatements
+    }
 }

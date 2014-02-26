@@ -148,18 +148,18 @@ class StorageSession {
 
             switch (gotErrorAction) {
                 case ErrorAction.SKIPANDCONTINUE:
-                    logger.warn("Skipping entry <${entryId}> but collect continues. Caused by: " + e + "; details: "+ e.getMessage())
+                    logger.warn("Skipping entry <${entryId}> but collect continues. Caused by: " + e)
                     depotSession.rollbackPending()
                     return true
                 case ErrorAction.STOREANDCONTINUE:
-                    logger.warn("Storing entry <${entryId}> with problem but collect continues. Caused by: " + e + "; details: "+ e.getMessage())
+                    logger.warn("Storing entry <${entryId}> with problem but collect continues. Caused by: " + e)
                     return true
                 case ErrorAction.SKIPANDHALT:
-                    logger.error("Error storing entry <${entryId}> and stopping collect. Caused by: " + e + "; details: "+ e.getMessage())
+                    logger.error("Error storing entry <${entryId}> and stopping collect. Caused by: " + e)
                     depotSession.rollbackPending()
                     return false
                 default:
-                    throw new IllegalStateException("Unknown ErrorAction: " + gotErrorAction + ". Caused by: " + e + "; details: "+ e.getMessage())
+                    throw new IllegalStateException("Unknown ErrorAction: " + gotErrorAction + ". Caused by: " + e)
             }
         }
     }
