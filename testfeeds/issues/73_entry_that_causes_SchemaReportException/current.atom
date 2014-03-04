@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="sv" xmlns:le="http://purl.org/atompub/link-extensions/1.0" xmlns="http://www.w3.org/2005/Atom">
+	<id>tag:boverket.se,2009:rinfo:feed</id>
+	<title>Boverkets författningssamling</title>
+	<updated>2014-01-28T09:10:59Z</updated>
+	<author>
+		<name>Boverket</name>
+		<uri>http://www.boverket.se</uri>
+		<email>registraturen@boverket.se</email>
+	</author>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/bfs/1987:32</id>
+		<updated>2010-06-10T08:19:44Z</updated>
+		<published>2010-06-10T08:19:44Z</published>
+		<title>Bostadsstyrelsens föreskrifter och information om ändring av föreskrifterna och informationen till förordningen (1983:1021) om tilläggslån för ombyggnad av bostadshus m m;</title>
+		<summary/>
+		<content/>
+		<link rel="alternate" href="1987-32tob7.xml" type="application/rdf+xml" length="1236" le:md5="74da688b66a1ec139eefa3aac0e4d8e8">
+		</link>
+	</entry>
+</feed>

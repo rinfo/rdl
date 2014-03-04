@@ -11,6 +11,7 @@ import se.lagrummet.rinfo.base.URIMinter
 import se.lagrummet.rinfo.base.MintResult
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.base.rdf.checker.RDFChecker
+import se.lagrummet.rinfo.base.rdf.checker.ReportReader
 
 
 class EntryRdfValidatorHandler implements StorageHandler {
@@ -173,7 +174,9 @@ class EntryRdfValidatorHandler implements StorageHandler {
         }
         def report = rdfChecker.check(repo, subjectUri.toString())
         if (!report.empty) {
-            throw new SchemaReportException(report)
+            def reportReader = new ReportReader(report.getAllStatements())
+            def errorsAndWarnings = reportReader.getErrorsAndWarnings()
+            throw new SchemaReportException(report, errorsAndWarnings)
         }
     }
 

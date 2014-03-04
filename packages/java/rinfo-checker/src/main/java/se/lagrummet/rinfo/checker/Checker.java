@@ -146,7 +146,7 @@ public class Checker {
                 Collection<StorageHandler> storageHandlers,
                 CollectorLogSession collectorLogSession) {
             super(credentials, depotSession, storageHandlers,
-                    collectorLogSession, new NoopFeedEntryIdIndex());
+                    collectorLogSession, new NoopFeedEntryIdIndex(), true);
         }
 
         public boolean storeEntry(Feed sourceFeed, Entry sourceEntry,

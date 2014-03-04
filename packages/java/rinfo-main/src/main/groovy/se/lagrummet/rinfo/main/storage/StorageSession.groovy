@@ -33,17 +33,20 @@ class StorageSession {
     DepotSession depotSession
     CollectorLogSession logSession
     FeedEntryDataIndex feedEntryDataIndex
+    boolean isCheckerCollect
 
     StorageSession(StorageCredentials credentials,
             DepotSession depotSession,
             Collection<StorageHandler> storageHandlers,
             CollectorLogSession logSession,
-            FeedEntryDataIndex feedEntryDataIndex) {
+            FeedEntryDataIndex feedEntryDataIndex,
+            boolean isCheckerCollect = false) {
         this.credentials = credentials
         this.storageHandlers = storageHandlers
         this.depotSession = depotSession
         this.logSession = logSession
         this.feedEntryDataIndex = feedEntryDataIndex
+        this.isCheckerCollect = isCheckerCollect
         logSession.start(credentials)
     }
 
@@ -146,21 +149,28 @@ class StorageSession {
             def gotErrorAction =
                     logSession.logError(e, timestamp, sourceFeed, sourceEntry)
 
+            boolean shouldContinue = isCheckerCollect
+
             switch (gotErrorAction) {
                 case ErrorAction.SKIPANDCONTINUE:
-                    logger.warn("Skipping entry <${entryId}> but collect continues. Caused by: " + e + "; details: "+ e.getMessage())
+                    logger.warn("Skipping entry <${entryId}> but collect continues. Caused by: " + e)
                     depotSession.rollbackPending()
-                    return true
+                    shouldContinue = true
+                    break
                 case ErrorAction.STOREANDCONTINUE:
-                    logger.warn("Storing entry <${entryId}> with problem but collect continues. Caused by: " + e + "; details: "+ e.getMessage())
-                    return true
+                    logger.warn("Storing entry <${entryId}> with problem but collect continues. Caused by: " + e)
+                    shouldContinue = true
+                    break
                 case ErrorAction.SKIPANDHALT:
-                    logger.error("Error storing entry <${entryId}> and stopping collect. Caused by: " + e + "; details: "+ e.getMessage())
+                    def shouldContinueAsString = isCheckerCollect ? "continues" : "is stopped"
+                    logger.error("Error storing entry <${entryId}> and collect " + shouldContinueAsString + ". Caused by: " + e)
                     depotSession.rollbackPending()
-                    return false
+                    break
                 default:
-                    throw new IllegalStateException("Unknown ErrorAction: " + gotErrorAction + ". Caused by: " + e + "; details: "+ e.getMessage())
+                    throw new IllegalStateException("Unknown ErrorAction: " + gotErrorAction + ". Caused by: " + e)
             }
+
+            return shouldContinue
         }
     }
 
