@@ -17,7 +17,7 @@ usermod -a -G ${tomcat_group} ${rinfo_user}
 tar xzf apache-tomcat-${version}.tar.gz
 mv apache-tomcat-${version} /opt/
 mv /opt/apache-tomcat-${version}/conf/server.xml /opt/apache-tomcat-${version}/conf/server.old.xml
-mv ${mgr_work_dir}/install/server.xml /opt/apache-tomcat-${version}/conf/.
+mv ${mgr_work_dir}/common/tomcat/server.xml /opt/apache-tomcat-${version}/conf/.
 pushd /opt/
     test -h tomcat && rm tomcat
     ln -s apache-tomcat-${version} tomcat
