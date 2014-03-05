@@ -6,6 +6,11 @@ tomcat_group=$3
 rinfo_user=$4
 mgr_work_dir=$5
 
+if [[ -f /opt/apache-tomcat-${version} ]] ; then
+    echo 'Tomcat ${version} already installed with correct version. Aborting tomcat installation.'
+    exit
+fi
+
 # Create the tomcat group and user (if they don't already exist)
 id -g ${tomcat_group} > /dev/null 2>&1 || groupadd ${tomcat_group}
 id ${tomcat_user} > /dev/null 2>&1 || useradd ${tomcat_user} -d /opt/tomcat/ -s /bin/false -r -g ${tomcat_group}
