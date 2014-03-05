@@ -6,8 +6,8 @@ tomcat_group=$3
 rinfo_user=$4
 mgr_work_dir=$5
 
-if [[ -f /opt/apache-tomcat-${version} ]] ; then
-    echo 'Tomcat ${version} already installed with correct version. Aborting tomcat installation.'
+if [[ -f /opt/apache-tomcat-${version}/conf/server.xml ]] ; then
+    echo 'Tomcat $version already installed with correct version. Aborting tomcat installation.'
     exit
 fi
 
