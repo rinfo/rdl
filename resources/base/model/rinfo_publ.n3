@@ -365,12 +365,11 @@
     rdfs:comment "En text som innehåller generella, bindande rättsregler (såsom lag, förordning eller föreskrift)  utgiven i någon författningssamling."@sv;
     protege:abstract "true";
     rdfs:subClassOf :FSDokument;
-    # TODO: beslutadAv-regeln hålls avslagen tills vidare, men den kanske bör slås på igen framöver
-    #rdfs:subClassOf
-    #    [ a owl:Restriction;
-    #        owl:onProperty :beslutadAv;
-    #        owl:minCardinality 1
-    #    ];
+    rdfs:subClassOf
+        [ a owl:Restriction;
+            owl:onProperty :beslutadAv;
+            owl:minCardinality 1
+        ];
     rdfs:subClassOf
         [ a owl:Restriction;
             owl:onProperty :ikrafttradanderegel;
