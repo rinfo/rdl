@@ -14,10 +14,15 @@ id ${tomcat_user} > /dev/null 2>&1 || useradd ${tomcat_user} -d /opt/tomcat/ -s 
 usermod -a -G ${tomcat_group} ${tomcat_user}
 usermod -a -G ${tomcat_group} ${rinfo_user}
 
+echo Unpack tomcat
 tar xzf apache-tomcat-${version}.tar.gz
+echo Move tomcat to opt
 mv apache-tomcat-${version} /opt/
+echo backup server.xml to server.old.xml
 mv /opt/apache-tomcat-${version}/conf/server.xml /opt/apache-tomcat-${version}/conf/server.old.xml
-mv ${mgr_work_dir}/common/tomcat/server.xml /opt/apache-tomcat-${version}/conf/.
+echo copy new server.xml file from ${mgr_work_dir}/install/server.xml to /opt/apache-tomcat-${version}/conf/server.xml
+mv ${mgr_work_dir}/install/server.xml /opt/apache-tomcat-${version}/conf/server.xml
+echo Completed this section
 pushd /opt/
     test -h tomcat && rm tomcat
     ln -s apache-tomcat-${version} tomcat
