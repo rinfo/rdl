@@ -15,6 +15,7 @@
     <ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2011-11-01</ikrafttradandedatum>
     <beslutsdatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2011-06-28</beslutsdatum>
     <dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/exempelmyndigheten"/>
+    <beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/exempelmyndigheten"/>
     <dct:identifier>EMFS 2011:41</dct:identifier>
     <arsutgava>2011</arsutgava>
     <dct:title xml:lang="sv">Föreskrifter om ändring i Exempelmyndigheten föreskrifter (EMFS 2007:16) om värdepappersrörelse;</dct:title>

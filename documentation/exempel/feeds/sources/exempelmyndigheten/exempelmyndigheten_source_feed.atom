@@ -27,7 +27,7 @@
         <link rel="alternate"
             href="EMFS-2011_39.rdf"
             type="application/rdf+xml"
-            length="2100" hash="md5:ba817ef08d6f48b164c397c69fabc1e2"/>
+            length="2182" hash="md5:c5bc286a378972f6239255328dbdafbc"/>
     </entry>
     
     <entry>
@@ -42,6 +42,6 @@
         <link rel="alternate"
             href="EMFS-2011_41.rdf"
             type="application/rdf+xml"
-            length="1423" hash="md5:e722ad23121a52b4a4b0f150b66bc4c4"/>
+            length="1505" hash="md5:28f628f2584126ec7fb47d59c6cb3296"/>
     </entry>
 </feed>
