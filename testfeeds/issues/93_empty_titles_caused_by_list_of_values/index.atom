@@ -37,4 +37,12 @@
 		<summary/>
 		<content src="1840/1840_46_konsolidering_senaste.xhtml" type="application/xhtml+xml" le:md5="b47c722235181d998e18d42defefda4f"/>
 	</entry>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/sfs/1992:301</id>
+		<updated>2008-11-27T11:36:45Z</updated>
+		<published>2008-11-27T11:36:45Z</published>
+		<title>1992:301 </title>
+		<summary/>
+		<link rel="alternate" href="1686/1992_301_andr.xhtml" type="application/rdf+xml" length="1070" le:md5="6b8ce5a486e3f829ee1f478f887dc69e"/>
+	</entry>
 </feed>
