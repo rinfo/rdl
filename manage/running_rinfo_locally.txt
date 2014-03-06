@@ -56,9 +56,9 @@ ElasticSearch
 Download and install ElasticSearch by following the instructions at
 <http://www.elasticsearch.org/>.
 
-(For the time being, you need version 0.17.7, the very latest versions
-don't work with the elasticsearch client lib that mvn pulls down from
-the remote repositories)
+(For the time being, you need version 0.90.11, there are still some
+adjustments needed before RDL can support version 1.0.0+, see
+https://github.com/rinfo/rdl/issues/87 for more details)
 
 Start an instance by running the ``elasticsearch`` command (commonly in the bin
 directory of the installation)::
