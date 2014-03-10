@@ -26,11 +26,13 @@ fab -p $pwd target.$2 -R admin app.admin.all
 fab -p $pwd target.$2 -R main app.main.all
 fab -p $pwd target.$2 -R service app.service.all
 fab -p $pwd target.$2 -R checker app.checker.all
+
+read -p "[press any key; to restart tomcat and apache on target server(s)]" -s -n1
 fab -p $pwd target.$2 -R main server.restart_all
+
+read -p "[press any key; to start collection via ping_main]" -s -n1
 fab -p $pwd target.$2 -R admin app.admin.ping_main
-#fab -p $pwd app.docs.build
-#fab -p $pwd target.$2 app.docs.deploy
-fab -p $pwd target.$2 -R main sysconf.sync_static_web
+
 
 
 
