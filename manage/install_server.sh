@@ -30,12 +30,7 @@ fab -p $pwd target.$2 -R checker app.checker.all
 read -p "[press any key; to restart tomcat and apache on target server(s)]" -s -n1
 fab -p $pwd target.$2 -R main server.restart_all
 
-read -p "[press any key; to start collection via ping_main]" -s -n1
-fab -p $pwd target.$2 -R admin app.admin.ping_main
-
-
-
-
-
-
-
+#TODO: make sure that collect of admin-feed is done after lagrummet is installed...
+#...to avoid that any scheduled collect of sources is interrupted by apache/tomcat restarts
+#read -p "[press any key; to start collection via ping_main]" -s -n1
+#fab -p $pwd target.$2 -R admin app.admin.ping_main
