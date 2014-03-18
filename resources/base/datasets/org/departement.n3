@@ -9,7 +9,6 @@
     a foaf:Organization;
     foaf:name "Arbetsdepartementet"@sv .
 
-
 <http://rinfo.lagrummet.se/org/arbetsmarknadsdepartementet>
     a foaf:Organization;
     foaf:name "Arbetsmarknadsdepartementet"@sv .
@@ -26,11 +25,9 @@
     a foaf:Organization;
     foaf:name "Finansdepartementet"@sv .
 
-
 <http://rinfo.lagrummet.se/org/foersvarsdepartementet>
     a foaf:Organization;
     foaf:name "Försvarsdepartementet"@sv .
-
 
 <http://rinfo.lagrummet.se/org/industridepartementet>
     a foaf:Organization;
@@ -44,16 +41,13 @@
     a foaf:Organization;
     foaf:name "Integrations- och jämställdhetsdepartementet"@sv .
 
-
 <http://rinfo.lagrummet.se/org/jordbruksdepartementet>
     a foaf:Organization;
     foaf:name "Jordbruksdepartementet"@sv .
 
-
 <http://rinfo.lagrummet.se/org/justitiedepartementet>
     a foaf:Organization;
     foaf:name "Justitiedepartementet"@sv .
-
 
 <http://rinfo.lagrummet.se/org/kommunikationsdepartementet>
     a foaf:Organization;
@@ -63,25 +57,25 @@
     a foaf:Organization;
     foaf:name "Kulturdepartementet"@sv .
 
+<http://rinfo.lagrummet.se/org/landsbygdsdepartementet>
+    a foaf:Organization;
+    foaf:name "Landsbygdsdepartementet"@sv .
+
 <http://rinfo.lagrummet.se/org/miljoe-_och_energidepartementet>
     a foaf:Organization;
     foaf:name "Miljö- och energidepartementet"@sv .
-
 
 <http://rinfo.lagrummet.se/org/miljoe-_och_naturresursdepartementet>
     a foaf:Organization;
     foaf:name "Miljö- och naturresursdepartementet"@sv .
 
-
 <http://rinfo.lagrummet.se/org/miljoe-_och_samhaellsbyggnadsdepartementet>
     a foaf:Organization;
     foaf:name "Miljö- och samhällsbyggnadsdepartementet"@sv .
 
-
 <http://rinfo.lagrummet.se/org/miljoedepartementet>
     a foaf:Organization;
     foaf:name "Miljödepartementet"@sv .
-
 
 <http://rinfo.lagrummet.se/org/naerings-_och_handelsdepartementet>
     a foaf:Organization;
@@ -107,3 +101,21 @@
     a foaf:Organization;
     foaf:name "Utrikesdepartementet"@sv .
 
+################################################################
+# Upphävda/ersatta departement -- en inkomplett lista. Fyll på allt eftersom
+
+<http://rinfo.lagrummet.se/org/handelsdepartementet>
+    a foaf:Organization;
+    foaf:name "Handelsdepartementet"@sv .
+
+<http://rinfo.lagrummet.se/org/kommundepartementet>
+    a foaf:Organization;
+    foaf:name "Kommundepartementet"@sv .
+
+<http://rinfo.lagrummet.se/org/budgetdepartementet>
+    a foaf:Organization;
+    foaf:name "Budgetdepartementet"@sv .
+
+<http://rinfo.lagrummet.se/org/utbildnings-_och_kulturdepartementet>
+    a foaf:Organization;
+    foaf:name "Utbildnings- och kulturdepartementet"@sv .

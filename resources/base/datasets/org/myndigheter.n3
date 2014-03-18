@@ -89,6 +89,10 @@
     a foaf:Organization;
     foaf:name "Försäkringskassan"@sv .
 
+<http://rinfo.lagrummet.se/org/h_m_konungen>
+    a foaf:Organization;
+    foaf:name "H M Konungen"@sv .
+
 <http://rinfo.lagrummet.se/org/havs-_och_vattenmyndigheten>
     a foaf:Organization;
     foaf:name "Havs- och vattenmyndigheten"@sv .
@@ -207,10 +211,18 @@
     a foaf:Organization;
     foaf:name "Riksarkivet"@sv .
 
+<http://rinfo.lagrummet.se/org/riksbanken>
+    a foaf:Organization;
+    foaf:name "Riksbanken"@sv .
+
 <http://rinfo.lagrummet.se/org/riksdagens_ombudsmaen>
     a foaf:Organization;
     skos:altLabel "JO"@sv ;
     foaf:name "Riksdagens ombudsmän"@sv .
+
+<http://rinfo.lagrummet.se/org/riksaaklagaren>
+    a foaf:Organization;
+    foaf:name "Riksåklagaren"@sv .
 
 <http://rinfo.lagrummet.se/org/riksgaeldskontoret>
     a foaf:Organization;
@@ -263,6 +275,10 @@
 <http://rinfo.lagrummet.se/org/statistiska_centralbyraan>
     a foaf:Organization;
     foaf:name "Statistiska centralbyrån"@sv .
+
+<http://rinfo.lagrummet.se/org/statskontoret>
+    a foaf:Organization;
+    foaf:name "Statskontoret"@sv .
 
 <http://rinfo.lagrummet.se/org/straalsaekerhetsmyndigheten>
     a foaf:Organization;
@@ -495,6 +511,10 @@
     a foaf:Organization;
     foaf:name "Arbetsmarknadsstyrelsen"@sv .
 
+<http://rinfo.lagrummet.se/org/armeintendenturfoervaltningen>
+    a foaf:Organization;
+    foaf:name "Armeintendenturförvaltningen"@sv .
+
 <http://rinfo.lagrummet.se/org/bankinspektionen>
     a foaf:Organization;
     foaf:name "Bankinspektionen"@sv .
@@ -503,15 +523,50 @@
     a foaf:Organization;
     foaf:name "Djurskyddsmyndigheten"@sv .
 
+<http://rinfo.lagrummet.se/org/fiskeristyrelsen>
+    a foaf:Organization;
+    foaf:name "Fiskeristyrelsen"@sv .
+
+<http://rinfo.lagrummet.se/org/foersaekringsinspektionen>
+    a foaf:Organization;
+    foaf:name "Försäkringsinspektionen"@sv .
+
+<http://rinfo.lagrummet.se/org/riksfoersaekringsverket>
+    a foaf:Organization;
+    foaf:name "Riksförsäkringsverket"@sv .
+
+<http://rinfo.lagrummet.se/org/riksrevisionsverket>
+    a foaf:Organization;
+    foaf:name "Riksrevisionsverket"@sv .
+
+<http://rinfo.lagrummet.se/org/riksskattenaemnden>
+    a foaf:Organization;
+    foaf:name "Riksskattenämnden"@sv .
+
+<http://rinfo.lagrummet.se/org/riksskatteverket>
+    a foaf:Organization;
+    foaf:name "Riksskatteverket"@sv .
+
 <http://rinfo.lagrummet.se/org/spraengaemnesinspektionen>
     a foaf:Organization;
     foaf:name "Sprängämnesinspektionen"@sv .
+
+<http://rinfo.lagrummet.se/org/statens_bostadskreditnaemnd>
+    a foaf:Organization;
+    foaf:name "Statens bostadskreditnämnd"@sv .
+
+<http://rinfo.lagrummet.se/org/statens_foerhandlingsnaemnd>
+    a foaf:Organization;
+    foaf:name "Statens förhandlingsnämnd"@sv .
 
 <http://rinfo.lagrummet.se/org/statens_naturvaardsverk>
     a foaf:Organization;
     rdfs:comment "Numera Naturvårdsverket";
     foaf:name "Statens naturvårdsverk"@sv .
 
+<http://rinfo.lagrummet.se/org/statens_provningsanstalt>
+    a foaf:Organization;
+    foaf:name "Statens provningsanstalt"@sv .
 
 # TODO: uri-minter-regeln enligt detta är "slugify(skos:altLabel or foaf:name)"
 # <http://rinfo.lagrummet.se/org/verket_foer_foervaltningsutveckling>
