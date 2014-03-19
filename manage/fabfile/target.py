@@ -129,6 +129,40 @@ def test():
     _tomcat_env()
 
 @targetenv
+def regression():
+    """Set target env to: regression"""
+    # Name env:
+    env.target = "regression"
+    # Machines:
+    env.user = 'rinfo'
+    env.roledefs = {
+        'main': ['rinfo.regression.lagrummet.se'],
+        'service': ['service.regression.lagrummet.se'],
+        'checker': ['checker.regression.lagrummet.se'],
+        'admin': ['admin.regression.lagrummet.se'],
+        'demosource': ['testfeed.lagrummet.se'],
+        'lagrummet': ['regression.lagrummet.se'],
+    }
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'checker': ['checker'],
+    }
+    # Tomcat
+    _tomcat_env()
+
+@targetenv
 def beta():
     """Set target env to: beta"""
     # Name env:

@@ -690,6 +690,12 @@
         </properties>
     </profile>
       <profile>
+          <id>regression</id>
+          <properties>
+              <environment>regression</environment>
+          </properties>
+      </profile>
+      <profile>
           <id>skrapat</id>
           <properties>
               <environment>skrapat</environment>
