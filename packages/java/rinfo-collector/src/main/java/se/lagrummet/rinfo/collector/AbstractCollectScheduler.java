@@ -220,9 +220,11 @@ public abstract class AbstractCollectScheduler {
             } finally {
                 feedInProcess.remove(feedUrlStr);
             }
-            logger.info("Completed collect of <"+ feedUrlStr +">.");
+            afterCompletedCollect(feedUrlStr);
         }
     }
+
+    protected abstract void afterCompletedCollect(String feedUrlStr);
 
     private synchronized String getNextFeed() {
         String feedUrlStr = feedQueue.peek();

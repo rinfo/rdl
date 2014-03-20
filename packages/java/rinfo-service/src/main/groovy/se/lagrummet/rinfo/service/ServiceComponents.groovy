@@ -58,6 +58,14 @@ class ServiceComponents {
         return config.getString("rinfo.service.serviceAppBaseUrl")
     }
 
+    String getVarnishUrl() {
+        return config.getString("rinfo.service.varnish.url")
+    }
+
+    boolean getVarnishInvalidationEnabled() {
+        return Boolean.parseBoolean(config.getString("rinfo.service.varnish.invalidationEnabled"))
+    }
+
     def newSesameLoader() {
         return new SesameLoader(repository, createElasticLoader())
     }
@@ -89,11 +97,12 @@ class ServiceComponents {
 
     private def createLoadScheduler() {
         // TODO: never schedule running collects?
+        def varnishInvalidator = new VarnishInvalidator(getVarnishUrl(), getVarnishInvalidationEnabled())
         def sourceFeedUrls = new ArrayList<URL>()
         for (url in config.getList("rinfo.service.sourceFeedUrls")) {
             sourceFeedUrls.add(new URL(url))
         }
-        def loadScheduler = new SesameLoadScheduler(this, sourceFeedUrls)
+        def loadScheduler = new SesameLoadScheduler(this, varnishInvalidator, sourceFeedUrls)
         loadScheduler.setInitialDelay(-1)
         loadScheduler.setScheduleInterval(-1)
         return loadScheduler

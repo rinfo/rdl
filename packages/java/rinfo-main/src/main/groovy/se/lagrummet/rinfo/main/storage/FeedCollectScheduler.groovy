@@ -99,4 +99,7 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
         this.sourceFeedUrls = Collections.unmodifiableList(mergedUrls)
     }
 
+    protected void afterCompletedCollect(String feedUrlStr) {
+        logger.info("Completed collect of <"+ feedUrlStr +">.");
+    }
 }
