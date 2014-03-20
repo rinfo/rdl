@@ -1,5 +1,5 @@
 <VirtualHost *:80>
-    ServerName rinfo.test.lagrummet.se
+    ServerName rinfo.regression.lagrummet.se
     ServerSignature On
 
     DocumentRoot /var/www/

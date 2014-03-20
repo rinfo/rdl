@@ -1,5 +1,5 @@
 <VirtualHost *:80>
-    ServerName admin.test.lagrummet.se
+    ServerName admin.regression.lagrummet.se
     ServerSignature On
 
     DocumentRoot /var/www/admin/

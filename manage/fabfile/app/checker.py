@@ -39,3 +39,15 @@ def all(deps="1", test="1", headless="0"):
     package(deps, test)
     deploy(headless)
 
+@task
+@roles('checker')
+def test():
+    """Test functions of checker"""
+    checker_url = "http://%s/" % env.roledefs['checker'][0]
+    print local("curl %(checker_url)s"%vars())
+
+@task
+@roles('checker')
+def clean():
+    sudo("rm -rf %(tomcat_webapps)s/rinfo-checker" % venv())
+    sudo("rm -rf %(tomcat_webapps)s/rinfo-checker.war" % venv())

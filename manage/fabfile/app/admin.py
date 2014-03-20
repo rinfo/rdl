@@ -54,6 +54,20 @@ def all(source=None):
     deploy()
 
 @task
+@roles('admin')
+def test():
+    """Http request to test admin is up and running correctly"""
+    admin_url = "http://%s/" % env.roledefs['admin'][0]
+    print local("curl %(admin_url)s"%vars())
+    # Should test the response to validate the admin servers correctness
+
+@task
+@roles('admin')
+def clean():
+    """Completetly remove all admin contents from server"""
+    sudo("rm -rf %(admin_webroot)s" % env)
+
+@task
 def ping_main():
     """Ping rinfo-main to (re-)collect the admin feed"""
     _needs_targetenv()

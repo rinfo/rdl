@@ -62,6 +62,14 @@ def restart_tomcat():
         pass
 
 @task
+def tomcat_stop():
+    sudo("/etc/init.d/tomcat stop")
+
+@task
+def tomcat_start():
+    sudo("/etc/init.d/tomcat start")
+
+@task
 def restart_apache():
     _needs_targetenv()
     #sudo("/etc/init.d/apache2 stop")
