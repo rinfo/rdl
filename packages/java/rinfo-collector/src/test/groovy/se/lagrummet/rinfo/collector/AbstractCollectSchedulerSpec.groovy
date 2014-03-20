@@ -159,4 +159,7 @@ class ManagedDummyScheduler extends AbstractCollectScheduler {
         blockCollectSemaphore = null
     }
 
+    void afterCompletedCollect(String feedUrlStr) {
+        println "Completed collect of <"+ feedUrlStr +">."
+    }
 }
