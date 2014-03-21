@@ -62,7 +62,8 @@ def test():
     admin_url = "http://%s/" % env.roledefs['admin'][0]
     respHttp = local("curl %(admin_url)s"%vars())
     print respHttp
-    if not "bla bla bla" in respHttp:
+    #if not "bla bla bla" in respHttp:
+    if not "/icons/folder.gif" in respHttp:
         raise
     # Should test the response to validate the admin servers correctness
 
