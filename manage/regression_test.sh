@@ -9,25 +9,21 @@ if [ -z "$PW_RINFO" ]; then
 	read PW_RINFO
 fi
 
-EXIT_STATUS=0
-
-function exit_on_error
-{
-if [ $EXIT_STATUS -ne 0 ];then	
-   echo "$1 returned $EXIT_STATUS! Exiting!"
-   exit $EXIT_STATUS
-fi
-}
-
-
 # Test Admin
 fab -p $PW_RINFO target.regression -R admin app.admin.testAll
 EXIT_STATUS=$?
-exit_on_error "Admin module"
+if [ $EXIT_STATUS -ne 0 ];then	
+   echo "Admin module returned $EXIT_STATUS! Exiting!"
+   exit $EXIT_STATUS
+fi
 
 # Test Checker
 fab -p $PW_RINFO target.regression -R checker app.checker.testAll
 EXIT_STATUS=$?
-exit_on_error "Checker module"
+if [ $EXIT_STATUS -ne 0 ];then	
+   echo "Checker module returned $EXIT_STATUS! Exiting!"
+   exit $EXIT_STATUS
+fi
+
 
 
