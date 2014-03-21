@@ -1,4 +1,5 @@
 import sys
+import time
 from os import sep, path as p
 from fabric.api import *
 from fabric.contrib.files import exists
@@ -6,6 +7,7 @@ from fabric.contrib.project import rsync_project
 from fabfile.util import slashed, cygpath
 from fabfile.target import _needs_targetenv
 from fabfile.util import venv, fullpath
+from fabfile.server import restart_apache
 
 
 def get_build_dir():
@@ -61,7 +63,7 @@ def test():
     respHttp = local("curl %(admin_url)s"%vars())
     print respHttp
     if not "bla bla bla" in respHttp:
-        print "Fail!!!!"
+        raise
     # Should test the response to validate the admin servers correctness
 
 @task
@@ -78,3 +80,18 @@ def ping_main():
     collector_url = "http://%s/collector" % env.roledefs['main'][0]
     print local("curl --data 'feed=%(feed_url)s' %(collector_url)s"%vars())
 
+
+@task
+@roles('admin')
+def testAll():
+    all()
+    restart_apache()
+    time.sleep(10)
+    try:
+        test()
+    except:
+        e = sys.exc_info()[0]
+        print e
+        sys.exit(1)
+    finally:
+        clean()

@@ -9,12 +9,12 @@ if [ -z "$PW_RINFO" ]; then
 fi
 
 # Test Admin
-fab -p $PW_RINFO target.regression -R admin app.admin.all
-fab -p $PW_RINFO target.regression -R checker server.restart_apache
-echo "Pause 1 min until admin install is complete"
-sleep 60
-fab -p $PW_RINFO target.regression -R admin app.admin.test
-fab -p $PW_RINFO target.regression -R admin app.admin.clean
+fab -p $PW_RINFO target.regression -R admin app.admin.testAll
+EXIT_STATUS=$?
+if [ $EXIT_STATUS -ne 0 ];then	
+   echo "Test returned $EXIT_STATUS! Exiting!"
+   exit $EXIT_STATUS
+fi
 
 # Test Checker
 fab -p $PW_RINFO target.regression -R checker app.checker.all

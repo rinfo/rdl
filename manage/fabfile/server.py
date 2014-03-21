@@ -63,10 +63,12 @@ def restart_tomcat():
 
 @task
 def tomcat_stop():
+    _needs_targetenv()
     sudo("/etc/init.d/tomcat stop")
 
 @task
 def tomcat_start():
+    _needs_targetenv()
     sudo("/etc/init.d/tomcat start")
 
 @task
