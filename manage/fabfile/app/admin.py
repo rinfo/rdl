@@ -58,7 +58,10 @@ def all(source=None):
 def test():
     """Http request to test admin is up and running correctly"""
     admin_url = "http://%s/" % env.roledefs['admin'][0]
-    print local("curl %(admin_url)s"%vars())
+    respHttp = local("curl %(admin_url)s"%vars())
+    print respHttp
+    if not "bla bla bla" in respHttp:
+        print "Fail!!!!"
     # Should test the response to validate the admin servers correctness
 
 @task
