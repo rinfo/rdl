@@ -1,6 +1,8 @@
 from fabric.api import *
 from fabric.contrib.files import exists
 import sys
+import time
+
 from os import path as p
 
 venv = lambda: dict(env, **sys._getframe(1).f_locals)
@@ -17,3 +19,6 @@ def slashed(path):
 def cygpath(path):
     return local("cygpath %s" % path)
 
+def msg_sleep(sleepTime, msg=""):
+    print "Pause in {0} second(s) for {1}!".format(sleepTime,msg)
+    time.sleep(sleepTime)

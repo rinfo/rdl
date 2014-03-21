@@ -8,11 +8,10 @@ from fabfile.util import slashed, cygpath
 from fabfile.target import _needs_targetenv
 from fabfile.util import venv, fullpath
 from fabfile.server import restart_apache
-
+from fabfile.util import msg_sleep
 
 def get_build_dir():
     return sep.join((env.builddir, env.target, 'rinfo-admin'))
-
 
 @task
 @runs_once
@@ -20,8 +19,8 @@ def get_build_dir():
 def setup():
     _needs_targetenv()
     if not exists(env.admin_webroot):
-       sudo("mkdir %(admin_webroot)s" % env)
-       sudo("chown %(user)s %(admin_webroot)s" % env)
+        sudo("mkdir %(admin_webroot)s" % env)
+        sudo("chown %(user)s %(admin_webroot)s" % env)
 
 @task
 def package(source=None):
@@ -63,7 +62,8 @@ def test():
     respHttp = local("curl %(admin_url)s"%vars())
     print respHttp
     #if not "bla bla bla" in respHttp:
-    if not "/icons/folder.gif" in respHttp:
+    if "folder.gif" in respHttp:
+        print "Could not find folder.gif in response! Failed!"
         raise
     # Should test the response to validate the admin servers correctness
 
@@ -81,13 +81,12 @@ def ping_main():
     collector_url = "http://%s/collector" % env.roledefs['main'][0]
     print local("curl --data 'feed=%(feed_url)s' %(collector_url)s"%vars())
 
-
 @task
 @roles('admin')
 def testAll():
     all()
     restart_apache()
-    time.sleep(10)
+    msg_sleep(10," apache restart")
     try:
         test()
     except:

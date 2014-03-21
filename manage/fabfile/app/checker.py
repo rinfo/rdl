@@ -1,8 +1,14 @@
+import sys
+import time
 from fabric.api import *
 from fabric.contrib.files import exists
 from fabfile.util import venv
 from fabfile.app import local_lib_rinfo_pkg, _deploy_war, _deploy_war_norestart
 from fabfile.target import _needs_targetenv
+from fabfile.server import restart_apache
+from fabfile.server import tomcat_stop
+from fabfile.server import tomcat_start
+from fabfile.util import msg_sleep
 
 ##
 # Local build
@@ -51,3 +57,20 @@ def test():
 def clean():
     sudo("rm -rf %(tomcat_webapps)s/rinfo-checker" % venv())
     sudo("rm -rf %(tomcat_webapps)s/rinfo-checker.war" % venv())
+
+@task
+@roles('admin')
+def testAll():
+    all()
+    restart_apache()
+    msg_sleep(10,"restart apache")
+    try:
+        test()
+    except:
+        e = sys.exc_info()[0]
+        print e
+        sys.exit(1)
+    finally:
+        tomcat_stop
+        clean()
+        tomcat_start
