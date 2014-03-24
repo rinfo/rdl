@@ -1,5 +1,8 @@
 package se.lagrummet.rinfo.service
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 import org.restlet.Context
 import org.restlet.data.CharacterSet
 import org.restlet.data.Language
@@ -26,10 +29,13 @@ import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDSerializer
 
 class DataFinder extends Finder {
 
+    private final Logger logger = LoggerFactory.getLogger(DataFinder.class)
+
     Repository repo
     JsonLdSettings jsonLdSettings
     String baseUri
     String constructQueryText
+    String constructQueryPath
     JSONLDSerializer jsonLdSerializer
     ObjectMapper jsonMapper = new ObjectMapper()
 
@@ -40,6 +46,7 @@ class DataFinder extends Finder {
         this.baseUri = baseUri
         this.repo = repo
         this.jsonLdSettings = jsonLdSettings
+        this.constructQueryPath = constructQueryPath
         this.constructQueryText = getClass().getResourceAsStream(
                 constructQueryPath).getText("utf-8")
 
@@ -86,7 +93,9 @@ class DataFinder extends Finder {
             }
 
             def getRepr(mediaType, mediaTypeStr) {
+                def beforeDate = new Date()
                 def itemRepo = getRichRDF(resourceUri)
+                logger.info("getRichRDF for resourceUri: '" + resourceUri + "' ("+constructQueryPath+") took " + ((new Date()).getTime()-beforeDate.getTime())/1000 + "s")
                 if (itemRepo == null) {
                     setStatus(Status.CLIENT_ERROR_NOT_FOUND)
                     return null
