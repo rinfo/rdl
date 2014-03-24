@@ -21,7 +21,6 @@ def package(deps="1", test="1"):
     flags = "" if int(test) else "-Dmaven.test.skip=true"
     local("cd %(java_packages)s/rinfo-checker/ && "
             "mvn %(flags)s -P%(target)s clean package war:war" % venv(), capture=False)
-
 ##
 # Server deploy
 
@@ -49,8 +48,16 @@ def all(deps="1", test="1", headless="0"):
 @roles('checker')
 def test():
     """Test functions of checker"""
-    checker_url = "http://%s/" % env.roledefs['checker'][0]
-    print local("curl %(checker_url)s"%vars())
+    admin_url = "http://%s/" % env.roledefs['checker'][0]
+    print "curl %(admin_url)s" % vars()
+    respHttp = local("curl %(admin_url)s" % vars(), capture=True)
+    if not "<h1>RInfo Checker" in str(respHttp):
+        print "Could not find <h1>RInfo Checker in response! Failed!"
+        print "#########################################################################################"
+        print respHttp
+        print "#########################################################################################"
+        raise
+    # Should test the response to validate the admin servers correctness
 
 @task
 @roles('checker')
@@ -61,7 +68,7 @@ def clean():
 @task
 @roles('admin')
 def testAll():
-    all()
+    all(test="0")
     restart_apache()
     msg_sleep(10,"restart apache")
     try:

@@ -60,3 +60,8 @@ def all(deps="1", test="1", headless="0"):
 #    # TODO: make **SURE** this is whay you really want to do!
 #    #sudo("rm -rf %(rinfo_main_store)s/collector-log" % env, user=env.tomcat_user)
 
+@task
+@roles('main')
+def testAll():
+    raise
+

@@ -1,4 +1,5 @@
 import re
+import sys
 from fabric.api import *
 from fabric.contrib.files import exists
 from fabfile.util import venv, mkdirpath
@@ -6,6 +7,11 @@ from fabfile import app, sysconf
 from fabfile.target import _needs_targetenv
 from fabfile.app import _deploy_war
 from fabfile.app import _deploy_war_norestart
+from fabfile.server import restart_apache
+from fabfile.server import restart_tomcat
+from fabfile.server import tomcat_stop
+from fabfile.server import tomcat_start
+from fabfile.util import msg_sleep
 
 ##
 # Local build
@@ -14,11 +20,17 @@ from fabfile.app import _deploy_war_norestart
 @runs_once
 def package(deps="1", test="1"):
     """Builds and packages the rinfo-service war, configured for the target env."""
-    if int(deps): app.local_lib_rinfo_pkg()
+    print "1.1.1 #########################################################################################"
+    if int(deps): app.local_lib_rinfo_pkg(test)
     _needs_targetenv()
+    print "1.1.2#########################################################################################"
     flags = "" if int(test) else "-Dmaven.test.skip=true"
+    print "###################################### FLAGS ###############################################"
+    print flags
+    print "###################################### FLAGS ###############################################"
     local("cd %(java_packages)s/rinfo-service/ && "
             "mvn %(flags)s -P%(target)s clean package war:war" % venv(), capture=False)
+    print "1.1.3 #########################################################################################"
 
 ##
 # Server deploy
@@ -50,7 +62,9 @@ def deploy(headless="0"):
 @roles('service')
 def all(deps="1", test="1", headless="0"):
     """Packages and deploys the rinfo-service war to target env."""
+    print "1.1 #########################################################################################"
     package(deps, test)
+    print "1.2 #########################################################################################"
     deploy(headless)
 
 ##
@@ -163,4 +177,70 @@ def stop_elasticsearch():
 def start_elasticsearch():
     _needs_targetenv()
     sudo("/etc/init.d/elasticsearch start")
+
+
+@task
+@roles('service')
+def test():
+    _needs_targetenv()
+    admin_url = "http://%s/" % env.roledefs['service'][0]
+    respHttp = local("curl %(admin_url)s/ui/"%vars(), capture=True)
+    if not "folder.gif" in str(respHttp):
+        print "Could not find folder.gif in response! Failed!"
+        print "#########################################################################################"
+        print respHttp
+        print "#########################################################################################"
+        raise
+
+@task
+@roles('service')
+def ping_start_collect():
+    _needs_targetenv()
+    #curl --data 'feed=http://testfeed.lagrummet.se/admin/feed/current.atom' http://service.regression.lagrummet.se/collector
+    #http://testfeed.lagrummet.se/admin/feed/current.atom
+    #dov_exempel_utan_fel/index-uppdaterad.atom
+    #feed_url = "http://%s/admin/feed/current.atom" % env.roledefs['demosource'][0]
+    feed_url = "http://%s/dov_exempel_utan_fel/index-uppdaterad.atom" % env.roledefs['demosource'][0]
+    collector_url = "http://%s/collector" % env.roledefs['service'][0]
+    respHttp = local("curl --data 'feed=%(feed_url)s' %(collector_url)s"%vars(), capture=True)
+    if not "Scheduled collect of" in str(respHttp):
+        print "Could not find Scheduled collect of in response! Failed!"
+        print "#########################################################################################"
+        print respHttp
+        print "#########################################################################################"
+        raise
+
+@task
+@roles('service')
+def clean():
+    """ Cleans checker from system. Will assume tomcat is inactive """
+    sudo("rm -rf %(tomcat_webapps)s/rinfo-service" % venv())
+    sudo("rm -rf %(tomcat_webapps)s/rinfo-service.war" % venv())
+    run("curl -XPOST http://localhost:8080/sesame-workbench/repositories/rinfo/clear")
+
+@task
+@roles('service')
+def testAll():
+    print "1 #########################################################################################"
+    all(test="0")
+    print "2 #########################################################################################"
+    restart_apache()
+    #restart_tomcat()
+    msg_sleep(15,"restart apache and wait for service to start")
+    try:
+        print "3 #########################################################################################"
+        ping_start_collect()
+        print "4 #########################################################################################"
+        msg_sleep(60,"collect feed")
+        print "5 #########################################################################################"
+        test()
+    except:
+        e = sys.exc_info()[0]
+        print e
+        sys.exit(1)
+    finally:
+        tomcat_stop
+        clean()
+        tomcat_start
+
 

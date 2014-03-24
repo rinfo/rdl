@@ -10,18 +10,34 @@ if [ -z "$PW_RINFO" ]; then
 fi
 
 # Test Admin
-fab -p $PW_RINFO target.regression -R admin app.admin.testAll
+#fab -p $PW_RINFO target.regression -R admin app.admin.testAll
+#EXIT_STATUS=$?
+#if [ $EXIT_STATUS -ne 0 ];then	
+#   echo "Admin module returned $EXIT_STATUS! Exiting!"
+#   exit $EXIT_STATUS
+#fi
+
+# Test Checker
+#fab -p $PW_RINFO target.regression -R checker app.checker.testAll
+#EXIT_STATUS=$?
+#if [ $EXIT_STATUS -ne 0 ];then	
+#   echo "Checker module returned $EXIT_STATUS! Exiting!"
+#   exit $EXIT_STATUS
+#fi
+
+# Test Service
+fab -p $PW_RINFO target.regression -R service app.service.testAll
 EXIT_STATUS=$?
 if [ $EXIT_STATUS -ne 0 ];then	
-   echo "Admin module returned $EXIT_STATUS! Exiting!"
+   echo "Service module returned $EXIT_STATUS! Exiting!"
    exit $EXIT_STATUS
 fi
 
-# Test Checker
-fab -p $PW_RINFO target.regression -R checker app.checker.testAll
+# Test Main
+fab -p $PW_RINFO target.regression -R main app.main.testAll
 EXIT_STATUS=$?
 if [ $EXIT_STATUS -ne 0 ];then	
-   echo "Checker module returned $EXIT_STATUS! Exiting!"
+   echo "Main module returned $EXIT_STATUS! Exiting!"
    exit $EXIT_STATUS
 fi
 
