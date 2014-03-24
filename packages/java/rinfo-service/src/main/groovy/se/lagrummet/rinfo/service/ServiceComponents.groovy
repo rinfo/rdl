@@ -59,7 +59,9 @@ class ServiceComponents {
     }
 
     String getVarnishUrl() {
-        return config.getString("rinfo.service.varnish.url")
+        def host = config.getString("rinfo.service.varnish.host")
+        def port = config.getString("rinfo.service.varnish.port")
+        return "http://" + host + ":" + port
     }
 
     boolean getVarnishInvalidationEnabled() {
