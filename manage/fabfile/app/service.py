@@ -171,7 +171,7 @@ def start_elasticsearch():
     _needs_targetenv()
     sudo("/etc/init.d/elasticsearch start")
 
-=======
+
 ##
 # Varnish install and setup
 
