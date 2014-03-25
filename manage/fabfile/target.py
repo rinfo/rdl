@@ -47,7 +47,7 @@ def dev_unix():
     env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
     env.demo_data_root = "/opt/rinfo/demo-depots"
     # Varnish
-    env.workdir_varnish = "/opt/rinfo/varnish"
+    env.workdir_varnish = "/opt/varnish"
     # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
@@ -84,7 +84,7 @@ def demo():
     env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
     env.demo_data_root = "/opt/rinfo/demo-depots"
     # Varnish
-    env.workdir_varnish = "/opt/rinfo/varnish"
+    env.workdir_varnish = "/opt/varnish"
     # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
@@ -121,7 +121,7 @@ def test():
     env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
     env.demo_data_root = "/opt/rinfo/demo-depots"
     # Varnish
-    env.workdir_varnish = "/opt/rinfo/varnish"
+    env.workdir_varnish = "/opt/varnish"
     # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
@@ -192,7 +192,7 @@ def beta():
     env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
     env.demo_data_root = "/opt/rinfo/demo-depots"
     # Varnish
-    env.workdir_varnish = "/opt/rinfo/varnish"
+    env.workdir_varnish = "/opt/varnish"
     # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
@@ -371,7 +371,7 @@ def prod():
     env.rinfo_dir = '/opt/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
     # Varnish
-    env.workdir_varnish = "/opt/rinfo/varnish"
+    env.workdir_varnish = "/opt/varnish"
     # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
