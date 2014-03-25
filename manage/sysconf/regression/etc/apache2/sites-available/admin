@@ -2,18 +2,6 @@
     ServerName admin.regression.lagrummet.se
     ServerSignature On
 
-    DocumentRoot /var/www/admin/
-    <Directory />
-        Options FollowSymLinks
-        AllowOverride None
-    </Directory>
-    <Directory /var/www/admin/>
-        Options Indexes FollowSymLinks MultiViews
-        AllowOverride None
-        Order allow,deny
-        allow from all
-    </Directory>
-
     ServerAdmin rinfo@lagrummet.se
 
     ErrorLog /var/log/apache2/admin-error.log

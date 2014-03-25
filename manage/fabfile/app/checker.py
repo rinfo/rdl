@@ -50,15 +50,8 @@ def all(deps="1", test="1", headless="0"):
 def test():
     """Test functions of checker"""
     admin_url = "http://%s/" % env.roledefs['checker'][0]
-    print "curl %(admin_url)s" % vars()
-    respHttp = local("curl %(admin_url)s" % vars(), capture=True)
-    if not "<h1>RInfo Checker" in str(respHttp):
-        print "Could not find <h1>RInfo Checker in response! Failed!"
-        print "#########################################################################################"
-        print respHttp
-        print "#########################################################################################"
+    if not verify_url_content(admin_url,"<h1>RInfo Checker"):
         raise
-    # Should test the response to validate the admin servers correctness
 
 @task
 @roles('checker')

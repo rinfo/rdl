@@ -177,30 +177,16 @@ def start_elasticsearch():
 def test():
     _needs_targetenv()
     admin_url = "http://%s/" % env.roledefs['service'][0]
-    respHttp = local("curl %(admin_url)s/ui/"%vars(), capture=True)
-    if not "RInfo Service" in str(respHttp):
-        print "Could not find RInfo Service in response! Failed!"
-        print "#########################################################################################"
-        print respHttp
-        print "#########################################################################################"
+    if not verify_url_content(admin_url,"RInfo Service"):
         raise
 
 @task
 @roles('service')
 def ping_start_collect():
     _needs_targetenv()
-    #curl --data 'feed=http://testfeed.lagrummet.se/admin/feed/current.atom' http://service.regression.lagrummet.se/collector
-    #http://testfeed.lagrummet.se/admin/feed/current.atom
-    #dov_exempel_utan_fel/index-uppdaterad.atom
-    #feed_url = "http://%s/admin/feed/current.atom" % env.roledefs['demosource'][0]
     feed_url = "http://%s/dov_exempel_utan_fel/index-uppdaterad.atom" % env.roledefs['demosource'][0]
     collector_url = "http://%s/collector" % env.roledefs['service'][0]
-    respHttp = local("curl --data 'feed=%(feed_url)s' %(collector_url)s"%vars(), capture=True)
-    if not "Scheduled collect of" in str(respHttp):
-        print "Could not find Scheduled collect of in response! Failed!"
-        print "#########################################################################################"
-        print respHttp
-        print "#########################################################################################"
+    if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s"%vars(),"Scheduled collect of"):
         raise
 
 @task
@@ -216,8 +202,7 @@ def clean():
 def test_all():
     all(test="0")
     restart_apache()
-    #restart_tomcat()
-    msg_sleep(15,"restart apache and wait for service to start")
+    msg_sleep(20,"restart apache and wait for service to start")
     try:
         ping_start_collect()
         msg_sleep(60,"collect feed")
