@@ -178,13 +178,10 @@ def start_elasticsearch():
 @task
 @roles('service')
 def install_varnish():
-		_needs_targetenv()
-
-		sudo("apt-get install varnish=3.0.5-1~wheezy -y")
-
-		mkdirpath("%(workdir_varnish)s" % env)
-		mkdirpath("%(workdir_varnish)s/cache" % env)
-
+    _needs_targetenv()
+    sudo("apt-get install varnish=3.0.5-1~wheezy -y")
+    mkdirpath("%(workdir_varnish)s" % env)
+    mkdirpath("%(workdir_varnish)s/cache" % env)
     put(p.join(env.manageroot, "sysconf", "common", "varnish", "rinfo-service.vcl"), "%(workdir_varnish)s" % env)
     put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "backend.vcl"), "%(workdir_varnish)s" % env)
     put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "host.vcl"), "%(workdir_varnish)s" % env)
