@@ -110,8 +110,8 @@ def clean():
 def test_all():
     all(test="0")
     restart_apache()
-    #restart_tomcat()
-    msg_sleep(15,"restart apache and wait for service to start")
+    restart_tomcat()
+    msg_sleep(15,"restart apache, tomcat and wait for service to start")
     try:
         ping_start_collect_admin()
         msg_sleep(10,"collect feed")

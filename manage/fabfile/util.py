@@ -19,16 +19,21 @@ def slashed(path):
 def cygpath(path):
     return local("cygpath %s" % path)
 
-def msg_sleep(sleepTime, msg=""):
-    print "Pause in {0} second(s) for {1}!".format(sleepTime,msg)
-    time.sleep(sleepTime)
+def msg_sleep(sleep_time, msg=""):
+    print "Pause in {0} second(s) for {1}!".format(sleep_time,msg)
+    time.sleep(sleep_time)
 
-def verify_url_content(url, string_exists_in_content):
-    respHttp = local("curl %(url)s"%vars(), capture=True)
-    if not string_exists_in_content in respHttp:
-        print "Could not find %(string_exists_in_content)s in response! Failed!"%vars()
-        print "#########################################################################################"
-        print respHttp
-        print "#########################################################################################"
-        return False
-    return True
+def verify_url_content(url, string_exists_in_content, sleep_time=15, max_retry=3):
+    retry_count = 1
+    while retry_count < max_retry:
+        respHttp = local("curl %(url)s"%vars(), capture=True)
+        if not string_exists_in_content in respHttp:
+            print "Could not find %(string_exists_in_content)s in response! Failed! Retry %(retry_count)s of %(max_retry)s."%vars()
+            retry_count = retry_count + 1
+            time.sleep(sleep_time)
+            continue
+        return True
+    print "#########################################################################################"
+    print respHttp
+    print "#########################################################################################"
+    return False

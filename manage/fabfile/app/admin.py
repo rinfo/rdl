@@ -8,6 +8,7 @@ from fabfile.util import slashed, cygpath
 from fabfile.target import _needs_targetenv
 from fabfile.util import venv, fullpath
 from fabfile.server import restart_apache
+from fabfile.server import restart_tomcat
 from fabfile.util import msg_sleep
 from fabfile.util import verify_url_content
 
@@ -83,7 +84,8 @@ def ping_main():
 def test_all():
     all()
     restart_apache()
-    msg_sleep(10," apache restart")
+    restart_tomcat()
+    msg_sleep(10," apache and tomcat restart")
     try:
         test()
     except:

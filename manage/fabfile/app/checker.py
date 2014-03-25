@@ -6,6 +6,7 @@ from fabfile.util import venv
 from fabfile.app import local_lib_rinfo_pkg, _deploy_war, _deploy_war_norestart
 from fabfile.target import _needs_targetenv
 from fabfile.server import restart_apache
+from fabfile.server import restart_tomcat
 from fabfile.server import tomcat_stop
 from fabfile.server import tomcat_start
 from fabfile.util import msg_sleep
@@ -64,7 +65,8 @@ def clean():
 def test_all():
     all(test="0")
     restart_apache()
-    msg_sleep(10,"restart apache")
+    restart_tomcat()
+    msg_sleep(10,"restart and tomcat apache")
     try:
         test()
     except:
