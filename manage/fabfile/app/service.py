@@ -171,6 +171,36 @@ def start_elasticsearch():
     _needs_targetenv()
     sudo("/etc/init.d/elasticsearch start")
 
+=======
+##
+# Varnish install and setup
+
+@task
+@roles('service')
+def install_varnish():
+		_needs_targetenv()
+
+		sudo("apt-get install varnish=3.0.5-1~wheezy -y")
+
+		mkdirpath("%(workdir_varnish)s" % env)
+		mkdirpath("%(workdir_varnish)s/cache" % env)
+
+    put(p.join(env.manageroot, "sysconf", "common", "varnish", "rinfo-service.vcl"), "%(workdir_varnish)s" % env)
+    put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "backend.vcl"), "%(workdir_varnish)s" % env)
+    put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "host.vcl"), "%(workdir_varnish)s" % env)
+
+@task
+@roles('service')
+def stop_varnish():
+    sudo("pkill varnishd")
+
+@task
+@roles('service')
+def start_varnish():
+    _needs_targetenv()
+    sudo("varnishd -a 127.0.0.1:8383 -T 127.0.0.1:6082 -s file,%(workdir_varnish)s/cache,1G -p vcl_dir=%(workdir_varnish)s -f rinfo-service.vcl" % env)
+
+
 
 @task
 @roles('service')
