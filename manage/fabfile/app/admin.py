@@ -9,6 +9,7 @@ from fabfile.target import _needs_targetenv
 from fabfile.util import venv, fullpath
 from fabfile.server import restart_apache
 from fabfile.util import msg_sleep
+from fabfile.util import verify_url_content
 
 def get_build_dir():
     return sep.join((env.builddir, env.target, 'rinfo-admin'))
@@ -59,13 +60,9 @@ def all(source=None):
 def test():
     """Http request to test admin is up and running correctly"""
     admin_url = "http://%s/" % env.roledefs['admin'][0]
-    respHttp = local("curl %(admin_url)s"%vars())
-    print respHttp
-    #if not "bla bla bla" in respHttp:
-    if "folder.gif" in respHttp:
-        print "Could not find folder.gif in response! Failed!"
+    #respHttp = local("curl %(admin_url)s"%vars(), capture=True)
+    if not verify_url_content(admin_url,"folder.gif"):
         raise
-    # Should test the response to validate the admin servers correctness
 
 @task
 @roles('admin')
@@ -83,7 +80,7 @@ def ping_main():
 
 @task
 @roles('admin')
-def testAll():
+def test_all():
     all()
     restart_apache()
     msg_sleep(10," apache restart")

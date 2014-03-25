@@ -9,6 +9,7 @@ from fabfile.server import restart_apache
 from fabfile.server import tomcat_stop
 from fabfile.server import tomcat_start
 from fabfile.util import msg_sleep
+from fabfile.util import verify_url_content
 
 ##
 # Local build
@@ -67,7 +68,7 @@ def clean():
 
 @task
 @roles('admin')
-def testAll():
+def test_all():
     all(test="0")
     restart_apache()
     msg_sleep(10,"restart apache")

@@ -22,3 +22,13 @@ def cygpath(path):
 def msg_sleep(sleepTime, msg=""):
     print "Pause in {0} second(s) for {1}!".format(sleepTime,msg)
     time.sleep(sleepTime)
+
+def verify_url_content(url, string_exists_in_content):
+    respHttp = local("curl %(url)s"%vars(), capture=True)
+    if not string_exists_in_content in respHttp:
+        print "Could not find %(string_exists_in_content)s in response! Failed!"%vars()
+        print "#########################################################################################"
+        print respHttp
+        print "#########################################################################################"
+        return False
+    return True

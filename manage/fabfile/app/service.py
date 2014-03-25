@@ -12,6 +12,7 @@ from fabfile.server import restart_tomcat
 from fabfile.server import tomcat_stop
 from fabfile.server import tomcat_start
 from fabfile.util import msg_sleep
+from fabfile.util import verify_url_content
 
 ##
 # Local build
@@ -20,17 +21,11 @@ from fabfile.util import msg_sleep
 @runs_once
 def package(deps="1", test="1"):
     """Builds and packages the rinfo-service war, configured for the target env."""
-    print "1.1.1 #########################################################################################"
     if int(deps): app.local_lib_rinfo_pkg(test)
     _needs_targetenv()
-    print "1.1.2#########################################################################################"
     flags = "" if int(test) else "-Dmaven.test.skip=true"
-    print "###################################### FLAGS ###############################################"
-    print flags
-    print "###################################### FLAGS ###############################################"
     local("cd %(java_packages)s/rinfo-service/ && "
             "mvn %(flags)s -P%(target)s clean package war:war" % venv(), capture=False)
-    print "1.1.3 #########################################################################################"
 
 ##
 # Server deploy
@@ -62,9 +57,7 @@ def deploy(headless="0"):
 @roles('service')
 def all(deps="1", test="1", headless="0"):
     """Packages and deploys the rinfo-service war to target env."""
-    print "1.1 #########################################################################################"
     package(deps, test)
-    print "1.2 #########################################################################################"
     deploy(headless)
 
 ##
@@ -185,8 +178,8 @@ def test():
     _needs_targetenv()
     admin_url = "http://%s/" % env.roledefs['service'][0]
     respHttp = local("curl %(admin_url)s/ui/"%vars(), capture=True)
-    if not "folder.gif" in str(respHttp):
-        print "Could not find folder.gif in response! Failed!"
+    if not "RInfo Service" in str(respHttp):
+        print "Could not find RInfo Service in response! Failed!"
         print "#########################################################################################"
         print respHttp
         print "#########################################################################################"
@@ -220,19 +213,14 @@ def clean():
 
 @task
 @roles('service')
-def testAll():
-    print "1 #########################################################################################"
+def test_all():
     all(test="0")
-    print "2 #########################################################################################"
     restart_apache()
     #restart_tomcat()
     msg_sleep(15,"restart apache and wait for service to start")
     try:
-        print "3 #########################################################################################"
         ping_start_collect()
-        print "4 #########################################################################################"
         msg_sleep(60,"collect feed")
-        print "5 #########################################################################################"
         test()
     except:
         e = sys.exc_info()[0]
