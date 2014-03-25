@@ -21,8 +21,8 @@ read pwd
 fab -p $pwd target.$2 -R main,service,checker,admin sysconf.install_server sysconf.configure_server
 fab -p $pwd target.$2 -R main,service,checker,admin app.service.install_elasticsearch
 fab -p $pwd target.$2 -R main,service,checker,admin app.service.start_elasticsearch
-#fab -p $pwd target.$2 -R main,service,checker,admin app.service.install_varnish
-#fab -p $pwd target.$2 -R main,service,checker,admin app.service.start_varnish
+fab -p $pwd target.$2 -R main,service,checker,admin app.service.install_varnish
+fab -p $pwd target.$2 -R main,service,checker,admin app.service.start_varnish
 fab -p $pwd target.$2 -R main,service,checker,admin app.service.deploy_sesame
 fab -p $pwd target.$2 -R admin app.admin.all
 fab -p $pwd target.$2 -R main app.main.all
