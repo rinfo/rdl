@@ -101,9 +101,11 @@ def ping_start_collect_feed():
 @roles('main')
 def clean():
     """ Cleans checker from system. Will assume tomcat is inactive """
+    tomcat_stop()
     sudo("rm -rf %(tomcat_webapps)s/rinfo-main" % venv())
     sudo("rm -rf %(tomcat_webapps)s/rinfo-main.war" % venv())
     sudo("rm -rf %(rinfo_main_store)s/" % venv())
+    tomcat_start()
 
 @task
 @roles('main')
@@ -123,8 +125,7 @@ def test_all():
         print e
         sys.exit(1)
     finally:
-        tomcat_stop
         clean()
-        tomcat_start
+
 
 

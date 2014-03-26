@@ -176,7 +176,7 @@ def start_elasticsearch():
 @roles('service')
 def test():
     _needs_targetenv()
-    admin_url = "http://%s/" % env.roledefs['service'][0]
+    admin_url = "http://%s/ui/" % env.roledefs['service'][0]
     if not verify_url_content(admin_url,"RInfo Service"):
         raise
 
@@ -193,8 +193,11 @@ def ping_start_collect():
 @roles('service')
 def clean():
     """ Cleans checker from system. Will assume tomcat is inactive """
+    tomcat_stop()
     sudo("rm -rf %(tomcat_webapps)s/rinfo-service" % venv())
     sudo("rm -rf %(tomcat_webapps)s/rinfo-service.war" % venv())
+    tomcat_start()
+    msg_sleep(10,"Wait for tomcat start")
     run("curl -XPOST http://localhost:8080/sesame-workbench/repositories/rinfo/clear")
 
 @task
@@ -213,8 +216,6 @@ def test_all():
         print e
         sys.exit(1)
     finally:
-        tomcat_stop
         clean()
-        tomcat_start
 
 

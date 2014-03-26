@@ -57,8 +57,10 @@ def test():
 @task
 @roles('checker')
 def clean():
+    tomcat_stop()
     sudo("rm -rf %(tomcat_webapps)s/rinfo-checker" % venv())
     sudo("rm -rf %(tomcat_webapps)s/rinfo-checker.war" % venv())
+    tomcat_start()
 
 @task
 @roles('admin')
@@ -74,6 +76,4 @@ def test_all():
         print e
         sys.exit(1)
     finally:
-        tomcat_stop
         clean()
-        tomcat_start
