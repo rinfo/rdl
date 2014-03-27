@@ -47,9 +47,6 @@ public class CheckerResource extends Resource {
             Form form = getRequest().getEntityAsForm();
             String feedUrl = form.getFirstValue("feedUrl");
             String maxEntriesStr = form.getFirstValue("maxEntries");
-            String showSuccessfulEntries = form.getFirstValue("showSuccessfulEntries");
-            final Map<String, String> params = new HashMap<String, String>();
-            params.put("show-successful-entries", showSuccessfulEntries);
             int maxEntries = !StringUtils.isEmpty(maxEntriesStr)?
                 Integer.parseInt(maxEntriesStr) : -1;
 
@@ -66,7 +63,7 @@ public class CheckerResource extends Resource {
                 getResponse().setEntity(new WriterRepresentation(MediaType.TEXT_HTML) {
                     public void write(Writer writer) throws IOException {
                         try {
-                            logXhtmlTransformer.writeXhtml(ins, writer, params);
+                            logXhtmlTransformer.writeXhtml(ins, writer);
                         } finally {
                             ins.close();
                         }

@@ -7,7 +7,6 @@
 
   <xsl:param name="base-url" select="'http://rinfo.lagrummet.se/'"/>
   <xsl:param name="mediabase" select="'media'"/>
-  <xsl:param name="show-successful-entries" select="false()"/>
 
   <xsl:key name="rel" match="/graph/resource" use="@uri"/>
   <xsl:variable name="r" select="/graph/resource"/>
@@ -120,9 +119,7 @@
         </div>
         <div class="clear_both"></div>
       </div>
-      <xsl:if test="$collected and
-                    ($collect-count - count($collected/parent::resource[a/awol:Entry]) > 0
-                    or $show-successful-entries)">
+      <xsl:if test="$collected">
         <h4>Poster</h4>
         <table class="report">
           <tr>
@@ -145,7 +142,6 @@
 
   <xsl:template match="*[a/awol:Entry]" mode="trow">
       <xsl:param name="pos"/>
-        <xsl:if test="$show-successful-entries">
             <tr class="entry">
               <td class="position"><xsl:value-of select="$pos"/></td>
               <td><xsl:apply-templates select="awol:updated"/></td>
@@ -153,7 +149,6 @@
               <td><xsl:apply-templates select="foaf:primaryTopic/@ref"/></td>
               <td></td>
             </tr>
-        </xsl:if>
   </xsl:template>
 
   <!-- TODO:
