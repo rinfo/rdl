@@ -81,18 +81,18 @@ def test():
 @roles('main')
 def ping_start_collect_admin():
     _needs_targetenv()
-    feed_url = "http://testfeed.lagrummet.se/admin/feed/current.atom"
+    feed_url = "http://%s/admin/feed/current.atom" % env.roledefs['demosource'][0]
     collector_url = "http://%s/collector" % env.roledefs['main'][0]
-    if not verify_url_content("curl --data 'feed=%(feed_url)s' %(collector_url)s"%vars(),"Scheduled collect of"):
+    if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s"%vars(),"Scheduled collect of"):
         raise
 
 @task
 @roles('main')
 def ping_start_collect_feed():
     _needs_targetenv()
-    feed_url = "http://testfeed.lagrummet.se/feed.atom"
+    feed_url = "http://%s/admin/current.atom" % env.roledefs['demosource'][0]
     collector_url = "http://%s/collector" % env.roledefs['main'][0]
-    if not verify_url_content("curl --data 'feed=%(feed_url)s' %(collector_url)s"%vars(),"Scheduled collect of"):
+    if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s"%vars(),"Scheduled collect of"):
         raise
 
 
@@ -104,6 +104,7 @@ def clean():
     tomcat_stop()
     sudo("rm -rf %(tomcat_webapps)s/rinfo-main" % venv())
     sudo("rm -rf %(tomcat_webapps)s/rinfo-main.war" % venv())
+    sudo("rm -rf %(tomcat)s/logs/rinfo-main*.*" % venv())
     sudo("rm -rf %(rinfo_main_store)s/" % venv())
     tomcat_start()
 

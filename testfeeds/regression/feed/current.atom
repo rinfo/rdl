@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+        xmlns:at="http://purl.org/atompub/tombstones/1.0"
+    xmlns:fh="http://purl.org/syndication/history/1.0"
+    xmlns:dct="http://purl.org/dc/terms/">
+
+    <id>tag:exempelmyndigheten.se,2009:rinfo:feed</id>
+    <updated>2012-02-24T20:05:11Z</updated>
+    <fh:complete/>
+    <title xml:lang="sv">Flöde för regressionstester</title>
+    <author>
+        <name>Erik Exempelson</name>
+        <uri>http://www.exempelmyndigheten.se/</uri>
+        <email>lagrum@exempelmyndigheten.se</email>
+    </author>
+    <link href="http://regression.testfeed.lagrummet.se" rel="self"/>
+
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/emfs/2011:39</id>
+        <updated>2012-02-24T20:05:11Z</updated>
+        <published>2012-02-24T20:05:11Z</published>
+        <title xml:lang="sv">Exempelmyndighetens föreskrifter och allmänna råd om information som gäller försäkring och tjänstepension;</title>
+        <summary xml:lang="sv"></summary>
+        <content src="/2011_39/EMFS-2011_39.pdf"
+            type="application/pdf"
+            hash="md5:e5b87b76a096333ceb3718ca7ba982a9"/>
+        <link rel="alternate"
+            href="/2011_39/EMFS-2011_39.rdf"
+            type="application/rdf+xml"
+            length="2100" hash="md5:ba817ef08d6f48b164c397c69fabc1e2"/>
+    </entry>
+</feed>
+

@@ -60,6 +60,7 @@ def clean():
     tomcat_stop()
     sudo("rm -rf %(tomcat_webapps)s/rinfo-checker" % venv())
     sudo("rm -rf %(tomcat_webapps)s/rinfo-checker.war" % venv())
+    sudo("rm -rf %(tomcat)s/logs/rinfo-checker*.*" % venv())
     tomcat_start()
 
 @task

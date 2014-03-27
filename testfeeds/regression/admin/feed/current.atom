@@ -1,0 +1,12 @@
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:fh="http://purl.org/syndication/history/1.0">
+	<id>tag:lagrummet.se,2010:rinfo:admin</id>
+	<title type="text">RInfo Base Data</title>
+	<updated>2014-03-20T10:36:37.000Z</updated>
+	
+	<entry>
+		<id>http://rinfo.lagrummet.se/sys/dataset</id>
+		<title type="text">http://rinfo.lagrummet.se/sys/dataset</title>
+		<updated>2014-03-07T13:08:43.000Z</updated>
+		<content type="application/rdf+xml" src="/admin/sys/dataset/rdf.rdf" />
+	</entry>
+</feed>

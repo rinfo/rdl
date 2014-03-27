@@ -146,7 +146,7 @@ def regression():
         'service': ['service.regression.lagrummet.se'],
         'checker': ['checker.regression.lagrummet.se'],
         'admin': ['admin.regression.lagrummet.se'],
-        'demosource': ['testfeed.lagrummet.se'],
+        'demosource': ['regression.testfeed.lagrummet.se'],
         'lagrummet': ['regression.lagrummet.se'],
     }
     # Manage
@@ -256,6 +256,7 @@ def testfeed():
         'checker': ['checker.testfeed'],
         'admin': ['admin.testfeed'],
         'demosource': ['testfeed.lagrummet.se'],
+        'regression': ['regression.testfeed.lagrummet.se'],
     }
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -272,6 +273,7 @@ def testfeed():
         'main': ['rinfo-main', 'admin'],
         'service': ['service'],
         'demosource': ['emfs'],
+        'regression': ['regression'],
         'checker': ['checker'],
     }
     # Tomcat
