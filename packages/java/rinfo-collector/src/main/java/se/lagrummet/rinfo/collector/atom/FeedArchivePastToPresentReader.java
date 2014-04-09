@@ -278,9 +278,11 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                 knownStoppingEntry = entry;
                 return false;
             }
-            putUriDateIfNewOrYoungest(entryModificationMap,
+            if (!putUriDateIfNewOrYoungest(entryModificationMap,
                     entry.getId(),
-                    entry.getUpdatedElement().getValue());
+                    entry.getUpdatedElement().getValue())) {
+                logger.info("Skipping older version of entry {}", entry.getId());
+            }
         }
 
         return true;
