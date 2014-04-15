@@ -48,6 +48,7 @@ def dev_unix():
     env.demo_data_root = "/opt/rinfo/demo-depots"
     # Varnish
     env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = "127.0.0.1"
     # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
@@ -85,6 +86,7 @@ def demo():
     env.demo_data_root = "/opt/rinfo/demo-depots"
     # Varnish
     env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = "127.0.0.1"
     # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
@@ -122,6 +124,7 @@ def test():
     env.demo_data_root = "/opt/rinfo/demo-depots"
     # Varnish
     env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = "127.0.0.1"
     # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
@@ -191,8 +194,9 @@ def beta():
     env.rinfo_main_store = "/opt/rinfo/store"
     env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
     env.demo_data_root = "/opt/rinfo/demo-depots"
-    # Varnish
+    # Varnish, if installing distributed make sure listen_ip_varnish is empty (listen to all interfaces)
     env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = ""
     # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
@@ -374,6 +378,7 @@ def prod():
     env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
     # Varnish
     env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = ""
     # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
@@ -388,7 +393,7 @@ def prod():
 def _tomcat_env():
     env.apache_jk_tomcat = True
     # when change version of tomcat, must check server.xml (../../sysconf/common/tomcat/server.xml)
-    env.tomcat_version = "7.0.52"
+    env.tomcat_version = "7.0.53"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
     env.tomcat_start = '/etc/init.d/tomcat start'

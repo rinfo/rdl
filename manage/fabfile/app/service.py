@@ -203,7 +203,7 @@ def stop_varnish():
 @roles('service')
 def start_varnish():
     _needs_targetenv()
-    sudo("varnishd -a 127.0.0.1:8383 -T 127.0.0.1:6082 -s file,%(workdir_varnish)s/cache,1G -p vcl_dir=%(workdir_varnish)s -f %(workdir_varnish)s/rinfo-service.vcl" % env)
+    sudo("varnishd -a %(listen_ip_varnish)s:8383 -T 127.0.0.1:6082 -s file,%(workdir_varnish)s/cache,1G -p vcl_dir=%(workdir_varnish)s -f %(workdir_varnish)s/rinfo-service.vcl" % env)
 
 
 
