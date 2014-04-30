@@ -75,7 +75,7 @@ def test():
     _needs_targetenv()
     admin_url = "http://%s/feed/current" % env.roledefs['main'][0]
     if not verify_url_content(admin_url,"<uri>http://rinfo.lagrummet.se/</uri>"):
-        raise
+        raise Exception("Test failed")
 
 @task
 @roles('main')
@@ -84,7 +84,7 @@ def ping_start_collect_admin():
     feed_url = "http://%s/admin/feed/current.atom" % env.roledefs['demosource'][0]
     collector_url = "http://%s/collector" % env.roledefs['main'][0]
     if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s"%vars(),"Scheduled collect of"):
-        raise
+        raise Exception("Test failed")
 
 @task
 @roles('main')
@@ -93,14 +93,12 @@ def ping_start_collect_feed():
     feed_url = "http://%s/admin/current.atom" % env.roledefs['demosource'][0]
     collector_url = "http://%s/collector" % env.roledefs['main'][0]
     if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s"%vars(),"Scheduled collect of"):
-        raise
-
-
+        raise Exception("Test failed")
 
 @task
 @roles('main')
 def clean():
-    """ Cleans checker from system. Will assume tomcat is inactive """
+    """ Cleans main from system """
     tomcat_stop()
     sudo("rm -rf %(tomcat_webapps)s/rinfo-main" % venv())
     sudo("rm -rf %(tomcat_webapps)s/rinfo-main.war" % venv())
@@ -118,7 +116,7 @@ def test_all():
     try:
         ping_start_collect_admin()
         msg_sleep(10,"collect feed")
-        ping_start_collect_feed
+        ping_start_collect_feed()
         msg_sleep(60,"collect feed")
         test()
     except:

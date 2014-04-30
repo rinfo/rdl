@@ -63,7 +63,7 @@ def test():
     admin_url = "http://%s/" % env.roledefs['admin'][0]
     #respHttp = local("curl %(admin_url)s"%vars(), capture=True)
     if not verify_url_content(admin_url,"folder.gif"):
-        raise
+        raise Exception("Test failed")
 
 @task
 @roles('admin')

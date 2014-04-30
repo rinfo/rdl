@@ -52,7 +52,7 @@ def test():
     """Test functions of checker"""
     admin_url = "http://%s/" % env.roledefs['checker'][0]
     if not verify_url_content(admin_url,"<h1>RInfo Checker"):
-        raise
+        raise Exception("Test failed")
 
 @task
 @roles('checker')

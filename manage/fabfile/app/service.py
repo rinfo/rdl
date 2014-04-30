@@ -213,7 +213,7 @@ def test():
     _needs_targetenv()
     admin_url = "http://%s/ui/" % env.roledefs['service'][0]
     if not verify_url_content(admin_url,"RInfo Service"):
-        raise
+        raise Exception("Test failed")
 
 @task
 @roles('service')
@@ -222,7 +222,7 @@ def ping_start_collect():
     feed_url = "http://%s/feed/current.atom" % env.roledefs['demosource'][0]
     collector_url = "http://%s/collector" % env.roledefs['service'][0]
     if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s"%vars(),"Scheduled collect of"):
-        raise
+        raise Exception("Test failed")
 
 @task
 @roles('service')
