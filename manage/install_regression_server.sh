@@ -1,4 +1,5 @@
-# Installs all necessary compontents for a server to act as a regression test server 
+#!/bin/sh
+# Installs all necessary compontents for a server to act as a regression test server
 
 echo "Enter sudo password: "
 read pwd

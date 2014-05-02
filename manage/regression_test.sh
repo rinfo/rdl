@@ -1,3 +1,4 @@
+#!/bin/sh
 # Test site regression style
 # This setup is thought to be run periodically possibly triggered from soruce code change/checkin/commit
 # Must run "install_regression_server.sh" first to prepare server

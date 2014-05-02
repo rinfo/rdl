@@ -1,4 +1,5 @@
-# Prepare remote server for fabric installation 
+#!/bin/sh
+# Prepare remote server for fabric installation
 # Copy the contents of this script into a shell script file and remember to make it executable. Then run it.
 
 # Install rinfo user and sudo

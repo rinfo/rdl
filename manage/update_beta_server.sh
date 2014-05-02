@@ -1,3 +1,4 @@
+#!/bin/sh
 if [ -z "$PW_RINFO" ]; then
 	echo "Enter sudo password: "
 	read PW_RINFO
