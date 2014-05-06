@@ -60,10 +60,15 @@ def all(source=None):
 @roles('admin')
 def test():
     """Http request to test admin is up and running correctly"""
-    admin_url = "http://%s/" % env.roledefs['admin'][0]
+    #admin_url = "http://%s/" % env.roledefs['admin'][0]
     #respHttp = local("curl %(admin_url)s"%vars(), capture=True)
-    if not verify_url_content(admin_url,"folder.gif"):
-        raise Exception("Test failed")
+    #if not verify_url_content(admin_url,"folder.gif"):
+    #    raise Exception("Test failed")
+    if env.target=='regression':
+        with lcd(env.projectroot+"/packages/java/rinfo-base/src/regression"):
+            local("casperjs test . --xunit=%(projectroot)s/testreport/admin_test_report.log" % env)
+    else:
+        raise Exception("Not tests available for other targets than regression")
 
 @task
 @roles('admin')
@@ -78,6 +83,8 @@ def ping_main():
     feed_url = "http://%s/feed/current" % env.roledefs['admin'][0]
     collector_url = "http://%s/collector" % env.roledefs['main'][0]
     print local("curl --data 'feed=%(feed_url)s' %(collector_url)s"%vars())
+
+    http://regression.testfeed.lagrummet.se/admin/current.atom
 
 @task
 @roles('admin')
