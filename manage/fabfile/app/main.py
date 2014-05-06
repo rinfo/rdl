@@ -90,7 +90,7 @@ def ping_start_collect_admin():
 @roles('main')
 def ping_start_collect_feed():
     _needs_targetenv()
-    feed_url = "http://%s/admin/current.atom" % env.roledefs['demosource'][0]
+    feed_url = "http://%s/feed/current.atom" % env.roledefs['demosource'][0]
     collector_url = "http://%s/collector" % env.roledefs['main'][0]
     if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s"%vars(),"Scheduled collect of"):
         raise Exception("Test failed")
