@@ -84,8 +84,6 @@ def ping_main():
     collector_url = "http://%s/collector" % env.roledefs['main'][0]
     print local("curl --data 'feed=%(feed_url)s' %(collector_url)s"%vars())
 
-    http://regression.testfeed.lagrummet.se/admin/current.atom
-
 @task
 @roles('admin')
 def test_all():
