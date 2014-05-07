@@ -8,21 +8,21 @@ casper.on('page.error', function(msg, trace) {
    }
 });
 casper.test.begin('Positive test base', function(test) {
-   casper.start('http://demo.lagrummet.se/');
-   casper.waitForSelector("article h1",
+   casper.start('http://admin.regression.lagrummet.se/');
+   casper.waitForSelector("title",
        function success() {
-           test.assertExists("article h1");
-           this.click("article h1");
+           test.assertExists("title");
+           this.click("title");
        },
        function fail() {
-           test.assertExists("article h1");
+           test.assertExists("title");
    });
-   casper.waitForSelector(x("//*[contains(text(), \'TESTVERSION\')]"),
+   casper.waitForSelector(x("//*[contains(text(), \'Index\')]"),
        function success() {
-           test.assertExists(x("//*[contains(text(), \'TESTVERSION\')]"));
+           test.assertExists(x("//*[contains(text(), \'Index\')]"));
          },
        function fail() {
-           test.assertExists(x("//*[contains(text(), \'TESTVERSION\')]"));
+           test.assertExists(x("//*[contains(text(), \'Index\')]"));
    });
 
    casper.run(function() {test.done();});
