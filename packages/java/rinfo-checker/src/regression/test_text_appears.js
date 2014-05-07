@@ -1,5 +1,4 @@
 var x = require('casper').selectXPath;
-casper.options.viewportSize = {width: 1855, height: 968};
 casper.on('page.error', function(msg, trace) {
    this.echo('Error: ' + msg, 'ERROR');
    for(var i=0; i<trace.length; i++) {
@@ -7,22 +6,14 @@ casper.on('page.error', function(msg, trace) {
        this.echo('   ' + step.file + ' (line ' + step.line + ')', 'ERROR');
    }
 });
-casper.test.begin('Positive test checker', function(test) {
-   casper.start('http://demo.lagrummet.se/');
-   casper.waitForSelector("article h1",
+casper.test.begin('Failing test for correct title', function(test) {
+   casper.start('http://checker.regression.lagrummet.se/');
+   casper.waitForSelector(x("//*[contains(text(), \'RInfo CheckerXXX\')]"),
        function success() {
-           test.assertExists("article h1");
-           this.click("article h1");
-       },
-       function fail() {
-           test.assertExists("article h1");
-   });
-   casper.waitForSelector(x("//*[contains(text(), \'TESTVERSION\')]"),
-       function success() {
-           test.assertExists(x("//*[contains(text(), \'TESTVERSION\')]"));
+           test.assertExists(x("//*[contains(text(), \'RInfo CheckerXXX\')]"));
          },
        function fail() {
-           test.assertExists(x("//*[contains(text(), \'TESTVERSION\')]"));
+           test.assertExists(x("//*[contains(text(), \'RInfo CheckerXXX\')]"));
    });
 
    casper.run(function() {test.done();});
