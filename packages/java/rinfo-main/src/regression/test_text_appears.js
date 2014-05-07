@@ -7,22 +7,31 @@ casper.on('page.error', function(msg, trace) {
        this.echo('   ' + step.file + ' (line ' + step.line + ')', 'ERROR');
    }
 });
+
 casper.test.begin('Positive test main', function(test) {
-   casper.start('http://demo.lagrummet.se/');
-   casper.waitForSelector("article h1",
+    casper.start().then(function() {
+        this.open('http://rinfo.beta.lagrummet.se/feed/current', {
+            method: 'get',
+            headers: {
+                'Accept': 'application/atom+xml'
+            }
+        });
+    });
+
+   casper.waitForSelector("author",
        function success() {
-           test.assertExists("article h1");
-           this.click("article h1");
+           test.assertExists("author");
+           this.click("author");
        },
        function fail() {
-           test.assertExists("article h1");
+           test.assertExists("author");
    });
-   casper.waitForSelector(x("//*[contains(text(), \'TESTVERSION\')]"),
+   casper.waitForSelector(x("//*[contains(text(), \'Rättsinformationssystemet\')]"),
        function success() {
-           test.assertExists(x("//*[contains(text(), \'TESTVERSION\')]"));
+           test.assertExists(x("//*[contains(text(), \'Rättsinformationssystemet\')]"));
          },
        function fail() {
-           test.assertExists(x("//*[contains(text(), \'TESTVERSION\')]"));
+           test.assertExists(x("//*[contains(text(), \'Rättsinformationssystemet\')]"));
    });
 
    casper.run(function() {test.done();});
