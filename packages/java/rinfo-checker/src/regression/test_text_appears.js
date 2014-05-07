@@ -8,12 +8,12 @@ casper.on('page.error', function(msg, trace) {
 });
 casper.test.begin('Failing test for correct title', function(test) {
    casper.start('http://checker.regression.lagrummet.se/');
-   casper.waitForSelector(x("//*[contains(text(), \'RInfo CheckerXXX\')]"),
+   casper.waitForSelector(x("//*[contains(text(), \'RInfo Checker\')]"),
        function success() {
-           test.assertExists(x("//*[contains(text(), \'RInfo CheckerXXX\')]"));
+           test.assertExists(x("//*[contains(text(), \'RInfo Checker\')]"));
          },
        function fail() {
-           test.assertExists(x("//*[contains(text(), \'RInfo CheckerXXX\')]"));
+           test.assertExists(x("//*[contains(text(), \'RInfo Checker\')]"));
    });
 
    casper.run(function() {test.done();});
