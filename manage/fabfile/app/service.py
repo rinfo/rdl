@@ -211,9 +211,14 @@ def start_varnish():
 @roles('service')
 def test():
     _needs_targetenv()
-    admin_url = "http://%s/ui/" % env.roledefs['service'][0]
-    if not verify_url_content(admin_url,"RInfo Service"):
-        raise Exception("Test failed")
+    #admin_url = "http://%s/ui/" % env.roledefs['service'][0]
+    #if not verify_url_content(admin_url,"RInfo Service"):
+    #   raise Exception("Test failed")
+    if env.target=='regression':
+        with lcd(env.projectroot+"/packages/java/rinfo-service/src/regression"):
+            local("casperjs test . --xunit=%(projectroot)s/testreport/service_test_report.log" % env)
+    else:
+        raise Exception("Not tests available for other targets than regression")
 
 @task
 @roles('service')

@@ -7,7 +7,7 @@ casper.on('page.error', function(msg, trace) {
        this.echo('   ' + step.file + ' (line ' + step.line + ')', 'ERROR');
    }
 });
-casper.test.begin('Positive test base', function(test) {
+casper.test.begin('Positive test main', function(test) {
    casper.start('http://demo.lagrummet.se/');
    casper.waitForSelector("article h1",
        function success() {
