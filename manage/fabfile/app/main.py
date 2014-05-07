@@ -22,7 +22,7 @@ from admin import ping_main
 @runs_once
 def package(deps="1", test="1"):
     """Builds and packages the rinfo-main war, configured for the target env."""
-    if int(deps): local_lib_rinfo_pkg()
+    if int(deps): local_lib_rinfo_pkg(test)
     _needs_targetenv()
     flags = "" if int(test) else "-Dmaven.test.skip=true"
     local("cd %(java_packages)s/rinfo-main/ && "

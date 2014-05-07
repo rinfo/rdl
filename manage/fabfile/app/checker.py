@@ -18,7 +18,7 @@ from fabfile.util import verify_url_content
 @task
 @runs_once
 def package(deps="1", test="1"):
-    if int(deps): local_lib_rinfo_pkg()
+    if int(deps): local_lib_rinfo_pkg(test)
     _needs_targetenv()
     flags = "" if int(test) else "-Dmaven.test.skip=true"
     local("cd %(java_packages)s/rinfo-checker/ && "
