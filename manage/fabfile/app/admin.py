@@ -60,7 +60,7 @@ def all(source=None):
 @roles('admin')
 def test():
     """Http request to test admin is up and running correctly"""
-    url=env.roledefs['admin'][0]
+    url="http:\\"+env.roledefs['admin'][0]
     if env.target=='regression':
         with lcd(env.projectroot+"/packages/java/rinfo-base/src/regression"):
             local("casperjs test . --xunit=%(projectroot)s/testreport/admin_test_report.log --url=%(url)s --target=%(target)s" % venv())

@@ -50,7 +50,7 @@ def all(deps="1", test="1", headless="0"):
 @roles('checker')
 def test():
     """Test functions of checker"""
-    url=env.roledefs['checker'][0]
+    url="http:\\"+env.roledefs['checker'][0]
     if env.target=='regression':
         with lcd(env.projectroot+"/packages/java/rinfo-checker/src/regression"):
             local("casperjs test . --xunit=%(projectroot)s/testreport/checker_test_report.log --url=%(url)s --target=%(target)s" % venv())

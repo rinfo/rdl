@@ -73,7 +73,7 @@ def all(deps="1", test="1", headless="0"):
 @roles('main')
 def test():
     _needs_targetenv()
-    url=env.roledefs['main'][0]
+    url="http:\\"+env.roledefs['main'][0]
     if env.target=='regression':
         with lcd(env.projectroot+"/packages/java/rinfo-main/src/regression"):
             local("casperjs test . --xunit=%(projectroot)s/testreport/main_test_report.log --url=%(url)s --target=%(target)s" % venv())
