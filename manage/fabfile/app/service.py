@@ -211,9 +211,6 @@ def start_varnish():
 @roles('service')
 def test():
     _needs_targetenv()
-    #admin_url = "http://%s/ui/" % env.roledefs['service'][0]
-    #if not verify_url_content(admin_url,"RInfo Service"):
-    #   raise Exception("Test failed")
     url=env.roledefs['service'][0]
     if env.target=='regression':
         with lcd(env.projectroot+"/packages/java/rinfo-service/src/regression"):

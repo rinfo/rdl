@@ -60,10 +60,6 @@ def all(source=None):
 @roles('admin')
 def test():
     """Http request to test admin is up and running correctly"""
-    #admin_url = "http://%s/" % env.roledefs['admin'][0]
-    #respHttp = local("curl %(admin_url)s"%vars(), capture=True)
-    #if not verify_url_content(admin_url,"folder.gif"):
-    #    raise Exception("Test failed")
     url=env.roledefs['admin'][0]
     if env.target=='regression':
         with lcd(env.projectroot+"/packages/java/rinfo-base/src/regression"):

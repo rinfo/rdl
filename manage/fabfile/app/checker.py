@@ -50,9 +50,6 @@ def all(deps="1", test="1", headless="0"):
 @roles('checker')
 def test():
     """Test functions of checker"""
-    #admin_url = "http://%s/" % env.roledefs['checker'][0]
-    #if not verify_url_content(admin_url,"<h1>RInfo Checker"):
-    #    raise Exception("Test failed")
     url=env.roledefs['checker'][0]
     if env.target=='regression':
         with lcd(env.projectroot+"/packages/java/rinfo-checker/src/regression"):

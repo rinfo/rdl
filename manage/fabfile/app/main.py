@@ -73,9 +73,6 @@ def all(deps="1", test="1", headless="0"):
 @roles('main')
 def test():
     _needs_targetenv()
-    #admin_url = "http://%s/feed/current" % env.roledefs['main'][0]
-    #if not verify_url_content(admin_url,"<uri>http://rinfo.lagrummet.se/</uri>"):
-    #    raise Exception("Test failed")
     url=env.roledefs['main'][0]
     if env.target=='regression':
         with lcd(env.projectroot+"/packages/java/rinfo-main/src/regression"):
