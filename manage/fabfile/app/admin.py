@@ -64,9 +64,10 @@ def test():
     #respHttp = local("curl %(admin_url)s"%vars(), capture=True)
     #if not verify_url_content(admin_url,"folder.gif"):
     #    raise Exception("Test failed")
+    url=env.roledefs['admin'][0]
     if env.target=='regression':
         with lcd(env.projectroot+"/packages/java/rinfo-base/src/regression"):
-            local("casperjs test . --xunit=%(projectroot)s/testreport/admin_test_report.log" % env)
+            local("casperjs test . --xunit=%(projectroot)s/testreport/admin_test_report.log --url=%(url)s --target=%(target)s" % venv())
     else:
         raise Exception("Not tests available for other targets than regression")
 

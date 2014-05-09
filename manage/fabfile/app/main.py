@@ -76,9 +76,10 @@ def test():
     #admin_url = "http://%s/feed/current" % env.roledefs['main'][0]
     #if not verify_url_content(admin_url,"<uri>http://rinfo.lagrummet.se/</uri>"):
     #    raise Exception("Test failed")
+    url=env.roledefs['main'][0]
     if env.target=='regression':
         with lcd(env.projectroot+"/packages/java/rinfo-main/src/regression"):
-            local("casperjs test . --xunit=%(projectroot)s/testreport/main_test_report.log" % env)
+            local("casperjs test . --xunit=%(projectroot)s/testreport/main_test_report.log --url=%(url)s --target=%(target)s" % venv())
     else:
         raise Exception("Not tests available for other targets than regression")
 
