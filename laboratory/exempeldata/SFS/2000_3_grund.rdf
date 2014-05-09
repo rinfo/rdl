@@ -1,0 +1,38 @@
+<!-- 
+Exempel på RDF/XML - grunddokument innehållandes det konsolideringen förväntas innehålla.
+Ser samma struktur efter import som xhtml+RDFa i de konsoliderade dokumenten
+(exemplet är ej helt verkligt - saknade fält är påhittade)
+-->
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rdf:RDF xmlns:dct="http://purl.org/dc/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:rpubl="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#">
+	<rdf:Description rdf:about="http://rinfo.lagrummet.se/publ/sfs/2000:3">
+		<rdf:type rdf:resource="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#Forordning"/>
+		<!-- dct:issued ska göras icke obligatoriskt -->
+		<dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2000-01-13</dct:issued>
+		<rpubl:forfattningssamling rdf:resource="http://rinfo.lagrummet.se/serie/fs/sfs"/>
+		<dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
+		<rpubl:beslutadAv rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
+		<!-- rpubl:bemyndigande ska göras icke obligatoriskt, eller bara obligatoriskt för myndigheter -->
+		<rpubl:bemyndigande rdf:resource="http://rinfo.lagrummet.se/org/regeringskansliet"/>
+		<dct:identifier xml:lang="sv">SFS 2000:3</dct:identifier>
+		<dct:title xml:lang="sv">Förordning (2000:3) om gränstullsamarbete med Finland</dct:title>
+		<rpubl:arsutgava>2000</rpubl:arsutgava>
+		<rpubl:lopnummer>3</rpubl:lopnummer>
+		<rpubl:departement>
+			<rdf:Description>
+				<rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization" />
+				<foaf:name xml:lang="sv">Finansdepartementet_S3</foaf:name>
+			</rdf:Description>
+		</rpubl:departement>
+		<rpubl:utfardandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2000-01-13</rpubl:utfardandedatum>
+		<rpubl:ikrafttradandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2000-02-01</rpubl:ikrafttradandedatum>
+		<!-- exempel på förarbeten -->
+		<rpubl:forarbete>
+			<rdf:Description>
+				<dct:identifier xml:lang="sv">Prop. 2005/06:64</dct:identifier>
+				<dct:identifier xml:lang="sv">bet. 2005/06:SoU16</dct:identifier>
+				<dct:identifier xml:lang="sv">rskr. 2005/06:219</dct:identifier>
+			</rdf:Description>
+		</rpubl:forarbete>
+	</rdf:Description>
+</rdf:RDF>
