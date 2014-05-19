@@ -70,7 +70,7 @@ def clean():
 @task
 @roles('admin')
 def test_all():
-    all(test="0")
+    all(deps=0,test="0")
     restart_apache()
     restart_tomcat()
     msg_sleep(10,"restart and tomcat apache")

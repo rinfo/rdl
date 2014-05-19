@@ -1,5 +1,4 @@
 var x = require('casper').selectXPath;
-casper.options.viewportSize = {width: 1855, height: 968};
 casper.on('page.error', function(msg, trace) {
    this.echo('Error: ' + msg, 'ERROR');
    for(var i=0; i<trace.length; i++) {
@@ -8,7 +7,7 @@ casper.on('page.error', function(msg, trace) {
    }
 });
 
-casper.test.begin('Positive test main', function(test) {
+casper.test.begin('Check admin feed exists', function(test) {
     casper.start().then(function() {
         this.open('http://rinfo.beta.lagrummet.se/feed/current', {
             method: 'get',

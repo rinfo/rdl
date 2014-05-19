@@ -7,7 +7,7 @@ casper.on('page.error', function(msg, trace) {
    }
 });
 casper.test.begin('Failing test for correct title', function(test) {
-   casper.start('http://service.regression.lagrummet.se/ui/');
+   casper.start(casper.cli.get("url")+'/ui/'); //TODO initial slash in 'ui' should not be necessary here
    casper.waitForSelector(x("//*[contains(text(), \'RInfo Service UI\')]"),
        function success() {
            test.assertExists(x("//*[contains(text(), \'RInfo Service UI\')]"));

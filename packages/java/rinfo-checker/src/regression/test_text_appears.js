@@ -6,8 +6,8 @@ casper.on('page.error', function(msg, trace) {
        this.echo('   ' + step.file + ' (line ' + step.line + ')', 'ERROR');
    }
 });
-casper.test.begin('Failing test for correct title', function(test) {
-   casper.start('http://checker.regression.lagrummet.se/');
+casper.test.begin('Check for Checker page title', function(test) {
+   casper.start(casper.cli.get("url"));
    casper.waitForSelector(x("//*[contains(text(), \'RInfo Checker\')]"),
        function success() {
            test.assertExists(x("//*[contains(text(), \'RInfo Checker\')]"));

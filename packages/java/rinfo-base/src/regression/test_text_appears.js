@@ -8,7 +8,6 @@ casper.on('page.error', function(msg, trace) {
    }
 });
 casper.test.begin('Positive test base', function(test) {
-   //casper.start('http://admin.regression.lagrummet.se/');
    casper.start(casper.cli.get("url"));
    casper.waitForSelector("title",
        function success() {
