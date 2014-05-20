@@ -1,0 +1,9 @@
+# For information on supported formats and syntax for the config file, see
+# <http://elasticsearch.org/guide/en/elasticsearch/reference/current/setup-configuration.html>
+
+#to avoid RCE..
+script.disable_dynamic: true
+network.host: "127.0.0.1"
+
+#if we need to cluster, add discovery.zen.ping.unicast.hosts
+discovery.zen.ping.multicast.enabled: false

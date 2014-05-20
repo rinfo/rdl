@@ -145,6 +145,7 @@ def install_elasticsearch():
         if exists("elasticsearch"):
             sudo("rm elasticsearch")
         sudo("ln -s elasticsearch-%(version)s elasticsearch" % vars())
+        put(p.join(env.manageroot, "sysconf", "common", "elasticsearch", "elasticsearch.yml"), "elasticsearch/config", use_sudo=True)
         sysconf.install_init_d("elasticsearch")
 
 def fetch_elasticsearch():
