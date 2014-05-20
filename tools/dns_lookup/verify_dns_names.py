@@ -1,27 +1,32 @@
 import socket
 import sys
 
-lookup_name = {'94.247.169.67': ['demo.lagrummet.se',
-                                                  '+.demo.lagrummet.se'],
+lookup_name = {
+               # demo
+               '94.247.169.67': ['demo.lagrummet.se',
+                                 '+.demo.lagrummet.se'],
+               '83.145.60.248':  ['www.demo.lagrummet.se'],
+
+               # test
                '109.74.8.123':  ['test.lagrummet.se',
-                                                  '+.test.lagrummet.se'],
+                                 '+.test.lagrummet.se'],
                # beta
                '46.21.106.19':  ['beta.lagrummet.se',
-                                                  'www.beta.lagrummet.se'],
+                                 'www.beta.lagrummet.se'],
                '46.21.106.52':  ['rinfo.beta.lagrummet.se'],
                '46.21.106.27':  ['admin.beta.lagrummet.se'],
-               '46.21.106.155':  ['service.beta.lagrummet.se'],
-               '46.21.106.120':  ['checker.beta.lagrummet.se'],
+               '46.21.106.155': ['service.beta.lagrummet.se'],
+               '46.21.106.120': ['checker.beta.lagrummet.se'],
 
                # regression
                '46.21.106.35':  ['regression.lagrummet.se',
-                                                  '+.regression.lagrummet.se'],
+                                 '+.regression.lagrummet.se'],
 
                # Negative test. Lookop should fail
                '109.74.8.1':    ['-not.lagrummet.se'],
               }
 
-rinfo_names = ('www', 'rinfo', 'admin', 'service', 'checker')
+rinfo_names = ('rinfo', 'admin', 'service', 'checker')
 
 any_names = ('rinfo', 'admin', 'www', 'ds', 'service', 'checker', 'a')
 
@@ -37,23 +42,14 @@ def check_dns_name(host_name, ip, fail=False):
         looked_up_ip = socket.gethostbyname(host_name)
     except:
         pass
-        #e = sys.exc_info()[0]
-        #print ('Failed to lookup %s ip %s because %s' % (host_name, ip ,e ) )
-        #if not fail:
-        #    success = False
     if fail:
         if looked_up_ip == ip:
             print('Lookup failed for "%s". Should not be %s' % (host_name, ip) )
             success = False
-        #else:
-        #    print('Lookup ok for "%s". Was %s' % (host_name, ip) )
         return
-
     if looked_up_ip != ip:
         print('Lookup failed for "%s". Should be %s, but was %s' % (host_name, ip, looked_up_ip) )
         success = False
-    #else:
-    #    print('Lookup ok for "%s". Was %s' % (host_name, ip) )
 
 for ip in lookup_name.keys():
     for host_name in lookup_name[ip]:
