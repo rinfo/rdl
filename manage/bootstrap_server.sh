@@ -16,5 +16,11 @@ scp ~/.ssh/id_rsa.pub rinfo@$1:.
 ssh rinfo@$1 'cat id_rsa.pub >> .ssh/authorized_keys'
 ssh rinfo@$1 rm id_rsa.pub
 
+if [ -f ~/.ssh/jenkins_id_rsa.pub ]
+then
+    scp ~/.ssh/jenkins_id_rsa.pub rinfo@$1:.
+    ssh rinfo@$1 'cat jenkins_id_rsa.pub >> .ssh/authorized_keys'
+    ssh rinfo@$1 rm jenkins_id_rsa.pub
+fi
 
 
