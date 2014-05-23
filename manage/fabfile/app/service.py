@@ -223,7 +223,8 @@ def test():
 @roles('service')
 def ping_start_collect():
     _needs_targetenv()
-    feed_url = "http://%s/feed/current.atom" % env.roledefs['demosource'][0]
+    print ('http://rinfo.regression.lagrummet.se/feed/current')
+    feed_url = "http://%s/feed/current" % env.roledefs['main'][0]
     collector_url = "http://%s/collector" % env.roledefs['service'][0]
     if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s"%vars(),"Scheduled collect of"):
         raise Exception("Test failed")
@@ -233,12 +234,12 @@ def ping_start_collect():
 def clean():
     """ Cleans checker from system. Will assume tomcat is inactive """
     tomcat_stop()
-    sudo("rm -rf %(tomcat_webapps)s/rinfo-service" % venv())
-    sudo("rm -rf %(tomcat_webapps)s/rinfo-service.war" % venv())
+    #sudo("rm -rf %(tomcat_webapps)s/rinfo-service" % venv())
+    #sudo("rm -rf %(tomcat_webapps)s/rinfo-service.war" % venv())
     sudo("rm -rf %(tomcat)s/logs/rinfo-service*.*" % venv())
     tomcat_start()
-    msg_sleep(10,"Wait for tomcat start")
-    run("curl -XPOST http://localhost:8080/sesame-workbench/repositories/rinfo/clear")
+    #msg_sleep(10,"Wait for tomcat start")
+    #run("curl -XPOST http://localhost:8080/sesame-workbench/repositories/rinfo/clear")
 
 @task
 @roles('service')

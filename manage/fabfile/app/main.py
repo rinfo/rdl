@@ -85,7 +85,7 @@ def test():
 @roles('main')
 def ping_start_collect_admin():
     _needs_targetenv()
-    feed_url = "http://%s/admin/feed/current.atom" % env.roledefs['demosource'][0]
+    feed_url = "http://%s/feed/current.atom" % env.roledefs['demosource'][0]
     collector_url = "http://%s/collector" % env.roledefs['main'][0]
     if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s"%vars(),"Scheduled collect of"):
         raise Exception("Test failed")
@@ -104,24 +104,41 @@ def ping_start_collect_feed():
 def clean():
     """ Cleans main from system """
     tomcat_stop()
-    sudo("rm -rf %(tomcat_webapps)s/rinfo-main" % venv())
-    sudo("rm -rf %(tomcat_webapps)s/rinfo-main.war" % venv())
+    #sudo("rm -rf %(tomcat_webapps)s/rinfo-main" % venv())
+    #sudo("rm -rf %(tomcat_webapps)s/rinfo-main.war" % venv())
     sudo("rm -rf %(tomcat)s/logs/rinfo-main*.*" % venv())
-    sudo("rm -rf %(rinfo_main_store)s/" % venv())
+    #sudo("rm -rf %(rinfo_main_store)s/" % venv())
     tomcat_start()
+
+@task
+@roles('main')
+def install_regression_data(restart_tomcat=True):
+    """ Cleans main from system """
+    if restart_tomcat:
+        tomcat_stop()
+    sudo("rm -rf %(rinfo_main_store)s/" % venv())
+    sudo("mkdir %(rinfo_main_store)s/" % venv())
+    with lcd("%(rinfo_main_store)s/" % venv()):
+        sudo("tar xzvf /home/%(user)s/regression_test_data/rinfo_store.tar.gz" % venv())
+        sudo("chown tomcat:root -R %(rinfo_main_store)s/" % venv())
+    if restart_tomcat:
+        tomcat_start()
 
 @task
 @roles('main')
 def test_all():
     all(deps=0,test="0")
     restart_apache()
+    #if env.target=='regression':
+    #    install_regression_data()
+    #else:
     restart_tomcat()
     msg_sleep(15,"restart apache, tomcat and wait for service to start")
     try:
-        ping_start_collect_admin()
-        msg_sleep(10,"collect feed")
-        ping_start_collect_feed()
-        msg_sleep(60,"collect feed")
+        #ping_start_collect_admin()
+        #msg_sleep(10,"collect feed")
+        #ping_start_collect_feed()
+        #msg_sleep(60,"collect feed")
         test()
     except:
         e = sys.exc_info()[0]
