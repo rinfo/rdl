@@ -149,7 +149,7 @@ def regression():
         'service': ['service.regression.lagrummet.se'],
         'checker': ['checker.regression.lagrummet.se'],
         'admin': ['admin.regression.lagrummet.se'],
-        'demosource': ['regression.testfeed.lagrummet.se'],
+        'demosource': ['v1.admin.regression.testfeed.lagrummet.se'],
         'lagrummet': ['regression.lagrummet.se'],
     }
     # Manage

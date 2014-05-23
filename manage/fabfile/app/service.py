@@ -238,7 +238,7 @@ def clean():
     sudo("rm -rf %(tomcat)s/logs/rinfo-service*.*" % venv())
     tomcat_start()
     msg_sleep(10,"Wait for tomcat start")
-    run("curl -XPOST http://localhost:8080/sesame-workbench/repositories/rinfo/clear")
+    #run("curl -XPOST http://localhost:8080/sesame-workbench/repositories/rinfo/clear")
 
 @task
 @roles('service')
