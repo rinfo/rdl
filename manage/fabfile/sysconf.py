@@ -27,6 +27,7 @@ from fabfile.util import mkdirpath, slashed
 
 @task
 def configure_server():
+    secure_sshd()
     _sync_workdir()
     sync_static_web()
     configure_app_container()
@@ -120,4 +121,8 @@ def fetch_tomcat_dist():
     workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
     with cd(workdir_tomcat):
         run("bash %(mgr_workdir)s/install/2_get-tomcat.sh %(tomcat_version)s" % env)
+
+def secure_sshd():
+    sudo("sed -i 's/^#PermitRootLogin yes/PermitRootLogin no/;s/PermitRootLogin yes/PermitRootLogin no/;s/^#PermitEmptyPasswords yes/PermitEmptyPasswords no/;s/PermitEmptyPasswords yes/PermitEmptyPasswords no/;s/^#X11Forwarding yes/X11Forwarding no/;s/X11Forwarding yes/X11Forwarding no/' /etc/ssh/sshd_config")
+    sudo("/etc/init.d/ssh restart")
 
