@@ -104,8 +104,8 @@ def ping_start_collect_feed():
 def clean():
     """ Cleans main from system """
     tomcat_stop()
-    sudo("rm -rf %(tomcat_webapps)s/rinfo-main" % venv())
-    sudo("rm -rf %(tomcat_webapps)s/rinfo-main.war" % venv())
+    #sudo("rm -rf %(tomcat_webapps)s/rinfo-main" % venv())
+    #sudo("rm -rf %(tomcat_webapps)s/rinfo-main.war" % venv())
     sudo("rm -rf %(tomcat)s/logs/rinfo-main*.*" % venv())
     #sudo("rm -rf %(rinfo_main_store)s/" % venv())
     tomcat_start()
@@ -129,16 +129,16 @@ def install_regression_data(restart_tomcat=True):
 def test_all():
     all(deps=0,test="0")
     restart_apache()
-    if env.target=='regression':
-        install_regression_data()
-    else:
-        restart_tomcat()
-        msg_sleep(15,"restart apache, tomcat and wait for service to start")
+    #if env.target=='regression':
+    #    install_regression_data()
+    #else:
+    restart_tomcat()
+    msg_sleep(15,"restart apache, tomcat and wait for service to start")
     try:
-        ping_start_collect_admin()
-        msg_sleep(10,"collect feed")
-        ping_start_collect_feed()
-        msg_sleep(60,"collect feed")
+        #ping_start_collect_admin()
+        #msg_sleep(10,"collect feed")
+        #ping_start_collect_feed()
+        #msg_sleep(60,"collect feed")
         test()
     except:
         e = sys.exc_info()[0]
