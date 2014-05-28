@@ -3,12 +3,14 @@ import sys
 
 lookup_name = {
                # demo
-               '94.247.169.67': ['demo.lagrummet.se',
-                                 '+.demo.lagrummet.se'],
-               '83.145.60.248':  ['www.demo.lagrummet.se'],
+               '46.21.106.37':  ['demo.lagrummet.se'],
+               '46.21.106.39':  ['rinfo.demo.lagrummet.se'],
+               '46.21.106.38':  ['admin.demo.lagrummet.se'],
+               '46.21.106.43':  ['service.demo.lagrummet.se'],
+               '46.21.106.44':  ['checker.demo.lagrummet.se'],
 
                # test
-               '109.74.8.123':  ['test.lagrummet.se',
+               '46.21.106.55':  ['test.lagrummet.se',
                                  '+.test.lagrummet.se'],
                # beta
                '46.21.106.19':  ['beta.lagrummet.se',
