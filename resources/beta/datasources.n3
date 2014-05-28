@@ -41,11 +41,11 @@
             dct:identifier "tag:boverket.se,2009:rinfo:feed"^^xsd:anyURI;
             dct:format "application/atom+xml";
             dct:publisher <http://rinfo.lagrummet.se/org/boverket>
-        ], [
-            iana:current <http://testfeed.lagrummet.se/feed.atom>;
-            dct:identifier "tag:exempelmyndigheten.se,2009:rinfo:feed"^^xsd:anyURI;
-            dct:format "application/rdf+xml";
-            dct:publisher <http://rinfo.lagrummet.se/org/exempelmyndigheten>
+#        ], [
+#            iana:current <http://testfeed.lagrummet.se/feed.atom>;
+#            dct:identifier "tag:exempelmyndigheten.se,2009:rinfo:feed"^^xsd:anyURI;
+#            dct:format "application/rdf+xml";
+#            dct:publisher <http://rinfo.lagrummet.se/org/exempelmyndigheten>
         ], [
             iana:current <http://www.naturvardsverket.se/Cb/NFS-container/Forfattningssamlingens-Postforteckning-ATOM/>;
             dct:identifier "tag:naturvardsverket.se,2011:rinfo:feed"^^xsd:anyURI;
