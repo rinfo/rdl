@@ -51,11 +51,8 @@ def all(deps="1", test="1", headless="0"):
 def test():
     """Test functions of checker"""
     url="http:\\"+env.roledefs['checker'][0]
-    if env.target=='regression':
-        with lcd(env.projectroot+"/packages/java/rinfo-checker/src/regression"):
-            local("casperjs test . --xunit=%(projectroot)s/testreport/checker_test_report.log --url=%(url)s --target=%(target)s" % venv())
-    else:
-        raise Exception("Not tests available for other targets than regression")
+    with lcd(env.projectroot+"/packages/java/rinfo-checker/src/regression"):
+        local("casperjs test . --xunit=%(projectroot)s/testreport/checker_test_report.log --url=%(url)s --target=%(target)s" % venv())
 
 
 @task
