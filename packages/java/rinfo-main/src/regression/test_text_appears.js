@@ -7,9 +7,9 @@ casper.on('page.error', function(msg, trace) {
    }
 });
 
-casper.test.begin('Check admin feed exists', function(test) {
+casper.test.begin('Check main feed exists', function(test) {
     casper.start().then(function() {
-        this.open('http://rinfo.beta.lagrummet.se/feed/current', {
+        this.open(casper.cli.get("url")+'feed/current', {
             method: 'get',
             headers: {
                 'Accept': 'application/atom+xml'
