@@ -78,14 +78,14 @@ casper.test.begin('Test test VA feed that checker finds errors in', function(tes
        function fail() {
            test.assertExists(x("//*[contains(text(), \'Angiven URI matchar inte den URI som beräknats utifrån egenskaper i dokumentet: - 1st\')]"));
    });*/
-   casper.waitForSelector("#filtrera:nth-child(3) span:nth-child(2)",
+   /*casper.waitForSelector("#filtrera:nth-child(3) span:nth-child(2)",
        function success() {
            test.assertExists("#filtrera:nth-child(3) span:nth-child(2)");
            this.click("#filtrera:nth-child(3) span:nth-child(2)");
        },
        function fail() {
            test.assertExists("#filtrera:nth-child(3) span:nth-child(2)");
-   });
+   });*/
    casper.waitForSelector(x("//*[contains(text(), \'Saknar svenskt språkattribut (xml:lang) för egenskap: description - 1st\')]"),
        function success() {
            test.assertExists(x("//*[contains(text(), \'Saknar svenskt språkattribut (xml:lang) för egenskap: description - 1st\')]"));

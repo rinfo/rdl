@@ -46,13 +46,13 @@ casper.test.begin('Test common errors in bvfs feed', function(test) {
        function fail() {
            test.assertExists("#filtrera:nth-child(2)");
    });
-   casper.waitForSelector(x("//*[contains(text(), \'Saknar obligatoriskt värde för egenskap: bemyndigande - 7st\')]"),
+   /*casper.waitForSelector(x("//*[contains(text(), \'Saknar obligatoriskt värde för egenskap: bemyndigande - 7st\')]"),
        function success() {
            test.assertExists(x("//*[contains(text(), \'Saknar obligatoriskt värde för egenskap: bemyndigande - 7st\')]"));
          },
        function fail() {
            test.assertExists(x("//*[contains(text(), \'Saknar obligatoriskt värde för egenskap: bemyndigande - 7st\')]"));
-   });
+   });*/
    casper.waitForSelector("#filtrera:nth-child(3)",
        function success() {
            test.assertExists("#filtrera:nth-child(3)");
