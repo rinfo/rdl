@@ -3,9 +3,6 @@ import sys
 
 lookup_name = {
 
-    # build server
-    '109.74.9.93': ['ci.lagrummet.se'],
-
     # beta
     '46.21.106.19': ['beta.lagrummet.se',
                      'www.beta.lagrummet.se'],
@@ -50,7 +47,7 @@ lookup_name = {
     '83.145.60.248': ['www.lagrummet.se'],
     '94.247.169.66': ['checker.lagrummet.se',
                       'service.lagrummet.se'],
-    
+
     # produktion (miscellaneous)
     '109.74.5.72': ['dokumentation.lagrummet.se']
 }
