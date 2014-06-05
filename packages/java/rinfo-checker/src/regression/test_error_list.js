@@ -61,36 +61,36 @@ casper.test.begin('Test common errors in bvfs feed', function(test) {
        function fail() {
            test.assertExists("#filtrera:nth-child(3)");
    });
-   casper.waitForSelector(x("//*[contains(text(), \'Värdet matchar inte datatyp för egenskap: utkomFranTryck - 1st\')]"),
+   /*casper.waitForSelector(x("//*[contains(text(), \'Värdet matchar inte datatyp för egenskap: utkomFranTryck - 1st\')]"),
        function success() {
            test.assertExists(x("//*[contains(text(), \'Värdet matchar inte datatyp för egenskap: utkomFranTryck - 1st\')]"));
          },
        function fail() {
            test.assertExists(x("//*[contains(text(), \'Värdet matchar inte datatyp för egenskap: utkomFranTryck - 1st\')]"));
-   });
-   casper.waitForSelector("#filtrera:nth-child(4)",
+   });*/
+   /*casper.waitForSelector("#filtrera:nth-child(4)",
        function success() {
            test.assertExists("#filtrera:nth-child(4)");
            this.click("#filtrera:nth-child(4)");
        },
        function fail() {
            test.assertExists("#filtrera:nth-child(4)");
-   });
-   casper.waitForSelector(x("//*[contains(text(), \'Värdet matchar inte datatyp för egenskap: ikrafttradandedatum - 1st\')]"),
+   });*/
+   /*casper.waitForSelector(x("//*[contains(text(), \'Värdet matchar inte datatyp för egenskap: ikrafttradandedatum - 1st\')]"),
        function success() {
            test.assertExists(x("//*[contains(text(), \'Värdet matchar inte datatyp för egenskap: ikrafttradandedatum - 1st\')]"));
          },
        function fail() {
            test.assertExists(x("//*[contains(text(), \'Värdet matchar inte datatyp för egenskap: ikrafttradandedatum - 1st\')]"));
-   });
-   casper.waitForSelector("#filtrera:nth-child(5)",
+   });*/
+   /*casper.waitForSelector("#filtrera:nth-child(5)",
        function success() {
            test.assertExists("#filtrera:nth-child(5)");
            this.click("#filtrera:nth-child(5)");
        },
        function fail() {
            test.assertExists("#filtrera:nth-child(5)");
-   });
+   });*/
    /*casper.waitForSelector(x("//*[contains(text(), \'Angiven URI matchar inte den URI som beräknats utifrån egenskaper i dokumentet: - 2st\')]"),
        function success() {
            test.assertExists(x("//*[contains(text(), \'Angiven URI matchar inte den URI som beräknats utifrån egenskaper i dokumentet: - 2st\')]"));
@@ -98,7 +98,7 @@ casper.test.begin('Test common errors in bvfs feed', function(test) {
        function fail() {
            test.assertExists(x("//*[contains(text(), \'Angiven URI matchar inte den URI som beräknats utifrån egenskaper i dokumentet: - 2st\')]"));
    });*/
-   casper.waitForSelector("#filtrera:nth-child(6)",
+   /*casper.waitForSelector("#filtrera:nth-child(6)",
        function success() {
            test.assertExists("#filtrera:nth-child(6)");
            this.click("#filtrera:nth-child(6)");
@@ -112,7 +112,7 @@ casper.test.begin('Test common errors in bvfs feed', function(test) {
          },
        function fail() {
            test.assertExists(x("//*[contains(text(), \'Övriga - 1st\')]"));
-   });
+   });    */
 
    casper.run(function() {test.done();});
 });
