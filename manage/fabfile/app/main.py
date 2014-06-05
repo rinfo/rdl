@@ -133,7 +133,7 @@ def test_all():
     #    install_regression_data()
     #else:
     restart_tomcat()
-    msg_sleep(15,"restart apache, tomcat and wait for service to start")
+    msg_sleep(60,"restart apache, tomcat and wait for service to start, and depot consistency check")
     try:
         #ping_start_collect_admin()
         #msg_sleep(10,"collect feed")

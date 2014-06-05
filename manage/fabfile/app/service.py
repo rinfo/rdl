@@ -249,8 +249,8 @@ def test_all():
     restart_tomcat()
     msg_sleep(20,"restart apache, tomcat and wait for service to start")
     try:
-        ping_start_collect()
-        msg_sleep(60,"collect feed")
+        #ping_start_collect()
+        #msg_sleep(60,"collect feed")
         test()
     except:
         e = sys.exc_info()[0]
