@@ -219,8 +219,8 @@ class StorageSession {
         // TODO: fail on missing sourceFeed.id..
         viaEntry.setSource(sourceFeed)
         // TODO:IMPROVE: is this way of setting base URI enough?
-        viaEntry.setBaseUri(viaEntry.getSource().getResolvedBaseUri())
-        viaEntry.getSource().setBaseUri(null)
+        viaEntry.setBaseUri(viaEntry.getSource().getResolvedBaseUri() as String)
+        viaEntry.getSource().setBaseUri(null as String)
         OutputStream viaEntryOutStream = depotEntry.getMetaOutputStream(VIA_META_RESOURCE)
         try {
             viaEntry.writeTo(viaEntryOutStream)
