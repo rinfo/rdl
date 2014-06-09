@@ -9,7 +9,7 @@ import org.apache.commons.configuration.DefaultConfigurationBuilder;
 
 import se.lagrummet.rinfo.base.rdf.RDFUtil;
 import se.lagrummet.rinfo.main.Components;
-import static se.lagrummet.rinfo.main.Components.ConfigKey;
+import se.lagrummet.rinfo.main.Components.ConfigKey;
 import se.lagrummet.rinfo.main.storage.StorageHandler;
 import se.lagrummet.rinfo.main.storage.EntryRdfValidatorHandler;
 
