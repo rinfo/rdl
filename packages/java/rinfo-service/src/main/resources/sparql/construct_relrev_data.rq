@@ -93,8 +93,10 @@ CONSTRUCT {
         # Skip if ?current is of a ?type known to have lots of revs
         ?current a ?type .
         FILTER(?type not in (foaf:Organization, bibo:Collection))
-        ?type rdfs:subClassOf+ ?basetype .
-        FILTER(?basetype not in (foaf:Organization, bibo:Collection))
+
+        # Leave this out for now! May be redundant for current use cases.
+        #?type rdfs:subClassOf+ ?basetype .
+        #FILTER(?basetype not in (foaf:Organization, bibo:Collection))
 
         ?revitem ?rev ?current .
 
