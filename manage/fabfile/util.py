@@ -38,3 +38,70 @@ def verify_url_content(url, string_exists_in_content, sleep_time=15, max_retry=3
     print respHttp
     print "#########################################################################################"
     return False
+
+class PrintXml:
+    xml_file = ""
+
+    def __init__(self, file_name):
+        self.xml_file = open(file_name, 'w')
+        self.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+
+    def write(self, text):
+        self.xml_file.write(text)
+        self.xml_file.write("\n")
+
+    def close(self):
+        self.xml_file.close()
+
+class JUnitReportItem:
+    name = ""
+    class_name = ""
+    failure_type = ""
+    failure_description = ""
+
+    def __init__(self, name, class_name, failure_type = "", failure_description = ""):
+        self.name = name
+        self.class_name = class_name
+        self.failure_type = failure_type
+        self.failure_description = failure_description
+
+    def write(self, output):
+        if self.failure_type=="":
+            output.write("  <testcase classname=\"%s\" name=\"%s\"/>" % (self.class_name,self.name) )
+        else:
+            output.write("  <testcase classname=\"%s\" name=\"%s\">" % (self.class_name,self.name) )
+            output.write("    <failure type=\"%s\">%s</failure>" % (self.failure_type,self.failure_description) )
+            output.write("  </testcase>")
+
+class JUnitReport:
+    'Creates a junit xml report'
+
+    items = list()
+
+    def add_test_success(self, name, class_name):
+        self.items.append(JUnitReportItem(name, class_name))
+
+    def add_test_failure(self, name, class_name, failure_type, failure_description):
+        self.items.append(JUnitReportItem(name, class_name, failure_type, failure_description))
+
+    def empty(self):
+        return len(self.items) == 0
+
+    def create_report(self, file_name):
+        if self.empty():
+            return
+        print_xml = PrintXml(file_name)
+        print_xml.write("<testsuite tests=\"%i\">" % (len(self.items)) )
+        for item in self.items:
+            item.write(print_xml)
+        print_xml.write("</testsuite>")
+        print_xml.close()
+
+
+#<testsuite tests="3">
+#    <testcase classname="foo" name="ASuccessfulTest"/>
+#    <testcase classname="foo" name="AnotherSuccessfulTest"/>
+#    <testcase classname="foo" name="AFailingTest">
+#        <failure type="NotEnoughFoo"> details about failure </failure>
+#    </testcase>
+#</testsuite>
