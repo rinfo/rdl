@@ -46,7 +46,7 @@ import se.lagrummet.rinfo.main.storage.SourceFeedsConfigHandler
  *     data sources).</li>
  * </ul>
  */
-@groovy.transform.CompileStatic // TODO: enable when greclipse 2.7.1 is released
+//@CompileStatic // TODO: enable when greclipse 2.7.1 is released
 class Components {
 
     static enum ConfigKey {
