@@ -8,6 +8,7 @@ casper.on('page.error', function(msg, trace) {
 });
 casper.test.begin('Test filter', function(test) {
    casper.start(casper.cli.get("url")+'/ui/');
+/*
    casper.waitForSelector("#type option:nth-child(1)",
        function success() {
            test.assertExists("#type option:nth-child(1)");
@@ -32,6 +33,7 @@ casper.test.begin('Test filter', function(test) {
        function fail() {
            test.assertExists("form#queryForm button");
    });
+*/
    /*casper.waitForSelector(x("//*[contains(text(), \'gav 27975\')]"),
        function success() {
            test.assertExists(x("//*[contains(text(), \'gav 27975\')]"));
@@ -39,6 +41,7 @@ casper.test.begin('Test filter', function(test) {
        function fail() {
            test.assertExists(x("//*[contains(text(), \'gav 27975\')]"));
    });*/
+/*
    casper.waitForSelector("tbody tr:nth-child(1) td:nth-child(1)",
        function success() {
            test.assertExists("tbody tr:nth-child(1) td:nth-child(1)");
@@ -47,6 +50,7 @@ casper.test.begin('Test filter', function(test) {
        function fail() {
            test.assertExists("tbody tr:nth-child(1) td:nth-child(1)");
    });
+*/
 /*
    casper.waitForSelector(x("/[contains(text(), \'SFS 1991:1733\')]"),
        function success() {
