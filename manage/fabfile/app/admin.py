@@ -11,6 +11,7 @@ from fabfile.server import restart_apache
 from fabfile.server import restart_tomcat
 from fabfile.util import msg_sleep
 from fabfile.util import verify_url_content
+from fabfile.util import test_url
 from fabfile.util import JUnitReport
 
 def get_build_dir():
@@ -70,11 +71,6 @@ def test():
         report.create_report("%(projectroot)s/testreport/admin_test_report.log" % venv() )
         print "Created report"
 
-def test_url(report, name, class_name, url, content):
-    if verify_url_content(url, content):
-        report.add_test_success(name, class_name)
-    else:
-        report.add_test_failure(name, class_name, "ping failure", "Unable to verify '%s' contains '%s'" % (url,content) )
 
 @task
 @roles('admin')
@@ -106,10 +102,3 @@ def test_all():
     finally:
         clean()
 
-@task
-@roles('admin')
-def ping_verify():
-    _needs_targetenv()
-    url="http:\\"+env.roledefs['admin'][0]
-    if verify_url_content("%(url)s/sys/dataset/rdf.rdf" % venv(),"tag:lagrummet.se,2009:rinfo"):
-        raise Exception("Unable to verify %(url)s " % venv())

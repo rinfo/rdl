@@ -7,6 +7,10 @@ import time
 from fabric.api import *
 from util import venv
 from target import _needs_targetenv
+from util import verify_url_content
+from util import test_url
+from util import JUnitReport
+
 
 @task
 def can_i_deploy():
@@ -89,3 +93,32 @@ def war_props(warname="ROOT"):
     run("unzip -p %(tomcat_webapps)s/%(warname)s.war"
             " WEB-INF/classes/*.properties"%venv())
 
+def ping_verify_roledef(report, role_name, url_add, content, name, class_name):
+    if env.roledefs[role_name] is None:
+        return
+    url="http://%s%s" % (env.roledefs[role_name][0],url_add)
+    #test_url(report, name % role_name, class_name % role_name, url, content)
+    test_url(report, name, class_name, url, content)
+
+@task
+def ping_verify():
+    _needs_targetenv()
+    report = JUnitReport()
+    ping_verify_roledef(report, 'main', '', '', 'Verify main responds', 'server.%(target)s.ping' % venv())
+    ping_verify_roledef(report, 'service', '', '', 'Verify service responds', 'server.%(target)s.ping' % venv())
+    ping_verify_roledef(report, 'checker', '', '', 'Verify checker responds', 'server.%(target)s.ping' % venv())
+    ping_verify_roledef(report, 'admin', '', '', 'Verify admin responds', 'server.%(target)s.ping' % venv())
+    ping_verify_roledef(report, 'demosource', '', '', 'Verify demosource responds', 'server.%(target)s.ping' % venv())
+    ping_verify_roledef(report, 'lagrummet', '', '', 'Verify lagrummet responds', 'server.%(target)s.ping' % venv())
+
+    ping_verify_roledef(report, 'main', '/feed/current', 'tag:lagrummet.se,2009:rinfo', 'Verify main feed', 'server.%(target)s.ping' % venv())
+    ping_verify_roledef(report, 'service', '/ui/#/-/publ?q=a&_page=0&_pageSize=10', 'resultat', 'Verify service search', 'server.%(target)s.ping' % venv())
+    ping_verify_roledef(report, 'checker', '', 'RInfo Checker', 'Verify checker title', 'server.%(target)s.ping' % venv())
+    ping_verify_roledef(report, 'admin', '/feed/current.atom', 'RInfo Base Data', 'Verify admin feed', 'server.%(target)s.ping' % venv())
+    ping_verify_roledef(report, 'demosource', '/feed/current.atom', 'atom', 'Verify demosource feed', 'server.%(target)s.ping' % venv())
+    ping_verify_roledef(report, 'lagrummet', '', 'Hitta orden!', 'Verify lagrummet search', 'server.%(target)s.ping' % venv())
+
+    if not report.empty():
+        report_name = "%(projectroot)s/ping_verify_%(target)s_report.log" % venv()
+        report.create_report(report_name)
+        print "Created report '%s'" % report_name

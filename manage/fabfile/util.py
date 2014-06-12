@@ -28,6 +28,8 @@ def verify_url_content(url, string_exists_in_content, sleep_time=15, max_retry=3
     retry_count = 1
     while retry_count < max_retry:
         respHttp = local("curl %(url)s"%vars(), capture=True)
+        if string_exists_in_content=="":
+            return True
         if not string_exists_in_content in respHttp:
             print "Could not find '%(string_exists_in_content)s' in response! Failed! Retry %(retry_count)s of %(max_retry)s."%vars()
             retry_count = retry_count + 1
@@ -38,6 +40,13 @@ def verify_url_content(url, string_exists_in_content, sleep_time=15, max_retry=3
     print respHttp
     print "#########################################################################################"
     return False
+
+def test_url(report, name, class_name, url, content):
+    if verify_url_content(url, content):
+        report.add_test_success(name, class_name)
+    else:
+        report.add_test_failure(name, class_name, "ping failure", "Unable to verify '%s' contains '%s'" % (url,content) )
+
 
 class PrintXml:
     xml_file = ""
