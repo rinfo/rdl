@@ -213,11 +213,8 @@ def start_varnish():
 def test():
     _needs_targetenv()
     url="http:\\"+env.roledefs['service'][0]
-    if env.target=='regression':
-        with lcd(env.projectroot+"/packages/java/rinfo-service/src/regression"):
-            local("casperjs test . --xunit=%(projectroot)s/testreport/service_test_report.log --url=%(url)s --target=%(target)s" % venv())
-    else:
-        raise Exception("Not tests available for other targets than regression")
+    with lcd(env.projectroot+"/packages/java/rinfo-service/src/regression"):
+        local("casperjs test . --xunit=%(projectroot)s/testreport/service_test_report.log --url=%(url)s --target=%(target)s" % venv())
 
 @task
 @roles('service')
