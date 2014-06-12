@@ -63,17 +63,12 @@ def test():
     """Http request to test admin is up and running correctly"""
     report = JUnitReport()
     url="http://"+env.roledefs['admin'][0]
-    test_url(report, "admin", "dataset", "%(url)s/sys/dataset/rdf.rdf" % venv(),"tag:lagrummet.se,2009:rinfo")
-    test_url(report, "admin", "current", "%(url)s/feed/current.atom" % venv(),"RInfo Base Data")
-    test_url(report, "admin", "index", url,"Index" % venv())
+    test_url(report, "Verify dataset exists and contains 'tag:lagrummet.se,2009:rinfo'", "admin.dataset", "%(url)s/sys/dataset/rdf.rdf" % venv(),"tag:lagrummet.se,2009:rinfo")
+    test_url(report, "Verify current.atom exists and contains 'RInfo Base Data'", "admin.current", "%(url)s/feed/current.atom" % venv(),"RInfo Base Data")
+    test_url(report, "Verify files index appears in root url", "admin.index", url,"Index" % venv())
     if not report.empty():
         report.create_report("%(projectroot)s/testreport/admin_test_report.log" % venv() )
         print "Created report"
-    #if env.target=='regression':
-    #    with lcd(env.projectroot+"/packages/java/rinfo-base/src/regression"):
-    #        local("casperjs test . --xunit=%(projectroot)s/testreport/admin_test_report.log --url=%(url)s --target=%(target)s" % venv())
-    #else:
-    #    raise Exception("Not tests available for other targets than regression")
 
 def test_url(report, name, class_name, url, content):
     if verify_url_content(url, content):
