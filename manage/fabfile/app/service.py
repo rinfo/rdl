@@ -212,7 +212,7 @@ def start_varnish():
 @roles('service')
 def test():
     _needs_targetenv()
-    url="http:\\"+env.roledefs['service'][0]
+    url="http://"+env.roledefs['service'][0]
     with lcd(env.projectroot+"/packages/java/rinfo-service/src/regression"):
         local("casperjs test . --xunit=%(projectroot)s/testreport/service_test_report.log --url=%(url)s --target=%(target)s" % venv())
 
