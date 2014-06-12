@@ -68,8 +68,10 @@ def test():
     test_url(report, "Verify current.atom exists and contains 'RInfo Base Data'", "admin.current", "%(url)s/feed/current.atom" % venv(),"RInfo Base Data")
     test_url(report, "Verify files index appears in root url", "admin.index", url,"Index" % venv())
     if not report.empty():
-        report.create_report("%(projectroot)s/testreport/admin_test_report.log" % venv() )
-        print "Created report"
+        file_name = "%(projectroot)s/testreport/admin_test_report.log" % venv()
+        report.create_report(file_name)
+        print "Created report '%s'" % file_name
+
 
 
 @task

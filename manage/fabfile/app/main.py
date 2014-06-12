@@ -12,6 +12,8 @@ from fabfile.server import tomcat_stop
 from fabfile.server import tomcat_start
 from fabfile.util import msg_sleep
 from fabfile.util import verify_url_content
+from fabfile.util import test_url
+from fabfile.util import JUnitReport
 from admin import ping_main
 
 
@@ -73,12 +75,14 @@ def all(deps="1", test="1", headless="0"):
 @roles('main')
 def test():
     _needs_targetenv()
-    url="http:\\"+env.roledefs['main'][0]
-    if env.target=='regression':
-        with lcd(env.projectroot+"/packages/java/rinfo-main/src/regression"):
-            local("casperjs test . --xunit=%(projectroot)s/testreport/main_test_report.log --url=%(url)s --target=%(target)s" % venv())
-    else:
-        raise Exception("Not tests available for other targets than regression")
+    report = JUnitReport()
+    url="http://"+env.roledefs['main'][0]
+    test_url(report, "Verify feed exists and contains 'tag:lagrummet.se,2009:rinfo'", "main.feed", "%(url)s/feed/current" % venv(),"tag:lagrummet.se,2009:rinfo")
+    test_url(report, "Verify dataset exists and contains 'tag:lagrummet.se,2009:rinfo'", "main.dataset", "%(url)s/sys/dataset/rdf" % venv(),"tag:lagrummet.se,2009:rinfo")
+    if not report.empty():
+        file_name = "%(projectroot)s/testreport/main_test_report.log" % venv()
+        report.create_report(file_name)
+        print "Created report '%s'" % file_name
 
 
 @task
