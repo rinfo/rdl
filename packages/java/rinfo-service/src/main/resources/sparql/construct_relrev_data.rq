@@ -103,15 +103,17 @@ CONSTRUCT {
         {
             ?revitem ?revprop ?revtext .
             FILTER(isLiteral(?revtext))
-            OPTIONAL { ?revitem a ?revtype . }
-            OPTIONAL { ?revitem dct:publisher ?revpublisher . }
-        } UNION {
-            ?revrevitem ?revrev ?revitem;
-                ?revrevprop ?revrevtext .
-            FILTER (?revrev = rpubl:referatAvDomstolsavgorande &&
-                    isLiteral(?revrevtext) )
-            OPTIONAL { ?revrevitem a ?revrevtype . }
-        }
+
+        # Leave out for now! Does not work for some known edge cases.
+        #    OPTIONAL { ?revitem a ?revtype . }
+        #    OPTIONAL { ?revitem dct:publisher ?revpublisher . }
+        }# UNION {
+        #    ?revrevitem ?revrev ?revitem;
+        #        ?revrevprop ?revrevtext .
+        #    FILTER (?revrev = rpubl:referatAvDomstolsavgorande &&
+        #            isLiteral(?revrevtext) )
+        #    OPTIONAL { ?revrevitem a ?revrevtype . }
+        #}
 
         # IMPROVE: generalize to follow any revitems upward to "containers" and
         # describe those.
