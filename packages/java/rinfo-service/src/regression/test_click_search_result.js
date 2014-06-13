@@ -7,8 +7,9 @@ casper.on('page.error', function(msg, trace) {
    }
 });
 captureScreen = function() {
-   this.capture('test_click_search_result_screen_error.png');
-   this.echo('Captured "test_click_search_result_screen_error.png"');
+   var file_name = casper.cli.get("output")+'test_click_search_result_screen_error.png';
+   this.capture(file_name);
+   this.echo('Captured "'+file_name+'"');
 
 }
 casper.test.begin('Test click of search result', function(test) {
@@ -19,7 +20,7 @@ casper.test.begin('Test click of search result', function(test) {
    casper.then(function() {
         this.test.assertTitle('RInfo Service UI');
         this.test.assertTextDoesntExist('Sökresultat');
-        this.sendKeys("#queryForm input[name='q']", "1999");
+        this.sendKeys("#queryForm input[name='q']", "1999 Riksbankens diskonto");
         this.click('#queryForm button[type="submit"]');
    });
 

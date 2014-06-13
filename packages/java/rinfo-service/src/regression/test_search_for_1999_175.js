@@ -8,9 +8,9 @@ casper.on('page.error', function(msg, trace) {
 });
 
 captureScreen = function() {
-   this.capture('test_click_search_for_1999_175_screen_error.png');
-   this.echo('Captured "test_click_search_for_1999_175_screen_error.png"');
-
+   var file_name = casper.cli.get("output")+'test_click_search_for_1999_175_screen_error.png';
+   this.capture(file_name);
+   this.echo('Captured "'+file_name+'"');
 }
 
 casper.test.begin('Test search for 1999:175', function(test) {
