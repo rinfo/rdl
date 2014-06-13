@@ -7,14 +7,13 @@ casper.on('page.error', function(msg, trace) {
    }
 });
 casper.test.begin('Failing test for correct title', function(test) {
-   casper.start(casper.cli.get("url")+'/ui/'); //TODO initial slash in 'ui' should not be necessary here
-   casper.waitForSelector(x("//*[contains(text(), \'RInfo Service UI\')]"),
-       function success() {
-           test.assertExists(x("//*[contains(text(), \'RInfo Service UI\')]"));
-         },
-       function fail() {
-           test.assertExists(x("//*[contains(text(), \'RInfo Service UI\')]"));
-   });
+   casper.start(casper.cli.get("url")+'/ui/');
+
+   casper.waitForSelector("body");
+
+   casper.then(function() {
+        this.test.assertTitle('RInfo Service UI');
+   })
 
    casper.run(function() {test.done();});
 });

@@ -6,60 +6,44 @@ casper.on('page.error', function(msg, trace) {
        this.echo('   ' + step.file + ' (line ' + step.line + ')', 'ERROR');
    }
 });
+captureScreen = function() {
+   this.capture('test_filter_screen_error.png');
+   this.echo('Captured "test_filter_screen_error.png"');
+}
 casper.test.begin('Test filter', function(test) {
    casper.start(casper.cli.get("url")+'/ui/');
-/*
-   casper.waitForSelector("#type option:nth-child(1)",
-       function success() {
-           test.assertExists("#type option:nth-child(1)");
-           this.click("#type option:nth-child(1)");
-       },
-       function fail() {
-           test.assertExists("#type option:nth-child(1)");
+
+   casper.waitForSelector("body");
+
+   casper.then(function() {
+        this.test.assertTitle('RInfo Service UI');
+        this.test.assertTextDoesntExist('Sökresultat');
+        this.sendKeys("#queryForm input[name='q']", "djur");
+        this.evaluate(function() {
+                document.querySelector("#type").value = "VagledandeDomstolsavgorande";
+                document.querySelector("#publisher").value = "hoegsta_domstolen";
+                return true;
+            });
+        this.click('#queryForm button[type="submit"]');
    });
-   casper.waitForSelector("#publisher option:nth-child(1)",
-       function success() {
-           test.assertExists("#publisher option:nth-child(1)");
-           this.click("#publisher option:nth-child(1)");
-       },
-       function fail() {
-           test.assertExists("#publisher option:nth-child(1)");
+
+   casper.waitForSelector("#resultsView h2", function(){}, captureScreen, 5000);
+
+   casper.then(function() {
+        this.test.assertTextExists("Sökresultat");
+        this.test.assertExists("a[href='#/publ/dom/hd/b2882-02/2003-12-22/data.json']");
+        this.click("a[href='#/publ/dom/hd/b2882-02/2003-12-22/data.json']");
    });
-   casper.waitForSelector("form#queryForm button",
-       function success() {
-           test.assertExists("form#queryForm button");
-           this.click("form#queryForm button");
-       },
-       function fail() {
-           test.assertExists("form#queryForm button");
-   });
-*/
-   /*casper.waitForSelector(x("//*[contains(text(), \'gav 27975\')]"),
-       function success() {
-           test.assertExists(x("//*[contains(text(), \'gav 27975\')]"));
-         },
-       function fail() {
-           test.assertExists(x("//*[contains(text(), \'gav 27975\')]"));
-   });*/
-/*
-   casper.waitForSelector("tbody tr:nth-child(1) td:nth-child(1)",
-       function success() {
-           test.assertExists("tbody tr:nth-child(1) td:nth-child(1)");
-           this.click("tbody tr:nth-child(1) td:nth-child(1)");
-       },
-       function fail() {
-           test.assertExists("tbody tr:nth-child(1) td:nth-child(1)");
-   });
-*/
-/*
-   casper.waitForSelector(x("/[contains(text(), \'SFS 1991:1733\')]"),
-       function success() {
-           test.assertExists(x("/[contains(text(), \'SFS 1991:1733\')]"));
-         },
-       function fail() {
-           test.assertExists(x("/[contains(text(), \'SFS 1991:1733\')]"));
-   });
-*/
+
+   casper.waitForSelector("#documentView h2", function(){}, captureScreen, 20000);
+
+   casper.then(function() {
+        this.test.assertSelectorHasText("#documentView > div:nth-child(2) > dl > dd:nth-child(8)", "B2882-02");
+
+   })
 
    casper.run(function() {test.done();});
 });
+
+
+

@@ -6,63 +6,36 @@ casper.on('page.error', function(msg, trace) {
        this.echo('   ' + step.file + ' (line ' + step.line + ')', 'ERROR');
    }
 });
+
+captureScreen = function() {
+   this.capture('test_click_search_for_1999_175_screen_error.png');
+   this.echo('Captured "test_click_search_for_1999_175_screen_error.png"');
+
+}
+
 casper.test.begin('Test search for 1999:175', function(test) {
    casper.start(casper.cli.get("url")+'/ui/');
-/*
-   casper.waitForSelector("form#queryForm input[name='q']",
-       function success() {
-           test.assertExists("form#queryForm input[name='q']");
-           this.click("form#queryForm input[name='q']");
-       },
-       function fail() {
-           test.assertExists("form#queryForm input[name='q']");
-   });
-   casper.waitForSelector("input[name='q']",
-       function success() {
-           this.sendKeys("input[name='q']", "1999:175");
-       },
-       function fail() {
-           test.assertExists("input[name='q']");
-   });
-   casper.waitForSelector("form#queryForm button",
-       function success() {
-           test.assertExists("form#queryForm button");
-           this.click("form#queryForm button");
-       },
-       function fail() {
-           test.assertExists("form#queryForm button");
-   });
-*/
-/*
-   casper.waitForSelector(x("/[contains(text(), \'gav 245 träffar\')]"),
-       function success() {
-           test.assertExists(x("/[contains(text(), \'gav 245 träffar\')]"));
-         },
-       function fail() {
-           test.assertExists(x("/[contains(text(), \'gav 245 träffar\')]"));
-   });
-*/
-/*
-   casper.waitForSelector("tr:nth-child(2) td:nth-child(1)",
-       function success() {
-           test.assertExists("tr:nth-child(2) td:nth-child(1)");
-           this.click("tr:nth-child(2) td:nth-child(1)");
-       },
-       function fail() {
-           test.assertExists("tr:nth-child(2) td:nth-child(1)");
-   });
-*/
 
-/*
-   casper.waitForSelector(x("/[contains(text(), \'SFS 1999:175\')]"),
-       function success() {
-           test.assertExists(x("/[contains(text(), \'SFS 1999:175\')]"));
-         },
-       function fail() {
-           test.assertExists(x("/[contains(text(), \'SFS 1999:175\')]"));
+   casper.then(function() {
+        this.test.assertTitle('RInfo Service UI');
+        this.test.assertTextDoesntExist('Sökresultat');
+        this.sendKeys("#queryForm input[name='q']", "1999:175");
+        this.click('#queryForm button[type="submit"]');
    });
-*/
 
+   casper.waitForSelector("#resultsView h2", function(){}, captureScreen, 5000);
+
+   casper.then(function() {
+        this.test.assertTextExists("Sökresultat");
+        this.test.assertExists("a[href='#/publ/sfs/1999:175/data.json']");
+        this.click("a[href='#/publ/sfs/1999:175/data.json']");
+   });
+
+   casper.waitForSelector("#documentView h2", function(){}, captureScreen, 20000);
+
+   casper.then(function() {
+        this.test.assertSelectorHasText('#documentView h2', 'SFS 1999:175');
+   })
 
    casper.run(function() {test.done();});
 });

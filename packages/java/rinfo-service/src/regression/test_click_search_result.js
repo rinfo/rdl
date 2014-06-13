@@ -6,97 +6,38 @@ casper.on('page.error', function(msg, trace) {
        this.echo('   ' + step.file + ' (line ' + step.line + ')', 'ERROR');
    }
 });
+captureScreen = function() {
+   this.capture('test_click_search_result_screen_error.png');
+   this.echo('Captured "test_click_search_result_screen_error.png"');
+
+}
 casper.test.begin('Test click of search result', function(test) {
    casper.start(casper.cli.get("url")+'/ui/');
-/*
-   casper.waitForSelector("input[name='q']",
-       function success() {
-           this.sendKeys("input[name='q']", "1999:175");
-       },
-       function fail() {
-           test.assertExists("input[name='q']");
+
+   casper.waitForSelector("body");
+
+   casper.then(function() {
+        this.test.assertTitle('RInfo Service UI');
+        this.test.assertTextDoesntExist('Sökresultat');
+        this.sendKeys("#queryForm input[name='q']", "1999");
+        this.click('#queryForm button[type="submit"]');
    });
-   casper.waitForSelector("form#queryForm button",
-       function success() {
-           test.assertExists("form#queryForm button");
-           this.click("form#queryForm button");
-       },
-       function fail() {
-           test.assertExists("form#queryForm button");
+
+   casper.waitForSelector("#resultsView h2", function(){}, captureScreen, 5000);
+
+   casper.then(function() {
+        this.test.assertTextExists("Sökresultat");
+        this.test.assertExists("a[href='#/publ/sfs/1999:766/data.json']");
+        this.click("a[href='#/publ/sfs/1999:766/data.json']");
    });
-   casper.waitForSelector(x("/*/
-/*[contains(text(), \'Förordning\')]"),
-       function success() {
-           test.assertExists(x("/*/
-/*[contains(text(), \'Förordning\')]"));
-         },
-       function fail() {
-           test.assertExists(x("/*/
-/*[contains(text(), \'Förordning\')]"));
-   });
-   casper.waitForSelector(".row",
-       function success() {
-           test.assertExists(".row");
-           this.click(".row");
-       },
-       function fail() {
-           test.assertExists(".row");
-   });
-   casper.waitForSelector(".row",
-       function success() {
-           test.assertExists(".row");
-           this.click(".row");
-       },
-       function fail() {
-           test.assertExists(".row");
-   });
-*/
-/*
-   casper.waitForSelector("#documentView div:nth-child(2) > dl",
-       function success() {
-           test.assertExists("#documentView div:nth-child(2) > dl");
-           this.click("#documentView div:nth-child(2) > dl");
-       },
-       function fail() {
-           test.assertExists("#documentView div:nth-child(2) > dl");
-   });
-*/
-/*
-   casper.waitForSelector("#documentView div:nth-child(2) dd:nth-child(12)",
-       function success() {
-           test.assertExists("#documentView div:nth-child(2) dd:nth-child(12)");
-           this.click("#documentView div:nth-child(2) dd:nth-child(12)");
-       },
-       function fail() {
-           test.assertExists("#documentView div:nth-child(2) dd:nth-child(12)");
-   });
-*/
-/*
-   casper.waitForSelector("#documentView div:nth-child(2) dd:nth-child(10)",
-       function success() {
-           test.assertExists("#documentView div:nth-child(2) dd:nth-child(10)");
-           this.click("#documentView div:nth-child(2) dd:nth-child(10)");
-       },
-       function fail() {
-           test.assertExists("#documentView div:nth-child(2) dd:nth-child(10)");
-   });
-*/
-/*
-   casper.waitForSelector(x("/[contains(text(), \'SFS 1999:175\')]"),
-       function success() {
-           test.assertExists(x("/[contains(text(), \'SFS 1999:175\')]"));
-         },
-       function fail() {
-           test.assertExists(x("/[contains(text(), \'SFS 1999:175\')]"));
-   });
-   casper.waitForSelector(x("/[contains(text(), \'\')]"),
-       function success() {
-           test.assertExists(x("/[contains(text(), \'\')]"));
-         },
-       function fail() {
-           test.assertExists(x("/[contains(text(), \'\')]"));
-   });
-*/
+
+   casper.waitForSelector("#documentView h2", function(){}, captureScreen, 20000);
+
+   casper.then(function() {
+        this.test.assertSelectorHasText('#documentView h2', 'SFS 1999:766');
+        //this.capture('test_click_search_result_screen.png');
+   })
 
    casper.run(function() {test.done();});
 });
+
