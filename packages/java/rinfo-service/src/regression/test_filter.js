@@ -16,7 +16,7 @@ casper.test.begin('Test filter', function(test) {
 
    casper.waitForSelector("body");
 
-   if (casper.cli.get("target") != "demo" && casper.cli.get("target") != "regression") {
+   if (casper.cli.get("target") != "regression") {
        casper.then(function() {
             this.test.assertTitle('RInfo Service UI');
             this.test.assertTextDoesntExist('Sökresultat');
