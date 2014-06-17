@@ -1,10 +1,12 @@
 package se.lagrummet.rinfo.base;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.io.*;
 
-import org.apache.commons.io.IOUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.lagrummet.rinfo.base.rdf.RDFUtil;
 import se.lagrummet.rinfo.base.rdf.Describer;
 import se.lagrummet.rinfo.base.rdf.Description;
@@ -12,18 +14,20 @@ import se.lagrummet.rinfo.base.rdf.Description;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
-import org.openrdf.model.URI;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
 
 public class URIMinter {
 
+    private final Logger logger = LoggerFactory.getLogger(URIMinter.class);
+
     CoinURISpace space;
     public static final String BASE_CHAR_MAP_PATH =
             "/uriminter/unicodebasechars-scandinavian.json";
 
     public URIMinter(Repository repo, String spaceUri) {
+        logger.trace("spaceUri=" + spaceUri);
         try {
             RepositoryConnection conn = repo.getConnection();
             try {
@@ -82,7 +86,9 @@ public class URIMinter {
                     new HashMap<String, List<MintResult>>();
             Describer describer = newDescriber(conn);
             for (Description desc : describer.subjects(null, null)) {
-                List<MintResult> results = space.coinUris(desc);
+                logger.trace("desc.about='"+desc.getAbout()+"'");
+                List<MintResult> results = space.coinUris(desc, false);
+                logger.trace("results.size='"+results.size()+"'");
                 if (results != null) {
                     resultMap.put(desc.getAbout(), results);
                 }
@@ -93,13 +99,68 @@ public class URIMinter {
         }
     }
 
+    public Map<String, List<MintResult>> computeSuggestionUris(Repository docRepo)
+            throws Exception {
+        RepositoryConnection conn = docRepo.getConnection();
+        try {
+            Map<String, List<MintResult>> resultMap =
+                    new HashMap<String, List<MintResult>>();
+            Describer describer = newDescriber(conn);
+            for (Description desc : describer.subjects(null, null)) {
+                logger.trace("desc.about='"+desc.getAbout()+"'");
+                List<MintResult> results = space.coinUris(desc, true);
+                logger.trace("results.size='"+results.size()+"'");
+                if (results != null) {
+                    resultMap.put(desc.getAbout(), results);
+                }
+            }
+
+            return bestMatch(resultMap);
+
+        } finally {
+            conn.close();
+        }
+    }
+
+    private Map<String, List<MintResult>> bestMatch(Map<String, List<MintResult>> resultMap) {
+
+        final int requiredMinMatchCount = 1;
+
+        for (Map.Entry<String, List<MintResult>> entry : resultMap.entrySet()) {
+            String uri = entry.getKey();
+            List<MintResult> results = entry.getValue();
+            int lowestDiff = Integer.MAX_VALUE;
+
+            for (MintResult result : results) {
+                int diff = result.getRulesSize() - result.getMatchCount();
+                if(diff < lowestDiff) {
+                    lowestDiff = diff;
+                }
+            }
+
+            List<MintResult> resultsWithBestMatch = new ArrayList<MintResult>();
+
+            for (MintResult result : results) {
+                int diff = result.getRulesSize() - result.getMatchCount();
+                if(diff == lowestDiff && result.getMatchCount() >= requiredMinMatchCount) {
+                    logger.trace("Adding to resultsWithBestMatch, uri: " + result.getUri() + ", rulesSize: " + result.getRulesSize() + ", matchCount: " + result.getMatchCount());
+                    resultsWithBestMatch.add(result);
+                }
+            }
+
+            resultMap.put(uri, resultsWithBestMatch);
+        }
+
+        return resultMap;
+    }
+
 
     static class CoinURISpace {
 
-        List<CoinTemplate> templates = new ArrayList<CoinTemplate>();
-        Map<String, Map<String, String>> slugMappings =
-                new HashMap<String, Map<String, String>>();
+        private final Logger logger = LoggerFactory.getLogger(CoinURISpace.class);
 
+        List<CoinTemplate> templates = new ArrayList<CoinTemplate>();
+        Map<String, Map<String, String>> slugMappings = new HashMap<String, Map<String, String>>();
         Map<String, String> baseCharMap;
 
         String base;
@@ -115,6 +176,16 @@ public class URIMinter {
             for (Description tdesc : desc.getRels("coin:template")) {
                 templates.add(new CoinTemplate(this, tdesc));
             }
+            logger.trace(">>>>>>>>>>>>>>>>>>>>>>> SlugMappings");
+            for (String key : slugMappings.keySet()) {
+                Map<String, String> stringStringMap = slugMappings.get(key);
+                logger.trace(" - mappings for key '"+key+"'");
+                for (String key2 : stringStringMap.keySet()) {
+                    String value = stringStringMap.get(key2);
+                    logger.trace(key2+"="+value);
+                }
+            }
+            logger.trace("<<<<<<<<<<<<<<<<<<<<<<< SlugMappings");
             Description slugTransl = desc.getRel("coin:slugTransform");
             if (slugTransl != null) {
               for (Description transform : slugTransl.getRels("coin:apply")) {
@@ -135,12 +206,16 @@ public class URIMinter {
          * Results are ordered by the {@link MintResult#getMatchCount()}
          * property. Higher value leads to earlier (lower) index in list.
          */
-        List<MintResult> coinUris(Description desc) {
+        List<MintResult> coinUris(Description desc, boolean allowSuggestions) {
+            logger.trace("desc.about="+desc.getAbout());
             List<MintResult> results = new ArrayList<MintResult>();
             for (CoinTemplate tplt : templates) {
-                MintResult result = tplt.coinUri(desc);
+                logger.trace("tplt.forType="+tplt.forType+", tplt.uriTemplate="+tplt.uriTemplate);
+                MintResult result = tplt.coinUri(desc, allowSuggestions);
                 if (result.getUri() != null) {
                     results.add(result);
+                } else {
+                    logger.trace("skipping mintresult="+result.toString());
                 }
             }
             Collections.sort(results, new Comparator<MintResult>() {
@@ -178,9 +253,20 @@ public class URIMinter {
             return sb.toString();
         }
 
+        public Map<String, String> getSluggMappings(String slugFrom) {
+            Map<String, String> stringStringMap = slugMappings.get(slugFrom);
+            if (stringStringMap==null) {
+                stringStringMap = new HashMap<String, String>();
+                slugMappings.put(slugFrom, stringStringMap);
+                logger.trace("Created SluggMappings for "+slugFrom+" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
+            }
+            return stringStringMap;
+        }
     }
 
     static class CoinTemplate {
+
+        private final Logger logger = LoggerFactory.getLogger(CoinTemplate.class);
 
         CoinURISpace space;
         String forType;
@@ -200,39 +286,109 @@ public class URIMinter {
             if (givenPriority != null) {
                 priority = ((java.math.BigInteger) givenPriority).intValue();
             }
+            logger.trace("%%%%%%%%%%%%% uriTemplate='"+uriTemplate+"' %%%%%%%%%%%%%%%%%");
             for (Description cmp : desc.getRels("coin:binding")) {
-                bindings.add(new CoinBinding(this, cmp));
+                CoinBinding binding = new CoinBinding(this, cmp);
+                bindings.add(binding);
+                logger.trace("binding.property="+binding.property+", binding.variable="+binding.variable+", binding.slug="+binding.slugFrom);
             }
         }
 
-        MintResult coinUri(Description desc) {
+        MintResult coinUri(Description desc, boolean allowSuggestion) {
+
+            final boolean trace = uriTemplate!=null? /*(uriTemplate.equals("/publ/rf/{serie}/{arsutgava}:{lopnummer}")
+                            ||*/ uriTemplate.equals("/publ/dom/{publisher}/{malnummer}/{avgorandedatum}")
+                            /*|| uriTemplate.equals("/publ/{fs}/{arsutgava}:{lopnummer}"))*/:false;
+
+            if (trace) logger.trace("******************* TRACE *******************");
+            if (trace) logger.trace("uri="+desc.getAbout());
+            if (trace) logger.trace("uriTemplate="+uriTemplate);
             int matchCount = 0;
             int rulesSize = bindings.size();
             if (forType != null) {
+                if (trace) logger.trace("forType="+forType);
                 rulesSize += 1;
                 boolean ok = false;
                 for (Description type : desc.getTypes()) {
+                    logger.trace(type.getAbout() + " är samma som? " + forType);
                     if (type.getAbout().equals(forType)) {
                         matchCount += 1;
                         ok = true;
                         break;
                     }
                 }
-                if (!ok)
+                if (!ok) {
+                    logger.trace("missing forType: " + forType + " return MintResult without uri. desc.getAbout() = " + desc.getAbout() + ", uriTemplate = " + uriTemplate + ", matchcount = " + matchCount + ", rulesSize = " + rulesSize + ", priority = " + priority);
                     return new MintResult(null, matchCount, rulesSize, priority);
-            }
+                }
+            } else
+                if (trace) logger.trace("missing forType!!!");
+
             Map<String, String> matches = new HashMap<String, String>();
-            for (CoinBinding binding : bindings) {
-                String match = binding.findMatch(desc);
+            for (final CoinBinding binding : bindings) {
+                final SluggMappings slugMap = getSluggmappingsViaSlugFrom(binding);
+                if (trace) logger.trace("binding.property="+binding.property+", binding.variable="+binding.variable+", binding.slug="+binding.slugFrom);
+                String match = binding.findMatch(desc, new Description.ReverseSlug() {
+                    @Override
+                    public String lookup(String urlStr, Description rel) {
+                        if (trace) logger.trace("ReverseSlug.lookupl("+urlStr+")");
+                        String relAboutSlug = rel!=null?slugMap.get(rel.getAbout()):null;
+                        if (trace) {
+                            if (rel!=null)
+                                logger.trace("ReverseSlug.relAboutSlug("+rel.getAbout()+")="+relAboutSlug);
+                            else
+                                logger.trace("ReverseSlug.relAboutSlug("+null+")");
+                        }
+                        try {
+                            URL url = new URL(urlStr);
+                            String resultSlug = slugMap.get(url.toString());
+                            if (trace) logger.trace("ReverseSlug.url("+url+")="+resultSlug);
+                            return resultSlug;
+                        } catch (MalformedURLException e) {
+                            return urlStr;
+                        }
+                    }
+                });
+                if (trace) logger.trace("match="+match);
                 if (match != null) {
                     matchCount++;
                     matches.put(binding.variable, match);
                 }
             }
-            String uri = (matchCount == rulesSize)?
-                buildUri(determineBase(desc), matches) :
-                null;
+            boolean ok = (matchCount == rulesSize);
+
+            String uri;
+
+            if (allowSuggestion) {
+                uri = buildUri(determineBase(desc), matches, true);
+            } else {
+                uri = (matchCount == rulesSize)?
+                    buildUri(determineBase(desc), matches, false) :
+                    null;
+            }
+
+            if (trace&&ok) logger.trace("uri="+uri);
             return new MintResult(uri, matchCount, rulesSize, priority);
+        }
+
+        private SluggMappings getSluggmappingsViaSlugFrom(CoinBinding binding) {
+            if (binding.slugFrom==null)
+                return new EmptySluggMappings();
+
+            return new SluggMappingsImpl(space.getSluggMappings(binding.slugFrom)){
+                @Override
+                public void put(String about, String info) {
+                    logger.trace("slugMappings.put("+about+","+info+")");
+                    super.put(about, info);
+                    super.put(info, about);
+                }
+
+                @Override
+                public String get(String about) {
+                    logger.trace("slugMappings.get("+about+")="+super.get(about));
+                    return super.get(about);
+                }
+            };
         }
 
         String determineBase(Description desc) {
@@ -247,7 +403,7 @@ public class URIMinter {
             return space.base;
         }
 
-        String buildUri(String base, Map<String, String> matches) {
+        String buildUri(String base, Map<String, String> matches, boolean allowSuggestion) {
             if (base == null)
                 return null;
             if (uriTemplate == null) {
@@ -261,13 +417,20 @@ public class URIMinter {
                 expanded = expanded.replace(var, value);
             }
             // TODO: if (expanded.indexOf("{") > -1)
-            try {
-                return new java.net.URI(base).resolve(expanded).toString();
-            } catch (java.net.URISyntaxException e) {
-                throw new RuntimeException(e);
+
+            if (allowSuggestion) {
+                logger.trace("returning expanded = " + expanded);
+                return expanded;
+            }
+
+            else {
+                try {
+                    return new java.net.URI(base).resolve(expanded).toString();
+                } catch (java.net.URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
-
     }
 
     static class CoinBinding {
@@ -285,19 +448,15 @@ public class URIMinter {
                 variable = getLeaf(property);
             slugFrom = desc.getObjectUri("coin:slugFrom");
             if (slugFrom != null) {
-                Map<String, String> slugMap = tplt.space.slugMappings.get(slugFrom);
-                if (slugMap == null) {
-                    slugMap = new HashMap<String, String>();
-                    tplt.space.slugMappings.put(slugFrom, slugMap);
-                }
-                for (Description slugged : desc.getDescriber().
-                        subjects(slugFrom, null)) {
-                    slugMap.put(slugged.getAbout(), slugged.getString(slugFrom));
+                SluggMappings sluggMappings = tplt.getSluggmappingsViaSlugFrom(this);
+                for (Description slugged : desc.getDescriber().subjects(slugFrom, null)) {
+                    sluggMappings.put(slugged.getAbout(), slugged.getString(slugFrom));
                 }
             }
         }
 
-        String findMatch(Description desc) {
+
+        String findMatch(Description desc, Description.ReverseSlug reverseSlug) {
             if (slugFrom != null) {
                 Description rel = desc.getRel(property);
                 if (rel == null)
@@ -305,13 +464,13 @@ public class URIMinter {
                 String v = rel.getString(slugFrom);
                 if (v != null)
                     return v;
-                Map<String, String> slugMap = tplt.space.slugMappings.get(slugFrom);
+                //Map<String, String> slugMap = tplt.space.slugMappings.get(slugFrom);
+                SluggMappings slugMap = tplt.getSluggmappingsViaSlugFrom(this);
                 if (slugMap != null) {
                     return slugMap.get(rel.getAbout());
                 }
-            } else {
-                return desc.getString(property);
-            }
+            } else if (desc != null && property != null)
+                return desc.getLexical(property, reverseSlug);
             return null;
         }
 
@@ -323,6 +482,47 @@ public class URIMinter {
 
     }
 
+    interface SluggMappings {
+        void put(String about, String info);
+        String get(String about);
+    }
+
+    /**
+     * Only empty reply
+     */
+    private static class EmptySluggMappings implements SluggMappings {
+        @Override
+        public void put(String about, String info) {}
+
+        @Override
+        public String get(String about) {return null;}
+    }
+
+    private static class SluggMappingsImpl implements SluggMappings {
+        Map<String, String> stringStringMap;
+
+        private SluggMappingsImpl(Map<String, String> stringStringMap) {
+            this.stringStringMap = stringStringMap;
+        }
+
+        @Override
+        public void put(String about, String info) {
+            stringStringMap.put(about, info);
+        }
+
+        @Override
+        public String get(String about) {
+            return stringStringMap.get(removeTrailingSlash(about));
+        }
+    }
+
+    private static String removeTrailingSlash(String url) {
+        if (url==null)
+            return null;
+        if (url.endsWith("/"))
+            return url.substring(0,url.length()-1);
+        return url;
+    }
 
     public static void main(String[] args) throws Exception {
         if (args.length < 3) {

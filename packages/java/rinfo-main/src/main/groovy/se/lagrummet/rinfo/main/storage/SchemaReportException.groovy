@@ -1,11 +1,13 @@
 package se.lagrummet.rinfo.main.storage
 
+import se.lagrummet.rinfo.base.rdf.checker.Report
 
 class SchemaReportException extends Exception {
 
-    def report
+    Report report
 
-    SchemaReportException(report) {
+    SchemaReportException(Report report, String cause) {
+        super(cause)
         this.report = report
     }
 

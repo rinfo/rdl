@@ -20,4 +20,13 @@ public class MintResult {
     public Integer getRulesSize() { return rulesSize; }
     public int getPriority() { return priority; }
 
+    @Override
+    public String toString() {
+        return "MintResult{" +
+                "uri='" + uri + '\'' +
+                ", matchCount=" + matchCount +
+                ", rulesSize=" + rulesSize +
+                ", priority=" + priority +
+                '}';
+    }
 }

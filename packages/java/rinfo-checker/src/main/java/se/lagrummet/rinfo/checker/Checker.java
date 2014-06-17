@@ -23,7 +23,6 @@ import se.lagrummet.rinfo.store.depot.FileDepot;
 import se.lagrummet.rinfo.store.depot.SourceContent;
 
 import se.lagrummet.rinfo.collector.atom.FeedEntryDataIndex;
-import se.lagrummet.rinfo.main.storage.ErrorLevel;
 import se.lagrummet.rinfo.main.storage.FeedCollector;
 import se.lagrummet.rinfo.main.storage.FeedCollectorSession;
 import se.lagrummet.rinfo.main.storage.StorageSession;
@@ -88,7 +87,7 @@ public class Checker {
         storageSession.relevantEntries = relevantEntries;
         storageSession.maxEntries = maxEntries;
         FeedCollectorSession collectSession = new OneFeedCollectorSession(
-                FeedCollector.createDefaultClient(), storageSession);
+                FeedCollector.createDefaultClient(true), storageSession);
         collectSession.readFeed(feedUrl);
         collectSession.shutdown();
         return logRepo;
@@ -147,8 +146,7 @@ public class Checker {
                 Collection<StorageHandler> storageHandlers,
                 CollectorLogSession collectorLogSession) {
             super(credentials, depotSession, storageHandlers,
-                    collectorLogSession, new NoopFeedEntryIdIndex(),
-                    ErrorLevel.NONE);
+                    collectorLogSession, new NoopFeedEntryIdIndex(), true);
         }
 
         public boolean storeEntry(Feed sourceFeed, Entry sourceEntry,

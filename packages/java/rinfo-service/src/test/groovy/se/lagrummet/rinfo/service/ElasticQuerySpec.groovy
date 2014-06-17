@@ -14,7 +14,7 @@ class ElasticQuerySpec extends Specification {
 
     def elQuery = new ElasticQuery(
             new ElasticData(null, "es-index",
-            new JsonLdSettings(new JSONLDContext([:]), [:])),
+            new JsonLdSettings(new JSONLDContext([:]), [:]), "true"),
             "http://service.lagrummet.se/")
 
     def showTerms = ['title', 'identifier'] as Set

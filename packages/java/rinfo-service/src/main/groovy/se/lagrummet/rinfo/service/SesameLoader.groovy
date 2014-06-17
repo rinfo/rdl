@@ -8,6 +8,8 @@ import org.apache.abdera.model.Entry
 import org.openrdf.repository.Repository
 import org.openrdf.repository.RepositoryConnection
 
+import org.elasticsearch.index.mapper.MapperParsingException
+
 import org.apache.abdera.model.AtomDate
 import org.apache.abdera.model.Entry
 import org.apache.abdera.model.Feed
@@ -74,9 +76,14 @@ class SesameLoader extends FeedArchivePastToPresentReader {
             logger.debug("Skipping collected entry <${entry.id}> [${entry.updated}]")
             return
         }
-        logger.info("Storing entry <${entry.id}>")
-        repoEntry.create()
-        elasticLoader?.create(conn, entry, this)
+
+        try {
+            logger.info("Storing entry <${entry.id}>")
+            repoEntry.create()
+            elasticLoader?.create(conn, entry, this)
+        } catch (MapperParsingException e) {
+            logger.warn("MapperParsingException caught when storing entry <${entry.id}>. Details: " + e.getMessage())
+        }
     }
 
     protected void delete(entryId, deletedTime) {

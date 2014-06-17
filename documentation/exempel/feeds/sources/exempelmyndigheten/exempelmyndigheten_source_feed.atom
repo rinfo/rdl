@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+	xmlns:at="http://purl.org/atompub/tombstones/1.0"
+    xmlns:fh="http://purl.org/syndication/history/1.0"
+    xmlns:dct="http://purl.org/dc/terms/">
+
+    <id>tag:exempelmyndigheten.se,2009:rinfo:feed</id>
+    <updated>2012-02-24T20:05:11Z</updated>
+    <fh:complete/>
+    <title xml:lang="sv">Flöde för Exempelmyndighetens författningssamling</title>
+    <author>
+        <name>Erik Exempelson</name>
+        <uri>http://www.exempelmyndigheten.se/</uri>
+        <email>lagrum@exempelmyndigheten.se</email>
+    </author>
+    <link href="http://testfeed.lagrummet.se" rel="self"/>
+    
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/emfs/2011:39</id>
+        <updated>2012-02-24T20:05:11Z</updated>
+        <published>2012-02-24T20:05:11Z</published>
+        <title xml:lang="sv">Exempelmyndighetens föreskrifter och allmänna råd om information som gäller försäkring och tjänstepension;</title>
+        <summary xml:lang="sv"></summary>
+        <content src="EMFS-2011_39.pdf"
+            type="application/pdf"
+            hash="md5:e5b87b76a096333ceb3718ca7ba982a9"/>
+        <link rel="alternate"
+            href="EMFS-2011_39.rdf"
+            type="application/rdf+xml"
+            length="2182" hash="md5:c5bc286a378972f6239255328dbdafbc"/>
+    </entry>
+    
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/emfs/2011:41</id>
+        <updated>2012-02-24T20:04:50Z</updated>
+        <published>2012-02-24T20:04:50Z</published>
+        <title xml:lang="sv">Föreskrifter om ändring i Exempelmyndighetens föreskrifter (FFFS 2007:16) om värdepappersrörelse;</title>
+        <summary xml:lang="sv"></summary>
+        <content src="EMFS-2011_41.pdf"
+            type="application/pdf"
+            hash="md5:dc2505c172e1fc6f25124c6b716e9857"/>
+        <link rel="alternate"
+            href="EMFS-2011_41.rdf"
+            type="application/rdf+xml"
+            length="1505" hash="md5:28f628f2584126ec7fb47d59c6cb3296"/>
+    </entry>
+</feed>

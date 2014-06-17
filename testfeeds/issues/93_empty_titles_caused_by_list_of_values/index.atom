@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="Windows-1252" standalone="no"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:le="http://purl.org/atompub/link-extensions/1.0" xmlns:fh="http://purl.org/syndication/history/1.0" xml:lang="sv">
+	<id>tag:sfs.regeringen.se,2013:rinfo:feed:1992</id>
+	<fh:complete/>
+	<title>SFS</title>
+	<updated>2014-02-12T13:40:42Z</updated>
+	<author>
+		<name>Regeringskansliet</name>
+		<uri>http://www.regeringen.se/</uri>
+		<email>rinfo@regeringen.se</email>
+	</author>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/sfs/1992:301/konsolidering/1994-01-01</id>
+		<updated>1999-10-25T11:24:45Z</updated>
+		<published>1999-10-25T11:24:45Z</published>
+		<title>1992:301 Lag (1992:301) om införande av kyrkolagen (1992:300)
+</title>
+		<summary/>
+		<content src="1992/1992_301_konsolidering_senaste.xhtml" type="application/xhtml+xml" le:md5="7da3402b2af76e6d1db36da186b35ec8"/>
+	</entry>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/sfs/1992:301</id>
+		<updated>2008-10-29T17:22:47Z</updated>
+		<published>2008-10-29T17:22:47Z</published>
+		<title>1992:301 Lag (1992:301) om införande av kyrkolagen (1992:300)
+</title>
+		<summary/>
+		<link rel="alternate" href="1992/1992_301_grund.xhtml" type="application/rdf+xml" length="1203" le:md5="480ccc0a4402c8d6cf5b5be15665042a"/>
+	</entry>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/sfs/1840:46/konsolidering/1840-12-21</id>
+		<updated>2008-07-16T16:08:41Z</updated>
+		<published>2008-07-16T16:08:41Z</published>
+		<title>1840:46 Brev (1840:46) angående Finska nationella församlingens i
+	Stockholm fortfarande, samt om regleringen av dess angelägenheter
+	</title>
+		<summary/>
+		<content src="1840/1840_46_konsolidering_senaste.xhtml" type="application/xhtml+xml" le:md5="b47c722235181d998e18d42defefda4f"/>
+	</entry>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/sfs/1992:301</id>
+		<updated>2008-11-27T11:36:45Z</updated>
+		<published>2008-11-27T11:36:45Z</published>
+		<title>1992:301 </title>
+		<summary/>
+		<link rel="alternate" href="1686/1992_301_andr.xhtml" type="application/rdf+xml" length="1070" le:md5="6b8ce5a486e3f829ee1f478f887dc69e"/>
+	</entry>
+</feed>

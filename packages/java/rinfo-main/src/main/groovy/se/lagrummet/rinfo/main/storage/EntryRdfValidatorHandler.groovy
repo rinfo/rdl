@@ -8,8 +8,10 @@ import org.openrdf.repository.Repository
 import se.lagrummet.rinfo.store.depot.DepotEntry
 
 import se.lagrummet.rinfo.base.URIMinter
+import se.lagrummet.rinfo.base.MintResult
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.base.rdf.checker.RDFChecker
+import se.lagrummet.rinfo.base.rdf.checker.ReportReader
 
 
 class EntryRdfValidatorHandler implements StorageHandler {
@@ -127,19 +129,39 @@ class EntryRdfValidatorHandler implements StorageHandler {
             logger.warn("No URIMinter available.")
             return
         }
+        logger.trace("subjectUri='"+subjectUri+"'")
         def uriResultMap = uriMinter.computeUris(repo)
+        logger.trace("uriResultMap.size="+(uriResultMap!=null?""+uriResultMap.size():"-"))
+        for (String key : uriResultMap.keySet())
+            logger.trace("uriResultMap["+key+"]='"+uriResultMap.get(key)+"'")
         def uriResults = uriResultMap[subjectUri.toString()]
+        logger.trace("uriResults.size="+(uriResults!=null?""+uriResults.size():"-"))
         def uriStr = (uriResults && uriResults.size() > 0)? uriResults[0].uri : null
+        //todo check results for partial matches and present error messages with suggestions
+        //Exception IncompleteMatchException(partial matches) -One or more MintResult.java-
+        //Make sure uri is available in MintResult.java
         if (uriStr == null) {
-            // TODO: throw new UnknownSubjectException(subjectUri)?
-            for (results in uriResultMap.values()) {
+            def uriSuggestionsMap = uriMinter.computeSuggestionUris(repo)
+            for (String key : uriSuggestionsMap.keySet())
+               logger.trace("uriSuggestionsMap["+key+"]='"+uriSuggestionsMap.get(key)+"'")
+
+            List<String> uriSuggestionList = new ArrayList<String>();
+            for (MintResult mintResult : uriSuggestionsMap[subjectUri.toString()]) {
+               uriSuggestionList.add(mintResult.getUri())
+            }
+
+            throw new UnknownSubjectException(subjectUri, uriSuggestionList)
+
+            /*for (results in uriResultMap.values()) {
                 for (result in results) {
                     uriStr = result.uri
                     break
                 }
-            }
+            } */
         }
         def computedUri = uriStr != null? new URI(uriStr) : null
+        if (!computedUri)
+            throw new UnableToComputeValidationURI(subjectUri)
         if (!subjectUri.equals(computedUri)) {
             throw new IdentifyerMismatchException(subjectUri, computedUri)
         }
@@ -152,7 +174,9 @@ class EntryRdfValidatorHandler implements StorageHandler {
         }
         def report = rdfChecker.check(repo, subjectUri.toString())
         if (!report.empty) {
-            throw new SchemaReportException(report)
+            def reportReader = new ReportReader(report.getAllStatements())
+            def errorsAndWarnings = reportReader.getErrorsAndWarnings()
+            throw new SchemaReportException(report, errorsAndWarnings)
         }
     }
 

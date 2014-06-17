@@ -1,4 +1,4 @@
-@Grab('rdfa:rdfa-sesame:0.1.0-SNAPSHOT')
+//@Grab('rdfa:rdfa-sesame:0.1.0-SNAPSHOT')
 @Grab(group='se.lagrummet.rinfo', module='rinfo-main', version='1.0-SNAPSHOT')
 import se.lagrummet.rinfo.collector.atom.FeedArchivePastToPresentReader
 import org.apache.abdera.model.*

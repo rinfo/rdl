@@ -36,7 +36,7 @@
         <!-- dct:description anger att detta är en beskrivning av
              resursen. dct:description och rdf:Description uttrycker
              helt olika saker. -->
-        <dct:description>
+        <dct:description xml:lang="sv">
           1 §, 1 a §, 2 §, 5 §, 31 § och 32 § mönsterskyddslagen
           (1970:485)
         </dct:description>
@@ -45,7 +45,7 @@
 
     <lagrum>
       <rdf:Description>
-        <dct:description>
+        <dct:description xml:lang="sv">
           Artikel 3, artikel 4, artikel 10, artikel 11, artikel 15,
           artikel 19 och artikel 27 Rådets förordning (EG) nr 6/2002
           av den 12 december 2001 om gemenskapsformgivning

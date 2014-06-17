@@ -1,0 +1,6 @@
+<VirtualHost *:80>
+    # ServerAdmin webmaster@lagrummet.se
+    ServerName regression.testfeed.lagrummet.se
+    DocumentRoot /opt/rinfo/demo-depots/regression
+
+</VirtualHost>

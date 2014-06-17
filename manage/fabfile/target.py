@@ -26,30 +26,40 @@ def _needs_targetenv():
 
 @targetenv
 def dev_unix():
-    """Set target env to: dev-unix"""
+    """Set target env to: dev_unix"""
     # Name env:
-    env.target = "dev-unix"
+    env.target = "dev_unix"
     # Machines:
+    env.user = 'rinfo'
     env.roledefs = {
-        'admin': ['localhost'],
         'main': ['localhost'],
         'service': ['localhost'],
-        'examples': ['localhost'],
+        'checker': ['localhost'],
+        'admin': ['localhost'],
+        'demosource': ['localhost'],
     }
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
     # Filesystem paths
-    env.rinfo_main_store = "/opt/work/rinfo/depots/rinfo"
-    env.examples_store = "/opt/work/rinfo/depots"
-    env.dist_dir = '/opt/work/rinfo/rinfo_dist'
-    env.rinfo_dir = '/opt/work/rinfo'
-    env.rinfo_rdf_repo_dir = '/opt/work/rinfo/aduna'
-    env.admin_webroot = "/opt/work/rinfo/admin"
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Varnish
+    env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = "127.0.0.1"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'checker': ['checker'],
+    }
     # Tomcat
-    env.tomcat = "/opt/tomcat"
-    env.tomcat_webapps = "%(tomcat)s/webapps"%env
-    env.tomcat_start = "%(tomcat)s/bin/catalina.sh start"%env
-    env.tomcat_stop = "%(tomcat)s/bin/catalina.sh stop"%env
-    env.tomcat_user = "tomcat"
-    env.tomcat_group = 'tomcat'
+    _tomcat_env()
+
 
 @targetenv
 def demo():
@@ -59,11 +69,233 @@ def demo():
     # Machines:
     env.user = 'rinfo'
     env.roledefs = {
-        'main': ['demo.lagrummet.se'],
-        'service': ['demo.lagrummet.se'],
-        'checker': ['demo.lagrummet.se'],
-        'admin': ['demo.lagrummet.se'],
-        'demosource': ['demo.lagrummet.se'],
+        'main': ['rinfo.demo.lagrummet.se'],
+        'service': ['service.demo.lagrummet.se'],
+        'checker': ['checker.demo.lagrummet.se'],
+        'admin': ['admin.demo.lagrummet.se'],
+        'demosource': ['testfeed.lagrummet.se'],
+        'lagrummet': ['demo.lagrummet.se'],
+    }
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Varnish
+    env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = "127.0.0.1"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+        'checker': ['checker'],
+    }
+    # Tomcat
+    _tomcat_env()
+
+@targetenv
+def test():
+    """Set target env to: test"""
+    # Name env:
+    env.target = "test"
+    # Machines:
+    env.user = 'rinfo'
+    env.roledefs = {
+        'main': ['rinfo.test.lagrummet.se'],
+        'service': ['service.test.lagrummet.se'],
+        'checker': ['checker.test.lagrummet.se'],
+        'admin': ['admin.test.lagrummet.se'],
+        'demosource': ['testfeed.lagrummet.se'],
+        'lagrummet': ['test.lagrummet.se'],
+    }
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Varnish
+    env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = "127.0.0.1"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+        'checker': ['checker'],
+    }
+    # Tomcat
+    _tomcat_env()
+
+@targetenv
+def regression():
+    """Set target env to: regression"""
+    # Name env:
+    env.target = "regression"
+    # Machines:
+    env.user = 'rinfo'
+    env.roledefs = {
+        'main': ['rinfo.regression.lagrummet.se'],
+        'service': ['service.regression.lagrummet.se'],
+        'checker': ['checker.regression.lagrummet.se'],
+        'admin': ['admin.regression.lagrummet.se'],
+        'demosource': ['v1.admin.regression.testfeed.lagrummet.se'],
+        'lagrummet': ['regression.lagrummet.se'],
+    }
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'checker': ['checker'],
+    }
+    # Tomcat
+    _tomcat_env()
+
+@targetenv
+def beta():
+    """Set target env to: beta"""
+    # Name env:
+    env.target = "beta"
+    # Machines:
+    env.user = 'rinfo'
+    env.roledefs = {
+        'main': ['rinfo.beta.lagrummet.se'],
+        'service': ['service.beta.lagrummet.se'],
+        'checker': ['checker.beta.lagrummet.se'],
+        'admin': ['admin.beta.lagrummet.se'],
+        'demosource': ['testfeed.lagrummet.se'],
+        'lagrummet': ['beta.lagrummet.se'],
+    }
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Varnish, if installing distributed make sure listen_ip_varnish is empty (listen to all interfaces)
+    env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = ""
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+        'checker': ['checker'],
+    }
+    # Tomcat
+    _tomcat_env()
+
+@targetenv
+def skrapat():
+    """Set target env to: Skrapat"""
+    # Name env:
+    env.target = "skrapat"
+    # Machines:
+    env.user = 'rinfo'
+    env.roledefs = {
+        'main': ['rinfo.skrapat.lagrummet.se'],
+        'service': ['service.skrapat.lagrummet.se'],
+        'checker': ['checker.skrapat.lagrummet.se'],
+        'admin': ['admin.skrapat.lagrummet.se'],
+        'demosource': ['testfeed.lagrummet.se'],
+        'lagrummet': ['skrapat.lagrummet.se'],
+    }
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'checker': ['checker'],
+    }
+    # Tomcat
+    _tomcat_env()
+
+
+@targetenv
+def testfeed():
+    """Set target env to: env
+
+       To work, you must set correct host(env.roledefs) values in /etc/hosts.
+    """
+    # Name env:
+    env.target = "testfeed"
+    # Machines:
+    env.user = 'rinfo'
+    env.roledefs = {
+        'main': ['main.testfeed'],
+        'service': ['service.testfeed'],
+        'checker': ['checker.testfeed'],
+        'admin': ['admin.testfeed'],
+        'demosource': ['testfeed.lagrummet.se'],
+        'regression': ['regression.testfeed.lagrummet.se'],
+    }
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'demosource': ['emfs'],
+        'regression': ['regression'],
+        'checker': ['checker'],
+    }
+    # Tomcat
+    _tomcat_env()
+
+@targetenv
+def scraped():
+    """Set target env to: demo"""
+    # Name env:
+    env.target = "scraped"
+    # Machines:
+    env.user = 'rinfo'
+    env.roledefs = {
+        'main': ['testfeed.lagrummet.se'],
+        'service': ['testfeed.lagrummet.se'],
+        'checker': ['testfeed.lagrummet.se'],
+        'admin': ['testfeed.lagrummet.se'],
+        'demosource': ['testfeed.lagrummet.se'],
     }
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -135,6 +367,7 @@ def prod():
         'checker': ['checker.lagrummet.se'],
         'doc': ['dev.lagrummet.se'],
         'admin': ['admin.lagrummet.se'],
+        'lagrummet': ['www.lagrummet.se'],
     }
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -143,11 +376,14 @@ def prod():
     env.rinfo_main_store = "/opt/rinfo/store"
     env.rinfo_dir = '/opt/rinfo'
     env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    # Varnish
+    env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = ""
     # Apache
     env.admin_webroot = "/var/www/admin"
     env.docs_webroot = "/var/www/dokumentation"
     env.apache_sites = {
-        'main': ['default', 'admin'],
+        'main': ['rinfo-main', 'admin'],
         'service': ['service'],
         'checker': ['checker'],
     }
@@ -156,7 +392,8 @@ def prod():
 
 def _tomcat_env():
     env.apache_jk_tomcat = True
-    env.tomcat_version = "7.0.37"
+    # when change version of tomcat, must check server.xml (../../sysconf/common/tomcat/server.xml)
+    env.tomcat_version = "7.0.54"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps"%env
     env.tomcat_start = '/etc/init.d/tomcat start'

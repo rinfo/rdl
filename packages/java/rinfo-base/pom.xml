@@ -31,7 +31,6 @@
         <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -175,6 +174,7 @@
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-eclipse-compiler</artifactId>
         <extensions>true</extensions>
+          <version>${greclipse.version}</version>
       </plugin>
 
     </plugins>

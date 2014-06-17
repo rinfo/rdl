@@ -1,6 +1,6 @@
 #!/bin/bash
 TOMCAT_DIST_BASE=http://www.apache.org/dist/tomcat
-TOMCAT_MIRROR_BASE=http://apache.dataphone.se/tomcat
+TOMCAT_MIRROR_BASE=http://apache.mirrors.spacedump.net/tomcat
 
 version=$1
 major=${version%%\.*}

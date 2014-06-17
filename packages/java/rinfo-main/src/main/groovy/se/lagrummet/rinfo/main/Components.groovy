@@ -28,7 +28,6 @@ import se.lagrummet.rinfo.base.URIMinter
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 import se.lagrummet.rinfo.main.storage.CollectorLog
-import se.lagrummet.rinfo.main.storage.ErrorLevel
 import se.lagrummet.rinfo.main.storage.EntryRdfValidatorHandler
 import se.lagrummet.rinfo.main.storage.FeedCollectScheduler
 import se.lagrummet.rinfo.main.storage.FeedCollector
@@ -68,8 +67,7 @@ class Components {
         ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets", false),
         PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
         COLLECTOR_LOG_DATA_DIR("rinfo.main.collector.logDataDir"),
-        COMPLETE_FEEDS_ID_INDEX_DIR("rinfo.main.collector.completeFeedsIndexDir"),
-        STOP_ON_ERROR_LEVEL("rinfo.main.checker.stopOnErrorLevel");
+        COMPLETE_FEEDS_ID_INDEX_DIR("rinfo.main.collector.completeFeedsIndexDir");
 
         String value;
         boolean requiredValue = true;
@@ -156,8 +154,7 @@ class Components {
 
     protected void setupStorage() {
         storage = new Storage(createDepot(), collectorLog,
-                createFeedEntryDataIndex(),
-                ErrorLevel.valueOf(configString(ConfigKey.STOP_ON_ERROR_LEVEL)))
+                createFeedEntryDataIndex())
     }
 
     protected void setupFeedCollector() {

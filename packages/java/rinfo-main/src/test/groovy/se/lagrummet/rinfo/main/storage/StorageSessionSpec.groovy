@@ -93,6 +93,142 @@ class StorageSessionSpec extends Specification {
         // TODO: log in .. eventRegistry?
     }
 
+    def "skip entry and continue collect"() {
+        setup:
+        Depot depot = Mock()
+        DepotSession depotSession = Mock()
+        StorageHandler handler = Mock()
+        CollectorLogSession logSession = Mock()
+        session = makeStorageSessionWithLogSession(depot, depotSession, [handler], logSession, false)
+
+        and: "mock depot creation and throw exception upon validation"
+        DepotEntry depotEntry = Mock()
+        mockupDepotEntry(depotEntry)
+        def entries = [:]
+        1 * depot.getEntryOrDeletedEntry(entryId) >> { entries[entryId] }
+        1 * depotSession.createEntry(entryId, _, _, _) >> {
+            entries[entryId] = depotEntry
+            return depotEntry
+        }
+        handler.onModified(session, depotEntry, true) >> {
+            throw new Exception()
+        }
+        logSession.logError(_, _, _, _) >> ErrorAction.SKIPANDCONTINUE
+
+        when: "a new entry is written"
+        session.beginPage(sourceUrl, sourceFeed)
+        boolean okToContinue = session.storeEntry(sourceFeed, sourceEntry, [], [])
+        session.endPage()
+
+        then: "the entry is rollbacked"
+        1 * depotSession.rollbackPending()
+
+        and: "the collect will continue"
+        okToContinue
+    }
+
+    def "store entry and continue collect"() {
+        setup:
+        Depot depot = Mock()
+        DepotSession depotSession = Mock()
+        StorageHandler handler = Mock()
+        CollectorLogSession logSession = Mock()
+        session = makeStorageSessionWithLogSession(depot, depotSession, [handler], logSession, false)
+
+        and: "mock depot creation and throw exception upon validation"
+        DepotEntry depotEntry = Mock()
+        mockupDepotEntry(depotEntry)
+        def entries = [:]
+        1 * depot.getEntryOrDeletedEntry(entryId) >> { entries[entryId] }
+        1 * depotSession.createEntry(entryId, _, _, _) >> {
+            entries[entryId] = depotEntry
+            return depotEntry
+        }
+        handler.onModified(session, depotEntry, true) >> {
+            throw new Exception()
+        }
+        logSession.logError(_, _, _, _) >> ErrorAction.STOREANDCONTINUE
+
+        when: "a new entry is written"
+        session.beginPage(sourceUrl, sourceFeed)
+        boolean okToContinue = session.storeEntry(sourceFeed, sourceEntry, [], [])
+        session.endPage()
+
+        then: "the entry is not rollbacked"
+        0 * depotSession.rollbackPending()
+
+        and: "the collect will continue"
+        okToContinue
+    }
+
+    def "skip entry and stop collect"() {
+        setup:
+        Depot depot = Mock()
+        DepotSession depotSession = Mock()
+        StorageHandler handler = Mock()
+        CollectorLogSession logSession = Mock()
+        session = makeStorageSessionWithLogSession(depot, depotSession, [handler], logSession, false)
+
+        and: "mock depot creation and throw exception upon validation"
+        DepotEntry depotEntry = Mock()
+        mockupDepotEntry(depotEntry)
+        def entries = [:]
+        1 * depot.getEntryOrDeletedEntry(entryId) >> { entries[entryId] }
+        1 * depotSession.createEntry(entryId, _, _, _) >> {
+            entries[entryId] = depotEntry
+            return depotEntry
+        }
+        handler.onModified(session, depotEntry, true) >> {
+            throw new Exception()
+        }
+        logSession.logError(_, _, _, _) >> ErrorAction.SKIPANDHALT
+
+        when: "a new entry is written"
+        session.beginPage(sourceUrl, sourceFeed)
+        boolean okToContinue = session.storeEntry(sourceFeed, sourceEntry, [], [])
+        session.endPage()
+
+        then: "the entry is rollbacked"
+        1 * depotSession.rollbackPending()
+
+        and: "the collect will not continue"
+        !okToContinue
+    }
+
+    def "skip entry and continue if checker collect"() {
+        setup:
+        Depot depot = Mock()
+        DepotSession depotSession = Mock()
+        StorageHandler handler = Mock()
+        CollectorLogSession logSession = Mock()
+        session = makeStorageSessionWithLogSession(depot, depotSession, [handler], logSession, true)
+
+        and: "mock depot creation and throw exception upon validation"
+        DepotEntry depotEntry = Mock()
+        mockupDepotEntry(depotEntry)
+        def entries = [:]
+        1 * depot.getEntryOrDeletedEntry(entryId) >> { entries[entryId] }
+        1 * depotSession.createEntry(entryId, _, _, _) >> {
+            entries[entryId] = depotEntry
+            return depotEntry
+        }
+        handler.onModified(session, depotEntry, true) >> {
+            throw new Exception()
+        }
+        logSession.logError(_, _, _, _) >> ErrorAction.SKIPANDHALT
+
+        when: "a new entry is written"
+        session.beginPage(sourceUrl, sourceFeed)
+        boolean okToContinue = session.storeEntry(sourceFeed, sourceEntry, [], [])
+        session.endPage()
+
+        then: "the entry is rollbacked"
+        1 * depotSession.rollbackPending()
+
+        and: "the collect will continue"
+        okToContinue
+    }
+
     def "an entry is updated"() {
         setup:
         Depot depot = Mock()
@@ -168,12 +304,21 @@ class StorageSessionSpec extends Specification {
         depotSession.getDepot() >> depot
         def collectorLog = new CollectorLog(repo,
                 "http://example.org/report/", "http://example.org/dataset/")
-        def storage = new Storage(depot, collectorLog, null, ErrorLevel.WARNING)
+        def storage = new Storage(depot, collectorLog, null)
         storage.storageHandlers = handlers
         storage.startup()
         def sourceFeed = "http://example.org/feed"
         return storage.openSession(new StorageCredentials(
                     new CollectorSource(new URI(sourceFeed), new URL(sourceFeed)), admin))
+    }
+
+    private makeStorageSessionWithLogSession(depot, depotSession, handlers, admin=false, logSession, isCheckerCollect) {
+        depot.openSession() >> depotSession
+        depotSession.getDepot() >> depot
+        def sourceFeed = "http://example.org/feed"
+        def credentials = new StorageCredentials(
+            new CollectorSource(new URI(sourceFeed), new URL(sourceFeed)), admin)
+        return new StorageSession(credentials, depotSession, handlers, logSession, null, isCheckerCollect)
     }
 
     private mockupDepotEntry(depotEntry) {

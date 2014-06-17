@@ -18,7 +18,7 @@ class StorageSpec extends Specification {
     Storage storage
 
     def setup() {
-        storage = new Storage(depot, collectorLog, null, ErrorLevel.WARNING)
+        storage = new Storage(depot, collectorLog, null)
         depot.openSession() >> Mock(DepotSession)
     }
 

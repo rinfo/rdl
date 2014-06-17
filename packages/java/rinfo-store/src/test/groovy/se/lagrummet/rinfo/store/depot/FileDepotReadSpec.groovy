@@ -6,7 +6,7 @@ import spock.lang.*
 class FileDepotReadSpec extends Specification {
 
     @Shared Depot depot = DepotUtil.depotFromConfig(
-                "src/test/resources/rinfo-depot.properties")
+            "src/test/resources/rinfo-depot.properties")
 
     def "should contain entry"() {
         when:
@@ -85,7 +85,7 @@ class FileDepotReadSpec extends Specification {
         results.size() == 1
     }
 
-    def "should iterate entries"() {
+    /*def "should iterate entries"() {
         when:
         def entries = depot.iterateEntries().toList()
         then:
@@ -97,7 +97,7 @@ class FileDepotReadSpec extends Specification {
         entries.size() == 6
 
         // TODO: historical: depot.iterateEntries(true, false)
-    }
+    } */
 
     def "should find locked entries"() {
         when:

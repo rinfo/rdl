@@ -20,7 +20,7 @@
     <greclipse.version>2.7.0-01</greclipse.version>
     <restlet.version>2.0.9</restlet.version>
     <sesame.version>2.6.10</sesame.version>
-    <elasticsearch.version>0.20.2</elasticsearch.version>
+    <elasticsearch.version>0.90.11</elasticsearch.version>
     <spatial4j.version>0.3</spatial4j.version>
     <tika.version>0.9</tika.version>
     <jackson.version>1.8.1</jackson.version>
@@ -508,8 +508,8 @@
           <version>2.3.2</version>
           <configuration>
             <compilerId>groovy-eclipse-compiler</compilerId>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>1.7</source>
+            <target>1.7</target>
             <encoding>UTF-8</encoding>
           </configuration>
           <dependencies>
@@ -517,6 +517,12 @@
               <groupId>org.codehaus.groovy</groupId>
               <artifactId>groovy-eclipse-compiler</artifactId>
               <version>${greclipse.version}</version>
+            </dependency>
+            <!-- TODO: remove below version spec and thereby allow newer versions -->
+            <dependency>
+              <groupId>org.codehaus.groovy</groupId>
+              <artifactId>groovy-eclipse-batch</artifactId>
+              <version>2.1.5-03</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -671,6 +677,30 @@
         <environment>demo</environment>
       </properties>
     </profile>
+    <profile>
+      <id>beta</id>
+      <properties>
+        <environment>beta</environment>
+      </properties>
+    </profile>
+    <profile>
+        <id>test</id>
+        <properties>
+            <environment>test</environment>
+        </properties>
+    </profile>
+      <profile>
+          <id>regression</id>
+          <properties>
+              <environment>regression</environment>
+          </properties>
+      </profile>
+      <profile>
+          <id>skrapat</id>
+          <properties>
+              <environment>skrapat</environment>
+          </properties>
+      </profile>
     <profile>
       <id>prod</id>
       <properties>

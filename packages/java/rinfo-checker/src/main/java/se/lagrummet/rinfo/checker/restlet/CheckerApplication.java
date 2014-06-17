@@ -24,6 +24,7 @@ import se.lagrummet.rinfo.checker.CheckerTool;
 public class CheckerApplication extends Application {
 
     private String mediaDirUrl = "war:///media/";
+    private String jsDirUrl = "war:///js/";
     private List<StorageHandler> handlers = new ArrayList<StorageHandler>();
 
     @Override
@@ -38,6 +39,7 @@ public class CheckerApplication extends Application {
             Router router = new Router(getContext());
             router.attachDefault(CheckerResource.class);
             router.attach("/media", new Directory(getContext(), mediaDirUrl));
+            router.attach("/js", new Directory(getContext(), jsDirUrl));
             return router;
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -5,6 +5,7 @@ body {
     padding: 0 40pt 0 40pt;
     background: -webkit-gradient(linear, left top, right top, from(#fff), to(#ddd));
     background: -moz-linear-gradient(left, #fff, #ddd);
+    height: 100%;
 }
 
 h1 {
@@ -45,13 +46,52 @@ dl.lone {
     margin: 0;
 }
 
-dl.summary {
+input.url {
+    width: 85%;
+}
+
+div.summary {
     background-color: #eee;
     border: 0.8pt solid #000000;
     padding: 4pt;
-    width: 36em;
     -moz-border-radius: 4pt;
     -webkit-border-radius: 4pt;
+}
+
+div.summary_left_section {
+	width:75%;
+	float:left;
+	overflow:hidden
+}
+
+div.summary_right_section {
+	width:25%;
+	float:right;
+}
+
+div.clear_both {
+    clear: both;
+}
+
+div.filter {
+    background-color: #eee;
+    border: 0.8pt solid #000000;
+    padding: 4pt;
+    -moz-border-radius: 4pt;
+    -webkit-border-radius: 4pt;
+}
+
+div.form_section {
+    margin: 5px;
+}
+
+input.submit_button {
+    margin-left: 5px;
+    width: 10%;
+}
+
+span.checkbox {
+    margin-left: 10px;
 }
 
 dt {
@@ -68,6 +108,11 @@ dd {
 dt.error,
 dd.error {
     color: #f00;
+}
+
+dt.success,
+dd.success {
+    color: #5AB109;
 }
 
 table {
@@ -94,18 +139,31 @@ td.position {
     background-color: #eee;
     font-style: italic;
     text-align: center;
+    width: 1%;
 }
 
 td.position {
     text-align: right;
 }
 
-th.dateTime {
-    width: 12.5em;
+th.dateTime,
+td.dateTime {
+    width: 10%;
 }
 
-th.status {
-    width: 8em;
+th.status,
+td.status {
+    width: 12%;
+}
+
+th.uri,
+td.uri {
+    width: 30%;
+}
+
+th.info,
+td.info {
+    width: 48%;
 }
 
 tr.entry {
@@ -124,3 +182,29 @@ tr.error {
     font-style: italic;
 }
 
+div#filtrera {
+    margin-bottom:10px
+}
+
+.highlight {
+    background-color: #FF885C;
+}
+
+.italic {
+    font-style: italic;
+    text-decoration: underline;
+}
+
+#spinner {
+    width: 200px ;
+    margin-left: auto ;
+    margin-right: auto ;
+}
+
+div.hide_show_all {
+    margin-bottom: 10px;
+}
+
+span.filtermatch_button {
+    margin-right: 5px;
+}

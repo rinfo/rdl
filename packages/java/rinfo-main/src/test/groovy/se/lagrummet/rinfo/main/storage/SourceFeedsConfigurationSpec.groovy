@@ -13,8 +13,8 @@ class SourceFeedsConfigurationSpec extends Specification {
     def configurationEntryId = systemDatasetUri
 
     def sourceFeedUrls = [
-        new URL("http://dom.se/dvfs/feed/current"),
-        new URL("http://regeringen.se/sfs/feed/current"),
+        new URI("http://dom.se/dvfs/feed/current"),
+        new URI("http://regeringen.se/sfs/feed/current"),
     ]
 
     def "Collect scheduler gets source feeds from rdf in configured entry"() {
@@ -23,7 +23,7 @@ class SourceFeedsConfigurationSpec extends Specification {
         def sourceFeedsConfigHandler = new SourceFeedsConfigHandler(
                 collectScheduler, configurationEntryId, systemDatasetUri)
         def session = new StorageSession(new StorageCredentials(null, true),
-                Mock(DepotSession), [], Mock(CollectorLogSession), null, ErrorLevel.WARNING)
+                Mock(DepotSession), [], Mock(CollectorLogSession), null)
 
         when: "an entry with expected id is created"
         sourceFeedsConfigHandler.onModified(session, mockSourcesEntry(), true)
@@ -37,7 +37,7 @@ class SourceFeedsConfigurationSpec extends Specification {
         def sourceFeedsConfigHandler = new SourceFeedsConfigHandler(
                 null, configurationEntryId, systemDatasetUri)
         def session = new StorageSession(new StorageCredentials(null, false),
-                Mock(DepotSession), [], Mock(CollectorLogSession), null, ErrorLevel.WARNING)
+                Mock(DepotSession), [], Mock(CollectorLogSession), null)
 
         when: "an entry with expected id is created"
         sourceFeedsConfigHandler.onModified(session, mockSourcesEntry(), true)

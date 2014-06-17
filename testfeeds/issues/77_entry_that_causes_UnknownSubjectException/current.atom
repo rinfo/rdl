@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="Windows-1252" standalone="no"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:le="http://purl.org/atompub/link-extensions/1.0" xmlns:fh="http://purl.org/syndication/history/1.0" xml:lang="sv">
+	<id>tag:sfs.regeringen.se,2013:rinfo:feed:1937</id>
+	<fh:complete/>
+	<title>SFS</title>
+	<updated>2014-01-29T22:41:54Z</updated>
+	<author>
+		<name>Regeringskansliet</name>
+		<uri>http://www.regeringen.se/</uri>
+		<email>rinfo@regeringen.se</email>
+	</author>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/sfs/1937:179/konsolidering/</id>
+		<updated>2008-05-15T16:03:39Z</updated>
+		<published>2008-05-15T16:03:39Z</published>
+		<title>1937:179 Kungl. Maj:ts Kungörelse (1937:179) om fortsatt tillämpning av kungörelsen den 6 maj 1927 (nr 129) angående förbud mot utförsel från riket av vissa äldre kulturföremål;
+</title>
+		<summary/>
+		<content src="1937_179_konsolidering_senaste.xhtml" type="application/xhtml+xml" le:md5="6df7076f63abff24d1017781a396788e"/>
+	</entry>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/sfs/1937:179</id>
+		<updated>2008-07-21T15:58:51Z</updated>
+		<published>2008-07-21T15:58:51Z</published>
+		<title>1937:179 Kungl. Maj:ts Kungörelse (1937:179) om fortsatt tillämpning av kungörelsen den 6 maj 1927 (nr 129) angående förbud mot utförsel från riket av vissa äldre kulturföremål
+</title>
+		<summary/>
+		<content src="1937_179_grund.xhtml" type="application/rdf+xml" le:md5="0ae84e945c2b607a16d9095c322eccd0"/>
+	</entry>
+</feed>

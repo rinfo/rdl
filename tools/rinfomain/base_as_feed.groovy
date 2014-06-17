@@ -2,7 +2,7 @@
 @Grab('se.lagrummet.rinfo:rinfo-store:1.0-SNAPSHOT')
 @Grab('org.restlet.jse:org.restlet:2.0.9')
 @Grab('org.restlet.jee:org.restlet.ext.servlet:2.0.9')
-@Grab('rdfa:rdfa-sesame:0.1.0-SNAPSHOT')
+//@Grab('rdfa:rdfa-sesame:0.1.0-SNAPSHOT')
 @Grab('se.lagrummet.rinfo:rinfo-base:1.0-SNAPSHOT')
 
 import javax.xml.transform.OutputKeys
@@ -82,8 +82,10 @@ def main() {
         "application/atom+xml": "atom",
         "text/html": "html",
     ]
+    println "------------------------- Main loop ------------------"
     coll.each { href, repr ->
         def fpath = outdir+href
+        println "fpath="+fpath
         def ext = extMap[repr.mediaType]
         if (ext && !fpath.endsWith("."+ext)) {
             fpath += "."+ext
@@ -350,9 +352,10 @@ Closure createFileWriter(file) {
 
 //======================================================================
 
-SAX_F = javax.xml.parsers.SAXParserFactory.newInstance()
+SAX_F = javax.xml.parsers.SAXParserFactory.newInstance("org.apache.xerces.jaxp.SAXParserFactoryImpl", null)
 SAX_F.setNamespaceAware(true)
-SAX_TF = (SAXTransformerFactory) TransformerFactory.newInstance()
+SAX_TF = (SAXTransformerFactory) TransformerFactory.newInstance("org.apache.xalan.processor.TransformerFactoryImpl",null)
+
 
 InputStream rdfVocabToXhtml(inputStream, outputStream) {
     def reader = SAX_F.newSAXParser().getXMLReader()

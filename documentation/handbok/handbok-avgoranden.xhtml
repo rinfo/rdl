@@ -49,6 +49,15 @@
 	    <th>Datum</th>
 	    <th>Ändring</th>
 	  </tr>
+        <tr>
+            <td>2014-01-30</td>
+            <td>Uppdaterat kontaktperson</td>
+        </tr>
+        <tr>
+            <td>2014-01-24</td>
+            <td>Korrigering av exempel som saknade parametern <code>xml:lang</code> i taggen <code>dct:description</code>,&nbsp;
+                samt förtydligande gällande hur malnummer skall fugera i URI.</td>
+        </tr>
 	  <tr>
 	    <td>2011-10-27</td>
             <td>Korrigering av exempel i bilaga 12.</td>
@@ -432,10 +441,9 @@
       <ul>
 	<li>Symbolen för <code>dct:publisher</code> hämtas från Bilaga 5</li>
 	<li>
-	  <code>malnummer</code> ska vara utan mellanslag och
-	  med eventuella å, ä och ö transformerade till aa, ae och oe,
-	  respektive (vilket är i linje med de generella
-	  URI-principerna för systemet)
+        <code>malnummer</code> ska följa de generella URI-principerna för systemet.
+        Eventuella å, ä och ö ska transformeras till aa, ae och oe.
+        Eventuella blanktecken ska bytas ut mot understrykningstecknet "_".
 	</li>
 	<li>
 	  <code>avgorandedatum</code> ska skrivas på formen ÅÅÅÅ-MM-DD.
@@ -673,7 +681,7 @@
 	<code class="xml"><![CDATA[
 <lagrum>
     <rdf:Description>
-	<dct:description>
+	<dct:description xml:lang="sv">
             1 §, 1 a §, 2 §, 5 §, 31 § och 32 § mönsterskyddslagen
             (1970:485)
 	</dct:description>

@@ -42,6 +42,7 @@ env.roledefs = {
     'service': [],
     'checker': [],
     'demosource': [],
+    'lagrummet': [],
 }
 
 ##

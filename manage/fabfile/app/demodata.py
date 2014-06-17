@@ -4,20 +4,25 @@ from fabric.contrib.files import *
 from fabric.contrib.project import rsync_project
 from fabfile.target import _needs_targetenv
 from fabfile.app import _deploy_war
+from fabfile.app import _deploy_war_norestart
 from fabfile.util import venv
 from os import path as p
 
 
 env.java_opts = 'JAVA_OPTS="-Xms512m -Xmx1024m"'
-env.demodata_dir = "/opt/work/rinfo/demodata"
+# env.demodata_dir = "/opt/work/rinfo/demodata"
+env.demodata_dir = "/tmp/rinfo-work/rinfo/demodata"
 env.demodata_tools = p.join(env.projectroot, "tools", "demodata")
 
 
 lagen_nu_datasets = ('sfs', 'dv')
 riksdagen_se_datasets = ('prop', 'sou', 'ds')
 
+exempel_datasets = [{'emfs': ['Forfattningar/EMFS/2011','exempelmyndigheten/exempelmyndigheten_source_feed.atom']}]
+exempel_datasets_keys = ('emfs')
+
 def _can_handle_dataset(dataset):
-    if not any(dataset in ds for ds in (lagen_nu_datasets, riksdagen_se_datasets)):
+    if not any(dataset in ds for ds in (lagen_nu_datasets, riksdagen_se_datasets, exempel_datasets_keys)):
         raise ValueError("Undefined dataset %r" % dataset)
 
 
@@ -33,6 +38,8 @@ def download(dataset, force="1"):
             _download_lagen_nu_data(dataset)
         elif dataset in riksdagen_se_datasets:
             _download_riksdagen_data(dataset)
+        elif dataset in exempel_datasets_keys:
+            _copy_local_repo(dataset)
 
 @task
 def create_depot(dataset):
@@ -64,12 +71,16 @@ def build_dataset_war(dataset):
 
 #@task
 @roles('demosource')
-def deploy_dataset_war(dataset):
+def deploy_dataset_war(dataset, restart=True):
     """Deploy a demo webapp for the given uploaded dataset."""
     _can_handle_dataset(dataset)
     if not exists(env.dist_dir):
         run("mkdir %(dist_dir)s"%env)
-    _deploy_war("%(java_packages)s/demodata-supply/target/%(dataset)s-demodata-supply.war" % venv(),
+    if restart:
+        _deploy_war("%(java_packages)s/demodata-supply/target/%(dataset)s-demodata-supply.war" % venv(),
+            "%(dataset)s-demodata-supply" % venv())
+    else:
+        _deploy_war_norestart("%(java_packages)s/demodata-supply/target/%(dataset)s-demodata-supply.war" % venv(),
             "%(dataset)s-demodata-supply" % venv())
 
 @task
@@ -95,7 +106,6 @@ def deploy_dataset(dataset):
     upload(dataset)
     dataset_war(dataset)
 
-
 #def full_demo_deploy():
 #    from itertools import chain
 #    for dataset in chain(lagen_nu_datasets, riksdagen_se_datasets):
@@ -103,6 +113,22 @@ def deploy_dataset(dataset):
 #        demo_refresh(dataset)
 #    from fabfile.app import admin
 #    admin.all()
+
+
+@task
+def deploy_testfeed(dataset):
+    for lookup in dataset.keys():
+        key = lookup
+    create_depot(key)
+    _copy_local_repo(key, dataset[key])
+    build_dataset_war(key)
+    upload(key)
+    deploy_dataset_war(key, restart=False)
+
+@task
+def deploy_all_testfeeds():
+    for dataset in exempel_datasets:
+        deploy_testfeed(dataset)
 
 
 def _mkdir_keep_prev(dir_path):
@@ -129,4 +155,19 @@ def _transform_riksdagen_data(dataset):
     local("%(java_opts)s groovy %(demodata_tools)s/data_riksdagen_se/depot_from_data_riksdagen_se.groovy "
             " %(demodata_dir)s/%(dataset)s-raw %(demodata_dir)s/%(dataset)s" % venv())
 
+def _copy_local_repo(dataset_key, dataset_value):
+    rdf_example_path = dataset_value[0]
+    atom_example_subpath_and_file = dataset_value[1]
+    local('cp -r ../../documentation/exempel/documents/publ/' + rdf_example_path + '/* %(demodata_dir)s/%(dataset_key)s' % venv())
+    local('cp -r ../../documentation/exempel/feeds/sources/' + atom_example_subpath_and_file + ' %(demodata_dir)s/%(dataset_key)s/feed.atom' % venv())
 
+
+@task
+@roles('regression')
+def deploy_regression_tests():
+    _needs_targetenv()
+    target_dir = env.demo_data_root+"/regression"
+    if not exists(target_dir):
+       sudo("mkdir -p %(target_dir)s" % venv())
+       sudo("chown %(user)s %(target_dir)s" % venv())
+    rsync_project(target_dir, "%(env.projectroot)s/testfeed/regression/" % venv(), exclude=".*", delete=True)

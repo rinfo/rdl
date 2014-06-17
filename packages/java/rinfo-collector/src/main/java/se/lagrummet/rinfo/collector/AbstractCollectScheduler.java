@@ -1,6 +1,8 @@
 package se.lagrummet.rinfo.collector;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -88,7 +90,7 @@ public abstract class AbstractCollectScheduler {
     /**
      * @return Collection of approved source feed URLs.
      */
-    public abstract Collection<URL> getSourceFeedUrls();
+    public abstract Collection<URI> getSourceFeedUrls();
 
     /**
      * Perform collect of feed from the given URL.
@@ -152,12 +154,14 @@ public abstract class AbstractCollectScheduler {
      * Schedule all source feeds for collect.
      */
     public void collectAllFeeds() {
-        Collection<URL> sourceFeedUrls = getSourceFeedUrls();
+        Collection<URI> sourceFeedUrls = getSourceFeedUrls();
         if (sourceFeedUrls != null) {
             logger.info("Starting scheduling for collect of " +
                     sourceFeedUrls.size() + " source feeds.");
-            for (URL feedUrl : sourceFeedUrls) {
-                enqueueCollect(feedUrl);
+            for (URI feedUrl : sourceFeedUrls) {
+                try {
+                    enqueueCollect(feedUrl.toURL());
+                } catch (MalformedURLException ignore) {} // Ignored because will be checked before this serveral times
             }
             logger.info("Done scheduling source feeds.");
         } else {
@@ -176,11 +180,13 @@ public abstract class AbstractCollectScheduler {
      */
     public boolean triggerFeedCollect(final URL feedUrl)
             throws NotAllowedSourceFeedException {
-        if (!getSourceFeedUrls().contains(feedUrl)) {
-            throw new NotAllowedSourceFeedException(
-                    "Called triggerFeedCollect with disallowed " +
-                    "feed url: <"+ feedUrl +">");
-        }
+        try {
+            if (!getSourceFeedUrls().contains(feedUrl.toURI())) {
+                throw new NotAllowedSourceFeedException(
+                        "Called triggerFeedCollect with disallowed " +
+                        "feed url: <"+ feedUrl +">");
+            }
+        } catch (URISyntaxException ignore) {}
         return enqueueCollect(feedUrl);
     }
 
@@ -214,9 +220,11 @@ public abstract class AbstractCollectScheduler {
             } finally {
                 feedInProcess.remove(feedUrlStr);
             }
-            logger.info("Completed collect of <"+ feedUrlStr +">.");
+            afterCompletedCollect(feedUrlStr);
         }
     }
+
+    protected abstract void afterCompletedCollect(String feedUrlStr);
 
     private synchronized String getNextFeed() {
         String feedUrlStr = feedQueue.peek();

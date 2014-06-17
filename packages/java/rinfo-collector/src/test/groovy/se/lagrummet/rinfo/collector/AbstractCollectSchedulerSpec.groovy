@@ -20,7 +20,7 @@ class AbstractCollectSchedulerSpec extends Specification {
             initialDelay: 0,
             scheduleInterval: -1,
             timeUnitName: "milliseconds",
-            sourceFeedUrls: SOURCE_FEEDS.collect { it.url }
+            sourceFeedUrls: SOURCE_FEEDS.collect { it.url.toURI() }
         )
     }
 
@@ -159,4 +159,7 @@ class ManagedDummyScheduler extends AbstractCollectScheduler {
         blockCollectSemaphore = null
     }
 
+    void afterCompletedCollect(String feedUrlStr) {
+        println "Completed collect of <"+ feedUrlStr +">."
+    }
 }

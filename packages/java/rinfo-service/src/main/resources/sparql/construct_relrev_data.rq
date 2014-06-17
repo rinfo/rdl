@@ -93,23 +93,27 @@ CONSTRUCT {
         # Skip if ?current is of a ?type known to have lots of revs
         ?current a ?type .
         FILTER(?type not in (foaf:Organization, bibo:Collection))
-        ?type rdfs:subClassOf+ ?basetype .
-        FILTER(?basetype not in (foaf:Organization, bibo:Collection))
+
+        # Leave this out for now! May be redundant for current use cases.
+        #?type rdfs:subClassOf+ ?basetype .
+        #FILTER(?basetype not in (foaf:Organization, bibo:Collection))
 
         ?revitem ?rev ?current .
 
         {
             ?revitem ?revprop ?revtext .
             FILTER(isLiteral(?revtext))
-            OPTIONAL { ?revitem a ?revtype . }
-            OPTIONAL { ?revitem dct:publisher ?revpublisher . }
-        } UNION {
-            ?revrevitem ?revrev ?revitem;
-                ?revrevprop ?revrevtext .
-            FILTER (?revrev = rpubl:referatAvDomstolsavgorande &&
-                    isLiteral(?revrevtext) )
-            OPTIONAL { ?revrevitem a ?revrevtype . }
-        }
+
+        # Leave out for now! Does not work for some known edge cases.
+        #    OPTIONAL { ?revitem a ?revtype . }
+        #    OPTIONAL { ?revitem dct:publisher ?revpublisher . }
+        }# UNION {
+        #    ?revrevitem ?revrev ?revitem;
+        #        ?revrevprop ?revrevtext .
+        #    FILTER (?revrev = rpubl:referatAvDomstolsavgorande &&
+        #            isLiteral(?revrevtext) )
+        #    OPTIONAL { ?revrevitem a ?revrevtype . }
+        #}
 
         # IMPROVE: generalize to follow any revitems upward to "containers" and
         # describe those.

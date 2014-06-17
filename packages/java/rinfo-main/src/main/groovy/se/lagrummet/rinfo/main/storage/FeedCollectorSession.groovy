@@ -201,23 +201,41 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
 
 public class RemoteSourceContent extends SourceContent {
 
+    private static final String MIME_TYPE_PDF = "application/pdf";
+
     private FeedCollectorSession collectorSession;
     String urlPath;
+    String mediaType;
+
+    private final Logger logger = LoggerFactory.getLogger(RemoteSourceContent)
 
     public RemoteSourceContent(FeedCollectorSession collectorSession, String urlPath,
             String mediaType, String lang, String enclosedUriPath) {
         super(mediaType, lang, enclosedUriPath);
         this.collectorSession = collectorSession;
         this.urlPath = urlPath;
+        this.mediaType = mediaType;
     }
 
     @Override
     public void writeTo(OutputStream outStream) throws IOException {
         // TODO:IMPROVE: retrying http; and also handle failed gets in writeTo(File)
+        boolean ok = true;
         if (getSourceStream() == null) {
-            setSourceStream(collectorSession.getResponseAsInputStream(urlPath), false);
+            try {
+                setSourceStream(collectorSession.getResponseAsInputStream(urlPath), false);
+            } catch (FileNotFoundException e) {
+                if(mediaType.equals(MIME_TYPE_PDF)) {
+                    logger.warn("Could not fetch pdf from url: " + urlPath + ". Caused by: " + e + "; details: "+ e.getMessage());
+                    ok = false;
+                } else {
+                    throw e;
+                }
+            }
         }
-        super.writeTo(outStream);
-    }
 
+        if(ok) {
+           super.writeTo(outStream);
+        }
+    }
 }

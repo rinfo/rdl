@@ -3,3 +3,7 @@
 .idea/
 .idea_modules/
 target
+*.iml
+out/
+testreport/
+ping_verify*

@@ -2,18 +2,25 @@ package se.lagrummet.rinfo.service
 
 import se.lagrummet.rinfo.collector.AbstractCollectScheduler
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class SesameLoadScheduler extends AbstractCollectScheduler {
 
-    ServiceComponents components
-    protected Collection<URL> sourceFeedUrls
+    private final Logger logger = LoggerFactory.getLogger(SesameLoadScheduler.class)
 
-    SesameLoadScheduler(components, sourceFeedUrls) {
+    ServiceComponents components
+    VarnishInvalidator varnishInvalidator
+    protected Collection<URI> sourceFeedUrls = new LinkedList<>()
+
+    SesameLoadScheduler(components, varnishInvalidator, Collection<URL> sourceFeedUrls) {
         this.components = components
-        this.sourceFeedUrls = sourceFeedUrls
+        this.varnishInvalidator = varnishInvalidator
+        for (source in sourceFeedUrls)
+            this.sourceFeedUrls.add(source.toURI())
     }
 
-    public Collection<URL> getSourceFeedUrls() {
+    public Collection<URI> getSourceFeedUrls() {
         return sourceFeedUrls
     }
 
@@ -26,4 +33,26 @@ class SesameLoadScheduler extends AbstractCollectScheduler {
         }
     }
 
+    protected void afterCompletedCollect(String feedUrlStr) {
+        logger.info("Completed collect of <"+ feedUrlStr +">.")
+
+        //Remove all objects in varnish cache
+        varnishInvalidator.ban("/")
+
+        /**
+         * TODO: Improve varnish cache invalidation!
+         * Ideally the varnish cache should be invalidated with precision
+         * given that (or when) we know exactly which objects to remove
+         *
+         * To remove a specific object, use purge:
+         * varnishInvalidator.purge("/publ/sfs/1999:175/data")
+         * varnishInvalidator.purge("/publ/sfs/1999:175/konsolidering/2011-05-02/data")
+         *
+         * To remove many objects matching a regex, use ban:
+         * varnishInvalidator.ban("/publ/sfs/1999:175/")  // includes both purge examples above
+         * varnishInvalidator.ban("/publ/sfs/")           // all SFS data
+         * varnishInvalidator.ban("/konsolidering")       // all consolidated data
+         * varnishInvalidator.ban("/2011-05-02")          // all data matching this date
+         */
+    }
 }

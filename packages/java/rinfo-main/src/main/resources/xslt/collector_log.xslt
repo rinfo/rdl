@@ -23,24 +23,33 @@
         </xsl:choose>
         <xsl:text> insamling</xsl:text>
       </h2>
-      <dl class="summary">
-        <dt>Start:</dt>
-        <dd><xsl:apply-templates select="tl:start"/></dd>
-        <xsl:for-each select="tl:end">
-          <dt>Stopp:</dt>
-          <dd><xsl:apply-templates select="."/></dd>
-        </xsl:for-each>
-        <xsl:for-each select="dct:source">
-          <dt>Startkälla:</dt>
-          <dd>
-            <xsl:apply-templates select="iana:current/@ref"/>
-            <br />
-            <xsl:text> (ID: </xsl:text>
-            <xsl:apply-templates select="dct:identifier"/>
-            <xsl:text>)</xsl:text>
-          </dd>
-        </xsl:for-each>
-      </dl>
+      <div class="summary">
+        <div class="summary_left_section">
+          <dl>
+            <xsl:for-each select="dct:source">
+              <dt>Startkälla:</dt>
+              <dd>
+                <xsl:apply-templates select="iana:current/@ref"/>
+                <br />
+                <xsl:text> (ID: </xsl:text>
+                <xsl:apply-templates select="dct:identifier"/>
+                <xsl:text>)</xsl:text>
+              </dd>
+            </xsl:for-each>
+          </dl>
+        </div>
+        <div class="summary_right_section">
+          <dl>
+            <dt>Start:</dt>
+            <dd><xsl:apply-templates select="tl:start"/></dd>
+            <xsl:for-each select="tl:end">
+              <dt>Stopp:</dt>
+              <dd><xsl:apply-templates select="."/></dd>
+            </xsl:for-each>
+          </dl>
+        </div>
+        <div class="clear_both"></div>
+      </div>
       <xsl:for-each select="iana:via">
         <xsl:apply-templates select=". | key('rel', ./@ref)"/>
       </xsl:for-each>
@@ -56,11 +65,12 @@
         <dt>Källa:</dt>
         <dd><xsl:apply-templates select="dct:source/@ref"/></dd>
         <dt>Meddelande</dt>
+        <br/>
         <p>
-          <xsl:text>Systemfel vid sidinläsning. Var vänlig att validera sidan. Teknisk orsak:</xsl:text>
+            <xsl:text>Systemfel vid sidinläsning. Var vänlig att validera sidan. Teknisk orsak:</xsl:text>
         </p>
         <p>
-          <xsl:value-of select="rdf:value"/>
+            <xsl:value-of select="rdf:value"/>
         </p>
       </dl>
     </div>
@@ -71,32 +81,44 @@
     <xsl:variable name="collect-count" select="count($collected)"/>
     <div class="source">
       <h3>Feed-källa</h3>
-      <dl class="summary">
-        <dt>Identifierare:</dt>
-        <dd><xsl:apply-templates select="awol:id"/></dd>
-        <dt>Feed-sidans URI:</dt>
-        <dd><xsl:apply-templates select="iana:self/@ref"/></dd>
-        <dt>Uppdaterad:</dt>
-        <dd><xsl:apply-templates select="awol:updated"/></dd>
-        <xsl:choose>
-          <xsl:when test="$collected">
-            <dt>Antal poster:</dt>
-            <dd><xsl:value-of select="$collect-count"/></dd>
-            <xsl:variable name="sucess-count"
-                          select="count($collected/parent::resource[a/awol:Entry])"/>
-            <xsl:if test="$collect-count != $sucess-count">
-              <dt class="error">Antal fel:</dt>
-              <dd class="error">
-                <xsl:value-of select="$collect-count - $sucess-count"/>
-              </dd>
-            </xsl:if>
-          </xsl:when>
-          <xsl:otherwise>
-            <dt>Detaljer:</dt>
-            <dd><a href="/{substring-after(@uri, $base-url)}">Insamlingsrapport</a></dd>
+      <div class="summary">
+        <div class="summary_left_section">
+          <dl>
+            <dt>Identifierare:</dt>
+            <dd><xsl:apply-templates select="awol:id"/></dd>
+            <dt>Feed-sidans URI:</dt>
+            <dd><xsl:apply-templates select="iana:self/@ref"/></dd>
+            <dt>Uppdaterad:</dt>
+            <dd><xsl:apply-templates select="awol:updated"/></dd>
+          </dl>
+        </div>
+        <div class="summary_right_section">
+          <dl>
+            <xsl:choose>
+              <xsl:when test="$collected">
+                <dt>Antal poster:</dt>
+                <dd><xsl:value-of select="$collect-count"/></dd>
+                <xsl:variable name="success-count" select="count($collected/parent::resource[a/awol:Entry])"/>
+                <dt class="success">Antal rätt:</dt>
+                <dd class="success">
+                    <xsl:value-of select="$success-count"/>
+                </dd>
+                <xsl:if test="$collect-count != $success-count">
+                  <dt class="error">Antal fel:</dt>
+                  <dd class="error">
+                    <xsl:value-of select="$collect-count - $success-count"/>
+                  </dd>
+                </xsl:if>
+              </xsl:when>
+            <xsl:otherwise>
+              <dt>Detaljer:</dt>
+              <dd><a href="/{substring-after(@uri, $base-url)}">Insamlingsrapport</a></dd>
           </xsl:otherwise>
         </xsl:choose>
-      </dl>
+          </dl>
+        </div>
+        <div class="clear_both"></div>
+      </div>
       <xsl:if test="$collected">
         <h4>Poster</h4>
         <table class="report">
@@ -104,7 +126,7 @@
             <th class="position">#</th>
             <th class="dateTime">Tidpunkt</th>
             <th class="status">Status</th>
-            <th class="uri">ID</th>
+            <th class="uri">URI</th>
             <th class="info">Information</th>
           </tr>
           <xsl:for-each select="$collected">
@@ -119,14 +141,14 @@
   </xsl:template>
 
   <xsl:template match="*[a/awol:Entry]" mode="trow">
-    <xsl:param name="pos"/>
-    <tr class="entry">
-      <td class="position"><xsl:value-of select="$pos"/></td>
-      <td><xsl:apply-templates select="awol:updated"/></td>
-      <td class="status">OK</td>
-      <td><xsl:apply-templates select="foaf:primaryTopic/@ref"/></td>
-      <td></td>
-    </tr>
+      <xsl:param name="pos"/>
+            <tr class="entry">
+              <td class="position"><xsl:value-of select="$pos"/></td>
+              <td><xsl:apply-templates select="awol:updated"/></td>
+              <td class="status">OK</td>
+              <td><xsl:apply-templates select="foaf:primaryTopic/@ref"/></td>
+              <td></td>
+            </tr>
   </xsl:template>
 
   <!-- TODO:
@@ -185,13 +207,21 @@
           <xsl:when test="rc:computedUri = ''">
             <xsl:text>Otillräcklig data för att matcha postens angivna URI.</xsl:text>
           </xsl:when>
-          <xsl:otherwise>Postens angivna URI matchar inte data.</xsl:otherwise>
+          <xsl:otherwise>Angiven URI matchar inte den URI som beräknats utifrån egenskaper i dokumentet</xsl:otherwise>
         </xsl:choose>
         <dl class="lone">
           <dt>Angiven URI:</dt>
-          <dd><xsl:value-of select="rc:givenUri"/></dd>
+          <dd>
+              <span><xsl:value-of select="rc:commonPrefix"/></span>
+              <span class="highlight"><xsl:value-of select="rc:givenUriDiff"/></span>
+              <span><xsl:value-of select="rc:commonSuffix"/></span>
+          </dd>
           <dt>Beräknad URI:</dt>
-          <dd><xsl:value-of select="rc:computedUri"/></dd>
+          <dd>
+              <span><xsl:value-of select="rc:commonPrefix"/></span>
+              <span class="highlight"><xsl:value-of select="rc:computedUriDiff"/></span>
+              <span><xsl:value-of select="rc:commonSuffix"/></span>
+          </dd>
         </dl>
       </td>
     </tr>
@@ -244,14 +274,14 @@
                   <xsl:variable name="last-ref" select="concat('[', count($items), ']')"/>
                   <xsl:value-of select="substring-after($msg, $last-ref)"/>
                 </dd>
+                <!-- TODO: Samla alla testdefinitioner på gemensam sida istället  -->
                 <!--<dt>Källfil:</dt>
-                <dd><xsl:apply-templates select="dct:source/@ref"/></dd>-->
-                <dt>Testdefinition:</dt>
+                <dd><xsl:apply-templates select="dct:source/@ref"/></dd>
                 <dd>
                   <xsl:for-each select="rdfs:isDefinedBy/@ref">
-                    <a href="{.}"><xsl:apply-templates select="."/></a>
+                    <a href="{.}">Testdefinition</a>
                   </xsl:for-each>
-                </dd>
+                </dd>-->
               </dl>
             </li>
           </xsl:for-each>
@@ -269,6 +299,32 @@
       <td><xsl:apply-templates select="iana:via/awol:id"/></td>
       <td>
           <xsl:value-of select="rdf:value"/>
+      </td>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="*[a/rc:UriError]" mode="trow">
+    <xsl:param name="pos"/>
+    <tr class="error">
+      <td class="position"><xsl:value-of select="$pos"/></td>
+      <td><xsl:apply-templates select="tl:at"/></td>
+      <td class="status">URI-fel</td>
+      <td><xsl:apply-templates select="iana:via/awol:id"/></td>
+      <td>
+          <div><xsl:value-of select="rdf:value"/></div>
+          <br/>
+          <xsl:if test="rc:uriSuggestion">
+              <div>
+                  <div class="italic">
+                      Följande URI-mallar matchar delvis:
+                  </div>
+                   <xsl:for-each select="rc:uriSuggestion">
+                        <div class="uriSuggestion">
+                            <xsl:apply-templates select="."/>
+                        </div>
+                   </xsl:for-each>
+              </div>
+          </xsl:if>
       </td>
     </tr>
   </xsl:template>

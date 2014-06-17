@@ -130,11 +130,13 @@ CONSTRUCT {
             a ?rev_type;
             dct:identifier ?rev_identifier .
         OPTIONAL { ?omtryck :ikrafttradandedatum ?rev_ikrafttradandedatum . }
-        FILTER NOT EXISTS {
-            ?omtryck2 :omtryckAv ?current;
-                :ikrafttradandedatum ?rev_ikrafttradandedatum2 .
-            FILTER(?rev_ikrafttradandedatum2 > ?rev_ikrafttradandedatum)
-        }
+
+        # Removed for performance reasons!
+        #FILTER NOT EXISTS {
+        #    ?omtryck2 :omtryckAv ?current;
+        #        :ikrafttradandedatum ?rev_ikrafttradandedatum2 .
+        #    FILTER(?rev_ikrafttradandedatum2 > ?rev_ikrafttradandedatum)
+        #}
 
     } UNION {
 

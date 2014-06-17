@@ -2,10 +2,12 @@
 package se.lagrummet.rinfo.collector.atom;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.model.Document;
+import se.lagrummet.rinfo.collector.ParseFeedException;
 
 
 public abstract class FeedArchiveReader {
@@ -105,7 +109,7 @@ public abstract class FeedArchiveReader {
      *
      * @return the previous archive URL, or null to stop climbing.
      */
-    public URL readFeedPage(URL url) throws IOException {
+    public URL readFeedPage(URL url) throws IOException, ParseFeedException {
         logger.info(String.format("Reading Feed <%s> ...", url));
         Feed feed;
         URL followingUrl = null;
@@ -123,7 +127,9 @@ public abstract class FeedArchiveReader {
                     followingUrl = followingHref.toURL();
                 }
             }
-
+        } catch (ParseFeedException e) {
+            logger.error(String.format("Error parsing feed: <%s>. Not a valid feed?", url), e);
+            throw e;
         } catch (Exception e) {
             logger.error(String.format("Error parsing feed: <%s>", url), e);
             throw new RuntimeException(e); /* TODO: stop on error?
@@ -150,9 +156,17 @@ public abstract class FeedArchiveReader {
      */
     public abstract boolean processFeedPage(URL pageUrl, Feed feed) throws Exception;
 
-    public static Feed parseFeed(InputStream inStream, URL baseUrl) {
-        return (Feed) Abdera.getInstance().getParser().parse(
-                inStream, baseUrl.toString()).getRoot();
+    public static Feed parseFeed(InputStream inStream, URL baseUrl) throws ParseFeedException {
+        Feed feed;
+
+        try {
+            Document document = Abdera.getInstance().getParser().parse(inStream, baseUrl.toString());
+            feed = (Feed) document.getRoot();
+        } catch (Exception e) {
+            throw new ParseFeedException("Kan inte läsa källa. Kontrollera att rätt URL är angiven och att källan är korrekt.");
+        }
+
+        return feed;
     }
 
     // TODO: define and make a default impl. (use a single dir, only latest feedUrl/feeId?)
@@ -173,17 +187,30 @@ public abstract class FeedArchiveReader {
      * @return InputStream, or null if the response didn't enclose an entity.
      */
     public InputStream getResponseAsInputStream(URL url) throws IOException {
-        return getResponseAsInputStream(url.toString());
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        try {
+            TrustModifier.relaxHostChecking(urlConnection);
+        } catch (KeyManagementException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (KeyStoreException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        urlConnection.setRequestMethod("GET");
+        return urlConnection.getInputStream();
+        //return getResponseAsInputStream(url.toString());
     }
 
     public InputStream getResponseAsInputStream(String url) throws IOException {
-        HttpGet urlGet = new HttpGet(url);
+        return getResponseAsInputStream(new URL(url));
+/*        HttpGet urlGet = new HttpGet(url);
         HttpResponse response = getClient().execute(urlGet);
         HttpEntity entity = response.getEntity();
         if (entity == null) {
             return null;
         }
-        return entity.getContent();
+        return entity.getContent();*/
     }
 
 }

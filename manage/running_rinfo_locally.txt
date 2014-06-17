@@ -27,6 +27,16 @@ To use the various instrumental tools used you also need:
 Setting up the environment
 ========================================================================
 
+Data directories
+------------------------------------------------------------------------
+
+These directories must exist and be writable by the user used to run
+maven and groovy. At start, they should be empty.
+
+* /opt/work/rinfo/
+* /opt/work/rinfo/depots/rinfo/
+
+
 Sesame
 ------------------------------------------------------------------------
 
@@ -50,15 +60,16 @@ Note: Tomcat is not really needed when running the services
 standalone. See below under rinfo-service for an alternative way of
 running the openrdf-sesame through through mvn and jetty.
 
+
 ElasticSearch
 ------------------------------------------------------------------------
 
 Download and install ElasticSearch by following the instructions at
 <http://www.elasticsearch.org/>.
 
-(For the time being, you need version 0.17.7, the very latest versions
-don't work with the elasticsearch client lib that mvn pulls down from
-the remote repositories)
+(For the time being, you need version 0.90.11, there are still some
+adjustments needed before RDL can support version 1.0.0+, see
+https://github.com/rinfo/rdl/issues/87 for more details)
 
 Start an instance by running the ``elasticsearch`` command (commonly in the bin
 directory of the installation)::
@@ -81,14 +92,60 @@ And run with (choose the config file location to your liking)::
     $ elasticsearch -f -D es.config=/opt/work/rinfo/elasticsearch/elasticsearch.yml
 
 
-Data directories
+Varnish
 ------------------------------------------------------------------------
 
-These directories must exist and be writable by the user used to run
-maven and groovy. At start, they should be empty.
+Download and install Varnish. For the time being you need version 3.0.5,
+see https://www.varnish-cache.org/releases/varnish-cache-3.0.5.
+(For Mac OS X, varnish can be installed with homebrew)
 
-* /opt/work/rinfo/
-* /opt/work/rinfo/depots/rinfo/
+Create the following directories that will be used by varnish at runtime:
+
+* /opt/work/rinfo/varnish/
+* /opt/work/rinfo/varnish/cache/
+
+Go to the recently created varnish directory and fetch the latest
+varnish configuration files (VCL) for the dev-unix environment.
+
+	$ cd /opt/work/rinfo/varnish/
+	$ wget https://raw.githubusercontent.com/rinfo/rdl/develop/manage/sysconf/common/varnish/rinfo-service.vcl
+	$ wget https://raw.githubusercontent.com/rinfo/rdl/develop/manage/sysconf/dev-unix/varnish/backend.vcl
+	$ wget https://raw.githubusercontent.com/rinfo/rdl/develop/manage/sysconf/dev-unix/varnish/host.vcl
+
+A brief description of the VCL files above:
+
+* rinfo-service.vcl: common configuration for PURGE/BAN logic, cache ttl, etc.
+* backend.vcl: environment specific backend setting, included by rinfo-service.vcl
+* host.vcl: environment specific host setting (if virtualhost is used), included by rinfo-service.vcl
+
+Start up varnishd on localhost port 8383. (Notice the "vcl_dir" parameter that allows
+backend.vcl and host.vcl to be relatively referenced by rinfo-service.vcl):
+
+	$ sudo varnishd -a 127.0.0.1:8383 -T 127.0.0.1:6082 -s file,/opt/work/rinfo/varnish/cache,1G -p vcl_dir=/opt/work/rinfo/varnish/ -f /opt/work/rinfo/varnish/rinfo-service.vcl
+
+To actually make use of varnish, your local installation of lagrummet.se
+should be configured to route rinfo-service requests through localhost:8383.
+Ensure that your local 'lagrummet.se-config.groovy' file has this key/value:
+
+	lagrummet.rdl.service.baseurl="http://127.0.0.1:8383/"
+
+To stop varnishd:
+
+	$ sudo pkill varnishd
+
+A few examples of manually invalidating the varnish cache with purge or ban.
+(See also: /rdl/java/rinfo-service/src/main/groovy/se/lagrummet/rinfo/service/VarnishInvalidator.groovy)
+
+	# To remove a specific object, use purge:
+	$ curl -X PURGE 127.0.0.1:8383/publ/sfs/1999:175/data
+	$ curl -X PURGE 127.0.0.1:8383/publ/sfs/1999:175/konsolidering/2011-05-02/data
+
+	# To remove many objects matching a regex, use ban:
+	$ curl -X BAN 127.0.0.1:8383/publ/sfs/1999:175/		# includes both purge examples above
+	$ curl -X BAN 127.0.0.1:8383/publ/sfs/						# all SFS data
+	$ curl -X BAN 127.0.0.1:8383/konsolidering				# all consolidated data
+	$ curl -X BAN 127.0.0.1:8383/2011-05-02						# all data matching this date
+
 
 The RInfo Applications
 ------------------------------------------------------------------------
@@ -264,13 +321,15 @@ Starting out clean
 
 1. rinfo-main: rm -r /opt/work/rinfo/depots/rinfo
 
+
 Adding source feeds
 ========================================================================
 
 [How to add a source feed to the admin feed, and collect it]
 
 1. Edit /opt/work/rinfo/testsources/www/sys/sources/rdf.rdf 
-      
+
+
 In Depth
 ========================================================================
 

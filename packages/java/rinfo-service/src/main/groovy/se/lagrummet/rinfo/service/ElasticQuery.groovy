@@ -349,7 +349,8 @@ class ElasticQuery {
     String escapeQueryString(String qs) {
         return qs.
             replaceAll(/(?<!\\)([:&|\\()\[\]{}"])/, /\\$1/).
-            replaceAll(/^(AND|OR)|(AND|OR)$/, "")
+            replaceAll(/^(AND|OR)|(AND|OR)$/, "").
+            replace("/", "\\/")
     }
 
     void prepareStats(SearchRequestBuilder srb) {
@@ -414,7 +415,7 @@ class ElasticQuery {
                     observations: it.entries.collect {
                         def isDate = it instanceof DateHistogramFacet.Entry
                         def key = isDate? "year" : isIri? "ref" : "term"
-                        def value = isDate? 1900 + new Date(it.time).year : it.term
+                        def value = isDate? 1900 + new Date(it.time).year : it.term.toString()
                         return [(key): value, count: it.count]
                     }
                 ]

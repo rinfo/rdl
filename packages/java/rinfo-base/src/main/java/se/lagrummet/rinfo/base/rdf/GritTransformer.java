@@ -26,5 +26,4 @@ public class GritTransformer {
             throws IOException {
         TransformerUtil.writeXhtml(inputStream, writer, templates);
     }
-
 }

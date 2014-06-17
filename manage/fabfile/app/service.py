@@ -1,9 +1,19 @@
 import re
+import sys
 from fabric.api import *
 from fabric.contrib.files import exists
 from fabfile.util import venv, mkdirpath
 from fabfile import app, sysconf
 from fabfile.target import _needs_targetenv
+from fabfile.app import _deploy_war
+from fabfile.app import _deploy_war_norestart
+from fabfile.server import restart_apache
+from fabfile.server import restart_tomcat
+from fabfile.server import tomcat_stop
+from fabfile.server import tomcat_start
+from fabfile.util import msg_sleep
+from fabfile.util import verify_url_content
+from os import path as p
 
 ##
 # Local build
@@ -12,7 +22,7 @@ from fabfile.target import _needs_targetenv
 @runs_once
 def package(deps="1", test="1"):
     """Builds and packages the rinfo-service war, configured for the target env."""
-    if int(deps): app.local_lib_rinfo_pkg()
+    if int(deps): app.local_lib_rinfo_pkg(test)
     _needs_targetenv()
     flags = "" if int(test) else "-Dmaven.test.skip=true"
     local("cd %(java_packages)s/rinfo-service/ && "
@@ -40,7 +50,7 @@ def setup():
 def deploy(headless="0"):
     """Deploys the rinfo-service war package to target env."""
     setup()
-    app._deploy_war(
+    _deploy_war_norestart(
             "%(java_packages)s/rinfo-service/target/rinfo-service-%(target)s.war"%env,
             "rinfo-service", int(headless))
 
@@ -135,6 +145,7 @@ def install_elasticsearch():
         if exists("elasticsearch"):
             sudo("rm elasticsearch")
         sudo("ln -s elasticsearch-%(version)s elasticsearch" % vars())
+        put(p.join(env.manageroot, "sysconf", "common", "elasticsearch", "elasticsearch.yml"), "elasticsearch/config", use_sudo=True)
         sysconf.install_init_d("elasticsearch")
 
 def fetch_elasticsearch():
@@ -161,4 +172,88 @@ def stop_elasticsearch():
 def start_elasticsearch():
     _needs_targetenv()
     sudo("/etc/init.d/elasticsearch start")
+
+
+##
+# Varnish install and setup
+
+@task
+@roles('service')
+def install_varnish():
+    _needs_targetenv()
+    gpg_key = local("curl -s 'http://repo.varnish-cache.org/debian/GPG-key.txt'", capture=True)
+    sudo("echo '%s' | apt-key add -" % gpg_key)
+    sudo("echo 'deb http://repo.varnish-cache.org/debian/ wheezy varnish-3.0' >> /etc/apt/sources.list")
+    sudo("apt-get update")
+    sudo("apt-get install varnish=3.0.5-1~wheezy -y")
+    stop_varnish() # stop default daemon started by installation
+    if not exists("%(workdir_varnish)s" % env):
+        sudo("mkdir %(workdir_varnish)s" % env)
+    if not exists("%(workdir_varnish)s/cache" % env):
+        sudo("mkdir %(workdir_varnish)s/cache" % env)
+    put(p.join(env.manageroot, "sysconf", "common", "varnish", "rinfo-service.vcl"), "%(workdir_varnish)s" % env, use_sudo=True)
+    put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "backend.vcl"), "%(workdir_varnish)s" % env, use_sudo=True)
+    put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "host.vcl"), "%(workdir_varnish)s" % env, use_sudo=True)
+
+@task
+@roles('service')
+def stop_varnish():
+    sudo("pkill varnishd")
+
+@task
+@roles('service')
+def start_varnish():
+    _needs_targetenv()
+    sudo("varnishd -a %(listen_ip_varnish)s:8383 -T 127.0.0.1:6082 -s file,%(workdir_varnish)s/cache,1G -p vcl_dir=%(workdir_varnish)s -f %(workdir_varnish)s/rinfo-service.vcl" % env)
+
+
+
+@task
+@roles('service')
+def test():
+    _needs_targetenv()
+    url="http://"+env.roledefs['service'][0]
+    with lcd(env.projectroot+"/packages/java/rinfo-service/src/regression"):
+        local("casperjs test . --xunit=%(projectroot)s/testreport/service_test_report.log --url=%(url)s --target=%(target)s --output=%(projectroot)s/testreport/" % venv())
+
+@task
+@roles('service')
+def ping_start_collect():
+    _needs_targetenv()
+    print ('http://rinfo.regression.lagrummet.se/feed/current')
+    feed_url = "http://%s/feed/current" % env.roledefs['main'][0]
+    collector_url = "http://%s/collector" % env.roledefs['service'][0]
+    if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s"%vars(),"Scheduled collect of"):
+        raise Exception("Test failed")
+
+@task
+@roles('service')
+def clean():
+    """ Cleans checker from system. Will assume tomcat is inactive """
+    tomcat_stop()
+    #sudo("rm -rf %(tomcat_webapps)s/rinfo-service" % venv())
+    #sudo("rm -rf %(tomcat_webapps)s/rinfo-service.war" % venv())
+    sudo("rm -rf %(tomcat)s/logs/rinfo-service*.*" % venv())
+    tomcat_start()
+    #msg_sleep(10,"Wait for tomcat start")
+    #run("curl -XPOST http://localhost:8080/sesame-workbench/repositories/rinfo/clear")
+
+@task
+@roles('service')
+def test_all():
+    all(deps=0,test="0")
+    restart_apache()
+    restart_tomcat()
+    msg_sleep(20,"restart apache, tomcat and wait for service to start")
+    try:
+        #ping_start_collect()
+        #msg_sleep(60,"collect feed")
+        test()
+    except:
+        e = sys.exc_info()[0]
+        print e
+        sys.exit(1)
+    finally:
+        clean()
+
 

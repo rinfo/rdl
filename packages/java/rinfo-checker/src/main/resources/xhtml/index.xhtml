@@ -3,29 +3,40 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>RInfo Checker: insamlingskontroll</title>
-        <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <link rel="stylesheet" type="text/css" href="media/collector_log.css?version=3" />
+        <script type="text/javascript" src="/js/jquery-1.10.2.js"></script>
+        <script type="text/javascript" src="/js/spin.js"></script>
+        <script type="text/javascript" src="/js/jquery.blockUI.js"></script>
+        <script type="text/javascript" src="/js/underscore.js"></script>
+        <script type="text/javascript" src="/js/backbone.js"></script>
+        <script type="text/javascript" src="/js/rinfo-checker.js?version=5"></script>
     </head>
     <body>
         <h1>RInfo Checker</h1>
-        <form method="POST">
-            <fieldset>
-                <legend>
-                    <label for="feedUrl">Källa (Atom-flöde):</label>
-                </legend>
-                <p>
-                    <label for="feedUrl">URL</label>
-                    <input type="text" class="url" name="feedUrl" id="feedUrl"
-                        size="64" />
-                </p>
-                <p>
-                    <label for="feedUrl">Antal poster att undersöka</label>
-                    <input type="text" name="maxEntries" id="maxEntries"
-                        size="3" value="10" />
-                </p>
-                <p>
-                    <input type="submit" value="Check" />
-                </p>
-            </fieldset>
+        <form id="html-form" action="" method="POST">
+						<fieldset>
+								<legend>
+										<label for="feedUrl">Källa (Atom-flöde):</label>
+								</legend>
+								<div class="form_section">
+										<span>
+												<label for="feedUrl">URL</label>
+												<input type="text" class="url" name="feedUrl" id="feedUrl" />
+										</span>
+										<span class="submit_button">
+												<input type="submit" value="Check" id="submitButton" />
+										</span>
+								</div>
+								<div class="form_section">
+										<span>
+												<label for="feedUrl">Antal poster att undersöka</label>
+												<input type="text" name="maxEntries" id="maxEntries" size="3" value="10" />
+										</span>
+								</div>
+						</fieldset>
         </form>
+        <div id="target"></div>
+        <div id="spinner"></div>
     </body>
 </html>

@@ -58,6 +58,16 @@ class ServiceComponents {
         return config.getString("rinfo.service.serviceAppBaseUrl")
     }
 
+    String getVarnishUrl() {
+        def host = config.getString("rinfo.service.varnish.host")
+        def port = config.getString("rinfo.service.varnish.port")
+        return "http://" + host + ":" + port
+    }
+
+    boolean getVarnishInvalidationEnabled() {
+        return Boolean.parseBoolean(config.getString("rinfo.service.varnish.invalidationEnabled"))
+    }
+
     def newSesameLoader() {
         return new SesameLoader(repository, createElasticLoader())
     }
@@ -89,11 +99,12 @@ class ServiceComponents {
 
     private def createLoadScheduler() {
         // TODO: never schedule running collects?
+        def varnishInvalidator = new VarnishInvalidator(getVarnishUrl(), getVarnishInvalidationEnabled())
         def sourceFeedUrls = new ArrayList<URL>()
         for (url in config.getList("rinfo.service.sourceFeedUrls")) {
             sourceFeedUrls.add(new URL(url))
         }
-        def loadScheduler = new SesameLoadScheduler(this, sourceFeedUrls)
+        def loadScheduler = new SesameLoadScheduler(this, varnishInvalidator, sourceFeedUrls)
         loadScheduler.setInitialDelay(-1)
         loadScheduler.setScheduleInterval(-1)
         return loadScheduler
@@ -113,7 +124,8 @@ class ServiceComponents {
         def host = esConf.getString("host")
         def port = esConf.getInt("port")
         def indexName = esConf.getString("index")
-        return new ElasticData(host, port, indexName, jsonLdSettings)
+        def ignoreMalformed = esConf.getString("ignore_malformed")
+        return new ElasticData(host, port, indexName, jsonLdSettings, ignoreMalformed)
     }
 
     private def createElasticLoader() {

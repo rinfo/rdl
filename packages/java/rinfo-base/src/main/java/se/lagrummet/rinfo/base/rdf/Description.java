@@ -1,5 +1,7 @@
 package se.lagrummet.rinfo.base.rdf;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 
@@ -37,6 +39,30 @@ public class Description {
     public String getString(String curie) {
         RDFLiteral literal = getLiteral(curie);
         return (literal != null)? literal.toString() : null;
+    }
+
+    public String getLexical(String curie, ReverseSlug reverseSlug) {
+        String string = null;
+        try {
+            Set<Object> objectValues = getObjectValues(curie);
+            for (Object value : objectValues) {
+                if (value instanceof RDFLiteral)  {
+                    string = value.toString();
+                    break;
+                }
+                if (value instanceof String) {
+                    string = reverseSlug.lookup((String) value, getRel(curie));
+                    break;
+                }
+            }
+            if (string!=null && !string.equals(""))
+                return string;
+        } catch (Exception ignore) {}
+        return null;
+    }
+
+    public interface ReverseSlug {
+        String lookup(String url, Description rel);
     }
 
     // TODO:? rename to get?

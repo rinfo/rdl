@@ -1,0 +1,28 @@
+<VirtualHost *:80>
+    ServerName service.beta.lagrummet.se
+    ServerSignature On
+
+    DocumentRoot /var/www/
+    <Directory />
+        Options FollowSymLinks
+        AllowOverride None
+    </Directory>
+    <Directory /var/www/>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride None
+        Order allow,deny
+        allow from all
+    </Directory>
+
+    ProxyPassMatch ^/robots\.txt$ !
+    ProxyPass /sesame-workbench/ ajp://localhost:8009/sesame-workbench/
+
+    ProxyPass / ajp://localhost:8009/rinfo-service/
+
+    ServerAdmin rinfo@lagrummet.se
+
+    ErrorLog /var/log/apache2/error.log
+    LogLevel warn
+    CustomLog /var/log/apache2/access.log combined
+
+</VirtualHost>

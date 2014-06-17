@@ -1,0 +1,9 @@
+<VirtualHost *:80>
+    ServerName rinfo.regression.lagrummet.se
+    ServerSignature On
+
+    ProxyPassMatch ^/robots\.txt$ !
+
+    ProxyPass /sesame-workbench/ ajp://localhost:8009/sesame-workbench/
+    ProxyPass / ajp://localhost:8009/rinfo-main/
+</VirtualHost>

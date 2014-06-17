@@ -1,10 +1,20 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dct: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix void: <http://rdfs.org/ns/void#> .
 @prefix iana: <http://www.iana.org/assignments/relation/> .
+@prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
+
 
 <http://rinfo.lagrummet.se/sys/dataset> a void:Dataset;
     dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    foaf:homepage <http://rinfo.lagrummet.se/>;
+    void:vocabulary rpubl:, dct:, foaf:;
+    void:uriSpace "http://rinfo.lagrummet.se/publ/";
+    #void:uriRegexPattern "http://rinfo.lagrummet.se/publ/[0-9a-z\-]+fs/[1-9][0-9/]+:\\w+" .
+    iana:describedby <http://rinfo.lagrummet.se/sys/uri/space#>;
+    iana:describedby <http://rinfo.lagrummet.se/sys/validation/>;
     void:dataDump [
             iana:current <http://rinfo.lagrummet.se/feed/current>;
             dct:identifier "tag:lagrummet.se,2009:rinfo"^^xsd:anyURI;
@@ -12,87 +22,33 @@
         ];
     dct:source
         [
-        # Actual feeds
-            dct:publisher <http://rinfo.lagrummet.se/org/boverket>;
+            iana:current <http://testfeed.lagrummet.se/SFS-2/index.atom>;
+            dct:identifier "tag:sfs.regeringen.se,2009:rinfo:feed"^^xsd:anyURI;
+            dct:format "application/atom+xml";
+            dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>
+        ], [
+            iana:current <http://dvsfs.ministry.se/DIR/Res/index.atom>;
+            dct:identifier "tag:komdir.regeringen.se,2009:rinfo:feed"^^xsd:anyURI;
+            dct:format "application/atom+xml";
+            dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>
+        ], [
+            iana:current <http://v1.va.regression.testfeed.lagrummet.se/index.atom>;
+            dct:identifier "tag:vagledandeavgoranden.dom.se,2011:rinfo:feed"^^xsd:anyURI;
+            dct:format "application/atom+xml";
+            dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>
+        ], [
             iana:current <https://rinfo.boverket.se/index.atom>;
             dct:identifier "tag:boverket.se,2009:rinfo:feed"^^xsd:anyURI;
-            dct:format "application/atom+xml"
+            dct:format "application/atom+xml";
+            dct:publisher <http://rinfo.lagrummet.se/org/boverket>
         ], [
-            dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
-            iana:current <https://www.vagledandeavgoranden.dom.se/lagrummet/atom/index.atom>;
-            dct:identifier "tag:vagledandeavgoranden.dom.se,2011:rinfo:feed"^^xsd:anyURI;
-            dct:format "application/atom+xml"
+            iana:current <http://testfeed.lagrummet.se/feed.atom>;
+            dct:identifier "tag:exempelmyndigheten.se,2009:rinfo:feed"^^xsd:anyURI;
+            dct:format "application/rdf+xml";
+            dct:publisher <http://rinfo.lagrummet.se/org/exempelmyndigheten>
         ], [
-            dct:publisher <http://rinfo.lagrummet.se/org/naturvaardsverket>;
             iana:current <http://www.naturvardsverket.se/Cb/NFS-container/Forfattningssamlingens-Postforteckning-ATOM/>;
             dct:identifier "tag:naturvardsverket.se,2011:rinfo:feed"^^xsd:anyURI;
-            dct:format "application/atom+xml"
-        ],
-        # Depot-based feeds
-        [
-            dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
-            iana:current <http://sfs.demo.lagrummet.se/feed/current>;
-            dct:identifier "tag:regeringen.se,2009:rinfo:dataset:sfs"^^xsd:anyURI;
-            dct:format "application/atom+xml"
-        ], [
-            dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
-            iana:current <http://prop.demo.lagrummet.se/feed/current>;
-            dct:identifier "tag:regeringen.se,2009:rinfo:dataset:prop"^^xsd:anyURI;
-            dct:format "application/atom+xml"
-        ], [
-            dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
-            iana:current <http://sou.demo.lagrummet.se/feed/current>;
-            dct:identifier "tag:regeringen.se,2009:rinfo:dataset:sou"^^xsd:anyURI;
-            dct:format "application/atom+xml"
-        ], [
-            dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>;
-            iana:current <http://ds.demo.lagrummet.se/feed/current>;
-            dct:identifier "tag:regeringen.se,2009:rinfo:dataset:ds"^^xsd:anyURI;
-            dct:format "application/atom+xml"
-        ], [
-            # TODO: isn't this replaced by the official vagledandeavgoranden above?
-            dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
-            iana:current <http://dv.demo.lagrummet.se/feed/current>;
-            dct:identifier "tag:dom.se,2009:rinfo:dataset:dv"^^xsd:anyURI;
-            dct:format "application/atom+xml"
-        ],
-        # FST-based feeds
-        [
-            dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
-            iana:current <http://fst.lagrummet.se/dvfs/feed/>;
-            dct:identifier "tag:domstol.se,2009:rinfo:feed"^^xsd:anyURI;
-            dct:format "application/atom+xml"
-        ], [
-            dct:publisher <http://rinfo.lagrummet.se/org/finansinspektionen>;
-            iana:current <http://fst.lagrummet.se/fffs/feed/>;
-            dct:identifier "tag:finansinspektionen.se,2009:rinfo:feed"^^xsd:anyURI;
-            dct:format "application/atom+xml"
-        ], [
-            dct:publisher <http://rinfo.lagrummet.se/org/elsaekerhetsverket>;
-            iana:current <https://fst.lagrummet.se/elsaek-fs/feed/>;
-            dct:identifier "tag:www.elsakerhetsverket.se,2011:rinfo:feed"^^xsd:anyURI;
-            dct:format "application/atom+xml"
-        ], [
-            dct:publisher <http://rinfo.lagrummet.se/org/styrelsen_foer_ackreditering_och_teknisk_kontroll>;
-            iana:current <https://fst.lagrummet.se/stafs/feed/>;
-            dct:identifier "tag:www.swedac.se,2011:rinfo:feed"^^xsd:anyURI;
-            dct:format "application/atom+xml"
-        ], [
-            dct:publisher <http://rinfo.lagrummet.se/org/riksarkivet>;
-            iana:current <https://fst.lagrummet.se/ra/feed/>;
-            dct:identifier "tag:riksarkivet.se,2012:rinfo:feed"^^xsd:anyURI;
-            dct:format "application/atom+xml"
-        ], [
-            dct:publisher <http://rinfo.lagrummet.se/org/foersaekringskassan>;
-            iana:current <https://fst.lagrummet.se/fkfs/feed/>;
-            dct:identifier "tag:forsakringskassan.se,2013:rinfo:feed"^^xsd:anyURI;
-            dct:format "application/atom+xml"
-        ],
-        # Scraped feeds
-        [
-            dct:publisher <http://rinfo.lagrummet.se/org/statens_jordbruksverk>;
-            iana:current <https://fst.lagrummet.se/scraper/sjvfs/news/main.atom>;
-            dct:identifier "tag:fst.lagrummet.se,2011:scraper:sjvfs:news:main.atom"^^xsd:anyURI;
-            dct:format "application/atom+xml"
+            dct:format "application/atom+xml";
+            dct:publisher <http://rinfo.lagrummet.se/org/naturvaardsverket>
         ] .
-

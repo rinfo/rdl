@@ -27,6 +27,7 @@ from fabfile.util import mkdirpath, slashed
 
 @task
 def configure_server():
+    secure_sshd()
     _sync_workdir()
     sync_static_web()
     configure_app_container()
@@ -93,6 +94,7 @@ def _prepare_mgr_work():
     _needs_targetenv()
     mkdirpath("%(mgr_workdir)s/install" % env)
     put(p.join(env.manageroot, "sysconf", "install", "*.sh"), "%(mgr_workdir)s/install" % env)
+    put(p.join(env.manageroot, "sysconf", "common", "tomcat", "server.xml"), "%(mgr_workdir)s/install" % env)
     mkdirpath("%(mgr_workdir)s/tomcat_pkg" % env)
 
 @task
@@ -111,7 +113,7 @@ def install_tomcat():
     fetch_tomcat_dist()
     workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
     with cd(workdir_tomcat):
-        sudo("bash %(mgr_workdir)s/install/3_install-tomcat.sh %(tomcat_version)s %(tomcat_user)s %(tomcat_group)s %(user)s" % env)
+        sudo("bash %(mgr_workdir)s/install/3_install-tomcat.sh %(tomcat_version)s %(tomcat_user)s %(tomcat_group)s %(user)s %(mgr_workdir)s" % env)
     install_init_d("tomcat")
 
 def fetch_tomcat_dist():
@@ -119,4 +121,8 @@ def fetch_tomcat_dist():
     workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
     with cd(workdir_tomcat):
         run("bash %(mgr_workdir)s/install/2_get-tomcat.sh %(tomcat_version)s" % env)
+
+def secure_sshd():
+    sudo("sed -i 's/^#PermitRootLogin yes/PermitRootLogin no/;s/PermitRootLogin yes/PermitRootLogin no/;s/^#PermitEmptyPasswords yes/PermitEmptyPasswords no/;s/PermitEmptyPasswords yes/PermitEmptyPasswords no/;s/^#X11Forwarding yes/X11Forwarding no/;s/X11Forwarding yes/X11Forwarding no/' /etc/ssh/sshd_config")
+    sudo("/etc/init.d/ssh restart")
 
