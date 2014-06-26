@@ -13,7 +13,7 @@ captureScreen = function() {
    this.echo('Captured "'+file_name+'"');
 }
 
-casper.test.begin('Test correct VA feed', function(test) {
+casper.test.begin('Test quantity limit', function(test) {
    casper.start(casper.cli.get("url"));
 
    casper.waitForSelector("body");
