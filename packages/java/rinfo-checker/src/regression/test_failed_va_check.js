@@ -6,6 +6,9 @@ casper.on('page.error', function(msg, trace) {
        var step = trace[i];
        this.echo('   ' + step.file + ' (line ' + step.line + ')', 'ERROR');
    }
+   var file_name = casper.cli.get("output")+'test_failed_va_check_pagr_error.png';
+   this.capture(file_name);
+   this.echo('Captured "'+file_name+'"');
 });
 
 captureScreen = function() {
