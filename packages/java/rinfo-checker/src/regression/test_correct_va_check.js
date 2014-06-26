@@ -32,6 +32,7 @@ casper.test.begin('Test correct VA feed', function(test) {
    casper.then(function() {
         this.test.assertTextExists("Utförd insamling");
         this.test.assertSelectorHasText('#target > div > div.summary > div.summary_left_section > dl > dd > code:nth-child(1)', feedUrl);
+        this.test.assertSelectorHasText('#target > div > div.source > div.summary > div.summary_left_section > dl > dd:nth-child(2)','tag:vagledandeavgoranden.dom.se,2011:rinfo:feed');
         this.test.assertSelectorHasText('#filtrera > span:nth-child(2)', 'Korrekta poster - 3st');
    });
 
