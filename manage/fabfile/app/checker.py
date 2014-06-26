@@ -52,7 +52,7 @@ def test():
     """Test functions of checker"""
     url="http://"+env.roledefs['checker'][0]
     with lcd(env.projectroot+"/packages/java/rinfo-checker/src/regression"):
-        local("casperjs test . --xunit=%(projectroot)s/testreport/checker_test_report.log --url=%(url)s --target=%(target)s" % venv())
+        local("casperjs test . --xunit=%(projectroot)s/testreport/checker_test_report.log --url=%(url)s --target=%(target)s --output=%(projectroot)s/testreport/" % venv())
 
 
 @task

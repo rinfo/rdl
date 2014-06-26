@@ -6,77 +6,35 @@ casper.on('page.error', function(msg, trace) {
        this.echo('   ' + step.file + ' (line ' + step.line + ')', 'ERROR');
    }
 });
+
+captureScreen = function() {
+   var file_name = casper.cli.get("output")+'test_correct_va_check_screen_error.png';
+   this.capture(file_name);
+   this.echo('Captured "'+file_name+'"');
+}
+
 casper.test.begin('Test correct VA feed', function(test) {
    casper.start(casper.cli.get("url"));
-   casper.waitForSelector("form#html-form input[name='feedUrl']",
-       function success() {
-           test.assertExists("form#html-form input[name='feedUrl']");
-           this.click("form#html-form input[name='feedUrl']");
-       },
-       function fail() {
-           test.assertExists("form#html-form input[name='feedUrl']");
+
+   casper.waitForSelector("body");
+
+   var feedUrl = "http://testfeed.lagrummet.se/dov_exempel_utan_fel/index-uppdaterad.atom"
+
+   casper.then(function() {
+        this.test.assertTitle('RInfo Checker: insamlingskontroll');
+        this.test.assertTextDoesntExist('Utförd insamling');
+        this.sendKeys("#html-form input[name='feedUrl']", feedUrl);
+        this.click('#submitButton');
    });
-   casper.waitForSelector("input[name='feedUrl']",
-       function success() {
-           this.sendKeys("input[name='feedUrl']", "http://testfeed.lagrummet.se/dov_exempel_utan_fel/index-uppdaterad.atom");
-       },
-       function fail() {
-           test.assertExists("input[name='feedUrl']");
-   });
-   casper.waitForSelector("form#html-form input[name='feedUrl']",
-       function success() {
-           test.assertExists("form#html-form input[name='feedUrl']");
-           this.click("form#html-form input[name='feedUrl']");
-       },
-       function fail() {
-           test.assertExists("form#html-form input[name='feedUrl']");
-   });
-   casper.waitForSelector("form#html-form input[name='feedUrl']",
-       function success() {
-           test.assertExists("form#html-form input[name='feedUrl']");
-           this.click("form#html-form input[name='feedUrl']");
-       },
-       function fail() {
-           test.assertExists("form#html-form input[name='feedUrl']");
-   });
-   casper.waitForSelector("form#html-form input[type=submit][value='Check']",
-       function success() {
-           test.assertExists("form#html-form input[type=submit][value='Check']");
-           this.click("form#html-form input[type=submit][value='Check']");
-       },
-       function fail() {
-           test.assertExists("form#html-form input[type=submit][value='Check']");
-   });
-   casper.waitForSelector("h2",
-       function success() {
-           test.assertExists("h2");
-           this.click("h2");
-       },
-       function fail() {
-           test.assertExists("h2");
-   });
-   casper.waitForSelector(x("//*[contains(text(), \'Utförd insamling\')]"),
-       function success() {
-           test.assertExists(x("//*[contains(text(), \'Utförd insamling\')]"));
-         },
-       function fail() {
-           test.assertExists(x("//*[contains(text(), \'Utförd insamling\')]"));
-   });
-   casper.waitForSelector("#filtrera",
-       function success() {
-           test.assertExists("#filtrera");
-           this.click("#filtrera");
-       },
-       function fail() {
-           test.assertExists("#filtrera");
-   });
-   casper.waitForSelector(x("//*[contains(text(), \'Korrekta poster - 3st\')]"),
-       function success() {
-           test.assertExists(x("//*[contains(text(), \'Korrekta poster - 3st\')]"));
-         },
-       function fail() {
-           test.assertExists(x("//*[contains(text(), \'Korrekta poster - 3st\')]"));
+
+   casper.waitForSelector("#target > div", function(){}, captureScreen, 5000);
+
+   casper.then(function() {
+        this.test.assertTextExists("Utförd insamling");
+        this.test.assertSelectorHasText('#target > div > div.summary > div.summary_left_section > dl > dd > code:nth-child(1)', feedUrl);
+        this.test.assertSelectorHasText('#filtrera > span:nth-child(2)', 'Korrekta poster - 3st');
    });
 
    casper.run(function() {test.done();});
 });
+
