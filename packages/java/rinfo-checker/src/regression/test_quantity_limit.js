@@ -8,7 +8,7 @@ casper.on('page.error', function(msg, trace) {
 });
 
 captureScreen = function() {
-   var file_name = casper.cli.get("output")+'test_correct_va_check_screen_error.png';
+   var file_name = casper.cli.get("output")+'test_quantity_limit_screen_error.png';
    this.capture(file_name);
    this.echo('Captured "'+file_name+'"');
 }
