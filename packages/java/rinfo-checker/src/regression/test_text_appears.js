@@ -8,12 +8,13 @@ casper.on('page.error', function(msg, trace) {
 });
 casper.test.begin('Check for Checker page title', function(test) {
    casper.start(casper.cli.get("url"));
-   casper.waitForSelector(x("//*[contains(text(), \'RInfo Checker\')]"),
-       function success() {
-           test.assertExists(x("//*[contains(text(), \'RInfo Checker\')]"));
-         },
-       function fail() {
-           test.assertExists(x("//*[contains(text(), \'RInfo Checker\')]"));
+
+   casper.start(casper.cli.get("url"));
+
+   casper.waitForSelector("body");
+
+   casper.then(function() {
+        this.test.assertTitle('RInfo Checker: insamlingskontroll');
    });
 
    casper.run(function() {test.done();});
