@@ -6,37 +6,34 @@ casper.on('page.error', function(msg, trace) {
        this.echo('   ' + step.file + ' (line ' + step.line + ')', 'ERROR');
    }
 });
+
+captureScreen = function() {
+   var file_name = casper.cli.get("output")+'test_no_protocol_in_url_screen_error.png';
+   this.capture(file_name);
+   this.echo('Captured "'+file_name+'"');
+}
+
+
 casper.test.begin('Test no protocol in url', function(test) {
    casper.start(casper.cli.get("url"));
-   casper.waitForSelector("form#html-form input[name='feedUrl']",
-       function success() {
-           test.assertExists("form#html-form input[name='feedUrl']");
-           this.click("form#html-form input[name='feedUrl']");
-       },
-       function fail() {
-           test.assertExists("form#html-form input[name='feedUrl']");
+
+   casper.waitForSelector("body");
+
+   var feedUrl = "URL_HERE";
+
+   casper.then(function() {
+        this.test.assertTitle('RInfo Checker: insamlingskontroll');
+        this.test.assertTextDoesntExist('Internal Server Error');
+        this.sendKeys("#html-form input[name='feedUrl']", feedUrl);
+        this.click('#submitButton');
    });
-   casper.waitForSelector("input[name='feedUrl']",
-       function success() {
-           this.sendKeys("input[name='feedUrl']", "URL_HERE\r");
-       },
-       function fail() {
-           test.assertExists("input[name='feedUrl']");
-   });
-   casper.waitForSelector("form#html-form input[type=submit][value='Check']",
-       function success() {
-           test.assertExists("form#html-form input[type=submit][value='Check']");
-           this.click("form#html-form input[type=submit][value='Check']");
-       },
-       function fail() {
-           test.assertExists("form#html-form input[type=submit][value='Check']");
-   });
-   casper.waitForSelector(x("//*[contains(text(), \'java.net.MalformedURLException: no protocol: URL_HERE\')]"),
-       function success() {
-           test.assertExists(x("//*[contains(text(), \'java.net.MalformedURLException: no protocol: URL_HERE\')]"));
-         },
-       function fail() {
-           test.assertExists(x("//*[contains(text(), \'java.net.MalformedURLException: no protocol: URL_HERE\')]"));
+
+   casper.waitForSelector("#target > p", function(){}, captureScreen, 5000);
+
+   casper.then(function() {
+        this.test.assertTextExists("Internal Server Error");
+        this.test.assertTextExists("java.net.MalformedURLException: no protocol: URL_HERE");
+        this.test.assertTextExists("You can get technical details");
    });
 
    casper.run(function() {test.done();});
