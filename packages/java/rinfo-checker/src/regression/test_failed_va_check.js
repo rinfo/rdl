@@ -1,14 +1,10 @@
 var x = require('casper').selectXPath;
-casper.options.viewportSize = {width: 1670, height: 585};
 casper.on('page.error', function(msg, trace) {
    this.echo('Error: ' + msg, 'ERROR');
    for(var i=0; i<trace.length; i++) {
        var step = trace[i];
        this.echo('   ' + step.file + ' (line ' + step.line + ')', 'ERROR');
    }
-   var file_name = casper.cli.get("output")+'test_failed_va_check_pagr_error.png';
-   this.capture(file_name);
-   this.echo('Captured "'+file_name+'"');
 });
 
 captureScreen = function() {
