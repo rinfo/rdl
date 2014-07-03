@@ -72,9 +72,28 @@ class ElasticQuery {
         return buildStats(esRes)
     }
 
+    def isLeaf(value) {
+        if(value == null
+            || value instanceof String
+            || value instanceof Integer) return true
+        return false
+    }
+    //flatten the map containing all interesting properties for the query
+    //needed because fields don't accept complextypes
+    def compress( Map m, String prefix = '' ) {
+        prefix = prefix ? "$prefix." : ''
+        m.collectEntries { k, v ->
+            if(!isLeaf(v)) compress( v, "$prefix$k" )
+            else
+                if(k == "_boost") [ (prefix[0..-2].toString()): v ]
+                else [ ("$prefix$k".toString()): v ]
+        }
+    }
+
     //@CompileStatic
     Map searchElastic(SearchRequestBuilder srb, String docType, Reference ref) {
-        def showTerms = jsonLdSettings.listFramesData[docType]?.keySet()
+        def showTerms = compress(jsonLdSettings.listFramesData[docType])?.keySet()
+
         if (!showTerms) {
             return null
         }
@@ -132,11 +151,7 @@ class ElasticQuery {
         if (docType) {
             srb.setTypes(docType)
         }
-        showTerms.removeAll { it == "publisher" || it == "forfattningssamling" || it == "upphaver" || it == "rev" || it == "andrar" || it == "konsoliderar"}
-        def source = ["publisher.iri" , "forfattningssamling.iri" , "upphaver.iri" , "rev.*" , "andrar.iri" , "konsoliderar.*"]
         srb.addFields(showTerms as String[])
-        srb.addFields(source as String[])
-        //srb.setFetchSource(source as String[])
         for (queryName in queryForm.names) {
             def queryItem = toQueryItem(queryName)
             def value = queryForm.getFirstValue(queryItem.name)

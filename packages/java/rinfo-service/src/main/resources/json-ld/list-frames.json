@@ -24,16 +24,16 @@
     "rattsfallspublikation": {"iri": null},
     "allmannaRadSerie": {"iri": null},
 
-    "andrar": [{"iri": null}],
-    "ersatter": [{"iri": null}],
-    "upphaver": [{"iri": null}],
-    "konsoliderar": [{"iri": null}],
+    "andrar": {"iri": null},
+    "ersatter": {"iri": null},
+    "upphaver": {"iri": null},
+    "konsoliderar": {"iri": null},
 
     "rev": {
-        "konsoliderar": [{"iri": null}],
-        "ersatter": [{"iri": null}],
-        "andrar": [{"iri": null}],
-        "upphaver": [{"iri": null}]
+        "konsoliderar": {"iri": null},
+        "ersatter": {"iri": null},
+        "andrar": {"iri": null},
+        "upphaver": {"iri": null}
     }
   },
 
