@@ -36,10 +36,15 @@ class ElasticQuery {
     def segmentWildcard = "*"
     def facetStatsSubSegment = "stats"
 
+    Map elasticfields = [:]
+
     ElasticQuery(ElasticData elasticData, String serviceAppBaseUrl) {
         this.elasticData = elasticData
         this.jsonLdSettings = elasticData.jsonLdSettings
         this.serviceAppBaseUrl = serviceAppBaseUrl
+        this.jsonLdSettings.listFramesData.each {
+            this.elasticfields += [(it.key): compress(it.value)?.keySet()]
+        }
     }
 
     @CompileStatic
@@ -92,8 +97,7 @@ class ElasticQuery {
 
     //@CompileStatic
     Map searchElastic(SearchRequestBuilder srb, String docType, Reference ref) {
-        def showTerms = compress(jsonLdSettings.listFramesData[docType])?.keySet()
-
+        def showTerms = elasticfields[docType]
         if (!showTerms) {
             return null
         }
