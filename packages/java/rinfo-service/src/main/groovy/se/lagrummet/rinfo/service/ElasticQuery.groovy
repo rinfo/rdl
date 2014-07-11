@@ -2,6 +2,12 @@ package se.lagrummet.rinfo.service
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Commons as Log
+import org.elasticsearch.common.xcontent.ToXContent
+import org.elasticsearch.common.xcontent.XContentBuilder
+import org.elasticsearch.index.query.MultiMatchQueryBuilder
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilder
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 
 import static org.restlet.data.CharacterSet.UTF_8
 import org.restlet.data.Reference
@@ -233,9 +239,8 @@ class ElasticQuery {
 
         QueryBuilder qb = (matches)?
             QueryBuilders.queryString(elasticQStr).
-                defaultOperator(QueryStringQueryBuilder.Operator.AND) :
+                defaultOperator(QueryStringQueryBuilder.Operator.AND).field("title^20").field("identifier^100").field("_all") :
             QueryBuilders.matchAllQuery()
-
         List<FilterBuilder> filterBuilders = []
         List<FilterBuilder> orFilterBuilders = []
 
