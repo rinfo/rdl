@@ -2,6 +2,8 @@ package se.lagrummet.rinfo.main.storage
 
 import spock.lang.*
 
+import java.util.concurrent.TimeUnit
+
 
 class FeedCollectSchedulerSpec extends Specification {
 
@@ -79,6 +81,25 @@ class FeedCollectSchedulerSpec extends Specification {
         ]
         then:
         collectScheduler.sourceFeedUrls.size() == 2
+    }
+
+    def "collect scheduler should run callback once when done"() {
+        setup:
+            def collectScheduler = new TestScheduler()
+            collectScheduler.sources = (1..3).collect {
+                def url = new URL("http://localhost/old/${it}")
+                new CollectorSource(url.toURI(), url)
+            }
+            final int timesRun = 0
+            collectScheduler.afterLastJobCallback = { timesRun+=1 }
+        when:
+            collectScheduler.startup()
+            //since the collect is't done in the same thread we need to block the test thread until it's done
+            //when we shutdown it should gracefully complete the scheduled tasks. and we'll busy wait for that.
+            collectScheduler.getExecutorService().shutdown()
+            collectScheduler.executorService.awaitTermination(100, TimeUnit.MILLISECONDS)
+        then:
+            assert timesRun == 1
     }
 
     class TestScheduler extends FeedCollectScheduler {
