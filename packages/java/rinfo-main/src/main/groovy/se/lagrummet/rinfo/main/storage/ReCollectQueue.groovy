@@ -26,6 +26,14 @@ class ReCollectQueue {
         return failedQueue.poll() as FailedResource
     }
 
+    public def size() {
+        return failedQueue.size()
+    }
+
+    public def purgeQueue() {
+        return failedQueue.removeAll(failedQueue)
+    }
+
     private def applyLimit() {
         failedQueue.removeAll { it.numberOfRetries > 3}
     }

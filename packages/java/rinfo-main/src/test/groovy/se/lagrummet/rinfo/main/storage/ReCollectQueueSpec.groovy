@@ -22,10 +22,30 @@ class ReCollectQueueSpec extends Specification {
             failed.url == "http://localhost"
     }
 
+    def "It should be possible to check the size of the queue"() {
+        setup:
+            def queue = ReCollectQueue.instance
+        when:
+            queue.add(new FailedResource(url: "http://localhost", numberOfRetries: 0))
+        then:
+            queue.size() == 1
+    }
+
+    def "It should be possible to purge the queue"() {
+        setup:
+            def queue = ReCollectQueue.instance
+        when:
+            queue.add(new FailedResource(url: "http://localhost", numberOfRetries: 0))
+            queue.purgeQueue()
+        then:
+            queue.isEmpty() == true
+    }
+
     def "It when adding an existing url to the queue it should requeue it and update the retries"() {
         setup:
             def queue = ReCollectQueue.instance
         when:
+            queue.add(new FailedResource(url: "http://localhost", numberOfRetries: 0))
             queue.add(new FailedResource(url: "http://localhost", numberOfRetries: 0))
         then:
             queue.peek().numberOfRetries == 1
