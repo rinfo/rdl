@@ -1,4 +1,5 @@
 package se.lagrummet.rinfo.main.storage
+import org.apache.abdera.model.Entry;
 //use with MyClass singleton = MyClass.instance
 @Singleton
 class ReCollectQueue {
@@ -6,24 +7,28 @@ class ReCollectQueue {
     public boolean isEmpty() {
         return failedQueue.isEmpty()
     }
-    public def add(FailedResource failedResource) {
-        if(!failedQueue.any { it.url == failedResource.url})
-            failedQueue << failedResource
+    public def add(FailedEntry failedEntry) {
+        if(!failedQueue.any { it.contentEntry?.id == failedEntry.contentEntry.id})
+            failedQueue << failedEntry
         else {
-            def failed = failedQueue.find {it.url == failedResource.url } as FailedResource
+            def failed = failedQueue.find {it.contentEntry.id == failedEntry.contentEntry.id } as FailedEntry
             failed.numberOfRetries += 1
-            failedQueue.removeAll { it.url == failed.url }
+            failedQueue.removeAll { it.contentEntry.id == failed.contentEntry.id }
             failedQueue << failed
         }
         applyLimit()
     }
 
-    public FailedResource peek() {
-        return failedQueue.peek() as FailedResource
+    public FailedEntry peek() {
+        return failedQueue.peek() as FailedEntry
     }
 
-    public FailedResource poll() {
-        return failedQueue.poll() as FailedResource
+    public FailedEntry poll() {
+        return failedQueue.poll() as FailedEntry
+    }
+
+    public def getAsList() {
+        return failedQueue as List
     }
 
     public def size() {
@@ -38,6 +43,10 @@ class ReCollectQueue {
         failedQueue.removeAll { it.numberOfRetries > 3}
     }
 
+
 }
 
-class FailedResource { def url, mimeType, lang, enclosedUriPath, numberOfRetries }
+class FailedEntry {
+    def numberOfRetries = 0
+    Entry contentEntry
+}
