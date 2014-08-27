@@ -23,7 +23,7 @@ class ReCollectFeedSpec extends Specification {
         when:
             def feed = ReCollectFeed.generate(queue.asList)
         then:
-            feed.size() > 0
+            feed.getEntry("http://localhost").getContentSrc() == content.getSrc()
 
     }
 }

@@ -1,28 +1,33 @@
 package se.lagrummet.rinfo.main.storage
-import groovy.xml.MarkupBuilder
-
-import java.text.SimpleDateFormat
+import org.apache.abdera.Abdera
+import org.apache.abdera.model.Feed
+import org.restlet.Request
+import org.restlet.Response
+import org.restlet.Restlet
+import org.restlet.data.MediaType
 
 class ReCollectFeed {
-    static String generate(reCollectQueue) {
-        def sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-        def stringWriter = new StringWriter()
-        def xml = new MarkupBuilder(stringWriter)
+    static Feed generate(reCollectQueue) {
 
-        xml.feed(xmlns:'http://www.w3.org/2005/Atom') {
-            title(type: "text", "rinfo recollect")
-            id("tag:lagrummet.se,2014:rinfo:recollect")
-            updated(sdf.format(new Date()))
+        def feed = Abdera.instance.newFeed()
 
-            reCollectQueue.each {
-                item -> entry {
-                    id item.contentEntry.getId().toString()
-                    title(type: "text", item.contentEntry.getTitle())
-                    updated sdf.format(new Date())
-                    content(contentType: item.contentEntry.getContentMimeType().toString(), src: item.contentEntry.getContentSrc()?.toString())
-                }
-            }
+        feed.setId("tag:lagrummet.se,2014:rinfo:recollect")
+        feed.setTitle("rinfo recollect")
+        feed.setUpdated(new Date())
+
+        reCollectQueue.each {
+            item -> feed.addEntry(item.contentEntry)
         }
-        return xml.toString()
+        return feed
+    }
+
+    static Restlet createFeed(context) {
+        return new Restlet(context) {
+            @Override
+            public void handle(Request request, Response response) {
+                def feed = generate(ReCollectQueue.instance.asList)
+                response.setEntity(feed.toString(), MediaType.APPLICATION_ATOM);
+            }
+        };
     }
 }
