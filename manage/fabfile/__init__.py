@@ -32,6 +32,9 @@ env.java_pkg_version = "1.0-SNAPSHOT"
 env.timestamp = datetime.utcnow().strftime('%Y_%m_%d_%H-%M-%S')
 env.datestamp = datetime.utcnow().strftime('%Y-%m-%d')
 
+env.ftp_server_url = "ftp://archive0d.glesys.com"
+env.snapshot_name = ""
+
 # env.roledefs defines available roles but the actual host lists for a certain
 # role is environment dependent and set up by the targets defined in
 # target.py (see i.e. tg_dev_unix)

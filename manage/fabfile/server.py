@@ -4,6 +4,7 @@ Diagnostics and admin tasks
 from __future__ import with_statement
 import contextlib
 import time
+import datetime
 from fabric.api import *
 from util import venv
 from target import _needs_targetenv
@@ -122,3 +123,72 @@ def ping_verify():
         report_name = "%(projectroot)s/ping_verify_%(target)s_report.log" % venv()
         report.create_report(report_name)
         print "Created report '%s'" % report_name
+
+def tar(filename, target_path, command='czvf'):
+    with cd(target_path):
+        run('tar %s %s *' % (command,filename) )
+        #run('echo "Test file" > %s' % filename)
+
+def ftp_push(filename, ftp_address, username, password):
+    print "ftp push %s to %s" % (filename,ftp_address)
+    run('curl -T %s %s --user %s:%s --ftp-create-dirs' % (filename,ftp_address,username,password))
+
+
+def tar_and_ftp_push(snapshot_name, name, password, source_tar_path, target_path, username):
+    file_to_upload = '%s/%s.tar.gz' % (target_path, name)
+    tar(file_to_upload, source_tar_path)
+    ftp_push(file_to_upload, '%s/%s/%s.tar.gz' % (env.ftp_server_url, snapshot_name, name), username, password)
+
+def role_is_active(role):
+    return env.host in env.roledefs[role]
+
+@parallel
+@roles('main')
+def take_main_snapshot_and_push_to_ftp(snapshot_name, target_path, username, password):
+    if not role_is_active('main'):
+        return
+    tar_and_ftp_push(snapshot_name, 'depot', password, '/opt/rinfo/store/', target_path, username)
+
+@parallel
+@roles('service')
+def take_service_snapshot_and_push_to_ftp(snapshot_name, target_path, username, password):
+    if not role_is_active('service'):
+        return
+    tar_and_ftp_push(snapshot_name, 'sesame', password, '/opt/rinfo/sesame-repo/', target_path, username)
+    tar_and_ftp_push(snapshot_name, 'elasticsearch', password, '/opt/elasticsearch/var/data/', target_path, username)
+
+
+def clean_path(tar_target_path):
+    run("rm -rf %s*" % tar_target_path)
+
+
+def create_path(tar_target_path):
+    run("mkdir -p %s" % tar_target_path)
+
+
+def calculate_stored_or_new_snapshot_name(name):
+    snapshot_name = name + "_" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    if not env.snapshot_name:
+        env.snapshot_name = snapshot_name
+    else:
+        snapshot_name = env.snapshot_name
+    return snapshot_name
+
+@task
+@roles('main','service')
+def take_snapshot_and_push_to_ftp(name='snapshot',username='',password=''):
+    _needs_targetenv()
+
+    tar_target_path = "%s/tmp/%s" % (env.mgr_workdir,name)
+    snapshot_name = calculate_stored_or_new_snapshot_name(name)
+
+    tomcat_stop()
+    clean_path(tar_target_path)
+    create_path(tar_target_path)
+    try:
+        take_main_snapshot_and_push_to_ftp(snapshot_name, tar_target_path, username, password)
+        take_service_snapshot_and_push_to_ftp(snapshot_name, tar_target_path, username, password)
+    finally:
+        clean_path(tar_target_path)
+        tomcat_start()
+
