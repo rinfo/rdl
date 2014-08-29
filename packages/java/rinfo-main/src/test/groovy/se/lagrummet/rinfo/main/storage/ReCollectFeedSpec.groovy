@@ -18,7 +18,6 @@ class ReCollectFeedSpec extends Specification {
             content.setContentType(Content.Type.MEDIA)
             entry.setContentElement(content)
 
-            def dummy = entry.getContentElement()
             queue.add(new FailedEntry(contentEntry: entry, numberOfRetries: 0))
         when:
             def feed = ReCollectFeed.generate(queue.asList)

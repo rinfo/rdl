@@ -232,6 +232,9 @@ class CollectorLogSession implements Closeable {
             }
             errorAction = ErrorAction.SKIPANDCONTINUE
         }
+        else if (error instanceof IOException) {
+            errorAction = ErrorAction.CONTINUEANDRETRYLATER
+        }
         if (errorDesc == null) {
             errorDesc = state.pageDescriber.newDescription(null, "rc:Error")
             def repr = error.cause?.toString() ?: error.toString() ?: "[N/A]"

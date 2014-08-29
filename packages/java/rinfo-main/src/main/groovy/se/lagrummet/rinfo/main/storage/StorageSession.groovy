@@ -135,6 +135,10 @@ class StorageSession {
             }
 
             logSession.logUpdatedEntry(sourceFeed, sourceEntry, depotEntry)
+
+            //check if the feedurl is recollect first to avoid slowing stuff down?
+            ReCollectQueue.instance.tryRemove(sourceEntry)
+
             return true
 
         } catch (Exception e) {
@@ -165,6 +169,11 @@ class StorageSession {
                     def shouldContinueAsString = isCheckerCollect ? "continues" : "is stopped"
                     logger.error("Error storing entry <${entryId}> and collect " + shouldContinueAsString + ". Caused by: " + e)
                     depotSession.rollbackPending()
+                    break
+                case ErrorAction.CONTINUEANDRETRYLATER:
+                    logger.info("Failed to download something in ${sourceEntry.id} adding the entry to the recollect queue")
+                    ReCollectQueue.instance.add(new FailedEntry(contentEntry: sourceEntry))
+                    shouldContinue = true
                     break
                 default:
                     throw new IllegalStateException("Unknown ErrorAction: " + gotErrorAction + ". Caused by: " + e)

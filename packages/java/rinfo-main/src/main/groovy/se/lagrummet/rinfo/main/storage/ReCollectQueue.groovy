@@ -50,6 +50,9 @@ class ReCollectQueue {
         return failedQueue.removeAll(failedQueue)
     }
 
+    public tryRemove(Entry toRemove) {
+        failedQueue.removeAll { it.contentEntry.id == toRemove.id }
+    }
     private def applyLimit() {
         failedQueue.removeAll {
             if(it.numberOfRetries > 3) {

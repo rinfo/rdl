@@ -5,6 +5,9 @@ import spock.lang.Specification
 
 class ReCollectQueueSpec extends Specification {
 
+    def setupSpec() {
+        ReCollectQueue.instance.purgeQueue()
+    }
     def "It should be possible to add things to the queue"() {
         setup:
             def queue = ReCollectQueue.instance
