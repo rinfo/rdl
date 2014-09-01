@@ -124,50 +124,86 @@ def ping_verify():
         report.create_report(report_name)
         print "Created report '%s'" % report_name
 
-def tar(filename, target_path, command='czvf'):
-    with cd(target_path):
-        run('tar %s %s *' % (command,filename) )
-        #run('echo "Test file" > %s' % filename)
-
-def ftp_push(filename, ftp_address, username, password):
-    print "ftp push %s to %s" % (filename,ftp_address)
-    run('curl -T %s %s --user %s:%s --ftp-create-dirs' % (filename,ftp_address,username,password))
-
-
-def tar_and_ftp_push(snapshot_name, name, password, source_tar_path, target_path, username):
-    file_to_upload = '%s/%s.tar.gz' % (target_path, name)
-    tar(file_to_upload, source_tar_path)
-    ftp_push(file_to_upload, '%s/%s/%s.tar.gz' % (env.ftp_server_url, snapshot_name, name), username, password)
-
 def role_is_active(role):
     return env.host in env.roledefs[role]
 
+def tar(filename, target_path, command='czvf', test=False):
+    with cd(target_path):
+        if test:
+            run('echo "Test file" > %s' % filename)
+        else:
+            run('tar %s %s *' % (command,filename) )
+
+def untar(filename, target_path, command='xzvf', use_sudo=False, test=False):
+    tar_cmd = 'tar %s %s' % (command, filename)
+    with cd(target_path):
+        if test:
+            print "Simulating tar command %s" % tar_cmd
+        elif use_sudo:
+            sudo(tar_cmd)
+        else:
+            run(tar_cmd)
+
+def ftp_push(filename, ftp_address, username, password, test=False):
+    if test:
+        print "ftp push %s to %s" % (filename,ftp_address)
+    else:
+        run('curl -T %s %s --user %s:%s --ftp-create-dirs' % (filename,ftp_address,username,password))
+
+def ftp_fetch(filename, ftp_address, target_path, username, password, test=False):
+    with cd(target_path):
+        if test:
+            print "ftp fetch %s from %s to %s" % (filename,ftp_address,target_path)
+        else:
+            run('curl %s/%s --user %s:%s --ftp-create-dirs -o %s' % (ftp_address,filename,username,password,filename))
+
+def tar_and_ftp_push(snapshot_name, name, password, source_tar_path, target_path, username, test=False):
+    file_to_upload = '%s/%s.tar.gz' % (target_path, name)
+    tar(file_to_upload, source_tar_path, test=test)
+    ftp_push(file_to_upload, '%s/%s/%s.tar.gz' % (env.ftp_server_url, snapshot_name, name), username, password, test=test)
+
+def ftp_fetch_and_untar(snapshot_name, name, tmp_path, target_tar_unpack_path, username, password, test=False):
+    file_to_download = '%s.tar.gz' % name
+    ftp_fetch(file_to_download, "%s/%s" % (env.ftp_server_url,snapshot_name), tmp_path, username, password, test=test)
+    clean_path(target_tar_unpack_path, use_sudo=True, test=test)
+    untar('%s/%s.tar.gz' % (tmp_path,name), target_tar_unpack_path, use_sudo=True, test=test)
+
 @parallel
 @roles('main')
-def take_main_snapshot_and_push_to_ftp(snapshot_name, target_path, username, password):
+def take_main_snapshot_and_push_to_ftp(snapshot_name, target_path, username, password, test=False):
     if not role_is_active('main'):
         return
-    tar_and_ftp_push(snapshot_name, 'depot', password, '/opt/rinfo/store/', target_path, username)
+    tar_and_ftp_push(snapshot_name, 'depot', password, '/opt/rinfo/store/', target_path, username, test=test)
 
 @parallel
 @roles('service')
-def take_service_snapshot_and_push_to_ftp(snapshot_name, target_path, username, password):
+def take_service_snapshot_and_push_to_ftp(snapshot_name, target_path, username, password, use_sesame=True, use_elasticsearch=True, test=False):
     if not role_is_active('service'):
         return
-    tar_and_ftp_push(snapshot_name, 'sesame', password, '/opt/rinfo/sesame-repo/', target_path, username)
-    tar_and_ftp_push(snapshot_name, 'elasticsearch', password, '/opt/elasticsearch/var/data/', target_path, username)
+    if use_sesame:
+        tar_and_ftp_push(snapshot_name, 'sesame', password, '/opt/rinfo/sesame-repo/', target_path, username, test=test)
+    if use_elasticsearch:
+        tar_and_ftp_push(snapshot_name, 'elasticsearch', password, '/opt/elasticsearch/var/data/', target_path, username,test=test)
 
 
-def clean_path(tar_target_path):
-    run("rm -rf %s*" % tar_target_path)
+def clean_path(tar_target_path, use_sudo=False, test=False):
+    if test:
+        print "remove files %s" % tar_target_path
+    elif use_sudo:
+        sudo("rm -rf %s*" % tar_target_path)
+    else:
+        run("rm -rf %s*" % tar_target_path)
 
 
-def create_path(tar_target_path):
+def create_path(tar_target_path, test=False):
+    if test:
+        print "Make directory: %s" % tar_target_path
+        return
     run("mkdir -p %s" % tar_target_path)
 
 
-def calculate_stored_or_new_snapshot_name(name):
-    snapshot_name = name + "_" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+def calculate_stored_or_new_snapshot_name(snapshot_name):
+    #snapshot_name = name + "_" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     if not env.snapshot_name:
         env.snapshot_name = snapshot_name
     else:
@@ -176,19 +212,59 @@ def calculate_stored_or_new_snapshot_name(name):
 
 @task
 @roles('main','service')
-def take_snapshot_and_push_to_ftp(name='snapshot',username='',password=''):
+def take_snapshot_and_push_to_ftp(name='snapshot',username='',password='', test=False):
     _needs_targetenv()
 
     tar_target_path = "%s/tmp/%s" % (env.mgr_workdir,name)
     snapshot_name = calculate_stored_or_new_snapshot_name(name)
 
-    tomcat_stop()
-    clean_path(tar_target_path)
-    create_path(tar_target_path)
+    if not test:
+        tomcat_stop()
+    clean_path(tar_target_path, test=test)
+    create_path(tar_target_path, test=test)
     try:
-        take_main_snapshot_and_push_to_ftp(snapshot_name, tar_target_path, username, password)
-        take_service_snapshot_and_push_to_ftp(snapshot_name, tar_target_path, username, password)
+        take_main_snapshot_and_push_to_ftp(snapshot_name, tar_target_path, username, password, test=test)
+        take_service_snapshot_and_push_to_ftp(snapshot_name, tar_target_path, username, password, test=test)
     finally:
-        clean_path(tar_target_path)
-        tomcat_start()
+        clean_path(tar_target_path, test=test)
+        if not test:
+            tomcat_start()
 
+@parallel
+@roles('main')
+def fetch_main_snapshot_from_ftp_and_install(snapshot_name, tar_target_path, username, password, test=False):
+    if not role_is_active('main'):
+        return
+    ftp_fetch_and_untar(snapshot_name, 'depot', tar_target_path, '/opt/rinfo/store/', username, password, test=test)
+
+@parallel
+@roles('service')
+def fetch_service_snapshot_from_ftp_and_install(snapshot_name, tar_target_path, username, password, use_sesame=True, use_elasticsearch=True, test=False):
+    if not role_is_active('service'):
+        return
+    if use_sesame:
+        ftp_fetch_and_untar(snapshot_name, 'sesame', tar_target_path, '/opt/rinfo/sesame-repo/', username, password, test=test)
+    if use_elasticsearch:
+        ftp_fetch_and_untar(snapshot_name, 'elasticsearch', tar_target_path, '/opt/elasticsearch/var/data/', username, password, test=test)
+
+
+@task
+@roles('main','service')
+def fetch_snapshot_from_ftp_and_install(name='snapshot',username='',password='', test=False):
+    _needs_targetenv()
+
+    tar_target_path = "%s/tmp/%s" % (env.mgr_workdir,name)
+    snapshot_name = calculate_stored_or_new_snapshot_name(name)
+
+    if not test:
+        tomcat_stop()
+    clean_path(tar_target_path, test=test)
+    create_path(tar_target_path, test=test)
+    try:
+        fetch_main_snapshot_from_ftp_and_install(snapshot_name, tar_target_path, username, password, test=test)
+        fetch_service_snapshot_from_ftp_and_install(snapshot_name, tar_target_path, username, password, test=test)
+    finally:
+        clean_path(tar_target_path, test=test)
+        #todo empty varnish cache
+        if not test:
+            tomcat_start()
