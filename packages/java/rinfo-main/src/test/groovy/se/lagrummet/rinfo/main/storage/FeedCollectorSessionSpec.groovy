@@ -56,15 +56,40 @@ class FeedCollectorSessionSpec extends Specification {
             GroovyMock(StorageSession, global: true)
             StorageSession.setViaEntry(_,_,_) >> { return }
 
-
-
         when:
             def feed = ReCollectFeed.generate(queue.asList)
 
             fcs.processFeedPageInOrder(new URL("http://localhost/feed/recollect"), feed, [entryThatWillSucceed], [:])
         then:
-            queue.asList.any {it.contentEntry.id == entryThatWillSucceed.id} == false
+            !queue.asList.any {it.contentEntry.id == entryThatWillSucceed.id}
 
+    }
+
+    def "when collecting the recollectfeed unsuccessful entrys should be readded to the queue"() {
+        setup:
+            def queue = ReCollectQueue.instance
+
+            def entryThatWillFail = Abdera.instance.newEntry()
+            def content = Abdera.instance.getFactory().newContent()
+
+
+            entryThatWillFail.setId("http://willfailagain")
+            entryThatWillFail.setContentElement(content)
+
+            logsession.logError(_,_,_,_) >> ErrorAction.CONTINUEANDRETRYLATER
+            content.setSrc("http://localhost/fail")
+            queue.add(new FailedEntry(contentEntry: entryThatWillFail))
+            def ss = makeStorageSessionWithLogSession(Mock(Depot), Mock(DepotSession), [Mock(StorageHandler)], logsession, false)
+            def fcs = new FeedCollectorSession(new DefaultHttpClient(), ss)
+
+            GroovyMock(StorageSession, global: true)
+            StorageSession.setViaEntry(_,_,_) >> { throw new FileNotFoundException() }
+        when:
+            def feed = ReCollectFeed.generate(queue.asList)
+
+            fcs.processFeedPageInOrder(new URL("http://localhost/feed/recollect"), feed, [entryThatWillFail], [:])
+        then:
+            queue.asList.find { it.contentEntry.id == entryThatWillFail.id}?.numberOfRetries == 1
     }
 
     private makeStorageSessionWithLogSession(depot, depotSession, handlers, admin=false, logSession, isCheckerCollect) {
