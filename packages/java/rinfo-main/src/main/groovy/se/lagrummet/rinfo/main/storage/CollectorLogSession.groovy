@@ -1,5 +1,7 @@
 package se.lagrummet.rinfo.main.storage
 
+import se.lagrummet.rinfo.store.depot.DepotWriteException
+
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex
 
 import org.apache.abdera.model.Entry
@@ -232,7 +234,7 @@ class CollectorLogSession implements Closeable {
             }
             errorAction = ErrorAction.SKIPANDCONTINUE
         }
-        else if (error instanceof IOException) {
+        else if (error instanceof IOException || error instanceof DepotWriteException ) {
             errorAction = ErrorAction.CONTINUEANDRETRYLATER
         }
         if (errorDesc == null) {

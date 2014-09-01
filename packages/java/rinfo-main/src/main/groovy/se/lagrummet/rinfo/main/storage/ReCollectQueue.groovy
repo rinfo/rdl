@@ -51,7 +51,14 @@ class ReCollectQueue {
     }
 
     public tryRemove(Entry toRemove) {
-        failedQueue.removeAll { it.contentEntry.id == toRemove.id }
+        logger.info("trying to remove ${toRemove.id}")
+        failedQueue.removeAll {
+            if(it.contentEntry.id == toRemove.id) {
+                logger.info("Removing entry ${toRemove.id} from ReCollectQueue")
+                return true
+            }
+            return false
+        }
     }
     private def applyLimit() {
         failedQueue.removeAll {

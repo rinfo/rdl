@@ -163,6 +163,8 @@ class StorageSession {
                     break
                 case ErrorAction.STOREANDCONTINUE:
                     logger.warn("Storing entry <${entryId}> with problem but collect continues. Caused by: " + e)
+                    //check if the feedurl is recollect first to avoid slowing stuff down?
+                    ReCollectQueue.instance.tryRemove(sourceEntry)
                     shouldContinue = true
                     break
                 case ErrorAction.SKIPANDHALT:
@@ -173,6 +175,8 @@ class StorageSession {
                 case ErrorAction.CONTINUEANDRETRYLATER:
                     logger.info("Failed to download something in ${sourceEntry.id} adding the entry to the recollect queue")
                     ReCollectQueue.instance.add(new FailedEntry(contentEntry: sourceEntry))
+                    logger.info("Rolling back current entry ${sourceEntry.id}")
+                    depotSession.rollbackPending()
                     shouldContinue = true
                     break
                 default:
@@ -246,7 +250,7 @@ class StorageSession {
         //     sourceEntry.updated>.created (above) *and* > depotEntry.updated..
         //     .. and "source feed" is "same as last"? (indirected via rdf facts)?
         // TODO:? Assert id == id (& feed.id == ..)?
-        return !(sourceEntry.getUpdated() > viaEntry.getUpdated())
+        return !(sourceEntry.getUpdated() > viaEntry?.getUpdated())
     }
 
 }
