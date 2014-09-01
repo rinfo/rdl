@@ -1,7 +1,7 @@
 from fabric.api import *
 
 @task
-@role('ci')
+@roles('ci')
 def install():
     sudo("apt-get install git")
     sudo("apt-get install maven2") # TODO: maven3
