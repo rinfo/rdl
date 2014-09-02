@@ -26,7 +26,7 @@ env.docbuild = sep.join((env.builddir, 'documentation'))
 env.baseresources = "%(projectroot)s/resources/base"%env
 
 # env.java_packages = "%(projectroot)s/packages/java"%env
-env.java_packages = sep.join((env.projectroot,'packages', 'java'))
+env.java_packages = sep.join((env.projectroot, 'packages', 'java'))
 
 env.java_pkg_version = "1.0-SNAPSHOT"
 env.timestamp = datetime.utcnow().strftime('%Y_%m_%d_%H-%M-%S')
@@ -61,4 +61,3 @@ import app.checker
 import app.docs
 import app.tools
 import app.demodata
-

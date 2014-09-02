@@ -6,6 +6,7 @@ from fabric.api import *
 
 targetenvs = []
 
+
 def targetenv(f):
     """
     Decorator function that makes sure that the list targetenvs contains all
@@ -15,6 +16,7 @@ def targetenv(f):
     targetenvs.append("target." + f.__name__)
     return task(f)
 
+
 def _needs_targetenv():
     """
     Makes sure that the env dictionary contains a certain set of keys. These
@@ -23,6 +25,7 @@ def _needs_targetenv():
     invoked.
     """
     require('target', 'roledefs', 'dist_dir', 'tomcat', provided_by=targetenvs)
+
 
 @targetenv
 def dev_unix():
@@ -99,6 +102,7 @@ def demo():
     # Tomcat
     _tomcat_env()
 
+
 @targetenv
 def test():
     """Set target env to: test"""
@@ -137,6 +141,7 @@ def test():
     # Tomcat
     _tomcat_env()
 
+
 @targetenv
 def regression():
     """Set target env to: regression"""
@@ -170,6 +175,7 @@ def regression():
     }
     # Tomcat
     _tomcat_env()
+
 
 @targetenv
 def beta():
@@ -208,6 +214,7 @@ def beta():
     }
     # Tomcat
     _tomcat_env()
+
 
 @targetenv
 def skrapat():
@@ -283,6 +290,7 @@ def testfeed():
     # Tomcat
     _tomcat_env()
 
+
 @targetenv
 def scraped():
     """Set target env to: demo"""
@@ -316,6 +324,7 @@ def scraped():
     }
     # Tomcat
     _tomcat_env()
+
 
 # Integration is a virtual environment that you could setup on your own computer
 # See README.txt for more information
@@ -354,6 +363,7 @@ def integration():
     # Tomcat
     _tomcat_env()
 
+
 @targetenv
 def prod():
     """Set target env to: prod"""
@@ -390,14 +400,14 @@ def prod():
     # Tomcat
     _tomcat_env()
 
+
 def _tomcat_env():
     env.apache_jk_tomcat = True
     # when change version of tomcat, must check server.xml (../../sysconf/common/tomcat/server.xml)
     env.tomcat_version = "7.0.55"
     env.tomcat = "/opt/tomcat"
-    env.tomcat_webapps = "%(tomcat)s/webapps"%env
+    env.tomcat_webapps = "%(tomcat)s/webapps" % env
     env.tomcat_start = '/etc/init.d/tomcat start'
     env.tomcat_stop = '/etc/init.d/tomcat stop'
     env.tomcat_user = 'tomcat'
     env.tomcat_group = 'tomcat'
-

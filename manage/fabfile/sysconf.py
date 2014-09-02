@@ -25,6 +25,7 @@ from fabfile.util import mkdirpath, slashed
 ##
 # Continuous Maintenance
 
+
 @task
 def configure_server():
     secure_sshd()
@@ -65,6 +66,7 @@ def configure_app_container():
             if sudo("cp -vu apache2/conf.d/jk.conf /etc/apache2/conf.d/"):
                 sudo("chown root:root /etc/apache2/conf.d/jk.conf")
 
+
 @task
 def configure_sites():
     _sync_workdir()
@@ -77,6 +79,7 @@ def configure_sites():
                 sudo("cp -vu apache2/sites-available/%s /etc/apache2/sites-available/" % site)
                 sudo("a2ensite %s" % site)
 
+
 @task
 def install_init_d(name):
     _sync_workdir()
@@ -86,8 +89,10 @@ def install_init_d(name):
             sudo("update-rc.d %s defaults" % name)
 
 
+
 ##
 # Initial Software Installation
+
 
 @runs_once
 def _prepare_mgr_work():
@@ -97,24 +102,29 @@ def _prepare_mgr_work():
     put(p.join(env.manageroot, "sysconf", "common", "tomcat", "server.xml"), "%(mgr_workdir)s/install" % env)
     mkdirpath("%(mgr_workdir)s/tomcat_pkg" % env)
 
+
 @task
 def install_server():
     install_dependencies()
     #install_jdk() # Installing the Proprietary JDK requires manual confirmation.
     install_tomcat()
 
+
 @task
 def install_dependencies():
     _prepare_mgr_work()
     sudo("bash %(mgr_workdir)s/install/1_deps.sh" % env)
+
 
 @task
 def install_tomcat():
     fetch_tomcat_dist()
     workdir_tomcat = "%(mgr_workdir)s/tomcat_pkg" % env
     with cd(workdir_tomcat):
-        sudo("bash %(mgr_workdir)s/install/3_install-tomcat.sh %(tomcat_version)s %(tomcat_user)s %(tomcat_group)s %(user)s %(mgr_workdir)s" % env)
+        sudo("bash %(mgr_workdir)s/install/3_install-tomcat.sh %(tomcat_version)s %(tomcat_user)s "
+             "%(tomcat_group)s %(user)s %(mgr_workdir)s" % env)
     install_init_d("tomcat")
+
 
 def fetch_tomcat_dist():
     _prepare_mgr_work()
@@ -122,7 +132,10 @@ def fetch_tomcat_dist():
     with cd(workdir_tomcat):
         run("bash %(mgr_workdir)s/install/2_get-tomcat.sh %(tomcat_version)s" % env)
 
+
 def secure_sshd():
-    sudo("sed -i 's/^#PermitRootLogin yes/PermitRootLogin no/;s/PermitRootLogin yes/PermitRootLogin no/;s/^#PermitEmptyPasswords yes/PermitEmptyPasswords no/;s/PermitEmptyPasswords yes/PermitEmptyPasswords no/;s/^#X11Forwarding yes/X11Forwarding no/;s/X11Forwarding yes/X11Forwarding no/' /etc/ssh/sshd_config")
+    sudo("sed -i 's/^#PermitRootLogin yes/PermitRootLogin no/;s/PermitRootLogin yes/PermitRootLogin no/;"
+         "s/^#PermitEmptyPasswords yes/PermitEmptyPasswords no/;s/PermitEmptyPasswords yes/PermitEmptyPasswords no/;"
+         "s/^#X11Forwarding yes/X11Forwarding no/;s/X11Forwarding yes/X11Forwarding no/' /etc/ssh/sshd_config")
     sudo("/etc/init.d/ssh restart")
 
