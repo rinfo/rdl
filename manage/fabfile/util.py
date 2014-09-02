@@ -15,7 +15,8 @@ def fullpath(dirpath):
 
 
 def mkdirpath(path):
-    if not exists(path): run("mkdir -p %s" % path)
+    if not exists(path):
+        run("mkdir -p %s" % path)
 
 
 def slashed(path):
@@ -28,18 +29,18 @@ def cygpath(path):
 
 @task
 def msg_sleep(sleep_time, msg=""):
-    print "Pause in {0} second(s) for {1}!".format(sleep_time,msg)
+    print "Pause in {0} second(s) for {1}!".format(sleep_time, msg)
     time.sleep(sleep_time)
 
 
 def verify_url_content(url, string_exists_in_content, sleep_time=15, max_retry=3):
     retry_count = 1
-    respHttp = ""
+    resp_http = ""
     while retry_count < max_retry:
-        respHttp = local("curl %(url)s" % vars(), capture=True)
-        if string_exists_in_content=="":
+        resp_http = local("curl %(url)s" % vars(), capture=True)
+        if not string_exists_in_content:
             return True
-        if not string_exists_in_content in respHttp:
+        if not string_exists_in_content in resp_http:
             print "Could not find '%(string_exists_in_content)s' in response! Failed! Retry %(retry_count)s " \
                   "of %(max_retry)s." % vars()
             retry_count += 1
@@ -47,7 +48,7 @@ def verify_url_content(url, string_exists_in_content, sleep_time=15, max_retry=3
             continue
         return True
     print "#########################################################################################"
-    print respHttp
+    print resp_http
     print "#########################################################################################"
     return False
 
@@ -57,7 +58,7 @@ def test_url(report, name, class_name, url, content):
         report.add_test_success(name, class_name)
     else:
         report.add_test_failure(name, class_name, "ping failure",
-                                "Unable to verify '%s' contains '%s'" % (url, content) )
+                                "Unable to verify '%s' contains '%s'" % (url, content))
 
 
 class PrintXml:
@@ -114,7 +115,7 @@ class JUnitReport:
         if self.empty():
             return
         print_xml = PrintXml(file_name)
-        print_xml.write("<testsuite tests=\"%i\">" % (len(self.items)) )
+        print_xml.write("<testsuite tests=\"%i\">" % (len(self.items)))
         for item in self.items:
             item.write(print_xml)
         print_xml.write("</testsuite>")

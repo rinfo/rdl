@@ -53,9 +53,8 @@ def setup():
 def deploy(headless="0"):
     """Deploys the rinfo-service war package to target env."""
     setup()
-    _deploy_war_norestart(
-            "%(java_packages)s/rinfo-service/target/rinfo-service-%(target)s.war" % env,
-            "rinfo-service", int(headless))
+    _deploy_war_norestart("%(java_packages)s/rinfo-service/target/rinfo-service-%(target)s.war" % env,
+                          "rinfo-service", int(headless))
 
 
 @task
@@ -75,7 +74,7 @@ def all(deps="1", test="1", headless="0"):
 def package_sesame():
     """Packages and deploys the Sesame RDF store war to target env."""
     env.pkgdir = "%(java_packages)s/rinfo-sesame-http" % env
-    local("cd %(pkgdir)s && mvn package"%env)
+    local("cd %(pkgdir)s && mvn package" % env)
     env.local_sesame_dir = "%(pkgdir)s/target/dependency" % env
 
 
@@ -95,7 +94,7 @@ def _patch_catalina_properties():
     sesame_data_dir_key = "info.aduna.platform.appdata.basedir"
     catalina_properties_path = "%(tomcat)s/conf/catalina.properties" % env
     with settings(warn_only=True):
-        if (sudo("grep '%(sesame_data_dir_key)s' %(catalina_properties_path)s" % venv())):
+        if sudo("grep '%(sesame_data_dir_key)s' %(catalina_properties_path)s" % venv()):
             print "'%(sesame_data_dir_key)s' already present in %(catalina_properties_path)s" % venv()
         else:
             print "'%(sesame_data_dir_key)s' NOT found in %(catalina_properties_path)s" % venv()
@@ -212,9 +211,12 @@ def install_varnish():
         sudo("mkdir %(workdir_varnish)s" % env)
     if not exists("%(workdir_varnish)s/cache" % env):
         sudo("mkdir %(workdir_varnish)s/cache" % env)
-    put(p.join(env.manageroot, "sysconf", "common", "varnish", "rinfo-service.vcl"), "%(workdir_varnish)s" % env, use_sudo=True)
-    put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "backend.vcl"), "%(workdir_varnish)s" % env, use_sudo=True)
-    put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "host.vcl"), "%(workdir_varnish)s" % env, use_sudo=True)
+    put(p.join(env.manageroot, "sysconf", "common", "varnish", "rinfo-service.vcl"), "%(workdir_varnish)s" % env,
+        use_sudo=True)
+    put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "backend.vcl"), "%(workdir_varnish)s" % env,
+        use_sudo=True)
+    put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "host.vcl"), "%(workdir_varnish)s" % env,
+        use_sudo=True)
 
 
 @task
@@ -239,6 +241,7 @@ def test():
     with lcd(env.projectroot+"/packages/java/rinfo-service/src/regression"):
         local("casperjs test . --xunit=%(projectroot)s/testreport/service_test_report.log --url=%(url)s"
               " --target=%(target)s --output=%(projectroot)s/testreport/" % venv())
+
 
 @task
 @roles('service')

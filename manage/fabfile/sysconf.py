@@ -19,7 +19,7 @@ from fabric.api import *
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
 from fabfile.target import _needs_targetenv
-from fabfile.util import mkdirpath, slashed
+from fabfile.util import mkdirpath
 
 
 ##
@@ -50,7 +50,7 @@ def sync_static_web():
         for fname in ['index.html', 'robots.txt']:
             if not exists(fname):
                 continue
-            www ="/var/www"
+            www = "/var/www"
             dest = "%s/%s" % (www, fname)
             if sudo("cp -vu %s %s/" % (fname, www)):
                 sudo("chmod u=rw,a=r %s" % dest)
@@ -74,7 +74,8 @@ def configure_sites():
     with cd(targetenv_etc_dir):
         for role in env.roles:
             sites = env.get('apache_sites')
-            if not sites or role not in sites: continue
+            if not sites or role not in sites:
+                continue
             for site in sites[role]:
                 sudo("cp -vu apache2/sites-available/%s /etc/apache2/sites-available/" % site)
                 sudo("a2ensite %s" % site)
@@ -87,7 +88,6 @@ def install_init_d(name):
         if sudo("cp -vu init.d/%s /etc/init.d/" % name):
             sudo("chmod 0755 /etc/init.d/%s" % name)
             sudo("update-rc.d %s defaults" % name)
-
 
 
 ##

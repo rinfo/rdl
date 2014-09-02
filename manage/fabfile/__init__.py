@@ -23,7 +23,7 @@ env.builddir = sep.join((env.projectroot, '_build'))
 
 env.docbuild = sep.join((env.builddir, 'documentation'))
 
-env.baseresources = "%(projectroot)s/resources/base"%env
+env.baseresources = "%(projectroot)s/resources/base" % env
 
 # env.java_packages = "%(projectroot)s/packages/java"%env
 env.java_packages = sep.join((env.projectroot, 'packages', 'java'))

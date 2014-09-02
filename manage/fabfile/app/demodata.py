@@ -124,6 +124,7 @@ def deploy_dataset(dataset):
 
 @task
 def deploy_testfeed(dataset):
+    key = ""
     for lookup in dataset.keys():
         key = lookup
     create_depot(key)
