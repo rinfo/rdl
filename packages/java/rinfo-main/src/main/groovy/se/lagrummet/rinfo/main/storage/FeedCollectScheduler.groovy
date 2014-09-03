@@ -16,6 +16,8 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     private URI adminFeedId
     private URL adminFeedUrl
 
+    private Map<URL, URI> whiteListedFeeds = [:]
+
     private Map<URI, CollectorSource> otherSourcesByFeedUrl = Collections.emptyMap()
 
     private Collection<URI> sourceFeedUrls = Collections.emptyList()
@@ -41,6 +43,11 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
 
     public void setAdminFeedUrl(URL adminFeedUrl) {
         this.adminFeedUrl = adminFeedUrl
+        refreshSourceFeedUrls()
+    }
+
+    public void setWhiteListedFeeds(whiteListedFeedsMap) {
+        this.whiteListedFeeds = whiteListedFeedsMap
         refreshSourceFeedUrls()
     }
 
@@ -95,6 +102,7 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
         if (adminFeedUrl != null) {
             mergedUrls.add(adminFeedUrl.toURI())
         }
+        mergedUrls.addAll(whiteListedFeeds.keySet().collect { it.toURI() })
         mergedUrls.addAll(otherSourcesByFeedUrl.keySet())
         this.sourceFeedUrls = Collections.unmodifiableList(mergedUrls)
     }
