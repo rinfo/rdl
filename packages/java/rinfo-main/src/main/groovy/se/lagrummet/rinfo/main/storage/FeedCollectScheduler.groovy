@@ -76,6 +76,9 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
         if (feedUrl.equals(adminFeedUrl)) {
             return new StorageCredentials(
                     new CollectorSource(adminFeedId, adminFeedUrl), true)
+        } else if (whiteListedFeeds.containsKey(feedUrl)) {
+            def feedId = whiteListedFeeds.get(feedUrl)
+            return new StorageCredentials(new CollectorSource(feedId, feedUrl), false)
         } else {
             def source = otherSourcesByFeedUrl.get(feedUrl.toURI())
             if (source == null) {
