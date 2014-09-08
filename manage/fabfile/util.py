@@ -54,11 +54,17 @@ def verify_url_content(url, string_exists_in_content, sleep_time=15, max_retry=3
 
 
 def test_url(report, name, class_name, url, content):
-    if verify_url_content(url, content):
-        report.add_test_success(name, class_name)
-    else:
-        report.add_test_failure(name, class_name, "ping failure",
-                                "Unable to verify '%s' contains '%s'" % (url, content))
+    try:
+        if verify_url_content(url, content):
+            report.add_test_success(name, class_name)
+        else:
+            report.add_test_failure(name, class_name, "ping failure",
+                                    "Unable to verify '%s' contains '%s'" % (url, content))
+    except:
+        e = sys.exc_info()[0]
+        print e
+        report.add_test_failure(name, class_name, "ping error", "Unable to verify '%s' contains '%s' because Unknonw "
+                                                                "error. See log for details." % (url, content))
 
 
 class PrintXml:
