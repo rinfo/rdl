@@ -217,6 +217,7 @@ def install_varnish():
         use_sudo=True)
     put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "host.vcl"), "%(workdir_varnish)s" % env,
         use_sudo=True)
+    put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "etc", "default", "varnish"), "/etc/default", use_sudo=True) 
 
 
 @task
@@ -229,8 +230,7 @@ def stop_varnish():
 @roles('service')
 def start_varnish():
     _needs_targetenv()
-    sudo("varnishd -a %(listen_ip_varnish)s:8383 -T 127.0.0.1:6082 -s file,%(workdir_varnish)s/cache,1G"
-         " -p vcl_dir=%(workdir_varnish)s -f %(workdir_varnish)s/rinfo-service.vcl" % env)
+    sudo("/etc/init.d/varnish start")
 
 
 @task
