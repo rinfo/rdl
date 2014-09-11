@@ -15,7 +15,7 @@
     </Directory>
 
     ProxyPassMatch ^/(index(\..+)?)?$ !
-    ProxyPassMatch ^/robots\.txt$ !
+    AliasMatch ^/robots\.txt$ /var/www/robots.txt
     #ProxyPass /admin !
     ProxyPass / ajp://localhost:8009/rinfo-main/
     #ProxyPassMatch ^/(.+/.*)$ ajp://localhost:8009/rinfo-main/$1

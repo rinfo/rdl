@@ -8,6 +8,8 @@
     # servers actually produced a returned error message.
     ServerSignature On
 
+    AliasMatch ^/robots\.txt$ /var/www/robots.txt
+
     <Proxy *>
         Order allow,deny
         Allow from all
