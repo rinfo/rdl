@@ -124,10 +124,10 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                             youngestAtomDate.getDate().equals(entryUpdated);
                     if (notSeenOrYoungestOfSeen) {
                         boolean knownOrOlderThanKnown =
-                            knownStoppingEntry != null && (
+                            knownStoppingEntry != null && ((
                                 entryId.equals(
-                                    knownStoppingEntry.getId()) ||
-                                isOlderThan(entryUpdated,
+                                    knownStoppingEntry.getId()) &&
+                                        entryUpdated.equals(knownStoppingEntry.getUpdated())) || isOlderThan(entryUpdated,
                                     knownStoppingEntry.getUpdated()));
                         if (knownOrOlderThanKnown) {
                             continue;
