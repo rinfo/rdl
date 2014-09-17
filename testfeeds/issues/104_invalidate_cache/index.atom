@@ -9,16 +9,221 @@
 <uri>http://www.regeringen.se/</uri>
 <email>rinfo@regeringen.se</email>
 </author>
-	<updated>2014-02-13T22:03:30.717Z</updated>
-	<link href="/feed/current" rel="self"/>
-	<entry>
-        <id>http://rinfo.lagrummet.se/publ/sfs/1999:175</id>
-        <updated>2012-01-11T15:48:09Z</updated>
-        <published>2012-01-11T15:48:09Z</published>
-        <title>1999:175 Rättsinformationsförordning (1999:175)</title>
-        <summary/>
-        <link rel="alternate" href="1999_175_grund.xhtml"
-        type="application/rdf+xml" length="1515" le:md5="7F8EAC258BF49ED579D004214A64BBBB"/>
-        <content src="http://rkrattsdb.gov.se/SFSdoc/99/990175.pdf" type="application/pdf"/>
-    </entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/1980:628/konsolidering/1998-07-01</id>
+<updated>2000-05-09T13:25:05Z</updated>
+<published>2000-05-09T13:25:05Z</published>
+<title>1980:628 F�rordning (1980:628) om r�ttsdatasystemet
+</title>
+<summary/>
+<content src="1980_628_konsolidering_senaste.xhtml"
+type="application/xhtml+xml"
+le:md5="E726ED3E192D03EA1B2EF06BEBF4239D"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/1980:628</id>
+<updated>2008-10-10T15:56:47Z</updated>
+<published>2008-10-10T15:56:47Z</published>
+<title>1980:628 F�rordning (1980:628) om r�ttsdatasystemet
+</title>
+<summary/>
+<link rel="alternate" href="1980_628_grund.xhtml"
+type="application/rdf+xml" length="1403" le:md5="D09DB824D42A8016E4239CC002914651"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/1999:175/konsolidering/2011-05-02</id>
+<updated>2012-05-17T09:58:22Z</updated>
+<published>2012-05-17T09:58:22Z</published>
+<title>1999:175 R�ttsinformationsf�rordning (1999:175)
+</title>
+<summary/>
+<content src="1999_175_konsolidering_senaste.xhtml"
+type="application/xhtml+xml"
+le:md5="A788BFCC9638AAD83388BB90B5C96D03"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/1999:175</id>
+<updated>2014-01-11T15:48:09Z</updated>
+<published>2014-01-11T15:48:09Z</published>
+<title>1999:175 R�ttsinformationsf�rordning (1999:175)
+</title>
+<summary/>
+<link rel="alternate" href="1999_175_grund.xhtml"
+type="application/rdf+xml" length="1515" le:md5="7F8EAC258BF49ED579D004214A64BBBB"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/99/990175.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2000:80</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2000:80 F�rordning (2000:80) om �ndring i r�ttsinformationsf�rordningen 
+(1999:175) 
+</title>
+<summary/>
+<link rel="alternate" href="2000_80_andr.xhtml"
+type="application/rdf+xml" length="1424" le:md5="891542011AB96694FFC3F1CF845C5CFB"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/00/000080.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2000:668</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2000:668 F�rordning (2000:668) om �ndring i r�ttsinformationsf�rordningen 
+(1999:175)
+</title>
+<summary/>
+<link rel="alternate" href="2000_668_andr.xhtml"
+type="application/rdf+xml" length="1427" le:md5="6CD664122A5653AD40508497EC787CD1"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/00/000668.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2001:147</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2001:147 F�rordning (2001:147) om �ndring i r�ttsinformationsf�rordningen 
+(1999:175)
+</title>
+<summary/>
+<link rel="alternate" href="2001_147_andr.xhtml"
+type="application/rdf+xml" length="1427" le:md5="135C49869583B29E0E4B51B38A984039"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/01/010147.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2002:1150</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2002:1150 F�rordning (2002:1150) om �ndring i r�ttsinformationsf�rordningen
+(1999:175)
+</title>
+<summary/>
+<link rel="alternate" href="2002_1150_andr.xhtml"
+type="application/rdf+xml" length="1430" le:md5="67C5021EF3B9DFBFE1974FE82BE0EFE2"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/02/021150.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2003:610</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2003:610 F�rordning (2003:610) om �ndring i r�ttsinformationsf�rordningen 
+(1999:175)
+</title>
+<summary/>
+<link rel="alternate" href="2003_610_andr.xhtml"
+type="application/rdf+xml" length="1427" le:md5="5FCDC2E71C40A4BA1160C541BC137AF2"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/03/030610.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2005:800</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2005:800 F�rordning (2005:800) om �ndring i r�ttsinformationsf�rordningen
+(1999:175)
+</title>
+<summary/>
+<link rel="alternate" href="2005_800_andr.xhtml"
+type="application/rdf+xml" length="1426" le:md5="746E408AD4EA2B31CF77BF2BCE996EE8"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/05/050800.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2006:87</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2006:87 F�rordning (2006:87) om �ndring i r�ttsinformationsf�rordningen 
+(1999:175)
+</title>
+<summary/>
+<link rel="alternate" href="2006_87_andr.xhtml"
+type="application/rdf+xml" length="1423" le:md5="B728E6F274827BBD337E4B5DB4ACA7FE"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/06/060087.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2007:293</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2007:293 F�rordning (2007:293) om �ndring i r�ttsinformationsf�rordningen (1999:175)</title>
+<summary/>
+<link rel="alternate" href="2007_293_andr.xhtml"
+type="application/rdf+xml" length="1425" le:md5="C8831819A1CBC5E085B119442826A9FF"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/07/070293.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2007:875</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2007:875 F�rordning (2007:875) om �ndring i r�ttsinformationsf�rordningen (1999:175)</title>
+<summary/>
+<link rel="alternate" href="2007_875_andr.xhtml"
+type="application/rdf+xml" length="1425" le:md5="EC203098600E2BA7CC8096587D4F4E27"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/07/070875.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2008:763</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2008:763 F�rordning (2008:763) om �ndring i f�rordningen (2007:293) om �ndring i r�ttsinformationsf�rordningen (1999:175)</title>
+<summary/>
+<link rel="alternate" href="2008_763_andr.xhtml"
+type="application/rdf+xml" length="1342" le:md5="C55CED1E19246E7AC0314F1E8C4FC486"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/08/080763.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2008:1205</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2008:1205 F�rordning (2008:1205) om �ndring i f�rordningen (2007:293) om �ndring i r�ttsinformationsf�rordningen (1999:175)</title>
+<summary/>
+<link rel="alternate" href="2008_1205_andr.xhtml"
+type="application/rdf+xml" length="1346" le:md5="E7D79BBC9038F9619085F7935B55477F"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/08/081205.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2008:1394</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2008:1394 F�rordning (2008:1394) om �ndring i r�ttsinformationsf�rordningen (1999:175)</title>
+<summary/>
+<link rel="alternate" href="2008_1394_andr.xhtml"
+type="application/rdf+xml" length="1429" le:md5="610878F33427BD1E098606CB5C33C419"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/08/081394.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2009:1059</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2009:1059 F�rordning (2009:1059) om �ndring i r�ttsinformationsf�rordningen (1999:175)</title>
+<summary/>
+<link rel="alternate" href="2009_1059_andr.xhtml"
+type="application/rdf+xml" length="1429" le:md5="91DF4852CD32E04C0E1BAFD7016B73BB"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/09/091059.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2010:283</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2010:283 F�rordning (2010:283) om �ndring i r�ttsinformationsf�rordningen (1999:175)</title>
+<summary/>
+<link rel="alternate" href="2010_283_andr.xhtml"
+type="application/rdf+xml" length="1425" le:md5="E383821E868E46FF882D437631E82605"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/10/100283.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2010:1806</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2010:1806 F�rordning (2010:1806) om �ndring i r�ttsinformationsf�rordningen (1999:175)</title>
+<summary/>
+<link rel="alternate" href="2010_1806_andr.xhtml"
+type="application/rdf+xml" length="1429" le:md5="BE2AB503C29CDDD5A481C5F5DFC5881F"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/10/101806.pdf" type="application/pdf"/>
+</entry>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/sfs/2010:1990</id>
+<updated>2011-01-11T15:48:09Z</updated>
+<published>2011-01-11T15:48:09Z</published>
+<title>2010:1990 F�rordning (2010:1990) om �ndring i r�ttsinformationsf�rordningen (1999:175)</title>
+<summary/>
+<link rel="alternate" href="2010_1990_andr.xhtml"
+type="application/rdf+xml" length="1429" le:md5="A53DDBBC9D7D29B99EA4B39C59AD20B4"/>
+<content src="http://rkrattsdb.gov.se/SFSdoc/10/101990.pdf" type="application/pdf"/>
+</entry>
 </feed>
