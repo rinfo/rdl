@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="Windows-1252" standalone="no"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:le="http://purl.org/atompub/link-extensions/1.0" xmlns:fh="http://purl.org/syndication/history/1.0" xml:lang="sv">
+  <id>tag:sfs.regeringen.se,2013:rinfo:feed:1999</id>
+<fh:complete/><title>SFS</title>
+<updated>2014-06-18T14:14:31Z</updated>
+<author>
+<name>Regeringskansliet</name>
+<uri>http://www.regeringen.se/</uri>
+<email>rinfo@regeringen.se</email>
+</author>
+	<updated>2014-02-13T22:03:30.717Z</updated>
+	<link href="/feed/current" rel="self"/>
+	<entry>
+        <id>http://rinfo.lagrummet.se/publ/sfs/1999:175</id>
+        <updated>2012-01-11T15:48:09Z</updated>
+        <published>2012-01-11T15:48:09Z</published>
+        <title>1999:175 Rättsinformationsförordning (1999:175)</title>
+        <summary/>
+        <link rel="alternate" href="1999_175_grund.xhtml"
+        type="application/rdf+xml" length="1515" le:md5="7F8EAC258BF49ED579D004214A64BBBB"/>
+        <content src="http://rkrattsdb.gov.se/SFSdoc/99/990175.pdf" type="application/pdf"/>
+    </entry>
+</feed>
