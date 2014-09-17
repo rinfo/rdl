@@ -119,7 +119,7 @@ class SesameLoader extends FeedArchivePastToPresentReader {
                 related << new URI(binding.getValue("id").toString())
             }
             return related
-        } catch (OpenRDFException e) {
+        } catch (Exception e) {
             logger.warn("Something went wrong when finding related IRIs to <${iri.toString()}> Details: " + e.getMessage())
             return []
         }
