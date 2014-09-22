@@ -235,6 +235,14 @@ def start_varnish():
 
 @task
 @roles('service')
+def ban_varnish(ban_path=''):
+    _needs_targetenv()
+    if env.listen_ip_varnish:
+        sudo("curl -X BAN %s:%s/%s" % (env.listen_ip_varnish, env.listen_port_varnish, ban_path))
+
+
+@task
+@roles('service')
 def test():
     _needs_targetenv()
     url = "http://"+env.roledefs['service'][0]
