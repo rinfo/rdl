@@ -1,6 +1,7 @@
 <VirtualHost *:80>
     # ServerAdmin webmaster@lagrummet.se
     ServerName testfeed.lagrummet.se
+    AliasMatch ^/robots\.txt$ /var/www/robots.txt
     DocumentRoot /opt/rinfo/demo-depots/emfs
 
 </VirtualHost>

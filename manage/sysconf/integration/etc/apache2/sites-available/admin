@@ -2,6 +2,8 @@
     ServerName rinfo-admin
     ServerSignature On
 
+    AliasMatch ^/robots\.txt$ /var/www/robots.txt
+
     DocumentRoot /var/www/admin/
     <Directory />
         Options FollowSymLinks
