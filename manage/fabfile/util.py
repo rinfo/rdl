@@ -2,6 +2,8 @@ from fabric.api import *
 from fabric.contrib.files import exists
 import sys
 import time
+import os
+import errno
 
 
 from os import path as p
@@ -132,7 +134,7 @@ class JUnitReport:
 def make_sure_directory_exists(file_name_and_path):
     try:
         os.makedirs(os.path.abspath(os.path.dirname(file_name_and_path)))
-    except OSError, exc:
+    except OSError as exc:
         if exc.errno != errno.EEXIST:
             raise
     return file_name_and_path
