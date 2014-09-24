@@ -120,12 +120,22 @@ class JUnitReport:
     def create_report(self, file_name):
         if self.empty():
             return
+        make_sure_directory_exists(file_name)
         print_xml = PrintXml(file_name)
         print_xml.write("<testsuite tests=\"%i\">" % (len(self.items)))
         for item in self.items:
             item.write(print_xml)
         print_xml.write("</testsuite>")
         print_xml.close()
+
+
+def make_sure_directory_exists(file_name_and_path):
+    try:
+        os.makedirs(os.path.abspath(os.path.dirname(file_name_and_path)))
+    except OSError, exc:
+        if exc.errno != errno.EEXIST:
+            raise
+    return file_name_and_path
 
 
 #<testsuite tests="3">
