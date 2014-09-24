@@ -1,5 +1,4 @@
 import sys
-import time
 from os import sep, path as p
 from fabric.api import *
 from fabric.contrib.files import exists
@@ -10,12 +9,13 @@ from fabfile.util import venv, fullpath
 from fabfile.server import restart_apache
 from fabfile.server import restart_tomcat
 from fabfile.util import msg_sleep
-from fabfile.util import verify_url_content
 from fabfile.util import test_url
 from fabfile.util import JUnitReport
 
+
 def get_build_dir():
     return sep.join((env.builddir, env.target, 'rinfo-admin'))
+
 
 @task
 @runs_once
@@ -26,6 +26,7 @@ def setup():
         sudo("mkdir %(admin_webroot)s" % env)
         sudo("chown %(user)s %(admin_webroot)s" % env)
 
+
 @task
 def package(source=None):
     """
@@ -34,9 +35,10 @@ def package(source=None):
     source = source or env.target
     tg_sources = p.join(env.projectroot, "resources", source, "datasources.n3")
     sourceopt = "-s " + fullpath(tg_sources) if p.exists(tg_sources) else ""
-    outdiropt ="-o " + fullpath(get_build_dir())
+    outdiropt = "-o " + fullpath(get_build_dir())
     local("cd %(toolsdir)s/rinfomain && groovy base_as_feed.groovy "
-            " -b %(baseresources)s %(sourceopt)s %(outdiropt)s" % venv())
+          "-b %(baseresources)s %(sourceopt)s %(outdiropt)s" % venv())
+
 
 @task
 @roles('admin')
@@ -49,7 +51,8 @@ def deploy():
         build_path = cygpath(slashed(builddir))
     else:
         build_path = slashed(builddir)
-    rsync_project((env.admin_webroot), build_path, exclude=".*", delete=True)
+    rsync_project(env.admin_webroot, build_path, exclude=".*", delete=True)
+
 
 @task
 @roles('admin')
@@ -58,20 +61,22 @@ def all(source=None):
     package(source)
     deploy()
 
+
 @task
 @roles('admin')
 def test():
     """Http request to test admin is up and running correctly"""
     report = JUnitReport()
-    url="http://"+env.roledefs['admin'][0]
-    test_url(report, "Verify dataset exists and contains 'tag:lagrummet.se,2009:rinfo'", "admin.dataset", "%(url)s/sys/dataset/rdf.rdf" % venv(),"tag:lagrummet.se,2009:rinfo")
-    test_url(report, "Verify current.atom exists and contains 'RInfo Base Data'", "admin.current", "%(url)s/feed/current.atom" % venv(),"RInfo Base Data")
-    test_url(report, "Verify files index appears in root url", "admin.index", url,"Index" % venv())
+    url = "http://"+env.roledefs['admin'][0]
+    test_url(report, "Verify dataset exists and contains 'tag:lagrummet.se,2009:rinfo'", "admin.dataset",
+             "%(url)s/sys/dataset/rdf.rdf" % venv(), "tag:lagrummet.se,2009:rinfo")
+    test_url(report, "Verify current.atom exists and contains 'RInfo Base Data'", "admin.current",
+             "%(url)s/feed/current.atom" % venv(), "RInfo Base Data")
+    test_url(report, "Verify files index appears in root url", "admin.index", url, "Index" % venv())
     if not report.empty():
         file_name = "%(projectroot)s/testreport/admin_test_report.log" % venv()
         report.create_report(file_name)
         print "Created report '%s'" % file_name
-
 
 
 @task
@@ -80,13 +85,15 @@ def clean():
     """Completetly remove all admin contents from server"""
     sudo("rm -rf %(admin_webroot)s" % env)
 
+
 @task
 def ping_main():
     """Ping rinfo-main to (re-)collect the admin feed"""
     _needs_targetenv()
     feed_url = "http://%s/feed/current" % env.roledefs['admin'][0]
     collector_url = "http://%s/collector" % env.roledefs['main'][0]
-    print local("curl --data 'feed=%(feed_url)s' %(collector_url)s"%vars())
+    print local("curl --data 'feed=%(feed_url)s' %(collector_url)s" % vars())
+
 
 @task
 @roles('admin')
@@ -94,7 +101,7 @@ def test_all():
     all()
     restart_apache()
     restart_tomcat()
-    msg_sleep(10," apache and tomcat restart")
+    msg_sleep(10, " apache and tomcat restart")
     try:
         test()
     except:
@@ -103,4 +110,3 @@ def test_all():
         sys.exit(1)
     finally:
         clean()
-

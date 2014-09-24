@@ -2,6 +2,8 @@
     ServerName checker.lagrummet.se
     ServerSignature On
 
+    AliasMatch ^/robots\.txt$ /var/www/robots.txt
+
     ProxyPass / ajp://localhost:8009/rinfo-checker/
 
     ServerAdmin rinfo@lagrummet.se

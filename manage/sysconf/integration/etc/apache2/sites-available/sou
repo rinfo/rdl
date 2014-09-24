@@ -1,5 +1,6 @@
 <VirtualHost *:80>
     ServerName sou-demo
     ServerSignature On
+    AliasMatch ^/robots\.txt$ /var/www/robots.txt
     ProxyPass / ajp://localhost:8009/sou-demodata-supply/
 </VirtualHost>
