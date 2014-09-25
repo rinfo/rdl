@@ -5,7 +5,8 @@ from __future__ import with_statement
 import contextlib
 import time
 from fabric.api import *
-from util import venv
+from util import venv, get_value_from_password_store, PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME, \
+    PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME
 from target import _needs_targetenv
 from util import test_url
 from util import JUnitReport
@@ -245,11 +246,15 @@ def calculate_stored_or_new_snapshot_name(snapshot_name):
 
 @task
 @roles('main', 'service')
-def take_snapshot_and_push_to_ftp(name='snapshot', username='', password='', test=False):
+def take_snapshot_and_push_to_ftp(name='snapshot', username='', password='', test=False, use_password_file=True):
     _needs_targetenv()
 
     tar_target_path = "%s/tmp/%s" % (env.mgr_workdir, name)
     snapshot_name = calculate_stored_or_new_snapshot_name(name)
+
+    if use_password_file:
+        username = get_value_from_password_store(PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, username)
+        password = get_value_from_password_store(PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, password)
 
     if not test:
         tomcat_stop()
@@ -288,11 +293,15 @@ def fetch_service_snapshot_from_ftp_and_install(snapshot_name, tar_target_path, 
 
 @task
 @roles('main', 'service')
-def fetch_snapshot_from_ftp_and_install(name='snapshot' ,username='', password='', test=False):
+def fetch_snapshot_from_ftp_and_install(name='snapshot' ,username='', password='', test=False, use_password_file=True):
     _needs_targetenv()
 
     tar_target_path = "%s/tmp/%s" % (env.mgr_workdir, name)
     snapshot_name = calculate_stored_or_new_snapshot_name(name)
+
+    if use_password_file:
+        username = get_value_from_password_store(PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, username)
+        password = get_value_from_password_store(PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, password)
 
     if not test:
         tomcat_stop()

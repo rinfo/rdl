@@ -1,3 +1,4 @@
+import ConfigParser
 from fabric.api import *
 from fabric.contrib.files import exists
 import sys
@@ -5,6 +6,7 @@ import time
 
 
 from os import path as p
+from os.path import expanduser
 
 
 venv = lambda: dict(env, **sys._getframe(1).f_locals)
@@ -31,6 +33,71 @@ def cygpath(path):
 def msg_sleep(sleep_time, msg=""):
     print "Pause in {0} second(s) for {1}!".format(sleep_time, msg)
     time.sleep(sleep_time)
+
+
+PASSWORD_FILE_NAME = 'password.cfg'
+PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME = 'standard.password'
+PASSWORD_FILE_FTP_USERNAME_PARAM_NAME = 'ftp.username'
+PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME = 'ftp.password'
+PASSWORD_FILE_DB_USERNAME_PARAM_NAME = 'db.username'
+PASSWORD_FILE_DB_PASSWORD_PARAM_NAME = 'db.password'
+PASSWORD_FILE_PARAMS = (PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME,
+                        PASSWORD_FILE_FTP_USERNAME_PARAM_NAME,
+                        PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME,
+                        PASSWORD_FILE_DB_USERNAME_PARAM_NAME,
+                        PASSWORD_FILE_DB_PASSWORD_PARAM_NAME)
+
+def get_password_file_name_and_path():
+    return "%s/%s" % (expanduser("~"), PASSWORD_FILE_NAME)
+
+def get_password_config():
+    password_file_name_ = get_password_file_name_and_path()
+    try:
+        config = ConfigParser.RawConfigParser()
+        config.read(password_file_name_)
+        print "Opened %s " % password_file_name_
+        return config
+    except:
+        config = ConfigParser.RawConfigParser()
+        print "Config file not found %s " % password_file_name_
+        return config
+
+
+@task
+def create_or_update_password_store():
+    """ Creates a password file to be used by the program """
+    print "To create password store '%s'. Please enter passwords " % PASSWORD_FILE_NAME
+    standard_password = raw_input("Standard password: ")
+    ftp_username = raw_input("ftp username: ")
+    ftp_password = raw_input("ftp password: ")
+    db_username = raw_input("db username: ")
+    db_password = raw_input("db password: ")
+    config = get_password_config()
+    if not config.has_section(env.target):
+        config.add_section(env.target)
+    config.set(env.target, PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME, standard_password)
+    config.set(env.target, PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, ftp_username)
+    config.set(env.target, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, ftp_password)
+    config.set(env.target, PASSWORD_FILE_DB_USERNAME_PARAM_NAME, db_username)
+    config.set(env.target, PASSWORD_FILE_DB_PASSWORD_PARAM_NAME, db_password)
+    password_file_name_ = get_password_file_name_and_path()
+    with open(password_file_name_, 'wb') as configfile:
+        config.write(configfile)
+        print "Written to file %s" % password_file_name_
+
+
+@task
+def get_value_from_password_store(name, default_value=''):
+    if not name in PASSWORD_FILE_PARAMS:
+        print "Param name '%s' not accepted here"
+        return default_value
+    try:
+        value = get_password_config().get(env.target, name)
+        if not value:
+            return default_value
+        return value
+    except:
+        return default_value
 
 
 def verify_url_content(url, string_exists_in_content, sleep_time=15, max_retry=3):

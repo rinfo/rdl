@@ -2,6 +2,7 @@
 Target Environments
 """
 from fabric.api import *
+from fabfile.util import get_value_from_password_store, PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME
 
 
 targetenvs = []
@@ -62,6 +63,7 @@ def dev_unix():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
 
 
 @targetenv
@@ -101,6 +103,7 @@ def demo():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
 
 
 @targetenv
@@ -140,6 +143,7 @@ def test():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
 
 
 @targetenv
@@ -175,6 +179,7 @@ def regression():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
 
 
 @targetenv
@@ -214,6 +219,7 @@ def beta():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
 
 
 @targetenv
@@ -249,6 +255,7 @@ def skrapat():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
 
 
 @targetenv
@@ -289,6 +296,7 @@ def testfeed():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
 
 
 @targetenv
@@ -324,6 +332,7 @@ def scraped():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
 
 
 # Integration is a virtual environment that you could setup on your own computer
@@ -362,6 +371,7 @@ def integration():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
 
 
 @targetenv
@@ -399,6 +409,7 @@ def prod():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
 
 
 def _tomcat_env():
@@ -411,3 +422,8 @@ def _tomcat_env():
     env.tomcat_stop = '/etc/init.d/tomcat stop'
     env.tomcat_user = 'tomcat'
     env.tomcat_group = 'tomcat'
+
+
+def _initialize_password():
+    print "Current env.password '%s' new env.password '%s'" % (env.password, get_value_from_password_store(PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME,env.password))
+    env.password = get_value_from_password_store(PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME,env.password)
