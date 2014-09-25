@@ -425,5 +425,4 @@ def _tomcat_env():
 
 
 def _initialize_password():
-    print "Current env.password '%s' new env.password '%s'" % (env.password, get_value_from_password_store(PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME,env.password))
     env.password = get_value_from_password_store(PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME,env.password)

@@ -43,9 +43,13 @@ PASSWORD_FILE_FTP_USERNAME_PARAM_NAME = 'ftp.username'
 PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME = 'ftp.password'
 PASSWORD_FILE_DB_USERNAME_PARAM_NAME = 'db.username'
 PASSWORD_FILE_DB_PASSWORD_PARAM_NAME = 'db.password'
+PASSWORD_FILE_ADMIN_USERNAME_PARAM_NAME = 'admin.username'
+PASSWORD_FILE_ADMIN_PASSWORD_PARAM_NAME = 'admin.password'
 PASSWORD_FILE_PARAMS = (PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME,
                         PASSWORD_FILE_FTP_USERNAME_PARAM_NAME,
                         PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME,
+                        PASSWORD_FILE_ADMIN_USERNAME_PARAM_NAME,
+                        PASSWORD_FILE_ADMIN_PASSWORD_PARAM_NAME,
                         PASSWORD_FILE_DB_USERNAME_PARAM_NAME,
                         PASSWORD_FILE_DB_PASSWORD_PARAM_NAME)
 
@@ -74,6 +78,8 @@ def create_or_update_password_store():
     ftp_password = raw_input("ftp password: ")
     db_username = raw_input("db username: ")
     db_password = raw_input("db password: ")
+    admin_username = raw_input("admin username: ")
+    admin_password = raw_input("admin password: ")
     config = get_password_config()
     if not config.has_section(env.target):
         config.add_section(env.target)
@@ -82,6 +88,8 @@ def create_or_update_password_store():
     config.set(env.target, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, ftp_password)
     config.set(env.target, PASSWORD_FILE_DB_USERNAME_PARAM_NAME, db_username)
     config.set(env.target, PASSWORD_FILE_DB_PASSWORD_PARAM_NAME, db_password)
+    config.set(env.target, PASSWORD_FILE_ADMIN_USERNAME_PARAM_NAME, admin_username)
+    config.set(env.target, PASSWORD_FILE_ADMIN_PASSWORD_PARAM_NAME, admin_password)
     password_file_name_ = get_password_file_name_and_path()
     with open(password_file_name_, 'wb') as configfile:
         config.write(configfile)
