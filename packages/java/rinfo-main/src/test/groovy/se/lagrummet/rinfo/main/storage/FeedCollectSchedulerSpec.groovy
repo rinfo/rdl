@@ -1,9 +1,10 @@
 package se.lagrummet.rinfo.main.storage
 
+import groovy.transform.Synchronized
 import spock.lang.*
 
 import java.util.concurrent.TimeUnit
-
+import java.util.concurrent.Semaphore
 
 class FeedCollectSchedulerSpec extends Specification {
 
@@ -85,6 +86,7 @@ class FeedCollectSchedulerSpec extends Specification {
 
     def "collect scheduler should run callback once when done"() {
         setup:
+            def semaphore = new Semaphore(-2)
             def collectScheduler = new TestScheduler()
             collectScheduler.sources = (1..3).collect {
                 def url = new URL("http://localhost/old/${it}")
@@ -97,19 +99,21 @@ class FeedCollectSchedulerSpec extends Specification {
             }
             collectScheduler.batchCompletedCallback = {
                 okToShutdown = true
+                semaphore.release()
             }
         when:
             collectScheduler.startup()
             //since the scheduler executes stuff in an other thread, we might stop the executor *before* the first
             //feed collect is started. *sigh*
-            while (!okToShutdown) {}
 
+            semaphore.acquire()
             //since the collect is't done in the same thread we need to block the test thread until it's done
             //when we shutdown it should gracefully complete the scheduled tasks. and we'll busy wait for that.
             collectScheduler.getExecutorService().shutdown()
             if(!collectScheduler.executorService.awaitTermination(10, TimeUnit.SECONDS)){
                 println "Wait timed out"
             }
+
         then:
             assert timesRun == 1
     }
