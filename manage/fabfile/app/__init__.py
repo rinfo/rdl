@@ -25,4 +25,5 @@ def _deploy_war(localwar, warname, headless=False):
 def _deploy_war_norestart(localwar, warname, headless=False):
     _needs_targetenv()
     rsync_project("%(dist_dir)s/%(warname)s.war" % venv(), localwar, '--progress')
+    run("chmod 644 %(dist_dir)s/%(warname)s.war" % venv())
     run("cp %(dist_dir)s/%(warname)s.war %(tomcat_webapps)s/." % venv())
