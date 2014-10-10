@@ -1,7 +1,10 @@
 package se.lagrummet.rinfo.main.storage
 
+import groovy.transform.Synchronized
 import spock.lang.*
 
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.Semaphore
 
 class FeedCollectSchedulerSpec extends Specification {
 
@@ -81,11 +84,75 @@ class FeedCollectSchedulerSpec extends Specification {
         collectScheduler.sourceFeedUrls.size() == 2
     }
 
+    def "collect scheduler should run callback once when done"() {
+        setup:
+            def semaphore = new Semaphore(-2)
+            def collectScheduler = new TestScheduler()
+            collectScheduler.sources = (1..3).collect {
+                def url = new URL("http://localhost/old/${it}")
+                new CollectorSource(url.toURI(), url)
+            }
+            final int timesRun = 0
+            final boolean okToShutdown = false
+            collectScheduler.afterLastJobCallback = {
+                timesRun+=1
+            }
+            collectScheduler.batchCompletedCallback = {
+                okToShutdown = true
+                semaphore.release()
+            }
+        when:
+            collectScheduler.startup()
+            //since the scheduler executes stuff in an other thread, we might stop the executor *before* the first
+            //feed collect is started. *sigh*
+
+            semaphore.acquire()
+            //since the collect is't done in the same thread we need to block the test thread until it's done
+            //when we shutdown it should gracefully complete the scheduled tasks. and we'll busy wait for that.
+            collectScheduler.getExecutorService().shutdown()
+            if(!collectScheduler.executorService.awaitTermination(10, TimeUnit.SECONDS)){
+                println "Wait timed out"
+            }
+
+        then:
+            assert timesRun == 1
+    }
+
+    def "collect should run afterLastJobCallback after last completed job when shutdown"() {
+        setup:
+        def collectScheduler = new TestScheduler()
+        collectScheduler.sources = (1..3).collect {
+            def url = new URL("http://localhost/old/${it}")
+            new CollectorSource(url.toURI(), url)
+        }
+        final int timesRun = 0
+
+        collectScheduler.afterLastJobCallback = {
+            timesRun+=1
+        }
+        collectScheduler.batchCompletedCallback = {
+            collectScheduler.shutdown()
+        }
+        when:
+        collectScheduler.startup()
+
+        //somewhere here the callback that does shutdown is run..
+
+        if(!collectScheduler.executorService.awaitTermination(10, TimeUnit.SECONDS)){
+            println "Wait timed out"
+        }
+        then:
+        assert timesRun == 1
+    }
+
     class TestScheduler extends FeedCollectScheduler {
         TestScheduler() { super(null) }
         protected void collectFeed(URL feedUrl, boolean lastInBatch) {
             println "dummy collect: ${feedUrl} (lastInBatch=${lastInBatch})"
             Thread.sleep 1
+            if (batchCompletedCallback != null) {
+                batchCompletedCallback.run()
+            }
         }
     }
 

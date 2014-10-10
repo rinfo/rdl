@@ -178,9 +178,10 @@ class Components {
             if (s == null || s.equals("")) continue
             onCompletePingTargets << new URL(s)
         }
-        collectScheduler.setBatchCompletedCallback(
+
+        collectScheduler.setAfterLastJobCallback(
                 new FeedUpdatePingNotifyer(publicSubscriptionFeed, onCompletePingTargets)
-            )
+        )
     }
 
     protected void setupStorageHandlers() {
