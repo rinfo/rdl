@@ -73,9 +73,9 @@ def clean():
 @roles('admin')
 def test_all():
     all(deps="0", test="0")
-    restart_apache()
     restart_tomcat()
-    msg_sleep(10, "restart and tomcat apache")
+    restart_apache()
+    msg_sleep(20, "restart and tomcat apache")
     try:
         test()
     except:
