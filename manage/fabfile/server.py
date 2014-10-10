@@ -3,13 +3,16 @@ Diagnostics and admin tasks
 """
 from __future__ import with_statement
 import contextlib
+from crypt import crypt
+from fabric.contrib.project import rsync_project, os
 import time
 from fabric.api import *
 from util import venv, get_value_from_password_store, PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME, \
-    PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME
+    PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, mkdirpath
 from target import _needs_targetenv
 from util import test_url
 from util import JUnitReport
+from os.path import expanduser
 
 
 @task
@@ -315,3 +318,57 @@ def fetch_snapshot_from_ftp_and_install(name='snapshot' ,username='', password='
         # todo empty varnish cache
         if not test:
             tomcat_start()
+
+
+def install_auto_login_key(id_rsa_pub_filename):
+    mkdirpath('/home/%s/.ssh' % env.user)
+    put('%s/.ssh/%s' % (expanduser('~'), id_rsa_pub_filename), '/home/%s/.' % env.user)
+    run('cat %s >> .ssh/authorized_keys' % id_rsa_pub_filename)
+    run('rm %s' % id_rsa_pub_filename)
+
+
+def prefere_ipv4_to_speed_up_debian_updates():
+    sudo('echo "precedence ::ffff:0:0/96  100" >>  /etc/gai.conf')
+
+
+def prepare_sudo_for_debian_and_add_rinfo_user():
+    stored_env_user = env.user
+    env.user = 'root'
+    run('apt-get install sudo -y')
+    try:
+        run('useradd rinfo -m -G sudo -s /bin/bash')
+        run('passwd rinfo')
+        env.user = stored_env_user
+    except:
+        return False
+    return True
+
+
+@task
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
+def bootstrap():
+    _needs_targetenv()
+    if not os_version() == 'Debian7':
+        print 'Unsupported os version %%' % os_version()
+        return
+    if not prepare_sudo_for_debian_and_add_rinfo_user():
+        return
+    prefere_ipv4_to_speed_up_debian_updates()
+
+    install_auto_login_key('id_rsa.pub')
+    if os.path.isfile('%s/.ssh/jenkins_id_rsa.pub' % expanduser('~')):
+        install_auto_login_key('jenkins_id_rsa.pub')
+
+
+@task
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
+def os_version():
+    output = sudo('cat /etc/*-release')
+    if 'Debian' in output:
+        if 'wheezy':
+            return 'Debian7'
+        if 'squeeze':
+            return 'Debian6'
+        if 'lenny':
+            return 'Debian5'
+    return ''
