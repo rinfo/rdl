@@ -2,7 +2,9 @@
 Target Environments
 """
 from fabric.api import *
-from fabfile.util import get_value_from_password_store, PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME
+from fabfile.util import get_value_from_password_store, PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME, \
+    PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, PASSWORD_FILE_DB_USERNAME_PARAM_NAME, \
+    PASSWORD_FILE_DB_PASSWORD_PARAM_NAME
 
 
 targetenvs = []
@@ -381,14 +383,12 @@ def prod():
     env.target = "prod"
     # Machines:
     env.user = 'rinfo'
-    env.roledefs = {
-        'main': ['rinfo.lagrummet.se'],
-        'service': ['service.lagrummet.se'],
-        'checker': ['checker.lagrummet.se'],
-        'doc': ['dev.lagrummet.se'],
-        'admin': ['admin.lagrummet.se'],
-        'lagrummet': ['www.lagrummet.se'],
-    }
+    env.roledefs['main'] = ['rinfo.lagrummet.se']
+    env.roledefs['service'] = ['service.lagrummet.se']
+    env.roledefs['checker'] = ['checker.lagrummet.se']
+    env.roledefs['doc'] = ['dev.lagrummet.se']
+    env.roledefs['admin'] = ['admin.lagrummet.se']
+    env.roledefs['lagrummet'] = ['www.lagrummet.se']
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
@@ -407,6 +407,40 @@ def prod():
         'service': ['service'],
         'checker': ['checker'],
     }
+    # Tomcat
+    _tomcat_env()
+    _initialize_password()
+
+
+@targetenv
+def infrastructure():
+    env.target = "infrastructure"
+    # Machines:
+    env.user = 'rinfo'
+    env.roledefs['emfs'] = ['testfeed.lagrummet.se']
+    env.roledefs['test'] = ['testfeed.lagrummet.se']
+    env.roledefs['regression'] = ['testfeed.lagrummet.se']
+    env.roledefs['skrapat'] = ['testfeed.lagrummet.se']
+    env.roledefs['demosource'] = ['testfeed.lagrummet.se']
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    env.testfeed_ftp_path = '%s/testfeed' % env.ftp_server_url
+    env.regression_compressed_file_name = 'regression.tgz'
+    env.skrapat_compressed_file_name = 'scraped.tgz'
+    # Apache
+    env.apache_sites = {
+        'test': ['test'],
+        'emfs': ['emfs'],
+        'demosource': ['emfs','sfs', 'dv', 'prop', 'sou', 'ds'],
+        'regression': ['regression'],
+        'skrapat': ['skrapat'],
+        }
     # Tomcat
     _tomcat_env()
     _initialize_password()

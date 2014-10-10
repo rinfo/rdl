@@ -707,6 +707,12 @@
         <environment>prod</environment>
       </properties>
     </profile>
+      <profile>
+          <id>infrastructure</id>
+          <properties>
+              <environment>infrastructure</environment>
+          </properties>
+      </profile>
     <profile>
       <!-- Site generation activated by a profile to stay compatible with Maven 2. -->
       <!-- Activate on command line with -Psite -->
