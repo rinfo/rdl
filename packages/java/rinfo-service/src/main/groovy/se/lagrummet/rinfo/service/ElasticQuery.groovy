@@ -313,6 +313,7 @@ class ElasticQuery {
             srb.addHighlightedField("identifier", 150, 0)
             //srb.addHighlightedField("publisher.name", 150, 0)
             srb.addHighlightedField("text", 150, 3)
+            srb.addHighlightedField("referatrubrik", 150, 0)
         }
 
         log.debug "Using ElasticSearch search JSON: ${srb.internalBuilder()}"
