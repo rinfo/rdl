@@ -29,3 +29,4 @@ def deploy():
     if sys.platform == 'win32':
         build_path = cygpath(build_path)
     rsync_project(env.docs_webroot, build_path, exclude=".*", delete=True)
+    sudo("chmod -R 755 %(docs_webroot)s" % env)
