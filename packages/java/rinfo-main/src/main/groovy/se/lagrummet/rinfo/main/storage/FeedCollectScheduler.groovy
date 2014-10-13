@@ -5,9 +5,7 @@ import org.apache.commons.configuration.ConfigurationException
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
 import se.lagrummet.rinfo.collector.AbstractCollectScheduler
-
 
 class FeedCollectScheduler extends AbstractCollectScheduler {
 
@@ -23,6 +21,7 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     private Collection<URI> sourceFeedUrls = Collections.emptyList()
 
     Runnable batchCompletedCallback
+    Runnable afterLastJobCallback
 
     private FeedCollector feedCollector
 
@@ -112,5 +111,8 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
 
     protected void afterCompletedCollect(String feedUrlStr) {
         logger.info("Completed collect of <"+ feedUrlStr +">.");
+        if(areJobQueuesEmpty() && afterLastJobCallback != null) {
+            afterLastJobCallback.run()
+        }
     }
 }

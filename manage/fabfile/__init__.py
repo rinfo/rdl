@@ -35,6 +35,8 @@ env.datestamp = datetime.utcnow().strftime('%Y-%m-%d')
 env.ftp_server_url = "ftp://archive0d.glesys.com"
 env.snapshot_name = ""
 
+env.listen_port_varnish = "8383"
+
 # env.roledefs defines available roles but the actual host lists for a certain
 # role is environment dependent and set up by the targets defined in
 # target.py (see i.e. tg_dev_unix)

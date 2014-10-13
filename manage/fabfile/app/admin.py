@@ -52,6 +52,7 @@ def deploy():
     else:
         build_path = slashed(builddir)
     rsync_project(env.admin_webroot, build_path, exclude=".*", delete=True)
+    sudo("chmod -R 755 %(admin_webroot)s" % env)
 
 
 @task
