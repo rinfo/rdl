@@ -7,3 +7,4 @@ target
 out/
 testreport/
 ping_verify*
+password.cfg
