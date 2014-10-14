@@ -139,3 +139,21 @@ def secure_sshd():
          "s/^#X11Forwarding yes/X11Forwarding no/;s/X11Forwarding yes/X11Forwarding no/' /etc/ssh/sshd_config")
     sudo("/etc/init.d/ssh restart")
 
+
+@task
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
+def put_vhost_profile(app_name, local_lan=True):
+    vhost_settings = read_template('sysconf/common/etc/apache2/apache_vhost_template.txt')
+    if local_lan:
+        vhost_settings = vhost_settings.replace('[%s]' % "app.vhost.dns.name", "%s.%s" % (app_name, env.target))
+    else:
+        vhost_settings = vhost_settings.replace('[%s]' % "app.vhost.dns.name", "%s.%s.lagrummet.se" % (app_name, env.target))
+    if local_lan:
+        vhost_settings = vhost_settings.replace('[%s]' % "app.ajp.url", "ajp://localhost:8009/rinfo-checker/" % (app_name, env.target))
+    else:
+        vhost_settings = vhost_settings.replace('[%s]' % "app.ajp.url", "ajp://%s.lagrummet.se:8009/rinfo-%s/" % (app_name, env.target))
+
+    vhost_settings = vhost_settings.replace('[%s]' % "app.error_log.file_and_path_name", "/var/log/apache2/%s-error.log" % (app_name))
+    vhost_settings = vhost_settings.replace('[%s]' % "app.access_log.file_and_path_name", "/var/log/apache2/%s-access.log combined" % (app_name))
+    file_name = "%s_%s" % (app_name,env.target)
+    write_to_apache_vhost_on_remote_server(file_name,vhost_settings)
