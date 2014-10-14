@@ -1,6 +1,9 @@
 import ConfigParser
 from fabric.api import *
 from fabric.contrib.files import exists
+from fabric.decorators import task
+from fabric.operations import put, run
+from fabric.state import env
 import sys
 import time
 import os
@@ -220,3 +223,11 @@ def make_sure_directory_exists(file_name_and_path):
 #        <failure type="NotEnoughFoo"> details about failure </failure>
 #    </testcase>
 #</testsuite>
+
+
+@task
+def install_public_key(id_rsa_pub_filename='id_rsa.pub'):
+    mkdirpath('/home/%s/.ssh' % env.user)
+    put('%s/.ssh/%s' % (expanduser('~'), id_rsa_pub_filename), '/home/%s/.' % env.user)
+    run('cat %s >> .ssh/authorized_keys' % id_rsa_pub_filename)
+    run('rm %s' % id_rsa_pub_filename)

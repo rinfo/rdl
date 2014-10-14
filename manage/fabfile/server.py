@@ -3,16 +3,16 @@ Diagnostics and admin tasks
 """
 from __future__ import with_statement
 import contextlib
-from crypt import crypt
-from fabric.contrib.project import rsync_project, os
+from fabric.contrib.project import os
 import time
 from fabric.api import *
-from util import venv, get_value_from_password_store, PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME, \
-    PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, mkdirpath
+from os.path import expanduser
+
+from fabfile.util import install_public_key
+from util import venv, get_value_from_password_store, PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME
 from target import _needs_targetenv
 from util import test_url
 from util import JUnitReport
-from os.path import expanduser
 
 
 @task
@@ -320,13 +320,6 @@ def fetch_snapshot_from_ftp_and_install(name='snapshot' ,username='', password='
             tomcat_start()
 
 
-def install_auto_login_key(id_rsa_pub_filename):
-    mkdirpath('/home/%s/.ssh' % env.user)
-    put('%s/.ssh/%s' % (expanduser('~'), id_rsa_pub_filename), '/home/%s/.' % env.user)
-    run('cat %s >> .ssh/authorized_keys' % id_rsa_pub_filename)
-    run('rm %s' % id_rsa_pub_filename)
-
-
 def prefere_ipv4_to_speed_up_debian_updates():
     sudo('echo "precedence ::ffff:0:0/96  100" >>  /etc/gai.conf')
 
@@ -355,9 +348,9 @@ def bootstrap():
         return
     prefere_ipv4_to_speed_up_debian_updates()
 
-    install_auto_login_key('id_rsa.pub')
+    install_public_key()
     if os.path.isfile('%s/.ssh/jenkins_id_rsa.pub' % expanduser('~')):
-        install_auto_login_key('jenkins_id_rsa.pub')
+        install_public_key('jenkins_id_rsa.pub')
 
 
 @task
