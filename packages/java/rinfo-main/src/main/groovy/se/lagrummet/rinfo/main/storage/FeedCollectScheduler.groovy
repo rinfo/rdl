@@ -14,6 +14,8 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     private URI adminFeedId
     private URL adminFeedUrl
 
+    private Map<URL, URI> whiteListedFeeds = [:]
+
     private Map<URI, CollectorSource> otherSourcesByFeedUrl = Collections.emptyMap()
 
     private Collection<URI> sourceFeedUrls = Collections.emptyList()
@@ -43,6 +45,11 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
         refreshSourceFeedUrls()
     }
 
+    public void setWhiteListedFeeds(whiteListedFeedsMap) {
+        this.whiteListedFeeds = whiteListedFeedsMap
+        refreshSourceFeedUrls()
+    }
+
     public Collection<CollectorSource> getSources() {
         return otherSourcesByFeedUrl.values()
     }
@@ -68,6 +75,9 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
         if (feedUrl.equals(adminFeedUrl)) {
             return new StorageCredentials(
                     new CollectorSource(adminFeedId, adminFeedUrl), true)
+        } else if (whiteListedFeeds.containsKey(feedUrl)) {
+            def feedId = whiteListedFeeds.get(feedUrl)
+            return new StorageCredentials(new CollectorSource(feedId, feedUrl), false)
         } else {
             def source = otherSourcesByFeedUrl.get(feedUrl.toURI())
             if (source == null) {
@@ -94,6 +104,7 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
         if (adminFeedUrl != null) {
             mergedUrls.add(adminFeedUrl.toURI())
         }
+        mergedUrls.addAll(whiteListedFeeds.keySet().collect { it.toURI() })
         mergedUrls.addAll(otherSourcesByFeedUrl.keySet())
         this.sourceFeedUrls = Collections.unmodifiableList(mergedUrls)
     }
