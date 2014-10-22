@@ -8,7 +8,7 @@ import time
 from fabric.api import *
 from os.path import expanduser
 
-from fabfile.util import install_public_key
+from fabfile.util import install_public_key, role_is_active
 from util import venv, get_value_from_password_store, PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME
 from target import _needs_targetenv
 from util import test_url
@@ -147,10 +147,6 @@ def ping_verify():
         print "Created report '%s'" % report_name
 
 
-def role_is_active(role):
-    return env.host in env.roledefs[role]
-
-
 def tar(filename, target_path, command='czvf', test=False):
     with cd(target_path):
         if test:
@@ -231,11 +227,25 @@ def clean_path(tar_target_path, use_sudo=False, test=False):
         run("rm -rf %s*" % tar_target_path)
 
 
-def create_path(tar_target_path, test=False):
+def create_path(target_path, test=False, use_sudo=False):
     if test:
-        print "Make directory: %s" % tar_target_path
+        print "Make directory: %s" % target_path
         return
-    run("mkdir -p %s" % tar_target_path)
+    if use_sudo:
+        sudo("mkdir -p %s" % target_path)
+    else:
+        run("mkdir -p %s" % target_path)
+
+
+def take_ownership(target_path, test=False, use_sudo=False):
+    if test:
+        print "take ownership of '%s'" % target_path
+        return
+    if use_sudo:
+        sudo("chown %s:%s %s" % (env.user, env.user, target_path) )
+    else:
+        run("chown %s:%s %s" % (env.user, env.user, target_path))
+
 
 
 def calculate_stored_or_new_snapshot_name(snapshot_name):
@@ -329,12 +339,13 @@ def prepare_sudo_for_debian_and_add_rinfo_user():
     env.user = 'root'
     run('apt-get install sudo -y')
     try:
-        run('useradd rinfo -m -G sudo -s /bin/bash')
-        run('passwd rinfo')
-        env.user = stored_env_user
+        run('useradd %s -m -G sudo -s /bin/bash' % stored_env_user)
+        run('passwd %s' % stored_env_user)
     except:
-        return False
-    return True
+        run('usermod -a -G sudo %s' % stored_env_user)
+        run('passwd %s' % stored_env_user)
+    finally:
+        env.user = stored_env_user
 
 
 @task
@@ -344,8 +355,8 @@ def bootstrap():
     if not os_version() == 'Debian7':
         print 'Unsupported os version %%' % os_version()
         return
-    if not prepare_sudo_for_debian_and_add_rinfo_user():
-        return
+    run('apt-get update')
+    prepare_sudo_for_debian_and_add_rinfo_user()
     prefere_ipv4_to_speed_up_debian_updates()
 
     install_public_key()
@@ -356,7 +367,7 @@ def bootstrap():
 @task
 @roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
 def os_version():
-    output = sudo('cat /etc/*-release')
+    output = run('cat /etc/*-release')
     if 'Debian' in output:
         if 'wheezy':
             return 'Debian7'
@@ -364,4 +375,4 @@ def os_version():
             return 'Debian6'
         if 'lenny':
             return 'Debian5'
-    return ''
+    return 'Unknown'

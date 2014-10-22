@@ -231,3 +231,7 @@ def install_public_key(id_rsa_pub_filename='id_rsa.pub'):
     put('%s/.ssh/%s' % (expanduser('~'), id_rsa_pub_filename), '/home/%s/.' % env.user)
     run('cat %s >> .ssh/authorized_keys' % id_rsa_pub_filename)
     run('rm %s' % id_rsa_pub_filename)
+
+
+def role_is_active(role):
+    return env.host in env.roledefs[role]

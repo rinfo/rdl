@@ -1,6 +1,6 @@
 <VirtualHost *:80>
     # ServerAdmin webmaster@lagrummet.se
-    ServerName dv.testfeed
+    ServerName dv.testfeed.lagrummet.se
 
     # Use trailing footer line under server-generated documents 
     # (error messages, mod_proxy ftp directory listings, mod_info output, ...), 
