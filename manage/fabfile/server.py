@@ -337,15 +337,23 @@ def prefere_ipv4_to_speed_up_debian_updates():
 def prepare_sudo_for_debian_and_add_rinfo_user():
     stored_env_user = env.user
     env.user = 'root'
+    run('apt-get update')
     run('apt-get install sudo -y')
     try:
+        run('whoami')
         run('useradd %s -m -G sudo -s /bin/bash' % stored_env_user)
         run('passwd %s' % stored_env_user)
     except:
         run('usermod -a -G sudo %s' % stored_env_user)
         run('passwd %s' % stored_env_user)
-    finally:
-        env.user = stored_env_user
+    env.user = stored_env_user
+    # Below sollution is NOT very impressive. To handle that fabric keeps session alive and does'nt update the
+    # sudo group of the user. Therefore it cannot continue. Must restart.
+    try:
+        sudo('pwd') #test sudo works
+    except :
+        print 'Du to debian user group update issues within current ssh session, you need to restart same command again.'
+        raise Exception()
 
 
 @task
@@ -355,7 +363,6 @@ def bootstrap():
     if not os_version() == 'Debian7':
         print 'Unsupported os version %%' % os_version()
         return
-    run('apt-get update')
     prepare_sudo_for_debian_and_add_rinfo_user()
     prefere_ipv4_to_speed_up_debian_updates()
 
