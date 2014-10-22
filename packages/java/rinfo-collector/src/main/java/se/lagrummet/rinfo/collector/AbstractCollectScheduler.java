@@ -235,4 +235,8 @@ public abstract class AbstractCollectScheduler {
         return feedUrlStr;
     }
 
+    public synchronized boolean areJobQueuesEmpty() {
+        logger.debug("Checking if job queues are empty");
+        return feedInProcess.isEmpty() && feedQueue.isEmpty();
+    }
 }
