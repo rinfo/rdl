@@ -11,6 +11,9 @@ import org.openrdf.repository.Repository
 
 class FeedCollectorSessionSpec extends Specification {
     def logsession = Mock(CollectorLogSession)
+    def setupSpec() {
+        ReCollectQueue.instance.purgeQueue()
+    }
     def "Should add failed entries to recollectqueue"() {
         setup:
             def feed = Abdera.instance.newFeed()
