@@ -2,7 +2,7 @@ import re
 import sys
 from fabric.api import *
 from fabric.contrib.files import exists
-from fabfile.util import venv, mkdirpath
+from fabfile.util import venv, mkdirpath, exit_on_error
 from fabfile import app, sysconf
 from fabfile.target import _needs_targetenv
 from fabfile.app import _deploy_war_norestart
@@ -50,6 +50,7 @@ def setup():
 
 @task
 @roles('service')
+@exit_on_error
 def deploy(headless="0"):
     """Deploys the rinfo-service war package to target env."""
     setup()

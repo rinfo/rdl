@@ -5,7 +5,7 @@ import sys
 import time
 import os
 import errno
-
+from functools import wraps
 
 from os import path as p
 from os.path import expanduser
@@ -213,3 +213,16 @@ def make_sure_directory_exists(file_name_and_path):
         if exc.errno != errno.EEXIST:
             raise
     return file_name_and_path
+
+def exit_on_error(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            print 'Got some exception, exiting with 1 to make it rain in jenkins..'
+            print e
+            sys.exit(1)
+        raise
+    return wrapper
+

@@ -1,7 +1,7 @@
 import sys
 from fabric.api import *
 from fabric.contrib.files import exists
-from fabfile.util import venv
+from fabfile.util import venv, exit_on_error
 from fabfile.app import local_lib_rinfo_pkg
 from fabfile.app import _deploy_war_norestart
 from fabfile.target import _needs_targetenv
@@ -49,6 +49,7 @@ def setup():
 
 @task
 @roles('main')
+@exit_on_error
 def deploy(headless="0"):
     """Deploys the rinfo-main war package to target env."""
     setup()
