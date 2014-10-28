@@ -52,7 +52,9 @@ class ElasticLoader {
     }
 
     void delete(URI entryId) {
-        def docType = findElasticType(entry.id)
+        def docType = findElasticType(entryId)
+        if(!docType)
+            return
         //DeleteResponse response =
         elasticData.client.prepareDelete(
                 elasticData.indexName, docType, entryId.toString()).execute().actionGet()

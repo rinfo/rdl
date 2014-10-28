@@ -1,5 +1,8 @@
 package se.lagrummet.rinfo.service
 
+import org.openrdf.OpenRDFException
+import org.openrdf.query.QueryLanguage
+import org.openrdf.repository.util.RDFInserter
 import org.slf4j.LoggerFactory
 
 import org.apache.abdera.model.Feed
@@ -14,7 +17,7 @@ import org.apache.abdera.model.AtomDate
 import org.apache.abdera.model.Entry
 import org.apache.abdera.model.Feed
 import org.apache.abdera.i18n.iri.IRI
-
+import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.collector.atom.FeedArchivePastToPresentReader
 
 
@@ -23,7 +26,7 @@ class SesameLoader extends FeedArchivePastToPresentReader {
     Repository repository
     RepositoryConnection conn
     ElasticLoader elasticLoader
-
+    def updatedEntries = []
     private final logger = LoggerFactory.getLogger(SesameLoader)
 
     SesameLoader(Repository repository, elasticLoader=null) {
@@ -78,6 +81,8 @@ class SesameLoader extends FeedArchivePastToPresentReader {
         }
 
         try {
+            if (repoEntry.isUpdate())
+                update(entry)
             logger.info("Storing entry <${entry.id}>")
             repoEntry.create()
             elasticLoader?.create(conn, entry, this)
@@ -91,6 +96,33 @@ class SesameLoader extends FeedArchivePastToPresentReader {
         logger.info("Deleting entry <${repoEntry.id}>")
         repoEntry.delete()
         elasticLoader?.delete(entryId)
+    }
+
+    protected void update(entry) {
+        logger.info("updating entry <${entry.id}>")
+        elasticLoader?.delete(entry.id.toURI())
+        updatedEntries << entry.id.toURI()
+        updatedEntries.addAll(relatedEntries(entry.id))
+    }
+
+    def relatedEntries(iri) {
+        try {
+            def constructQueryText = getClass().getResourceAsStream(
+                    '/sparql/select_rel_iri.rq').getText("utf-8")
+            def uri = conn.valueFactory.createURI(iri as String)
+            def query = conn.prepareTupleQuery(QueryLanguage.SPARQL, constructQueryText);
+            query.setBinding("current", uri)
+            def result = query.evaluate();
+            def related = []
+            while(result.hasNext()) {
+                def binding = result.next()
+                related << new URI(binding.getValue("id").toString())
+            }
+            return related
+        } catch (Exception e) {
+            logger.warn("Something went wrong when finding related IRIs to <${iri.toString()}> Details: " + e.getMessage())
+            return []
+        }
     }
 
 }
