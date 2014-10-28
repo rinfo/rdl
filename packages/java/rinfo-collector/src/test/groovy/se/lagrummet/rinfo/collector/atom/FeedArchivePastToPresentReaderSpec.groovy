@@ -143,7 +143,8 @@ class FeedArchivePastToPresentReaderSpec extends Specification {
         when:
         def reader = new CollectReader(
                 knownEntry:[id: "http://example.org/doc/1",
-                            updated:"2000-01-01T00:00:02Z"])
+                            updated:"2000-01-01T00:00:02.000Z"])
+
         reader.readFeed(new URL("${baseUrl}/deleted_updated.atom"))
         then:
         reader.entryRow(0) == "<http://example.org/doc/1> @ 2000-01-01T00:00:04.000Z"
