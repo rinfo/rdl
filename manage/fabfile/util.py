@@ -213,12 +213,3 @@ def make_sure_directory_exists(file_name_and_path):
         if exc.errno != errno.EEXIST:
             raise
     return file_name_and_path
-
-
-#<testsuite tests="3">
-#    <testcase classname="foo" name="ASuccessfulTest"/>
-#    <testcase classname="foo" name="AnotherSuccessfulTest"/>
-#    <testcase classname="foo" name="AFailingTest">
-#        <failure type="NotEnoughFoo"> details about failure </failure>
-#    </testcase>
-#</testsuite>
