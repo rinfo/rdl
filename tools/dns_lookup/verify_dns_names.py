@@ -27,8 +27,8 @@ lookup_name = {
                      '+.regression.lagrummet.se'],
 
     # testfeed
-    '109.74.5.72': ['testfeed.lagrummet.se',
-                    '+.testfeed.lagrummet.se'],
+    '46.21.107.182': ['testfeed.lagrummet.se'],
+
     # skrapat (really old test feed but still in use)
     '79.99.1.133': ['skrapat.lagrummet.se',
                     '+.skrapat.lagrummet.se'],
