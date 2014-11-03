@@ -19,12 +19,12 @@ if [ $EXIT_STATUS -ne 0 ];then
 fi
 
 # Test Checker
-fab -p $PW_RINFO target.regression -R checker app.checker.test_all
-EXIT_STATUS=$?
-if [ $EXIT_STATUS -ne 0 ];then	
-   echo "Checker module returned $EXIT_STATUS! Exiting!"
-   exit $EXIT_STATUS
-fi
+#fab -p $PW_RINFO target.regression -R checker app.checker.test_all
+#EXIT_STATUS=$?
+#if [ $EXIT_STATUS -ne 0 ];then
+#   echo "Checker module returned $EXIT_STATUS! Exiting!"
+#   exit $EXIT_STATUS
+#fi
 
 # Test Service
 fab -p $PW_RINFO target.regression -R service app.service.test_all
