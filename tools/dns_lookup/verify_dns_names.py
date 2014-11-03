@@ -23,7 +23,7 @@ lookup_name = {
                      '+.test.lagrummet.se'],
 
     # regression
-    '46.21.106.35': ['regression.lagrummet.se',
+    '46.21.107.182': ['regression.lagrummet.se',
                      '+.regression.lagrummet.se'],
 
     # testfeed
