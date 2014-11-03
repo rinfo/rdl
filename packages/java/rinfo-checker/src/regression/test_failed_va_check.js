@@ -18,7 +18,7 @@ casper.test.begin('Test test VA feed that checker finds errors in', function(tes
 
    casper.waitForSelector("body");
 
-   var feedUrl = "http://testfeed.lagrummet.se/dov_exempel_med_fel/index.atom"
+   var feedUrl = "http://regression.testfeed.lagrummet.se/dov_exempel_med_fel/index.atom"
 
    casper.then(function() {
         this.test.assertTitle('RInfo Checker: insamlingskontroll');

@@ -18,7 +18,7 @@ casper.test.begin('Test common errors in bvfs feed', function(test) {
 
    casper.waitForSelector("body");
 
-   var feedUrl = "http://testfeed.lagrummet.se/fel_1/index.atom";
+   var feedUrl = "http://regression.testfeed.lagrummet.se/fel_1/index.atom";
 
    casper.then(function() {
         this.test.assertTitle('RInfo Checker: insamlingskontroll');
@@ -47,7 +47,7 @@ casper.test.begin('Test common errors in bvfs feed', function(test) {
 
         this.test.assertTextExists('Angiven URI matchar inte den URI som beräknats utifrån egenskaper i dokumentet');
         this.test.assertTextExists('Saknar obligatoriskt värde för egenskap: bemyndigande');
-        this.test.assertTextExists('http://testfeed.lagrummet.se/fel_1/1988-13tob8.xml');
+        this.test.assertTextExists('http://regression.testfeed.lagrummet.se/fel_1/1988-13tob8.xml');
         this.test.assertTextExists('Värdet \'1988-03-00\' matchar inte datatyp för egenskap: utkomFranTryck');
         this.test.assertTextExists('Värdet \'9999-99-99\' matchar inte datatyp för egenskap: ikrafttradandedatum');
    });

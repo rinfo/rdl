@@ -18,7 +18,7 @@ casper.test.begin('Test quantity limit', function(test) {
 
    casper.waitForSelector("body");
 
-   var feedUrl = "http://testfeed.lagrummet.se/dov_exempel_utan_fel/index-uppdaterad.atom"
+   var feedUrl = "http://regression.testfeed.lagrummet.se/dov_exempel_utan_fel/index-uppdaterad.atom"
 
    casper.then(function() {
         this.test.assertTitle('RInfo Checker: insamlingskontroll');

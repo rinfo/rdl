@@ -48,6 +48,10 @@ env.roledefs = {
     'checker': [],
     'demosource': [],
     'lagrummet': [],
+    'emfs':[],
+    'test': [],
+    'regression': [],
+    'skrapat': [],
 }
 
 ##
@@ -56,6 +60,7 @@ env.roledefs = {
 import target
 import sysconf
 import server
+import testfeed
 import app.main
 import app.admin
 import app.service

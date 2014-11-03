@@ -1,6 +1,9 @@
 import ConfigParser
 from fabric.api import *
 from fabric.contrib.files import exists
+from fabric.decorators import task
+from fabric.operations import put, run
+from fabric.state import env
 import sys
 import time
 import os
@@ -61,11 +64,9 @@ def get_password_config():
     try:
         config = ConfigParser.RawConfigParser()
         config.read(password_file_name_)
-        print "Opened %s " % password_file_name_
         return config
     except:
         config = ConfigParser.RawConfigParser()
-        print "Config file not found %s " % password_file_name_
         return config
 
 
@@ -226,3 +227,22 @@ def exit_on_error(func):
         raise
     return wrapper
 
+#<testsuite tests="3">
+#    <testcase classname="foo" name="ASuccessfulTest"/>
+#    <testcase classname="foo" name="AnotherSuccessfulTest"/>
+#    <testcase classname="foo" name="AFailingTest">
+#        <failure type="NotEnoughFoo"> details about failure </failure>
+#    </testcase>
+#</testsuite>
+
+
+@task
+def install_public_key(id_rsa_pub_filename='id_rsa.pub'):
+    mkdirpath('/home/%s/.ssh' % env.user)
+    put('%s/.ssh/%s' % (expanduser('~'), id_rsa_pub_filename), '/home/%s/.' % env.user)
+    run('cat %s >> .ssh/authorized_keys' % id_rsa_pub_filename)
+    run('rm %s' % id_rsa_pub_filename)
+
+
+def role_is_active(role):
+    return env.host in env.roledefs[role]

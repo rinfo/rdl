@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="sv" xmlns="http://www.w3.org/2005/Atom" xmlns:at="http://purl.org/atompub/tombstones/1.0" xmlns:le="http://purl.org/atompub/link-extensions/1.0">
+<id>tag:vagledandeavgoranden.dom.se,2011:rinfo:feed</id>
+<title>Vägledande avgoranden</title>
+<updated>2013-11-19T10:30:53Z</updated>
+<author>
+<name>Domstolsverket</name>
+<uri>http://www.domstol.se/</uri>
+<email>vagledandeavgoranden@dom.se</email>
+</author>
+<link href="https://www.vagledandeavgoranden.dom.se/lagrummet/atom/index.atom" rel="self"/>
+<link href="https://www.vagledandeavgoranden.dom.se/lagrummet/atom/20130214001.atom" rel="prev-archive"/>
+<at:deleted-entry ref="http://rinfo.lagrummet.se/publ/rf/nja/2008/s_1082" when="2013-02-15T10:58:43.193216000Z"/>
+<at:deleted-entry ref="http://rinfo.lagrummet.se/publ/dom/hd/oe4998-06/2008-11-20" when="2013-02-15T11:07:27.0Z"/>
+<entry>
+<id>http://rinfo.lagrummet.se/publ/dom/hfd/3862-10/2012-11-21</id>
+<updated>2013-02-23T00:10:09.48390000Z</updated>
+<published>2013-02-14T13:33:11Z</published>
+<title>HFD 3862-10</title>
+<content/>
+<link href="13883-kort.rdf" le:md5="8c2ac67d644b02b50dc8f14fc2b01713" length="2238" rel="alternate" type="application/rdf+xml"/>
+</entry>
+</feed>
