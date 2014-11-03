@@ -186,11 +186,11 @@ def _copy_local_repo(dataset_key, dataset_value):
 
 
 @task
-@roles('regression')
+@roles('regression','demosource')
 def deploy_regression_tests():
     _needs_targetenv()
     target_dir = env.demo_data_root+"/regression"
     if not exists(target_dir):
         sudo("mkdir -p %(target_dir)s" % venv())
         sudo("chown %(user)s %(target_dir)s" % venv())
-    rsync_project(target_dir, "%(env.projectroot)s/testfeed/regression/" % venv(), exclude=".*", delete=True)
+    rsync_project(target_dir, "%s/testfeeds/regression/" % env.projectroot, exclude=".*")

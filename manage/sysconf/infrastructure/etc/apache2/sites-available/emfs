@@ -2,6 +2,7 @@
     # ServerAdmin webmaster@lagrummet.se
     ServerName testfeed.lagrummet.se
     AliasMatch ^/robots\.txt$ /var/www/robots.txt
+    ProxyPass /SFS-2 http://sfstestfeed.lagrummet.se/SFS-2
     DocumentRoot /opt/rinfo/demo-depots/emfs
 
 </VirtualHost>
