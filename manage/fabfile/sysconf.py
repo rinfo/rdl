@@ -27,6 +27,7 @@ from fabfile.util import mkdirpath, role_is_active
 
 
 @task
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
 def configure_server():
     secure_sshd()
     _sync_workdir()
@@ -104,6 +105,7 @@ def _prepare_mgr_work():
 
 
 @task
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
 def install_server():
     install_dependencies()
     #install_jdk() # Installing the Proprietary JDK requires manual confirmation.
