@@ -362,9 +362,9 @@ def prepare_sudo_for_debian_and_add_rinfo_user():
 @roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
 def bootstrap():
     _needs_targetenv()
-    if not os_version() == 'Debian7':
-        print 'Unsupported os version %%' % os_version()
-        return
+    #if not os_version() == 'Debian7':
+    #    print 'Unsupported os version %%' % os_version()
+    #    return
     prepare_sudo_for_debian_and_add_rinfo_user()
     prefere_ipv4_to_speed_up_debian_updates()
 

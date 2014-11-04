@@ -191,14 +191,11 @@ def beta():
     env.target = "beta"
     # Machines:
     env.user = 'rinfo'
-    env.roledefs = {
-        'main': ['rinfo.beta.lagrummet.se'],
-        'service': ['service.beta.lagrummet.se'],
-        'checker': ['checker.beta.lagrummet.se'],
-        'admin': ['admin.beta.lagrummet.se'],
-        'demosource': ['testfeed.lagrummet.se'],
-        'lagrummet': ['beta.lagrummet.se'],
-    }
+    env.roledefs['main'] = ['rinfo.beta.lagrummet.se']
+    env.roledefs['service'] = ['service.beta.lagrummet.se']
+    env.roledefs['checker'] = ['checker.beta.lagrummet.se']
+    env.roledefs['admin'] = ['admin.beta.lagrummet.se']
+    env.roledefs['lagrummet'] = ['beta.lagrummet.se']
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
