@@ -41,6 +41,7 @@ def _sync_workdir():
     for confdir in [p.join(env.manageroot, "sysconf", "common"),
                     p.join(env.manageroot, "sysconf", env.target)]:
         rsync_project(env.mgr_workdir, confdir, exclude=".*", delete=True)
+        run('chmod +x %s/*.sh' % confdir)
 
 
 @task
