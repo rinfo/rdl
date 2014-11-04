@@ -170,7 +170,8 @@ def ftp_push(filename, ftp_address, username, password, test=False):
     if test:
         print "ftp push %s to %s" % (filename, ftp_address)
     else:
-        run('curl -T %s %s --user %s:%s --ftp-create-dirs' % (filename, ftp_address, username, password))
+        with hide('output','running'):
+            run('curl -T %s %s --user %s:%s --ftp-create-dirs' % (filename, ftp_address, username, password))
 
 
 def ftp_fetch(filename, ftp_address, target_path, username, password, test=False):
@@ -178,7 +179,8 @@ def ftp_fetch(filename, ftp_address, target_path, username, password, test=False
         if test:
             print "ftp fetch %s from %s to %s" % (filename, ftp_address, target_path)
         else:
-            run('curl %s/%s --user %s:%s --ftp-create-dirs -o %s' % (ftp_address, filename, username, password,
+            with hide('output','running'):
+                run('curl %s/%s --user %s:%s --ftp-create-dirs -o %s' % (ftp_address, filename, username, password,
                                                                      filename))
 
 
