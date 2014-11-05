@@ -36,12 +36,12 @@ def configure_server():
     configure_sites()
 
 
-@runs_once
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
 def _sync_workdir():
     for confdir in [p.join(env.manageroot, "sysconf", "common"),
                     p.join(env.manageroot, "sysconf", env.target)]:
         rsync_project(env.mgr_workdir, confdir, exclude=".*", delete=True)
-        run('chmod +x %s/*.sh' % confdir)
+        #run('chmod +x %s/install/*.sh' % env.mgr_workdir)
 
 
 @task
@@ -96,7 +96,7 @@ def install_init_d(name):
 # Initial Software Installation
 
 
-@runs_once
+#@runs_once
 def _prepare_mgr_work():
     _needs_targetenv()
     mkdirpath("%(mgr_workdir)s/install" % env)
