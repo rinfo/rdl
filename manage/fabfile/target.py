@@ -147,6 +147,81 @@ def test():
     _tomcat_env()
     _initialize_password()
 
+@targetenv
+def dom():
+    """Set target env to: test"""
+    # Name env:
+    env.target = "dom"
+    # Machines:
+    env.user = 'rinfo'
+    env.roledefs = {
+        'main': ['rinfo.t1.lagr.dev.dom.se'],
+        'service': ['service.t1.lagr.dev.dom.se'],
+        'checker': ['checker.t1.lagr.dev.dom.se'],
+        'admin': ['admin.t1.lagr.dev.dom.se'],
+        'demosource': ['testfeed.t1.lagr.dev.dom.se'],
+        'lagrummet': ['t1.lagr.dev.dom.se'],
+        }
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Varnish
+    env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = "127.0.0.1"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+        'checker': ['checker'],
+        }
+    # Tomcat
+    _tomcat_env()
+
+@targetenv
+def ville():
+    """Set target env to: test"""
+    # Name env:
+    env.target = "dom"
+    # Machines:
+    env.user = 'rinfo'
+    env.roledefs = {
+        'main': ['rinfo.ville.lagrummet.se'],
+        'service': ['service.ville.lagrummet.se'],
+        'checker': ['checker.ville.lagrummet.se'],
+        'admin': ['admin.ville.lagrummet.se'],
+        'demosource': ['testfeed.ville.lagrummet.se'],
+        'lagrummet': ['ville.lagrummet.se'],
+        }
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Varnish
+    env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = "127.0.0.1"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+        'checker': ['checker'],
+        }
+    # Tomcat
+    _tomcat_env()
 
 @targetenv
 def regression():
