@@ -689,6 +689,18 @@
             <environment>test</environment>
         </properties>
     </profile>
+    <profile>
+        <id>dom</id>
+        <properties>
+            <environment>dom</environment>
+        </properties>
+    </profile>
+    <profile>
+        <id>ville</id>
+        <properties>
+            <environment>ville</environment>
+        </properties>
+    </profile>
       <profile>
           <id>regression</id>
           <properties>

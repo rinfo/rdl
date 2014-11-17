@@ -154,14 +154,13 @@ def dom():
     env.target = "dom"
     # Machines:
     env.user = 'rinfo'
-    env.roledefs = {
-        'main': ['rinfo.t1.lagr.dev.dom.se'],
-        'service': ['service.t1.lagr.dev.dom.se'],
-        'checker': ['checker.t1.lagr.dev.dom.se'],
-        'admin': ['admin.t1.lagr.dev.dom.se'],
-        'demosource': ['testfeed.t1.lagr.dev.dom.se'],
-        'lagrummet': ['t1.lagr.dev.dom.se'],
-        }
+    
+    env.roledefs['main'] = ['rinfo.t1.lagr.dev.dom.se']
+    env.roledefs['service'] = ['service.t1.lagr.dev.dom.se']
+    env.roledefs['checker'] = ['checker.t1.lagr.dev.dom.se']
+    env.roledefs['admin'] = ['admin.t1.lagr.dev.dom.se']
+    env.roledefs['lagrummet'] = ['t1.lagr.dev.dom.se']
+
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
@@ -189,17 +188,16 @@ def dom():
 def ville():
     """Set target env to: test"""
     # Name env:
-    env.target = "dom"
+    env.target = "ville"
     # Machines:
     env.user = 'rinfo'
-    env.roledefs = {
-        'main': ['rinfo.ville.lagrummet.se'],
-        'service': ['service.ville.lagrummet.se'],
-        'checker': ['checker.ville.lagrummet.se'],
-        'admin': ['admin.ville.lagrummet.se'],
-        'demosource': ['testfeed.ville.lagrummet.se'],
-        'lagrummet': ['ville.lagrummet.se'],
-        }
+
+    env.roledefs['main'] = ['rinfo.ville.lagrummet.se']
+    env.roledefs['service'] = ['service.ville.lagrummet.se']
+    env.roledefs['checker'] = ['checker.ville.lagrummet.se']
+    env.roledefs['admin'] = ['admin.ville.lagrummet.se']
+    env.roledefs['lagrummet'] = ['ville.lagrummet.se']
+
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
@@ -521,7 +519,7 @@ def infrastructure():
 def _tomcat_env():
     env.apache_jk_tomcat = True
     # when change version of tomcat, must check server.xml (../../sysconf/common/tomcat/server.xml)
-    env.tomcat_version = "7.0.56"
+    env.tomcat_version = "7.0.57"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps" % env
     env.tomcat_start = '/etc/init.d/tomcat start'
