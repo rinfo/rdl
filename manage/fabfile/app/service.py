@@ -206,7 +206,7 @@ def install_varnish():
     sudo("echo '%s' | apt-key add -" % gpg_key)
     sudo("echo 'deb http://repo.varnish-cache.org/debian/ wheezy varnish-3.0' >> /etc/apt/sources.list")
     sudo("apt-get update")
-    sudo("apt-get install varnish=3.0.5-1~wheezy -y")
+    sudo("apt-get install varnish=3.0.6-1~wheezy -y")
     stop_varnish()  # stop default daemon started by installation
     if not exists("%(workdir_varnish)s" % env):
         sudo("mkdir %(workdir_varnish)s" % env)
