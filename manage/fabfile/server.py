@@ -112,6 +112,8 @@ def war_props(warname="ROOT"):
 def ping_verify_roledef(report, role_name, url_add, content, name, class_name):
     if env.roledefs[role_name] is None:
         return
+    if len(env.roledefs[role_name])==0:
+        return
     url = "http://%s%s" % (env.roledefs[role_name][0], url_add)
     #test_url(report, name % role_name, class_name % role_name, url, content)
     test_url(report, name, class_name, url, content)
