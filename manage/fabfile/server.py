@@ -140,7 +140,7 @@ def ping_verify():
                         'server.%(target)s.ping' % venv())
     ping_verify_roledef(report, 'demosource', '/feed/current.atom', 'atom', 'Verify demosource feed',
                         'server.%(target)s.ping' % venv())
-    ping_verify_roledef(report, 'lagrummet', '', 'Hitta orden!', 'Verify lagrummet search',
+    ping_verify_roledef(report, 'lagrummet', '', 'lagrummet.se', 'Verify lagrummet search',
                         'server.%(target)s.ping' % venv())
 
     if not report.empty():
