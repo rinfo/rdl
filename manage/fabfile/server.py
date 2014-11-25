@@ -116,7 +116,7 @@ def ping_verify():
     ping_verify_roledef(report, 'checker', '', 'RInfo Checker', 'Verify checker title', 'server.%(target)s.ping' % venv())
     ping_verify_roledef(report, 'admin', '/feed/current.atom', 'RInfo Base Data', 'Verify admin feed', 'server.%(target)s.ping' % venv())
     ping_verify_roledef(report, 'demosource', '/feed/current.atom', 'atom', 'Verify demosource feed', 'server.%(target)s.ping' % venv())
-    ping_verify_roledef(report, 'lagrummet', '', 'Hitta orden!', 'Verify lagrummet search', 'server.%(target)s.ping' % venv())
+    ping_verify_roledef(report, 'lagrummet', '', 'Lagrummet.se', 'Verify lagrummet search', 'server.%(target)s.ping' % venv())
 
     if not report.empty():
         report_name = "%(projectroot)s/ping_verify_%(target)s_report.log" % venv()
