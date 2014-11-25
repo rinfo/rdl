@@ -701,6 +701,12 @@
             <environment>ville</environment>
         </properties>
     </profile>
+    <profile>
+        <id>valle</id>
+        <properties>
+            <environment>valle</environment>
+        </properties>
+    </profile>
       <profile>
           <id>regression</id>
           <properties>
