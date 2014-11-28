@@ -28,7 +28,7 @@ mv workers.properties /etc/apache2/
 
 mv jk.conf /etc/apache2/conf.d/
 
-mv rinfo-main > /etc/apache2/sites-available/rinfo-main
+mv rinfo-main /etc/apache2/sites-available/rinfo-main
 
 a2ensite rinfo-main
 
