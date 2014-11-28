@@ -149,7 +149,7 @@ def test():
 
 @targetenv
 def dom():
-    """Set target env to: test"""
+    """Set target env to: dom"""
     # Name env:
     env.target = "dom"
     # Machines:
@@ -185,8 +185,45 @@ def dom():
     _tomcat_env()
 
 @targetenv
+def template():
+    """Set target env to: template"""
+    # Name env:
+    env.target = "template"
+    # Machines:
+    env.user = 'rinfo'
+    
+    env.roledefs['main'] = ['rinfo.dnsplaceholderforsed']
+    env.roledefs['service'] = ['service.dnsplaceholderforsed']
+    env.roledefs['checker'] = ['checker.dnsplaceholderforsed']
+    env.roledefs['admin'] = ['admin.dnsplaceholderforsed']
+    env.roledefs['lagrummet'] = ['dnsplaceholderforsed']
+
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Varnish
+    env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = "127.0.0.1"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+        'checker': ['checker'],
+        }
+    # Tomcat
+    _tomcat_env()
+
+@targetenv
 def ville():
-    """Set target env to: test"""
+    """Set target env to: ville"""
     # Name env:
     env.target = "ville"
     # Machines:
@@ -223,7 +260,7 @@ def ville():
 
 @targetenv
 def valle():
-    """Set target env to: test"""
+    """Set target env to: valle"""
     # Name env:
     env.target = "valle"
     # Machines:

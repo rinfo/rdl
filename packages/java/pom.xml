@@ -690,6 +690,12 @@
         </properties>
     </profile>
     <profile>
+        <id>template</id>
+        <properties>
+            <environment>template</environment>
+        </properties>
+    </profile>
+    <profile>
         <id>dom</id>
         <properties>
             <environment>dom</environment>
