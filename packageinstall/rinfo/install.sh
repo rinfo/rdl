@@ -23,12 +23,15 @@ sed -i 's/^#PermitRootLogin yes/PermitRootLogin no/;s/PermitRootLogin yes/Permit
 /etc/init.d/ssh restart
 mv robots.txt /var/www/
 chmod u=rw,a=r /var/www/robots.txt
+chown root:root /var/www/robots.txt
 
 mv workers.properties /etc/apache2/
 
 mv jk.conf /etc/apache2/conf.d/
 
 mv rinfo-main /etc/apache2/sites-available/rinfo-main
+chown root:root /etc/apache2/sites-available/rinfo-main
+chmod 644 /etc/apache2/sites-available/rinfo-main
 
 a2ensite rinfo-main
 
@@ -43,4 +46,5 @@ mkdir -p /opt/tomcat/logs
 chown rinfo /opt/tomcat/logs
 
 /etc/init.d/tomcat start
-/etc/init.d/apache2 start
+/etc/init.d/apache2 restart
+
