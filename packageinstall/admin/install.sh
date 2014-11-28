@@ -19,6 +19,8 @@ chown root:root /var/www/robots.txt
 mv jk.conf /etc/apache2/conf.d/
 
 mv admin /etc/apache2/sites-available/admin
+chown root:root /etc/apache2/sites-available/admin
+chmod 644 /etc/apache2/sites-available/admin
 
 mkdir -p /var/www/admin
 ( cd output && cp -r * /var/www/admin/ )
@@ -29,4 +31,4 @@ chown -R rinfo:rinfo /var/www/admin/*
 
 a2ensite admin
 
-/etc/init.d/apache2 start
+/etc/init.d/apache2 restart
