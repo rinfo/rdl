@@ -22,5 +22,9 @@ cp ../../manage/sysconf/common/etc/apache2/conf.d/jk.conf tmp/
 
 sed 's/dnsplaceholderforsed/'$1'/g' ../../manage/sysconf/template/etc/apache2/sites-available/rinfo-main > tmp/rinfo-main
 
+cp ~/.ssh/id_rsa.pub tmp/
+
+cp install.sh tmp/
+
 ( cd tmp && tar -zcf ../rinfo-main.tar.gz * )
 
