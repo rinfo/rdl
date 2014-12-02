@@ -12,8 +12,8 @@
 NAME=tomcat
 
 # Tomcat init-script
-TOMCAT_USER=tomcat
-TOMCAT_GROUP=tomcat
+TOMCAT_USER=tomcat7
+TOMCAT_GROUP=tomcat7
 PID_DIR="/var/run/$NAME"
 PID_FILE="$PID_DIR/$NAME.pid"
 
