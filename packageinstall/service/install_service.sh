@@ -10,3 +10,4 @@ a2ensite service
 
 mv rinfo-service.war /var/lib/tomcat7/webapps/
 
+echo 'info.aduna.platform.appdata.basedir=/opt/rinfo/sesame-repo' >> /var/lib/tomcat7/conf/catalina.properties

@@ -22,6 +22,7 @@ cp ../../manage/sysconf/common/etc/apache2/conf.d/jk.conf tmp/
 
 sed 's/dnsplaceholderforsed/'$1'/g' ../../manage/sysconf/template/etc/apache2/sites-available/rinfo-main > tmp/rinfo-main
 sed 's/dnsplaceholderforsed/lagrummet\.se/g' ../../manage/sysconf/template/etc/apache2/sites-available/rinfo-main >> tmp/rinfo-main
+sed 's/dnsplaceholderforsed/'$1'/g' ./start_collect.sh > tmp/start_collect.sh
 
 cp ~/.ssh/id_rsa.pub tmp/
 
