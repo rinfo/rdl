@@ -17,10 +17,9 @@ cp ../rinfo/install_rinfo.sh tmp/
 cp ../rinfo/tmp/rinfo-main tmp/
 cp -r ../rinfo/tmp/rinfo-main.war tmp/
 cp -r ../rinfo/tmp/workers.properties tmp/
-cp -r ../rinfo/tmp/start_collect.sh tmp/
 
 rm tmp/install.sh
-cp install.sh tmp/
+sed 's/dnsplaceholderforsed/'$1'/g' install.sh > tmp/install.sh
 
 rm rinfo-rdl-singlenode.tar.gz
 

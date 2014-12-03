@@ -20,5 +20,10 @@ source ./install_elasticsearch.sh
 source ./start_varnish.sh
 source ./start_elasticsearch.sh
 
+export sym=dnsplaceholderforsed
+
+echo '127.0.0.1	'$sym, admin.$sym, checker.$sym, service.$sym, rinfo.$sym >> /etc/hosts
+
 source start_apache.sh
 source start_tomcat.sh
+
