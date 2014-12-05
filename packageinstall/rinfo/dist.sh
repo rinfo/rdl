@@ -12,7 +12,7 @@ mkdir tmp
 
 cp ../../packages/java/rinfo-main/target/rinfo-main.war tmp/
 
-cp ../../manage/sysconf/common/etc/init.d/tomcat tmp/init.d_tomcat tmp/
+cp ../../manage/sysconf/common/etc/init.d/tomcat tmp/init.d_tomcat
 
 cp ../../manage/sysconf/template/www/robots.txt tmp/
 
@@ -35,6 +35,8 @@ cp ../reuse/start_apache.sh tmp/
 cp ../reuse/start_tomcat.sh tmp/
 
 cp install.sh tmp/
+
+git log -1 | grep 'commit' > tmp/git_status.txt
 
 ( cd tmp && tar -zcf ../rinfo-main.tar.gz * )
 

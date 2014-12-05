@@ -56,5 +56,7 @@ cp install.sh tmp/
 
 rm rinfo-service.tar.gz
 
+git log -1 | grep 'commit' > tmp/git_status.txt
+
 ( cd tmp && tar -zcf ../rinfo-service.tar.gz * )
 

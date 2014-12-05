@@ -23,4 +23,6 @@ sed 's/dnsplaceholderforsed/'$1'/g' install.sh > tmp/install.sh
 
 rm rinfo-rdl-singlenode.tar.gz
 
+git log -1 | grep 'commit' > tmp/git_status.txt
+
 ( cd tmp && tar -zcf ../rinfo-rdl-singlenode.tar.gz * )

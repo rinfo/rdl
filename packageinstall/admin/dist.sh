@@ -23,5 +23,7 @@ cp ../reuse/start_apache.sh tmp/
 
 cp ./install_admin.sh tmp/
 
+git log -1 | grep 'commit' > tmp/git_status.txt
+
 ( cd tmp && tar -zcf ../rinfo-admin.tar.gz * )
 
