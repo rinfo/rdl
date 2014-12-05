@@ -44,7 +44,8 @@ lookup_name = {
                      'rinfo.lagrummet.se'],
     '94.247.169.67': ['dev.lagrummet.se'],
     # produktion (currently NOT reserved for use by virtual machines)
-    '83.145.60.248': ['www.lagrummet.se'],
+    '83.145.60.248': ['www.lagrummet.se',
+                      'lagrummet.se'],
     '94.247.169.66': ['checker.lagrummet.se',
                       'service.lagrummet.se'],
 
