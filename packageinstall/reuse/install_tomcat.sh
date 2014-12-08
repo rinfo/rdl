@@ -10,7 +10,6 @@ rm -rf /var/lib/tomcat7/webapps/*
 
 chmod 0755 /etc/init.d/tomcat7
 update-rc.d tomcat7 defaults
-sed -i 's/^#PermitRootLogin yes/PermitRootLogin no/;s/PermitRootLogin yes/PermitRootLogin no/;s/^#PermitEmptyPasswords yes/PermitEmptyPasswords no/;s/PermitEmptyPasswords yes/PermitEmptyPasswords no/;s/^#X11Forwarding yes/X11Forwarding no/;s/X11Forwarding yes/X11Forwarding no/' /etc/ssh/sshd_config
 
 mkdir -p /opt/tomcat/logs
 chown rinfo /opt/tomcat/logs
