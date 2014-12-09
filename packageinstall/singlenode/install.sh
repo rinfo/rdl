@@ -12,6 +12,8 @@ source ./install_admin.sh
 source ./create_folders.sh
 source ./install_rinfo.sh
 
+source ./install_checker.sh
+
 source ./install_service.sh
 source ./install_sesame.sh
 

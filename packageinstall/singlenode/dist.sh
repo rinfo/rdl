@@ -8,6 +8,8 @@ mkdir tmp
 ( cd ../service && source dist.sh $1 )
 
 cp -r ../service/tmp/* tmp/
+rm tmp/git_status.txt
+rm tmp/install.sh
 
 cp ../admin/install_admin.sh tmp/
 cp ../admin/tmp/admin tmp/
@@ -18,7 +20,10 @@ cp ../rinfo/tmp/rinfo-main tmp/
 cp -r ../rinfo/tmp/rinfo-main.war tmp/
 cp -r ../rinfo/tmp/workers.properties tmp/
 
-rm tmp/install.sh
+cp ../checker/install_checker.sh tmp/
+cp ../checker/tmp/checker tmp/
+cp -r ../checker/tmp/rinfo-checker.war tmp/
+
 sed 's/dnsplaceholderforsed/'$1'/g' install.sh > tmp/install.sh
 
 rm rinfo-rdl-singlenode.tar.gz

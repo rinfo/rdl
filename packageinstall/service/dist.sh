@@ -18,8 +18,6 @@ cp ../../packages/java/rinfo-service/target/rinfo-service.war tmp/
 cp ../../packages/java/rinfo-sesame-http/target/dependency/sesame-workbench.war tmp/
 cp ../../packages/java/rinfo-sesame-http/target/dependency/openrdf-sesame.war tmp/
 
-cp ../../manage/sysconf/common/etc/init.d/tomcat tmp/init.d_tomcat
-
 cp ../../manage/sysconf/template/www/robots.txt tmp/
 
 cp ../../manage/sysconf/common/etc/apache2/workers.properties tmp/
