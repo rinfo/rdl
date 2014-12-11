@@ -1,0 +1,31 @@
+/*
+    Hantera min- och maxbredd för huvudlayout  
+*/
+div#container {
+	width:expression((document.documentElement.clientWidth > 1000) ? "1000px" : (document.documentElement.clientWidth < 700) ? "700px" : "100%");
+}
+
+div#content, div#pageleft, div#pageright
+{
+    height: 400px; /* Minsta höjd för innehållskolumnen */
+}
+/* Jämför med div#header i screen.css */
+div#header {
+	height:70px; /* min-height finns inte i IE, men height fungerar felaktigt som min-height. */
+}
+
+div.columns 
+{
+    height: 10em;
+}
+
+div.links div.link 
+{
+    height: 1%;
+    clear:both;
+}
+div#content 
+{
+    padding-left:0;
+    margin-left:10px;
+}
