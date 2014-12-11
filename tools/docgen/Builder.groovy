@@ -30,7 +30,7 @@ class Builder {
     }
 
     static DEFAULT_COPY_PATTERNS = [
-            "css/*.*", "img/*.*", "pres/**/*.*"
+            "css/*.*", "styles/*.*", "img/*.*", "pres/**/*.*"
         ]
     static DEFAULT_RENDER_PATTERNS = [
             "index.xhtml",
