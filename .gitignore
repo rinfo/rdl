@@ -8,3 +8,12 @@ out/
 testreport/
 ping_verify*
 password.cfg
+laboratory/applications/rinfo-admin/.classpath
+laboratory/sandbox/msher/integration/repository-perf-test/.classpath
+laboratory/sandbox/msher/integration/repository-perf-test/.project
+laboratory/sandbox/msher/integration/repository/.classpath
+laboratory/sandbox/msher/integration/repository/.project
+laboratory/sandbox/msher/integration/sparql-endpoint-restlet/.classpath
+laboratory/sandbox/msher/integration/sparql-endpoint-restlet/.project
+laboratory/sandbox/msher/integration/sparql-endpoint-sesame/.classpath
+laboratory/sandbox/msher/integration/sparql-endpoint-sesame/.project
