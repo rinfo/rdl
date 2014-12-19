@@ -9,3 +9,7 @@ chmod 644 /etc/apache2/sites-available/rinfo-main
 a2ensite rinfo-main
 
 mv rinfo-main.war /var/lib/tomcat7/webapps/
+
+mkdir -p /opt/rinfo/store
+chown -R tomcat7 /opt/rinfo/store
+

@@ -20,7 +20,9 @@ cp ../../packages/java/rinfo-sesame-http/target/dependency/openrdf-sesame.war tm
 
 cp ../../manage/sysconf/template/www/robots.txt tmp/
 
-cp ../../manage/sysconf/common/etc/apache2/workers.properties tmp/
+echo 'workers.tomcat_home=/var/lib/tomcat7' > tmp/workers.properties
+echo 'ps=/' >> tmp/workers.properties
+cat ../../manage/sysconf/common/etc/apache2/workers.properties | grep 'worker\.' >> tmp/workers.properties
 
 cp ../../manage/sysconf/common/etc/apache2/conf.d/jk.conf tmp/
 
@@ -57,4 +59,3 @@ rm rinfo-service.tar.gz
 git log -1 | grep 'commit' > tmp/git_status.txt
 
 ( cd tmp && tar -zcf ../rinfo-service.tar.gz * )
-
