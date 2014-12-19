@@ -23,14 +23,19 @@ env.builddir = sep.join((env.projectroot, '_build'))
 
 env.docbuild = sep.join((env.builddir, 'documentation'))
 
-env.baseresources = "%(projectroot)s/resources/base"%env
+env.baseresources = "%(projectroot)s/resources/base" % env
 
 # env.java_packages = "%(projectroot)s/packages/java"%env
-env.java_packages = sep.join((env.projectroot,'packages', 'java'))
+env.java_packages = sep.join((env.projectroot, 'packages', 'java'))
 
 env.java_pkg_version = "1.0-SNAPSHOT"
 env.timestamp = datetime.utcnow().strftime('%Y_%m_%d_%H-%M-%S')
 env.datestamp = datetime.utcnow().strftime('%Y-%m-%d')
+
+env.ftp_server_url = "ftp://archive0d.glesys.com"
+env.snapshot_name = ""
+
+env.listen_port_varnish = "8383"
 
 # env.roledefs defines available roles but the actual host lists for a certain
 # role is environment dependent and set up by the targets defined in
@@ -43,6 +48,10 @@ env.roledefs = {
     'checker': [],
     'demosource': [],
     'lagrummet': [],
+    'emfs':[],
+    'test': [],
+    'regression': [],
+    'skrapat': [],
 }
 
 ##
@@ -51,6 +60,7 @@ env.roledefs = {
 import target
 import sysconf
 import server
+import testfeed
 import app.main
 import app.admin
 import app.service
@@ -58,4 +68,3 @@ import app.checker
 import app.docs
 import app.tools
 import app.demodata
-

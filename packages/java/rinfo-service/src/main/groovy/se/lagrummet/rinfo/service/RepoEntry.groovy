@@ -118,6 +118,17 @@ class RepoEntry {
         return false
     }
 
+    boolean isUpdate() {
+        if (getStoredContext()) {
+            def updatedStmt = RDFUtil.one(
+                    conn, storedContext, AWOL_UPDATED, null)
+            if (updatedStmt) {
+                return true
+            }
+        }
+        return false
+    }
+
     void create() {
         try {
             if (getStoredContext() != null) {

@@ -81,10 +81,10 @@ class ElasticData {
                     // TODO: only boost on "top level" (or reduce on depth)!
                     float boost = jsonLdSettings.boostTermMap[term] ?: 1.0
                     propMap[term] = [
-                        "type": "multi_field",
+                        "type": "string",
                         "fields": [
-                            (term): ["type": "string", "index": "analyzed", "boost": boost],
-                            "raw": ["type": "string", "index": "not_analyzed", "include_in_all": true]//, "boost": boost]
+                            //(term): ["type": "string", "index": "analyzed", "boost": boost],
+                            "raw": ["type": "string", "index": "not_analyzed", "include_in_all": true, "boost": boost]
                         ]
                     ]
                 } else {

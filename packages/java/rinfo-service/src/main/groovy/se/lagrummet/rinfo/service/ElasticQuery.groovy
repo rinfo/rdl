@@ -2,6 +2,12 @@ package se.lagrummet.rinfo.service
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Commons as Log
+import org.elasticsearch.common.xcontent.ToXContent
+import org.elasticsearch.common.xcontent.XContentBuilder
+import org.elasticsearch.index.query.MultiMatchQueryBuilder
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilder
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 
 import static org.restlet.data.CharacterSet.UTF_8
 import org.restlet.data.Reference
@@ -36,10 +42,15 @@ class ElasticQuery {
     def segmentWildcard = "*"
     def facetStatsSubSegment = "stats"
 
+    Map elasticfields = [:]
+
     ElasticQuery(ElasticData elasticData, String serviceAppBaseUrl) {
         this.elasticData = elasticData
         this.jsonLdSettings = elasticData.jsonLdSettings
         this.serviceAppBaseUrl = serviceAppBaseUrl
+        this.jsonLdSettings.listFramesData.each {
+            this.elasticfields += [(it.key): compress(it.value)?.keySet()]
+        }
     }
 
     @CompileStatic
@@ -72,9 +83,27 @@ class ElasticQuery {
         return buildStats(esRes)
     }
 
+    def isLeaf(value) {
+        if(value == null
+            || value instanceof String
+            || value instanceof Integer) return true
+        return false
+    }
+    //flatten the map containing all interesting properties for the query
+    //needed because fields don't accept complextypes
+    def compress( Map m, String prefix = '' ) {
+        prefix = prefix ? "$prefix." : ''
+        m.collectEntries { k, v ->
+            if(!isLeaf(v)) compress( v, "$prefix$k" )
+            else
+                if(k == "_boost") [ (prefix[0..-2].toString()): v ]
+                else [ ("$prefix$k".toString()): v ]
+        }
+    }
+
     //@CompileStatic
     Map searchElastic(SearchRequestBuilder srb, String docType, Reference ref) {
-        def showTerms = jsonLdSettings.listFramesData[docType]?.keySet()
+        def showTerms = elasticfields[docType]
         if (!showTerms) {
             return null
         }
@@ -210,9 +239,8 @@ class ElasticQuery {
 
         QueryBuilder qb = (matches)?
             QueryBuilders.queryString(elasticQStr).
-                defaultOperator(QueryStringQueryBuilder.Operator.AND) :
+                defaultOperator(QueryStringQueryBuilder.Operator.AND).field("title^20").field("identifier^100").field("_all") :
             QueryBuilders.matchAllQuery()
-
         List<FilterBuilder> filterBuilders = []
         List<FilterBuilder> orFilterBuilders = []
 

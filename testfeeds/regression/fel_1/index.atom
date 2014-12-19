@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="sv" xmlns:le="http://purl.org/atompub/link-extensions/1.0" xmlns="http://www.w3.org/2005/Atom">
+	<id>tag:boverket.se,2009:rinfo:feed</id>
+	<title>Boverkets fÃ¶rfattningssamling</title>
+	<updated>2013-09-24T13:58:38Z</updated>
+	<author>
+		<name>Boverket</name>
+		<uri>http://www.boverket.se</uri>
+		<email>registraturen@boverket.se</email>
+	</author>
+	<link href="https://rinfo.boverket.se/index.atom" rel="self">
+	</link>
+	<entry>
+	<id>http://rinfo.lagrummet.se/publ/dom/mod/p7100-12/2013-01-30</id>
+	<updated>2013-02-14T00:10:04.522538000Z</updated>
+	<published>2013-02-13T14:17:46Z</published>
+	<title>MOD P 7100-12</title>
+	<content/>
+	<link href="13849-kort.rdf" le:md5="96fc58eb687b07b8682cdb0acde5ae30" length="3045" rel="alternate" type="application/rdf+xml"/>
+	</entry>
+
+	<entry>
+	<id>http://rinfo.lagrummet.se/publ/dom/mod/p7100-12/2013-01-31</id>
+	<updated>2013-02-14T00:10:04.522538000Z</updated>
+	<published>2013-02-13T14:17:46Z</published>
+	<title>MOD P 7100-12</title>
+	<content/>
+	<link href="13850-kort.rdf" le:md5="20b0521094aae08c476fdb64ce293bbe" length="3113" rel="alternate" type="application/rdf+xml"/>
+	</entry>
+	
+	
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/bfs/1993:19</id>
+		<updated>2010-06-10T08:19:54Z</updated>
+		<published>2010-06-10T08:19:54Z</published>
+		<title>Boverkets fÃ¶reskrifter om sÃ¤rskilt ombyggnadsbidrag rÃ¶r Ã¤ldrebostÃ¤der;</title>
+		<summary>Boverkets fÃ¶reskriver
+           1  Jfr bet. 1992/93:BoUlO, rskr. 206. fÃ¶ljande med stÃ¶d av 6 Â§ 
+          fÃ¶rordningen (1993:166) om sÃ¤rskilt ombyggnadsbidrag fÃ¶r Ã¤ldrebostÃ¤der.</summary>
+		<content src="1993-19oma1.pdf" type="application/pdf" le:md5="7cd2770c586e9ed4de616b20f99a956b">
+		</content>
+		<link rel="alternate" href="1993-19oma1.xml" type="application/rdf+xml" length="1027" le:md5="16053008741aeab8e0353c2db8c2ddd7">
+		</link>
+	</entry>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/bfs/1992:46</id>
+		<updated>2010-06-10T08:19:53Z</updated>
+		<published>2010-06-10T08:19:53Z</published>
+		<title>Boverkets fÃ¶reskrifter till lagen (1992:1574) om bostadsanpassningsbidrag m.m.;</title>
+		<summary>Boverket fÃ¶reskriver
+           1  Jfr prop. 1992/93:58, BoU4, rskr. 98. fÃ¶ljande med stÃ¶d av fÃ¶rordningen (1992:1575) med bemyndigande fÃ¶r Boverket att meddela fÃ¶reskrifter om verkstÃ¤lligheten av lagen (1992:1574) om bostadsanpassningsbidrag m.m. Till ansÃ¶kan om bostadsanpassningsbidrag enligt lagen (1992:1574) om bostadsanpassningsbidrag m.m. skall fogas fÃ¶ljande.</summary>
+		<content src="1992-46bab13.pdf" type="application/pdf" le:md5="d7faebbbd422d467e66c2cab77e490e4">
+		</content>
+		<link rel="alternate" href="1992-46bab13.xml" type="application/rdf+xml" length="1036" le:md5="7aa69821e864ca57f126a3969bde597e">
+		</link>
+	</entry>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/bfs/1992:15</id>
+		<updated>2010-06-10T08:19:52Z</updated>
+		<published>2010-06-10T08:19:52Z</published>
+		<title>Boverkets fÃ¶reskrifter om Ã¤ndring av fÃ¶reskrifterna om funktionskontroll av ventilationssystem;</title>
+		<summary>Med stÃ¶d av 4 Â§ fÃ¶rordningen (1991:1273) om funktionskontroll av ventilationssystem fÃ¶reskriver
+           1  Jfr prop. 1990/91:145, BoUI9, rskr. 353. Boverket att verkets fÃ¶reskrifter om funktionskontroll av ventilationssystem skall kompletteras med ett nytt avsnitt under rubriken 
+          Intervaller fÃ¶r Ã¥terkommande besiktning m.m. av fÃ¶ljande lydelse.  FÃ¶rfattningen kommer dÃ¤rfÃ¶r att ha fÃ¶ljande lydelse frÃ¥n och med den dag dÃ¥ denna fÃ¶rfattning trÃ¤der i kraft.</summary>
+		<content src="1992-15ovr64.pdf" type="application/pdf" le:md5="b30a6fef9e8cb3908737751643d55904">
+		</content>
+		<link rel="alternate" href="1992-15ovr64.xml" type="application/rdf+xml" length="1119" le:md5="17d46ad00e41a4e2b5a3d1dfa4e2729d">
+		</link>
+	</entry>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/bfs/1991:36</id>
+		<updated>2010-06-10T08:19:49Z</updated>
+		<published>2010-06-10T08:19:49Z</published>
+		<title>Boverkets fÃ¶reskrifter om funktionskontroll av ventilationssystem;</title>
+		<summary>Boverket fÃ¶reskriver
+           1 Jfr prop. 1990/91:145, BoU19, rskr. 353. fÃ¶ljande med stÃ¶d av 2 Â§ 
+          fÃ¶rordningen (1991:1273) 
+          om funktionskontroll av ventilationssystem.</summary>
+		<content src="1991-36ovr61.pdf" type="application/pdf" le:md5="df1c9e06de9a219c5bffdec4f04b7b11">
+		</content>
+		<link rel="alternate" href="1991-36ovr61.xml" type="application/rdf+xml" length="1023" le:md5="97b2a6c6e0f9744a2359cdb8c5b98411">
+		</link>
+	</entry>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/bfs/1990:27</id>
+		<updated>2010-06-10T08:19:48Z</updated>
+		<published>2010-06-10T08:19:48Z</published>
+		<title>Boverkets fÃ¶reskrifter om stÃ¶d till vissa icke-statliga kulturlokaler;</title>
+		<summary>Boverket fÃ¶reskriver
+           1  Jfr 1989/90: BoU 14, rskr. 168. med stÃ¶d av 8 och 12 Â§Â§ fÃ¶rordningen (1990:573) om stÃ¶d till vissa icke-statliga kulturlokaler fÃ¶ljande.</summary>
+		<content src="1990-27skl1.pdf" type="application/pdf" le:md5="0db65c0ed34954473aaf205cd04b249c">
+		</content>
+		<link rel="alternate" href="1990-27skl1.xml" type="application/rdf+xml" length="1027" le:md5="b7d2edc5be2850077a8503dc365f0c63">
+		</link>
+	</entry>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/bfs/1988:13</id>
+		<updated>2010-06-10T08:19:47Z</updated>
+		<published>2010-06-10T08:19:47Z</published>
+		<title>Bostadsstyrelsens fÃ¶reskrifter om Ã¤ndring av fÃ¶reskrifterna till fÃ¶rordningen (1983:1021) om tillÃ¤ggslÃ¥n fÃ¶r ombyggnad av bostadshus m m;</title>
+		<summary>FÃ¶r att anpassa berÃ¤kningen av fastighetens avkastningsvÃ¤rde till de verkliga kapitalkostnaderna har fÃ¶rÃ¤ndringar gjorts i fÃ¶reskrifterna till 11 Â§ fÃ¶rordningen (1983:1021) om tillÃ¤ggslÃ¥n fÃ¶r ombyggnad av bostadshus m. m. Ã„ndringarna Ã¤r markerade.</summary>
+		<content src="1988-13tob8.pdf" type="application/pdf" le:md5="42434682d832bd5ae5f7620d29402720">
+		</content>
+		<link rel="alternate" href="1988-13tob8.xml" type="application/rdf+xml" length="1160" le:md5="6410855973f14054804bd3db27008b07">
+		</link>
+	</entry>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/bfs/1988:14</id>
+		<updated>2010-06-10T08:19:47Z</updated>
+		<published>2010-06-10T08:19:47Z</published>
+		<title>Bostadsstyrelsens fÃ¶reskrifter om Ã¤ndring av fÃ¶reskrifterna till fÃ¶rordningen (1983:1021) om tillÃ¤ggslÃ¥n fÃ¶r ombyggnad av bostadshus m m;</title>
+		<summary>FÃ¶r att anpassa berÃ¤kningen av fastighetens avkastningsvÃ¤rde till de verkliga kapitalkostnaderna har fÃ¶rÃ¤ndringar gjorts i fÃ¶reskrifterna till 11 Â§ fÃ¶rordningen (1983:1021) om tillÃ¤ggslÃ¥n fÃ¶r ombyggnad av bostadshus m. m. Ã„ndringarna Ã¤r markerade.</summary>
+		<content src="1988-13tob8.pdf" type="application/pdf" le:md5="42434682d832bd5ae5f7620d29402720">
+		</content>
+		<link rel="alternate" href="1988-13tob8.xml" type="application/rdf+xml" length="1164" le:md5="9c4a2261908dc6287cfeba7b88c70ba6">
+		</link>
+	</entry>
+	<entry>
+		<id>http://rinfo.lagrummet.se/publ/bfs/1987:4</id>
+		<updated>2010-06-10T08:19:46Z</updated>
+		<published>2010-06-10T08:19:46Z</published>
+		<title>Bostadsstyrelsens fÃ¶reskrifter och information om Ã¤ndring av fÃ¶reskrifterna och informationen till fÃ¶rordningen (1983:1021) om tillÃ¤ggslÃ¥n fÃ¶r ombyggnad av bostadshus m m;</title>
+		<summary>Med anledning av riksdagens beslut (prop. 1986/87:48) har bl.a. 2, 4 och 7 Â§Â§ 
+          fÃ¶rordningen (1983:1021) 
+          om tillÃ¤ggslÃ¥n fÃ¶r ombyggnad av bostadshus m. m. Ã¤ndrats. Ã„ndringsfÃ¶rordningen har SFS nr 1986:1405 och trÃ¤der i kraft den l januari 1987.</summary>
+		<content src="1987-4tob6.pdf" type="application/pdf" le:md5="4dda62925b0ebfd9bada255cfa80a2f0">
+		</content>
+		<link rel="alternate" href="1987-4tob6.xml" type="application/rdf+xml" length="1191" le:md5="8fbc66d1961d70af74989fc99d3e4ffc">
+		</link>
+	</entry>
+	<entry>
+	<id>http://rinfo.lagrummet.se/publ/dom/md/2013-4/2013-02-26</id>
+	<updated>2013-02-27T00:10:04.2338000Z</updated>
+	<published>2013-02-26T12:57:37Z</published>
+	<title>MD 2013-4</title>
+	<content/>
+	<link href="13899-kort.rdf" le:md5="2ba4db920437068dd6174e8d342443c7" length="1708" rel="alternate" type="application/rdf+xml"/>
+	</entry>
+</feed>	
+	

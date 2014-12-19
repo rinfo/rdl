@@ -10,7 +10,7 @@
         allow from all
     </Directory>
 
-    ProxyPassMatch ^/robots\.txt$ !
+    AliasMatch ^/robots\.txt$ /var/www/robots.txt
     
     ProxyPass / ajp://localhost:8009/rinfo-main/
 </VirtualHost>

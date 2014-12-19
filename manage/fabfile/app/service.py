@@ -2,10 +2,9 @@ import re
 import sys
 from fabric.api import *
 from fabric.contrib.files import exists
-from fabfile.util import venv, mkdirpath
+from fabfile.util import venv, mkdirpath, exit_on_error
 from fabfile import app, sysconf
 from fabfile.target import _needs_targetenv
-from fabfile.app import _deploy_war
 from fabfile.app import _deploy_war_norestart
 from fabfile.server import restart_apache
 from fabfile.server import restart_tomcat
@@ -18,18 +17,21 @@ from os import path as p
 ##
 # Local build
 
+
 @task
 @runs_once
 def package(deps="1", test="1"):
     """Builds and packages the rinfo-service war, configured for the target env."""
-    if int(deps): app.local_lib_rinfo_pkg(test)
+    if int(deps):
+        app.local_lib_rinfo_pkg(test)
     _needs_targetenv()
     flags = "" if int(test) else "-Dmaven.test.skip=true"
     local("cd %(java_packages)s/rinfo-service/ && "
-            "mvn %(flags)s -P%(target)s clean package war:war" % venv(), capture=False)
+          "mvn %(flags)s -P%(target)s clean package war:war" % venv(), capture=False)
 
 ##
 # Server deploy
+
 
 @task
 @runs_once
@@ -38,21 +40,23 @@ def setup():
     """Creates neccessary directories for rinfo-service runtime data."""
     _needs_targetenv()
     if not exists(env.dist_dir):
-        run("mkdir %(dist_dir)s"%env)
+        run("mkdir %(dist_dir)s" % env)
     if not exists(env.rinfo_dir):
-        sudo("mkdir %(rinfo_dir)s"%env)
+        sudo("mkdir %(rinfo_dir)s" % env)
     if not exists(env.rinfo_rdf_repo_dir):
-        sudo("mkdir %(rinfo_rdf_repo_dir)s"%env)
-        sudo("chown %(tomcat_user)s %(rinfo_rdf_repo_dir)s"%env)
+        sudo("mkdir %(rinfo_rdf_repo_dir)s" % env)
+        sudo("chown %(tomcat_user)s %(rinfo_rdf_repo_dir)s" % env)
+
 
 @task
 @roles('service')
+@exit_on_error
 def deploy(headless="0"):
     """Deploys the rinfo-service war package to target env."""
     setup()
-    _deploy_war_norestart(
-            "%(java_packages)s/rinfo-service/target/rinfo-service-%(target)s.war"%env,
-            "rinfo-service", int(headless))
+    _deploy_war_norestart("%(java_packages)s/rinfo-service/target/rinfo-service-%(target)s.war" % env,
+                          "rinfo-service", int(headless))
+
 
 @task
 @roles('service')
@@ -61,16 +65,19 @@ def all(deps="1", test="1", headless="0"):
     package(deps, test)
     deploy(headless)
 
+
 ##
 # Sesame and Repo Util deploy
+
 
 @task
 @roles('service')
 def package_sesame():
     """Packages and deploys the Sesame RDF store war to target env."""
-    env.pkgdir = "%(java_packages)s/rinfo-sesame-http"%env
-    local("cd %(pkgdir)s && mvn package"%env)
-    env.local_sesame_dir = "%(pkgdir)s/target/dependency"%env
+    env.pkgdir = "%(java_packages)s/rinfo-sesame-http" % env
+    local("cd %(pkgdir)s && mvn package" % env)
+    env.local_sesame_dir = "%(pkgdir)s/target/dependency" % env
+
 
 @task
 @roles('service')
@@ -79,7 +86,8 @@ def deploy_sesame():
     package_sesame()
     _patch_catalina_properties()
     for warname in ['openrdf-sesame', 'sesame-workbench']:
-        app._deploy_war("%(local_sesame_dir)s/%(warname)s.war"%venv(), warname)
+        app._deploy_war("%(local_sesame_dir)s/%(warname)s.war" % venv(), warname)
+
 
 def _patch_catalina_properties():
     # This will patch catalina.properties so that it contains the system 
@@ -87,7 +95,7 @@ def _patch_catalina_properties():
     sesame_data_dir_key = "info.aduna.platform.appdata.basedir"
     catalina_properties_path = "%(tomcat)s/conf/catalina.properties" % env
     with settings(warn_only=True):
-        if (sudo("grep '%(sesame_data_dir_key)s' %(catalina_properties_path)s" % venv())):
+        if sudo("grep '%(sesame_data_dir_key)s' %(catalina_properties_path)s" % venv()):
             print "'%(sesame_data_dir_key)s' already present in %(catalina_properties_path)s" % venv()
         else:
             print "'%(sesame_data_dir_key)s' NOT found in %(catalina_properties_path)s" % venv()
@@ -95,8 +103,10 @@ def _patch_catalina_properties():
             sudo("echo '# The data dir for Sesame used by rinfo-service' >> %(catalina_properties_path)s" % venv())
             sudo("echo '%(sesame_data_dir_key)s=%(rinfo_rdf_repo_dir)s' >> %(catalina_properties_path)s" % venv())
 
+
 ##
 # Manage repository
+
 
 @task
 @roles('service')
@@ -105,35 +115,41 @@ def repotool():
     env.rinfo_repo_jar = "rinfo-rdf-repo-%s-jar-with-dependencies.jar" % env.java_pkg_version
     env.rinfo_service_props = "rinfo-service.properties"
 
+
 @task
 @runs_once
 @roles('service')
 def deploy_repotool():
     repotool()
     local("cd %(java_packages)s/rinfo-rdf-repo && "
-            "mvn -P %(target)s assembly:assembly"%env)
-    put("%(java_packages)s/rinfo-service/src/environments/%(target)s/%(rinfo_service_props)s"%env,
-            "%(dist_dir)s/"%env)
-    put("%(java_packages)s/rinfo-rdf-repo/target/%(rinfo_repo_jar)s"%env, "%(dist_dir)s/"%env)
+          "mvn -P %(target)s assembly:assembly" % env)
+    put("%(java_packages)s/rinfo-service/src/environments/%(target)s/%(rinfo_service_props)s" % env,
+        "%(dist_dir)s/" % env)
+    put("%(java_packages)s/rinfo-rdf-repo/target/%(rinfo_repo_jar)s" % env, "%(dist_dir)s/" % env)
+
 
 @task
 @roles('service')
 def setup_repo():
     _repotool('setup')
 
+
 @task
 @roles('service')
 def clean_repo():
     _repotool('clean')
 
+
 def _repotool(cmd):
     repotool()
     run("cd %(dist_dir)s && "
-            "java -jar %(rinfo_repo_jar)s %(cmd)s "
-            "%(rinfo_service_props)s rinfo.service.repo"%venv())
+        "java -jar %(rinfo_repo_jar)s %(cmd)s "
+        "%(rinfo_service_props)s rinfo.service.repo" % venv())
+
 
 ##
 # ElasticSearch install and setup
+
 
 @task
 @roles('service')
@@ -145,8 +161,10 @@ def install_elasticsearch():
         if exists("elasticsearch"):
             sudo("rm elasticsearch")
         sudo("ln -s elasticsearch-%(version)s elasticsearch" % vars())
-        put(p.join(env.manageroot, "sysconf", "common", "elasticsearch", "elasticsearch.yml"), "elasticsearch/config", use_sudo=True)
+        put(p.join(env.manageroot, "sysconf", "common", "elasticsearch", "elasticsearch.yml"),
+            "elasticsearch/config", use_sudo=True)
         sysconf.install_init_d("elasticsearch")
+
 
 def fetch_elasticsearch():
     with open("%(java_packages)s/pom.xml" % env) as pom:
@@ -161,11 +179,13 @@ def fetch_elasticsearch():
             run("wget http://download.elasticsearch.org/elasticsearch/elasticsearch/%s" % elastic_distfile)
     return elastic_version, "%(workdir_elastic)s/%(elastic_distfile)s" % vars()
 
+
 @task
 @roles('service')
 def stop_elasticsearch():
     _needs_targetenv()
     sudo("/etc/init.d/elasticsearch stop")
+
 
 @task
 @roles('service')
@@ -177,6 +197,7 @@ def start_elasticsearch():
 ##
 # Varnish install and setup
 
+
 @task
 @roles('service')
 def install_varnish():
@@ -185,46 +206,62 @@ def install_varnish():
     sudo("echo '%s' | apt-key add -" % gpg_key)
     sudo("echo 'deb http://repo.varnish-cache.org/debian/ wheezy varnish-3.0' >> /etc/apt/sources.list")
     sudo("apt-get update")
-    sudo("apt-get install varnish=3.0.5-1~wheezy -y")
-    stop_varnish() # stop default daemon started by installation
+    sudo("apt-get install varnish=3.0.6-1~wheezy -y")
+    stop_varnish()  # stop default daemon started by installation
     if not exists("%(workdir_varnish)s" % env):
         sudo("mkdir %(workdir_varnish)s" % env)
     if not exists("%(workdir_varnish)s/cache" % env):
         sudo("mkdir %(workdir_varnish)s/cache" % env)
-    put(p.join(env.manageroot, "sysconf", "common", "varnish", "rinfo-service.vcl"), "%(workdir_varnish)s" % env, use_sudo=True)
-    put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "backend.vcl"), "%(workdir_varnish)s" % env, use_sudo=True)
-    put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "host.vcl"), "%(workdir_varnish)s" % env, use_sudo=True)
+    put(p.join(env.manageroot, "sysconf", "common", "varnish", "rinfo-service.vcl"), "%(workdir_varnish)s" % env,
+        use_sudo=True)
+    put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "backend.vcl"), "%(workdir_varnish)s" % env,
+        use_sudo=True)
+    put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "varnish", "host.vcl"), "%(workdir_varnish)s" % env,
+        use_sudo=True)
+    put(p.join(env.manageroot, "sysconf", "%(target)s" % env, "etc", "default", "varnish"), "/etc/default", use_sudo=True) 
+
 
 @task
 @roles('service')
 def stop_varnish():
     sudo("pkill varnishd")
 
+
 @task
 @roles('service')
 def start_varnish():
     _needs_targetenv()
-    sudo("varnishd -a %(listen_ip_varnish)s:8383 -T 127.0.0.1:6082 -s file,%(workdir_varnish)s/cache,1G -p vcl_dir=%(workdir_varnish)s -f %(workdir_varnish)s/rinfo-service.vcl" % env)
+    sudo("/etc/init.d/varnish start")
 
+
+@task
+@roles('service')
+def ban_varnish(ban_path=''):
+    _needs_targetenv()
+    if env.listen_ip_varnish:
+        sudo("curl -X BAN %s:%s/%s" % (env.listen_ip_varnish, env.listen_port_varnish, ban_path))
 
 
 @task
 @roles('service')
 def test():
     _needs_targetenv()
-    url="http://"+env.roledefs['service'][0]
+    url = "http://"+env.roledefs['service'][0]
     with lcd(env.projectroot+"/packages/java/rinfo-service/src/regression"):
-        local("casperjs test . --xunit=%(projectroot)s/testreport/service_test_report.log --url=%(url)s --target=%(target)s --output=%(projectroot)s/testreport/" % venv())
+        local("casperjs test . --xunit=%(projectroot)s/testreport/service_test_report.log --url=%(url)s"
+              " --target=%(target)s --output=%(projectroot)s/testreport/" % venv())
+
 
 @task
 @roles('service')
 def ping_start_collect():
     _needs_targetenv()
-    print ('http://rinfo.regression.lagrummet.se/feed/current')
+    print 'http://rinfo.regression.lagrummet.se/feed/current'
     feed_url = "http://%s/feed/current" % env.roledefs['main'][0]
     collector_url = "http://%s/collector" % env.roledefs['service'][0]
-    if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s"%vars(),"Scheduled collect of"):
+    if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s" % vars(), "Scheduled collect of"):
         raise Exception("Test failed")
+
 
 @task
 @roles('service')
@@ -238,13 +275,14 @@ def clean():
     #msg_sleep(10,"Wait for tomcat start")
     #run("curl -XPOST http://localhost:8080/sesame-workbench/repositories/rinfo/clear")
 
+
 @task
 @roles('service')
 def test_all():
-    all(deps=0,test="0")
+    all(deps="0", test="0")
     restart_apache()
     restart_tomcat()
-    msg_sleep(20,"restart apache, tomcat and wait for service to start")
+    msg_sleep(20, "restart apache, tomcat and wait for service to start")
     try:
         #ping_start_collect()
         #msg_sleep(60,"collect feed")
@@ -255,5 +293,3 @@ def test_all():
         sys.exit(1)
     finally:
         clean()
-
-

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#" xmlns:dct="http://purl.org/dc/terms/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+	<VagledandeDomstolsavgorande rdf:about="http://rinfo.lagrummet.se/publ/dom/mod/p7100-12/2013-01-31">
+		<avgorandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2013-01-30</avgorandedatum>
+		<domstolsavdelning>6</domstolsavdelning>
+		<malnummer>P 7100-12</malnummer>
+		<lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1987:10#k_6-p_26"/>
+		<rattsfallshanvisning rdf:resource="http://rinfo.lagrummet.se/publ/rf/mod/2012:44"/>
+		<dct:title xml:lang="sv">Upphävande av beslut om antagande av detaljplan ----- I - Fråga om det fanns särskilda skäl för att frångå huvudregeln om att huvudmannaskapet för allmänna platser ska ligga på kommunen. Vid den bedömningen beaktade Mark- och miljööverdomstolen planområdets avstånd till kommunens tätort, de befintliga förhållandena i fråga om vägskötsel, avsaknaden av kommunalt bedrivna anläggningar och det svaga motståndet bland de boende inom området mot detaljplanen samt det faktum att andra detaljplaner inom ett större planområde hade enskilt huvudmannaskap. Det var även fråga om en relativt begränsad utbyggnad vilket betyder att områdets ursprungliga karaktär kommer att behållas. Mot denna bakgrund fann Mark- och miljööverdomstolen att kommunen förmått visa att särskilda skäl för enskilt huvudmannaskap förelåg. II - Fråga om kommun vid antagande av detaljplan haft rätt att avsäga sig huvudmannaskapet för gator och andra allmänna platser. Området omfattar 120 fastigheter med både fritidshus och permanentbostäder. Den nya detaljplanen föreslogs innehålla ett tillskott på ca 350 småhus/tomter och utökad byggrätt för befintliga fastigheter. I detaljplanen föreslås att kommunen inte ska vara huvudman för allmän platsmark, utan att en eller flera gemensamhetsföreningar ska bildas för skötsel av dessa ytor. Mark- och miljööverdomstolen konstaterar att planens syfte var att utvidga området till mer än tre gånger dess storlek och skapa en helt ny stadsdel med såväl bostäder som offentlig och kommersiell service och att det ursprungliga fritidshusområdet är en liten del av den överprövade detaljplanen. Sammantaget fann domstolen att kommunen inte visat att det förelåg sådana särskilda skäl som motiverar att man frångår huvudregeln om kommunalt huvudmannaskap inom detaljplanen.</dct:title>
+		<dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/mark-_och_miljoeoeverdomstolen"/>
+		<dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2013-02-13</dct:issued>
+		<dct:subject>
+			<rdf:Description>
+				<rdfs:label xml:lang="sv">Kommunalt huvudmannaskap</rdfs:label>
+			</rdf:Description>
+		</dct:subject>
+		<dct:subject>
+			<rdf:Description>
+				<rdfs:label xml:lang="sv">Allmänna platser</rdfs:label>
+			</rdf:Description>
+		</dct:subject>
+	</VagledandeDomstolsavgorande>
+</rdf:RDF>

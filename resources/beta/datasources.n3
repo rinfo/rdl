@@ -32,7 +32,7 @@
             dct:format "application/atom+xml";
             dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>
         ], [
-            iana:current <https://www.vagledandeavgoranden.dom.se/lagrummet/atom/index.atom>;
+            iana:current <http://v1.va.regression.testfeed.lagrummet.se/index.atom>;
             dct:identifier "tag:vagledandeavgoranden.dom.se,2011:rinfo:feed"^^xsd:anyURI;
             dct:format "application/atom+xml";
             dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>

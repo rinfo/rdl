@@ -2,9 +2,13 @@
 Target Environments
 """
 from fabric.api import *
+from fabfile.util import get_value_from_password_store, PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME, \
+    PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, PASSWORD_FILE_DB_USERNAME_PARAM_NAME, \
+    PASSWORD_FILE_DB_PASSWORD_PARAM_NAME
 
 
 targetenvs = []
+
 
 def targetenv(f):
     """
@@ -15,6 +19,7 @@ def targetenv(f):
     targetenvs.append("target." + f.__name__)
     return task(f)
 
+
 def _needs_targetenv():
     """
     Makes sure that the env dictionary contains a certain set of keys. These
@@ -23,6 +28,7 @@ def _needs_targetenv():
     invoked.
     """
     require('target', 'roledefs', 'dist_dir', 'tomcat', provided_by=targetenvs)
+
 
 @targetenv
 def dev_unix():
@@ -59,6 +65,7 @@ def dev_unix():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
 
 
 @targetenv
@@ -98,6 +105,8 @@ def demo():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
+
 
 @targetenv
 def test():
@@ -136,6 +145,118 @@ def test():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
+
+@targetenv
+def dom():
+    """Set target env to: test"""
+    # Name env:
+    env.target = "dom"
+    # Machines:
+    env.user = 'rinfo'
+    
+    env.roledefs['main'] = ['rinfo.t1.lagr.dev.dom.se']
+    env.roledefs['service'] = ['service.t1.lagr.dev.dom.se']
+    env.roledefs['checker'] = ['checker.t1.lagr.dev.dom.se']
+    env.roledefs['admin'] = ['admin.t1.lagr.dev.dom.se']
+    env.roledefs['lagrummet'] = ['t1.lagr.dev.dom.se']
+
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Varnish
+    env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = "127.0.0.1"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+        'checker': ['checker'],
+        }
+    # Tomcat
+    _tomcat_env()
+
+@targetenv
+def ville():
+    """Set target env to: test"""
+    # Name env:
+    env.target = "ville"
+    # Machines:
+    env.user = 'rinfo'
+
+    env.roledefs['main'] = ['rinfo.ville.lagrummet.se']
+    env.roledefs['service'] = ['service.ville.lagrummet.se']
+    env.roledefs['checker'] = ['checker.ville.lagrummet.se']
+    env.roledefs['admin'] = ['admin.ville.lagrummet.se']
+    env.roledefs['lagrummet'] = ['ville.lagrummet.se']
+
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Varnish
+    env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = "127.0.0.1"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+        'checker': ['checker'],
+        }
+    # Tomcat
+    _tomcat_env()
+
+@targetenv
+def valle():
+    """Set target env to: test"""
+    # Name env:
+    env.target = "valle"
+    # Machines:
+    env.user = 'rinfo'
+
+    env.roledefs['main'] = ['rinfo.valle.lagrummet.se']
+    env.roledefs['service'] = ['service.valle.lagrummet.se']
+    env.roledefs['checker'] = ['checker.valle.lagrummet.se']
+    env.roledefs['admin'] = ['admin.valle.lagrummet.se']
+    env.roledefs['lagrummet'] = ['valle.lagrummet.se']
+
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    # Varnish
+    env.workdir_varnish = "/opt/varnish"
+    env.listen_ip_varnish = "127.0.0.1"
+    # Apache
+    env.admin_webroot = "/var/www/admin"
+    env.docs_webroot = "/var/www/dokumentation"
+    env.apache_sites = {
+        'main': ['rinfo-main', 'admin'],
+        'service': ['service'],
+        'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
+        'checker': ['checker'],
+        }
+    # Tomcat
+    _tomcat_env()
 
 @targetenv
 def regression():
@@ -170,6 +291,8 @@ def regression():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
+
 
 @targetenv
 def beta():
@@ -178,14 +301,11 @@ def beta():
     env.target = "beta"
     # Machines:
     env.user = 'rinfo'
-    env.roledefs = {
-        'main': ['rinfo.beta.lagrummet.se'],
-        'service': ['service.beta.lagrummet.se'],
-        'checker': ['checker.beta.lagrummet.se'],
-        'admin': ['admin.beta.lagrummet.se'],
-        'demosource': ['testfeed.lagrummet.se'],
-        'lagrummet': ['beta.lagrummet.se'],
-    }
+    env.roledefs['main'] = ['rinfo.beta.lagrummet.se']
+    env.roledefs['service'] = ['service.beta.lagrummet.se']
+    env.roledefs['checker'] = ['checker.beta.lagrummet.se']
+    env.roledefs['admin'] = ['admin.beta.lagrummet.se']
+    env.roledefs['lagrummet'] = ['beta.lagrummet.se']
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
@@ -208,6 +328,8 @@ def beta():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
+
 
 @targetenv
 def skrapat():
@@ -242,6 +364,7 @@ def skrapat():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
 
 
 @targetenv
@@ -282,6 +405,8 @@ def testfeed():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
+
 
 @targetenv
 def scraped():
@@ -316,6 +441,8 @@ def scraped():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
+
 
 # Integration is a virtual environment that you could setup on your own computer
 # See README.txt for more information
@@ -353,6 +480,8 @@ def integration():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
+
 
 @targetenv
 def prod():
@@ -361,14 +490,12 @@ def prod():
     env.target = "prod"
     # Machines:
     env.user = 'rinfo'
-    env.roledefs = {
-        'main': ['rinfo.lagrummet.se'],
-        'service': ['service.lagrummet.se'],
-        'checker': ['checker.lagrummet.se'],
-        'doc': ['dev.lagrummet.se'],
-        'admin': ['admin.lagrummet.se'],
-        'lagrummet': ['www.lagrummet.se'],
-    }
+    env.roledefs['main'] = ['rinfo.lagrummet.se']
+    env.roledefs['service'] = ['service.lagrummet.se']
+    env.roledefs['checker'] = ['checker.lagrummet.se']
+    env.roledefs['doc'] = ['dev.lagrummet.se']
+    env.roledefs['admin'] = ['admin.lagrummet.se']
+    env.roledefs['lagrummet'] = ['www.lagrummet.se']
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
@@ -389,15 +516,54 @@ def prod():
     }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
+
+
+@targetenv
+def infrastructure():
+    env.target = "infrastructure"
+    # Machines:
+    env.user = 'rinfo'
+    env.roledefs['emfs'] = ['testfeed.lagrummet.se']
+    env.roledefs['test'] = ['testfeed.lagrummet.se']
+    env.roledefs['regression'] = ['testfeed.lagrummet.se']
+    env.roledefs['skrapat'] = ['testfeed.lagrummet.se']
+    env.roledefs['demosource'] = ['testfeed.lagrummet.se']
+    # Manage
+    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.dist_dir = 'rinfo_dist'
+    # Filesystem paths
+    env.rinfo_dir = '/opt/rinfo'
+    env.rinfo_main_store = "/opt/rinfo/store"
+    env.rinfo_rdf_repo_dir = '/opt/rinfo/sesame-repo'
+    env.demo_data_root = "/opt/rinfo/demo-depots"
+    env.testfeed_ftp_path = '%s/testfeed' % env.ftp_server_url
+    env.regression_compressed_file_name = 'regression.tgz'
+    env.skrapat_compressed_file_name = 'scraped.tgz'
+    # Apache
+    env.apache_sites = {
+        'test': ['test'],
+        'emfs': ['emfs'],
+        'demosource': ['emfs','sfs', 'dv', 'prop', 'sou', 'ds', 'va', 'regression'],
+        'regression': ['regression'],
+        'skrapat': ['skrapat'],
+        }
+    # Tomcat
+    _tomcat_env()
+    _initialize_password()
+
 
 def _tomcat_env():
     env.apache_jk_tomcat = True
     # when change version of tomcat, must check server.xml (../../sysconf/common/tomcat/server.xml)
-    env.tomcat_version = "7.0.54"
+    env.tomcat_version = "7.0.57"
     env.tomcat = "/opt/tomcat"
-    env.tomcat_webapps = "%(tomcat)s/webapps"%env
+    env.tomcat_webapps = "%(tomcat)s/webapps" % env
     env.tomcat_start = '/etc/init.d/tomcat start'
     env.tomcat_stop = '/etc/init.d/tomcat stop'
     env.tomcat_user = 'tomcat'
     env.tomcat_group = 'tomcat'
 
+
+def _initialize_password():
+    env.password = get_value_from_password_store(PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME,env.password)
