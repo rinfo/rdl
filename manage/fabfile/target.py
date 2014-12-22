@@ -183,6 +183,8 @@ def dom():
         }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
+
 
 @targetenv
 def ville():
@@ -220,6 +222,8 @@ def ville():
         }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
+
 
 @targetenv
 def valle():
@@ -257,6 +261,8 @@ def valle():
         }
     # Tomcat
     _tomcat_env()
+    _initialize_password()
+
 
 @targetenv
 def regression():
