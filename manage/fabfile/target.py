@@ -217,7 +217,6 @@ def ville():
     env.apache_sites = {
         'main': ['rinfo-main', 'admin'],
         'service': ['service'],
-        'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
         'checker': ['checker'],
         }
     # Tomcat
@@ -256,7 +255,6 @@ def valle():
     env.apache_sites = {
         'main': ['rinfo-main', 'admin'],
         'service': ['service'],
-        'demosource': ['sfs', 'dv', 'prop', 'sou', 'ds'],
         'checker': ['checker'],
         }
     # Tomcat
