@@ -37,6 +37,8 @@ env.snapshot_name = ""
 
 env.listen_port_varnish = "8383"
 
+env.target_config_dir = "/etc/rinfo/"
+
 # env.roledefs defines available roles but the actual host lists for a certain
 # role is environment dependent and set up by the targets defined in
 # target.py (see i.e. tg_dev_unix)

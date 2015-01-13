@@ -1,6 +1,7 @@
 <configuration>
     <override>
-        <properties fileName="rinfo-main.properties"/>
+        <properties fileName="/etc/rinfo/rinfo-main.properties"/>
+        <!-- <properties fileName="rinfo-main.properties"/> -->
         <properties fileName="rinfo-main-common.properties"/>
     </override>
 </configuration>
