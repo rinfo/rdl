@@ -46,6 +46,9 @@ def setup():
     if not exists(env.rinfo_rdf_repo_dir):
         sudo("mkdir %(rinfo_rdf_repo_dir)s" % env)
         sudo("chown %(tomcat_user)s %(rinfo_rdf_repo_dir)s" % env)
+    if not exists(env.target_config_dir):
+        sudo("mkdir %(target_config_dir)s" % env)
+    put("%(java_packages)s/rinfo-service/src/environments/%(target)s/rinfo-service.properties"  % env,"%(target_config_dir)srinfo-service.properties"  % env, use_sudo=True)
 
 
 @task
