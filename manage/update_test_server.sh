@@ -1,5 +1,6 @@
 #!/bin/sh
 
+fab target.test app.main.setup app.service.setup app.checker.setup
 fab target.test app.admin.all app.main.all app.checker.all app.service.all
 
 EXIT_STATUS=$?
