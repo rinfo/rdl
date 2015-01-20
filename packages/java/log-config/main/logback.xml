@@ -29,9 +29,7 @@
     <appender-ref ref="access-log"/>
   </logger>
   
-  <logger name="se.lagrummet.rinfo" level="info">
-    <appender-ref ref="file"/>
-  </logger>
+  <logger name="se.lagrummet.rinfo" level="info"/>
   
   <root level="warn">
     <appender-ref ref="file"/>
