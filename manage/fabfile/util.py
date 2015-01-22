@@ -1,5 +1,6 @@
 import ConfigParser
 from fabric.api import *
+from fabric.context_managers import hide, cd
 from fabric.contrib.files import exists
 from fabric.decorators import task
 from fabric.operations import put, run
@@ -249,3 +250,21 @@ def install_public_key(id_rsa_pub_filename='id_rsa.pub'):
 
 def role_is_active(role):
     return env.host in env.roledefs[role]
+
+
+def ftp_push(filename, ftp_address, username, password, test=False):
+    if test:
+        print "ftp push %s to %s" % (filename, ftp_address)
+    else:
+        with hide('output','running'):
+            run('curl -T %s %s --user %s:%s --ftp-create-dirs' % (filename, ftp_address, username, password))
+
+
+def ftp_fetch(filename, ftp_address, target_path, username, password, test=False):
+    with cd(target_path):
+        if test:
+            print "ftp fetch %s from %s to %s" % (filename, ftp_address, target_path)
+        else:
+            with hide('output','running'):
+                run('curl %s/%s --user %s:%s --ftp-create-dirs -o %s' % (ftp_address, filename, username, password,
+                                                                     filename))

@@ -47,7 +47,8 @@ def setup():
         sudo("chown -R %(tomcat_user)s %(rinfo_main_store)s" % env)
     if not exists(env.target_config_dir):
         sudo("mkdir %(target_config_dir)s" % env)
-    put("%(java_packages)s/rinfo-main/src/environments/%(target)s/rinfo-main.properties"  % env,"%(target_config_dir)srinfo-main.properties"  % env, use_sudo=True)
+    if not exists("%(target_config_dir)srinfo-main.properties"  % env):
+        put("%(java_packages)s/rinfo-main/src/environments/%(target)s/rinfo-main.properties"  % env,"%(target_config_dir)srinfo-main.properties"  % env, use_sudo=True)
 
 @task
 @roles('main')

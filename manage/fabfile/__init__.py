@@ -33,6 +33,7 @@ env.timestamp = datetime.utcnow().strftime('%Y_%m_%d_%H-%M-%S')
 env.datestamp = datetime.utcnow().strftime('%Y-%m-%d')
 
 env.ftp_server_url = "ftp://archive0d.glesys.com"
+env.repo_server_url = "ftp://archive0d.glesys.com/repo"
 env.snapshot_name = ""
 
 env.listen_port_varnish = "8383"

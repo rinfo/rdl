@@ -8,7 +8,7 @@ import time
 from fabric.api import *
 from os.path import expanduser
 
-from fabfile.util import install_public_key, role_is_active
+from fabfile.util import install_public_key, role_is_active, ftp_push, ftp_fetch
 from util import venv, get_value_from_password_store, PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME
 from target import _needs_targetenv
 from util import test_url
@@ -166,24 +166,6 @@ def untar(filename, target_path, command='xzvf', use_sudo=False, test=False):
             sudo(tar_cmd)
         else:
             run(tar_cmd)
-
-
-def ftp_push(filename, ftp_address, username, password, test=False):
-    if test:
-        print "ftp push %s to %s" % (filename, ftp_address)
-    else:
-        with hide('output','running'):
-            run('curl -T %s %s --user %s:%s --ftp-create-dirs' % (filename, ftp_address, username, password))
-
-
-def ftp_fetch(filename, ftp_address, target_path, username, password, test=False):
-    with cd(target_path):
-        if test:
-            print "ftp fetch %s from %s to %s" % (filename, ftp_address, target_path)
-        else:
-            with hide('output','running'):
-                run('curl %s/%s --user %s:%s --ftp-create-dirs -o %s' % (ftp_address, filename, username, password,
-                                                                     filename))
 
 
 def tar_and_ftp_push(snapshot_name, name, password, source_tar_path, target_path, username, test=False):

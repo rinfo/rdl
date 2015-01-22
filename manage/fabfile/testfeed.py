@@ -1,9 +1,9 @@
 from fabric.api import *
-from fabfile.server import ftp_fetch, untar, create_path, restart_apache, take_ownership
+from fabfile.server import untar, create_path, restart_apache, take_ownership
 from fabfile.sysconf import configure_sites
 from fabfile.target import _needs_targetenv
 from fabfile.util import get_value_from_password_store, PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, \
-    PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME
+    PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, ftp_fetch
 
 
 @roles('regression')
