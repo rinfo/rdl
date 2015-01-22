@@ -68,7 +68,7 @@ def version():
 
 
 @task
-@roles('checker')
+@roles('main')
 def install():
     _needs_targetenv()
     username = get_value_from_password_store(PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, "")

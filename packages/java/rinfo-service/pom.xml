@@ -6,10 +6,10 @@
 
   <groupId>se.lagrummet.rinfo</groupId>
   <artifactId>rinfo-service</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1</version>
   <name>RInfo Service</name>
   <url>http://dev.lagrummet.se/rinfo/</url>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
 
   <parent>
     <groupId>se.lagrummet</groupId>
@@ -132,10 +132,25 @@
 
   </dependencies>
 
+    <distributionManagement>
+        <repository>
+            <id>ftp-repo</id>
+            <name>Main repo</name>
+            <url>ftp://archive0d.glesys.com/repo/</url>
+        </repository>
+    </distributionManagement>
 
-  <build>
+    <build>
     <finalName>${project.artifactId}</finalName>
     <defaultGoal>package</defaultGoal>
+
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+                <version>2.8</version>
+            </extension>
+        </extensions>
 
     <resources>
 
@@ -174,7 +189,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <warName>${project.artifactId}-${environment}</warName>
+          <warName>${project.artifactId}-${project.version}</warName>
           <!--<webResources>
             <resource>
               <filtering>false</filtering>

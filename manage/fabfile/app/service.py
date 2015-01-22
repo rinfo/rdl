@@ -1,11 +1,13 @@
+from _elementtree import ElementTree
 import re
 import sys
 from fabric.api import *
 from fabric.contrib.files import exists
-from fabfile.util import venv, mkdirpath, exit_on_error
+from fabfile.util import venv, mkdirpath, exit_on_error, get_value_from_password_store, \
+    PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, ftp_fetch
 from fabfile import app, sysconf
 from fabfile.target import _needs_targetenv
-from fabfile.app import _deploy_war_norestart
+from fabfile.app import _deploy_war_norestart, _deploy_war_direct
 from fabfile.server import restart_apache
 from fabfile.server import restart_tomcat
 from fabfile.server import tomcat_stop
@@ -50,6 +52,35 @@ def setup():
         sudo("mkdir %(target_config_dir)s" % env)
     if not exists("%(target_config_dir)srinfo-service.properties" % env):
         put("%(java_packages)s/rinfo-service/src/environments/%(target)s/rinfo-service.properties" % env,"%(target_config_dir)srinfo-service.properties" % env, use_sudo=True)
+
+
+@task
+@runs_once
+def deploy_to_repo():
+    with lcd("%s/rinfo-service/" % env.java_packages):
+        local("mvn clean deploy war:war" , capture=False)
+
+
+@task
+def version():
+    pom = ElementTree()
+    pom.parse("%(java_packages)s/rinfo-service/pom.xml" % env)
+    return pom.find('{http://maven.apache.org/POM/4.0.0}version').text
+
+
+@task
+@roles('service')
+def install():
+    _needs_targetenv()
+    username = get_value_from_password_store(PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, "")
+    password = get_value_from_password_store(PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, "")
+    target_path = "%s/tmp/" % env.dist_dir
+    if not exists(target_path):
+        run("mkdir %s" % target_path)
+    use_version = version()
+    filename = "rinfo-service-%s.war" % use_version
+    ftp_fetch(filename, "%s/se/lagrummet/rinfo/rinfo-service/%s" % (env.repo_server_url, use_version), target_path, username, password)
+    _deploy_war_direct(target_path+filename,"rinfo-service.war")
 
 
 @task
