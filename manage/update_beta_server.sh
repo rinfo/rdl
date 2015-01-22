@@ -9,6 +9,6 @@ if [ $EXIT_STATUS -ne 0 ];then
    exit $EXIT_STATUS
 fi
 
-fab target.beta -R main server.restart_tomcat
+fab target.beta -R main,service,checker server.restart_tomcat
 
 

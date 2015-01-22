@@ -9,3 +9,4 @@ if [ $EXIT_STATUS -ne 0 ];then
    exit $EXIT_STATUS
 fi
 
+fab target.demo -R main server.restart_tomcat
