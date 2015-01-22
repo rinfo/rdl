@@ -181,7 +181,7 @@ def install_regression_data(restart_tomcat=True):
 @task
 @roles('main')
 def test_all():
-    all(deps="0", test="0")
+    install()
     restart_apache()
     #if env.target=='regression':
     #    install_regression_data()

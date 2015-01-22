@@ -314,7 +314,7 @@ def clean():
 @task
 @roles('service')
 def test_all():
-    all(deps="0", test="0")
+    install()
     restart_apache()
     restart_tomcat()
     msg_sleep(20, "restart apache, tomcat and wait for service to start")

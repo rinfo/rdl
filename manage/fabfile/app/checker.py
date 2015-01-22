@@ -108,7 +108,7 @@ def clean():
 @task
 @roles('admin')
 def test_all():
-    all(deps="0", test="0")
+    install()
     restart_tomcat()
     restart_apache()
     msg_sleep(20, "restart and tomcat apache")

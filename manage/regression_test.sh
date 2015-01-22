@@ -4,6 +4,9 @@
 # Must run "install_regression_server.sh" first to prepare server
 # If you want no password prompts, you must allso install a public key on the target server
 
+#Build and deploy to repository
+fab app.checker.deploy_to_repo app.service.deploy_to_repo app.main.deploy_to_repo
+
 # Test Admin
 fab target.regression -R admin app.admin.test_all
 EXIT_STATUS=$?

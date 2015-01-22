@@ -23,9 +23,9 @@ fab target.$2 -R main,service,checker,admin app.service.install_varnish
 fab target.$2 -R main,service,checker,admin app.service.start_varnish
 fab target.$2 -R main,service,checker,admin app.service.deploy_sesame
 fab target.$2 -R admin app.admin.all
-fab target.$2 -R main app.main.all
-fab target.$2 -R service app.service.all
-fab target.$2 -R checker app.checker.all
+fab target.$2 app.main.install
+fab target.$2 app.service.install
+fab target.$2 app.checker.install
 
 read -p "[press any key; to restart tomcat and apache on target server(s)]" -s -n1
 fab target.$2 -R main server.restart_all

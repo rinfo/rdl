@@ -1,7 +1,7 @@
 #!/bin/sh
 
 fab target.test app.main.setup app.service.setup app.checker.setup
-fab target.test app.admin.all app.main.all app.checker.all app.service.all
+fab target.test app.admin.all app.main.install app.checker.install app.service.install
 
 EXIT_STATUS=$?
 if [ $EXIT_STATUS -ne 0 ];then
