@@ -8,6 +8,7 @@ import sys
 import time
 import os
 import errno
+import traceback
 from functools import wraps
 
 from os import path as p
@@ -223,6 +224,7 @@ def exit_on_error(func):
         except Exception as e:
             print 'Got some exception, exiting with 1 to make it rain in jenkins..'
             print e
+            traceback.print_exc()
             sys.exit(1)
         raise
     return wrapper

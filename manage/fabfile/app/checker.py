@@ -32,6 +32,9 @@ def package(deps="1", test="1"):
 def setup():
     if not exists(env.dist_dir):
         run("mkdir %(dist_dir)s" % env)
+    if not exists(env.target_config_dir):
+        sudo("mkdir %(target_config_dir)s" % env)
+    put("%(java_packages)s/rinfo-main/src/environments/%(target)s/rinfo-main.properties"  % env,"%(target_config_dir)srinfo-main.properties"  % env, use_sudo=True)
 
 
 @task

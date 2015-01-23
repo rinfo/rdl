@@ -16,24 +16,21 @@ fi
 
 cd manage/fabfile
 
-echo "Enter sudo password: "
-read pwd
-
-fab -p $pwd target.$2 -R main,service,checker,admin sysconf.install_server sysconf.configure_server
-fab -p $pwd target.$2 -R main,service,checker,admin app.service.install_elasticsearch
-fab -p $pwd target.$2 -R main,service,checker,admin app.service.start_elasticsearch
-fab -p $pwd target.$2 -R main,service,checker,admin app.service.install_varnish
-fab -p $pwd target.$2 -R main,service,checker,admin app.service.start_varnish
-fab -p $pwd target.$2 -R main,service,checker,admin app.service.deploy_sesame
-fab -p $pwd target.$2 -R admin app.admin.all
-fab -p $pwd target.$2 -R main app.main.all
-fab -p $pwd target.$2 -R service app.service.all
-fab -p $pwd target.$2 -R checker app.checker.all
+fab target.$2 -R main,service,checker,admin sysconf.install_server sysconf.configure_server
+fab target.$2 -R main,service,checker,admin app.service.install_elasticsearch
+fab target.$2 -R main,service,checker,admin app.service.start_elasticsearch
+fab target.$2 -R main,service,checker,admin app.service.install_varnish
+fab target.$2 -R main,service,checker,admin app.service.start_varnish
+fab target.$2 -R main,service,checker,admin app.service.deploy_sesame
+fab target.$2 -R admin app.admin.all
+fab target.$2 -R main app.main.all
+fab target.$2 -R service app.service.all
+fab target.$2 -R checker app.checker.all
 
 read -p "[press any key; to restart tomcat and apache on target server(s)]" -s -n1
-fab -p $pwd target.$2 -R main server.restart_all
+fab target.$2 -R main server.restart_all
 
 #TODO: make sure that collect of admin-feed is done after lagrummet is installed...
 #...to avoid that any scheduled collect of sources is interrupted by apache/tomcat restarts
 #read -p "[press any key; to start collection via ping_main]" -s -n1
-#fab -p $pwd target.$2 -R admin app.admin.ping_main
+#fab target.$2 -R admin app.admin.ping_main
