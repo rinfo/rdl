@@ -103,14 +103,15 @@ class DataFinder extends Finder {
                     setStatus(Status.CLIENT_ERROR_NOT_FOUND)
                     return null
                 }
-
-                def withManyTitles = subjectsWithManyTitles(itemRepo)
+                def filteredPredicate = "http://purl.org/dc/terms/title"
+                def graph = new GraphCleaner()
+                def withManyTitles = graph.subjectsWithManyPredicate(itemRepo, filteredPredicate)
 
                 withManyTitles.each {
-                    def newTitle = tryGetBetterTitle(it as String, resourceUri)
+                    def newTitle = graph.tryGetDataFromNamedGraph(itemRepo, it as String, filteredPredicate, "${resourceUri}/entry#context")
                     if (!newTitle)
                         return
-                    itemRepo = updateGraph(itemRepo, it as String, newTitle)
+                    itemRepo = graph.updateGraph(itemRepo, it as String, filteredPredicate,newTitle)
                 }
 
                 def rdfRepr = serializeRDF(itemRepo, resourceUri, mediaTypeStr)
@@ -152,72 +153,4 @@ class DataFinder extends Finder {
             outStream.close()
         }
     }
-
-    def subjectsWithManyTitles(Repository itemRepo) {
-        def queryString = getClass().getResourceAsStream(
-                '/sparql/select_s_with_multiple_titles.rq').getText("utf-8")
-
-        def itemCon = itemRepo.getConnection()
-        def dupeQuery = itemCon.prepareTupleQuery(QueryLanguage.SPARQL, queryString)
-        def dupeRes = dupeQuery.evaluate()
-
-        def subjects = []
-
-        if(dupeRes) {
-            try {
-                while (dupeRes.hasNext()) {
-                    def bindingSet = dupeRes.next()
-                    println "value of s: ${bindingSet.getValue("s")}"
-                    subjects << bindingSet.getValue("s").toString()
-                }
-            } catch (OpenRDFException e) {
-                logger.warn("Something went wrong when finding subjects with many to titles Details: " + e.getMessage())
-            } finally {
-                itemCon.close()
-            }
-        }
-        return subjects
-    }
-
-    def tryGetBetterTitle(String subject, String graph) {
-        def conn = repo.getConnection()
-        def constructQueryText = getClass().getResourceAsStream(
-                '/sparql/select_title_from_named.rq').getText("utf-8")
-        try {
-            def query = conn.prepareTupleQuery(QueryLanguage.SPARQL, constructQueryText);
-            query.setBinding("subject", conn.valueFactory.createURI(subject))
-            query.setBinding("graph", conn.valueFactory.createURI("${graph}/entry#context".toString()))
-
-            def result = query.evaluate();
-            if(result.hasNext()) {
-                def binding = result.next()
-                return binding.getValue("title").toString()
-            }
-        } catch (OpenRDFException e) {
-            logger.warn("Something went wrong when finding title to <${subject}> Details: " + e.getMessage())
-        } finally {
-            conn.close()
-        }
-        return ''
-    }
-
-    def updateGraph(Repository itemRepo, String subject, String newData) {
-        def itemCon = itemRepo.getConnection()
-        def updateQueryString = getClass().getResourceAsStream(
-                '/sparql/replace_field.rq').getText("utf-8")
-        try {
-            def updateQuery = itemCon.prepareUpdate(QueryLanguage.SPARQL, updateQueryString)
-            updateQuery.setBinding("subject", itemCon.valueFactory.createURI(subject))
-            updateQuery.setBinding("data", itemCon.valueFactory.createLiteral(newData))
-
-            updateQuery.execute()
-
-            return itemRepo
-        } catch (OpenRDFException e) {
-            logger.warn("Something went wrong when updating subject <${subject}> Details: " + e.getMessage())
-        } finally {
-            itemCon.close()
-        }
-    }
-
 }

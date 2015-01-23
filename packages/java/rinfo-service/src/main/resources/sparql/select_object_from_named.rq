@@ -7,10 +7,10 @@ PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX bibo: <http://purl.org/ontology/bibo/>
 PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
 
-select distinct ?title where {
-    ?subject dct:title ?title . {
+select distinct ?data where {
+    ?subject ?predicate ?data . {
         GRAPH ?graph {
-            ?s dct:title ?title .
+            ?s ?predicate ?data .
           }
     }
 }

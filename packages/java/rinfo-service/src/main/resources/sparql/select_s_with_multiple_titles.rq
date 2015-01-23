@@ -8,6 +8,6 @@ PREFIX bibo: <http://purl.org/ontology/bibo/>
 PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
 
 select ?s where {
-  ?s dct:title ?o
+    ?s ?predicate ?o
 }
 group by ?s having (count(?o) > 1)

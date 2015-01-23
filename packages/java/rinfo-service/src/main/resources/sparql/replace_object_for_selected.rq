@@ -8,8 +8,8 @@ PREFIX bibo: <http://purl.org/ontology/bibo/>
 PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>
 
 DELETE {
-    ?subject dct:title ?o
+    ?subject ?predicate ?o
 }
 INSERT {
-    ?subject dct:title ?data
-} WHERE { ?subject dct:title ?o }
+    ?subject ?predicate ?data
+} WHERE { ?subject ?predicate ?o }
