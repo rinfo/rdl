@@ -62,10 +62,12 @@ def deploy_to_repo():
 
 
 @task
-def version():
-    pom = ElementTree()
-    pom.parse("%(java_packages)s/rinfo-service/pom.xml" % env)
-    return pom.find('{http://maven.apache.org/POM/4.0.0}version').text
+def version(version=""):
+    if version=="":
+        pom = ElementTree()
+        pom.parse("%(java_packages)s/rinfo-service/pom.xml" % env)
+        version = pom.find('{http://maven.apache.org/POM/4.0.0}version').text
+    return version
 
 
 @task
