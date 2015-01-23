@@ -72,14 +72,14 @@ def version(version=""):
 
 @task
 @roles('service')
-def install():
+def install(use_version=""):
     _needs_targetenv()
     username = get_value_from_password_store(PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, "")
     password = get_value_from_password_store(PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, "")
     target_path = "%s/tmp/" % env.dist_dir
     if not exists(target_path):
         run("mkdir %s" % target_path)
-    use_version = version()
+    use_version = version(use_version)
     filename = "rinfo-service-%s.war" % use_version
     ftp_fetch(filename, "%s/se/lagrummet/rinfo/rinfo-service/%s" % (env.repo_server_url, use_version), target_path, username, password)
     _deploy_war_direct(target_path+filename,"rinfo-service.war")
