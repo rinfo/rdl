@@ -159,7 +159,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <warName>${project.artifactId}-${environment}</warName>
-          <webResources>
+          <!--<webResources>
             <resource>
               <filtering>false</filtering>
               <directory>src/environments/${environment}</directory>
@@ -168,7 +168,7 @@
                 <include>**/*</include>
               </includes>
             </resource>
-          </webResources>
+          </webResources>-->
         </configuration>
       </plugin>
 

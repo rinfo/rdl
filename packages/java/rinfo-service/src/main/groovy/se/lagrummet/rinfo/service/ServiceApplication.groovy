@@ -17,6 +17,7 @@ import org.restlet.routing.Variable
 class ServiceApplication extends Application {
 
     static final String CONFIG_PROPERTIES_FILE_NAME = "rinfo-service.properties"
+    static final String COMMON_CONFIG_PROPERTIES_FILE_NAME = "/etc/rinfo/"+CONFIG_PROPERTIES_FILE_NAME
 
     static final String SERVICE_COMPONENTS_CONTEXT_KEY =
             "rinfo.service.components.restlet.context"
@@ -30,7 +31,7 @@ class ServiceApplication extends Application {
     ServiceApplication(Context parentContext) {
         super(parentContext)
         setupExtensions()
-        components = new ServiceComponents(CONFIG_PROPERTIES_FILE_NAME)
+        components = new ServiceComponents(new File(COMMON_CONFIG_PROPERTIES_FILE_NAME).exists()?COMMON_CONFIG_PROPERTIES_FILE_NAME:CONFIG_PROPERTIES_FILE_NAME)
         getContext().getAttributes().putIfAbsent(SERVICE_COMPONENTS_CONTEXT_KEY, components)
     }
 
