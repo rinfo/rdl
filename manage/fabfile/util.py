@@ -9,6 +9,7 @@ import time
 import os
 import errno
 import traceback
+from lxml import etree
 from functools import wraps
 
 from os import path as p
@@ -181,6 +182,12 @@ class JUnitReportItem:
             output.write("    <failure type=\"%s\">%s</failure>" % (self.failure_type, self.failure_description))
             output.write("  </testcase>")
 
+    def xml(self, testsuite):
+        testcase = etree.SubElement(testsuite, 'testcase', classname=self.class_name, name=self.name)
+        if self.failure_type:
+            failure = etree.SubElement(testcase, 'failure', type=self.failure_type)
+            failure.text=self.failure_description
+
 
 class JUnitReport:
     """ Creates a junit xml report """
@@ -201,10 +208,13 @@ class JUnitReport:
             return
         make_sure_directory_exists(file_name)
         print_xml = PrintXml(file_name)
-        print_xml.write("<testsuite tests=\"%i\">" % (len(self.items)))
+        testsuite = etree.Element("testsuite", tests=str(len(self.items)))
+        #print_xml.write("<testsuite tests=\"%i\">" % (len(self.items)))
         for item in self.items:
-            item.write(print_xml)
-        print_xml.write("</testsuite>")
+            #item.write(print_xml)
+            item.xml(testsuite)
+        #print_xml.write("</testsuite>")
+        print_xml.write(etree.tostring(testsuite, pretty_print=True))
         print_xml.close()
 
 
