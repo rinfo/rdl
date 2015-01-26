@@ -707,6 +707,12 @@
             <environment>valle</environment>
         </properties>
     </profile>
+    <profile>
+        <id>viktor</id>
+        <properties>
+            <environment>viktor</environment>
+        </properties>
+    </profile>
       <profile>
           <id>regression</id>
           <properties>
