@@ -1,13 +1,10 @@
 package se.lagrummet.rinfo.service
 
-import org.openrdf.OpenRDFException
-import org.openrdf.query.QueryLanguage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import org.restlet.Context
 import org.restlet.data.CharacterSet
-import org.restlet.data.Language
 import org.restlet.data.MediaType
 import org.restlet.data.Status
 import org.restlet.Request
@@ -17,8 +14,6 @@ import org.restlet.representation.Representation
 import org.restlet.resource.Finder
 import org.restlet.resource.Get
 import org.restlet.resource.ServerResource
-import org.restlet.routing.Router
-
 import org.openrdf.repository.Repository
 
 import org.codehaus.jackson.map.ObjectMapper
@@ -103,15 +98,16 @@ class DataFinder extends Finder {
                     setStatus(Status.CLIENT_ERROR_NOT_FOUND)
                     return null
                 }
+
                 def filteredPredicate = "http://purl.org/dc/terms/title"
-                def graph = new GraphCleaner()
-                def withManyTitles = graph.subjectsWithManyPredicate(itemRepo, filteredPredicate)
+
+                def withManyTitles = GraphCleanUtil.subjectsWithManyPredicate(itemRepo, filteredPredicate)
 
                 withManyTitles.each {
-                    def newTitle = graph.tryGetDataFromNamedGraph(itemRepo, it as String, filteredPredicate, "${resourceUri}/entry#context")
+                    def newTitle = GraphCleanUtil.tryGetDataFromNamedGraph(itemRepo, it as String, filteredPredicate, "${resourceUri}/entry#context")
                     if (!newTitle)
                         return
-                    itemRepo = graph.updateGraph(itemRepo, it as String, filteredPredicate,newTitle)
+                    itemRepo = GraphCleanUtil.updateGraph(itemRepo, it as String, filteredPredicate,newTitle)
                 }
 
                 def rdfRepr = serializeRDF(itemRepo, resourceUri, mediaTypeStr)
