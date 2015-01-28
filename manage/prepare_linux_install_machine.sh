@@ -6,6 +6,7 @@
 sudo apt-get update
 sudo apt-get install git -y
 sudo apt-get install build-essential python-dev python-pkg-resources python-setuptools sudo -y
+sudo apt-get install python-lxml  -y
 sudo easy_install pip
 sudo pip install fabric
 
