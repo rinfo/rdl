@@ -87,9 +87,9 @@ class ServiceApplication extends Application {
                     "/sparql/construct_summary.rq")
             ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
 
-        if (components.elasticQuery) {
+        if (components.elasticQuery && components.simpleElasticQuery) {
             router.attach("/-/{docType}",
-                    new ElasticFinder(ctx, components.elasticQuery))
+                    new ElasticFinder(ctx, components.elasticQuery, components.simpleElasticQuery))
         }
 
         if (mediaDirUrl) {
