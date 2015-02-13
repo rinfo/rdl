@@ -1,0 +1,26 @@
+<VirtualHost *:80>
+    ServerName service.stage.lagrummet.se.se
+    ServerSignature On
+
+    DocumentRoot /var/www/
+    <Directory />
+        Options FollowSymLinks
+        AllowOverride None
+    </Directory>
+    <Directory /var/www/>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride None
+        Order allow,deny
+        allow from all
+    </Directory>
+
+    ProxyPassMatch ^/robots\.txt$ !
+    ProxyPass / ajp://localhost:8009/rinfo-service/
+
+    ServerAdmin rinfo@lagrummet.se
+
+    ErrorLog /var/log/apache2/error.log
+    LogLevel warn
+    CustomLog /var/log/apache2/access.log combined
+
+</VirtualHost>

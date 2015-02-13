@@ -1,0 +1,10 @@
+START=yes
+
+NFILES=131072
+MEMLOCK=82000
+
+DAEMON_OPTS="-a :8383 \
+			-T 127.0.0.1:6082 \
+			-s file,/opt/varnish/cache,1G \
+			-p vcl_dir=/opt/varnish \
+			-f /opt/varnish/rinfo-service.vcl"
