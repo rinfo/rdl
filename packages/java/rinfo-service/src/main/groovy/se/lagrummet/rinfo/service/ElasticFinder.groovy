@@ -29,7 +29,7 @@ class ElasticFinder extends Finder {
     SimpleElasticQuery elasticQuerySimple
     ObjectMapper jsonMapper
 
-    ElasticFinder(Context context, ElasticQuery elasticQuery, SimpleElasticQuery simpleElasticQuery) {
+    ElasticFinder(Context context, ElasticQuery elasticQuery, SimpleElasticQuery simpleElasticQuery = null) {
         super(context)
         this.elasticQuery = elasticQuery
         this.elasticQuerySimple = simpleElasticQuery
@@ -74,7 +74,7 @@ class ElasticFinder extends Finder {
         }
     }
 
-    def isSimpleQuery(Reference ref) {
+    boolean isSimpleQuery(Reference ref) {
         def queryNames = ref.getQueryAsForm(UTF_8)
         queryNames.each {
             if (!simpleFields.contains((it as Parameter).getName()))
