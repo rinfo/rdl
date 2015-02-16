@@ -1,6 +1,6 @@
 <VirtualHost *:80>
     # ServerAdmin webmaster@lagrummet.se
-    ServerName ds.stage.lagrummet.se.se
+    ServerName ds.stage.lagrummet.se
 
     # Use trailing footer line under server-generated documents 
     # (error messages, mod_proxy ftp directory listings, mod_info output, ...), 

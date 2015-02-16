@@ -1,5 +1,5 @@
 <VirtualHost *:80>
-    ServerName service.stage.lagrummet.se.se
+    ServerName service.stage.lagrummet.se
     ServerSignature On
 
     DocumentRoot /var/www/

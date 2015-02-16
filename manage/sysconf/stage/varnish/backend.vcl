@@ -2,5 +2,5 @@
 
 # Set rinfo-service backend for TEST environment
 backend default {
-	.host = "service.stage.lagrummet.se.se";
+	.host = "service.stage.lagrummet.se";
 }
