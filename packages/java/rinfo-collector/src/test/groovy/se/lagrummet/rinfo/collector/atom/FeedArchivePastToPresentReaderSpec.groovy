@@ -139,6 +139,18 @@ class FeedArchivePastToPresentReaderSpec extends Specification {
         reader.effectiveEntries.size() == 1
     }
 
+    def "should update to youngest entry when several available"() {
+        when:
+        def reader = new CollectReader(
+                knownEntry:[id: "http://example.org/doc/1",
+                            updated:"2000-01-01T00:00:02.000Z"])
+
+        reader.readFeed(new URL("${baseUrl}/deleted_updated.atom"))
+        then:
+        reader.entryRow(0) == "<http://example.org/doc/1> @ 2000-01-01T00:00:04.000Z"
+        reader.effectiveEntries.size() == 1
+    }
+
 }
 
 class CollectReader extends FeedArchivePastToPresentReader {

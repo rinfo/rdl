@@ -111,6 +111,7 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
                     if (!ok) {
                         break
                     }
+
                 } catch (Exception e) {
                     // NOTE: storageSession should handle (log and report) errors.
                     ok = false;
@@ -219,23 +220,9 @@ public class RemoteSourceContent extends SourceContent {
 
     @Override
     public void writeTo(OutputStream outStream) throws IOException {
-        // TODO:IMPROVE: retrying http; and also handle failed gets in writeTo(File)
-        boolean ok = true;
         if (getSourceStream() == null) {
-            try {
-                setSourceStream(collectorSession.getResponseAsInputStream(urlPath), false);
-            } catch (FileNotFoundException e) {
-                if(mediaType.equals(MIME_TYPE_PDF)) {
-                    logger.warn("Could not fetch pdf from url: " + urlPath + ". Caused by: " + e + "; details: "+ e.getMessage());
-                    ok = false;
-                } else {
-                    throw e;
-                }
-            }
-        }
-
-        if(ok) {
-           super.writeTo(outStream);
+            setSourceStream(collectorSession.getResponseAsInputStream(urlPath), false);
+            super.writeTo(outStream);
         }
     }
 }

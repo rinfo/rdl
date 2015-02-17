@@ -1,0 +1,20 @@
+<VirtualHost *:80>
+    ServerName [app.vhost.dns.name]
+    ServerSignature On
+
+    AliasMatch ^/robots\.txt$ /var/www/robots.txt
+
+    <Proxy *>
+        Order allow,deny
+        Allow from all
+    </Proxy>
+
+    ProxyPass / [app.ajp.url]
+
+    ServerAdmin rinfo@lagrummet.se
+
+    ErrorLog [app.error_log.file_and_path_name]
+    LogLevel warn
+    CustomLog [app.access_log.file_and_path_name]
+
+</VirtualHost>

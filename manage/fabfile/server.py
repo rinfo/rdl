@@ -3,10 +3,13 @@ Diagnostics and admin tasks
 """
 from __future__ import with_statement
 import contextlib
+from fabric.contrib.project import os
 import time
 from fabric.api import *
-from util import venv, get_value_from_password_store, PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME, \
-    PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME
+from os.path import expanduser
+
+from fabfile.util import install_public_key, role_is_active
+from util import venv, get_value_from_password_store, PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME
 from target import _needs_targetenv
 from util import test_url
 from util import JUnitReport
@@ -109,6 +112,8 @@ def war_props(warname="ROOT"):
 def ping_verify_roledef(report, role_name, url_add, content, name, class_name):
     if env.roledefs[role_name] is None:
         return
+    if len(env.roledefs[role_name])==0:
+        return
     url = "http://%s%s" % (env.roledefs[role_name][0], url_add)
     #test_url(report, name % role_name, class_name % role_name, url, content)
     test_url(report, name, class_name, url, content)
@@ -135,17 +140,13 @@ def ping_verify():
                         'server.%(target)s.ping' % venv())
     ping_verify_roledef(report, 'demosource', '/feed/current.atom', 'atom', 'Verify demosource feed',
                         'server.%(target)s.ping' % venv())
-    ping_verify_roledef(report, 'lagrummet', '', 'Hitta orden!', 'Verify lagrummet search',
+    ping_verify_roledef(report, 'lagrummet', '', 'lagrummet.se', 'Verify lagrummet search',
                         'server.%(target)s.ping' % venv())
 
     if not report.empty():
         report_name = "%(projectroot)s/ping_verify_%(target)s_report.log" % venv()
         report.create_report(report_name)
         print "Created report '%s'" % report_name
-
-
-def role_is_active(role):
-    return env.host in env.roledefs[role]
 
 
 def tar(filename, target_path, command='czvf', test=False):
@@ -171,7 +172,8 @@ def ftp_push(filename, ftp_address, username, password, test=False):
     if test:
         print "ftp push %s to %s" % (filename, ftp_address)
     else:
-        run('curl -T %s %s --user %s:%s --ftp-create-dirs' % (filename, ftp_address, username, password))
+        with hide('output','running'):
+            run('curl -T %s %s --user %s:%s --ftp-create-dirs' % (filename, ftp_address, username, password))
 
 
 def ftp_fetch(filename, ftp_address, target_path, username, password, test=False):
@@ -179,7 +181,8 @@ def ftp_fetch(filename, ftp_address, target_path, username, password, test=False
         if test:
             print "ftp fetch %s from %s to %s" % (filename, ftp_address, target_path)
         else:
-            run('curl %s/%s --user %s:%s --ftp-create-dirs -o %s' % (ftp_address, filename, username, password,
+            with hide('output','running'):
+                run('curl %s/%s --user %s:%s --ftp-create-dirs -o %s' % (ftp_address, filename, username, password,
                                                                      filename))
 
 
@@ -228,11 +231,25 @@ def clean_path(tar_target_path, use_sudo=False, test=False):
         run("rm -rf %s*" % tar_target_path)
 
 
-def create_path(tar_target_path, test=False):
+def create_path(target_path, test=False, use_sudo=False):
     if test:
-        print "Make directory: %s" % tar_target_path
+        print "Make directory: %s" % target_path
         return
-    run("mkdir -p %s" % tar_target_path)
+    if use_sudo:
+        sudo("mkdir -p %s" % target_path)
+    else:
+        run("mkdir -p %s" % target_path)
+
+
+def take_ownership(target_path, test=False, use_sudo=False):
+    if test:
+        print "take ownership of '%s'" % target_path
+        return
+    if use_sudo:
+        sudo("chown %s:%s %s" % (env.user, env.user, target_path) )
+    else:
+        run("chown %s:%s %s" % (env.user, env.user, target_path))
+
 
 
 def calculate_stored_or_new_snapshot_name(snapshot_name):
@@ -315,3 +332,58 @@ def fetch_snapshot_from_ftp_and_install(name='snapshot' ,username='', password='
         # todo empty varnish cache
         if not test:
             tomcat_start()
+
+
+def prefere_ipv4_to_speed_up_debian_updates():
+    sudo('echo "precedence ::ffff:0:0/96  100" >>  /etc/gai.conf')
+
+
+def prepare_sudo_for_debian_and_add_rinfo_user():
+    stored_env_user = env.user
+    env.user = 'root'
+    run('apt-get update')
+    run('apt-get install sudo -y')
+    try:
+        run('whoami')
+        run('useradd %s -m -G sudo -s /bin/bash' % stored_env_user)
+        run('passwd %s' % stored_env_user)
+    except:
+        run('usermod -a -G sudo %s' % stored_env_user)
+        run('passwd %s' % stored_env_user)
+    env.user = stored_env_user
+    # Below sollution is NOT very impressive. To handle that fabric keeps session alive and does'nt update the
+    # sudo group of the user. Therefore it cannot continue. Must restart.
+    try:
+        sudo('pwd') #test sudo works
+    except :
+        print 'Du to debian user group update issues within current ssh session, you need to restart same command again.'
+        raise Exception()
+
+
+@task
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
+def bootstrap():
+    _needs_targetenv()
+    #if not os_version() == 'Debian7':
+    #    print 'Unsupported os version %%' % os_version()
+    #    return
+    prepare_sudo_for_debian_and_add_rinfo_user()
+    prefere_ipv4_to_speed_up_debian_updates()
+
+    install_public_key()
+    if os.path.isfile('%s/.ssh/jenkins_id_rsa.pub' % expanduser('~')):
+        install_public_key('jenkins_id_rsa.pub')
+
+
+@task
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
+def os_version():
+    output = run('cat /etc/*-release')
+    if 'Debian' in output:
+        if 'wheezy':
+            return 'Debian7'
+        if 'squeeze':
+            return 'Debian6'
+        if 'lenny':
+            return 'Debian5'
+    return 'Unknown'

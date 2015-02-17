@@ -1,0 +1,26 @@
+<VirtualHost *:80>
+    ServerName v1.emfs.regression.testfeed.lagrummet.se
+    alias /robots.txt /var/www/robots.txt
+    DocumentRoot /opt/rinfo/demo-depots/regression/v1/emfs
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName v1.sfs.regression.testfeed.lagrummet.se
+    alias /robots.txt /var/www/robots.txt
+    DocumentRoot /opt/rinfo/demo-depots/regression/v1/sfs
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName v1.va.regression.testfeed.lagrummet.se
+    alias /robots.txt /var/www/robots.txt
+    DocumentRoot /opt/rinfo/demo-depots/regression/v1/va
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName v1.admin.regression.testfeed.lagrummet.se
+    alias /robots.txt /var/www/robots.txt
+    DocumentRoot /opt/rinfo/demo-depots/regression/v1/admin
+</VirtualHost>
+<VirtualHost *:80>
+    # ServerAdmin webmaster@lagrummet.se
+    ServerName regression.testfeed.lagrummet.se
+    AliasMatch ^/robots\.txt$ /var/www/robots.txt
+    DocumentRoot /opt/rinfo/demo-depots/regression
+</VirtualHost>

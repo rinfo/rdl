@@ -5,9 +5,7 @@ import org.apache.commons.configuration.ConfigurationException
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
 import se.lagrummet.rinfo.collector.AbstractCollectScheduler
-
 
 class FeedCollectScheduler extends AbstractCollectScheduler {
 
@@ -16,11 +14,14 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
     private URI adminFeedId
     private URL adminFeedUrl
 
+    private Map<URL, URI> whiteListedFeeds = [:]
+
     private Map<URI, CollectorSource> otherSourcesByFeedUrl = Collections.emptyMap()
 
     private Collection<URI> sourceFeedUrls = Collections.emptyList()
 
     Runnable batchCompletedCallback
+    Runnable afterLastJobCallback
 
     private FeedCollector feedCollector
 
@@ -41,6 +42,11 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
 
     public void setAdminFeedUrl(URL adminFeedUrl) {
         this.adminFeedUrl = adminFeedUrl
+        refreshSourceFeedUrls()
+    }
+
+    public void setWhiteListedFeeds(whiteListedFeedsMap) {
+        this.whiteListedFeeds = whiteListedFeedsMap
         refreshSourceFeedUrls()
     }
 
@@ -69,6 +75,9 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
         if (feedUrl.equals(adminFeedUrl)) {
             return new StorageCredentials(
                     new CollectorSource(adminFeedId, adminFeedUrl), true)
+        } else if (whiteListedFeeds.containsKey(feedUrl)) {
+            def feedId = whiteListedFeeds.get(feedUrl)
+            return new StorageCredentials(new CollectorSource(feedId, feedUrl), false)
         } else {
             def source = otherSourcesByFeedUrl.get(feedUrl.toURI())
             if (source == null) {
@@ -95,11 +104,15 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
         if (adminFeedUrl != null) {
             mergedUrls.add(adminFeedUrl.toURI())
         }
+        mergedUrls.addAll(whiteListedFeeds.keySet().collect { it.toURI() })
         mergedUrls.addAll(otherSourcesByFeedUrl.keySet())
         this.sourceFeedUrls = Collections.unmodifiableList(mergedUrls)
     }
 
     protected void afterCompletedCollect(String feedUrlStr) {
         logger.info("Completed collect of <"+ feedUrlStr +">.");
+        if(areJobQueuesEmpty() && afterLastJobCallback != null) {
+            afterLastJobCallback.run()
+        }
     }
 }

@@ -9,7 +9,6 @@ sudo /usr/sbin/a2enmod proxy_http
 sudo apt-get install pgp -y
 
 # admin tools:
-sudo apt-get install wget -y
 sudo apt-get install curl -y
 sudo apt-get install unzip -y
 sudo apt-get install lsof -y

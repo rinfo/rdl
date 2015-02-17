@@ -1,0 +1,17 @@
+<VirtualHost *:80>
+    ServerName rinfo.viktor.lagrummet.se
+    ServerSignature On
+
+    DocumentRoot /var/www/
+    <Directory /var/www/>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride None
+        Order allow,deny
+        allow from all
+    </Directory>
+
+    ProxyPassMatch ^/robots\.txt$ !
+
+    ProxyPass /sesame-workbench/ ajp://localhost:8009/sesame-workbench/
+    ProxyPass / ajp://localhost:8009/rinfo-main/
+</VirtualHost>

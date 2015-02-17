@@ -27,8 +27,8 @@ lookup_name = {
                      '+.regression.lagrummet.se'],
 
     # testfeed
-    '109.74.5.72': ['testfeed.lagrummet.se',
-                    '+.testfeed.lagrummet.se'],
+    '46.21.107.182': ['testfeed.lagrummet.se',
+                      'regression.testfeed.lagrummet.se'],
     # skrapat (really old test feed but still in use)
     '79.99.1.133': ['skrapat.lagrummet.se',
                     '+.skrapat.lagrummet.se'],
@@ -44,13 +44,14 @@ lookup_name = {
                      'rinfo.lagrummet.se'],
     '94.247.169.67': ['dev.lagrummet.se'],
     # produktion (currently NOT reserved for use by virtual machines)
-    '83.145.60.248': ['www.lagrummet.se'],
+    '109.74.8.123': ['www.lagrummet.se',
+                      'lagrummet.se'],
     '94.247.169.66': ['checker.lagrummet.se',
                       'service.lagrummet.se'],
 
-    # produktion (miscellaneous)
-    '109.74.5.72': ['dokumentation.lagrummet.se']
-}
+    # Doc
+    '109.74.5.72': ['dokumentation.lagrummet.se'],
+    }
 
 rinfo_names = ('rinfo', 'admin', 'service', 'checker')
 
@@ -71,11 +72,14 @@ def check_dns_name(host_name, ip, fail=False):
         pass
     if fail:
         if looked_up_ip == ip:
-            print('Lookup failed for "%s". Should not be %s' % (host_name, ip) )
+            print('Lookup failed for "%s". Should not be %s!' % (host_name, ip) )
             success = False
         return
     if looked_up_ip != ip:
-        print('Lookup failed for "%s". Should be %s, but was %s' % (host_name, ip, looked_up_ip) )
+        if looked_up_ip=='':
+            print('Lookup failed for "%s". Should be %s, but was not found!' % (host_name, ip) )
+        else:
+            print('Lookup failed for "%s". Should be %s, but was %s!' % (host_name, ip, looked_up_ip) )
         success = False
 
 

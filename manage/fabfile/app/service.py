@@ -2,7 +2,7 @@ import re
 import sys
 from fabric.api import *
 from fabric.contrib.files import exists
-from fabfile.util import venv, mkdirpath
+from fabfile.util import venv, mkdirpath, exit_on_error
 from fabfile import app, sysconf
 from fabfile.target import _needs_targetenv
 from fabfile.app import _deploy_war_norestart
@@ -46,10 +46,14 @@ def setup():
     if not exists(env.rinfo_rdf_repo_dir):
         sudo("mkdir %(rinfo_rdf_repo_dir)s" % env)
         sudo("chown %(tomcat_user)s %(rinfo_rdf_repo_dir)s" % env)
+    if not exists(env.target_config_dir):
+        sudo("mkdir %(target_config_dir)s" % env)
+    put("%(java_packages)s/rinfo-service/src/environments/%(target)s/rinfo-service.properties"  % env,"%(target_config_dir)srinfo-service.properties"  % env, use_sudo=True)
 
 
 @task
 @roles('service')
+@exit_on_error
 def deploy(headless="0"):
     """Deploys the rinfo-service war package to target env."""
     setup()
@@ -205,7 +209,7 @@ def install_varnish():
     sudo("echo '%s' | apt-key add -" % gpg_key)
     sudo("echo 'deb http://repo.varnish-cache.org/debian/ wheezy varnish-3.0' >> /etc/apt/sources.list")
     sudo("apt-get update")
-    sudo("apt-get install varnish=3.0.5-1~wheezy -y")
+    sudo("apt-get install varnish=3.0.6-1~wheezy -y")
     stop_varnish()  # stop default daemon started by installation
     if not exists("%(workdir_varnish)s" % env):
         sudo("mkdir %(workdir_varnish)s" % env)

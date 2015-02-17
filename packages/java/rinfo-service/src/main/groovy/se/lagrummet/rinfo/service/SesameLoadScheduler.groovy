@@ -12,6 +12,7 @@ class SesameLoadScheduler extends AbstractCollectScheduler {
     ServiceComponents components
     VarnishInvalidator varnishInvalidator
     protected Collection<URI> sourceFeedUrls = new LinkedList<>()
+    def updatedEntries = []
 
     SesameLoadScheduler(components, varnishInvalidator, Collection<URL> sourceFeedUrls) {
         this.components = components
@@ -30,15 +31,17 @@ class SesameLoadScheduler extends AbstractCollectScheduler {
           repoLoader.readFeed(feedUrl)
         } finally {
           repoLoader.shutdown()
+          this.updatedEntries.addAll(repoLoader.updatedEntries)
         }
     }
 
     protected void afterCompletedCollect(String feedUrlStr) {
         logger.info("Completed collect of <"+ feedUrlStr +">.")
 
-        //Remove all objects in varnish cache
-        varnishInvalidator.ban("/")
-
+        updatedEntries.each {
+            varnishInvalidator.ban(it.getPath())
+        }
+        updatedEntries = []
         /**
          * TODO: Improve varnish cache invalidation!
          * Ideally the varnish cache should be invalidated with precision

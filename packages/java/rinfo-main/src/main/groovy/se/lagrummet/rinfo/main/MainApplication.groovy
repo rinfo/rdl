@@ -8,6 +8,7 @@ import org.restlet.Restlet
 import org.restlet.resource.Finder
 import org.restlet.routing.Router
 import org.restlet.routing.Variable
+import se.lagrummet.rinfo.main.storage.ReCollectFeed
 
 import static org.restlet.routing.Template.MODE_EQUALS
 import static org.restlet.routing.Template.MODE_STARTS_WITH
@@ -40,6 +41,7 @@ class MainApplication extends Application {
         def router = new Router(getContext())
         router.attach("/collector",
                 new Finder(getContext(), CollectorHandler)).setMatchingMode(MODE_EQUALS)
+        router.attach("/feed/recollect", ReCollectFeed.createFeed(getContext())).setMatchingMode(MODE_EQUALS)
 
         router.attach(new URL(components.collectorLog.reportBaseUri).path,
                 new Finder(getContext(), LogListResource)).setMatchingMode(MODE_EQUALS)

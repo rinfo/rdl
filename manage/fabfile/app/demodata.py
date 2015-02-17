@@ -123,21 +123,29 @@ def deploy_dataset(dataset):
 
 
 @task
-def deploy_testfeed(dataset):
+def deploy_testfeed(dataset, only_build_and_deploy_war=False):
     key = ""
     for lookup in dataset.keys():
         key = lookup
-    create_depot(key)
-    _copy_local_repo(key, dataset[key])
+    if not only_build_and_deploy_war:
+        create_depot(key)
+        _copy_local_repo(key, dataset[key])
+        upload(key)
     build_dataset_war(key)
-    upload(key)
     deploy_dataset_war(key, restart=False)
 
 
 @task
+@roles('demosource')
 def deploy_all_testfeeds():
     for dataset in exempel_datasets:
         deploy_testfeed(dataset)
+    for key in lagen_nu_datasets:
+        build_dataset_war(key)
+        deploy_dataset_war(key, restart=False)
+    for key in riksdagen_se_datasets:
+        build_dataset_war(key)
+        deploy_dataset_war(key, restart=False)
 
 
 def _mkdir_keep_prev(dir_path):
@@ -171,18 +179,18 @@ def _transform_riksdagen_data(dataset):
 def _copy_local_repo(dataset_key, dataset_value):
     rdf_example_path = dataset_value[0]
     atom_example_subpath_and_file = dataset_value[1]
-    local('cp -r ../../documentation/exempel/documents/publ/' + rdf_example_path +
+    local('cp -r %s/documentation/exempel/documents/publ/' % env.projectroot + rdf_example_path +
           '/* %(demodata_dir)s/%(dataset_key)s' % venv())
-    local('cp -r ../../documentation/exempel/feeds/sources/' + atom_example_subpath_and_file +
+    local('cp -r %s/documentation/exempel/feeds/sources/' % env.projectroot + atom_example_subpath_and_file +
           ' %(demodata_dir)s/%(dataset_key)s/feed.atom' % venv())
 
 
 @task
-@roles('regression')
+@roles('regression','demosource')
 def deploy_regression_tests():
     _needs_targetenv()
     target_dir = env.demo_data_root+"/regression"
     if not exists(target_dir):
         sudo("mkdir -p %(target_dir)s" % venv())
         sudo("chown %(user)s %(target_dir)s" % venv())
-    rsync_project(target_dir, "%(env.projectroot)s/testfeed/regression/" % venv(), exclude=".*", delete=True)
+    rsync_project(target_dir, "%s/testfeeds/regression/" % env.projectroot, exclude=".*")

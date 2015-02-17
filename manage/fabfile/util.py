@@ -1,11 +1,16 @@
 import ConfigParser
 from fabric.api import *
 from fabric.contrib.files import exists
+from fabric.decorators import task
+from fabric.operations import put, run
+from fabric.state import env
 import sys
 import time
 import os
 import errno
-
+import traceback
+from lxml import etree
+from functools import wraps
 
 from os import path as p
 from os.path import expanduser
@@ -61,11 +66,9 @@ def get_password_config():
     try:
         config = ConfigParser.RawConfigParser()
         config.read(password_file_name_)
-        print "Opened %s " % password_file_name_
         return config
     except:
         config = ConfigParser.RawConfigParser()
-        print "Config file not found %s " % password_file_name_
         return config
 
 
@@ -179,6 +182,12 @@ class JUnitReportItem:
             output.write("    <failure type=\"%s\">%s</failure>" % (self.failure_type, self.failure_description))
             output.write("  </testcase>")
 
+    def xml(self, testsuite):
+        testcase = etree.SubElement(testsuite, 'testcase', classname=self.class_name, name=self.name)
+        if self.failure_type:
+            failure = etree.SubElement(testcase, 'failure', type=self.failure_type)
+            failure.text=self.failure_description
+
 
 class JUnitReport:
     """ Creates a junit xml report """
@@ -199,10 +208,13 @@ class JUnitReport:
             return
         make_sure_directory_exists(file_name)
         print_xml = PrintXml(file_name)
-        print_xml.write("<testsuite tests=\"%i\">" % (len(self.items)))
+        testsuite = etree.Element("testsuite", tests=str(len(self.items)))
+        #print_xml.write("<testsuite tests=\"%i\">" % (len(self.items)))
         for item in self.items:
-            item.write(print_xml)
-        print_xml.write("</testsuite>")
+            #item.write(print_xml)
+            item.xml(testsuite)
+        #print_xml.write("</testsuite>")
+        print_xml.write(etree.tostring(testsuite, pretty_print=True))
         print_xml.close()
 
 
@@ -214,6 +226,18 @@ def make_sure_directory_exists(file_name_and_path):
             raise
     return file_name_and_path
 
+def exit_on_error(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            print 'Got some exception, exiting with 1 to make it rain in jenkins..'
+            print e
+            traceback.print_exc()
+            sys.exit(1)
+        raise
+    return wrapper
 
 #<testsuite tests="3">
 #    <testcase classname="foo" name="ASuccessfulTest"/>
@@ -222,3 +246,16 @@ def make_sure_directory_exists(file_name_and_path):
 #        <failure type="NotEnoughFoo"> details about failure </failure>
 #    </testcase>
 #</testsuite>
+
+
+@task
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
+def install_public_key(id_rsa_pub_filename='id_rsa.pub'):
+    mkdirpath('/home/%s/.ssh' % env.user)
+    put('%s/.ssh/%s' % (expanduser('~'), id_rsa_pub_filename), '/home/%s/.' % env.user)
+    run('cat %s >> .ssh/authorized_keys' % id_rsa_pub_filename)
+    run('rm %s' % id_rsa_pub_filename)
+
+
+def role_is_active(role):
+    return env.host in env.roledefs[role]

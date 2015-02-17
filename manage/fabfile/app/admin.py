@@ -3,7 +3,7 @@ from os import sep, path as p
 from fabric.api import *
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
-from fabfile.util import slashed, cygpath
+from fabfile.util import slashed, cygpath, exit_on_error
 from fabfile.target import _needs_targetenv
 from fabfile.util import venv, fullpath
 from fabfile.server import restart_apache
@@ -39,9 +39,9 @@ def package(source=None):
     local("cd %(toolsdir)s/rinfomain && groovy base_as_feed.groovy "
           "-b %(baseresources)s %(sourceopt)s %(outdiropt)s" % venv())
 
-
 @task
 @roles('admin')
+@exit_on_error
 def deploy():
     """Deploy the admin feed to target env."""
     setup()

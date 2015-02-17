@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="sv" xmlns="http://www.w3.org/2005/Atom" xmlns:at="http://purl.org/atompub/tombstones/1.0" xmlns:le="http://purl.org/atompub/link-extensions/1.0">
+<id>tag:vagledandeavgoranden.dom.se,2011:rinfo:feed</id>
+<title>Vägledande avgoranden</title>
+<updated>2013-12-18T15:16:34Z</updated>
+<author>
+<name>Domstolsverket</name>
+<uri>http://www.domstol.se/</uri>
+<email>vagledandeavgoranden@dom.se</email>
+</author>
+<link href="https://www.vagledandeavgoranden.dom.se/lagrummet/atom/index.atom" rel="self"/>
+<link href="https://www.vagledandeavgoranden.dom.se/lagrummet/atom/20130214001.atom" rel="prev-archive"/>
+<at:deleted-entry ref="http://rinfo.lagrummet.se/publ/rf/nja/2008/s_1082" when="2013-02-15T10:58:43.193216000Z"/>
+<at:deleted-entry ref="http://rinfo.lagrummet.se/publ/dom/hd/oe4998-06/2008-11-20" when="2013-02-15T11:07:27.0Z"/>
+
+<entry>
+
+<!-- UPPDATERING: 'id' nedan har uppdaterats från /mod/p7100-12/ till /mmd/p_7100-12/  -->
+<id>http://rinfo.lagrummet.se/publ/dom/mmd/p_7100-12/2013-01-30</id>
+<!-- UPPDATERING SLUT -->
+
+<updated>2013-02-14T00:10:04.522538000Z</updated>
+<published>2013-02-13T14:17:46Z</published>
+<title>MOD P 7100-12</title>
+<content/>
+<link href="13849-kort-uppdaterad.rdf" le:md5="83cb5807cd146fe848b71f99419318a8" length="3238" rel="alternate" type="application/rdf+xml"/>
+</entry>
+
+
+<entry>
+<id>http://rinfo.lagrummet.se/publ/dom/hfd/2486-11/2012-11-07</id>
+<updated>2013-02-23T00:10:04.530040000Z</updated>
+<published>2013-02-14T13:06:28Z</published>
+<title>HFD 2486-11</title>
+<content/>
+<link href="13851-kort-uppdaterad.rdf" le:md5="8cc6490ddd1d865bc14cacdeb0430b1f" length="1741" rel="alternate" type="application/rdf+xml"/>
+</entry>
+
+
+<entry>
+<id>http://rinfo.lagrummet.se/publ/dom/md/2013-4/2013-02-26</id>
+<updated>2013-02-27T00:10:04.2338000Z</updated>
+<published>2013-02-26T12:57:37Z</published>
+<title>MD 2013-4</title>
+<content/>
+<link href="13899-kort-uppdaterad.rdf" le:md5="ddf150082db2e3c68dbae400744e88e5" length="1952" rel="alternate" type="application/rdf+xml"/>
+</entry>
+
+
+</feed>

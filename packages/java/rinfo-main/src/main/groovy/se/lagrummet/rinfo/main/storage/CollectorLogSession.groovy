@@ -1,5 +1,7 @@
 package se.lagrummet.rinfo.main.storage
 
+import se.lagrummet.rinfo.store.depot.DepotWriteException
+
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex
 
 import org.apache.abdera.model.Entry
@@ -231,6 +233,9 @@ class CollectorLogSession implements Closeable {
                  errorDesc.addLiteral("rc:uriSuggestion", uriSuggestion)
             }
             errorAction = ErrorAction.SKIPANDCONTINUE
+        }
+        else if (error instanceof IOException || error instanceof DepotWriteException ) {
+            errorAction = ErrorAction.CONTINUEANDRETRYLATER
         }
         if (errorDesc == null) {
             errorDesc = state.pageDescriber.newDescription(null, "rc:Error")

@@ -689,6 +689,36 @@
             <environment>test</environment>
         </properties>
     </profile>
+    <profile>
+        <id>dom</id>
+        <properties>
+            <environment>dom</environment>
+        </properties>
+    </profile>
+    <profile>
+        <id>ville</id>
+        <properties>
+            <environment>ville</environment>
+        </properties>
+    </profile>
+    <profile>
+        <id>valle</id>
+        <properties>
+            <environment>valle</environment>
+        </properties>
+    </profile>
+    <profile>
+        <id>viktor</id>
+        <properties>
+            <environment>viktor</environment>
+        </properties>
+    </profile>
+    <profile>
+        <id>stage</id>
+        <properties>
+            <environment>stage</environment>
+        </properties>
+    </profile>
       <profile>
           <id>regression</id>
           <properties>
@@ -707,6 +737,12 @@
         <environment>prod</environment>
       </properties>
     </profile>
+      <profile>
+          <id>infrastructure</id>
+          <properties>
+              <environment>infrastructure</environment>
+          </properties>
+      </profile>
     <profile>
       <!-- Site generation activated by a profile to stay compatible with Maven 2. -->
       <!-- Activate on command line with -Psite -->
