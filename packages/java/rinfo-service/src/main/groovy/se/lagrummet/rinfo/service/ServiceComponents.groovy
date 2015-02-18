@@ -13,7 +13,7 @@ import se.lagrummet.rinfo.rdf.repo.RepositoryHandler
 import se.lagrummet.rinfo.rdf.repo.RepositoryHandlerFactory
 
 import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDContext
-import se.lagrummet.rinfo.service.impl.RDLQueryBuilderImpl
+import se.lagrummet.rinfo.service.elasticsearch.impl.RDLQueryBuilderImpl
 
 
 class ServiceComponents {
@@ -149,7 +149,7 @@ class ServiceComponents {
         if(!elasticData) {
             return null
         }
-        return new SimpleElasticQuery(elasticData, getServiceAppBaseUrl(), new RDLQueryBuilderImpl())
+        return new SimpleElasticQuery(elasticData, getServiceAppBaseUrl())
     }
 
     protected Map readJson(String dataPath) {
