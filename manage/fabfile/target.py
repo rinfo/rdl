@@ -2,6 +2,7 @@
 Target Environments
 """
 from fabric.api import *
+from os.path import expanduser
 from fabfile.util import get_value_from_password_store, PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME, \
     PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, PASSWORD_FILE_DB_USERNAME_PARAM_NAME, \
     PASSWORD_FILE_DB_PASSWORD_PARAM_NAME
@@ -45,7 +46,7 @@ def dev_unix():
         'demosource': ['localhost'],
     }
     # Manage
-    env.mgr_workdir = "/home/%(user)s/mgr_work" % env
+    env.mgr_workdir = "%s/mgr_work" % expanduser("~")
     env.dist_dir = 'rinfo_dist'
     # Filesystem paths
     env.rinfo_dir = '/opt/rinfo'

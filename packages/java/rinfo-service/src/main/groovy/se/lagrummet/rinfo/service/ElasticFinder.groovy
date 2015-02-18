@@ -45,6 +45,7 @@ class ElasticFinder extends Finder {
         def status = null
         try {
             if (isSimpleQuery(request.resourceRef)) {
+            //if (false) {
                 data = elasticQuerySimple.search(docType, request.resourceRef)
             } else {
                 data = elasticQuery.search(docType, request.resourceRef)
@@ -64,7 +65,17 @@ class ElasticFinder extends Finder {
         return new ServerResource() {
             @Get("json")
             Representation asJSON() {
+/*
+                println '********************************** DATA *************************************************'
+                println data
+                println '*****************************************************************************************'
+*/
                 def jsonStr = jsonMapper.writeValueAsString(data)
+/*
+                println '---------------------------------- JSON ------------------------------------------------'
+                println jsonStr
+                println '----------------------------------------------------------------------------------------'
+*/
                 def mediaType = MediaType.APPLICATION_JSON
                 if (status != null) {
                     setStatus(status)
