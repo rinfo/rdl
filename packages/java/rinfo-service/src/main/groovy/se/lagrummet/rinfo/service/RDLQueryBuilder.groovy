@@ -17,12 +17,16 @@ public interface RDLQueryBuilder {
 
         void restrictType(Type type)
 
-        Result result()
+        Result result(String iriReplaceUrl)
 
         void close()
     }
 
     interface Result {
         List items();
+
+        double duration()
+
+        Map stats()
     }
 }

@@ -51,6 +51,9 @@ class ElasticQuery {
         this.jsonLdSettings.listFramesData.each {
             this.elasticfields += [(it.key): compress(it.value)?.keySet()]
         }
+//        println "*************************************************** elasticfields *********************************************************************"
+//        println elasticfields.toMapString()
+//        println "*************************************************** elasticfields *********************************************************************"
     }
 
     @CompileStatic

@@ -1,15 +1,16 @@
 package se.lagrummet.rinfo.service
 
-import groovy.transform.CompileStatic
-import org.restlet.data.Reference
+import static org.restlet.data.CharacterSet.UTF_8
 
 class SimpleElasticQuery {
 
+    private final String REQUEST_QUERY_PARAM_NAME = 'q'
+
     ElasticData elasticData
     String serviceAppBaseUrl
-    RDLQueryBuilder builder;
+    RDLQueryBuilder builder
 
-    SimpleElasticQuery(ElasticData elasticData, String serviceAppBaseUrl) {
+    SimpleElasticQuery(ElasticData elasticData, String serviceAppBaseUrl, RDLQueryBuilder builder) {
         this.elasticData = elasticData
         this.serviceAppBaseUrl = serviceAppBaseUrl
         this.builder = builder;
@@ -18,83 +19,64 @@ class SimpleElasticQuery {
     Map search(docType, reference) {
         println '++++++++++++++++++++++++++++++++++++++++++++++++++++++ simpleElasticQuery search ++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
 
+        def queryForm = reference.getQueryAsForm(UTF_8)
+
         def qb = builder.createBuilder()
         try {
+            queryForm.getValuesArray(REQUEST_QUERY_PARAM_NAME).collect() { qb.addQuery(it) }
 
-            reference.get
-            qb.addQuery("Rättsinformationsförordningen")
-            qb.restrictType(RDLQueryBuilder.Type.KonsolideradGrundforfattning)
+            //queryForm.getValuesArray('type') { qb.restrictType(it)}
+            //queryForm.getFirstValue('_stats')
 
-            return [
-                    "@language" : "sv",
-                    "@context" : "/json-ld/context.json",
-                    "startIndex" : 0,
-                    "itemsPerPage" : 50,
-                    "totalResults" : 2,
-                    "duration" : "PT0.023S",
-                    "current" : "/-/publ?_page=0&q=r%C3%A4ttsinformationsf%C3%B6rordning",
-                    items:qb.result().items()
-            ]
+            return createResult(qb.result(serviceAppBaseUrl), reference.getQuery())
         } finally {
             qb.close()
         }
-
     }
 
-    Map staticResult() {
-        Map res = [
-                "@language" : "sv",
-                "@context" : "/json-ld/context.json",
-                "startIndex" : 0,
-                "itemsPerPage" : 50,
-                "totalResults" : 2,
-                "duration" : "PT0.023S",
-                "current" : "/-/publ?_page=0&q=r%C3%A4ttsinformationsf%C3%B6rordning",
-                "items" : [ [
-                        "title" : "Rättsinformationsförordning (1999:175)",
-                        "type" : "KonsolideradGrundforfattning",
-                        "identifier" : "SFS 1999:175 i lydelse enligt SFS 2010:1990",
-                        "konsoliderar" : [
-                                "iri" : "http://rinfo.lagrummet.se/publ/sfs/1999:175"
-                        ],
-                        "iri" : "http://rinfo.lagrummet.se/publ/sfs/1999:175/konsolidering/2011-05-02",
-                        "issued" : "2011-05-02",
-                        "describedby" : "http://localhost:8181/publ/sfs/1999:175/konsolidering/2011-05-02/data.json",
-                        "matches" : [
-                                "text" : [ "<em class=\"match\">Rättsinformationsförordning</em> (1999:175)Ett offentligt rättsinformationssystem  1 § I syfte att tillförsäkra den offentliga förvaltningen och enskilda" ],
-                                "title" : [ "<em class=\"match\">Rättsinformationsförordning</em> (1999:175)" ]
-                        ]
-                ], [
-                        "publisher" : [
-                                "iri" : "http://rinfo.lagrummet.se/org/regeringskansliet"
-                        ],
-                        "rev" : [
-                                "andrar.iri" : [ "http://rinfo.lagrummet.se/publ/sfs/2008:763", "http://rinfo.lagrummet.se/publ/sfs/2010:1990", "http://rinfo.lagrummet.se/publ/sfs/2008:1205" ],
-                                "konsoliderar.iri" : "http://rinfo.lagrummet.se/publ/sfs/1999:175/konsolidering/2011-05-02"
-                        ],
-                        "forfattningssamling" : [
-                                "iri" : "http://rinfo.lagrummet.se/serie/fs/sfs"
-                        ],
-                        "issued" : "1999-03-25",
-                        "type" : "Forordning",
-                        "iri" : "http://rinfo.lagrummet.se/publ/sfs/1999:175",
-                        "title" : "Rättsinformationsförordning (1999:175)",
-                        "ikrafttradandedatum" : "1999-05-01",
-                        "utfardandedatum" : "1999-03-25",
-                        "upphaver" : [
-                                "iri" : "http://rinfo.lagrummet.se/publ/sfs/1980:628"
-                        ],
-                        "identifier" : "SFS 1999:175",
-                        "andrar" : [
-                                "iri" : "http://rinfo.lagrummet.se/publ/sfs/1980:628"
-                        ],
-                        "describedby" : "http://localhost:8181/publ/sfs/1999:175/data.json",
-                        "matches" : [
-                                "text" : [ "0175Svensk författningssamling SFS 1999:175 <em class=\"match\">Rättsinformationsförordning</em>; Utkom från trycket den 13 april 1999 utfärdad den 25 mars 1999. Regeringen" ],
-                                "title" : [ "<em class=\"match\">Rättsinformationsförordning</em> (1999:175)" ]
-                        ]
-                ] ]
+    private Map createResult(RDLQueryBuilder.Result result, String query) {
+        def data = [
+                "@language": "sv",
+                "@context": "/json-ld/context.json",
+                "startIndex": 0,
+                "itemsPerPage": 50,
+                "totalResults": result.items().size(),
+                duration: "PT${result.duration()}S" as String,
+                //"current": "/-/publ?_page=0&q=r%C3%A4ttsinformationsf%C3%B6rordning"
+                "current": "/-/publ?"+query
         ]
-        return res
+        data.items = result.items()
+        data.statistics = result.stats()
+        return data
     }
+
+/*
+    def addPagination(docType, prepSearch, hitsLength, data) {
+        def pageParam = pageParamKey + '=' + prepSearch.page
+        def currentPage = "/-/${docType}?" +
+                ((prepSearch.queryString.indexOf(pageParam) == -1)? "${pageParam}&" : "") +
+                prepSearch.queryString
+        if (prepSearch.page > 0) {
+            data.prev = currentPage.replace(pageParam, pageParamKey + '=' + (prepSearch.page - 1))
+        }
+        data.current = currentPage as String
+        if (hitsLength == data.itemsPerPage &&
+                (data.startIndex + data.itemsPerPage) < data.totalResults) {
+            data.next = currentPage.replace(pageParam, pageParamKey + '=' + (prepSearch.page + 1))
+        }
+    }
+*/
+
+
 }
+
+/*    def data = [
+            "@language": "sv",
+            "@context": jsonLdSettings.ldContextPath,
+            startIndex: prepSearch.startIndex,
+            itemsPerPage: prepSearch.pageSize,
+            totalResults: esRes.hits.totalHits(),
+
+    ]
+*/
+
