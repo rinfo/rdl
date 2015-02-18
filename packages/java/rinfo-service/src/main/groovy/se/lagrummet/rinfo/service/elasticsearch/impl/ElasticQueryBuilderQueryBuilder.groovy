@@ -14,12 +14,12 @@ import se.lagrummet.rinfo.service.elasticsearch.RDLQueryBuilder
 class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
 
     BoolQueryBuilder boolQuery
-    private int hitcount
     private RDLQueryBuilderImpl rdlQueryBuilder
+    private int page
+    private int pageSize
 
-    ElasticQueryBuilderQueryBuilder(RDLQueryBuilderImpl rdlQueryBuilder, int hitcount) {
+    ElasticQueryBuilderQueryBuilder(RDLQueryBuilderImpl rdlQueryBuilder) {
         this.rdlQueryBuilder = rdlQueryBuilder
-        this.hitcount = hitcount
         boolQuery = QueryBuilders.boolQuery()
     }
 
@@ -38,13 +38,13 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
 
         SearchRequestBuilder searchRequestBuilder = createAndPrepareSearchRequestBuilder()
 
-        return new ElasticQueryBuilderResult(response: searchRequestBuilder.execute().actionGet(), iriReplaceUrl: iriReplaceUrl)
+        return new ElasticQueryBuilderResult(response: searchRequestBuilder.execute().actionGet(), iriReplaceUrl: iriReplaceUrl, page:page, pageSize:pageSize)
     }
 
     private SearchRequestBuilder createAndPrepareSearchRequestBuilder() {
         SearchRequestBuilder searchRequestBuilder = rdlQueryBuilder.prepareSearch()
 
-        searchRequestBuilder.setSize(hitcount)
+        calculatePagination(searchRequestBuilder)
         setHighlightedFields(searchRequestBuilder, RDLQueryBuilder.HIGHLIGHTERS_TAG, RDLQueryBuilder.HIGHLIGHTED_FIELDS)
         searchRequestBuilder.addFields(RDLQueryBuilder.SELECT_FIELDS.tokenize(',') as String[])
         searchRequestBuilder.setQuery(boolQuery)
@@ -53,6 +53,13 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
         return searchRequestBuilder
     }
 
+    @Override
+    void setPagination(int page, int pageSize) {
+        this.pageSize = pageSize
+        this.page = page
+    }
+
+    int startIndex() {page * pageSize}
 
     @Override
     void close() {}
@@ -70,6 +77,11 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
                 QueryBuilders.constantScoreQuery(FilterBuilders.termFilter("type", type))
                         .boost(boostValue)
         )
+    }
+
+    private SearchRequestBuilder calculatePagination(SearchRequestBuilder searchRequestBuilder) {
+        searchRequestBuilder.setFrom(startIndex())
+        searchRequestBuilder.setSize(pageSize)
     }
 
     private static void setHighlightedFields(SearchRequestBuilder searchRequestBuilder, highlighters_tag, highlighted_fields) {

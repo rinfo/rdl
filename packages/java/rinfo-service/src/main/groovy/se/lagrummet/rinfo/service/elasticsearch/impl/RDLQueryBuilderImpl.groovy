@@ -27,7 +27,7 @@ public class RDLQueryBuilderImpl implements RDLQueryBuilder {
     
     @Override
     RDLQueryBuilder.QueryBuilder createBuilder() {
-        return new ElasticQueryBuilderQueryBuilder(this, 6)
+        return new ElasticQueryBuilderQueryBuilder(this)
     }
 
     SearchRequestBuilder prepareSearch() {

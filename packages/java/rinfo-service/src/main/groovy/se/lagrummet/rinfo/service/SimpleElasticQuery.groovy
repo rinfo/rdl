@@ -7,7 +7,12 @@ import static org.restlet.data.CharacterSet.UTF_8
 
 class SimpleElasticQuery {
 
-    private final String REQUEST_QUERY_PARAM_NAME = 'q'
+    private final def CONST = [
+            requestQueryParam: "q",
+            defaultPageSize:50,
+            pageParamKey: '_page',
+            pageSizeParamKey: '_pageSize'
+    ]
 
     ElasticData elasticData
     String serviceAppBaseUrl
@@ -26,7 +31,14 @@ class SimpleElasticQuery {
 
         def qb = builder.createBuilder()
         try {
-            queryForm.getValuesArray(REQUEST_QUERY_PARAM_NAME).collect() { qb.addQuery(it) }
+            queryForm.getValuesArray(CONST.requestQueryParam).collect() { qb.addQuery(it) }
+            int page = queryForm.getFirstValue(CONST.pageParamKey)?.toInteger()?:0
+            int pageSize = queryForm.getFirstValue(CONST.pageSizeParamKey)?.toInteger()?:CONST.defaultPageSize
+            if (page<0||pageSize<0)
+                return [:]
+            println "se.lagrummet.rinfo.service.SimpleElasticQuery.search page=${page} pageSize=${pageSize}"
+
+            qb.setPagination(page, pageSize)
 
             //queryForm.getValuesArray('type') { qb.restrictType(it)}
             //queryForm.getFirstValue('_stats')
@@ -41,34 +53,33 @@ class SimpleElasticQuery {
         def data = [
                 "@language": "sv",
                 "@context": "/json-ld/context.json",
-                "startIndex": 0,
-                "itemsPerPage": 50,
-                "totalResults": result.items().size(),
+                "startIndex": result.startIndex(),
+                "itemsPerPage": result.pageSize(),
+                "totalResults": result.totalHits(),
                 duration: "PT${result.duration()}S" as String,
-                //"current": "/-/publ?_page=0&q=r%C3%A4ttsinformationsf%C3%B6rordning"
-                "current": "/-/publ?"+query
         ]
         data.items = result.items()
         data.statistics = result.stats()
+        addPagination("publ", [page: result.page(), queryString: query], result.hitsLength(), data)
         return data
     }
 
-/*
+
     def addPagination(docType, prepSearch, hitsLength, data) {
-        def pageParam = pageParamKey + '=' + prepSearch.page
+        def pageParam = CONST.pageParamKey + '=' + prepSearch.page
         def currentPage = "/-/${docType}?" +
                 ((prepSearch.queryString.indexOf(pageParam) == -1)? "${pageParam}&" : "") +
                 prepSearch.queryString
         if (prepSearch.page > 0) {
-            data.prev = currentPage.replace(pageParam, pageParamKey + '=' + (prepSearch.page - 1))
+            data.prev = currentPage.replace(pageParam, CONST.pageParamKey + '=' + (prepSearch.page - 1))
         }
         data.current = currentPage as String
         if (hitsLength == data.itemsPerPage &&
                 (data.startIndex + data.itemsPerPage) < data.totalResults) {
-            data.next = currentPage.replace(pageParam, pageParamKey + '=' + (prepSearch.page + 1))
+            data.next = currentPage.replace(pageParam, CONST.pageParamKey + '=' + (prepSearch.page + 1))
         }
     }
-*/
+
 
 
 }

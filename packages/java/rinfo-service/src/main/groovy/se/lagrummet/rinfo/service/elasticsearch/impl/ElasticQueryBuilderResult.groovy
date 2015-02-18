@@ -9,6 +9,8 @@ import se.lagrummet.rinfo.service.elasticsearch.RDLQueryBuilder
 class ElasticQueryBuilderResult implements RDLQueryBuilder.Result {
     SearchResponse response
     String iriReplaceUrl
+    private int page
+    private int pageSize
 
     @Override
     List items() {
@@ -24,4 +26,20 @@ class ElasticQueryBuilderResult implements RDLQueryBuilder.Result {
     Map stats() {
         return Utils.buildStats(response)
     }
+
+    @Override int startIndex() {page*pageSize}
+    @Override int pageSize() {pageSize}
+    @Override int page() {page}
+
+    @Override
+    long totalHits() {
+        return response.getHits().totalHits()
+    }
+
+    @Override
+    int hitsLength() {
+        return response.getHits().hits.length
+    }
+
+
 }

@@ -37,6 +37,8 @@ public interface RDLQueryBuilder {
         Result result(String iriReplaceUrl)
 
         void close()
+
+        void setPagination(int page, int pageSize)
     }
 
     interface Result {
@@ -45,5 +47,15 @@ public interface RDLQueryBuilder {
         double duration()
 
         Map stats()
+
+        int startIndex()
+
+        int pageSize()
+
+        long totalHits()
+
+        int hitsLength()
+
+        int page()
     }
 }
