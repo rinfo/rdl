@@ -97,6 +97,11 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <configuration>
           <webApp>${basedir}/target/dependency/openrdf-sesame.war</webApp>
+            <connectors>
+                <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                    <port>8079</port>
+                </connector>
+            </connectors>
           <webAppConfig>
             <contextPath>/openrdf-sesame</contextPath>
           </webAppConfig>
