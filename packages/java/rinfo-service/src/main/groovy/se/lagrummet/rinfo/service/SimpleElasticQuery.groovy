@@ -9,9 +9,11 @@ class SimpleElasticQuery {
 
     private final def CONST = [
             requestQueryParam: "q",
+            requestTypeParam: "type",
             defaultPageSize:50,
             pageParamKey: '_page',
-            pageSizeParamKey: '_pageSize'
+            pageSizeParamKey: '_pageSize',
+            statsParam: '_stats',
     ]
 
     ElasticData elasticData
@@ -31,17 +33,17 @@ class SimpleElasticQuery {
 
         def qb = builder.createBuilder()
         try {
-            queryForm.getValuesArray(CONST.requestQueryParam).collect() { qb.addQuery(it) }
+            queryForm.getValuesArray(CONST.requestQueryParam).collect { qb.addQuery(it) }
             int page = queryForm.getFirstValue(CONST.pageParamKey)?.toInteger()?:0
             int pageSize = queryForm.getFirstValue(CONST.pageSizeParamKey)?.toInteger()?:CONST.defaultPageSize
+            println "se.lagrummet.rinfo.service.SimpleElasticQuery.search page=${page} pageSize=${pageSize}"
             if (page<0||pageSize<0)
                 return [:]
-            println "se.lagrummet.rinfo.service.SimpleElasticQuery.search page=${page} pageSize=${pageSize}"
 
             qb.setPagination(page, pageSize)
 
-            //queryForm.getValuesArray('type') { qb.restrictType(it)}
-            //queryForm.getFirstValue('_stats')
+            queryForm.getValuesArray(CONST.requestTypeParam).collect { qb.restrictType(it)}
+            //queryForm.getFirstValue(CONST.statsParam)
 
             return createResult(qb.result(serviceAppBaseUrl), reference.getQuery())
         } finally {

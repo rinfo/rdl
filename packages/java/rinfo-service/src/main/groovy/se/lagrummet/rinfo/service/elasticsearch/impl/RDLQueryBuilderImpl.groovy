@@ -34,22 +34,5 @@ public class RDLQueryBuilderImpl implements RDLQueryBuilder {
         return elasticData.client.prepareSearch(PREPARED_SEARCH_NAME_INDICE)
     }
 
-    /*********************************************************************** */
-    /******************* Test run ********************************************/
-    /*********************************************************************** */
-
-    public static void main(String[] properties){
-        RDLQueryBuilderImpl elasticQueryBuilder = new RDLQueryBuilderImpl()
-        def qb = elasticQueryBuilder.createBuilder()
-        qb.addQuery("Rättsinformationsförordning")
-        def res = qb.result()
-        println "*************************************************************************************************"
-        println res.items().toString()
-        println "*************************************************************************************************"
-        println "duration=" + res.duration()
-        println "*************************************************************************************************"
-        println res.stats().toMapString()
-        println "*************************************************************************************************"
-    }
 }
 

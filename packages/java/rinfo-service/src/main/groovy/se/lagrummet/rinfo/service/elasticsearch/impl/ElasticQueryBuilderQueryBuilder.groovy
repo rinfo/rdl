@@ -17,6 +17,7 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
     private RDLQueryBuilderImpl rdlQueryBuilder
     private int page
     private int pageSize
+    private def types = []
 
     ElasticQueryBuilderQueryBuilder(RDLQueryBuilderImpl rdlQueryBuilder) {
         this.rdlQueryBuilder = rdlQueryBuilder
@@ -29,7 +30,8 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
     }
 
     @Override
-    void restrictType(RDLQueryBuilder.Type type) {
+    void restrictType(String type) {
+        types.add(type)
     }
 
     @Override
@@ -46,7 +48,9 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
 
         calculatePagination(searchRequestBuilder)
         setHighlightedFields(searchRequestBuilder, RDLQueryBuilder.HIGHLIGHTERS_TAG, RDLQueryBuilder.HIGHLIGHTED_FIELDS)
-        searchRequestBuilder.addFields(RDLQueryBuilder.SELECT_FIELDS.tokenize(',') as String[])
+        searchRequestBuilder.addFields(RDLQueryBuilder.SELECT_FIELDS.tokenize(',').collect {it.trim()} as String[] )
+        if (!types.isEmpty())
+            addSearchQueryForPreSelectedSearchFields(types.toListString(),["type"] as String[],"100%");
         searchRequestBuilder.setQuery(boolQuery)
         searchRequestBuilder.addFacet(FacetBuilders.termsFacet("type").field("type"))
 
@@ -80,14 +84,18 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
     }
 
     private SearchRequestBuilder calculatePagination(SearchRequestBuilder searchRequestBuilder) {
+        println "se.lagrummet.rinfo.service.elasticsearch.impl.ElasticQueryBuilderQueryBuilder.calculatePagination startIndex=${startIndex()} pageSize=${pageSize}"
         searchRequestBuilder.setFrom(startIndex())
         searchRequestBuilder.setSize(pageSize)
     }
 
     private static void setHighlightedFields(SearchRequestBuilder searchRequestBuilder, highlighters_tag, highlighted_fields) {
+        println "se.lagrummet.rinfo.service.elasticsearch.impl.ElasticQueryBuilderQueryBuilder.setHighlightedFields"
         searchRequestBuilder.setHighlighterPreTags(highlighters_tag.start)
         searchRequestBuilder.setHighlighterPostTags(highlighters_tag.end)
-        for (highlightedField in highlighted_fields)
+        for (highlightedField in highlighted_fields) {
+            println "se.lagrummet.rinfo.service.elasticsearch.impl.ElasticQueryBuilderQueryBuilder.setHighlightedFields field=${highlightedField.field} size=${highlightedField.size} number=${highlightedField.number}"
             searchRequestBuilder.addHighlightedField(highlightedField.field, highlightedField.size, highlightedField.number)
+        }
     }
 }

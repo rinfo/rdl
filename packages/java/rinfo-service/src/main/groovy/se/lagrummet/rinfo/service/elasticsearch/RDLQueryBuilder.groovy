@@ -32,7 +32,7 @@ public interface RDLQueryBuilder {
 
         void addQuery(String query)
 
-        void restrictType(Type type)
+        void restrictType(String type)
 
         Result result(String iriReplaceUrl)
 
