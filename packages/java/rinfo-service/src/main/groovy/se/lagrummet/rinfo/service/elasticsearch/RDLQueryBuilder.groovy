@@ -16,10 +16,10 @@ public interface RDLQueryBuilder {
 
     def HIGHLIGHTERS_TAG = [start:"<em class=\"match\">",end:"</em>"]
     def HIGHLIGHTED_FIELDS = [
-            [field:"title", size:150, number:0],
-            [field:"identifier", size:150, number:0],
-            [field:"text", size:150, number:0],
-            [field:"referatrubrik", size:150, number:0]
+            [field:"title", size:150, number:1],
+            [field:"identifier", size:150, number:1],
+            [field:"text", size:150, number:1],
+            [field:"referatrubrik", size:150, number:1]
     ]
     
     enum Type {
