@@ -24,7 +24,7 @@ class ElasticQueryBuilderResult implements RDLQueryBuilder.Result {
 
     @Override
     Map stats() {
-        return Utils.buildStats(response)
+        return Utils.buildStats2(response)
     }
 
     @Override int startIndex() {page*pageSize}

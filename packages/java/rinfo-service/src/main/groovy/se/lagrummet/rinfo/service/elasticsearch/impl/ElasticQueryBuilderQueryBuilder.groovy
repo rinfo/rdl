@@ -5,6 +5,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.search.MatchQuery
+import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.elasticsearch.search.facet.FacetBuilders
 import se.lagrummet.rinfo.service.elasticsearch.RDLQueryBuilder
 
@@ -52,7 +53,8 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
         if (!types.isEmpty())
             addSearchQueryForPreSelectedSearchFields(types.toListString(),["type"] as String[],"100%");
         searchRequestBuilder.setQuery(boolQuery)
-        searchRequestBuilder.addFacet(FacetBuilders.termsFacet("type").field("type"))
+        //searchRequestBuilder.addFacet(FacetBuilders.termsFacet("type").field("type"))
+        searchRequestBuilder.addAggregation(AggregationBuilders.terms("type").field("type").size(100))
 
         return searchRequestBuilder
     }

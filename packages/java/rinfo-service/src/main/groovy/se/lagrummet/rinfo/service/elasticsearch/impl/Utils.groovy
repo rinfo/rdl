@@ -3,6 +3,7 @@ package se.lagrummet.rinfo.service.elasticsearch.impl
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchHits
+import org.elasticsearch.search.aggregations.bucket.terms.Terms
 import org.elasticsearch.search.facet.datehistogram.DateHistogramFacet
 
 /**
@@ -22,6 +23,30 @@ class Utils {
                                 def key = isDate? "year" : isIri? "ref" : "term"
                                 def value = isDate? 1900 + new Date(it.time).year : it.term.toString()
                                 return [(key): value, count: it.count]
+                            }
+                    ]
+                }.findAll {
+                    it.observations
+                }
+        ]
+    }
+
+    static Map buildStats2(SearchResponse esRes) {
+//        Terms typeAgg = esRes.aggregations.get("type")
+//        Terms.Bucket bucket = typeAgg.buckets.get(0)
+//        bucket.key
+        return [
+                type: "DataSet",
+                slices: esRes.aggregations.collect {
+                    def iriPos = it.name.indexOf(".iri")
+                    def isIri = iriPos > -1
+                    return [
+                            dimension: isIri? it.name.substring(0, iriPos) : it.name,
+                            observations: it.buckets.collect {
+                                def isDate = it instanceof DateHistogramFacet.Entry
+                                def key = isDate? "year" : isIri? "ref" : "term"
+                                def value = isDate? 1900 + new Date(it.time).year : it.key.toString()
+                                return [(key): value, count: it.docCount]
                             }
                     ]
                 }.findAll {
