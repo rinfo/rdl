@@ -1,0 +1,18 @@
+<VirtualHost *:80>
+    ServerName checker.stage.lagrummet.se
+    ServerSignature On
+
+    <Proxy *>
+        Order allow,deny
+        Allow from all
+    </Proxy>
+
+    ProxyPass / ajp://localhost:8009/rinfo-checker/
+
+    ServerAdmin rinfo@lagrummet.se
+
+    ErrorLog /var/log/apache2/checker-error.log
+    LogLevel warn
+    CustomLog /var/log/apache2/checker-access.log combined
+
+</VirtualHost>

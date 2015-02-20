@@ -714,6 +714,12 @@
             <environment>viktor</environment>
         </properties>
     </profile>
+    <profile>
+        <id>stage</id>
+        <properties>
+            <environment>stage</environment>
+        </properties>
+    </profile>
       <profile>
           <id>regression</id>
           <properties>

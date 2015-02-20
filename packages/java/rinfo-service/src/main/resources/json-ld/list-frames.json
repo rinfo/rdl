@@ -1,11 +1,10 @@
 {
-
   "publ": {
     "type": "Rattsinformationsdokument",
     "iri": null,
-    "identifier": {"_boost": 100},
-    "title": {"_boost": 20},
-
+    "identifier": {"_boost": 500},
+    "title": {"_boost": 15},
+    "referatrubrik": { "_boost": 20},
     "malnummer": null,
     "diarienummer": null,
 
