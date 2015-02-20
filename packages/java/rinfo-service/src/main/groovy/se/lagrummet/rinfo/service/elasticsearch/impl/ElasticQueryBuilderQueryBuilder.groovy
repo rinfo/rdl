@@ -3,10 +3,12 @@ package se.lagrummet.rinfo.service.elasticsearch.impl
 import org.elasticsearch.action.search.SearchRequestBuilder
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.FilterBuilders
+import org.elasticsearch.index.query.OrFilterBuilder
 import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.TermFilterBuilder
 import org.elasticsearch.index.search.MatchQuery
 import org.elasticsearch.search.aggregations.AggregationBuilders
-import org.elasticsearch.search.facet.FacetBuilders
+import org.elasticsearch.search.aggregations.metrics.tophits.TopHitsBuilder
 import se.lagrummet.rinfo.service.elasticsearch.RDLQueryBuilder
 
 /**
@@ -37,7 +39,7 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
 
     @Override
     RDLQueryBuilder.Result result(String iriReplaceUrl) {
-        boostTypeInSearch(RDLQueryBuilder.Type.KonsolideradGrundforfattning, RDLQueryBuilder.TYPE_BOOST_KONSOLIDERAD_GRUNDFORFATTNING)
+        boostTypeInSearch("KonsolideradGrundforfattning", RDLQueryBuilder.TYPE_BOOST_KONSOLIDERAD_GRUNDFORFATTNING)
 
         SearchRequestBuilder searchRequestBuilder = createAndPrepareSearchRequestBuilder()
 
@@ -53,10 +55,35 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
         if (!types.isEmpty())
             addSearchQueryForPreSelectedSearchFields(types.toListString(),["type"] as String[],"100%");
         searchRequestBuilder.setQuery(boolQuery)
-        //searchRequestBuilder.addFacet(FacetBuilders.termsFacet("type").field("type"))
-        searchRequestBuilder.addAggregation(AggregationBuilders.terms("type").field("type").size(100))
+        prepareGroupResultByType(searchRequestBuilder)
+
+        println searchRequestBuilder
 
         return searchRequestBuilder
+    }
+
+    private static SearchRequestBuilder prepareGroupResultByType(SearchRequestBuilder searchRequestBuilder) {
+        searchRequestBuilder.addAggregation(
+                AggregationBuilders
+                        .filters("byType")
+                        .filter("Lagar",createOrFilterByGroup("Lagar"))
+                        .filter("Rattsfall",createOrFilterByGroup("Rattsfall"))
+                .subAggregation(
+                        setHighlightedFields(
+                            AggregationBuilders.topHits("top")
+                                    .setFetchSource(RDLQueryBuilder.SELECT_FIELDS.tokenize(',').collect {it.trim()} as String[])
+                                    .setSize(4)
+                                    .setFrom(1)
+                            ,RDLQueryBuilder.HIGHLIGHTERS_TAG
+                            ,RDLQueryBuilder.HIGHLIGHTED_FIELDS
+                        )
+                )
+        )
+
+    }
+
+    static OrFilterBuilder createOrFilterByGroup(String group) {
+        FilterBuilders.orFilter(RDLQueryBuilder.TYPE.findAll { it.group==group }.collect { FilterBuilders.termFilter("type", it.type) } as org.elasticsearch.index.query.FilterBuilder[])
     }
 
     @Override
@@ -78,7 +105,7 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
         )
     }
 
-    private BoolQueryBuilder boostTypeInSearch(RDLQueryBuilder.Type type, float boostValue) {
+    private BoolQueryBuilder boostTypeInSearch(String type, float boostValue) {
         boolQuery.should(
                 QueryBuilders.constantScoreQuery(FilterBuilders.termFilter("type", type))
                         .boost(boostValue)
@@ -86,18 +113,17 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
     }
 
     private SearchRequestBuilder calculatePagination(SearchRequestBuilder searchRequestBuilder) {
-        println "se.lagrummet.rinfo.service.elasticsearch.impl.ElasticQueryBuilderQueryBuilder.calculatePagination startIndex=${startIndex()} pageSize=${pageSize}"
         searchRequestBuilder.setFrom(startIndex())
         searchRequestBuilder.setSize(pageSize)
     }
 
-    private static void setHighlightedFields(SearchRequestBuilder searchRequestBuilder, highlighters_tag, highlighted_fields) {
-        println "se.lagrummet.rinfo.service.elasticsearch.impl.ElasticQueryBuilderQueryBuilder.setHighlightedFields"
+    private static def setHighlightedFields(def searchRequestBuilder, highlighters_tag, highlighted_fields) {
         searchRequestBuilder.setHighlighterPreTags(highlighters_tag.start)
         searchRequestBuilder.setHighlighterPostTags(highlighters_tag.end)
         for (highlightedField in highlighted_fields) {
-            println "se.lagrummet.rinfo.service.elasticsearch.impl.ElasticQueryBuilderQueryBuilder.setHighlightedFields field=${highlightedField.field} size=${highlightedField.size} number=${highlightedField.number}"
             searchRequestBuilder.addHighlightedField(highlightedField.field, highlightedField.size, highlightedField.number)
         }
+        return searchRequestBuilder
     }
+
 }

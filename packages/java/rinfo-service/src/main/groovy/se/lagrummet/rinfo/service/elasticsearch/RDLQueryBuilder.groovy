@@ -6,7 +6,7 @@ package se.lagrummet.rinfo.service.elasticsearch
 public interface RDLQueryBuilder {
 
     String PREPARED_SEARCH_NAME_INDICE = "rinfo"
-    float TYPE_BOOST_KONSOLIDERAD_GRUNDFORFATTNING = 1.05f
+    float TYPE_BOOST_KONSOLIDERAD_GRUNDFORFATTNING = 5.05f
     String QUERY_MINIMUM_MATCH = "80%"
 
     String SELECT_FIELDS =
@@ -14,17 +14,40 @@ public interface RDLQueryBuilder {
 
     String[] QUERY_SEARCH_FIELDS = ["identifier^5", "title^2", "text"]
 
-    def HIGHLIGHTERS_TAG = [start:"<em class=\"match\">",end:"</em>"]
+    def HIGHLIGHTERS_TAG = [start:"<span class=\"match\">",end:"</span>"]
     def HIGHLIGHTED_FIELDS = [
             [field:"title", size:150, number:1],
             [field:"identifier", size:150, number:1],
             [field:"text", size:150, number:1],
             [field:"referatrubrik", size:150, number:1]
     ]
-    
-    enum Type {
-        KonsolideradGrundforfattning
-    }
+
+
+    List TYPE = [
+            /* Lagar */
+            [type:"Lag", group:"Lagar"],
+            [type:"Forordning",group:"Lagar"],
+            [type:"KonsolideradGrundforfattning",group:"Lagar"],
+            [type:"Grundlag",group:"Lagar"],
+            [type:"Tillkannagivande",group:"Lagar"],
+            [type:"Rattelseblad",group:"Lagar"],
+            [type:"Brev",group:"Lagar"],
+            [type:"Cirkular",group:"Lagar"],
+            [type:"AllmannaRad",group:"Lagar"],
+            /* Rattsfall */
+            [type:"Rattsfallsnotis",group:"Rattsfall"],
+            [type:"Rattsfallsreferat",group:"Rattsfall"],
+            [type:"VagledandeDomstolsavgorande",group:"Rattsfall"],
+            [type:"VagledandeMyndighetsavgorande",group:"Rattsfall"],
+            /* Foreskrifter */
+            [type:"Myndighetsforeskrift",group:"Foreskrifter"],
+            /* Propositioner */
+            [type:"Proposition",group:"Propositioner"],
+            /* Utredningar */
+            [type:"Kommittedirektiv",group:"Utredningar"],
+            [type:"Utredningsbetankande",group:"Utredningar"],
+            [type:"Utredningsserie",group:"Utredningar"],
+    ]
 
     QueryBuilder createBuilder()
 
