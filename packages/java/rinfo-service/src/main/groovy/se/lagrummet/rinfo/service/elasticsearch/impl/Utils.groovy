@@ -14,36 +14,6 @@ class Utils {
     static Map buildStats(SearchResponse esRes, String iriReplaceUrl) {
         return [
                 type: "DataSet",
-                slices: esRes.facets.collect {
-                    def iriPos = it.name.indexOf(".iri")
-                    def isIri = iriPos > -1
-                    return [
-                            dimension: isIri? it.name.substring(0, iriPos) : it.name,
-                            observations: it.entries.collect {
-                                def isDate = it instanceof DateHistogramFacet.Entry
-                                def key = isDate? "year" : isIri? "ref" : "term"
-                                def value = isDate? 1900 + new Date(it.time).year : it.term.toString()
-                                return [(key): value, count: it.count]
-                            }
-                    ]
-                }.findAll {
-                    it.observations
-                }
-        ]
-    }
-
-    static Map buildStats2(SearchResponse esRes, String iriReplaceUrl) {
-/*
-        Terms typeAgg = esRes.aggregations.get("type")
-        Terms.Bucket bucket = typeAgg.buckets.get(0)
-        bucket.getAggregations().get("top").getH
-        TopHits topHits = bucket.getAggregations().get("top");
-
-        esRes.aggregations.get("top")
-*/
-
-        return [
-                type: "DataSet",
                 slices: esRes.aggregations.collect {
                     def iriPos = it.name.indexOf(".iri")
                     def isIri = iriPos > -1
@@ -130,21 +100,3 @@ class Utils {
         return iri.replaceFirst(/http:\/\/rinfo\.lagrummet\.se\/([^#]+)(#.*)?/, iriReplaceUrl + '$1/data.json$2')
     }
 }
-
-/*
-// sr is here your SearchResponse object
-Terms agg = sr.getAggregations().get("agg");
-
-// For each entry
-for (Terms.Bucket entry : agg.getBuckets()) {
-    String key = entry.getKey();                    // bucket key
-    long docCount = entry.getDocCount();            // Doc count
-    logger.info("key [{}], doc_count [{}]", key, docCount);
-
-    // We ask for top_hits for each bucket
-    TopHits topHits = entry.getAggregations().get("top");
-    for (SearchHit hit : topHits.getHits().getHits()) {
-        logger.info(" -> id [{}], _source [{}]", hit.getId(), hit.getSourceAsString());
-    }
-}
-*/
