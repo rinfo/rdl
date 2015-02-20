@@ -7,6 +7,7 @@ import org.elasticsearch.index.query.OrFilterBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.TermFilterBuilder
 import org.elasticsearch.index.search.MatchQuery
+import org.elasticsearch.search.aggregations.AbstractAggregationBuilder
 import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.elasticsearch.search.aggregations.metrics.tophits.TopHitsBuilder
 import se.lagrummet.rinfo.service.elasticsearch.RDLQueryBuilder
@@ -76,7 +77,7 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
                                     .setFrom(1)
                             ,RDLQueryBuilder.HIGHLIGHTERS_TAG
                             ,RDLQueryBuilder.HIGHLIGHTED_FIELDS
-                        )
+                        ) as AbstractAggregationBuilder
                 )
         )
 
