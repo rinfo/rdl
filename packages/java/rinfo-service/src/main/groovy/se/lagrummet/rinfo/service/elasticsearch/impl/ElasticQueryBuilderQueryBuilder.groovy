@@ -74,7 +74,6 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
                             AggregationBuilders.topHits("top")
                                     .setFetchSource(RDLQueryBuilder.SELECT_FIELDS.tokenize(',').collect {it.trim()} as String[])
                                     .setSize(4)
-                                    .setFrom(1)
                             ,RDLQueryBuilder.HIGHLIGHTERS_TAG
                             ,RDLQueryBuilder.HIGHLIGHTED_FIELDS
                         ) as AbstractAggregationBuilder
