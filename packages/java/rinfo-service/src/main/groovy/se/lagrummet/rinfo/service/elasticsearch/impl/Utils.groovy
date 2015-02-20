@@ -27,7 +27,7 @@ class Utils {
                                 return [(
                                         key): value,
                                         count: it.docCount,
-                                        items: createListOfSearchHits2(topHits.hits, iriReplaceUrl)
+                                        items: createListOfTopSearchHits(topHits.hits, iriReplaceUrl)
                                 ]
                             }
                     ]
@@ -37,28 +37,11 @@ class Utils {
         ]
     }
 
-    /*"statistics" : {
-    "type" : "DataSet",
-    "slices" : [ {
-      "dimension" : "type",
-      "observations" : [ {
-        "term" : "KonsolideradGrundforfattning",
-        "count" : 9440
-      }, {
-        "term" : "Forordning",
-        "count" : 27
-      }, {
-        "term" : "Rattsfallsreferat",
-        "count" : 1
-      } ]
-    } ]
-  },*/
-
-    static List createListOfSearchHits2(SearchHits hits, String iriReplaceUrl) {
+    static List createListOfTopSearchHits(SearchHits hits, String iriReplaceUrl) {
         def list = []
         for (def hit : hits) {
-            def source = hit.getSource()
-            list.add(source)
+            hit.fields = hit.getSource()
+            list.add( buildResultItem(hit, iriReplaceUrl))
         }
         return list
     }
@@ -82,8 +65,10 @@ class Utils {
                 lItem = item.get(baseKey, [:])
                 lKey = key.substring(dotAt + 1)
             }
-            if (hf.value != null) {
-                lItem[lKey] = hf.values.size() > 1?  hf.values : hf.value
+            if (hf.value && !(hf instanceof String)) {
+                lItem[lKey] = hf.values.size() > 1 ?  hf.values : hf.value
+            } else {
+                lItem[lKey] = hf
             }
         }
         if (item.iri) {
