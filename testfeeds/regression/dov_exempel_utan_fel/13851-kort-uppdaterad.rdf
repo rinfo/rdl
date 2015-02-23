@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#" xmlns:dct="http://purl.org/dc/terms/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+	<VagledandeDomstolsavgorande rdf:about="http://rinfo.lagrummet.se/publ/dom/hfd/2486-11/2012-11-07">
+		<avgorandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2012-11-07</avgorandedatum>
+		<domstolsavdelning>2</domstolsavdelning>
+		<malnummer>2486-11</malnummer>
+		<lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1977:1160#k_3-p_2"/>
+		<lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/1991:900#k_10-p_8"/>
+		<lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2010:800#k_2-p_2"/>
+		<lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2010:800#k_2-p_8"/>
+		<rattsfallshanvisning rdf:resource="http://rinfo.lagrummet.se/publ/rf/ra/2001/not/195"/>
+		<dct:title xml:lang="sv">En kommuns beslut att av arbetsmiljöskäl vägra en grundskoleelevs personliga assistenter att i skolan utföra assistansarbete åt eleven har inte ansetts olagligt. Laglighetsprövning enligt kommunallagen.</dct:title>
+		
+		<!-- UPPDATERING: 'publisher' nedan har uppdaterats från 'hoegsta_forvaltningsdomstolen' till 'hoegsta_foervaltningsdomstolen'  -->
+		<dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/hoegsta_foervaltningsdomstolen"/>
+		<!-- UPPDATERING SLUT -->
+		
+		<dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2013-02-14</dct:issued>
+		<dct:subject>
+			<rdf:Description>
+				<rdfs:label xml:lang="sv">Laglighetsprövning enligt kommunallagen</rdfs:label>
+			</rdf:Description>
+		</dct:subject>
+	</VagledandeDomstolsavgorande>
+</rdf:RDF>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#" xmlns:dct="http://purl.org/dc/terms/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+	<VagledandeDomstolsavgorande rdf:about="http://rinfo.lagrummet.se/publ/dom/md/2013-4/2013-02-26">
+		<avgorandedatum rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2013-02-26</avgorandedatum>
+		<malnummer>2013-4</malnummer>
+		<lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2008:486#p_10"/>
+		<lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2008:486#p_3"/>
+		<lagrum rdf:resource="http://rinfo.lagrummet.se/publ/sfs/2008:486#p_8"/>
+		<lagrum>
+			<rdf:Description>
+				<dct:description>Artikel 2 k i Europaparlamentets och rådets direktiv 2005/29/EG om otillbörliga affärsmetoder som tillämpas av näringsidkare gentemot konsumenter</dct:description>
+			</rdf:Description>
+		</lagrum>
+		<dct:title xml:lang="sv">Marknadsföring av ost. Fråga om påstående om öppnande av ostbutik vid tillfällig försäljning i s.k. shop-in-shop är vilseledande. Även fråga om innebörden av köpbeslut.	</dct:title>
+		<dct:publisher rdf:resource="http://rinfo.lagrummet.se/org/marknadsdomstolen"/>
+		<dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2013-02-26</dct:issued>
+		<dct:subject>
+			<rdf:Description>
+				<rdfs:label xml:lang="sv">Affärsbeslut</rdfs:label>
+			</rdf:Description>
+		</dct:subject>
+		<dct:subject>
+			<rdf:Description>
+				<rdfs:label xml:lang="sv">Shop-in-shop</rdfs:label>
+			</rdf:Description>
+		</dct:subject>
+		<dct:subject>
+			<rdf:Description>
+				<rdfs:label xml:lang="sv">Vilseledande marknadsföring</rdfs:label>
+			</rdf:Description>
+		</dct:subject>
+	</VagledandeDomstolsavgorande>
+</rdf:RDF>

@@ -1,7 +1,7 @@
 import sys
 from fabric.api import *
 from fabric.contrib.files import exists
-from fabfile.util import venv
+from fabfile.util import venv, exit_on_error
 from fabfile.app import local_lib_rinfo_pkg
 from fabfile.app import _deploy_war_norestart
 from fabfile.target import _needs_targetenv
@@ -45,10 +45,13 @@ def setup():
     if not exists(env.rinfo_main_store):
         sudo("mkdir %(rinfo_main_store)s" % env)
         sudo("chown -R %(tomcat_user)s %(rinfo_main_store)s" % env)
-
+    if not exists(env.target_config_dir):
+        sudo("mkdir %(target_config_dir)s" % env)
+    put("%(java_packages)s/rinfo-main/src/environments/%(target)s/rinfo-main.properties"  % env,"%(target_config_dir)srinfo-main.properties"  % env, use_sudo=True)
 
 @task
 @roles('main')
+@exit_on_error
 def deploy(headless="0"):
     """Deploys the rinfo-main war package to target env."""
     setup()
@@ -95,7 +98,11 @@ def test():
 @roles('main')
 def ping_start_collect_admin():
     _needs_targetenv()
-    feed_url = "http://%s/feed/current.atom" % env.roledefs['demosource'][0]
+    feed_url = ''
+    if env.target=='regression':
+        feed_url = "http://%s/feed/current.atom" % env.roledefs['demosource'][0]
+    else:
+        feed_url = "http://%s/feed/current" % env.roledefs['admin'][0]
     collector_url = "http://%s/collector" % env.roledefs['main'][0]
     if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s" % vars(), "Scheduled collect of"):
         raise Exception("Test failed")

@@ -67,7 +67,8 @@ class Components {
         ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets", false),
         PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
         COLLECTOR_LOG_DATA_DIR("rinfo.main.collector.logDataDir"),
-        COMPLETE_FEEDS_ID_INDEX_DIR("rinfo.main.collector.completeFeedsIndexDir");
+        COMPLETE_FEEDS_ID_INDEX_DIR("rinfo.main.collector.completeFeedsIndexDir"),
+        WHITELISTED_FEEDS("rinfo.main.collector.whiteListedFeed");
 
         String value;
         boolean requiredValue = true;
@@ -170,6 +171,12 @@ class Components {
         configure(collectScheduler, "rinfo.main.collector")
         //collectScheduler.adminFeedId = new URI(configString(ConfigKey.ADMIN_FEED_ID))
         //collectScheduler.adminFeedUrl = new URL(configString(ConfigKey.ADMIN_FEED_URL))
+
+        collectScheduler.whiteListedFeeds = configString(ConfigKey.WHITELISTED_FEEDS).split(';').inject([:]) { map, token ->
+            token.split('=').with { map[new URL(it[0])] = new URI(it[1]) }
+            map
+        }
+
         def publicSubscriptionFeed = new URL(
                 configString(ConfigKey.PUBLIC_SUBSCRIPTION_FEED))
         def onCompletePingTargets = new ArrayList<URL>()
