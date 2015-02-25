@@ -55,7 +55,7 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
         searchRequestBuilder.addFields(RDLQueryBuilder.SELECT_FIELDS.tokenize(',').collect {it.trim()} as String[] )
         if (!types.isEmpty())
             addSearchQueryForPreSelectedSearchFields(types.toListString(),["type"] as String[],"100%");
-        searchRequestBuilder.setQuery(ReduceFilterQueryScore(boolQuery))
+        searchRequestBuilder.setQuery(ReduceScoreFilterForMultipleTitlesOnQuery(boolQuery))
 
         prepareGroupResultByType(searchRequestBuilder)
 
@@ -118,7 +118,7 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
         searchRequestBuilder.setSize(pageSize)
     }
 
-    private def ReduceFilterQueryScore(def query) {
+    private def ReduceScoreFilterForMultipleTitlesOnQuery(def query) {
         QueryBuilders.functionScoreQuery(query as QueryBuilder,
             ScoreFunctionBuilders.scriptFunction(
                 "if(_source.title instanceof List) { 1/pow(3, _source.title.size()) } else { 1 }"
