@@ -4,12 +4,12 @@ import org.elasticsearch.action.search.SearchRequestBuilder
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.OrFilterBuilder
+import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.index.query.TermFilterBuilder
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.index.search.MatchQuery
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder
 import org.elasticsearch.search.aggregations.AggregationBuilders
-import org.elasticsearch.search.aggregations.metrics.tophits.TopHitsBuilder
 import se.lagrummet.rinfo.service.elasticsearch.RDLQueryBuilder
 
 /**
@@ -55,7 +55,8 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
         searchRequestBuilder.addFields(RDLQueryBuilder.SELECT_FIELDS.tokenize(',').collect {it.trim()} as String[] )
         if (!types.isEmpty())
             addSearchQueryForPreSelectedSearchFields(types.toListString(),["type"] as String[],"100%");
-        searchRequestBuilder.setQuery(boolQuery)
+        searchRequestBuilder.setQuery(ReduceFilterQueryScore(boolQuery))
+
         prepareGroupResultByType(searchRequestBuilder)
 
         println searchRequestBuilder
@@ -115,6 +116,14 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
     private SearchRequestBuilder calculatePagination(SearchRequestBuilder searchRequestBuilder) {
         searchRequestBuilder.setFrom(startIndex())
         searchRequestBuilder.setSize(pageSize)
+    }
+
+    private def ReduceFilterQueryScore(def query) {
+        QueryBuilders.functionScoreQuery(query as QueryBuilder,
+            ScoreFunctionBuilders.scriptFunction(
+                "if(_source.title instanceof List) { 1/pow(3, _source.title.size()) } else { 1 }"
+            )
+        )
     }
 
     private static def setHighlightedFields(def searchRequestBuilder, highlighters_tag, highlighted_fields) {
