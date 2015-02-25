@@ -65,7 +65,7 @@ class Utils {
                 lItem = item.get(baseKey, [:])
                 lKey = key.substring(dotAt + 1)
             }
-            if (hf.value && !(hf instanceof String)) {
+            if (hf.value && !(hf instanceof String) && !(hf instanceof List)) {
                 lItem[lKey] = hf.values.size() > 1 ?  hf.values : hf.value
             } else {
                 lItem[lKey] = hf
