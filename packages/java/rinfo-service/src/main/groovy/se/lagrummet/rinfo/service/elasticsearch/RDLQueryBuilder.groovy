@@ -6,7 +6,6 @@ package se.lagrummet.rinfo.service.elasticsearch
 public interface RDLQueryBuilder {
 
     String PREPARED_SEARCH_NAME_INDICE = "rinfo"
-    float TYPE_BOOST_KONSOLIDERAD_GRUNDFORFATTNING = 5.05f
     String QUERY_MINIMUM_MATCH = "80%"
 
     String SELECT_FIELDS =
@@ -27,7 +26,7 @@ public interface RDLQueryBuilder {
             /* Lagar */
             [type:"Lag", group:"Lagar"],
             [type:"Forordning",group:"Lagar"],
-            [type:"KonsolideradGrundforfattning",group:"Lagar"],
+            [type:"KonsolideradGrundforfattning",group:"Lagar", boost: 5.05f],
             [type:"Grundlag",group:"Lagar"],
             [type:"Tillkannagivande",group:"Lagar"],
             [type:"Rattelseblad",group:"Lagar"],

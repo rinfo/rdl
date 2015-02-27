@@ -5,7 +5,6 @@ import org.elasticsearch.index.query.BoolFilterBuilder
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.OrFilterBuilder
-import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.index.search.MatchQuery
@@ -26,7 +25,7 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
 
     ElasticQueryBuilderQueryBuilder(RDLQueryBuilderImpl rdlQueryBuilder) {
         this.rdlQueryBuilder = rdlQueryBuilder
-        boolQueryBuilderExplained = new BoolQueryBuilderExplained()
+        boolQueryBuilderExplained = new BoolQueryBuilderExplained(RDLQueryBuilder.TYPE)
 
     }
 
@@ -65,7 +64,6 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
         setHighlightedFields(searchRequestBuilder, RDLQueryBuilder.HIGHLIGHTERS_TAG, RDLQueryBuilder.HIGHLIGHTED_FIELDS)
         searchRequestBuilder.addFields(RDLQueryBuilder.SELECT_FIELDS.tokenize(',').collect {it.trim()} as String[] )
 
-        boolQueryBuilderExplained.boostTypeInSearch("KonsolideradGrundforfattning", RDLQueryBuilder.TYPE_BOOST_KONSOLIDERAD_GRUNDFORFATTNING)
         boolQueryBuilderExplained.imposeTo(searchRequestBuilder)
 
         if (!types.isEmpty())
@@ -129,9 +127,26 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
 
     private static class BoolQueryBuilderExplained {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+        private List listOfTypesToBoost = []
 
-        BoolQueryBuilderExplained() {
+        BoolQueryBuilderExplained(List listOfTypesToBoost) {
+            this.listOfTypesToBoost = listOfTypesToBoost
             reduceScoreFilterForMultipleTitlesOnQuery()
+            addBoostOfTypeInQuery()
+        }
+
+        private def reduceScoreFilterForMultipleTitlesOnQuery() {
+            QueryBuilders.functionScoreQuery(boolQuery,
+                    ScoreFunctionBuilders.scriptFunction(
+                            "if(_source.title instanceof List) { 1/pow(3, _source.title.size()) } else { 1 }"
+                    )
+            )
+        }
+
+        private void addBoostOfTypeInQuery() {
+            listOfTypesToBoost.findAll { it.containsKey('boost') }.each {
+                boolQueryBuilderExplained.boostTypeInSearch(it.type, it.boost)
+            }
         }
 
         BoolQueryBuilder addSearchQueryForPreSelectedSearchFields(String queryText, String[] searchFields, String minimalMatchPercent) {
@@ -146,14 +161,6 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
             boolQuery.should(
                     QueryBuilders.constantScoreQuery(FilterBuilders.termFilter("type", type))
                             .boost(boostValue)
-            )
-        }
-
-        private def reduceScoreFilterForMultipleTitlesOnQuery() {
-            QueryBuilders.functionScoreQuery(boolQuery,
-                    ScoreFunctionBuilders.scriptFunction(
-                            "if(_source.title instanceof List) { 1/pow(3, _source.title.size()) } else { 1 }"
-                    )
             )
         }
 
