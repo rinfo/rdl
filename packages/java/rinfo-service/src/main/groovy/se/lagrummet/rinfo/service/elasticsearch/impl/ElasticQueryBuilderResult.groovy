@@ -1,12 +1,12 @@
 package se.lagrummet.rinfo.service.elasticsearch.impl
 
 import org.elasticsearch.action.search.SearchResponse
-import se.lagrummet.rinfo.service.elasticsearch.RDLQueryBuilder
+import se.lagrummet.rinfo.service.elasticsearch.ElasticSearchQueryBuilder
 
 /**
  * Created by christian on 2/18/15.
  */
-class ElasticQueryBuilderResult implements RDLQueryBuilder.Result {
+class ElasticQueryBuilderResult implements ElasticSearchQueryBuilder.Result {
     SearchResponse response
     String iriReplaceUrl
     private int page

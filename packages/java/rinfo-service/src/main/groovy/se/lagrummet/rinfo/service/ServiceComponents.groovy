@@ -13,8 +13,6 @@ import se.lagrummet.rinfo.rdf.repo.RepositoryHandler
 import se.lagrummet.rinfo.rdf.repo.RepositoryHandlerFactory
 
 import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDContext
-import se.lagrummet.rinfo.service.elasticsearch.impl.RDLQueryBuilderImpl
-
 
 class ServiceComponents {
 

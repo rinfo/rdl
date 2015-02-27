@@ -1,7 +1,7 @@
 package se.lagrummet.rinfo.service
 
-import se.lagrummet.rinfo.service.elasticsearch.RDLQueryBuilder
-import se.lagrummet.rinfo.service.elasticsearch.impl.RDLQueryBuilderImpl
+import se.lagrummet.rinfo.service.elasticsearch.ElasticSearchQueryBuilder
+import se.lagrummet.rinfo.service.elasticsearch.impl.ElasticSearchQueryBuilderImpl
 
 import static org.restlet.data.CharacterSet.UTF_8
 
@@ -18,12 +18,12 @@ class SimpleElasticQuery {
 
     ElasticData elasticData
     String serviceAppBaseUrl
-    RDLQueryBuilder builder
+    ElasticSearchQueryBuilder builder
 
     SimpleElasticQuery(ElasticData elasticData, String serviceAppBaseUrl) {
         this.elasticData = elasticData
         this.serviceAppBaseUrl = serviceAppBaseUrl
-        this.builder = new RDLQueryBuilderImpl(elasticData)
+        this.builder = new ElasticSearchQueryBuilderImpl(elasticData)
     }
 
     Map search(docType, reference) {
@@ -51,7 +51,7 @@ class SimpleElasticQuery {
         }
     }
 
-    private Map createResult(RDLQueryBuilder.Result result, String query) {
+    private Map createResult(ElasticSearchQueryBuilder.Result result, String query) {
         def data = [
                 "@language": "sv",
                 "@context": "/json-ld/context.json",

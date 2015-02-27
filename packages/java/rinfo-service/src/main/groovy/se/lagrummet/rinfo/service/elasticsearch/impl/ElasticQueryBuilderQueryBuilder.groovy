@@ -10,28 +10,28 @@ import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.index.search.MatchQuery
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder
 import org.elasticsearch.search.aggregations.AggregationBuilders
-import se.lagrummet.rinfo.service.elasticsearch.RDLQueryBuilder
+import se.lagrummet.rinfo.service.elasticsearch.ElasticSearchQueryBuilder
 
 /**
  * Created by christian on 2/18/15.
  */
-class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
+class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.QueryBuilder {
 
     BoolQueryBuilderExplained boolQueryBuilderExplained
-    private RDLQueryBuilderImpl rdlQueryBuilder
+    private ElasticSearchQueryBuilderImpl rdlQueryBuilder
     private int page
     private int pageSize
     private def types = []
 
-    ElasticQueryBuilderQueryBuilder(RDLQueryBuilderImpl rdlQueryBuilder) {
+    ElasticQueryBuilderQueryBuilder(ElasticSearchQueryBuilderImpl rdlQueryBuilder) {
         this.rdlQueryBuilder = rdlQueryBuilder
-        boolQueryBuilderExplained = new BoolQueryBuilderExplained(RDLQueryBuilder.TYPE)
+        boolQueryBuilderExplained = new BoolQueryBuilderExplained(ElasticSearchQueryBuilder.TYPE)
 
     }
 
     @Override
     void addQuery(String queryText) {
-        boolQueryBuilderExplained.addSearchQueryForPreSelectedSearchFields(queryText, RDLQueryBuilder.QUERY_SEARCH_FIELDS, RDLQueryBuilder.QUERY_MINIMUM_MATCH)
+        boolQueryBuilderExplained.addSearchQueryForPreSelectedSearchFields(queryText, ElasticSearchQueryBuilder.QUERY_SEARCH_FIELDS, ElasticSearchQueryBuilder.QUERY_MINIMUM_MATCH)
     }
 
     @Override
@@ -51,7 +51,7 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
     void close() {}
 
     @Override
-    RDLQueryBuilder.Result result(String iriReplaceUrl) {
+    ElasticSearchQueryBuilder.Result result(String iriReplaceUrl) {
         SearchRequestBuilder searchRequestBuilder = createAndPrepareSearchRequestBuilder()
 
         return new ElasticQueryBuilderResult(response: searchRequestBuilder.execute().actionGet(), iriReplaceUrl: iriReplaceUrl, page:page, pageSize:pageSize)
@@ -61,8 +61,8 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
         SearchRequestBuilder searchRequestBuilder = rdlQueryBuilder.prepareSearch()
 
         calculatePagination(searchRequestBuilder)
-        setHighlightedFields(searchRequestBuilder, RDLQueryBuilder.HIGHLIGHTERS_TAG, RDLQueryBuilder.HIGHLIGHTED_FIELDS)
-        searchRequestBuilder.addFields(RDLQueryBuilder.SELECT_FIELDS.tokenize(',').collect {it.trim()} as String[] )
+        setHighlightedFields(searchRequestBuilder, ElasticSearchQueryBuilder.HIGHLIGHTERS_TAG, ElasticSearchQueryBuilder.HIGHLIGHTED_FIELDS)
+        searchRequestBuilder.addFields(ElasticSearchQueryBuilder.SELECT_FIELDS.tokenize(',').collect {it.trim()} as String[] )
 
         boolQueryBuilderExplained.imposeTo(searchRequestBuilder)
 
@@ -74,10 +74,15 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
         return searchRequestBuilder
     }
 
+    private SearchRequestBuilder calculatePagination(SearchRequestBuilder searchRequestBuilder) {
+        searchRequestBuilder.setFrom(startIndex())
+        searchRequestBuilder.setSize(pageSize)
+    }
+
     /* Helper functions */
 
     private static OrFilterBuilder createOrFilterByGroup(String group) {
-        FilterBuilders.orFilter(RDLQueryBuilder.TYPE.findAll { it.group==group }.collect { FilterBuilders.termFilter("type", it.type) } as org.elasticsearch.index.query.FilterBuilder[])
+        FilterBuilders.orFilter(ElasticSearchQueryBuilder.TYPE.findAll { it.group==group }.collect { FilterBuilders.termFilter("type", it.type) } as org.elasticsearch.index.query.FilterBuilder[])
     }
 
     private static SearchRequestBuilder prepareGroupResultByType(SearchRequestBuilder searchRequestBuilder) {
@@ -89,10 +94,10 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
                         .subAggregation(
                         setHighlightedFields(
                                 AggregationBuilders.topHits("top")
-                                        .setFetchSource(RDLQueryBuilder.SELECT_FIELDS.tokenize(',').collect {it.trim()} as String[])
+                                        .setFetchSource(ElasticSearchQueryBuilder.SELECT_FIELDS.tokenize(',').collect {it.trim()} as String[])
                                         .setSize(4)
-                                ,RDLQueryBuilder.HIGHLIGHTERS_TAG
-                                ,RDLQueryBuilder.HIGHLIGHTED_FIELDS
+                                ,ElasticSearchQueryBuilder.HIGHLIGHTERS_TAG
+                                ,ElasticSearchQueryBuilder.HIGHLIGHTED_FIELDS
                         ) as AbstractAggregationBuilder
                 )
         )
@@ -106,13 +111,6 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
     private static OrFilterBuilder createOrFilterByTypes(String terms, def types) {
         FilterBuilders.orFilter(types.collect { FilterBuilders.termFilter(terms, it) } as org.elasticsearch.index.query.FilterBuilder[])
     }
-
-
-    private SearchRequestBuilder calculatePagination(SearchRequestBuilder searchRequestBuilder) {
-        searchRequestBuilder.setFrom(startIndex())
-        searchRequestBuilder.setSize(pageSize)
-    }
-
 
     private static def setHighlightedFields(def searchRequestBuilder, highlighters_tag, highlighted_fields) {
         searchRequestBuilder.setHighlighterPreTags(highlighters_tag.start)

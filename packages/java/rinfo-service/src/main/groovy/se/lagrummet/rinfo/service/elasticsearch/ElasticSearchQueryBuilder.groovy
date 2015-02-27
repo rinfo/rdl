@@ -3,9 +3,10 @@ package se.lagrummet.rinfo.service.elasticsearch
 /**
  * Created by christian on 2/16/15.
  */
-public interface RDLQueryBuilder {
+public interface ElasticSearchQueryBuilder {
 
     String PREPARED_SEARCH_NAME_INDICE = "rinfo"
+
     String QUERY_MINIMUM_MATCH = "80%"
 
     String SELECT_FIELDS =
@@ -14,13 +15,13 @@ public interface RDLQueryBuilder {
     String[] QUERY_SEARCH_FIELDS = ["identifier^5", "title^2", "text"]
 
     def HIGHLIGHTERS_TAG = [start:"<span class=\"match\">",end:"</span>"]
+
     def HIGHLIGHTED_FIELDS = [
             [field:"title", size:150, number:1],
             [field:"identifier", size:150, number:1],
             [field:"text", size:150, number:1],
             [field:"referatrubrik", size:150, number:1]
     ]
-
 
     List TYPE = [
             /* Lagar */
