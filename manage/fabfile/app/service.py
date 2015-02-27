@@ -259,7 +259,6 @@ def test():
 @roles('service')
 def ping_start_collect():
     _needs_targetenv()
-    print 'http://rinfo.regression.lagrummet.se/feed/current'
     feed_url = "http://%s/feed/current" % env.roledefs['main'][0]
     collector_url = "http://%s/collector" % env.roledefs['service'][0]
     if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s" % vars(), "Scheduled collect of"):
