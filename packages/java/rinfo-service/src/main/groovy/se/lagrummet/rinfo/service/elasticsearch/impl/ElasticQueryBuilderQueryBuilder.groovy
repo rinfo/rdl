@@ -4,8 +4,10 @@ import org.elasticsearch.action.search.SearchRequestBuilder
 import org.elasticsearch.index.query.BoolFilterBuilder
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.FilterBuilders
+import org.elasticsearch.index.query.MatchQueryBuilder
 import org.elasticsearch.index.query.OrFilterBuilder
 import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.QueryStringQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.index.search.MatchQuery
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder
@@ -17,21 +19,27 @@ import se.lagrummet.rinfo.service.elasticsearch.ElasticSearchQueryBuilder
  */
 class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.QueryBuilder {
 
-    BoolQueryBuilderExplained boolQueryBuilderExplained
     private ElasticSearchQueryBuilderImpl rdlQueryBuilder
     private int page
     private int pageSize
     private def types = []
+    private def queries = []
+    private def synonyms = []
 
     ElasticQueryBuilderQueryBuilder(ElasticSearchQueryBuilderImpl rdlQueryBuilder) {
         this.rdlQueryBuilder = rdlQueryBuilder
-        boolQueryBuilderExplained = new BoolQueryBuilderExplained(ElasticSearchQueryBuilder.TYPE)
-
     }
 
     @Override
     void addQuery(String queryText) {
-        boolQueryBuilderExplained.addSearchQueryForPreSelectedSearchFields(queryText, ElasticSearchQueryBuilder.QUERY_SEARCH_FIELDS, ElasticSearchQueryBuilder.QUERY_MINIMUM_MATCH)
+        println "se.lagrummet.rinfo.service.elasticsearch.impl.ElasticQueryBuilderQueryBuilder.addQuery ${queryText}"
+        queries.add(queryText)
+    }
+
+    @Override
+    void addSynonym(String synonym){
+        println "se.lagrummet.rinfo.service.elasticsearch.impl.ElasticQueryBuilderQueryBuilder.addSynonym ${synonym}"
+        synonyms.add(synonym)
     }
 
     @Override
@@ -64,12 +72,19 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
         setHighlightedFields(searchRequestBuilder, ElasticSearchQueryBuilder.HIGHLIGHTERS_TAG, ElasticSearchQueryBuilder.HIGHLIGHTED_FIELDS)
         searchRequestBuilder.addFields(ElasticSearchQueryBuilder.SELECT_FIELDS.tokenize(',').collect {it.trim()} as String[] )
 
+        BoolQueryBuilderExplained boolQueryBuilderExplained = new BoolQueryBuilderExplained(
+                ElasticSearchQueryBuilder.TYPE, ElasticSearchQueryBuilder.QUERY_SEARCH_FIELDS,
+                ElasticSearchQueryBuilder.QUERY_MINIMUM_MATCH, ElasticSearchQueryBuilder.EXACT_MATCH_BOOST)
+        queries.each boolQueryBuilderExplained.eachSearchQueryForPreSelectedSearchFields
+        synonyms.each boolQueryBuilderExplained.eachSynonymQueryForPreSelectedSearchFields
         boolQueryBuilderExplained.imposeTo(searchRequestBuilder)
 
         if (!types.isEmpty())
             searchRequestBuilder.setPostFilter(addFilterForTypes("type",types))
 
         prepareGroupResultByType(searchRequestBuilder)
+
+        println searchRequestBuilder
 
         return searchRequestBuilder
     }
@@ -126,9 +141,15 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
     private static class BoolQueryBuilderExplained {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
         private List listOfTypesToBoost = []
+        private String[] querySearchFields
+        private String queryMinimalMatchPercent
+        private float exactMatchBoost
 
-        BoolQueryBuilderExplained(List listOfTypesToBoost) {
+        BoolQueryBuilderExplained(List listOfTypesToBoost, String[] querySearchFields, String queryMinimalMatchPercent, float exactMatchBoost) {
+            this.exactMatchBoost = exactMatchBoost
             this.listOfTypesToBoost = listOfTypesToBoost
+            this.queryMinimalMatchPercent = queryMinimalMatchPercent
+            this.querySearchFields = querySearchFields
             reduceScoreFilterForMultipleTitlesOnQuery()
             addBoostOfTypeInQuery()
         }
@@ -143,19 +164,40 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
 
         private void addBoostOfTypeInQuery() {
             listOfTypesToBoost.findAll { it.containsKey('boost') }.each {
-                boolQueryBuilderExplained.boostTypeInSearch(it.type, it.boost)
+                boostTypeInSearch(it.type, it.boost)
             }
         }
 
-        BoolQueryBuilder addSearchQueryForPreSelectedSearchFields(String queryText, String[] searchFields, String minimalMatchPercent) {
+        def eachSearchQueryForPreSelectedSearchFields = {
             boolQuery.should(
-                    QueryBuilders.multiMatchQuery(queryText, searchFields)
+                    QueryBuilders.multiMatchQuery(it, querySearchFields)
                             .type(MatchQuery.Type.PHRASE_PREFIX)
-                            .minimumShouldMatch(minimalMatchPercent)
+                            .minimumShouldMatch(queryMinimalMatchPercent)
+                            .operator(MatchQueryBuilder.Operator.OR)
+            )
+
+            QueryStringQueryBuilder builder = QueryBuilders.queryString(it)
+            querySearchFields.each {builder.field(it)}
+            builder.defaultOperator(QueryStringQueryBuilder.Operator.AND)
+            boolQuery.should(builder)
+
+            if (it.contains(":"))
+                boolQuery.should(
+                        QueryBuilders.queryString("\"${it.replace(":"," ")}\"")
+                                .field("identifier")
+                                .boost(exactMatchBoost)
+                )
+        }
+
+        def eachSynonymQueryForPreSelectedSearchFields = {
+            boolQuery.should(
+                    QueryBuilders.multiMatchQuery(it, querySearchFields)
+                            .type(MatchQuery.Type.PHRASE)
+                            .operator(MatchQueryBuilder.Operator.OR)
             )
         }
 
-        BoolQueryBuilder boostTypeInSearch(String type, float boostValue) {
+        void boostTypeInSearch(String type, float boostValue) {
             boolQuery.should(
                     QueryBuilders.constantScoreQuery(FilterBuilders.termFilter("type", type))
                             .boost(boostValue)

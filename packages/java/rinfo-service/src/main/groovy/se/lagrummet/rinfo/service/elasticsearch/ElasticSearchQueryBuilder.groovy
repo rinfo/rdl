@@ -9,6 +9,8 @@ public interface ElasticSearchQueryBuilder {
 
     String QUERY_MINIMUM_MATCH = "80%"
 
+    float EXACT_MATCH_BOOST = 100000f;
+
     String SELECT_FIELDS =
             "type, iri, identifier, title, malnummer, beslutsdatum, issued, ikrafttradandedatum"
 
@@ -27,7 +29,7 @@ public interface ElasticSearchQueryBuilder {
             /* Lagar */
             [type:"Lag", group:"Lagar"],
             [type:"Forordning",group:"Lagar"],
-            [type:"KonsolideradGrundforfattning",group:"Lagar", boost: 5.05f],
+            [type:"KonsolideradGrundforfattning",group:"Lagar", boost: 5000000.05f],
             [type:"Grundlag",group:"Lagar"],
             [type:"Tillkannagivande",group:"Lagar"],
             [type:"Rattelseblad",group:"Lagar"],
@@ -54,6 +56,8 @@ public interface ElasticSearchQueryBuilder {
     interface QueryBuilder {
 
         void addQuery(String query)
+
+        void addSynonym(String synonym)
 
         void restrictType(String type)
 

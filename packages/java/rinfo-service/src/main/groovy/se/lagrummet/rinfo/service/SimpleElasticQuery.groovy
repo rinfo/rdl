@@ -33,7 +33,8 @@ class SimpleElasticQuery {
 
         def qb = builder.createBuilder()
         try {
-            queryForm.getValuesArray(CONST.requestQueryParam).collect { qb.addQuery(it) }
+            boolean first = true;
+            queryForm.getValuesArray(CONST.requestQueryParam).each { if (first) { qb.addQuery(it); first=false; } else qb.addSynonym(it); }
             int page = queryForm.getFirstValue(CONST.pageParamKey)?.toInteger()?:0
             int pageSize = queryForm.getFirstValue(CONST.pageSizeParamKey)?.toInteger()?:CONST.defaultPageSize
             println "se.lagrummet.rinfo.service.SimpleElasticQuery.search page=${page} pageSize=${pageSize}"
