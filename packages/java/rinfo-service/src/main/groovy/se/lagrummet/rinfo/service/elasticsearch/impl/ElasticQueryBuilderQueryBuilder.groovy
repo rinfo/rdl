@@ -1,6 +1,7 @@
 package se.lagrummet.rinfo.service.elasticsearch.impl
 
 import org.elasticsearch.action.search.SearchRequestBuilder
+import org.elasticsearch.index.query.BoolFilterBuilder
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.OrFilterBuilder
@@ -26,6 +27,7 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
     ElasticQueryBuilderQueryBuilder(RDLQueryBuilderImpl rdlQueryBuilder) {
         this.rdlQueryBuilder = rdlQueryBuilder
         boolQuery = QueryBuilders.boolQuery()
+
     }
 
     @Override
@@ -53,13 +55,15 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
         calculatePagination(searchRequestBuilder)
         setHighlightedFields(searchRequestBuilder, RDLQueryBuilder.HIGHLIGHTERS_TAG, RDLQueryBuilder.HIGHLIGHTED_FIELDS)
         searchRequestBuilder.addFields(RDLQueryBuilder.SELECT_FIELDS.tokenize(',').collect {it.trim()} as String[] )
-        if (!types.isEmpty())
-            addSearchQueryForPreSelectedSearchFields(types.toListString(),["type"] as String[],"100%");
-        searchRequestBuilder.setQuery(ReduceScoreFilterForMultipleTitlesOnQuery(boolQuery))
+
+        searchRequestBuilder.setQuery(reduceScoreFilterForMultipleTitlesOnQuery(boolQuery))
+
+        if (!types.isEmpty()) {
+            BoolFilterBuilder filter = addFilterForTypes("type",types);
+            searchRequestBuilder.setPostFilter(filter)
+        }
 
         prepareGroupResultByType(searchRequestBuilder)
-
-        println searchRequestBuilder
 
         return searchRequestBuilder
     }
@@ -106,6 +110,15 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
         )
     }
 
+    private static BoolFilterBuilder addFilterForTypes(String terms, def types) {
+        return FilterBuilders.boolFilter().must(createOrFilterByTypes(terms, types))
+    }
+
+    private static OrFilterBuilder createOrFilterByTypes(String terms, def types) {
+        FilterBuilders.orFilter(types.collect { FilterBuilders.termFilter(terms, it) } as org.elasticsearch.index.query.FilterBuilder[])
+    }
+
+
     private BoolQueryBuilder boostTypeInSearch(String type, float boostValue) {
         boolQuery.should(
                 QueryBuilders.constantScoreQuery(FilterBuilders.termFilter("type", type))
@@ -118,7 +131,7 @@ class ElasticQueryBuilderQueryBuilder implements RDLQueryBuilder.QueryBuilder {
         searchRequestBuilder.setSize(pageSize)
     }
 
-    private def ReduceScoreFilterForMultipleTitlesOnQuery(def query) {
+    static private def reduceScoreFilterForMultipleTitlesOnQuery(def query) {
         QueryBuilders.functionScoreQuery(query as QueryBuilder,
             ScoreFunctionBuilders.scriptFunction(
                 "if(_source.title instanceof List) { 1/pow(3, _source.title.size()) } else { 1 }"
