@@ -84,6 +84,7 @@ class GraphCleanUtil {
 
 
     private static def readQueryStringFromFile(def filename) {
-        return getClass().getClassLoader().getResourceAsStream("sparql/${filename}").getText("utf-8")
+        return GraphCleanUtil.class.getResourceAsStream("/sparql/${filename}").getText("utf-8")
+        //return getClass().getClassLoader().getResourceAsStream("sparql/${filename}").getText("utf-8")
     }
 }
