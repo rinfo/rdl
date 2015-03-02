@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory
 
 import org.restlet.Context
 import org.restlet.data.CharacterSet
-import org.restlet.data.Language
 import org.restlet.data.MediaType
 import org.restlet.data.Status
 import org.restlet.Request
@@ -15,8 +14,6 @@ import org.restlet.representation.Representation
 import org.restlet.resource.Finder
 import org.restlet.resource.Get
 import org.restlet.resource.ServerResource
-import org.restlet.routing.Router
-
 import org.openrdf.repository.Repository
 
 import org.codehaus.jackson.map.ObjectMapper
@@ -95,11 +92,24 @@ class DataFinder extends Finder {
             def getRepr(mediaType, mediaTypeStr) {
                 def beforeDate = new Date()
                 def itemRepo = getRichRDF(resourceUri)
+
                 logger.info("getRichRDF for resourceUri: '" + resourceUri + "' ("+constructQueryPath+") took " + ((new Date()).getTime()-beforeDate.getTime())/1000 + "s")
                 if (itemRepo == null) {
                     setStatus(Status.CLIENT_ERROR_NOT_FOUND)
                     return null
                 }
+
+                def filteredPredicate = "http://purl.org/dc/terms/title"
+
+                def withManyTitles = GraphCleanUtil.subjectsWithManyPredicate(itemRepo, filteredPredicate)
+
+                withManyTitles.each {
+                    def newTitle = GraphCleanUtil.tryGetDataFromNamedGraph(itemRepo, it as String, filteredPredicate, "${resourceUri}/entry#context")
+                    if (!newTitle)
+                        return
+                    itemRepo = GraphCleanUtil.updateGraph(itemRepo, it as String, filteredPredicate,newTitle)
+                }
+
                 def rdfRepr = serializeRDF(itemRepo, resourceUri, mediaTypeStr)
                 return new StringRepresentation(rdfRepr, mediaType,
                         null, new CharacterSet("utf-8"))
@@ -139,5 +149,4 @@ class DataFinder extends Finder {
             outStream.close()
         }
     }
-
 }
