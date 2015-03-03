@@ -58,6 +58,7 @@ class GraphCleanUtil {
         } finally {
             conn.close()
         }
+        logger.debug("could not get ${subject} from named graph ${graph}")
         return ''
     }
 
@@ -80,6 +81,20 @@ class GraphCleanUtil {
         } finally {
             conn.close()
         }
+    }
+
+    def static filterRepo(Repository itemRepo, String filteredPredicate ,String resourceUri) {
+        logger.debug("Filtering duplicates in context of ${resourceUri}")
+        def withManyTitles = GraphCleanUtil.subjectsWithManyPredicate(itemRepo, filteredPredicate)
+
+        withManyTitles.each {
+            def newTitle = GraphCleanUtil.tryGetDataFromNamedGraph(itemRepo, it as String, filteredPredicate, "${resourceUri}/entry#context")
+            if (!newTitle)
+                return
+            itemRepo = GraphCleanUtil.updateGraph(itemRepo, it as String, filteredPredicate, newTitle)
+        }
+
+        return itemRepo
     }
 
 

@@ -58,4 +58,13 @@ class GraphCleanUtilSpec extends Specification {
 
             result.hasNext()
     }
+
+    def 'should be able to filter repo'() {
+        given:
+            setupSpec()
+        when:
+            repo = GraphCleanUtil.filterRepo(repo, "http://purl.org/dc/terms/title", "http://rinfo.lagrummet.se/publ/sfs/1999:175")
+        then:
+            GraphCleanUtil.subjectsWithManyPredicate(repo, "http://purl.org/dc/terms/title").size() == 0
+    }
 }
