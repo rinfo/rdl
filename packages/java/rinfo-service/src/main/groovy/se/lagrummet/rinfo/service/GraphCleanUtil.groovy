@@ -83,15 +83,15 @@ class GraphCleanUtil {
         }
     }
 
-    def static filterRepo(Repository itemRepo, String filteredPredicate ,String resourceUri) {
+    def static filterRepo(Repository itemRepo, Repository origRepo, String filteredPredicate ,String resourceUri) {
         logger.debug("Filtering duplicates in context of ${resourceUri}")
-        def withManyTitles = GraphCleanUtil.subjectsWithManyPredicate(itemRepo, filteredPredicate)
+        def withManyTitles = subjectsWithManyPredicate(itemRepo, filteredPredicate)
 
         withManyTitles.each {
-            def newTitle = GraphCleanUtil.tryGetDataFromNamedGraph(itemRepo, it as String, filteredPredicate, "${resourceUri}/entry#context")
+            def newTitle = tryGetDataFromNamedGraph(origRepo, it as String, filteredPredicate, "${resourceUri}/entry#context")
             if (!newTitle)
                 return
-            itemRepo = GraphCleanUtil.updateGraph(itemRepo, it as String, filteredPredicate, newTitle)
+            itemRepo = updateGraph(itemRepo, it as String, filteredPredicate, newTitle)
         }
 
         return itemRepo

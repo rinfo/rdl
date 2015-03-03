@@ -99,7 +99,7 @@ class DataFinder extends Finder {
                     return null
                 }
 
-                itemRepo = GraphCleanUtil.filterRepo(itemRepo, "http://purl.org/dc/terms/title", resourceUri)
+                itemRepo = GraphCleanUtil.filterRepo(itemRepo, repo, "http://purl.org/dc/terms/title", resourceUri)
 
                 def rdfRepr = serializeRDF(itemRepo, resourceUri, mediaTypeStr)
                 return new StringRepresentation(rdfRepr, mediaType,
