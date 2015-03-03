@@ -67,4 +67,13 @@ class GraphCleanUtilSpec extends Specification {
         then:
             GraphCleanUtil.subjectsWithManyPredicate(repo, "http://purl.org/dc/terms/title").size() == 0
     }
+
+    def 'should be able to pick from consolidated'() {
+        given:
+            setupSpec()
+        when:
+            def uri = GraphCleanUtil.tryGetConsolidated(repo, "http://rinfo.lagrummet.se/publ/sfs/1999:175")
+        then:
+            uri == "http://rinfo.lagrummet.se/publ/sfs/1999:175/konsolidering/2011-05-02"
+    }
 }
