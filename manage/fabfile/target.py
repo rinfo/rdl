@@ -75,14 +75,13 @@ def demo():
     env.target = "demo"
     # Machines:
     env.user = 'rinfo'
-    env.roledefs = {
-        'main': ['rinfo.demo.lagrummet.se'],
-        'service': ['service.demo.lagrummet.se'],
-        'checker': ['checker.demo.lagrummet.se'],
-        'admin': ['admin.demo.lagrummet.se'],
-        'demosource': ['testfeed.lagrummet.se'],
-        'lagrummet': ['demo.lagrummet.se'],
-    }
+
+    env.roledefs['main'] = ['rinfo.demo.lagrummet.se']
+    env.roledefs['service'] = ['service.demo.lagrummet.se']
+    env.roledefs['checker'] = ['checker.demo.lagrummet.se']
+    env.roledefs['admin'] = ['admin.demo.lagrummet.se']
+    env.roledefs['lagrummet'] = ['demo.lagrummet.se']
+
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
