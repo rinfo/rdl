@@ -341,14 +341,13 @@ def regression():
     env.target = "regression"
     # Machines:
     env.user = 'rinfo'
-    env.roledefs = {
-        'main': ['rinfo.regression.lagrummet.se'],
-        'service': ['service.regression.lagrummet.se'],
-        'checker': ['checker.regression.lagrummet.se'],
-        'admin': ['admin.regression.lagrummet.se'],
-        'demosource': ['v1.admin.regression.testfeed.lagrummet.se'],
-        'lagrummet': ['regression.lagrummet.se'],
-    }
+
+    env.roledefs['main'] = ['rinfo.regression.lagrummet.se']
+    env.roledefs['service'] = ['service.regression.lagrummet.se']
+    env.roledefs['checker'] = ['checker.regression.lagrummet.se']
+    env.roledefs['admin'] = ['admin.regression.lagrummet.se']
+    env.roledefs['lagrummet'] = ['regression.lagrummet.se']
+
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
