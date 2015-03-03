@@ -72,7 +72,8 @@ class GraphCleanUtil {
 
             updateQuery.setBinding("subject", conn.valueFactory.createURI(subject))
             updateQuery.setBinding("predicate", conn.valueFactory.createURI(predicate))
-            updateQuery.setBinding("data", conn.valueFactory.createLiteral(newData))
+            def (data, lang) = newData.tokenize("\"@")
+            updateQuery.setBinding("data", conn.valueFactory.createLiteral(data, lang))
             updateQuery.execute()
 
             return itemRepo

@@ -53,7 +53,7 @@ class GraphCleanUtilSpec extends Specification {
                     "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" +
                     "PREFIX bibo: <http://purl.org/ontology/bibo/>\n" +
                     "PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>\n" +
-                    "SELECT * WHERE { ?s dct:title \"newTitle\" }")
+                    "SELECT * WHERE { ?s dct:title ?p. FILTER (STR(?p)='newTitle') }")
             def result = query.evaluate()
 
             result.hasNext()
