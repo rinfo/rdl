@@ -181,6 +181,12 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
             builder.defaultOperator(QueryStringQueryBuilder.Operator.AND)
             boolQuery.should(builder)
 
+            if (it.contains(":"))
+                boolQuery.should(
+                        QueryBuilders.queryString("\"${it.replace(":"," ")}\"")
+                                .field("identifier")
+                                .boost(exactMatchBoost)
+                )
         }
 
         def eachSynonymQueryForPreSelectedSearchFields = {
