@@ -12,9 +12,9 @@ public interface ElasticSearchQueryBuilder {
     float EXACT_MATCH_BOOST = 100000f;
 
     String SELECT_FIELDS =
-            "type, iri, identifier, title, malnummer, beslutsdatum, issued, ikrafttradandedatum"
+            "type, iri, identifier, title, malnummer, beslutsdatum, issued, ikrafttradandedatum, referatrubrik"
 
-    String[] QUERY_SEARCH_FIELDS = ["identifier^5", "title^2", "text"]
+    String[] QUERY_SEARCH_FIELDS = ["identifier^5", "title^2", "text", "referatrubrik^2"]
 
     def HIGHLIGHTERS_TAG = [start:"<span class=\"match\">",end:"</span>"]
 
@@ -29,7 +29,7 @@ public interface ElasticSearchQueryBuilder {
             /* Lagar */
             [type:"Lag", group:"Lagar"],
             [type:"Forordning",group:"Lagar"],
-            [type:"KonsolideradGrundforfattning",group:"Lagar", boost: 5000000.05f],
+            [type:"KonsolideradGrundforfattning",group:"Lagar", boost: 1000000.05f],
             [type:"Grundlag",group:"Lagar"],
             [type:"Tillkannagivande",group:"Lagar"],
             [type:"Rattelseblad",group:"Lagar"],
