@@ -1,6 +1,6 @@
 #!/bin/sh
 
-fab target.beta app.main.setup app.service.setup app.checker.setup
+fab target.beta app.main.setup app.service.setup app.checker.setup app.service.ban_varnish
 fab target.beta app.admin.all app.main.all app.checker.all app.service.all
 
 EXIT_STATUS=$?
