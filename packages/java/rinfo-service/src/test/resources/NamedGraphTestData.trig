@@ -49,3 +49,17 @@
 		rpubl:lopnummer "175" ;
 		rpubl:ikrafttradandedatum "1999-05-01"^^xsd:date .
 }
+<http://rinfo.lagrummet.se/publ/sfs/1999:175/konsolidering/2011-05-02/entry#context> {
+	<http://rinfo.lagrummet.se/publ/sfs/1999:175> a rpubl:Forordning ;
+		dct:title "Rättsinformationsförordning2 (1999:175)"@sv ;
+		dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet> ;
+		dct:issued "1999-03-25"^^xsd:date ;
+		dct:identifier "SFS 1999:175"@sv ;
+		rpubl:arsutgava "1999" ;
+		rpubl:lopnummer "175" ;
+		rpubl:ikrafttradandedatum "1999-05-01"^^xsd:date .
+    <http://rinfo.lagrummet.se/publ/sfs/1999:175/konsolidering/2011-05-02> rpubl:konsoliderar <http://rinfo.lagrummet.se/publ/sfs/1999:175> ;
+        dct:issued "2011-05-02"^^xsd:date ;
+        dct:identifier "SFS 1999:175 i lydelse enligt SFS 2010:1990"@sv ;
+        rpubl:konsolideringsunderlag <http://rinfo.lagrummet.se/publ/sfs/1999:175> .
+}

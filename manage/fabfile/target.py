@@ -75,14 +75,13 @@ def demo():
     env.target = "demo"
     # Machines:
     env.user = 'rinfo'
-    env.roledefs = {
-        'main': ['rinfo.demo.lagrummet.se'],
-        'service': ['service.demo.lagrummet.se'],
-        'checker': ['checker.demo.lagrummet.se'],
-        'admin': ['admin.demo.lagrummet.se'],
-        'demosource': ['testfeed.lagrummet.se'],
-        'lagrummet': ['demo.lagrummet.se'],
-    }
+
+    env.roledefs['main'] = ['rinfo.demo.lagrummet.se']
+    env.roledefs['service'] = ['service.demo.lagrummet.se']
+    env.roledefs['checker'] = ['checker.demo.lagrummet.se']
+    env.roledefs['admin'] = ['admin.demo.lagrummet.se']
+    env.roledefs['lagrummet'] = ['demo.lagrummet.se']
+
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
@@ -342,14 +341,13 @@ def regression():
     env.target = "regression"
     # Machines:
     env.user = 'rinfo'
-    env.roledefs = {
-        'main': ['rinfo.regression.lagrummet.se'],
-        'service': ['service.regression.lagrummet.se'],
-        'checker': ['checker.regression.lagrummet.se'],
-        'admin': ['admin.regression.lagrummet.se'],
-        'demosource': ['v1.admin.regression.testfeed.lagrummet.se'],
-        'lagrummet': ['regression.lagrummet.se'],
-    }
+
+    env.roledefs['main'] = ['rinfo.regression.lagrummet.se']
+    env.roledefs['service'] = ['service.regression.lagrummet.se']
+    env.roledefs['checker'] = ['checker.regression.lagrummet.se']
+    env.roledefs['admin'] = ['admin.regression.lagrummet.se']
+    env.roledefs['lagrummet'] = ['regression.lagrummet.se']
+
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'

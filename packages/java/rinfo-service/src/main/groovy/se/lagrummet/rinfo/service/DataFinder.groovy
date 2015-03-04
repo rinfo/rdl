@@ -99,16 +99,7 @@ class DataFinder extends Finder {
                     return null
                 }
 
-                def filteredPredicate = "http://purl.org/dc/terms/title"
-
-                def withManyTitles = GraphCleanUtil.subjectsWithManyPredicate(itemRepo, filteredPredicate)
-
-                withManyTitles.each {
-                    def newTitle = GraphCleanUtil.tryGetDataFromNamedGraph(itemRepo, it as String, filteredPredicate, "${resourceUri}/entry#context")
-                    if (!newTitle)
-                        return
-                    itemRepo = GraphCleanUtil.updateGraph(itemRepo, it as String, filteredPredicate,newTitle)
-                }
+                itemRepo = GraphCleanUtil.fixTitlesForSFS(itemRepo, repo, resourceUri)
 
                 def rdfRepr = serializeRDF(itemRepo, resourceUri, mediaTypeStr)
                 return new StringRepresentation(rdfRepr, mediaType,
