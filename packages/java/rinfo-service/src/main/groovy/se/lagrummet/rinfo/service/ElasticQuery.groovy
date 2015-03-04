@@ -21,6 +21,9 @@ import org.restlet.data.Reference
 
 @Log
 class ElasticQuery {
+	
+	public static final String regex_sanitize_elasticsearch = "([+\\-!\\(\\){}\\[\\]\\/^\"~*?:\\\\]|[&\\|]{2})";
+	public static final String replacement = "\\\\\$1";
 
     ElasticData elasticData
     JsonLdSettings jsonLdSettings
@@ -327,8 +330,9 @@ class ElasticQuery {
         ]
     }
 
-    def toQueryItem(final String name) {
-        def item = [
+    def toQueryItem(final String name_dirty) {
+        String name = name_dirty.replaceAll(regex_sanitize_elasticsearch, replacement);
+		def item = [
             name: name,
             term: null,
             optOr: false,
