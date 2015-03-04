@@ -158,10 +158,11 @@ def tar(filename, target_path, command='czvf', test=False):
 
 
 def untar(filename, target_path, command='xzvf', use_sudo=False, test=False, is_local=False):
+    tar_cmd = 'tar %s %s' % (command, filename)
     if test:
         print "Simulating tar command %s" % tar_cmd
         return
-    tar_cmd = 'tar %s %s' % (command, filename)
+
     if is_local:
         with lcd(target_path):
             local(tar_cmd)
