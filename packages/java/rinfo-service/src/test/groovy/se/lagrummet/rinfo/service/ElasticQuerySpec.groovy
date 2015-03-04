@@ -109,7 +109,7 @@ class ElasticQuerySpec extends Specification {
     }
 
     @Unroll
-    def "can sanitize queries"() {
+    def "can sanitize form parameters for elasticsearch"() {
         expect:
         elQuery.sanitize_for_elasticsearch(qs) == esc
         where:
@@ -117,6 +117,7 @@ class ElasticQuerySpec extends Specification {
         /Change nothing/      | /Change nothing/
         /Change s{o}mething/      | /Change s\{o\}mething/
         /Keep "the" hyphens/      | /Keep "the" hyphens/
+        /Keep the 'other' hyphens/      | /Keep the 'other' hyphens/
         /{"query": {"match": {"_all": "a"}}}/      | /\{"query"\: \{"match"\: \{"_all"\: "a"\}\}\}/
     }
 
