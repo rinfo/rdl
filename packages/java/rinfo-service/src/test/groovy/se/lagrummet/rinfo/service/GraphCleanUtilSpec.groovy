@@ -53,7 +53,7 @@ class GraphCleanUtilSpec extends Specification {
                     "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" +
                     "PREFIX bibo: <http://purl.org/ontology/bibo/>\n" +
                     "PREFIX rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#>\n" +
-                    "SELECT * WHERE { ?s dct:title \"newTitle\" }")
+                    "SELECT * WHERE { ?s dct:title ?p. FILTER (STR(?p)='newTitle') }")
             def result = query.evaluate()
 
             result.hasNext()
@@ -66,5 +66,14 @@ class GraphCleanUtilSpec extends Specification {
             repo = GraphCleanUtil.filterRepo(repo, repo,"http://purl.org/dc/terms/title", "http://rinfo.lagrummet.se/publ/sfs/1999:175")
         then:
             GraphCleanUtil.subjectsWithManyPredicate(repo, "http://purl.org/dc/terms/title").size() == 0
+    }
+
+    def 'should be able to pick from consolidated'() {
+        given:
+            setupSpec()
+        when:
+            def uri = GraphCleanUtil.tryGetConsolidated(repo, "http://rinfo.lagrummet.se/publ/sfs/1999:175")
+        then:
+            uri == "http://rinfo.lagrummet.se/publ/sfs/1999:175/konsolidering/2011-05-02"
     }
 }
