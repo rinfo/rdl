@@ -109,6 +109,18 @@ class ElasticQuerySpec extends Specification {
     }
 
     @Unroll
+    def "can sanitize queries"() {
+        expect:
+        elQuery.sanitize_for_elasticsearch(qs) == esc
+        where:
+        qs              | esc
+        /Change nothing/      | /Change nothing/
+        /Change s{o}mething/      | /Change s\{o\}mething/
+        /Keep "the" hyphens/      | /Keep "the" hyphens/
+        /{"query": {"match": {"_all": "a"}}}/      | /\{"query"\: \{"match"\: \{"_all"\: "a"\}\}\}/
+    }
+
+    @Unroll
     def "can turn a rinfo IRI to a service IRI"() {
         expect:
         elQuery.makeServiceLink(iri) == expected
