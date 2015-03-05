@@ -22,7 +22,7 @@ import org.restlet.data.Reference
 @Log
 class ElasticQuery { // \\+-&|!(){}[]^~*?:
 	
-	public static final String regex_sanitize_elasticsearch = "([+\\-!\\(\\){}\\[\\]\\/^~*?:\\\\]|[&\\|]{2})";
+	public static final String regex_sanitize_elasticsearch = "([+\\-|&!\\(\\){}\\[\\]\\/^~*?:\\\\]|[&\\|]{2})";
 	public static final String replacement = "\\\\\$1";
 
     ElasticData elasticData
