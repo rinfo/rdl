@@ -106,7 +106,7 @@ def _prepare_mgr_work():
 
 
 @task
-@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'stage', 'regression', 'skrapat', 'demosource')
 def install_server():
     install_dependencies()
     #install_jdk() # Installing the Proprietary JDK requires manual confirmation.
