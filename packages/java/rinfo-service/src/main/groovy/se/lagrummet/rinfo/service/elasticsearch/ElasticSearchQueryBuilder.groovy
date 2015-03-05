@@ -5,8 +5,6 @@ package se.lagrummet.rinfo.service.elasticsearch
  */
 public interface ElasticSearchQueryBuilder {
 
-    String PREPARED_SEARCH_NAME_INDICE = "rinfo"
-
     String QUERY_MINIMUM_MATCH = "80%"
 
     float EXACT_MATCH_BOOST = 100000f;

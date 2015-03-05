@@ -23,7 +23,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder 
     }
 
     SearchRequestBuilder prepareSearch() {
-        return elasticData.client.prepareSearch(PREPARED_SEARCH_NAME_INDICE)
+        return elasticData.client.prepareSearch(elasticData.indexName)
     }
 
 }

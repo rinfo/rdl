@@ -32,13 +32,11 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
 
     @Override
     void addQuery(String queryText) {
-        println "se.lagrummet.rinfo.service.elasticsearch.impl.ElasticQueryBuilderQueryBuilder.addQuery ${queryText}"
         queries.add(queryText)
     }
 
     @Override
     void addSynonym(String synonym){
-        println "se.lagrummet.rinfo.service.elasticsearch.impl.ElasticQueryBuilderQueryBuilder.addSynonym ${synonym}"
         synonyms.add(synonym)
     }
 
