@@ -7,7 +7,7 @@ public interface ElasticSearchQueryBuilder {
 
     String QUERY_MINIMUM_MATCH = "80%"
 
-    float EXACT_MATCH_BOOST = 100000f;
+    Float EXACT_MATCH_BOOST = null;
 
     String SELECT_FIELDS =
             "type, iri, identifier, title, malnummer, beslutsdatum, issued, ikrafttradandedatum, referatrubrik"
@@ -27,7 +27,8 @@ public interface ElasticSearchQueryBuilder {
             /* Lagar */
             [type:"Lag", group:"Lagar"],
             [type:"Forordning",group:"Lagar"],
-            [type:"KonsolideradGrundforfattning",group:"Lagar", boost: 1000000.05f],
+            //[type:"KonsolideradGrundforfattning",group:"Lagar", boost: 1f],
+            [type:"KonsolideradGrundforfattning",group:"Lagar"],
             [type:"Grundlag",group:"Lagar"],
             [type:"Tillkannagivande",group:"Lagar"],
             [type:"Rattelseblad",group:"Lagar"],
