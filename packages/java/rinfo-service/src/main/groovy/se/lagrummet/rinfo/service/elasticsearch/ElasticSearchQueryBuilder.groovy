@@ -60,7 +60,7 @@ public interface ElasticSearchQueryBuilder {
 
         void restrictType(String type)
 
-        void setExplain(boolean explain)
+        void setExplain(Boolean explain)
 
         Result result(String iriReplaceUrl)
 

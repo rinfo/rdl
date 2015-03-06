@@ -25,7 +25,7 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
     private def types = []
     private def queries = []
     private def synonyms = []
-    private boolean explain
+    private Boolean explain
 
     ElasticQueryBuilderQueryBuilder(ElasticSearchQueryBuilderImpl rdlQueryBuilder) {
         this.rdlQueryBuilder = rdlQueryBuilder
@@ -47,7 +47,7 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
     }
 
     @Override
-    void setExplain(boolean explain) {
+    void setExplain(Boolean explain) {
         this.explain = explain
     }
 
@@ -72,7 +72,7 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
     private SearchRequestBuilder createAndPrepareSearchRequestBuilder() {
         SearchRequestBuilder searchRequestBuilder = rdlQueryBuilder.prepareSearch()
 
-        searchRequestBuilder.explain = explain
+        searchRequestBuilder.explain = explain!=null?explain:false
 
         calculatePagination(searchRequestBuilder)
         setHighlightedFields(searchRequestBuilder, ElasticSearchQueryBuilder.HIGHLIGHTERS_TAG, ElasticSearchQueryBuilder.HIGHLIGHTED_FIELDS)
