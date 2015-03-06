@@ -14,6 +14,7 @@ class SimpleElasticQuery {
             pageParamKey: '_page',
             pageSizeParamKey: '_pageSize',
             statsParam: '_stats',
+            explainParam: 'explain',
     ]
 
     ElasticData elasticData
@@ -42,6 +43,8 @@ class SimpleElasticQuery {
                 return [:]
 
             qb.setPagination(page, pageSize)
+
+            qb.explain = queryForm.getFirstValue(CONST.explainParam)?.toBoolean()
 
             queryForm.getValuesArray(CONST.requestTypeParam).collect { qb.restrictType(it)}
             //queryForm.getFirstValue(CONST.statsParam)

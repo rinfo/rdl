@@ -24,7 +24,7 @@ import org.codehaus.jackson.map.SerializationConfig
 @CompileStatic
 @Log
 class ElasticFinder extends Finder {
-    static final String[] simpleFields = ['q', 'type', '_stats', '_page', '_pageSize', 'ifExists-ikrafttradandedatum']
+    static final String[] simpleFields = ['q', 'type', '_stats', '_page', '_pageSize', 'ifExists-ikrafttradandedatum','explain']
     ElasticQuery elasticQuery
     SimpleElasticQuery elasticQuerySimple
     ObjectMapper jsonMapper

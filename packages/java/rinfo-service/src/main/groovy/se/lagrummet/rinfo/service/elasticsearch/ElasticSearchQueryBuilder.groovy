@@ -59,6 +59,8 @@ public interface ElasticSearchQueryBuilder {
 
         void restrictType(String type)
 
+        void setExplain(boolean explain)
+
         Result result(String iriReplaceUrl)
 
         void close()

@@ -25,6 +25,7 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
     private def types = []
     private def queries = []
     private def synonyms = []
+    private boolean explain
 
     ElasticQueryBuilderQueryBuilder(ElasticSearchQueryBuilderImpl rdlQueryBuilder) {
         this.rdlQueryBuilder = rdlQueryBuilder
@@ -43,6 +44,11 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
     @Override
     void restrictType(String type) {
         types.add(type)
+    }
+
+    @Override
+    void setExplain(boolean explain) {
+        this.explain = explain
     }
 
     @Override
@@ -65,6 +71,8 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
 
     private SearchRequestBuilder createAndPrepareSearchRequestBuilder() {
         SearchRequestBuilder searchRequestBuilder = rdlQueryBuilder.prepareSearch()
+
+        searchRequestBuilder.explain = explain
 
         calculatePagination(searchRequestBuilder)
         setHighlightedFields(searchRequestBuilder, ElasticSearchQueryBuilder.HIGHLIGHTERS_TAG, ElasticSearchQueryBuilder.HIGHLIGHTED_FIELDS)
@@ -179,12 +187,12 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
             builder.defaultOperator(QueryStringQueryBuilder.Operator.AND)
             boolQuery.should(builder)
 
-            if (it.contains(":"))
-                boolQuery.should(
-                        QueryBuilders.queryString("\"${it.replace(":"," ")}\"")
-                                .field("identifier")
-                                .boost(exactMatchBoost)
-                )
+//            if (it.contains(":") && exactMatchBoost)
+//                boolQuery.should(
+//                        QueryBuilders.queryString("\"${it.replace(":"," ")}\"")
+//                                .field("identifier")
+//                                .boost(exactMatchBoost)
+//                )
         }
 
         def eachSynonymQueryForPreSelectedSearchFields = {
