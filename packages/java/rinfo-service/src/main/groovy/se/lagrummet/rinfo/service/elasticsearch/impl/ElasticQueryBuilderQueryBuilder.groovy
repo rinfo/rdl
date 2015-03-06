@@ -151,7 +151,7 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
         private String queryMinimalMatchPercent
         private Float exactMatchBoost
 
-        BoolQueryBuilderExplained(List listOfTypesToBoost, String[] querySearchFields, String queryMinimalMatchPercent, float exactMatchBoost) {
+        BoolQueryBuilderExplained(List listOfTypesToBoost, String[] querySearchFields, String queryMinimalMatchPercent, Float exactMatchBoost) {
             this.exactMatchBoost = exactMatchBoost
             this.listOfTypesToBoost = listOfTypesToBoost
             this.queryMinimalMatchPercent = queryMinimalMatchPercent
