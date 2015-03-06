@@ -77,7 +77,7 @@ class Utils {
         hit.highlightFields.each { key, hlf ->
             item.get('matches', [:])[key] = hlf.fragments.collect { it.toString() }
         }
-        item.explanation = hit.getExplanation()?.description
+        item.explanation = hit.getExplanation()?.toHtml()
         return item
     }
 
