@@ -5,6 +5,10 @@ package se.lagrummet.rinfo.service.elasticsearch
  */
 public interface ElasticSearchQueryBuilder {
 
+    String regex_sanitize_elasticsearch = "([+\\-|&!\\(\\){}\\[\\]\\/^~*?:\\\\]|[&\\|]{2})";
+    String replacement = "\\\\\$1";
+
+
     String QUERY_MINIMUM_MATCH = "80%"
 
     Float EXACT_MATCH_BOOST = null;

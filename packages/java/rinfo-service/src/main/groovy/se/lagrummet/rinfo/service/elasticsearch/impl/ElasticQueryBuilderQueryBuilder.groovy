@@ -33,7 +33,7 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
 
     @Override
     void addQuery(String queryText) {
-        queries.add(queryText)
+        queries.add(queryText.replaceAll(ElasticSearchQueryBuilder.regex_sanitize_elasticsearch, ElasticSearchQueryBuilder.replacement))
     }
 
     @Override
