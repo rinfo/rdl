@@ -334,11 +334,11 @@ class ElasticQuery { // \\+-&|!(){}[]^~*?:
     }
 			
 	def sanitize_for_elasticsearch(final String parameter) {
-		return parameter.replaceAll(regex_sanitize_elasticsearch, replacement);
+     	return parameter.replaceAll(regex_sanitize_elasticsearch, replacement);
 	}
 
     def toQueryItem(final String name_dirty) {
-        String name = sanitize_for_elasticsearch(name_dirty);
+        String name = name_dirty
 		def item = [
             name: name,
             term: null,
@@ -389,6 +389,7 @@ class ElasticQuery { // \\+-&|!(){}[]^~*?:
     }
 
     String escapeQueryString(String qs) {
+        //return qs.replaceAll(regex_sanitize_elasticsearch, replacement);
         return qs.
             replaceAll(/(?<!\\)([:&|\\()\[\]{}"])/, /\\$1/).
             replaceAll(/^(AND|OR)|(AND|OR)$/, "").
