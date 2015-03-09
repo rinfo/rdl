@@ -218,8 +218,16 @@ def ftp_fetch_and_untar(snapshot_name, name, tmp_path, target_tar_unpack_path, u
 def take_main_snapshot_and_push_to_ftp(snapshot_name, target_path, username, password, test=False):
     if not role_is_active('main'):
         return
+    if not test:
+        tomcat_stop()
+
+    clean_path(target_path, test=test)
+    create_path(target_path, test=test)
+
     tar_and_ftp_push(snapshot_name, 'depot', password, '/opt/rinfo/store/', target_path, username, test=test)
 
+    if not test:
+        tomcat_start()
 
 @parallel
 @roles('service')
@@ -227,6 +235,11 @@ def take_service_snapshot_and_push_to_ftp(snapshot_name, target_path, username, 
                                           use_elasticsearch=True, test=False):
     if not role_is_active('service'):
         return
+
+    if not test:
+        tomcat_stop()
+        sudo("/etc/init.d/elasticsearch stop")
+
     if use_sesame:
         tar_and_ftp_push(snapshot_name, 'sesame', password, '/opt/rinfo/sesame-repo/', target_path, username,
                          test=test)
@@ -234,6 +247,9 @@ def take_service_snapshot_and_push_to_ftp(snapshot_name, target_path, username, 
         tar_and_ftp_push(snapshot_name, 'elasticsearch', password, '/opt/elasticsearch/var/data/', target_path,
                          username, test=test)
 
+    if not test:
+        tomcat_start()
+        sudo("/etc/init.d/elasticsearch start")    
 
 def clean_path(tar_target_path, use_sudo=False, test=False, is_local=False):
     cmd = "rm -rf %s*" % tar_target_path
@@ -292,18 +308,11 @@ def take_snapshot_and_push_to_ftp(name='snapshot', username='', password='', tes
         username = get_value_from_password_store(PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, username)
         password = get_value_from_password_store(PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, password)
 
-    if not test:
-        tomcat_stop()
-    clean_path(tar_target_path, test=test)
-    create_path(tar_target_path, test=test)
     try:
         take_main_snapshot_and_push_to_ftp(snapshot_name, tar_target_path, username, password, test=test)
         take_service_snapshot_and_push_to_ftp(snapshot_name, tar_target_path, username, password, test=test)
     finally:
         clean_path(tar_target_path, test=test)
-        if not test:
-            tomcat_start()
-
 
 @parallel
 @roles('main')
@@ -311,8 +320,17 @@ def fetch_main_snapshot_from_ftp_and_install(snapshot_name, tar_target_path, use
                                              is_local=False):
     if not role_is_active('main'):
         return
+    if not test:
+        tomcat_stop()
+
+    clean_path(tar_target_path, test=test)
+    create_path(tar_target_path, test=test)
+
     ftp_fetch_and_untar(snapshot_name, 'depot', tar_target_path, '/opt/rinfo/store/', username, password, test=test,
                         is_local=is_local)
+
+    if not test:
+        tomcat_start()
 
 
 @parallel
@@ -321,12 +339,24 @@ def fetch_service_snapshot_from_ftp_and_install(snapshot_name, tar_target_path, 
                                                 use_elasticsearch=True, test=False, is_local=False):
     if not role_is_active('service'):
         return
+
+    if not test:
+        tomcat_stop()
+        sudo("/etc/init.d/elasticsearch stop")    
+
+    clean_path(tar_target_path, test=test)
+    create_path(tar_target_path, test=test)
+
     if use_sesame:
         ftp_fetch_and_untar(snapshot_name, 'sesame', tar_target_path, '/opt/rinfo/sesame-repo/', username, password,
                             test=test, is_local=is_local)
     if use_elasticsearch:
         ftp_fetch_and_untar(snapshot_name, 'elasticsearch', tar_target_path, '/opt/elasticsearch/var/data/', username,
                             password, test=test, is_local=is_local)
+
+    if not test:
+        tomcat_start()
+        sudo("/etc/init.d/elasticsearch start")    
 
 
 @task
@@ -347,8 +377,10 @@ def fetch_snapshot_from_ftp_and_install(name='snapshot' ,username='', password='
 
     if not test and not is_local:
         tomcat_stop()
+
     clean_path(tar_target_path, test=test, is_local=is_local)
     create_path(tar_target_path, test=test, is_local=is_local)
+
     try:
         fetch_main_snapshot_from_ftp_and_install(snapshot_name, tar_target_path, username, password, test=test,
                                                  is_local=is_local)
@@ -359,7 +391,6 @@ def fetch_snapshot_from_ftp_and_install(name='snapshot' ,username='', password='
         # todo empty varnish cache
         if not test and not is_local:
             tomcat_start()
-
 
 def prefere_ipv4_to_speed_up_debian_updates():
     sudo('echo "precedence ::ffff:0:0/96  100" >>  /etc/gai.conf')
