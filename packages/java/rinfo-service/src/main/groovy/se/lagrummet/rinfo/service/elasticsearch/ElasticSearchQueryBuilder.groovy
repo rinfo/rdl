@@ -12,7 +12,7 @@ public interface ElasticSearchQueryBuilder {
     String SELECT_FIELDS =
             "type, iri, identifier, title, malnummer, beslutsdatum, issued, ikrafttradandedatum, referatrubrik"
 
-    String[] QUERY_SEARCH_FIELDS = ["identifier^5", "title^2", "text", "referatrubrik^2"]
+    String[] QUERY_SEARCH_FIELDS = ["identifier^5", "title^2", "text", "referatrubrik^2", "malnummer"]
 
     def HIGHLIGHTERS_TAG = [start:"<span class=\"match\">",end:"</span>"]
 
