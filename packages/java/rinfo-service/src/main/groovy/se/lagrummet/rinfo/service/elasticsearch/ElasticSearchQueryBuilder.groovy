@@ -27,7 +27,7 @@ public interface ElasticSearchQueryBuilder {
             /* Lagar */
             [type:"Lag", group:"Lagar"],
             [type:"Forordning",group:"Lagar"],
-            //[type:"KonsolideradGrundforfattning",group:"Lagar", boost: 1f],
+            [type:"KonsolideradGrundforfattning",group:"Lagar", boost: 1f],
             [type:"KonsolideradGrundforfattning",group:"Lagar"],
             [type:"Grundlag",group:"Lagar"],
             [type:"Tillkannagivande",group:"Lagar"],
@@ -37,7 +37,7 @@ public interface ElasticSearchQueryBuilder {
             [type:"AllmannaRad",group:"Lagar"],
             /* Rattsfall */
             [type:"Rattsfallsnotis",group:"Rattsfall"],
-            [type:"Rattsfallsreferat",group:"Rattsfall"],
+            [type:"Rattsfallsreferat",group:"Rattsfall", boost: 2f],
             [type:"VagledandeDomstolsavgorande",group:"Rattsfall"],
             [type:"VagledandeMyndighetsavgorande",group:"Rattsfall"],
             /* Foreskrifter */
