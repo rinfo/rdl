@@ -31,8 +31,7 @@ public interface ElasticSearchQueryBuilder {
             /* Lagar */
             [type:"Lag", group:"Lagar"],
             [type:"Forordning",group:"Lagar"],
-            [type:"KonsolideradGrundforfattning",group:"Lagar", boost: 1f],
-            [type:"KonsolideradGrundforfattning",group:"Lagar"],
+            [type:"KonsolideradGrundforfattning",group:"Lagar", boost: 3f],
             [type:"Grundlag",group:"Lagar"],
             [type:"Tillkannagivande",group:"Lagar"],
             [type:"Rattelseblad",group:"Lagar"],
