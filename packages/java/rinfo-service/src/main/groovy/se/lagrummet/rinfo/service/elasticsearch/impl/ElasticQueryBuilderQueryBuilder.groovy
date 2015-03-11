@@ -1,13 +1,18 @@
 package se.lagrummet.rinfo.service.elasticsearch.impl
 
 import org.elasticsearch.action.search.SearchRequestBuilder
+import org.elasticsearch.common.lucene.search.function.FunctionScoreQuery
 import org.elasticsearch.index.query.BoolFilterBuilder
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.MatchQueryBuilder
 import org.elasticsearch.index.query.OrFilterBuilder
+import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryStringQueryBuilder
+import org.elasticsearch.index.query.functionscore.FunctionScoreModule
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryParser
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.index.search.MatchQuery
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder
@@ -156,8 +161,6 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
             this.listOfTypesToBoost = listOfTypesToBoost
             this.queryMinimalMatchPercent = queryMinimalMatchPercent
             this.querySearchFields = querySearchFields
-            reduceScoreFilterForMultipleTitlesOnQuery()
-            addBoostOfTypeInQuery()
         }
 
         private def reduceScoreFilterForMultipleTitlesOnQuery() {
@@ -168,9 +171,12 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
             )
         }
 
-        private void addBoostOfTypeInQuery() {
+        private void addBoostOfTypeInQuery(def functionScoreQuery) {
             listOfTypesToBoost.findAll { it.containsKey('boost') }.each {
-                boostTypeInSearch(it.type, it.boost)
+                //boostTypeInSearch(it.type, it.boost)
+                functionScoreQuery.add(
+                        FilterBuilders.termFilter("type", it.type), ScoreFunctionBuilders.weightFactorFunction(it.boost as float)
+                )
             }
         }
 
@@ -187,31 +193,21 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
             builder.defaultOperator(QueryStringQueryBuilder.Operator.AND)
             boolQuery.should(builder)
 
-//            if (it.contains(":") && exactMatchBoost)
-//                boolQuery.should(
-//                        QueryBuilders.queryString("\"${it.replace(":"," ")}\"")
-//                                .field("identifier")
-//                                .boost(exactMatchBoost)
-//                )
+
         }
 
         def eachSynonymQueryForPreSelectedSearchFields = {
             boolQuery.should(
                     QueryBuilders.multiMatchQuery(it, querySearchFields)
-                            .type(MatchQuery.Type.PHRASE)
-                            .operator(MatchQueryBuilder.Operator.OR)
-            )
-        }
-
-        void boostTypeInSearch(String type, float boostValue) {
-            boolQuery.should(
-                    QueryBuilders.constantScoreQuery(FilterBuilders.termFilter("type", type))
-                            .boost(boostValue)
+                            .operator(MatchQueryBuilder.Operator.AND)
+                            .boost(2)
             )
         }
 
         void imposeTo(SearchRequestBuilder searchRequestBuilder) {
-            searchRequestBuilder.setQuery(boolQuery)
+            def query = reduceScoreFilterForMultipleTitlesOnQuery()
+            addBoostOfTypeInQuery(query)
+            searchRequestBuilder.setQuery(query)
         }
 
     }
