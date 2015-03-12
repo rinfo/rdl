@@ -43,7 +43,7 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
 
     @Override
     void addSynonym(String synonym){
-        synonyms.add(synonym)
+        synonyms.add(synonym?.replaceAll(ElasticSearchQueryBuilder.regex_sanitize_elasticsearch, ElasticSearchQueryBuilder.replacement))
     }
 
     @Override
