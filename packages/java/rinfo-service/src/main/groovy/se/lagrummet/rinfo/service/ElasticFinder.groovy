@@ -76,10 +76,12 @@ class ElasticFinder extends Finder {
 
     boolean isSimpleQuery(Reference ref) {
         def queryNames = ref.getQueryAsForm(UTF_8)
-        def returnVal = true
+        def returnVal = false
         queryNames.each {
             if (!simpleFields.contains((it as Parameter).getName()))
                 returnVal = false
+            else
+                returnVal = true
         }
         return returnVal
     }
