@@ -177,7 +177,6 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
 
         private void addBoostOfTypeInQuery(def functionScoreQuery) {
             listOfTypesToBoost.findAll { it.containsKey('boost') }.each {
-                //boostTypeInSearch(it.type, it.boost)
                 functionScoreQuery.add(
                         FilterBuilders.termFilter("type", it.type), ScoreFunctionBuilders.weightFactorFunction(it.boost as float)
                 )
