@@ -94,7 +94,7 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
             searchRequestBuilder.setPostFilter(addFilterForTypes("type",types))
 
         prepareGroupResultByType(searchRequestBuilder)
-
+        addStatistics(searchRequestBuilder)
         println searchRequestBuilder
 
         return searchRequestBuilder
@@ -128,6 +128,10 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
                 )
         )
 
+    }
+
+    private static def addStatistics(SearchRequestBuilder searchRequestBuilder) {
+        searchRequestBuilder.addAggregation(AggregationBuilders.terms("type").field("type"))
     }
 
     private static BoolFilterBuilder addFilterForTypes(String terms, def types) {

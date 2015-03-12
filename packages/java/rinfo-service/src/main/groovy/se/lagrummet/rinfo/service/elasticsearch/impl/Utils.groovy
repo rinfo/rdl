@@ -14,7 +14,7 @@ class Utils {
     static Map buildStats(SearchResponse esRes, String iriReplaceUrl) {
         return [
                 type: "DataSet",
-                slices: esRes.aggregations.collect {
+                slices: esRes.aggregations?.aggregations.collect {
                     def iriPos = it.name.indexOf(".iri")
                     def isIri = iriPos > -1
                     return [
@@ -27,7 +27,7 @@ class Utils {
                                 return [(
                                         key): value,
                                         count: it.docCount,
-                                        items: createListOfTopSearchHits(topHits.hits, iriReplaceUrl)
+                                        items: createListOfTopSearchHits(topHits?.hits, iriReplaceUrl)
                                 ]
                             }
                     ]
