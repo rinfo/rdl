@@ -1,0 +1,11 @@
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX protege:<http://protege.stanford.edu/plugins/owl/protege#>
+
+select distinct ?s where {
+    ?s rdf:type ?d . 
+    ?d protege:abstract "true" . { 
+        select ?s where {
+            ?s rdf:type ?o
+        } group by ?s having (count(distinct ?o) = 1)
+    }
+} order by ?s
