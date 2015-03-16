@@ -16,6 +16,7 @@
 
     ProxyPassMatch ^/robots\.txt$ !
     ProxyPass / ajp://localhost:8009/rinfo-service/
+    ProxyPassReverse / ajp://localhost:8009/rinfo-service/
 
     ServerAdmin rinfo@lagrummet.se
 
