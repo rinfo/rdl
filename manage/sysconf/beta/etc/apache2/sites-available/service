@@ -15,9 +15,12 @@
     </Directory>
 
     AliasMatch ^/robots\.txt$ /var/www/robots.txt
+    
     ProxyPass /sesame-workbench/ ajp://localhost:8009/sesame-workbench/
+    ProxyPassReverse /sesame-workbench/ ajp://localhost:8009/sesame-workbench/
 
     ProxyPass / ajp://localhost:8009/rinfo-service/
+    ProxyPassReverse / ajp://localhost:8009/rinfo-service/
 
     ServerAdmin rinfo@lagrummet.se
 
