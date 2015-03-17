@@ -644,6 +644,7 @@
     
   <profiles>
     <profile>
+      <id>default</id>
       <activation>
         <property>
           <name>!environment</name>
