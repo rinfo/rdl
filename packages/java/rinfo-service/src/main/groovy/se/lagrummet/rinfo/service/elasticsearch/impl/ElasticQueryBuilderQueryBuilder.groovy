@@ -17,13 +17,14 @@ import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.index.search.MatchQuery
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder
 import org.elasticsearch.search.aggregations.AggregationBuilders
+import org.slf4j.LoggerFactory
 import se.lagrummet.rinfo.service.elasticsearch.ElasticSearchQueryBuilder
 
 /**
  * Created by christian on 2/18/15.
  */
 class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.QueryBuilder {
-
+    private final logger = LoggerFactory.getLogger(ElasticQueryBuilderQueryBuilder)
     private ElasticSearchQueryBuilderImpl rdlQueryBuilder
     private int page
     private int pageSize
@@ -95,7 +96,7 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
 
         prepareGroupResultByType(searchRequestBuilder)
         addStatistics(searchRequestBuilder)
-        println searchRequestBuilder
+        logger.debug("elasticQuery:\n${searchRequestBuilder}")
 
         return searchRequestBuilder
     }

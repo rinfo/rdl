@@ -1,12 +1,13 @@
 package se.lagrummet.rinfo.service
 
+import org.slf4j.LoggerFactory
 import se.lagrummet.rinfo.service.elasticsearch.ElasticSearchQueryBuilder
 import se.lagrummet.rinfo.service.elasticsearch.impl.ElasticSearchQueryBuilderImpl
 
 import static org.restlet.data.CharacterSet.UTF_8
 
 class SimpleElasticQuery {
-
+    private final logger = LoggerFactory.getLogger(SimpleElasticQuery)
     private final def CONST = [
             requestQueryParam: "q",
             requestTypeParam: "type",
@@ -28,7 +29,6 @@ class SimpleElasticQuery {
     }
 
     Map search(docType, reference) {
-        println '++++++++++++++++++++++++++++++++++++++++++++++++++++++ simpleElasticQuery search ++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
 
         def queryForm = reference.getQueryAsForm(UTF_8)
 
@@ -38,7 +38,7 @@ class SimpleElasticQuery {
             queryForm.getValuesArray(CONST.requestQueryParam).each { if (first) { qb.addQuery(it); first=false; } else qb.addSynonym(it); }
             int page = queryForm.getFirstValue(CONST.pageParamKey)?.toInteger()?:0
             int pageSize = queryForm.getFirstValue(CONST.pageSizeParamKey)?.toInteger()?:CONST.defaultPageSize
-            println "se.lagrummet.rinfo.service.SimpleElasticQuery.search page=${page} pageSize=${pageSize}"
+            logger.debug("searching with page=${page} pageSize=${pageSize}")
             if (page<0||pageSize<0)
                 return [:]
 
@@ -47,7 +47,6 @@ class SimpleElasticQuery {
             qb.explain = queryForm.getFirstValue(CONST.explainParam)?.toBoolean()
 
             queryForm.getValuesArray(CONST.requestTypeParam).collect { qb.restrictType(it)}
-            //queryForm.getFirstValue(CONST.statsParam)
 
             return createResult(qb.result(serviceAppBaseUrl), reference.getQuery())
         } finally {
