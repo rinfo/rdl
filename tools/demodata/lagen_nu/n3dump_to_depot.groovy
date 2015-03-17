@@ -41,12 +41,12 @@ import org.apache.abdera.Abdera
 import se.lagrummet.rinfo.base.rdf.RDFUtil
 import se.lagrummet.rinfo.store.depot.*
 
-class MediaType {
+/*class MediaType {
     static RDF_XML = "application/rdf+xml"
     static HTML = "text/html"
     static TEXT = "text/plain"
     static PDF  = "application/pdf"
-}
+}*/
 
 def download(URL remoteurl,File localfile) {
     if (localfile.exists())

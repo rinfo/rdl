@@ -2,10 +2,10 @@
   "publ": {
     "type": "Rattsinformationsdokument",
     "iri": null,
-    "identifier": {"_boost": 500},
-    "title": {"_boost": 15},
-    "referatrubrik": { "_boost": 20},
-    "malnummer": null,
+    "identifier": {"_boost": 500, "analyzer":"identifiers"},
+    "title": {"_boost": 15, "analyzer":"swedish_with_sfs_ids"},
+    "referatrubrik": { "_boost": 20, "analyzer":"swedish"},
+    "malnummer": {"analyzer":"malnummer"},
     "diarienummer": null,
 
     "utfardandedatum": null,

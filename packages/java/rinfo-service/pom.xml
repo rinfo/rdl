@@ -9,7 +9,7 @@
   <version>1.0-SNAPSHOT</version>
   <name>RInfo Service</name>
   <url>http://dev.lagrummet.se/rinfo/</url>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
 
   <parent>
     <groupId>se.lagrummet</groupId>

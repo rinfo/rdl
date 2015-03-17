@@ -37,6 +37,7 @@ class ServiceApplicationSpec extends Specification {
     static RepositoryHandler repositoryHandler
 
     def setupSpec() {
+/*
         def config = new PropertiesConfiguration(CONFIG_PROPERTIES_FILE_NAME)
         serviceAppPort = config.getInt("test.serviceAppPort")
         feedAppPort = config.getInt("test.feedAppPort")
@@ -73,11 +74,14 @@ class ServiceApplicationSpec extends Specification {
         component.hosts.add(serviceHost)
         component.hosts.add(feedHost)
         component.start()
+*/
     }
 
     def cleanupSpec() {
+/*
         repositoryHandler.cleanRepository()
         component.stop()
+*/
     }
 
     // Ignore this test during my own test. This test is partially fault, because it tests another part of the system.

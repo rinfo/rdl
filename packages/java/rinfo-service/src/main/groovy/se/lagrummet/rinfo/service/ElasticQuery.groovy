@@ -20,7 +20,10 @@ import org.elasticsearch.search.sort.SortOrder
 import org.restlet.data.Reference
 
 @Log
-class ElasticQuery {
+class ElasticQuery { // \\+-&|!(){}[]^~*?:
+	
+	public static final String regex_sanitize_elasticsearch = "([+\\-|&!\\(\\){}\\[\\]\\/^~*?:\\\\]|[&\\|]{2})";
+	public static final String replacement = "\\\\\$1";
 
     ElasticData elasticData
     JsonLdSettings jsonLdSettings
@@ -46,6 +49,9 @@ class ElasticQuery {
         this.jsonLdSettings.listFramesData.each {
             this.elasticfields += [(it.key): compress(it.value)?.keySet()]
         }
+//        println "*************************************************** elasticfields *********************************************************************"
+//        println elasticfields.toMapString()
+//        println "*************************************************** elasticfields *********************************************************************"
     }
 
     @CompileStatic
@@ -326,9 +332,14 @@ class ElasticQuery {
             addStats: addStats
         ]
     }
+			
+	def sanitize_for_elasticsearch(final String parameter) {
+     	return parameter.replaceAll(regex_sanitize_elasticsearch, replacement);
+	}
 
-    def toQueryItem(final String name) {
-        def item = [
+    def toQueryItem(final String name_dirty) {
+        String name = name_dirty
+		def item = [
             name: name,
             term: null,
             optOr: false,
@@ -378,6 +389,7 @@ class ElasticQuery {
     }
 
     String escapeQueryString(String qs) {
+        //return qs.replaceAll(regex_sanitize_elasticsearch, replacement);
         return qs.
             replaceAll(/(?<!\\)([:&|\\()\[\]{}"])/, /\\$1/).
             replaceAll(/^(AND|OR)|(AND|OR)$/, "").
