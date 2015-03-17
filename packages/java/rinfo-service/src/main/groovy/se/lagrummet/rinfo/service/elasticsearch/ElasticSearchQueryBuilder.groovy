@@ -5,7 +5,7 @@ package se.lagrummet.rinfo.service.elasticsearch
  */
 public interface ElasticSearchQueryBuilder {
 
-    String regex_sanitize_elasticsearch = "([+\\-|&!\\(\\){}\\[\\]\\/^~*?:\\\\]|[&\\|]{2})";
+    String regex_sanitize_elasticsearch = "([+\\-|&!\\(\\){}\\[\\]\\/^~\"*?:\\\\]|[&\\|]{2})";
     String replacement = "\\\\\$1";
 
 
