@@ -17,41 +17,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <!--
-  <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl104-over-slf4j</artifactId>
-    </dependency>
-  </dependencies>
-  -->
-
   <build>
-    <!--
-    <defaultGoal>assembly:directory</defaultGoal>
-    <directory>${basedir}/target</directory>
-    <finalName>${project.artifactId}-${project.version}</finalName>
-    <resources>
-      <resource>
-        <filtering>true</filtering>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/lib.xml</descriptor>
-          </descriptors>
-        </configuration>
-      </plugin>
-    </plugins>
-    -->
     <defaultGoal>package</defaultGoal>
     
     <plugins>
