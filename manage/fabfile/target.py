@@ -632,7 +632,7 @@ def infrastructure():
 def _tomcat_env():
     env.apache_jk_tomcat = True
     # when change version of tomcat, must check server.xml (../../sysconf/common/tomcat/server.xml)
-    env.tomcat_version = "7.0.57"
+    env.tomcat_version = "7.0.59"
     env.tomcat = "/opt/tomcat"
     env.tomcat_webapps = "%(tomcat)s/webapps" % env
     env.tomcat_start = '/etc/init.d/tomcat start'
