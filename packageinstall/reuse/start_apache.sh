@@ -1,5 +1,5 @@
 #!/bin/bash 
 
-echo '------------- Start Apache'
+echo '------------- Start Apache CentOS'
 
-/etc/init.d/apache2 restart
+apachectl restart

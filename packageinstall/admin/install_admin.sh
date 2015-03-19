@@ -1,10 +1,19 @@
 #!/bin/bash 
 
-echo '------------- Install Rinfo-Admin'
+echo '------------- Install Rinfo-Admin CentOS'
 
-mv admin /etc/apache2/sites-available/admin
-chown root:root /etc/apache2/sites-available/admin
-chmod 644 /etc/apache2/sites-available/admin
+sed 's/dnsplaceholderforsed/'$1'/g' admin > tmp_admin
+sed 's/dnsplaceholderforsed/lagrummet\.se/g' admin >> tmp_admin
+
+#mkdir -p /etc/httpd/sites-available 
+#mkdir -p /etc/httpd/sites-enabled
+
+mv tmp_admin /etc/httpd/conf.d/admin.conf
+#mv tmp_admin /etc/httpd/sites-available/admin.conf
+#ln -s /etc/httpd/sites-available/admin.conf /etc/httpd/sites-enabled/admin.conf
+
+#chown root:root /etc/httpd/sites-available/admin.conf
+#chmod 644 /etc/httpd/sites-available/admin.conf
 
 mkdir -p /var/www/admin
 ( cd output && cp -r * /var/www/admin/ )
@@ -12,5 +21,3 @@ chmod -R 755 /var/www/admin
 chown -R rinfo:root /var/www/admin
 
 chown -R rinfo:rinfo /var/www/admin/*
-
-a2ensite admin

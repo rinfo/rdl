@@ -18,8 +18,8 @@
 
     ServerAdmin rinfo@lagrummet.se
 
-    ErrorLog /var/log/apache2/admin-error.log
+    ErrorLog /var/log/httpd/admin-error.log
     LogLevel warn
-    CustomLog /var/log/apache2/admin-access.log combined
+    CustomLog /var/log/httpd/admin-access.log combined
 
 </VirtualHost>
