@@ -189,12 +189,14 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
                     QueryBuilders.multiMatchQuery(it, querySearchFields)
                             .type(MatchQuery.Type.PHRASE_PREFIX)
                             .minimumShouldMatch(queryMinimalMatchPercent)
-                            .operator(MatchQueryBuilder.Operator.OR)
+                            .operator(MatchQueryBuilder.Operator.AND)
             )
 
             QueryStringQueryBuilder builder = QueryBuilders.queryString(it)
             querySearchFields.each {builder.field(it)}
             builder.defaultOperator(QueryStringQueryBuilder.Operator.AND)
+            builder.minimumShouldMatch(queryMinimalMatchPercent)
+            builder.analyzeWildcard(true)
             boolQuery.should(builder)
 
 

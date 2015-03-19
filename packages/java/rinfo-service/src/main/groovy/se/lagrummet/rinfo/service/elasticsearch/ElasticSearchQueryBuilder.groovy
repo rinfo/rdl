@@ -9,7 +9,7 @@ public interface ElasticSearchQueryBuilder {
     String replacement = "\\\\\$1";
 
 
-    String QUERY_MINIMUM_MATCH = "80%"
+    String QUERY_MINIMUM_MATCH = "1<50% 2<-25%"
 
     Float EXACT_MATCH_BOOST = null;
 
