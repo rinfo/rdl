@@ -26,6 +26,18 @@
       "swedish_stemmer": {
         "type": "stemmer",
         "language": "swedish"
+      },
+      "malnummer_without_leading_char": {
+        "type": "pattern_capture",
+        "preserve_original": 1,
+        "patterns": [
+          "(\\d{4,}-\\d{1,})"
+          ]
+      },
+      "malnummer_replace_hypen":{
+        "type": "pattern_replace",
+        "pattern": "(\\w?\\d{4,})hypen(\\d{1,})",
+        "replacement": "$1-$2"
       }
     },
     "char_filter": {
@@ -38,6 +50,11 @@
         "type": "pattern_replace",
         "pattern": "(SFS)\\s(\\d{4}):(\\d{1,})",
         "replacement": "$1_$2colon$3"
+      },
+      "break_out_malnummer": {
+        "type": "pattern_replace",
+        "pattern": "(\\w?\\d{4,})-(\\d{1,})(\\w+)",
+        "replacement": "$1hypen$2 $3"
       }
     },
     "analyzer": {
@@ -51,20 +68,24 @@
       },
       "malnummer": {
         "tokenizer": "keyword",
-        "filter": ["lowercase"]
+        "filter": ["malnummer_without_leading_char","lowercase", "unique"]
       },
-      "swedish_with_sfs_ids": {
+      "swedish_with_sfs_malnummer": {
         "tokenizer": "standard",
         "char_filter": [
           "SFS_id_map",
-          "SFS_nr_id_map"
+          "SFS_nr_id_map",
+          "break_out_malnummer"
         ],
         "filter": [
           "swedish_stop",
           "swedish_stemmer",
           "SFS_id_map_back",
           "SFS_nr_id_map_back",
-          "lowercase"
+          "malnummer_replace_hypen",
+          "malnummer_without_leading_char",
+          "lowercase",
+          "unique"
         ]
       }
     }

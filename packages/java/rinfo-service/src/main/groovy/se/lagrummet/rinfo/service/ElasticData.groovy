@@ -35,7 +35,7 @@ class ElasticData {
             ], [
                 "resource_text": [
                         "match": "text",
-                        "mapping": ["type": "string", "index": "analyzed", "analyzer":"swedish_with_sfs_ids", "include_in_all": false]
+                        "mapping": ["type": "string", "index": "analyzed", "analyzer":"swedish_with_sfs_malnummer", "include_in_all": false]
                 ]
             ]
         ]
