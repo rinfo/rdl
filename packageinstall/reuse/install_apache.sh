@@ -2,9 +2,9 @@
 
 echo '------------- Install Apache CentOS'
 
-#yum -y install httpd
+yum -y install httpd
 
-#apachectl stop
+apachectl stop
 
 mv robots.txt /var/www/
 chmod u=rw,a=r /var/www/robots.txt

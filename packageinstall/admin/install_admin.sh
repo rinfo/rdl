@@ -16,5 +16,5 @@ chown -R rinfo:root /var/www/admin
 
 chown -R rinfo:rinfo /var/www/admin/*
 
-echo '127.0.0.1  admin.'$1 >> /etc/hosts
-echo '127.0.0.1  admin.lagrummet.se' >> /etc/hosts
+#echo '127.0.0.1  admin.'$1 >> /etc/hosts
+#echo '127.0.0.1  admin.lagrummet.se' >> /etc/hosts
