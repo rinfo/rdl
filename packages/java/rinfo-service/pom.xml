@@ -175,16 +175,6 @@
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <warName>${project.artifactId}-${environment}</warName>
-          <!--<webResources>
-            <resource>
-              <filtering>false</filtering>
-              <directory>src/environments/${environment}</directory>
-              <targetPath>WEB-INF/classes</targetPath>
-              <includes>
-                <include>**/*</include>
-              </includes>
-            </resource>
-          </webResources>-->
         </configuration>
       </plugin>
 

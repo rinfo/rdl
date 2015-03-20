@@ -122,7 +122,9 @@ function renderStats(stats, dynamicSelects) {
         if (!sharedData.terms[this.term]) {
           console.log("Unknown term: " + this.term);
         }
-        label = sharedData.terms[this.term].label;
+        try {
+            label = sharedData.terms[this.term].label;
+        } catch (ignore) { console.log("Failed to read 'sharedData.terms[this.term].label' because "+ignore.message)}
         value = this.term;
       }
       if (!value)

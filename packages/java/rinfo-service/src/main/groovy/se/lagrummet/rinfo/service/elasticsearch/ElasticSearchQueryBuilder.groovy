@@ -5,7 +5,12 @@ package se.lagrummet.rinfo.service.elasticsearch
  */
 public interface ElasticSearchQueryBuilder {
 
-    String regex_sanitize_elasticsearch = "([+\\-|&!\\(\\){}\\[\\]\\/^~\"*?:\\\\]|[&\\|]{2})";
+    String regex_sanitize_elasticsearch = "([+\\-|&!{}\\[\\]\\/^~\"\\\\]|[&:()\\|]{2}" +
+            "|\\:(?!\\S)" + //matchar kolon ej följt av ett icke "whitespace" (om tecknet är sista tecken..)
+            "|\\((?!\\w)\\)" + //matchar ( ej följt av tecken följt av )
+            "|\\((?!\\w)" + //matchar ( ej följt av tecken
+            "|(?<!\\w)\\))"; //matchar ) utan tecken _innan_ )
+
     String replacement = "\\\\\$1";
 
 
