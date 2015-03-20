@@ -6,7 +6,7 @@ cp ../../manage/sysconf/template/etc/apache2/sites-available/admin tmp/
 
 cp ../../manage/sysconf/template/www/robots.txt tmp/
 
-cp ../../manage/sysconf/common/etc/apache2/conf.d/jk.conf tmp/
+#cp ../../manage/sysconf/common/etc/apache2/conf.d/jk.conf tmp/
 
 cp install.sh tmp/
 
@@ -21,5 +21,5 @@ cp ./install_admin.sh tmp/
 
 git log -1 | grep 'commit' > tmp/git_status.txt
 
-( cd tmp && tar -zcf ../rinfo-admin.tar.gz * )
+( cd tmp && chmod a+x *.sh && tar -zcf ../rinfo-admin.tar.gz * )
 

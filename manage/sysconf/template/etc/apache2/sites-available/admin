@@ -1,15 +1,9 @@
 <VirtualHost *:80>
-    ServerName admin.dnsplaceholderforsed
-    ServerSignature On
 
-    AliasMatch ^/robots\.txt$ /var/www/robots.txt
-
-    DocumentRoot /var/www/admin/
-    <Directory />
-        Options FollowSymLinks
-        AllowOverride None
-    </Directory>
-    <Directory /var/www/admin/>
+    ServerName www.admin.dnsplaceholderforsed
+    ServerAlias admin.dnsplaceholderforsed
+    DocumentRoot "/var/www/admin"
+    <Directory "/var/www/admin">
         Options Indexes FollowSymLinks MultiViews
         AllowOverride None
         Order allow,deny
@@ -18,8 +12,7 @@
 
     ServerAdmin rinfo@lagrummet.se
 
-    ErrorLog /var/log/httpd/admin-error.log
+    ErrorLog /var/log/httpd/admin.dnsplaceholderforsed.error.log
     LogLevel warn
-    CustomLog /var/log/httpd/admin-access.log combined
-
+    CustomLog /var/log/httpd/admin.dnsplaceholderforsed.requests.log combined
 </VirtualHost>
