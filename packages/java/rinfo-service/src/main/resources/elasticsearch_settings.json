@@ -53,7 +53,7 @@
       },
       "break_out_malnummer": {
         "type": "pattern_replace",
-        "pattern": "(\\w?\\d{4,})-(\\d{1,})(\\w+)",
+        "pattern": "(\\w?\\d{4,})-(\\d{1,})(\\w*)",
         "replacement": "$1hypen$2 $3"
       }
     },
