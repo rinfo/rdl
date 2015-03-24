@@ -7,6 +7,7 @@ from fabric.contrib.project import os
 import time
 from fabric.api import *
 from os.path import expanduser
+import sys
 
 from fabfile.util import install_public_key, role_is_active
 from util import venv, get_value_from_password_store, PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME
@@ -213,7 +214,6 @@ def ftp_fetch_and_untar(snapshot_name, name, tmp_path, target_tar_unpack_path, u
     untar('%s/%s.tar.gz' % (tmp_path, name), target_tar_unpack_path, use_sudo=True, test=test, is_local=is_local)
 
 
-@parallel
 @roles('main')
 def take_main_snapshot_and_push_to_ftp(snapshot_name, target_path, username, password, test=False):
     if not role_is_active('main'):
@@ -221,15 +221,11 @@ def take_main_snapshot_and_push_to_ftp(snapshot_name, target_path, username, pas
     if not test:
         tomcat_stop()
 
-    clean_path(target_path, test=test)
-    create_path(target_path, test=test)
-
     tar_and_ftp_push(snapshot_name, 'depot', password, '/opt/rinfo/store/', target_path, username, test=test)
 
     if not test:
         tomcat_start()
 
-@parallel
 @roles('service')
 def take_service_snapshot_and_push_to_ftp(snapshot_name, target_path, username, password, use_sesame=True,
                                           use_elasticsearch=True, test=False):
@@ -308,11 +304,14 @@ def take_snapshot_and_push_to_ftp(name='snapshot', username='', password='', tes
         username = get_value_from_password_store(PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, username)
         password = get_value_from_password_store(PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, password)
 
+    clean_path(tar_target_path, test=False)
+    create_path(tar_target_path, test=False)
+
     try:
         take_main_snapshot_and_push_to_ftp(snapshot_name, tar_target_path, username, password, test=test)
         take_service_snapshot_and_push_to_ftp(snapshot_name, tar_target_path, username, password, test=test)
     finally:
-        clean_path(tar_target_path, test=test)
+        clean_path(tar_target_path, test=False)
 
 @parallel
 @roles('main')
@@ -342,7 +341,11 @@ def fetch_service_snapshot_from_ftp_and_install(snapshot_name, tar_target_path, 
 
     if not test:
         tomcat_stop()
-        sudo("/etc/init.d/elasticsearch stop")    
+        try:
+            sudo("/etc/init.d/elasticsearch stop")
+        except:
+            e = sys.exc_info()[0]
+            print "Warning: problems stopping elastic search because %s" % e
 
     clean_path(tar_target_path, test=test)
     create_path(tar_target_path, test=test)
