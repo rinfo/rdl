@@ -234,7 +234,12 @@ def take_service_snapshot_and_push_to_ftp(snapshot_name, target_path, username, 
 
     if not test:
         tomcat_stop()
-        sudo("/etc/init.d/elasticsearch stop")
+        try:
+            sudo("/etc/init.d/elasticsearch stop")
+        except:
+            e = sys.exc_info()[0]
+            print "WARNING! Problems stopping elastic search because %s" % e
+
 
     if use_sesame:
         tar_and_ftp_push(snapshot_name, 'sesame', password, '/opt/rinfo/sesame-repo/', target_path, username,
