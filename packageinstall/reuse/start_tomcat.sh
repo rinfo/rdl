@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-echo '------------- Start Tomcat'
+echo '------------- Start Tomcat CentOS'
 
-/etc/init.d/tomcat7 start
+service tomcat start
 

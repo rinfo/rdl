@@ -2,4 +2,4 @@
 
 echo '------------- Start Apache CentOS'
 
-apachectl restart
+apachectl start

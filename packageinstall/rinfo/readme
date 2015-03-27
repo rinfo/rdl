@@ -1,4 +1,4 @@
 Kör 
 
-$ source ./dist.sh test.lagrummet.se
+$ source ./dist.sh
 

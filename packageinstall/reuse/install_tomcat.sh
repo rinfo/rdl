@@ -1,15 +1,13 @@
 #!/bin/bash 
 
-echo '------------- Install Tomcat'
+echo '------------- Install Tomcat Cent OS'
 
-apt-get install openjdk-7-jre-headless -y
+yum -y install java-1.7.0-openjdk
 
-apt-get install tomcat7 -y
-/etc/init.d/tomcat7 stop
-rm -rf /var/lib/tomcat7/webapps/*
+yum -y install tomcat 
 
-chmod 0755 /etc/init.d/tomcat7
-update-rc.d tomcat7 defaults
+service tomcat stop
+rm -rf /var/lib/tomcat/webapps/*
 
 mkdir -p /opt/tomcat/logs
-chown rinfo /opt/tomcat/logs
+chown tomcat /opt/tomcat/logs
