@@ -10,6 +10,7 @@
     </Proxy>
 
     ProxyPass / ajp://localhost:8009/rinfo-checker/
+    ProxyPassReverse / ajp://localhost:8009/rinfo-checker/
 
     ServerAdmin rinfo@lagrummet.se
 

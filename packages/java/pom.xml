@@ -20,7 +20,7 @@
     <greclipse.version>2.7.0-01</greclipse.version>
     <restlet.version>2.0.9</restlet.version>
     <sesame.version>2.6.10</sesame.version>
-    <elasticsearch.version>1.2.1</elasticsearch.version>
+    <elasticsearch.version>1.4.4</elasticsearch.version>
     <spatial4j.version>0.3</spatial4j.version>
     <tika.version>0.9</tika.version>
     <jackson.version>1.8.1</jackson.version>
@@ -118,7 +118,27 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+      <repository>
+          <snapshots>
+              <enabled>false</enabled>
+          </snapshots>
+          <id>bintray-groovy-maven</id>
+          <name>bintray</name>
+          <url>http://dl.bintray.com/groovy/maven</url>
+      </repository>
+
   </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray-groovy-maven</id>
+            <name>bintray-plugins</name>
+            <url>http://dl.bintray.com/groovy/maven</url>
+        </pluginRepository>
+    </pluginRepositories>
 
   <!-- for codenarc-maven-plugin
   <pluginRepositories>
@@ -290,6 +310,11 @@
       <dependency>
         <groupId>org.openrdf.sesame</groupId>
         <artifactId>sesame-rio-trix</artifactId>
+        <version>${sesame.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.openrdf.sesame</groupId>
+        <artifactId>sesame-rio-trig</artifactId>
         <version>${sesame.version}</version>
       </dependency>
       <dependency>
@@ -495,6 +520,8 @@
       </extension>
     </extensions>
 
+
+
     <pluginManagement>
       <plugins>
 
@@ -585,38 +612,34 @@
           <version>2.1.1</version>
         </plugin>
 
+<!--
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>cobertura-maven-plugin</artifactId>
           <version>2.4</version>
         </plugin>
+-->
 
-        <!--
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>codenarc-maven-plugin</artifactId>
-          <version>0.8-alpha-SNAPSHOT</version>
-        </plugin>
-        -->
-
+<!--
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>findbugs-maven-plugin</artifactId>
           <version>2.3.1</version>
           <configuration>
-            <!--
             <findbugsXmlOutput>true</findbugsXmlOutput>
             <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
             <xmlOutput>true</xmlOutput>
-            -->
           </configuration>
         </plugin>
+-->
 
+<!--
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>taglist-maven-plugin</artifactId>
           <version>2.4</version>
         </plugin>
+-->
 
         <plugin>
           <groupId>org.mortbay.jetty</groupId>
@@ -639,6 +662,7 @@
     
   <profiles>
     <profile>
+      <id>default</id>
       <activation>
         <property>
           <name>!environment</name>
@@ -707,6 +731,18 @@
             <environment>valle</environment>
         </properties>
     </profile>
+    <profile>
+        <id>viktor</id>
+        <properties>
+            <environment>viktor</environment>
+        </properties>
+    </profile>
+    <profile>
+        <id>stage</id>
+        <properties>
+            <environment>stage</environment>
+        </properties>
+    </profile>
       <profile>
           <id>regression</id>
           <properties>
@@ -766,10 +802,12 @@
                   <groupId>org.codehaus.mojo</groupId>
                   <artifactId>findbugs-maven-plugin</artifactId>
                 </plugin-->
+<!--
                 <plugin>
                   <groupId>org.codehaus.mojo</groupId>
                   <artifactId>taglist-maven-plugin</artifactId>
                 </plugin>
+-->
               </reportPlugins>
             </configuration>
           </plugin>

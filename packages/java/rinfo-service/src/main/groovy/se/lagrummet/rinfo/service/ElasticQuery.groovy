@@ -2,15 +2,8 @@ package se.lagrummet.rinfo.service
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Commons as Log
-import org.elasticsearch.common.xcontent.ToXContent
-import org.elasticsearch.common.xcontent.XContentBuilder
-import org.elasticsearch.index.query.MultiMatchQueryBuilder
-import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
-import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilder
-import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 
 import static org.restlet.data.CharacterSet.UTF_8
-import org.restlet.data.Reference
 
 import org.elasticsearch.action.search.SearchPhaseExecutionException
 import org.elasticsearch.action.search.SearchResponse
@@ -24,10 +17,13 @@ import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.facet.FacetBuilders
 import org.elasticsearch.search.facet.datehistogram.DateHistogramFacet
 import org.elasticsearch.search.sort.SortOrder
-
+import org.restlet.data.Reference
 
 @Log
-class ElasticQuery {
+class ElasticQuery { // \\+-&|!(){}[]^~*?:
+	
+	public static final String regex_sanitize_elasticsearch = "([+\\-|&!\\(\\){}\\[\\]\\/^~*?:\\\\]|[&\\|]{2})";
+	public static final String replacement = "\\\\\$1";
 
     ElasticData elasticData
     JsonLdSettings jsonLdSettings
@@ -44,6 +40,8 @@ class ElasticQuery {
 
     Map elasticfields = [:]
 
+    def boostMap =  [:]
+
     ElasticQuery(ElasticData elasticData, String serviceAppBaseUrl) {
         this.elasticData = elasticData
         this.jsonLdSettings = elasticData.jsonLdSettings
@@ -51,6 +49,9 @@ class ElasticQuery {
         this.jsonLdSettings.listFramesData.each {
             this.elasticfields += [(it.key): compress(it.value)?.keySet()]
         }
+//        println "*************************************************** elasticfields *********************************************************************"
+//        println elasticfields.toMapString()
+//        println "*************************************************** elasticfields *********************************************************************"
     }
 
     @CompileStatic
@@ -96,7 +97,10 @@ class ElasticQuery {
         m.collectEntries { k, v ->
             if(!isLeaf(v)) compress( v, "$prefix$k" )
             else
-                if(k == "_boost") [ (prefix[0..-2].toString()): v ]
+                if(k == "_boost") {
+                    boostMap << [(prefix[0..-2].toString()): v ]
+                    [ (prefix[0..-2].toString()): v ]
+                }
                 else [ ("$prefix$k".toString()): v ]
         }
     }
@@ -239,8 +243,12 @@ class ElasticQuery {
 
         QueryBuilder qb = (matches)?
             QueryBuilders.queryString(elasticQStr).
-                defaultOperator(QueryStringQueryBuilder.Operator.AND).field("title^20").field("identifier^100").field("_all") :
+                defaultOperator(QueryStringQueryBuilder.Operator.AND).field("_all") :
             QueryBuilders.matchAllQuery()
+
+        if(matches)
+            qb = addBoostedFields(qb)
+
         List<FilterBuilder> filterBuilders = []
         List<FilterBuilder> orFilterBuilders = []
 
@@ -311,6 +319,7 @@ class ElasticQuery {
             srb.addHighlightedField("identifier", 150, 0)
             //srb.addHighlightedField("publisher.name", 150, 0)
             srb.addHighlightedField("text", 150, 3)
+            srb.addHighlightedField("referatrubrik", 150, 0)
         }
 
         log.debug "Using ElasticSearch search JSON: ${srb.internalBuilder()}"
@@ -323,9 +332,14 @@ class ElasticQuery {
             addStats: addStats
         ]
     }
+			
+	def sanitize_for_elasticsearch(final String parameter) {
+     	return parameter.replaceAll(regex_sanitize_elasticsearch, replacement);
+	}
 
-    def toQueryItem(final String name) {
-        def item = [
+    def toQueryItem(final String name_dirty) {
+        String name = name_dirty
+		def item = [
             name: name,
             term: null,
             optOr: false,
@@ -375,6 +389,7 @@ class ElasticQuery {
     }
 
     String escapeQueryString(String qs) {
+        //return qs.replaceAll(regex_sanitize_elasticsearch, replacement);
         return qs.
             replaceAll(/(?<!\\)([:&|\\()\[\]{}"])/, /\\$1/).
             replaceAll(/^(AND|OR)|(AND|OR)$/, "").
@@ -458,4 +473,10 @@ class ElasticQuery {
         return iri.replaceFirst(/http:\/\/rinfo\.lagrummet\.se\/([^#]+)(#.*)?/, serviceAppBaseUrl + '$1/data.json$2')
     }
 
+    QueryStringQueryBuilder addBoostedFields(qb) {
+        boostMap.each { key,boostValue ->
+            qb.field("${key}",boostValue)
+        }
+        return qb
+    }
 }

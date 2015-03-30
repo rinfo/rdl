@@ -28,8 +28,12 @@ casper.test.begin('Test click of search result', function(test) {
 
    casper.then(function() {
         this.test.assertTextExists("Sökresultat");
-        this.test.assertExists("a[href='#/publ/sfs/1999:766/data.json']");
-        this.click("a[href='#/publ/sfs/1999:766/data.json']");
+        //this.test.assertExists("a[href='#/publ/sfs/1999:766/data.json']");
+        //this.click("a[href='#/publ/sfs/1999:766/data.json']");
+
+        this.test.assertExists("a[href='#/publ/sfs/1999:766/konsolidering/1999-10-04/data.json']");
+        this.click("a[href='#/publ/sfs/1999:766/konsolidering/1999-10-04/data.json']");
+
    });
 
    casper.waitForSelector("#documentView h2", function(){}, captureScreen, 20000);

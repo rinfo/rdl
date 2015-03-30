@@ -14,7 +14,6 @@ import se.lagrummet.rinfo.rdf.repo.RepositoryHandlerFactory
 
 import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDContext
 
-
 class ServiceComponents {
 
     Configuration config
@@ -25,6 +24,7 @@ class ServiceComponents {
     JsonLdSettings jsonLdSettings
     ElasticData elasticData
     ElasticQuery elasticQuery
+    SimpleElasticQuery simpleElasticQuery
 
     String ldContextPath = "/json-ld/context.json"
     protected String listFramesPath = "/json-ld/list-frames.json"
@@ -48,6 +48,7 @@ class ServiceComponents {
         this.jsonLdSettings = createJsonLdSettings()
         this.elasticData = createElasticData()
         this.elasticQuery = createElasticQuery()
+        this.simpleElasticQuery = createSimpleElasticQuery()
     }
 
     String getDataAppBaseUri() {
@@ -140,6 +141,13 @@ class ServiceComponents {
             return null
         }
         return new ElasticQuery(elasticData, getServiceAppBaseUrl())
+    }
+
+    private def createSimpleElasticQuery() {
+        if(!elasticData) {
+            return null
+        }
+        return new SimpleElasticQuery(elasticData, getServiceAppBaseUrl())
     }
 
     protected Map readJson(String dataPath) {

@@ -7,6 +7,7 @@ import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.indices.IndexAlreadyExistsException
 import org.elasticsearch.transport.RemoteTransportException
+import groovy.json.JsonSlurper
 
 
 @Log
@@ -30,6 +31,11 @@ class ElasticData {
                 "resource_type": [
                     "match": "type",
                     "mapping": ["type": "string", "index": "not_analyzed", "include_in_all": false]
+                ]
+            ], [
+                "resource_text": [
+                        "match": "text",
+                        "mapping": ["type": "string", "index": "analyzed", "analyzer":"swedish_with_sfs_malnummer", "include_in_all": false]
                 ]
             ]
         ]
@@ -58,10 +64,15 @@ class ElasticData {
         return null
     }
 
+    synchronized def readSettings() {
+        return new JsonSlurper().parse(new InputStreamReader(this.getClass().getResourceAsStream("/elasticsearch_settings.json")))
+    }
+
     synchronized void initialize() {
         def indices = client.admin().indices()
+        def settings = readSettings()
         try {
-            indices.prepareCreate(indexName).execute().actionGet()
+            indices.prepareCreate(indexName).setSettings(settings).execute().actionGet()
         } catch (IndexAlreadyExistsException e) {
             log.info "ElasticSearch index '${indexName}' already exists."
         } catch (RemoteTransportException e) {
@@ -83,14 +94,22 @@ class ElasticData {
                     propMap[term] = [
                         "type": "string",
                         "fields": [
-                            //(term): ["type": "string", "index": "analyzed", "boost": boost],
-                            "raw": ["type": "string", "index": "not_analyzed", "include_in_all": true, "boost": boost]
+                            (term): ["type": "string", "index": "analyzed", "boost": boost]
                         ]
                     ]
                 } else {
                     Float boost = jsonLdSettings.boostTermMap[term]
                     if (boost) {
                         propMap[term] = ["type": "string", "index": "analyzed", "boost": boost]
+                    }
+                }
+                if(frame[term] instanceof Map) {
+                    def analyzer = frame[term]?.analyzer
+                    if (analyzer) {
+                        if (!propMap[term])
+                            propMap[term] = ["type": "string", "index": "analyzed", "analyzer": analyzer]
+                        else
+                            propMap[term].put("analyzer", analyzer)
                     }
                 }
             }

@@ -28,10 +28,10 @@ class ServiceApplication extends Application {
 
     boolean allowCORS = true
 
-    ServiceApplication(Context parentContext) {
+    ServiceApplication(Context parentContext, boolean useCommon = true) {
         super(parentContext)
         setupExtensions()
-        components = new ServiceComponents(new File(COMMON_CONFIG_PROPERTIES_FILE_NAME).exists()?COMMON_CONFIG_PROPERTIES_FILE_NAME:CONFIG_PROPERTIES_FILE_NAME)
+        components = new ServiceComponents(useCommon&&new File(COMMON_CONFIG_PROPERTIES_FILE_NAME).exists()?COMMON_CONFIG_PROPERTIES_FILE_NAME:CONFIG_PROPERTIES_FILE_NAME)
         getContext().getAttributes().putIfAbsent(SERVICE_COMPONENTS_CONTEXT_KEY, components)
     }
 
@@ -87,9 +87,9 @@ class ServiceApplication extends Application {
                     "/sparql/construct_summary.rq")
             ).template.variables.put("path", new Variable(Variable.TYPE_URI_PATH))
 
-        if (components.elasticQuery) {
+        if (components.elasticQuery && components.simpleElasticQuery) {
             router.attach("/-/{docType}",
-                    new ElasticFinder(ctx, components.elasticQuery))
+                    new ElasticFinder(ctx, components.elasticQuery, components.simpleElasticQuery))
         }
 
         if (mediaDirUrl) {
