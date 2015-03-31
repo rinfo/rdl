@@ -192,13 +192,20 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
                             .operator(MatchQueryBuilder.Operator.AND)
             )
 
-            QueryStringQueryBuilder builder = QueryBuilders.queryString(it)
-            querySearchFields.each {builder.field(it)}
-            builder.defaultOperator(QueryStringQueryBuilder.Operator.AND)
-            builder.minimumShouldMatch(queryMinimalMatchPercent)
-            builder.analyzeWildcard(true)
-            boolQuery.should(builder)
+            QueryStringQueryBuilder queryBuilder = QueryBuilders.queryString(it)
+            querySearchFields.findAll {!it.startsWith("identifier") }.each {queryBuilder.field(it) }
+            queryBuilder.defaultOperator(QueryStringQueryBuilder.Operator.OR)
+            queryBuilder.analyzer("swedish_with_sfs_ids")
+            queryBuilder.minimumShouldMatch(queryMinimalMatchPercent)
+            queryBuilder.analyzeWildcard(true)
+            boolQuery.should(queryBuilder)
 
+            MatchQueryBuilder matchBuilder = QueryBuilders.matchQuery("identifier", it)
+            matchBuilder.analyzer("identifiers")
+            def idBoost = Float.parseFloat(querySearchFields.findAll {it.startsWith("identifier")}.first().tokenize("^")[1])
+            matchBuilder.boost(idBoost)
+
+            boolQuery.should(matchBuilder)
 
         }
 
