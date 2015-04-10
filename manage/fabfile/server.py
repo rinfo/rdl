@@ -264,7 +264,9 @@ def clean_path(tar_target_path, use_sudo=False, test=False, is_local=False):
         run(cmd)
 
 
-def create_path(target_path, test=False, use_sudo=False, is_local=False):
+def create_path(target_path, test=False, use_sudo=False, is_local=False, clean=False):
+    if clean:
+        clean_path(tar_target_path=target_path, use_sudo=use_sudo, test=test, is_local=is_local)
     if test:
         print "Make directory: %s" % target_path
         return

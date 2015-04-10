@@ -63,6 +63,7 @@ import target
 import sysconf
 import server
 import testfeed
+import docker
 import app.main
 import app.admin
 import app.service
