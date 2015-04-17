@@ -92,6 +92,13 @@ def deploy_sesame():
         app._deploy_war("%(local_sesame_dir)s/%(warname)s.war" % venv(), warname)
 
 
+@task
+@roles('service')
+def destroy_service_repository(default_repository='rinfo'):
+    _needs_targetenv()
+    run("curl -X POST http://localhost:8080/sesame-workbench/repositories/%s/clear" % default_repository)
+
+
 def _patch_catalina_properties():
     # This will patch catalina.properties so that it contains the system 
     # property that controls where sesame stores its data
@@ -279,7 +286,7 @@ def destroy_service_data(start_top_tomcat=True):
         return
     if start_top_tomcat:
         tomcat_stop()
-    sudo("rm -rf %(rinfo_rdf_repo_dir)s/*" % venv())
+    destroy_service_repository()
     delete_elasticsearch_index()
     ban_varnish()
     if start_top_tomcat:
