@@ -1,4 +1,4 @@
-package se.lagrummet.rinfo.main
+package se.lagrummet.rinfo.base
 
 import org.restlet.Client
 import org.restlet.data.MediaType

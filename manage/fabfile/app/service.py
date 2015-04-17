@@ -2,7 +2,7 @@ import re
 import sys
 from fabric.api import *
 from fabric.contrib.files import exists
-from fabfile.util import venv, mkdirpath, exit_on_error
+from fabfile.util import venv, mkdirpath, exit_on_error, role_is_active
 from fabfile import app, sysconf
 from fabfile.target import _needs_targetenv
 from fabfile.app import _deploy_war_norestart
@@ -197,6 +197,13 @@ def start_elasticsearch():
     sudo("/etc/init.d/elasticsearch start")
 
 
+@task
+@roles('service')
+def delete_elasticsearch_index(index_name='rinfo'):
+    _needs_targetenv()
+    run("curl -XDELETE 'http://localhost:9200/%s/'" % index_name)
+
+
 ##
 # Varnish install and setup
 
@@ -263,6 +270,20 @@ def ping_start_collect():
     collector_url = "http://%s/collector" % env.roledefs['service'][0]
     if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s" % vars(), "Scheduled collect of"):
         raise Exception("Test failed")
+
+
+@task
+@roles('service')
+def destroy_service_data(start_top_tomcat=True):
+    if not role_is_active('service'):
+        return
+    if start_top_tomcat:
+        tomcat_stop()
+    sudo("rm -rf %(rinfo_rdf_repo_dir)s/*" % venv())
+    delete_elasticsearch_index()
+    ban_varnish()
+    if start_top_tomcat:
+        tomcat_start()
 
 
 @task

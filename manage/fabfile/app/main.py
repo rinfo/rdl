@@ -1,7 +1,7 @@
 import sys
 from fabric.api import *
 from fabric.contrib.files import exists
-from fabfile.util import venv, exit_on_error
+from fabfile.util import venv, exit_on_error, role_is_active
 from fabfile.app import local_lib_rinfo_pkg
 from fabfile.app import _deploy_war_norestart
 from fabfile.target import _needs_targetenv
@@ -112,10 +112,38 @@ def ping_start_collect_admin():
 @roles('main')
 def ping_start_collect_feed():
     _needs_targetenv()
-    feed_url = "http://%s/feed/current.atom" % env.roledefs['demosource'][0]
     collector_url = "http://%s/collector" % env.roledefs['main'][0]
-    if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s" % vars(), "Scheduled collect of"):
-        raise Exception("Test failed")
+    if env.target=='regression':
+        feed_url = "http://%s/feed/current.atom" % env.roledefs['demosource'][0]
+        if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s" % vars(), "Scheduled collect of"):
+            raise Exception("Scheduled collect failed")
+    else:
+        filename = "%(resources)s/%(target)s/datasources.n3" % venv()
+        read_file = open(filename, 'r')
+        for line in read_file:
+            line = line.strip()
+            if line.startswith('iana:current'):
+                start_index = line.index('<') + 1
+                end_index = line.index('>')
+                feed_url = line[start_index:end_index].strip()
+                if feed_url=='http://rinfo.lagrummet.se/feed/current':
+                    continue
+                if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s" % vars(),
+                                          "Scheduled collect of",
+                                          alternate_string_exists_in_content="is already scheduled for collect"):
+                    print "Failed to start collect of '%s'" % feed_url
+
+
+@task
+@roles('main')
+def destroy_main_data(start_top_tomcat=True):
+    if not role_is_active('main'):
+        return
+    if start_top_tomcat:
+        tomcat_stop()
+    sudo("rm -rf %(rinfo_main_store)s/*" % venv())
+    if start_top_tomcat:
+        tomcat_start()
 
 
 @task

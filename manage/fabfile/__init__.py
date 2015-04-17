@@ -19,6 +19,8 @@ env.projectroot = p.normpath(p.join(env.manageroot, '..'))
 
 env.toolsdir = sep.join((env.projectroot, 'tools'))
 
+env.resources = sep.join((env.projectroot, 'resources'))
+
 env.builddir = sep.join((env.projectroot, '_build'))
 
 env.docbuild = sep.join((env.builddir, 'documentation'))
@@ -70,3 +72,4 @@ import app.checker
 import app.docs
 import app.tools
 import app.demodata
+import app.tasks
