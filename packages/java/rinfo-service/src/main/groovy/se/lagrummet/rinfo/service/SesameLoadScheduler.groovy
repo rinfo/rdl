@@ -47,8 +47,8 @@ class SesameLoadScheduler extends AbstractCollectScheduler {
         updatedEntries.each {
             varnishInvalidator.ban(it.getPath())
         }
-        //todo if (!onCompletePingTargets.isEmpty() && !updatedEntries.isEmpty()) implement this when tests ok
-        if (onCompletePingTargets && !onCompletePingTargets.isEmpty())
+        if (onCompletePingTargets && !onCompletePingTargets.isEmpty() && !updatedEntries.isEmpty())
+        //if (onCompletePingTargets && !onCompletePingTargets.isEmpty())
             try {
                 logger.info("Notify onCompletePingTargets ${updatedEntries.size()} updated entries.")
                 new Thread(new FeedUpdatePingNotifyer(null, onCompletePingTargets)).start()
