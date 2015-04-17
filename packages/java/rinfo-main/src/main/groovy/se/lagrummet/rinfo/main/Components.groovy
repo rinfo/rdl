@@ -14,12 +14,13 @@ import org.slf4j.LoggerFactory
 import org.openrdf.repository.Repository
 import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.nativerdf.NativeStore
-import se.lagrummet.rinfo.base.FeedUpdatePingNotifyer
 import se.lagrummet.rinfo.store.depot.BeanUtilsURIConverter
 import se.lagrummet.rinfo.store.depot.Depot
 import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.depot.LockedDepotEntryException
+
+import se.lagrummet.rinfo.base.FeedUpdatePingNotifyer
 
 import se.lagrummet.rinfo.collector.atom.FeedEntryDataIndex
 import se.lagrummet.rinfo.collector.atom.fs.FeedEntryDataIndexFSImpl

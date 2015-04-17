@@ -1,7 +1,7 @@
 package se.lagrummet.rinfo.service
 
-import se.lagrummet.rinfo.base.FeedUpdatePingNotifyer
 import se.lagrummet.rinfo.collector.AbstractCollectScheduler
+import se.lagrummet.rinfo.base.FeedUpdatePingNotifyer
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
