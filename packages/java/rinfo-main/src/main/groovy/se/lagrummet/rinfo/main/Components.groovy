@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory
 import org.openrdf.repository.Repository
 import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.nativerdf.NativeStore
-
+import se.lagrummet.rinfo.base.FeedUpdatePingNotifyer
 import se.lagrummet.rinfo.store.depot.BeanUtilsURIConverter
 import se.lagrummet.rinfo.store.depot.Depot
 import se.lagrummet.rinfo.store.depot.DepotEntry

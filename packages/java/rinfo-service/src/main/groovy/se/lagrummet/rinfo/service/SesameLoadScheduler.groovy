@@ -1,5 +1,6 @@
 package se.lagrummet.rinfo.service
 
+import se.lagrummet.rinfo.base.FeedUpdatePingNotifyer
 import se.lagrummet.rinfo.collector.AbstractCollectScheduler
 
 import org.slf4j.Logger
@@ -12,11 +13,16 @@ class SesameLoadScheduler extends AbstractCollectScheduler {
     ServiceComponents components
     VarnishInvalidator varnishInvalidator
     protected Collection<URI> sourceFeedUrls = new LinkedList<>()
+    protected Collection<URL> onCompletePingTargets
     def updatedEntries = []
+    private URL publicSubscriptionFeed
 
-    SesameLoadScheduler(components, varnishInvalidator, Collection<URL> sourceFeedUrls) {
+    SesameLoadScheduler(components, varnishInvalidator, Collection<URL> sourceFeedUrls, Collection<URL> onCompletePingTargets, URL publicSubscriptionFeed) {
+        this.publicSubscriptionFeed = publicSubscriptionFeed
         this.components = components
         this.varnishInvalidator = varnishInvalidator
+        this.onCompletePingTargets = onCompletePingTargets
+        logger.info("Found ${onCompletePingTargets.size()} onCompletePingTarget(s)")
         for (source in sourceFeedUrls)
             this.sourceFeedUrls.add(source.toURI())
     }
@@ -41,6 +47,13 @@ class SesameLoadScheduler extends AbstractCollectScheduler {
         updatedEntries.each {
             varnishInvalidator.ban(it.getPath())
         }
+        //todo if (!onCompletePingTargets.isEmpty() && !updatedEntries.isEmpty()) implement this when tests ok
+        if (onCompletePingTargets && !onCompletePingTargets.isEmpty())
+            try {
+                logger.info("Notify onCompletePingTargets ${updatedEntries.size()} updated entries.")
+                new Thread(new FeedUpdatePingNotifyer(null, onCompletePingTargets)).start()
+            } catch (Exception e) { e.printStackTrace(); }
+
         updatedEntries = []
         /**
          * TODO: Improve varnish cache invalidation!
@@ -57,5 +70,6 @@ class SesameLoadScheduler extends AbstractCollectScheduler {
          * varnishInvalidator.ban("/konsolidering")       // all consolidated data
          * varnishInvalidator.ban("/2011-05-02")          // all data matching this date
          */
+
     }
 }
