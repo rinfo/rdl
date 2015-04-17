@@ -110,8 +110,14 @@ def ping_start_collect_admin():
 
 @task
 @roles('main')
-def ping_start_collect_feed():
+def ping_start_collect_feed(default_feed=None):
     _needs_targetenv()
+    if default_feed:
+        if not verify_url_content(" --data 'feed=%(default_feed)s' %(collector_url)s" % vars(),
+                                  "Scheduled collect of",
+                                  alternate_string_exists_in_content="is already scheduled for collect"):
+            print "Failed to start collect of '%s'" % default_feed
+        return
     collector_url = "http://%s/collector" % env.roledefs['main'][0]
     if env.target=='regression':
         feed_url = "http://%s/feed/current.atom" % env.roledefs['demosource'][0]
