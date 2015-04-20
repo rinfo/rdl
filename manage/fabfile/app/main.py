@@ -96,6 +96,12 @@ def test():
 
 @task
 @roles('main')
+def count_rdfs_in_publ_in_depot(type=""):
+    with cd("%s/depot/publ/%s" % (env.rinfo_main_store, type) ):
+        run("find | grep .rdf | wc -l")
+
+@task
+@roles('main')
 def ping_start_collect_admin():
     _needs_targetenv()
     feed_url = ''
