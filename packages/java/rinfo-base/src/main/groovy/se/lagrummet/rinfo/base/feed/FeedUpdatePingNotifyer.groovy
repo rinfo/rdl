@@ -1,4 +1,4 @@
-package se.lagrummet.rinfo.base
+package se.lagrummet.rinfo.base.feed
 
 import org.apache.http.NameValuePair
 import org.apache.http.client.HttpClient
@@ -43,15 +43,15 @@ class FeedUpdatePingNotifyer implements Runnable {
         HttpClient http = new DefaultHttpClient(); //HttpClientBuilder.create().build();
 
         try {
-            HttpResponse response;
+            HttpResponse response
             if (feedUrl) {
                 HttpPost post = new HttpPost(pingTarget.toString())
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-                nameValuePairs.add(new BasicNameValuePair("feed",feedUrl.toString()));
-                post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                response = http.execute(post);
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1)
+                nameValuePairs.add(new BasicNameValuePair("feed",feedUrl.toString()))
+                post.setEntity(new UrlEncodedFormEntity(nameValuePairs))
+                response = http.execute(post)
             } else {
-                response = http.execute(new HttpGet(pingTarget.toString()));
+                response = http.execute(new HttpGet(pingTarget.toString()))
             }
             if (response.statusLine.statusCode < 200 || response.statusLine.statusCode >= 300) {
                 logger.error("Failed code ${response.statusLine.statusCode} because ${response.statusLine.reasonPhrase}")

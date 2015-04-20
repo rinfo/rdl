@@ -20,7 +20,7 @@ import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.depot.LockedDepotEntryException
 
-import se.lagrummet.rinfo.base.FeedUpdatePingNotifyer
+import se.lagrummet.rinfo.base.feed.FeedUpdatePingNotifyer
 
 import se.lagrummet.rinfo.collector.atom.FeedEntryDataIndex
 import se.lagrummet.rinfo.collector.atom.fs.FeedEntryDataIndexFSImpl
