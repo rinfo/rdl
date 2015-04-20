@@ -309,6 +309,8 @@ def clean():
 @task
 @roles('service')
 def test_all():
+    if not role_is_active('service'):
+        return
     all(deps="0", test="0")
     restart_apache()
     restart_tomcat()

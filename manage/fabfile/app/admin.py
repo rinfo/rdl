@@ -3,7 +3,7 @@ from os import sep, path as p
 from fabric.api import *
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
-from fabfile.util import slashed, cygpath, exit_on_error
+from fabfile.util import slashed, cygpath, exit_on_error, role_is_active
 from fabfile.target import _needs_targetenv
 from fabfile.util import venv, fullpath
 from fabfile.server import restart_apache
@@ -99,6 +99,8 @@ def ping_main():
 @task
 @roles('admin')
 def test_all():
+    if not role_is_active('service'):
+        return
     all()
     restart_apache()
     restart_tomcat()

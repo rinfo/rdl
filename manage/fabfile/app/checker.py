@@ -1,7 +1,7 @@
 import sys
 from fabric.api import *
 from fabric.contrib.files import exists
-from fabfile.util import venv, exit_on_error
+from fabfile.util import venv, exit_on_error, role_is_active
 from fabfile.app import local_lib_rinfo_pkg, _deploy_war_norestart
 from fabfile.target import _needs_targetenv
 from fabfile.server import restart_apache
@@ -76,6 +76,8 @@ def clean():
 @task
 @roles('admin')
 def test_all():
+    if not role_is_active('service'):
+        return
     all(deps="0", test="0")
     restart_tomcat()
     restart_apache()
