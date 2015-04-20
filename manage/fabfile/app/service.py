@@ -311,7 +311,7 @@ def clean():
 def test_all():
     if not role_is_active('service'):
         return
-    all(deps="0", test="0")
+    all(deps="1", test="0")
     restart_apache()
     restart_tomcat()
     msg_sleep(20, "restart apache, tomcat and wait for service to start")
