@@ -84,6 +84,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
         for (FeedReference feedRef : feedTrail) {
             try {
                 Feed feed = feedRef.openFeed();
+                logger.debug("Open feed "+feed.getBaseUri());
                 feed = feed.sortEntriesByUpdated(/*new_first=*/false);
 
                 // IMPROVE: must not have paged feed links! Fail if so.
@@ -105,16 +106,20 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                         computeDeletedFromComplete(feed) : getDeletedMarkers(feed);
 
                 List<Entry> effectiveEntries = new ArrayList<Entry>();
+                logger.debug("Count entries in feed "+feed.getEntries().size());
                 for (Entry entry: feed.getEntries()) {
                     IRI entryId = entry.getId();
                     Date entryUpdated = entry.getUpdated();
+                    logger.debug("Working with entry "+entryId+" updated at "+entryUpdated);
                     if (deletedMap.containsKey(entryId)) {
                         if (isYoungerThan(deletedMap.get(entryId).getDate(), entryUpdated)) {
                             // IMPROVE: only if deleted is youngest, not same-age?
                             // Also, ignore deleted as now, or do delete and re-add?
+                            logger.debug("Entry "+entryId+" ignored because deleted later in feed");
                             continue;
                         } else {
                             deletedMap.remove(entryId);
+                            logger.debug("Entry "+entryId+" retained because deleted before in feed");
                         }
                     }
                     AtomDate youngestAtomDate = entryModificationMap.get(
@@ -135,6 +140,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                         effectiveEntries.add(entry);
                     }
                 }
+                logger.debug("Count effective entries in feed "+effectiveEntries.size());
 
                 // IMPROVE: not necessary if incremental logging is used. See
                 // also the IMPROVE after processFeedPageInOrder call.
