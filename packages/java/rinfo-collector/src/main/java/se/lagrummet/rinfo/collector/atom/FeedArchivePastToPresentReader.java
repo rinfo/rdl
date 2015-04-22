@@ -135,6 +135,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                                         entryUpdated.equals(knownStoppingEntry.getUpdated())) || isOlderThan(entryUpdated,
                                     knownStoppingEntry.getUpdated()));
                         if (knownOrOlderThanKnown) {
+                            logger.debug("Entry "+entryId+" ignored because known or older than known.");
                             continue;
                         }
                         effectiveEntries.add(entry);
