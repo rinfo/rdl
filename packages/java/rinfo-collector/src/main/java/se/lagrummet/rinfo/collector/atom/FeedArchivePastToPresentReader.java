@@ -1,27 +1,24 @@
 package se.lagrummet.rinfo.collector.atom;
 
-import java.io.*;
-import java.util.*;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import javax.activation.MimeType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.http.client.HttpClient;
-
 import org.apache.abdera.Abdera;
+import org.apache.abdera.ext.history.FeedPagingHelper;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.AtomDate;
 import org.apache.abdera.model.Content;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
-
-import org.apache.abdera.ext.history.FeedPagingHelper;
+import org.apache.http.client.HttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.lagrummet.rinfo.collector.ParseFeedException;
+
+import javax.activation.MimeType;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.*;
 
 
 /**
@@ -122,8 +119,7 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                             logger.debug("Entry "+entryId+" retained because deleted before in feed");
                         }
                     }
-                    AtomDate youngestAtomDate = entryModificationMap.get(
-                            entryId);
+                    AtomDate youngestAtomDate = entryModificationMap.get(entryId);
                     boolean notSeenOrYoungestOfSeen =
                             youngestAtomDate == null ||
                             youngestAtomDate.getDate().equals(entryUpdated);
@@ -135,11 +131,15 @@ public abstract class FeedArchivePastToPresentReader extends FeedArchiveReader {
                                         entryUpdated.equals(knownStoppingEntry.getUpdated())) || isOlderThan(entryUpdated,
                                     knownStoppingEntry.getUpdated()));
                         if (knownOrOlderThanKnown) {
-                            logger.debug("Entry "+entryId+" ignored because known or older than known.");
+                            logger.debug("Entry "+entryId+" ignored because known or older than known. youngestAtomDate="+youngestAtomDate+" entryUpdated="+entryUpdated);
+                            if (knownStoppingEntry != null)
+                                logger.debug("knownStoppingEntry.id="+knownStoppingEntry.getId()+" knownStoppingEntry.updated"+knownStoppingEntry.getUpdated()+" isOlderThan="+isOlderThan(entryUpdated,
+                                        knownStoppingEntry.getUpdated()));
                             continue;
                         }
                         effectiveEntries.add(entry);
-                    }
+                    } else
+                        logger.debug("Entry "+entryId+" ignored because is seen or youngest of seen. youngestAtomDate="+youngestAtomDate+" entryUpdated="+entryUpdated);
                 }
                 logger.debug("Count effective entries in feed "+effectiveEntries.size());
 

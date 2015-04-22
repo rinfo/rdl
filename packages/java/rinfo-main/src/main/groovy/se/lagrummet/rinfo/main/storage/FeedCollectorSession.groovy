@@ -102,6 +102,7 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
             storageSession.beginPage(pageUrl, feed)
             deleteFromMarkers(feed, deletedMap)
             for (entry in effectiveEntries) {
+                logger.debug("Processing feed entry: "+entry.getId())
                 try {
                     List<SourceContent> contents = new ArrayList<SourceContent>()
                     List<SourceContent> enclosures = new ArrayList<SourceContent>()
@@ -109,6 +110,7 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
                     ok = storageSession.storeEntry(
                             feed, entry, contents, enclosures)
                     if (!ok) {
+                        //todo log remaining entries
                         break
                     }
 
@@ -138,6 +140,7 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
                 storageSession.deleteEntry(sourceFeed,
                         delItem.getKey().toURI(),
                         delItem.getValue().getDate())
+                logger.debug("Deleted entry "+delItem.key+" in soruce feed "+sourceFeed.getBaseUri())
             } catch (Exception e) {
                 // NOTE: storageSession should handle (log and report) errors.
                 logger.error("Error deleting entry!", e)

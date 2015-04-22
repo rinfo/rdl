@@ -29,7 +29,7 @@
     <appender-ref ref="access-log"/>
   </logger>
   
-  <logger name="se.lagrummet.rinfo" level="info">
+  <logger name="se.lagrummet.rinfo" level="debug">
     <appender-ref ref="file"/>
   </logger>
   
