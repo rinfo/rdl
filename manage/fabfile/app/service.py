@@ -281,16 +281,12 @@ def ping_start_collect():
 
 @task
 @roles('service')
-def destroy_service_data(start_top_tomcat=True):
+def destroy_service_data():
     if not role_is_active('service'):
         return
-    if start_top_tomcat:
-        tomcat_stop()
     destroy_service_repository()
     delete_elasticsearch_index()
     ban_varnish()
-    if start_top_tomcat:
-        tomcat_start()
 
 
 @task
