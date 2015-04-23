@@ -65,6 +65,15 @@ def all(source=None):
 
 @task
 @roles('admin')
+def serve_local_folder(source=None, port="8280"):
+    """Package and serve the admin feed at selected port on localhost."""
+    package(source=source)
+    with lcd("%(toolsdir)s/rinfomain" % env):
+        local("groovy serve_folder.groovy %s/_build/test/rinfo-admin %s" % (env.projectroot, port) )
+
+
+@task
+@roles('admin')
 def test():
     """Http request to test admin is up and running correctly"""
     report = JUnitReport()
