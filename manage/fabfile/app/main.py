@@ -107,6 +107,8 @@ def ping_start_collect_admin():
     feed_url = ''
     if env.target=='regression':
         feed_url = "http://%s/feed/current.atom" % env.roledefs['demosource'][0]
+    elif env.target=='dev_unix':
+        feed_url = "http://%s:8280/feed/current.atom" % env.roledefs['admin'][0]
     else:
         feed_url = "http://%s/feed/current" % env.roledefs['admin'][0]
     main_host_and_port = env.roledefs['main'][0] if env.target!='dev_unix' else "%s:8180" % env.roledefs['main'][0]
