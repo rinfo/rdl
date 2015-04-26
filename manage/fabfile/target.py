@@ -605,6 +605,7 @@ def infrastructure():
     env.roledefs['regression'] = ['testfeed.lagrummet.se']
     env.roledefs['skrapat'] = ['testfeed.lagrummet.se']
     env.roledefs['demosource'] = ['testfeed.lagrummet.se']
+    env.roledefs['collectreg'] = ['collectreg.lagrummet.se']
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'

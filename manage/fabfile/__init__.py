@@ -56,6 +56,7 @@ env.roledefs = {
     'test': [],
     'regression': [],
     'skrapat': [],
+    'collectreg': [],
 }
 
 ##

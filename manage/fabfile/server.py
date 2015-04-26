@@ -444,9 +444,11 @@ def prepare_sudo_for_debian_and_add_rinfo_user():
 
 
 @task
-@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
-def bootstrap():
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource', 'collectreg')
+def bootstrap(role=None):
     _needs_targetenv()
+    if role and not role_is_active(role):
+        return
     #if not os_version() == 'Debian7':
     #    print 'Unsupported os version %%' % os_version()
     #    return
