@@ -250,8 +250,10 @@ def exit_on_error(func):
 
 
 @task
-@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
-def install_public_key(id_rsa_pub_filename='id_rsa.pub'):
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource', 'collectreg')
+def install_public_key(id_rsa_pub_filename='id_rsa.pub', role=None):
+    if role and not role_is_active(role):
+        return
     mkdirpath('/home/%s/.ssh' % env.user)
     put('%s/.ssh/%s' % (expanduser('~'), id_rsa_pub_filename), '/home/%s/.' % env.user)
     run('cat %s >> .ssh/authorized_keys' % id_rsa_pub_filename)
