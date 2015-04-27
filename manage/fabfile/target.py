@@ -45,6 +45,7 @@ def dev_unix():
         'admin': ['localhost'],
         'demosource': ['localhost'],
     }
+    env.roles = calculate_roles()
     # Manage
     env.mgr_workdir = "%s/mgr_work" % expanduser("~")
     env.dist_dir = 'rinfo_dist'
@@ -82,6 +83,7 @@ def demo():
     env.roledefs['checker'] = ['checker.demo.lagrummet.se']
     env.roledefs['admin'] = ['admin.demo.lagrummet.se']
     env.roledefs['lagrummet'] = ['demo.lagrummet.se']
+    env.roles = calculate_roles()
 
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -121,6 +123,7 @@ def test():
     env.roledefs['admin'] = ['admin.test.lagrummet.se']
     env.roledefs['demosource'] = ['testfeed.lagrummet.se']
     env.roledefs['lagrummet'] = ['test.lagrummet.se']
+    env.roles = calculate_roles()
 
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -159,6 +162,7 @@ def dom():
     env.roledefs['checker'] = ['checker.t1.lagr.dev.dom.se']
     env.roledefs['admin'] = ['admin.t1.lagr.dev.dom.se']
     env.roledefs['lagrummet'] = ['t1.lagr.dev.dom.se']
+    env.roles = calculate_roles()
 
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -198,6 +202,7 @@ def ville():
     env.roledefs['checker'] = ['checker.ville.lagrummet.se']
     env.roledefs['admin'] = ['admin.ville.lagrummet.se']
     env.roledefs['lagrummet'] = ['ville.lagrummet.se']
+    env.roles = calculate_roles()
 
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -236,6 +241,7 @@ def valle():
     env.roledefs['checker'] = ['checker.valle.lagrummet.se']
     env.roledefs['admin'] = ['admin.valle.lagrummet.se']
     env.roledefs['lagrummet'] = ['valle.lagrummet.se']
+    env.roles = calculate_roles()
 
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -273,6 +279,7 @@ def viktor():
     env.roledefs['checker'] = ['checker.viktor.lagrummet.se']
     env.roledefs['admin'] = ['admin.viktor.lagrummet.se']
     env.roledefs['lagrummet'] = ['viktor.lagrummet.se']
+    env.roles = calculate_roles()
 
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -310,6 +317,7 @@ def stage():
     env.roledefs['checker'] = ['checker.stage.lagrummet.se']
     env.roledefs['admin'] = ['admin.stage.lagrummet.se']
     env.roledefs['lagrummet'] = ['stage.lagrummet.se']
+    env.roles = calculate_roles()
 
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -348,6 +356,7 @@ def regression():
     env.roledefs['checker'] = ['checker.regression.lagrummet.se']
     env.roledefs['admin'] = ['admin.regression.lagrummet.se']
     env.roledefs['lagrummet'] = ['regression.lagrummet.se']
+    env.roles = calculate_roles()
 
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -377,12 +386,12 @@ def collectreg():
     env.target = "collectreg"
     # Machines:
     env.user = 'rinfo'
-
     env.roledefs['main'] = ['rinfo.collectreg.lagrummet.se']
     env.roledefs['service'] = ['service.collectreg.lagrummet.se']
     env.roledefs['checker'] = ['checker.collectreg.lagrummet.se']
     env.roledefs['admin'] = ['admin.collectreg.lagrummet.se']
     env.roledefs['lagrummet'] = ['collectreg.lagrummet.se']
+    env.roles = calculate_roles()
 
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
@@ -417,6 +426,7 @@ def beta():
     env.roledefs['checker'] = ['checker.beta.lagrummet.se']
     env.roledefs['admin'] = ['admin.beta.lagrummet.se']
     env.roledefs['lagrummet'] = ['beta.lagrummet.se']
+    env.roles = calculate_roles()
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
@@ -457,6 +467,7 @@ def skrapat():
         'demosource': ['testfeed.lagrummet.se'],
         'lagrummet': ['skrapat.lagrummet.se'],
     }
+    env.roles = calculate_roles()
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
@@ -496,6 +507,7 @@ def testfeed():
         'demosource': ['testfeed.lagrummet.se'],
         'regression': ['regression.testfeed.lagrummet.se'],
     }
+    env.roles = calculate_roles()
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
@@ -533,6 +545,7 @@ def scraped():
         'admin': ['testfeed.lagrummet.se'],
         'demosource': ['testfeed.lagrummet.se'],
     }
+    env.roles = calculate_roles()
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
@@ -572,6 +585,7 @@ def integration():
         'admin': ['rinfo-integration'],
         'demosource': ['rinfo-integration'],
     }
+    env.roles = calculate_roles()
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
@@ -607,6 +621,7 @@ def prod():
     env.roledefs['doc'] = ['dev.lagrummet.se']
     env.roledefs['admin'] = ['admin.lagrummet.se']
     env.roledefs['lagrummet'] = ['www.lagrummet.se']
+    env.roles = calculate_roles()
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
@@ -641,6 +656,7 @@ def infrastructure():
     env.roledefs['skrapat'] = ['testfeed.lagrummet.se']
     env.roledefs['demosource'] = ['testfeed.lagrummet.se']
     env.roledefs['collectreg'] = ['collectreg.lagrummet.se']
+    env.roles = calculate_roles()
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
     env.dist_dir = 'rinfo_dist'
@@ -679,3 +695,11 @@ def _tomcat_env():
 
 def _initialize_password():
     env.password = get_value_from_password_store(PASSWORD_FILE_STANDARD_PASSWORD_PARAM_NAME,env.password)
+
+
+def calculate_roles():
+    roles_list = []
+    for role in env.roledefs:
+        if env.roledefs[role]:
+            roles_list.append(role)
+    return roles_list

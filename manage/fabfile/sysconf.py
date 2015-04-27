@@ -72,7 +72,10 @@ def configure_app_container():
 
 
 @task
-def configure_sites():
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
+def configure_sites(role=None):
+    if role and not role_is_active(role):
+        return
     _sync_workdir()
     targetenv_etc_dir = "%(mgr_workdir)s/%(target)s/etc" % env
     with cd(targetenv_etc_dir):
@@ -81,6 +84,7 @@ def configure_sites():
             if not sites or role not in sites:
                 continue
             for site in sites[role]:
+                print "Site %s" % site
                 sudo("cp -vu apache2/sites-available/%s /etc/apache2/sites-available/" % site)
                 sudo("a2ensite %s" % site)
 
