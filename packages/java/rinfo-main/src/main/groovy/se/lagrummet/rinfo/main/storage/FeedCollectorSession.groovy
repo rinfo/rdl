@@ -98,6 +98,7 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
         logger.info("Processing feed page: <${pageUrl}> (id <${feed.id}>)")
 
         boolean ok = true;
+        List<Entry> remainingEntries = new LinkedList<Entry>(effectiveEntries) // Used to see what is left in case of stop (!ok)
         try {
             storageSession.beginPage(pageUrl, feed)
             deleteFromMarkers(feed, deletedMap)
@@ -107,13 +108,12 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
                     List<SourceContent> contents = new ArrayList<SourceContent>()
                     List<SourceContent> enclosures = new ArrayList<SourceContent>()
                     fillContentsAndEnclosures(entry, contents, enclosures)
-                    ok = storageSession.storeEntry(
-                            feed, entry, contents, enclosures)
+                    ok = storageSession.storeEntry(feed, entry, contents, enclosures)
                     if (!ok) {
                         //todo log remaining entries
                         break
                     }
-
+                    remainingEntries.remove(entry)
                 } catch (Exception e) {
                     // NOTE: storageSession should handle (log and report) errors.
                     ok = false;
@@ -125,6 +125,12 @@ public class FeedCollectorSession extends FeedArchivePastToPresentReader {
             handlePageError(e, pageUrl)
         } finally {
             storageSession.endPage(pageUrl)
+        }
+        if (!remainingEntries.isEmpty()) {
+            logger.debug("Entry processing of feed ${feed.baseUri} stopped ")
+            for (entry in effectiveEntries) {
+                logger.debug("Entry ${entry.id} ignored because feed processing stopped!")
+            }
         }
         return ok;
     }
