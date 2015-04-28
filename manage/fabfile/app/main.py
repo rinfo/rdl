@@ -98,7 +98,25 @@ def test():
 @roles('main')
 def count_rdfs_in_publ_in_depot(type=""):
     with cd("%s/depot/publ/%s" % (env.rinfo_main_store, type) ):
-        run("find | grep .rdf | wc -l")
+        return run("find | grep .rdf | wc -l")
+
+
+@task
+@roles('main')
+def verify_depot_minimum_size():
+    EXPECTED_SFS_DOCUMENT_COUNT = 58268
+    EXPECTED_VA_DOCUMENT_COUNT = 24841
+    sfs_document_count = int(count_rdfs_in_publ_in_depot('sfs'))
+    if sfs_document_count < EXPECTED_SFS_DOCUMENT_COUNT:
+        raise Exception("SFS Document count verification failed! Expected %s documents, but found %s! Aborting..." %
+                        (EXPECTED_SFS_DOCUMENT_COUNT,sfs_document_count))
+    va_document_count = int(count_rdfs_in_publ_in_depot('dom')) +  int(count_rdfs_in_publ_in_depot('rf'))
+    if va_document_count < EXPECTED_VA_DOCUMENT_COUNT:
+        raise Exception("VA Document count verification failed! Expected %s documents, but found %s! Aborting..." %
+                        (EXPECTED_VA_DOCUMENT_COUNT,va_document_count))
+    print "Found %s SFS documents" % sfs_document_count
+    print "Found %s VA documents" % va_document_count
+
 
 @task
 @roles('main')
