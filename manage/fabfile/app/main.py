@@ -49,6 +49,7 @@ def setup():
         sudo("mkdir %(target_config_dir)s" % env)
     put("%(java_packages)s/rinfo-main/src/environments/%(target)s/rinfo-main.properties"  % env,"%(target_config_dir)srinfo-main.properties"  % env, use_sudo=True)
 
+
 @task
 @roles('main')
 @exit_on_error
@@ -97,8 +98,20 @@ def test():
 @task
 @roles('main')
 def count_rdfs_in_publ_in_depot(type=""):
-    with cd("%s/depot/publ/%s" % (env.rinfo_main_store, type) ):
+    with cd("%s/depot/publ/%s" % (env.rinfo_main_store, type)):
         return run("find | grep .rdf | wc -l")
+
+
+@task
+@roles('main')
+def get_rdf_list_in_depot(type=""):
+    _needs_targetenv()
+    file_name = 'rdf_list_%s.txt' % env.target
+    remote_file_and_path = '/tmp/%s' % file_name
+    with cd("%s/depot/publ/%s" % (env.rinfo_main_store, type)):
+        run("find | grep .rdf > %s" % remote_file_and_path)
+    get(remote_file_and_path, '/tmp/%s' % file_name)
+    local('sort /tmp/%s > /tmp/sorted_%s' % (file_name, file_name))
 
 
 @task
