@@ -9,8 +9,6 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.HttpResponse
 import org.apache.http.message.BasicNameValuePair
 
-//import org.apache.http.impl.client.HttpClientBuilder
-//import org.apache.http.message.BasicNameValuePair
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -35,12 +33,7 @@ class FeedUpdatePingNotifyer implements Runnable {
     void doPing(URL pingTarget, URL feedUrl) {
         logger.info("${pingTarget} ${feedUrl}")
 
-        /*
-            Credentials defaultcreds = new UsernamePasswordCredentials("username", "password");
-            client.getState().setCredentials(new AuthScope("myhost", 80, AuthScope.ANY_REALM), defaultcreds);
-         */
-
-        HttpClient http = new DefaultHttpClient(); //HttpClientBuilder.create().build();
+        HttpClient http = new DefaultHttpClient();
 
         try {
             HttpResponse response
