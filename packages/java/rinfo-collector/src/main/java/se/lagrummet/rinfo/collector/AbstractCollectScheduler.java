@@ -213,7 +213,7 @@ public abstract class AbstractCollectScheduler {
     private void executeCollect() {
         String feedUrlStr = getNextFeed();
         if (feedUrlStr != null) {
-            boolean initialAdminReadOnEmptySystem = getSourceFeedUrls().size() == 1;
+            boolean initialAdminReadOnEmptySystem = (getSourceFeedUrls().size() == 2);
             try {
                 collectFeed(new URL(feedUrlStr), true);
             } catch (MalformedURLException e) {
@@ -228,10 +228,11 @@ public abstract class AbstractCollectScheduler {
     }
 
     private void ifInitialAdminReadThenEnqueueAllNewSources(String feedUrlStr, boolean initialAdminReadOnEmptySystem) {
-        if (initialAdminReadOnEmptySystem && getSourceFeedUrls().size() > 1) try {
-            for (URI sourceFeedURI : getSourceFeedUrls())
+        if (initialAdminReadOnEmptySystem && getSourceFeedUrls().size() > 2) try {
+            for (URI sourceFeedURI : getSourceFeedUrls()) {
                 if (!sourceFeedURI.equals(new URL(feedUrlStr).toURI()))
                     enqueueCollect(sourceFeedURI.toURL());
+            }
         } catch (Exception ignore) {ignore.printStackTrace();}
     }
 
