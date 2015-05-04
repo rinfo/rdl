@@ -8,12 +8,7 @@ from fabfile.server import tomcat_stop, tomcat_start
 
 
 @task
-@roles('main','service')
-def destroy_all_data(start_top_tomcat=True):
-    destroy_main_data(start_top_tomcat=False)
-    if start_top_tomcat:
-        tomcat_stop()
-    destroy_main_data(start_top_tomcat=False)
-    destroy_service_data(start_top_tomcat=False)
-    if start_top_tomcat:
-        tomcat_start()
+@roles('service','main')
+def destroy_all_data(start_stop_tomcat=True):
+    destroy_service_data()
+    destroy_main_data(start_stop_tomcat=start_stop_tomcat)
