@@ -181,6 +181,22 @@ def ping_start_collect_feed(default_feed=None):
 
 @task
 @roles('main')
+def ping_start_collect_all():
+    _needs_targetenv()
+    main_host_and_port = env.roledefs['main'][0] if env.target!='dev_unix' else "%s:8180" % env.roledefs['main'][0]
+    collector_url = "http://%s/collector" % main_host_and_port
+    if env.target=='regression':
+        if not verify_url_content(" --data 'feed=all' %(collector_url)s" % vars(), "Scheduled collect of"):
+            raise Exception("Scheduled collect failed!")
+    else:
+        if not verify_url_content(" --data 'feed=all' %(collector_url)s" % vars(),
+                                  "Scheduled collect of",
+                                  alternate_string_exists_in_content="is already scheduled for collect"):
+            print "Failed to start collect of 'All'"
+
+
+@task
+@roles('main')
 def destroy_main_data(start_stop_tomcat=True):
     if not role_is_active('main'):
         return

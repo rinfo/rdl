@@ -44,6 +44,9 @@ class CollectorHandler extends Handler {
         //  a status monitor or some estimate of when the user can expect the
         //  request to be fulfilled.
 
+        if (feedUrl.equalsIgnoreCase("all"))
+            collectScheduler.collectAllFeeds()
+        else
         try {
             boolean wasScheduled = collectScheduler.triggerFeedCollect(new URL(feedUrl))
             if (!wasScheduled) {
