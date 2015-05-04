@@ -191,7 +191,8 @@ def ping_start_collect_all():
     else:
         if not verify_url_content(" --data 'feed=all' %(collector_url)s" % vars(),
                                   "Scheduled collect of",
-                                  alternate_string_exists_in_content="is already scheduled for collect"):
+                                  alternate_string_exists_in_content="is already scheduled for collect"
+                                  , sleep_time=30, max_retry=5):
             print "Failed to start collect of 'All'"
 
 
