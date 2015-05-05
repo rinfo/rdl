@@ -118,7 +118,27 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+      <repository>
+          <snapshots>
+              <enabled>false</enabled>
+          </snapshots>
+          <id>bintray-groovy-maven</id>
+          <name>bintray</name>
+          <url>http://dl.bintray.com/groovy/maven</url>
+      </repository>
+
   </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray-groovy-maven</id>
+            <name>bintray-plugins</name>
+            <url>http://dl.bintray.com/groovy/maven</url>
+        </pluginRepository>
+    </pluginRepositories>
 
   <!-- for codenarc-maven-plugin
   <pluginRepositories>
@@ -500,6 +520,8 @@
       </extension>
     </extensions>
 
+
+
     <pluginManagement>
       <plugins>
 
@@ -725,6 +747,12 @@
           <id>regression</id>
           <properties>
               <environment>regression</environment>
+          </properties>
+      </profile>
+      <profile>
+          <id>collectreg</id>
+          <properties>
+              <environment>collectreg</environment>
           </properties>
       </profile>
       <profile>

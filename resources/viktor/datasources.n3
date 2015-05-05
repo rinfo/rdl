@@ -1,0 +1,36 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix iana: <http://www.iana.org/assignments/relation/> .
+@prefix rpubl: <http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#> .
+
+
+<http://rinfo.lagrummet.se/sys/dataset> a void:Dataset;
+    dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>;
+    foaf:homepage <http://rinfo.lagrummet.se/>;
+    void:vocabulary rpubl:, dct:, foaf:;
+    void:uriSpace "http://rinfo.lagrummet.se/publ/";
+    #void:uriRegexPattern "http://rinfo.lagrummet.se/publ/[0-9a-z\-]+fs/[1-9][0-9/]+:\\w+" .
+    iana:describedby <http://rinfo.lagrummet.se/sys/uri/space#>;
+    iana:describedby <http://rinfo.lagrummet.se/sys/validation/>;
+    void:dataDump [
+            iana:current <http://rinfo.lagrummet.se/feed/current>;
+            dct:identifier "tag:lagrummet.se,2009:rinfo"^^xsd:anyURI;
+            dct:format "application/atom+xml"
+        ];
+    dct:source
+        [
+            iana:current <http://dvsfs.ministry.se/SFS/Res/index.atom>;
+            #iana:current <http://v3.sfs.regression.testfeed.lagrummet.se/index.atom>;
+            dct:identifier "tag:sfs.regeringen.se,2009:rinfo:feed"^^xsd:anyURI;
+            dct:format "application/atom+xml";
+            dct:publisher <http://rinfo.lagrummet.se/org/regeringskansliet>
+        ], [
+            iana:current <https://www.vagledandeavgoranden.dom.se/lagrummet/atom/index.atom>;
+            #iana:current <http://v3.va.regression.testfeed.lagrummet.se/index.atom>;
+            dct:identifier "tag:vagledandeavgoranden.dom.se,2011:rinfo:feed"^^xsd:anyURI;
+            dct:format "application/atom+xml";
+            dct:publisher <http://rinfo.lagrummet.se/org/domstolsverket>
+        ] .

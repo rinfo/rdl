@@ -20,10 +20,12 @@ from fabric.contrib.files import exists, append
 from fabric.contrib.project import rsync_project
 from fabfile.target import _needs_targetenv
 from fabfile.util import mkdirpath, role_is_active
+from fabfile.util import venv
 
 
 ##
 # Continuous Maintenance
+
 
 
 @task
@@ -70,7 +72,10 @@ def configure_app_container():
 
 
 @task
-def configure_sites():
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
+def configure_sites(role=None):
+    if role and not role_is_active(role):
+        return
     _sync_workdir()
     targetenv_etc_dir = "%(mgr_workdir)s/%(target)s/etc" % env
     with cd(targetenv_etc_dir):
@@ -79,6 +84,7 @@ def configure_sites():
             if not sites or role not in sites:
                 continue
             for site in sites[role]:
+                print "Site %s" % site
                 sudo("cp -vu apache2/sites-available/%s /etc/apache2/sites-available/" % site)
                 sudo("a2ensite %s" % site)
 
@@ -90,6 +96,19 @@ def install_init_d(name):
         if sudo("cp -vu init.d/%s /etc/init.d/" % name):
             sudo("chmod 0755 /etc/init.d/%s" % name)
             sudo("update-rc.d %s defaults" % name)
+
+
+@task
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource', 'collectreg')
+def update_hosts(ip="127.0.0.1", role=None):
+    if role and not role_is_active(role):
+        return
+    add_to_hosts = "\n%(ip)s    %(target)s.lagrummet.se\n" \
+                   "%(ip)s    admin.%(target)s.lagrummet.se\n" \
+                   "%(ip)s    rinfo.%(target)s.lagrummet.se\n" \
+                   "%(ip)s    service.%(target)s.lagrummet.se\n" \
+                   "%(ip)s    checker.%(target)s.lagrummet.se\n" % venv()
+    append("/etc/hosts", add_to_hosts, use_sudo=True)
 
 
 ##

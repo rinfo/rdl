@@ -6,6 +6,7 @@ import org.elasticsearch.client.Client
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.indices.IndexAlreadyExistsException
+import org.elasticsearch.indices.InvalidIndexNameException
 import org.elasticsearch.transport.RemoteTransportException
 import groovy.json.JsonSlurper
 
@@ -35,7 +36,7 @@ class ElasticData {
             ], [
                 "resource_text": [
                         "match": "text",
-                        "mapping": ["type": "string", "index": "analyzed", "analyzer":"swedish_with_sfs_ids", "include_in_all": false]
+                        "mapping": ["type": "string", "index": "analyzed", "analyzer":"swedish_with_sfs_malnummer", "include_in_all": false]
                 ]
             ]
         ]
@@ -75,6 +76,8 @@ class ElasticData {
             indices.prepareCreate(indexName).setSettings(settings).execute().actionGet()
         } catch (IndexAlreadyExistsException e) {
             log.info "ElasticSearch index '${indexName}' already exists."
+        } catch (InvalidIndexNameException e) {
+            log.info "ElasticSearch index ${indexName} already exists as an Alias"
         } catch (RemoteTransportException e) {
             if (e.cause instanceof IndexAlreadyExistsException) {
                 log.info "ElasticSearch index '${indexName}' already exists."

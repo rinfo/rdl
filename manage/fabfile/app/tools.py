@@ -22,3 +22,5 @@ def ping_service_collector():
     collector_url = "http://%s/collector" % env.roledefs['service'][0]
     feed_url = "http://%s/feed/current" % env.roledefs['main'][0]
     ping_collector(collector_url, feed_url)
+
+

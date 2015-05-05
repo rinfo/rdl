@@ -105,7 +105,13 @@ class ServiceComponents {
         for (url in config.getList("rinfo.service.sourceFeedUrls")) {
             sourceFeedUrls.add(new URL(url))
         }
-        def loadScheduler = new SesameLoadScheduler(this, varnishInvalidator, sourceFeedUrls)
+        def publicSubscriptionFeed = new URL(config.getString("rinfo.service.sourceFeedUrls"))
+        def onCompletePingTargets = new ArrayList<URL>()
+        for (String s : config.getList("rinfo.service.collector.onCompletePingTargets")) {
+            if (s == null || s.equals("")) continue
+            onCompletePingTargets << new URL(s)
+        }
+        def loadScheduler = new SesameLoadScheduler(this, varnishInvalidator, sourceFeedUrls, onCompletePingTargets, publicSubscriptionFeed)
         loadScheduler.setInitialDelay(-1)
         loadScheduler.setScheduleInterval(-1)
         return loadScheduler
