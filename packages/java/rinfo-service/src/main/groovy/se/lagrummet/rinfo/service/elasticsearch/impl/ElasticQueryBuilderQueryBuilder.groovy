@@ -39,7 +39,12 @@ class ElasticQueryBuilderQueryBuilder implements ElasticSearchQueryBuilder.Query
 
     @Override
     void addQuery(String queryText) {
-        queries.add(queryText?.replaceAll(ElasticSearchQueryBuilder.regex_sanitize_elasticsearch, ElasticSearchQueryBuilder.replacement))
+        def change = queryText?.replaceAll(ElasticSearchQueryBuilder.regex_sanitize_elasticsearch, ElasticSearchQueryBuilder.replacement)
+        queries.add(change)
+        if (!change.equals(queryText))
+            logger.debug("QueryString sanitized from '${queryText}' to '${change}'")
+        else
+            logger.debug("QueryString NOT sanitized '${queryText}'")
     }
 
     @Override

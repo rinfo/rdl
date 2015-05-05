@@ -9,6 +9,7 @@ public interface ElasticSearchQueryBuilder {
             "|\\:(?!\\S)" + //matchar kolon ej följt av ett icke "whitespace" (om tecknet är sista tecken..)
             "|\\((?!\\w)\\)" + //matchar ( ej följt av tecken följt av )
             "|\\((?!\\w)" + //matchar ( ej följt av tecken
+            "|\\(\\w+" + //matchar ( följt av a till z samt 0 till 9
             "|(?<!\\w)\\))"; //matchar ) utan tecken _innan_ )
 
     String replacement = "\\\\\$1";
