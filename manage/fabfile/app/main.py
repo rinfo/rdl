@@ -198,6 +198,15 @@ def ping_start_collect_all():
 
 @task
 @roles('main')
+def collect_status():
+    _needs_targetenv()
+    main_host_and_port = env.roledefs['main'][0] if env.target!='dev_unix' else "%s:8180" % env.roledefs['main'][0]
+    collector_url = "http://%s/collector" % main_host_and_port
+    print local("curl %s" % collector_url, capture=True)
+
+
+@task
+@roles('main')
 def destroy_main_data(start_stop_tomcat=True):
     if not role_is_active('main'):
         return
