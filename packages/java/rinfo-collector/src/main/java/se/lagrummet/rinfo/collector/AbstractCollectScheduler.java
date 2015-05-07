@@ -4,10 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -250,5 +247,14 @@ public abstract class AbstractCollectScheduler {
     public synchronized boolean areJobQueuesEmpty() {
         logger.debug("Checking if job queues are empty");
         return feedInProcess.isEmpty() && feedQueue.isEmpty();
+    }
+
+    public Map status(Map report) {
+        report.put("started", Boolean.toString(started));
+        report.put("feedQueue.size", feedQueue.size());
+        report.put("feedQueue", feedQueue);
+        report.put("feedInProcess.size", feedInProcess.size());
+        report.put("feedInProcess", feedInProcess);
+        return report;
     }
 }
