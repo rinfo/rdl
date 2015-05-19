@@ -1,7 +1,7 @@
 import sys
 from fabric.api import *
 from fabric.contrib.files import exists
-from fabfile.util import venv, exit_on_error
+from fabfile.util import venv, exit_on_error, role_is_active
 from fabfile.app import local_lib_rinfo_pkg
 from fabfile.app import _deploy_war_norestart
 from fabfile.target import _needs_targetenv
@@ -48,6 +48,7 @@ def setup():
     if not exists(env.target_config_dir):
         sudo("mkdir %(target_config_dir)s" % env)
     put("%(java_packages)s/rinfo-main/src/environments/%(target)s/rinfo-main.properties"  % env,"%(target_config_dir)srinfo-main.properties"  % env, use_sudo=True)
+
 
 @task
 @roles('main')
@@ -96,26 +97,100 @@ def test():
 
 @task
 @roles('main')
+def count_rdfs_in_publ_in_depot(type=""):
+    with cd("%s/depot/publ/%s" % (env.rinfo_main_store, type)):
+        return run("find | grep .rdf | wc -l")
+
+
+@task
+@roles('main')
+def get_rdf_list_in_depot(type=""):
+    _needs_targetenv()
+    file_name = 'rdf_list_%s.txt' % env.target
+    remote_file_and_path = '/tmp/%s' % file_name
+    with cd("%s/depot/publ/%s" % (env.rinfo_main_store, type)):
+        run("find | grep .rdf > %s" % remote_file_and_path)
+    get(remote_file_and_path, '/tmp/%s' % file_name)
+    local('sort /tmp/%s > /tmp/sorted_%s' % (file_name, file_name))
+
+
+@task
+@roles('main')
+def verify_depot_minimum_size():
+    EXPECTED_SFS_DOCUMENT_COUNT = 58268
+    EXPECTED_VA_DOCUMENT_COUNT = 24841
+    sfs_document_count = int(count_rdfs_in_publ_in_depot('sfs'))
+    if sfs_document_count < EXPECTED_SFS_DOCUMENT_COUNT:
+        raise Exception("SFS Document count verification failed! Expected %s documents, but found %s! Aborting..." %
+                        (EXPECTED_SFS_DOCUMENT_COUNT,sfs_document_count))
+    va_document_count = int(count_rdfs_in_publ_in_depot('dom')) +  int(count_rdfs_in_publ_in_depot('rf'))
+    if va_document_count < EXPECTED_VA_DOCUMENT_COUNT:
+        raise Exception("VA Document count verification failed! Expected %s documents, but found %s! Aborting..." %
+                        (EXPECTED_VA_DOCUMENT_COUNT,va_document_count))
+    print "Found %s SFS documents" % sfs_document_count
+    print "Found %s VA documents" % va_document_count
+
+
+@task
+@roles('main')
 def ping_start_collect_admin():
     _needs_targetenv()
     feed_url = ''
     if env.target=='regression':
         feed_url = "http://%s/feed/current.atom" % env.roledefs['demosource'][0]
+    elif env.target=='dev_unix':
+        feed_url = "http://%s:8280/feed/current.atom" % env.roledefs['admin'][0]
     else:
         feed_url = "http://%s/feed/current" % env.roledefs['admin'][0]
-    collector_url = "http://%s/collector" % env.roledefs['main'][0]
+    main_host_and_port = env.roledefs['main'][0] if env.target!='dev_unix' else "%s:8180" % env.roledefs['main'][0]
+    collector_url = "http://%s/collector" % main_host_and_port
     if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s" % vars(), "Scheduled collect of"):
         raise Exception("Test failed")
 
 
 @task
 @roles('main')
-def ping_start_collect_feed():
+def ping_start_collect_feed(default_feed=None):
     _needs_targetenv()
-    feed_url = "http://%s/feed/current.atom" % env.roledefs['demosource'][0]
-    collector_url = "http://%s/collector" % env.roledefs['main'][0]
-    if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s" % vars(), "Scheduled collect of"):
-        raise Exception("Test failed")
+    if default_feed:
+        if not verify_url_content(" --data 'feed=%(default_feed)s' %(collector_url)s" % vars(),
+                                  "Scheduled collect of",
+                                  alternate_string_exists_in_content="is already scheduled for collect"):
+            print "Failed to start collect of '%s'" % default_feed
+        return
+    main_host_and_port = env.roledefs['main'][0] if env.target!='dev_unix' else "%s:8180" % env.roledefs['main'][0]
+    collector_url = "http://%s/collector" % main_host_and_port
+    if env.target=='regression':
+        feed_url = "http://%s/feed/current.atom" % env.roledefs['demosource'][0]
+        if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s" % vars(), "Scheduled collect of"):
+            raise Exception("Scheduled collect failed")
+    else:
+        filename = "%(resources)s/%(target)s/datasources.n3" % venv()
+        read_file = open(filename, 'r')
+        for line in read_file:
+            line = line.strip()
+            if line.startswith('iana:current'):
+                start_index = line.index('<') + 1
+                end_index = line.index('>')
+                feed_url = line[start_index:end_index].strip()
+                if feed_url=='http://rinfo.lagrummet.se/feed/current':
+                    continue
+                if not verify_url_content(" --data 'feed=%(feed_url)s' %(collector_url)s" % vars(),
+                                          "Scheduled collect of",
+                                          alternate_string_exists_in_content="is already scheduled for collect"):
+                    print "Failed to start collect of '%s'" % feed_url
+
+
+@task
+@roles('main')
+def destroy_main_data(start_top_tomcat=True):
+    if not role_is_active('main'):
+        return
+    if start_top_tomcat:
+        tomcat_stop()
+    sudo("rm -rf %(rinfo_main_store)s/*" % venv())
+    if start_top_tomcat:
+        tomcat_start()
 
 
 @task
@@ -148,7 +223,9 @@ def install_regression_data(restart_tomcat=True):
 @task
 @roles('main')
 def test_all():
-    all(deps="0", test="0")
+    if not role_is_active('service'):
+        return
+    all(deps="1", test="0")
     restart_apache()
     #if env.target=='regression':
     #    install_regression_data()

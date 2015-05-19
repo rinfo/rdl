@@ -137,6 +137,8 @@ class ReportReader {
     }
 
     String removeURIBaseFromValue(String value) {
+        if (value==null)
+            return null
         value = value.replace("http://rinfo.lagrummet.se/ns/2008/11/rinfo/publ#","")
         return value.replace("http://purl.org/dc/terms/","")
     }

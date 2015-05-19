@@ -750,6 +750,12 @@
           </properties>
       </profile>
       <profile>
+          <id>collectreg</id>
+          <properties>
+              <environment>collectreg</environment>
+          </properties>
+      </profile>
+      <profile>
           <id>skrapat</id>
           <properties>
               <environment>skrapat</environment>

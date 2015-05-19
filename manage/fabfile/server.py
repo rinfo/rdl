@@ -200,16 +200,33 @@ def ftp_fetch(filename, ftp_address, target_path, username, password, test=False
 
 
 
-def tar_and_ftp_push(snapshot_name, name, password, source_tar_path, target_path, username, test=False):
+def tar_and_ftp_push(snapshot_name, name, password, source_tar_path, target_path, username, test=False, md5sum=True):
     file_to_upload = '%s/%s.tar.gz' % (target_path, name)
     tar(file_to_upload, source_tar_path, test=test)
     ftp_push(file_to_upload, '%s/%s/%s.tar.gz' % (env.ftp_server_url, snapshot_name, name), username, password,
              test=test)
+    if md5sum:
+        md5_file = '%s/%s.md5' % (target_path, name)
+        run("md5sum %s > %s" % (file_to_upload, md5_file) )
+        ftp_push(md5_file, '%s/%s/%s.md5' % (env.ftp_server_url, snapshot_name, name), username, password,
+                 test=test)
 
 
-def ftp_fetch_and_untar(snapshot_name, name, tmp_path, target_tar_unpack_path, username, password, test=False, is_local=False):
+
+def ftp_fetch_and_untar(snapshot_name, name, tmp_path, target_tar_unpack_path, username, password, test=False, is_local=False, md5sum=True):
     file_to_download = '%s.tar.gz' % name
     ftp_fetch(file_to_download, "%s/%s" % (env.ftp_server_url, snapshot_name), tmp_path, username, password, test=test, is_local=is_local)
+    if md5sum:
+        md5_file = '%s.md5' % name
+        ignore = False
+        try:
+            ftp_fetch(md5_file, "%s/%s" % (env.ftp_server_url, snapshot_name), tmp_path, username, password, test=test, is_local=is_local)
+        except: # no md5 file -> ignore
+            ignore = True
+        if not ignore:
+            with cd(tmp_path):
+                run('md5sum -c %s' % md5_file)
+
     clean_path(target_tar_unpack_path, use_sudo=True, test=test, is_local=is_local)
     untar('%s/%s.tar.gz' % (tmp_path, name), target_tar_unpack_path, use_sudo=True, test=test, is_local=is_local)
 
@@ -427,9 +444,11 @@ def prepare_sudo_for_debian_and_add_rinfo_user():
 
 
 @task
-@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
-def bootstrap():
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource', 'collectreg')
+def bootstrap(role=None):
     _needs_targetenv()
+    if role and not role_is_active(role):
+        return
     #if not os_version() == 'Debian7':
     #    print 'Unsupported os version %%' % os_version()
     #    return
