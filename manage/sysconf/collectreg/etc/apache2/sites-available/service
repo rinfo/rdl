@@ -1,0 +1,14 @@
+<VirtualHost *:80>
+    ServerName service.collectreg.lagrummet.se
+    ServerSignature On
+
+    AliasMatch ^/robots\.txt$ /var/www/robots.txt
+    ProxyPass / ajp://localhost:8009/rinfo-service/
+
+    ServerAdmin rinfo@lagrummet.se
+
+    ErrorLog /var/log/apache2/error.log
+    LogLevel warn
+    CustomLog /var/log/apache2/access.log combined
+
+</VirtualHost>

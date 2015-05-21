@@ -4,10 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -213,6 +210,7 @@ public abstract class AbstractCollectScheduler {
     private void executeCollect() {
         String feedUrlStr = getNextFeed();
         if (feedUrlStr != null) {
+            boolean initialAdminReadOnEmptySystem = (getSourceFeedUrls().size() == 2);
             try {
                 collectFeed(new URL(feedUrlStr), true);
             } catch (MalformedURLException e) {
@@ -220,8 +218,19 @@ public abstract class AbstractCollectScheduler {
             } finally {
                 feedInProcess.remove(feedUrlStr);
             }
+            ifInitialAdminReadThenEnqueueAllNewSources(feedUrlStr, initialAdminReadOnEmptySystem);
+
             afterCompletedCollect(feedUrlStr);
         }
+    }
+
+    private void ifInitialAdminReadThenEnqueueAllNewSources(String feedUrlStr, boolean initialAdminReadOnEmptySystem) {
+        if (initialAdminReadOnEmptySystem && getSourceFeedUrls().size() > 2) try {
+            for (URI sourceFeedURI : getSourceFeedUrls()) {
+                if (!sourceFeedURI.equals(new URL(feedUrlStr).toURI()))
+                    enqueueCollect(sourceFeedURI.toURL());
+            }
+        } catch (Exception ignore) {ignore.printStackTrace();}
     }
 
     protected abstract void afterCompletedCollect(String feedUrlStr);
@@ -238,5 +247,14 @@ public abstract class AbstractCollectScheduler {
     public synchronized boolean areJobQueuesEmpty() {
         logger.debug("Checking if job queues are empty");
         return feedInProcess.isEmpty() && feedQueue.isEmpty();
+    }
+
+    public Map status(Map report) {
+        report.put("started", Boolean.toString(started));
+        report.put("feedQueue.size", feedQueue.size());
+        report.put("feedQueue", feedQueue);
+        report.put("feedInProcess.size", feedInProcess.size());
+        report.put("feedInProcess", feedInProcess);
+        return report;
     }
 }

@@ -115,4 +115,13 @@ class FeedCollectScheduler extends AbstractCollectScheduler {
             afterLastJobCallback.run()
         }
     }
+
+    @Override
+    public Map status(Map report) {
+        logger.debug("report.size="+report.size())
+        super.status(report)
+        report.put("adminFeedUrl", adminFeedUrl.toString())
+        report.put("sourceFeedUrls", sourceFeedUrls.collect{it.toString()})
+        return report
+    }
 }

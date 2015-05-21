@@ -12,6 +12,7 @@ import se.lagrummet.rinfo.base.rdf.RDFUtil
 
 class RDFChecker {
 
+
     Repository repository
     List<String> testQueries
     URI errorType = new URIImpl("http://purl.org/net/schemarama#Error")

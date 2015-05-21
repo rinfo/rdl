@@ -1,9 +1,10 @@
 package se.lagrummet.rinfo.main
 
+import groovy.json.JsonOutput
 import org.restlet.data.MediaType
 import org.restlet.data.Status
 import org.restlet.resource.Handler
-
+import se.lagrummet.rinfo.base.rdf.jsonld.JSONLDContext
 import se.lagrummet.rinfo.collector.NotAllowedSourceFeedException
 
 import se.lagrummet.rinfo.main.storage.FeedCollectScheduler
@@ -15,11 +16,17 @@ class CollectorHandler extends Handler {
 
     @Override
     public boolean allowPost() { return true; }
+    @Override
+    public boolean allowGet() { return true; }
 
     @Override
     public void handleGet() {
+        def collectScheduler = ContextAccess.getCollectScheduler(context)
+        getResponse().setEntity(JsonOutput.prettyPrint(JsonOutput.toJson(collectScheduler.status(new HashMap()))), MediaType.APPLICATION_JSON)
+        getResponse().setStatus(Status.SUCCESS_OK)
+
         // TODO: some form of collect status page..
-        getResponse().setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED, BAD_MSG)
+        //getResponse().setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED, BAD_MSG)
     }
 
     @Override
@@ -44,6 +51,9 @@ class CollectorHandler extends Handler {
         //  a status monitor or some estimate of when the user can expect the
         //  request to be fulfilled.
 
+        if (feedUrl.equalsIgnoreCase("all"))
+            collectScheduler.collectAllFeeds()
+        else
         try {
             boolean wasScheduled = collectScheduler.triggerFeedCollect(new URL(feedUrl))
             if (!wasScheduled) {

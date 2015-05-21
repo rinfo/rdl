@@ -2,7 +2,7 @@ import re
 import sys
 from fabric.api import *
 from fabric.contrib.files import exists
-from fabfile.util import venv, mkdirpath, exit_on_error
+from fabfile.util import venv, mkdirpath, exit_on_error, role_is_active
 from fabfile import app, sysconf
 from fabfile.target import _needs_targetenv
 from fabfile.app import _deploy_war_norestart
@@ -90,6 +90,13 @@ def deploy_sesame():
     _patch_catalina_properties()
     for warname in ['openrdf-sesame', 'sesame-workbench']:
         app._deploy_war("%(local_sesame_dir)s/%(warname)s.war" % venv(), warname)
+
+
+@task
+@roles('service')
+def destroy_service_repository(default_repository='rinfo'):
+    _needs_targetenv()
+    run("curl -X POST http://localhost:8080/sesame-workbench/repositories/%s/clear" % default_repository)
 
 
 def _patch_catalina_properties():
@@ -197,6 +204,13 @@ def start_elasticsearch():
     sudo("/etc/init.d/elasticsearch start")
 
 
+@task
+@roles('service')
+def delete_elasticsearch_index(index_name='rinfo'):
+    _needs_targetenv()
+    run("curl -XDELETE 'http://localhost:9200/%s/'" % index_name)
+
+
 ##
 # Varnish install and setup
 
@@ -267,6 +281,16 @@ def ping_start_collect():
 
 @task
 @roles('service')
+def destroy_service_data():
+    if not role_is_active('service'):
+        return
+    destroy_service_repository()
+    delete_elasticsearch_index()
+    ban_varnish()
+
+
+@task
+@roles('service')
 def clean():
     """ Cleans checker from system. Will assume tomcat is inactive """
     tomcat_stop()
@@ -281,7 +305,9 @@ def clean():
 @task
 @roles('service')
 def test_all():
-    all(deps="0", test="0")
+    if not role_is_active('service'):
+        return
+    all(deps="1", test="0")
     restart_apache()
     restart_tomcat()
     msg_sleep(20, "restart apache, tomcat and wait for service to start")

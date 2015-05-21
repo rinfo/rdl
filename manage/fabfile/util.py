@@ -113,20 +113,21 @@ def get_value_from_password_store(name, default_value=''):
         return default_value
 
 
-def verify_url_content(url, string_exists_in_content, sleep_time=15, max_retry=3):
+def verify_url_content(url, string_exists_in_content, alternate_string_exists_in_content=None, sleep_time=15, max_retry=3):
     retry_count = 1
     resp_http = ""
     while retry_count < max_retry:
         resp_http = local("curl %(url)s" % vars(), capture=True)
         if not string_exists_in_content:
             return True
-        if not string_exists_in_content in resp_http:
-            print "Could not find '%(string_exists_in_content)s' in response! Failed! Retry %(retry_count)s " \
-                  "of %(max_retry)s." % vars()
-            retry_count += 1
-            time.sleep(sleep_time)
-            continue
-        return True
+        if string_exists_in_content in resp_http:
+            return True
+        if alternate_string_exists_in_content and alternate_string_exists_in_content in resp_http:
+            return True
+        print "Could not find '%(string_exists_in_content)s' in response! Failed! Retry %(retry_count)s " \
+              "of %(max_retry)s." % vars()
+        retry_count += 1
+        time.sleep(sleep_time)
     print "#########################################################################################"
     print resp_http
     print "#########################################################################################"
@@ -249,8 +250,10 @@ def exit_on_error(func):
 
 
 @task
-@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource')
-def install_public_key(id_rsa_pub_filename='id_rsa.pub'):
+@roles('main', 'service', 'checker', 'admin', 'lagrummet', 'emfs', 'test', 'regression', 'skrapat', 'demosource', 'collectreg')
+def install_public_key(id_rsa_pub_filename='id_rsa.pub', role=None):
+    if role and not role_is_active(role):
+        return
     mkdirpath('/home/%s/.ssh' % env.user)
     put('%s/.ssh/%s' % (expanduser('~'), id_rsa_pub_filename), '/home/%s/.' % env.user)
     run('cat %s >> .ssh/authorized_keys' % id_rsa_pub_filename)

@@ -140,7 +140,10 @@ class StorageSession {
             ReCollectQueue.instance.tryRemove(sourceEntry)
 
             return true
-
+        } catch (NullPointerException e) {
+            e.printStackTrace()
+            logger.error("Unexpected internal error. Stopping feed.",e)
+            return false;
         } catch (Exception e) {
             /* TODO: explicit handling (and logging) of more errors:
                 - retriable:

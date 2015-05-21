@@ -14,12 +14,13 @@ import org.slf4j.LoggerFactory
 import org.openrdf.repository.Repository
 import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.nativerdf.NativeStore
-
 import se.lagrummet.rinfo.store.depot.BeanUtilsURIConverter
 import se.lagrummet.rinfo.store.depot.Depot
 import se.lagrummet.rinfo.store.depot.DepotEntry
 import se.lagrummet.rinfo.store.depot.FileDepot
 import se.lagrummet.rinfo.store.depot.LockedDepotEntryException
+
+import se.lagrummet.rinfo.base.feed.FeedUpdatePingNotifyer
 
 import se.lagrummet.rinfo.collector.atom.FeedEntryDataIndex
 import se.lagrummet.rinfo.collector.atom.fs.FeedEntryDataIndexFSImpl
@@ -65,6 +66,7 @@ class Components {
         ADMIN_FEED_ID("rinfo.main.collector.adminFeedId"),
         ADMIN_FEED_URL("rinfo.main.collector.adminFeedUrl"),
         ON_COMPLETE_PING_TARGETS("rinfo.main.collector.onCompletePingTargets", false),
+        //ON_COMPLETE_ADMIN_PING_TARGETS("rinfo.main.collector.onCompleteAdminPingTargets", false),
         PUBLIC_SUBSCRIPTION_FEED("rinfo.main.publicSubscriptionFeed"),
         COLLECTOR_LOG_DATA_DIR("rinfo.main.collector.logDataDir"),
         COMPLETE_FEEDS_ID_INDEX_DIR("rinfo.main.collector.completeFeedsIndexDir"),
@@ -187,7 +189,7 @@ class Components {
         }
 
         collectScheduler.setAfterLastJobCallback(
-                new FeedUpdatePingNotifyer(publicSubscriptionFeed, onCompletePingTargets)
+            new FeedUpdatePingNotifyer(publicSubscriptionFeed, onCompletePingTargets)
         )
     }
 
