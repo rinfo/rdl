@@ -97,31 +97,31 @@ def test():
 
 @task
 @roles('main')
-def count_rdfs_in_publ_in_depot(type=""):
+def count_rdfs_in_publ_in_depot(type="", file_type="rdf"):
     with cd("%s/depot/publ/%s" % (env.rinfo_main_store, type)):
-        return run("find | grep .rdf | wc -l")
+        return run("find | grep .%s | wc -l" % file_type)
 
 
 @task
 @roles('main')
-def get_rdf_list_in_depot(type=""):
+def get_rdf_list_in_depot(type="", file_type="rdf"):
     _needs_targetenv()
     file_name = 'rdf_list_%s.txt' % env.target
     remote_file_and_path = '/tmp/%s' % file_name
     with cd("%s/depot/publ/%s" % (env.rinfo_main_store, type)):
-        run("find | grep .rdf > %s" % remote_file_and_path)
+        run("find | grep .%s > %s" % (file_type, remote_file_and_path) )
     get(remote_file_and_path, '/tmp/%s' % file_name)
     local('sort /tmp/%s > /tmp/sorted_%s' % (file_name, file_name))
 
 
 @task
 @roles('main')
-def verify_depot_minimum_size(EXPECTED_SFS_DOCUMENT_COUNT = 58268, EXPECTED_VA_DOCUMENT_COUNT = 24841):
-    sfs_document_count = int(count_rdfs_in_publ_in_depot('sfs'))
+def verify_depot_minimum_size(EXPECTED_SFS_DOCUMENT_COUNT = 58268, EXPECTED_VA_DOCUMENT_COUNT = 24841, file_type="rdf"):
+    sfs_document_count = int(count_rdfs_in_publ_in_depot('sfs',file_type))
     if sfs_document_count >= EXPECTED_SFS_DOCUMENT_COUNT:
         raise Exception("SFS Document count verification failed! Expected %s documents, but found %s! Aborting..." %
                         (EXPECTED_SFS_DOCUMENT_COUNT,sfs_document_count))
-    va_document_count = int(count_rdfs_in_publ_in_depot('dom')) +  int(count_rdfs_in_publ_in_depot('rf'))
+    va_document_count = int(count_rdfs_in_publ_in_depot('dom',file_type)) +  int(count_rdfs_in_publ_in_depot('rf',file_type))
     if va_document_count >= EXPECTED_VA_DOCUMENT_COUNT:
         raise Exception("VA Document count verification failed! Expected %s documents, but found %s! Aborting..." %
                         (EXPECTED_VA_DOCUMENT_COUNT,va_document_count))
