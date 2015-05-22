@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="Windows-1252" standalone="no"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:le="http://purl.org/atompub/link-extensions/1.0" xmlns:fh="http://purl.org/syndication/history/1.0" xml:lang="sv">
+    <id>tag:sfs.regeringen.se,2013:rinfo:feed:2014</id>
+    <fh:complete/><title>SFS</title>
+    <updated>2015-03-25T14:07:14Z</updated>
+    <author>
+        <name>Regeringskansliet</name>
+        <uri>http://www.regeringen.se/</uri>
+        <email>rinfo@regeringen.se</email>
+    </author>
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/sfs/2014:1/konsolidering/2014-01-21</id>
+        <updated>2014-01-21T11:41:14Z</updated>
+        <published>2014-01-21T11:41:14Z</published>
+        <title>2014:1 Tillkännagivande (2014:1) av uppgift om Riksbankens referensränta</title>
+        <summary/>
+        <content src="2014_1_konsolidering_senaste.xhtml"
+                 type="application/xhtml+xml"
+                 le:md5="D841B140ECD65D12572211E7BEC599CC"/>
+    </entry>
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/sfs/2014:2/konsolidering/2014-02-15</id>
+        <updated>2014-03-07T14:26:30Z</updated>
+        <published>2014-03-07T14:26:30Z</published>
+        <title>2014:2 Förordning (2014:2) om försöksverksamhet med övningsskolor och övningsförskolor inom lärar- och förskollärarutbildningar</title>
+        <summary/>
+        <content src="2014_2_konsolidering_senaste.xhtml"
+                 type="application/xhtml+xml"
+                 le:md5="00B6B1477062C819E79114318BCC7843"/>
+    </entry>
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/sfs/2014:1</id>
+        <updated>2014-04-02T09:12:18Z</updated>
+        <published>2014-04-02T09:12:18Z</published>
+        <title>2014:1 Tillkännagivande (2014:1) av uppgift om Riksbankens referensränta</title>
+        <summary/>
+        <link rel="alternate" href="2014_1_grund.xhtml"
+              type="application/rdf+xml" length="1439" le:md5="8EBAE651E1A9C934C17948F3E8ED4C60"/>
+        <content src="http://rkrattsdb.gov.se/SFSdoc/14/140001.pdf" type="application/pdf"/>
+    </entry>
+</feed>
