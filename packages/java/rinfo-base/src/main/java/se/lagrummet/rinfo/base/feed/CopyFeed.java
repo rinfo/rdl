@@ -10,6 +10,7 @@ import se.lagrummet.rinfo.base.feed.type.DocumentUrl;
 import se.lagrummet.rinfo.base.feed.type.FeedUrl;
 import se.lagrummet.rinfo.base.feed.type.Md5Sum;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
@@ -34,10 +35,12 @@ public interface CopyFeed  {
     interface DiscoveredEntryCollector {
         void feedOfFeed(Feed.EntryId entryId, FeedUrl feedUrl);
         void document(Feed.EntryId entryId, DocumentUrl documentURL, Md5Sum md5sum, Long length, String type);
+        void prevFeed(FeedUrl feedUrl);
     }
 
     interface FeedEntryParser {
-         void parse(FeedUrl feed, Node nodeEntry, DiscoveredEntryCollector discoveredEntryCollector) throws EntryIdNotFoundException, MalformedFeedUrlException, MalformedDocumentUrlException;
+         void parseEntries(FeedUrl feed, Node nodeEntry, DiscoveredEntryCollector discoveredEntryCollector) throws EntryIdNotFoundException, MalformedFeedUrlException, MalformedDocumentUrlException;
+         void parseLinks(FeedUrl feedUrl, Node link, DiscoveredEntryCollector discoveredEntryCollector) throws MalformedFeedUrlException;
     }
 
     interface EntryDocumentDownloader {

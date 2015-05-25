@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="Windows-1252" standalone="no"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:le="http://purl.org/atompub/link-extensions/1.0" xmlns:fh="http://purl.org/syndication/history/1.0" xml:lang="sv">
+    <id>tag:sfs.regeringen.se,2013:rinfo:feed:2014</id>
+    <fh:complete/><title>SFS</title>
+    <updated>2015-03-25T14:07:14Z</updated>
+    <author>
+        <name>Regeringskansliet</name>
+        <uri>http://www.regeringen.se/</uri>
+        <email>rinfo@regeringen.se</email>
+    </author>
+    <link href="simplefeed_next.atom" rel="self"/>
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/dom/mmd/p8048-12/2013-01-10</id>
+        <updated>2014-03-21T16:27:38.693943000Z</updated>
+        <published>2013-02-20T10:27:33Z</published>
+        <title>MMD P8048-12</title>
+        <content/>
+        <link href="13892-kort.rdf" le:md5="a3cbc5ddb791f70dca9c9454012ef711" length="1737" rel="alternate" type="application/rdf+xml"/>
+    </entry>
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/rf/mod/2013:5</id>
+        <updated>2014-03-21T16:27:38.698943000Z</updated>
+        <published>2013-02-20T10:31:02Z</published>
+        <title>MÖD 2013:5</title>
+        <summary>Antagande av detaljplan ----- En kommun hade antagit en detaljplan. Innan antagandebeslutet vann laga kraft antog kommunen på nytt en detaljplan för samma område. Mark- och miljööverdomstolen har upphävt båda besluten. Det har inte ansetts möjligt för en kommun att upphäva eller ändra ett detaljplanebeslut innan det har vunnit laga kraft. Att kommunen fattat två antagandebeslut har också medfört otydlighet om vilket antagandebeslut och vilka antagandehandlingar som gäller och vilken innebörd de båda besluten har.</summary>
+        <content le:md5="81c7b266c9aaf13b87dd712c2bf2fee1" length="20744" src="11171.html" type="text/html"/>
+        <link href="11171-ref.rdf" rel="alternate" type="application/rdf+xml"/>
+    </entry>
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/dom/hd/oe4581-12/2013-02-18</id>
+        <updated>2014-03-21T16:27:38.834186000Z</updated>
+        <published>2013-02-20T15:30:23Z</published>
+        <title>HD Ö4581-12</title>
+        <content/>
+        <link href="13893-kort.rdf" le:md5="392ff66aec733f237928dcdc40d8f0f7" length="2802" rel="alternate" type="application/rdf+xml"/>
+    </entry>
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/rf/nja/2013/s_75</id>
+        <updated>2014-03-21T16:27:38.839300000Z</updated>
+        <published>2013-06-04T08:17:05Z</published>
+        <title>NJA 2013 S. 75</title>
+        <summary>Resning har beviljats till nackdel för en tidigare frikänd person som efter tolv år frivilligt och förbehållslöst har erkänt gärningen. Det har beaktats bl.a. att den nya berättelsen är förenlig med den bevisning som fanns i brottmålet. Fråga också om vem som är behörig att ansöka om resning.</summary>
+        <content le:md5="5cbee91933301d9ff4d6f7fa9fe67957" length="34421" src="11172.html" type="text/html"/>
+        <link href="11172-ref.rdf" rel="alternate" type="application/rdf+xml"/>
+    </entry>
+</feed>

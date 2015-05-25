@@ -22,6 +22,8 @@ import java.io.IOException;
 
 /**
  * Created by christian on 5/22/15.
+ *
+ * Tests reading of feed skeleton. Not processing entries.
  */
 public class FeedReaderTest {
     final String RESOURCES_PATH = "packages/java/rinfo-base/src/test/resources/";

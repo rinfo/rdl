@@ -1,6 +1,5 @@
 package se.lagrummet.rinfo.base.feed.impl;
 
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import se.lagrummet.rinfo.base.feed.CopyFeed;
@@ -19,31 +18,32 @@ import java.net.MalformedURLException;
 * Created by christian on 5/21/15.
 */
 public class FeedEntryParserImpl implements CopyFeed.FeedEntryParser {
-     final String ENTRY_ID_NAME = "id";
-     final String ENTRY_CONTENT_NAME = "content";
+    final String ENTRY_ID_NAME = "id";
+    final String ENTRY_CONTENT_NAME = "content";
     final String ENTRY_LINK_NAME = "link";
-     final String ENTRY_CONTENT_TYPE_NAME = "type";
-     final String ENTRY_CONTENT_SRC_NAME = "src";
+    final String ENTRY_CONTENT_TYPE_NAME = "type";
+    final String ENTRY_CONTENT_SRC_NAME = "src";
     final String ENTRY_CONTENT_HREF_NAME = "href";
-     final String ENTRY_CONTENT_MD5_NAME = "le:md5";
-     //final String ENTRY_CONTENT_MD5_NAME = "http://purl.org/atompub/link-extensions/1.0:md5";
-     final String ENTRY_CONTENT_LENGTH_NAME = "length";
-
-    /*
-    <entry>
-        <id>http://rinfo.lagrummet.se/publ/sfs/2014:1/konsolidering/2014-01-21</id>
-        <updated>2014-01-21T11:41:14Z</updated>
-        <published>2014-01-21T11:41:14Z</published>
-        <title>2014:1 Tillkännagivande (2014:1) av uppgift om Riksbankens referensränta</title>
-        <summary/>
-        <content src="2014_1_konsolidering_senaste.xhtml"
-                 type="application/xhtml+xml"
-                 le:md5="D841B140ECD65D12572211E7BEC599CC"/>
-    </entry>
-*/
+    final String ENTRY_CONTENT_MD5_NAME = "le:md5";
+    //final String ENTRY_CONTENT_MD5_NAME = "http://purl.org/atompub/link-extensions/1.0:md5";
+    final String ENTRY_CONTENT_LENGTH_NAME = "length";
+    final String LINK_REL_PREV_ARCHIVE = "prev-archive";
 
     @Override
-    public void parse(FeedUrl feed, Node nodeEntry, CopyFeed.DiscoveredEntryCollector discoveredEntryCollector) throws EntryIdNotFoundException, MalformedFeedUrlException, MalformedDocumentUrlException {
+    public void parseLinks(FeedUrl feedUrl, Node link, CopyFeed.DiscoveredEntryCollector discoveredEntryCollector) throws MalformedFeedUrlException {
+        Node linkRelPrevArchive = link.getAttributes().getNamedItem(LINK_REL_PREV_ARCHIVE);
+        if (linkRelPrevArchive!=null) {
+            String textContent = linkRelPrevArchive.getTextContent();
+            try {
+                discoveredEntryCollector.prevFeed(FeedUrl.parse(textContent));
+            } catch (MalformedURLException e) {
+                throw new MalformedFeedUrlException(textContent, e);
+            }
+        }
+    }
+
+    @Override
+    public void parseEntries(FeedUrl feed, Node nodeEntry, CopyFeed.DiscoveredEntryCollector discoveredEntryCollector) throws EntryIdNotFoundException, MalformedFeedUrlException, MalformedDocumentUrlException {
         NodeEntryProcessor nodeEntryProcessor = new NodeEntryProcessor(nodeEntry);
 
         Feed.EntryId entryId = nodeEntryProcessor.getId();
@@ -105,15 +105,6 @@ public class FeedEntryParserImpl implements CopyFeed.FeedEntryParser {
          }
 
          protected Node getFirstAttributeByName(String attrName) {
-/*
-             System.out.println("se.lagrummet.rinfo.base.feed.impl.FeedEntryParserImpl.AbstractNodeProcessor.getFirstAttributeByName *********** "+attrName+" **********");
-             NamedNodeMap attributes = root.getAttributes();
-             for (int i = 0; i < attributes.getLength(); i++) {
-                 Node item = attributes.item(i);
-                 System.out.println("attr "+item.getNodeName()+"="+item.getTextContent());
-
-             }
-*/
              return root.getAttributes().getNamedItem(attrName);
          }
      }
@@ -158,7 +149,9 @@ public class FeedEntryParserImpl implements CopyFeed.FeedEntryParser {
              Node node = getFirstAttributeByName(ENTRY_CONTENT_TYPE_NAME);
              if (node.getTextContent().equalsIgnoreCase("application/xhtml+xml")
                      || node.getTextContent().equalsIgnoreCase("application/pdf")
-                     || node.getTextContent().equalsIgnoreCase("application/rdf+xml"))
+                     || node.getTextContent().equalsIgnoreCase("application/rdf+xml")
+                     || node.getTextContent().equalsIgnoreCase("text/html")
+                     )
                  return Feed.ContentKind.Source;
              if (node.getTextContent().equalsIgnoreCase("application/atom+xml;type=feed"))
                  return Feed.ContentKind.FeedOfFeed;

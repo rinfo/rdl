@@ -68,6 +68,21 @@ public class CopyFeedImpl implements CopyFeed, CopyFeed.FileNameCreator {
                     }
                 }, feed, entryId, documentURL, md5sum, targetPath);
             }
+
+            @Override
+            public void prevFeed(FeedUrl feedUrl) {
+                try {
+                    feedReader.read(feedUrl, this);
+                } catch (FailedToReadFeedException e) {
+                    errorReport.failedToReed(feed, null, feedUrl, e);
+                } catch (MalformedDocumentUrlException e) {
+                    errorReport.mailformedDocumentUrl(feed, null, feedUrl, e);
+                } catch (EntryIdNotFoundException e) {
+                    errorReport.entryIdNotFound(feed, null, feedUrl, e);
+                } catch (MalformedFeedUrlException e) {
+                    errorReport.malformedFeedUrl(feed, null, feedUrl, e);
+                }
+            }
         });
 
         try {

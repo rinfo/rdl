@@ -17,6 +17,7 @@ import java.util.List;
 public interface Feed {
 
     String ENTRY_NAME = "entry";
+    String LINK_NAME = "link";
 
     DocumentUrl createDocumentUrl(String relativeUrl) throws MalformedURLException;
 

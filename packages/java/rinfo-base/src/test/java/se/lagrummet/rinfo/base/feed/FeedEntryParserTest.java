@@ -1,6 +1,8 @@
 package se.lagrummet.rinfo.base.feed;
 
 import static org.junit.Assert.*;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -24,6 +26,8 @@ import static org.mockito.Mockito.*;
 
 /**
  * Created by christian on 5/22/15.
+ *
+ * Test of processing entries in feed
  */
 public class FeedEntryParserTest {
     final String RESOURCES_PATH = "packages/java/rinfo-base/src/test/resources/";
@@ -31,20 +35,32 @@ public class FeedEntryParserTest {
     final String SIMPLE_FEED = FEEDS_PATH+"simplefeed.atom";
 
     final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+    CopyFeed.FeedEntryParser feedEntryParser;
+    FeedUrl feedUrl;
+    Document document;
+    NodeList entries;
+    CopyFeed.DiscoveredEntryCollector discoveredEntryCollector;
+
+    @Before
+    public void init() {
+        try {
+            feedEntryParser = new FeedEntryParserImpl();
+            feedUrl = FeedUrl.parse("Http://my.se");
+            document = dbf.newDocumentBuilder().parse(new File(SIMPLE_FEED));
+            entries = document.getDocumentElement().getElementsByTagName(Feed.ENTRY_NAME);
+            discoveredEntryCollector = mock(CopyFeed.DiscoveredEntryCollector.class);
+        } catch (Exception ignore) {ignore.printStackTrace();}
+    }
 
     @Test
-    public void simpleParse() throws ParserConfigurationException, IOException, SAXException, MalformedDocumentUrlException, EntryIdNotFoundException, MalformedFeedUrlException {
-        CopyFeed.FeedEntryParser feedEntryParser = new FeedEntryParserImpl();
-        FeedUrl feedUrl = FeedUrl.parse("Http://my.se");
-
-        Document document = dbf.newDocumentBuilder().parse(new File(SIMPLE_FEED));
-        NodeList entries = document.getDocumentElement().getElementsByTagName(Feed.ENTRY_NAME);
-
+    public void countParsedEntries() {
         assertEquals(3, entries.getLength());
+    }
 
-        CopyFeed.DiscoveredEntryCollector discoveredEntryCollector1 = mock(CopyFeed.DiscoveredEntryCollector.class);
-        feedEntryParser.parse(feedUrl, entries.item(0), discoveredEntryCollector1);
-        verify(discoveredEntryCollector1).document(
+    @Test
+    public void parseEntryWithXHtmlContent() throws ParserConfigurationException, IOException, SAXException, MalformedDocumentUrlException, EntryIdNotFoundException, MalformedFeedUrlException {
+        feedEntryParser.parseEntries(feedUrl, entries.item(0), discoveredEntryCollector);
+        verify(discoveredEntryCollector).document(
                 new EntryIdImpl("http://rinfo.lagrummet.se/publ/sfs/2014:1/konsolidering/2014-01-21"),
                 DocumentUrl.parse("http://my.se/2014_1_konsolidering_senaste.xhtml"),
                 Md5Sum.create("D841B140ECD65D12572211E7BEC599CC"),
@@ -52,10 +68,12 @@ public class FeedEntryParserTest {
                 "application/xhtml+xml");
 
         //verify(discoveredEntryCollector1, never()).document(any(Feed.EntryId.class), any(DocumentUrl.class), any(Md5Sum.class));
+    }
 
-        CopyFeed.DiscoveredEntryCollector discoveredEntryCollector2 = mock(CopyFeed.DiscoveredEntryCollector.class);
-        feedEntryParser.parse(feedUrl, entries.item(1), discoveredEntryCollector2);
-        verify(discoveredEntryCollector2, times(1)).document(
+    @Test
+    public void parseEntryWithXHtmlContentWithOtherData() throws ParserConfigurationException, IOException, SAXException, MalformedDocumentUrlException, EntryIdNotFoundException, MalformedFeedUrlException {
+        feedEntryParser.parseEntries(feedUrl, entries.item(1), discoveredEntryCollector);
+        verify(discoveredEntryCollector, times(1)).document(
                 new EntryIdImpl("http://rinfo.lagrummet.se/publ/sfs/2014:2/konsolidering/2014-02-15"),
                 DocumentUrl.parse("http://my.se/2014_2_konsolidering_senaste.xhtml"),
                 Md5Sum.create("00B6B1477062C819E79114318BCC7843"),
@@ -63,17 +81,18 @@ public class FeedEntryParserTest {
                 "application/xhtml+xml");
 
         //verify(discoveredEntryCollector1, never()).document(any(Feed.EntryId.class), any(DocumentUrl.class), any(Md5Sum.class));
+    }
 
-
-        CopyFeed.DiscoveredEntryCollector discoveredEntryCollector3 = mock(CopyFeed.DiscoveredEntryCollector.class);
-        feedEntryParser.parse(feedUrl, entries.item(2), discoveredEntryCollector3);
-        verify(discoveredEntryCollector3, times(1)).document(
+    @Test
+    public void parseEntryWithPdfContentAndXHtmlRel() throws ParserConfigurationException, IOException, SAXException, MalformedDocumentUrlException, EntryIdNotFoundException, MalformedFeedUrlException {
+        feedEntryParser.parseEntries(feedUrl, entries.item(2), discoveredEntryCollector);
+        verify(discoveredEntryCollector, times(1)).document(
                 new EntryIdImpl("http://rinfo.lagrummet.se/publ/sfs/2014:1"),
                 DocumentUrl.parse("http://rkrattsdb.gov.se/SFSdoc/14/140001.pdf"),
                 null,
                 null,
                 "application/pdf");
-        verify(discoveredEntryCollector3, times(1)).document(
+        verify(discoveredEntryCollector, times(1)).document(
                 new EntryIdImpl("http://rinfo.lagrummet.se/publ/sfs/2014:1"),
                 DocumentUrl.parse("http://my.se/2014_1_grund.xhtml"),
                 Md5Sum.create("8EBAE651E1A9C934C17948F3E8ED4C60"),
