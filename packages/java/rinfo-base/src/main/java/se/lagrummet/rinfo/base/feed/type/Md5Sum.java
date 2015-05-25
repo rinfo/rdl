@@ -47,7 +47,7 @@ public final class Md5Sum {
         return sb.toString();
     }
 
-    interface Md5SumCalculator {
+    public interface Md5SumCalculator {
         void update(byte[] data);
         void update(byte[] data, int off, int len);
         Md5Sum create();

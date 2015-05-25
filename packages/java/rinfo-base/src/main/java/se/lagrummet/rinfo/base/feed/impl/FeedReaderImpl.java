@@ -29,15 +29,11 @@ public class FeedReaderImpl implements CopyFeed.FeedReader {
         Document document = feedUrl.getDocument();
         Node root = document.getDocumentElement();
 
-        List<Node> linkNodes = allNodes(root, Feed.LINK_NAME);
-        for (Node entry : linkNodes) {
+        for (Node entry : allNodes(root, Feed.LINK_NAME))
             parser.parseLinks(feedUrl, entry, discoveredEntryCollector);
-        }
 
-        List<Node> entryNodes = allNodes(root, Feed.ENTRY_NAME);
-        for (Node entry : entryNodes) {
+        for (Node entry : allNodes(root, Feed.ENTRY_NAME))
             parser.parseEntries(feedUrl, entry, discoveredEntryCollector);
-        }
     }
 
     private List<Node> allNodes(Node root, String entryName) {

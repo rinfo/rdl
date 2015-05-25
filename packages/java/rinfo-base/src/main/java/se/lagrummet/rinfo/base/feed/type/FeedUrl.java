@@ -1,5 +1,7 @@
 package se.lagrummet.rinfo.base.feed.type;
 
+import se.lagrummet.rinfo.base.feed.util.Utils;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -23,4 +25,9 @@ public class FeedUrl extends CommonUrl {
     public DocumentUrl createDocumentUrl(String relativeUrl) throws MalformedURLException {
         return DocumentUrl.parse(getUrl(),relativeUrl);
     }
+
+    public static FeedUrl parse(URL base, String feedUrl) throws MalformedURLException {
+        return create(Utils.parse(base, feedUrl));
+    }
+
 }
