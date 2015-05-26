@@ -4,17 +4,19 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import se.lagrummet.rinfo.base.feed.exceptions.*;
+import se.lagrummet.rinfo.base.feed.exceptions.FailedToReadFeedException;
+import se.lagrummet.rinfo.base.feed.impl.ReportImpl;
 import se.lagrummet.rinfo.base.feed.impl.XmlParserImpl;
 import se.lagrummet.rinfo.base.feed.type.Md5Sum;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.net.URL;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -38,7 +40,7 @@ public class XmlParserTest {
 
         XmlParserImpl xmlParser = new XmlParserImpl(resourceLocator);
 
-        Parser.FeedBuilder feedBuilder = xmlParser.parse(simple_feed_atom);
+        Parser.FeedBuilder feedBuilder = xmlParser.parse(simple_feed_atom, new ReportImpl());
 
         Assert.assertEquals("tag:sfs.regeringen.se,2013:rinfo:feed:2014", feedBuilder.getId());
         Iterator<Parser.EntryBuilder> iterator = feedBuilder.getEntries().iterator();
@@ -52,26 +54,6 @@ public class XmlParserTest {
         Assert.assertFalse(iterator.hasNext());
     }
 
-    private static ResourceLocator.Resource fileResource(final String fileName) {
-        final File file = new File(fileName);
-        return new ResourceLocator.Resource() {
-            @Override public Integer size() {return (int) file.length();}
-
-            @Override
-            public Md5Sum writeTo(OutputStream outputStream, URL baseUrl) throws ResourceWriteException {
-                try {
-                    byte[] buffer = new byte[(int) file.length()];
-                    new FileInputStream(file).read(buffer);
-                    outputStream.write(buffer);
-                } catch (IOException e) {
-                    throw new ResourceWriteException(fileName, e);
-                }
-                return null;
-            }
-        };
-    }
-
-
     private class MyResourceLocator implements ResourceLocator {
         private final Resource simple_feed_atom;
 
@@ -82,19 +64,22 @@ public class XmlParserTest {
         @Override
         public void locate(Resource resource, Reply reply) {
             if (resource== simple_feed_atom) {
-                reply.ok(new MyData(SIMPLE_FEED));
+                reply.ok(new MyData(SIMPLE_FEED, resource));
                 return ;
             }
-            reply.ok(new MyData(SIMPLE_NEXT_FEED));
+            reply.ok(new MyData(SIMPLE_NEXT_FEED, resource));
         }
 
         private class MyData implements Data {
             private final String filename;
+            private Resource resource;
 
-            public MyData(String filename) {
+            public MyData(String filename, Resource resource) {
                 this.filename = filename;
+                this.resource = resource;
             }
 
+            @Override public Resource getResource() {return resource;}
             @Override public Md5Sum getMd5Sum() {return null;}
 
             @Override public InputStream asInputStream() {

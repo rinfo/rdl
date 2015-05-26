@@ -2,10 +2,12 @@ package se.lagrummet.rinfo.base.feed.type;
 
 import org.w3c.dom.Document;
 import se.lagrummet.rinfo.base.feed.exceptions.FailedToReadFeedException;
+import se.lagrummet.rinfo.base.feed.util.Utils;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,22 +19,20 @@ import java.security.NoSuchAlgorithmException;
 public abstract class CommonUrl {
     final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
-    private URL url;
+    protected String url;
 
-    public URL getUrl() {
-        return url;
-    }
+    public URL getUrl() throws MalformedURLException {return new URL(url);}
 
-    protected CommonUrl(URL url) {
+    protected CommonUrl(String url) {
         this.url = url;
     }
 
     public String getName() {
-        return new File(url.getFile()).getName();
+        return Utils.extractFileName(url);
     }
 
     public void copyToFile(Path path) throws IOException {
-        Files.copy(url.openStream(), path);
+        Files.copy(getUrl().openStream(), path);
     }
 
     @Override
@@ -41,7 +41,7 @@ public abstract class CommonUrl {
     }
 
     public Md5Sum copyToFile(File target) throws IOException, NoSuchAlgorithmException {
-        InputStream in = new BufferedInputStream(url.openStream());
+        InputStream in = new BufferedInputStream(getUrl().openStream());
         OutputStream out = new BufferedOutputStream(new FileOutputStream(target));
         Md5Sum.Md5SumCalculator md5SumCalculator = Md5Sum.calculator();
         byte[] buffer = new byte[1024];
@@ -58,7 +58,7 @@ public abstract class CommonUrl {
     public Document getDocument() throws FailedToReadFeedException {
         try {
             DocumentBuilder db = dbf.newDocumentBuilder();
-            return db.parse(url.openStream());
+            return db.parse(getUrl().openStream());
         } catch(Exception e) {
             throw new FailedToReadFeedException(url.toString(),e);
         }

@@ -1,7 +1,6 @@
 package se.lagrummet.rinfo.base.feed;
 
 import se.lagrummet.rinfo.base.feed.exceptions.FailedToReadFeedException;
-import se.lagrummet.rinfo.base.feed.type.FeedUrl;
 
 import java.util.Date;
 
@@ -10,7 +9,7 @@ import java.util.Date;
  */
 public interface Parser {
 
-    FeedBuilder parse(ResourceLocator.Resource resource) throws FailedToReadFeedException;
+    FeedBuilder parse(ResourceLocator.Resource resource, Report report) throws FailedToReadFeedException;
 
     interface FeedBuilder {
         String getId();
@@ -20,9 +19,12 @@ public interface Parser {
         String getAuthorURI();
         String getAuthorEMail();
         Iterable<EntryBuilder> getEntries();
+
+        Feed toFeed();
     }
 
     interface EntryBuilder {
+        String getBaseUrl();
         String getId();
         String getTitle();
         String getSummary();
@@ -36,5 +38,10 @@ public interface Parser {
         String getSource();
         String getType();
         String getMd5SUM();
+        String getLength();
+
+        boolean isFeedOfFeed();
+
+
     }
 }

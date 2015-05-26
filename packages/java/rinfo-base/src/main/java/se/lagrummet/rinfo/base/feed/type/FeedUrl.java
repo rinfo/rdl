@@ -1,5 +1,6 @@
 package se.lagrummet.rinfo.base.feed.type;
 
+import se.lagrummet.rinfo.base.feed.impl.UrlResource;
 import se.lagrummet.rinfo.base.feed.util.Utils;
 
 import java.net.MalformedURLException;
@@ -11,14 +12,14 @@ import java.net.URL;
 public class FeedUrl extends CommonUrl {
 
     public static FeedUrl create(URL feedUrl) {
+        return new FeedUrl(feedUrl.toString());
+    }
+
+    public static FeedUrl parse(String feedUrl)  {
         return new FeedUrl(feedUrl);
     }
 
-    public static FeedUrl parse(String feedUrl) throws MalformedURLException {
-        return new FeedUrl(new URL(feedUrl));
-    }
-
-    private FeedUrl(URL feedUrl) {
+    private FeedUrl(String feedUrl) {
         super(feedUrl);
     }
 
@@ -28,6 +29,10 @@ public class FeedUrl extends CommonUrl {
 
     public static FeedUrl parse(URL base, String feedUrl) throws MalformedURLException {
         return create(Utils.parse(base, feedUrl));
+    }
+
+    public UrlResource asResource() throws MalformedURLException {
+        return UrlResource.feed(url);
     }
 
 }

@@ -1,5 +1,7 @@
 package se.lagrummet.rinfo.base.feed.type;
 
+import se.lagrummet.rinfo.base.feed.exceptions.SevereInternalException;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -8,14 +10,16 @@ import java.security.NoSuchAlgorithmException;
  */
 public final class Md5Sum {
 
-    public static Md5Sum create(String md5Sum) {return new Md5Sum(md5Sum);}
+    public static Md5Sum create(String md5Sum) {return md5Sum!=null ? new Md5Sum(md5Sum) : null;}
     public static Md5Sum calculate(String inputData) throws NoSuchAlgorithmException {return calculate(inputData.getBytes());}
     public static Md5Sum calculate(byte[] inputData) throws NoSuchAlgorithmException {return new Md5Sum(MD5(inputData));}
-    public static Md5SumCalculator calculator() throws NoSuchAlgorithmException {return new MyMd5SumCalculator(); }
+    public static Md5SumCalculator calculator()  {return new MyMd5SumCalculator(); }
 
     private String md5sum;
 
     private Md5Sum(String md5sum) {
+        if (md5sum==null)
+            throw new NullPointerException("md5sum is null");
         this.md5sum = md5sum;
     }
 
@@ -26,9 +30,8 @@ public final class Md5Sum {
 
         Md5Sum md5Sum = (Md5Sum) o;
 
-        if (md5sum != null ? !md5sum.equals(md5Sum.md5sum) : md5Sum.md5sum != null) return false;
+        return !(md5sum != null ? !md5sum.equals(md5Sum.md5sum) : md5Sum.md5sum != null);
 
-        return true;
     }
 
     @Override
@@ -56,8 +59,12 @@ public final class Md5Sum {
     static class MyMd5SumCalculator implements Md5SumCalculator {
         java.security.MessageDigest md;
 
-        MyMd5SumCalculator() throws NoSuchAlgorithmException {
-            this.md = java.security.MessageDigest.getInstance("MD5");
+        MyMd5SumCalculator()  {
+            try {
+                this.md = MessageDigest.getInstance("MD5");
+            } catch (NoSuchAlgorithmException e) {
+                throw new SevereInternalException(e);
+            }
         }
 
         @Override

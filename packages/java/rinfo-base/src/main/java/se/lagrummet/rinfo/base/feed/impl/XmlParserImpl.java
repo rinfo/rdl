@@ -6,6 +6,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import se.lagrummet.rinfo.base.feed.Feed;
 import se.lagrummet.rinfo.base.feed.Parser;
+import se.lagrummet.rinfo.base.feed.Report;
 import se.lagrummet.rinfo.base.feed.ResourceLocator;
 import se.lagrummet.rinfo.base.feed.exceptions.FailedToReadFeedException;
 import se.lagrummet.rinfo.base.feed.util.Utils;
@@ -32,12 +33,14 @@ public class XmlParserImpl implements Parser {
     }
 
     @Override
-    public FeedBuilder parse(ResourceLocator.Resource resource) throws FailedToReadFeedException {
-        MyFeedBuilder myFeedBuilder = new MyFeedBuilder();
+    public FeedBuilder parse(ResourceLocator.Resource resource, Report report) throws FailedToReadFeedException {
+        resource.start(report);
+        MyFeedBuilder myFeedBuilder = new MyFeedBuilder(report);
         resourceLocator.locate(resource, myFeedBuilder);
-        if (!myFeedBuilder.waitOk()) {
+        if (!myFeedBuilder.waitOk(60*30)) {
             throw new FailedToReadFeedException("Failed to locate resource "+myFeedBuilder.getFailure()+" "+myFeedBuilder.getFailureComment());
         }
+        resource.end(report);
         return myFeedBuilder;
     }
 
@@ -45,15 +48,22 @@ public class XmlParserImpl implements Parser {
         private int taskCount = 1;
         private ResourceLocator.Failure failure;
         private String failureComment;
+        private Report report;
 
         public ResourceLocator.Failure getFailure() {return failure;}
         public String getFailureComment() {return failureComment;}
 
+        protected AbstractReply(Report report) {
+            this.report = report;
+        }
+
         @Override
         public synchronized void ok(ResourceLocator.Data data) {
             try {
-                processData(data.asDocument());
+                data.getResource().intermediate(report, "processData");
+                processData(data.asDocument(), data.getResource().getUrl());
                 completed();
+                data.getResource().end(report);
             } catch (ParseException | MalformedURLException | ParserConfigurationException | SAXException e) {
                 failure = ResourceLocator.Failure.Parse;
                 failureComment = e.getMessage();
@@ -65,7 +75,6 @@ public class XmlParserImpl implements Parser {
 
         public synchronized void addTask() {
             taskCount++;
-            System.out.println("se.lagrummet.rinfo.base.feed.impl.XmlParserImpl.AbstractReply.addTask taskCount="+taskCount);
         }
 
         @Override
@@ -73,21 +82,26 @@ public class XmlParserImpl implements Parser {
             this.failure = failure;
             this.failureComment = comment;
             completed();
-            System.out.println("se.lagrummet.rinfo.base.feed.impl.XmlParserImpl.AbstractReply.failed failure="+failure+" "+comment);
         }
 
         protected synchronized void completed() {
             taskCount--;
             if (taskCount ==0)
                 this.notifyAll();
-            System.out.println("se.lagrummet.rinfo.base.feed.impl.XmlParserImpl.AbstractReply.completed taskCount="+taskCount);
         }
 
-        protected abstract void processData(Document document) throws ParseException, MalformedURLException;
+        protected void addNewSource(String url) {
+            addTask();
+            UrlResource resource = UrlResource.feed(url);
+            resource.start(report);
+            resourceLocator.locate(resource, this);
+        }
 
-        synchronized boolean waitOk() {
+        protected abstract void processData(Document document, String url) throws ParseException, MalformedURLException;
+
+        synchronized boolean waitOk(int timeoutSec) {
             if (taskCount>0) try {
-                wait(60*1000);
+                wait(1000*timeoutSec);
             } catch (InterruptedException e) {e.printStackTrace();}
             if (taskCount>0)
                 failure = ResourceLocator.Failure.Timeout;
@@ -97,7 +111,7 @@ public class XmlParserImpl implements Parser {
 
     private class MyFeedBuilder extends AbstractReply implements FeedBuilder {
 
-        private List<EntryBuilder> entryBuilders = new ArrayList<>();
+        private List<MyEntryBuilder> entryBuilders = new ArrayList<>();
         private String id;
         private boolean complete;
         private Date updated;
@@ -105,16 +119,25 @@ public class XmlParserImpl implements Parser {
         private String authorUri;
         private String authorEMail;
 
+        public MyFeedBuilder(Report report) {
+            super(report);
+        }
+
         @Override public String getId() {return id;}
         @Override public boolean isComplete() {return complete;}
         @Override public Date getUpdated() {return updated;}
         @Override public String getAuthorName() {return authorName;}
         @Override public String getAuthorURI() {return authorUri;}
         @Override public String getAuthorEMail() {return authorEMail;}
-        @Override public Iterable<EntryBuilder> getEntries() {return entryBuilders;}
+        @Override public Iterable<EntryBuilder> getEntries() {return new ArrayList<EntryBuilder>(entryBuilders);}
 
         @Override
-        protected void processData(Document document) throws ParseException, MalformedURLException {
+        public Feed toFeed() {
+            return new FeedImpl().build(this);
+        }
+
+        @Override
+        protected void processData(Document document, String url) throws ParseException, MalformedURLException {
             if (document==null)
                 throw new NullPointerException("document is null!");
             XmlInterpreter interpreter = new XmlInterpreter(document);
@@ -126,15 +149,17 @@ public class XmlParserImpl implements Parser {
             authorEMail = interpreter.getTagValue("authorEMail");
 
             for (XmlInterpreter link : interpreter.allNodes(LINK_NAME))
-                if (link.hasAttrValue("rel","prev-archive")) {
-                    addTask();
-                    resourceLocator.locate(new UrlResource(link.getAttrValue("href")), this);
-                }
+                if (link.hasAttrValue("rel","prev-archive"))
+                    addNewSource(link.getAttrValue("href"));
 
             for (XmlInterpreter entry : interpreter.allNodes(ENTRY_NAME)) {
-                MyEntryBuilder myEntryBuilder = new MyEntryBuilder();
+                MyEntryBuilder myEntryBuilder = new MyEntryBuilder(url);
                 myEntryBuilder.parse(entry);
                 entryBuilders.add(myEntryBuilder);
+                for (EntryContentBuilder entryContentBuilder : myEntryBuilder.getContents()) {
+                    if (entryContentBuilder.isFeedOfFeed())
+                        addNewSource(entryContentBuilder.getSource());
+                }
             }
         }
     }
@@ -148,7 +173,13 @@ public class XmlParserImpl implements Parser {
         private int batchIndex;
         private Date updated;
         private Date published;
+        private String baseUrl;
 
+        public MyEntryBuilder(String baseUrl) {
+            this.baseUrl = baseUrl;
+        }
+
+        @Override public String getBaseUrl() {return baseUrl;}
         @Override public String getId() {return id;}
         @Override public String getTitle() {return title;}
         @Override public String getSummary() {return summary;}
@@ -184,8 +215,20 @@ public class XmlParserImpl implements Parser {
         private String md5Sum;
         private String type;
         private String source;
+        private String length;
 
         @Override public String getMd5SUM() {return md5Sum;}
+
+        @Override
+        public String getLength() {
+            return length;
+        }
+
+        @Override
+        public boolean isFeedOfFeed() {
+            return getType()!=null && getType().equalsIgnoreCase("application/atom+xml;type=feed");
+        }
+
         @Override public String getType() {return type;}
         @Override public String getSource() {return source;}
 
@@ -193,12 +236,14 @@ public class XmlParserImpl implements Parser {
             md5Sum = content.getAttrValue("le:md5");
             type = content.getAttrValue("type");
             source = content.getAttrValue("src");
+            length = content.getAttrValue("length");
         }
 
         public void parseLink(XmlInterpreter content) {
             md5Sum = content.getAttrValue("le:md5");
             type = content.getAttrValue("type");
             source = content.getAttrValue("href");
+            length = content.getAttrValue("length");
         }
     }
 

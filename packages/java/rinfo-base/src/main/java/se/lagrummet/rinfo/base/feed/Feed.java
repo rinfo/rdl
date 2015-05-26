@@ -1,36 +1,40 @@
 package se.lagrummet.rinfo.base.feed;
 
-import se.lagrummet.rinfo.base.feed.exceptions.EntryIdNotFoundException;
-import se.lagrummet.rinfo.base.feed.exceptions.FailedToReadFeedException;
-import se.lagrummet.rinfo.base.feed.exceptions.MalformedDocumentUrlException;
-import se.lagrummet.rinfo.base.feed.exceptions.MalformedFeedUrlException;
 import se.lagrummet.rinfo.base.feed.type.DocumentUrl;
 import se.lagrummet.rinfo.base.feed.type.Md5Sum;
 
-import javax.activation.MimeType;
-import java.net.MalformedURLException;
-import java.util.List;
+import java.util.Date;
 
 /**
  * Created by christian on 5/21/15.
  */
 public interface Feed {
 
-    String ENTRY_NAME = "entry";
-    String LINK_NAME = "link";
+    enum ContentKind { Source, FeedOfFeed, Unknown;
 
-    DocumentUrl createDocumentUrl(String relativeUrl) throws MalformedURLException;
+        public static ContentKind parse(String type) {
+            if (type==null)
+                return Unknown;
+            if (type.equalsIgnoreCase("application/xhtml+xml")
+                    || type.equalsIgnoreCase("application/pdf")
+                    || type.equalsIgnoreCase("application/rdf+xml")
+                    || type.equalsIgnoreCase("text/html")
+                    )
+                return Feed.ContentKind.Source;
+            if (type.equalsIgnoreCase("application/atom+xml;type=feed"))
+                return Feed.ContentKind.FeedOfFeed;
+            return Feed.ContentKind.Unknown;
+        }
 
-    enum ContentKind { Source, FeedOfFeed, Unknown }
-
-    void read(CopyFeed.FeedReader feedReader, CopyFeed.DiscoveredEntryCollector discoveredEntryCollector) throws FailedToReadFeedException, MalformedFeedUrlException, EntryIdNotFoundException, MalformedDocumentUrlException;
-
-    interface Entry {
-        EntryId getId();
-        List<Content> getContentList();
     }
 
-    interface EntryId {
+    Iterable<Entry> getEntries();
+    String getId();
+    Date getUpdated();
+
+    interface Entry {
+        String getId();
+        Iterable<Content> getContentList();
     }
 
     interface Content {
@@ -39,5 +43,8 @@ public interface Feed {
         Long getLength();
         DocumentUrl getDocumentUrl();
         String getType();
+
+        ResourceLocator.Resource asResource();
     }
+
 }

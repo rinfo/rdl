@@ -1,5 +1,10 @@
 package se.lagrummet.rinfo.base.feed.util;
 
+import se.lagrummet.rinfo.base.feed.type.Md5Sum;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
@@ -23,6 +28,8 @@ public class Utils {
     };
 
     public static Date parseXMLDateTime(String value) throws ParseException {
+        if (value==null)
+            return null;
         for (SimpleDateFormat df : acceptedFormats) {
             try {
                 return df.parse(value);
@@ -64,5 +71,22 @@ public class Utils {
             return new URL(Utils.calculateUrlBase(base)+feedUrl);
         return new URL(Utils.calculateUrlRel(base)+feedUrl);
     }
+
+    public static void copyStream(InputStream in, OutputStream out, Md5Sum.Md5SumCalculator md5SumCalculator) throws IOException {
+        byte[] buffer = new byte[1024];
+        int len;
+        while ((len = in.read(buffer)) != -1) {
+            out.write(buffer, 0, len);
+            md5SumCalculator.update(buffer, 0, len);
+        }
+    }
+
+    public static String extractFileName(String url) {
+        int indexOfLastSlash = url.lastIndexOf("/");
+        if (indexOfLastSlash==-1)
+            return url;
+        return url.substring(indexOfLastSlash);
+    }
+
 
 }

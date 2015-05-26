@@ -1,5 +1,7 @@
 package se.lagrummet.rinfo.base.feed.type;
 
+import se.lagrummet.rinfo.base.feed.util.Utils;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -8,21 +10,17 @@ import java.net.URL;
  */
 public class DocumentUrl extends CommonUrl {
 
-    public static DocumentUrl create(URL feedUrl) {
+    public static DocumentUrl create(String feedUrl) {
+        if (feedUrl==null)
+            throw new NullPointerException("feedUrl is null!");
         return new DocumentUrl(feedUrl);
     }
 
-    public static DocumentUrl parse(String feedUrl) throws MalformedURLException {
-        return new DocumentUrl(new URL(feedUrl));
-    }
-
     public static DocumentUrl parse(URL base, String feedUrl) throws MalformedURLException {
-        if (feedUrl.startsWith("http://") || feedUrl.startsWith("https://"))
-            return new DocumentUrl(new URL(feedUrl));
-        return new DocumentUrl(new URL(base.toString()+"/"+feedUrl));
+        return new DocumentUrl(Utils.parse(base, feedUrl).toString());
     }
 
-    private DocumentUrl(URL feedUrl) {
+    private DocumentUrl(String feedUrl) {
         super(feedUrl);
     }
 }

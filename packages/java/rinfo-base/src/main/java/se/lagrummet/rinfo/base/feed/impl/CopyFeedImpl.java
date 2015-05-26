@@ -1,110 +1,144 @@
 package se.lagrummet.rinfo.base.feed.impl;
 
-import se.lagrummet.rinfo.base.feed.CopyFeed;
-import se.lagrummet.rinfo.base.feed.Feed;
+import se.lagrummet.rinfo.base.feed.*;
 import se.lagrummet.rinfo.base.feed.exceptions.*;
-import se.lagrummet.rinfo.base.feed.type.DocumentUrl;
-import se.lagrummet.rinfo.base.feed.type.FeedUrl;
-import se.lagrummet.rinfo.base.feed.type.Md5Sum;
 
-import java.net.URI;
-import java.net.URL;
-import java.util.concurrent.Semaphore;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by christian on 5/21/15.
  */
-public class CopyFeedImpl implements CopyFeed, CopyFeed.FileNameCreator {
+public class CopyFeedImpl implements CopyFeed {
 
-    ErrorReport errorReport = new ErrorReportImpl();
-    FeedReader feedReader = new FeedReaderImpl(new FeedEntryParserImpl());
-    FeedBuilder feedBuilder = new FeedBuilderImpl();
-    EntryDocumentDownloader documentDownloader = new EntryDocumentDownloaderImpl(this);
+    ResourceLocator resourceLocator;
+    Parser parser;
 
-    public CopyFeedImpl() {
-    }
-
-    public void copy(FeedUrl feedURL, final String targetPath) throws FailedToReadFeedException, EntryIdNotFoundException, MalformedFeedUrlException, MalformedDocumentUrlException {
-        final Feed feed = new FeedImpl(feedURL);
-
-        final WaitCounter waitCounter = new WaitCounter();
-
-        feed.read(feedReader, new DiscoveredEntryCollector() {
-            @Override
-            public void feedOfFeed(Feed.EntryId entryId, FeedUrl feedUrl) {
-                try {
-                    feedReader.read(feedUrl, this);
-                } catch (FailedToReadFeedException e) {
-                    errorReport.failedToReed(feed, entryId, feedUrl, e);
-                } catch (MalformedDocumentUrlException e) {
-                    errorReport.mailformedDocumentUrl(feed, entryId, feedUrl, e);
-                } catch (EntryIdNotFoundException e) {
-                    errorReport.entryIdNotFound(feed, entryId, feedUrl, e);
-                } catch (MalformedFeedUrlException e) {
-                    errorReport.malformedFeedUrl(feed, entryId, feedUrl, e);
-                }
-            }
-
-            @Override
-            public void document(final Feed.EntryId entryId, final DocumentUrl documentURL, final Md5Sum md5sum, final Long length, final String type) {
-                waitCounter.start();
-                documentDownloader.downloadEntryAndVerifyMd5Sum(new EntryDocumentDownloaderReply() {
-                    @Override
-                    public void completed() {
-                        feedBuilder.addEntry(entryId, documentURL, md5sum, length, type);
-                        waitCounter.end();
-                    }
-
-                    @Override
-                    public void md5SumCheckFailed(Md5Sum md5SumOfDownloadedDocument) {
-                        errorReport.md5SumCheckFailed(entryId, documentURL, md5sum, md5SumOfDownloadedDocument);
-                        waitCounter.end();
-                    }
-
-                    @Override
-                    public void failed(Exception e) {
-                        errorReport.failedToDownloadDocument(entryId, documentURL, md5sum, e);
-                        waitCounter.end();
-                    }
-                }, feed, entryId, documentURL, md5sum, targetPath);
-            }
-
-            @Override
-            public void prevFeed(FeedUrl feedUrl) {
-                try {
-                    feedReader.read(feedUrl, this);
-                } catch (FailedToReadFeedException e) {
-                    errorReport.failedToReed(feed, null, feedUrl, e);
-                } catch (MalformedDocumentUrlException e) {
-                    errorReport.mailformedDocumentUrl(feed, null, feedUrl, e);
-                } catch (EntryIdNotFoundException e) {
-                    errorReport.entryIdNotFound(feed, null, feedUrl, e);
-                } catch (MalformedFeedUrlException e) {
-                    errorReport.malformedFeedUrl(feed, null, feedUrl, e);
-                }
-            }
-        });
-
-        try {
-            waitCounter.wait(1000 * 60 * 10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public CopyFeedImpl(ResourceLocator resourceLocator, Parser parser) {
+        this.resourceLocator = resourceLocator;
+        this.parser = parser;
     }
 
     @Override
-    public String createFileName(Feed feed, Feed.EntryId getEntryId, DocumentUrl documentUrl) {
-        return documentUrl.getName();
+    public void copy(ResourceLocator.Resource resource, String targetPath, Report report) throws FailedToReadFeedException, EntryIdNotFoundException, MalformedFeedUrlException, MalformedDocumentUrlException, MalformedURLException {
+        Parser.FeedBuilder feedBuilder = parser.parse(resource, report);
+        Feed feed = feedBuilder.toFeed();
+
+        DownloadAndWriteToDisk downloadAndWriteToDisk = new DownloadAndWriteToDisk(extractContentList(feed), targetPath, report);
+        downloadAndWriteToDisk.start();
+        downloadAndWriteToDisk.waitUntilCompleted(120 * 60);
+        resource.end(report);
     }
 
-    private class WaitCounter {
-        int count = 0;
+    Iterable<Feed.Content> extractContentList(Feed feed) {
+        List<Feed.Content> contents = new LinkedList<>();
+        for (Feed.Entry entry : feed.getEntries()) {
+            for (Feed.Content content : entry.getContentList()) {
+                contents.add(content);
+            }
+        }
+        return contents;
+    }
 
-        synchronized void start() { count++;}
-        synchronized void end() {
-            count--;
-            if (count==0)
-                this.notifyAll();
+    private class DownloadAndWriteToDisk {
+        Iterable<Feed.Content> contents;
+        private String targetPath;
+        private Report report;
+        boolean completed = false;
+        int remainingTasks = 0;
+
+        private DownloadAndWriteToDisk(Iterable<Feed.Content> contents, String targetPath, Report report) {
+            this.contents = contents;
+            this.targetPath = targetPath;
+            this.report = report;
+        }
+
+
+        private synchronized void countDownRemainingTasks() {
+            remainingTasks--;
+            if (remainingTasks==0) {
+                completed = true;
+                notifyAll();
+            }
+        }
+
+        public synchronized void start() {
+            for (Feed.Content content : contents) {
+                if (content.getDocumentUrl()!=null) {
+                    remainingTasks++;
+                    new DownloadTask(content, report).copy();
+                }
+            }
+        }
+
+        public synchronized void waitUntilCompleted(int timeoutSec) {
+            if (completed)
+                return;
+            try {
+                wait(timeoutSec*1000);
+            } catch (InterruptedException e) {}
+            if (!completed)
+                throw new SevereInternalException("Timeout! remainingTasks="+remainingTasks);
+        }
+
+        class DownloadTask implements ResourceLocator.Reply{
+            private Feed.Content content;
+            private Report report;
+
+            DownloadTask(Feed.Content content, Report report) {
+                this.content = content;
+                this.report = report;
+            }
+
+            @Override
+            public void ok(ResourceLocator.Data data) {
+                data.getResource().intermediate(report, "downloaded");
+                if (content.getMd5Sum()!=null && data.getMd5Sum()!=null) {
+                    if (!content.getMd5Sum().equals(data.getMd5Sum())) {
+                        failed(ResourceLocator.Failure.Md5SumDiff, "feed md5 "+content.getMd5Sum()+" actual md5 "+data.getMd5Sum());
+                        return;
+                    }
+                }
+                try {
+                    Path file = new File(targetPath, content.getDocumentUrl().getName()).toPath();
+                    System.out.println("se.lagrummet.rinfo.base.feed.impl.CopyFeedImpl.DownloadAndWriteToDisk.DownloadTask.ok file="+file);
+                    Files.copy(data.asInputStream(), file);
+                    data.getResource().end(report);
+                    countDownRemainingTasks();
+                } catch (FileAlreadyExistsException e) {
+                    data.getResource().end(report);
+                    countDownRemainingTasks();
+                    data.getResource().intermediate(report, "file already exists "+e.getFile());
+                } catch (IOException e) {
+                    failed(ResourceLocator.Failure.ResourceWrite, e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void failed(ResourceLocator.Failure failure, String comment) {
+                System.out.println("se.lagrummet.rinfo.base.feed.impl.CopyFeedImpl.DownloadAndWriteToDisk.failed "+failure+" "+comment);
+                countDownRemainingTasks();
+            }
+
+            public void copy() {
+                ResourceLocator.Resource resource = null;
+                try {
+                    resource = content.asResource();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return ;
+                }
+                resource.start(report);
+                resourceLocator.locate(resource, this);
+            }
         }
     }
+
 }

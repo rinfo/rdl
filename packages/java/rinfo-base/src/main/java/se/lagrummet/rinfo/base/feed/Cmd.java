@@ -4,13 +4,8 @@ import se.lagrummet.rinfo.base.feed.exceptions.EntryIdNotFoundException;
 import se.lagrummet.rinfo.base.feed.exceptions.FailedToReadFeedException;
 import se.lagrummet.rinfo.base.feed.exceptions.MalformedDocumentUrlException;
 import se.lagrummet.rinfo.base.feed.exceptions.MalformedFeedUrlException;
-import se.lagrummet.rinfo.base.feed.impl.CopyFeedImpl;
-import se.lagrummet.rinfo.base.feed.impl.ResourceLocatorImpl;
-import se.lagrummet.rinfo.base.feed.impl.UrlResource;
-import se.lagrummet.rinfo.base.feed.impl.XmlParserImpl;
-import se.lagrummet.rinfo.base.feed.type.FeedUrl;
+import se.lagrummet.rinfo.base.feed.impl.*;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -28,42 +23,45 @@ public class Cmd {
             "  Cmd list http://myfeed.example/index.atom\n";
 
     public static void main(String[] params) {
-        if (params.length==0) {
+        if (params.length!=2) {
             System.out.println(USAGE_TEXT);
             System.exit(-1);
             return;
         }
 
         try {
-            FeedUrl feedURL = FeedUrl.parse(params[0]);
-            Parser parser = new XmlParserImpl(new ResourceLocatorImpl(feedURL.getUrl()));
-            Parser.FeedBuilder parse = parser.parse(new UrlResource(params[0]));
-            System.out.println("Parse feed "+params[0]);
-            System.out.println("Id: "+parse.getId());
-            System.out.println("Author uri: "+parse.getAuthorURI());
-            System.out.println("Entries: ");
-            for (Parser.EntryBuilder entryBuilder : parse.getEntries()) {
-                System.out.println("  EntryId: "+entryBuilder.getId());
-            }
-        } catch (MalformedURLException | FailedToReadFeedException e) {
+            String command = params[0];
+            String url = params[1];
+            if (command.equalsIgnoreCase("list")) {
+                Report report = new ReportImpl();
+                Parser parser = new XmlParserImpl(new ResourceLocatorImpl(new URL(url)));
+                Parser.FeedBuilder parse = parser.parse(UrlResource.startFeed(url), report);
+                System.out.println("*** Parse feed "+url+" ***");
+                System.out.println("Id: "+parse.getId());
+                System.out.println("Author uri: "+parse.getAuthorURI());
+                System.out.println("Entries: ");
+                int count = 0;
+                for (Parser.EntryBuilder entryBuilder : parse.getEntries()) {
+                    count++;
+                    System.out.println("  EntryId: "+entryBuilder.getId());
+                }
+                System.out.println("Found "+count+" entries in feed");
+                report.print();
+            } else if (command.equalsIgnoreCase("copy")) {
+                Report report = new ReportImpl();
+                ResourceLocatorImpl resourceLocator = new ResourceLocatorImpl(new URL(url));
+                Parser parser = new XmlParserImpl(resourceLocator);
+                CopyFeed copyFeed = new CopyFeedImpl(resourceLocator, parser);
+                copyFeed.copy(UrlResource.startFeed(url), ".", report);
+                report.print();
+            } else
+                System.out.println("Unknown command '"+command+"'");
+        } catch (MalformedURLException | FailedToReadFeedException | MalformedDocumentUrlException | EntryIdNotFoundException | MalformedFeedUrlException e) {
             e.printStackTrace();
+            System.exit(-1);
+            return;
         }
         System.exit(0);
-        /*try {
-            FeedUrl feedURL = FeedUrl.parse(params[0]);
-            new CopyFeedImpl().copy(feedURL, new File(".").getAbsolutePath());
-        } catch (MalformedURLException e) {
-            System.out.println("Kunde inte tolka parameter som korrekt url '"+params[0]+"'");
-            System.exit(-1);
-            return;
-        } catch (FailedToReadFeedException e) {
-            System.out.println("Kunde inte läsa url '"+params[0]+"'");
-            e.printStackTrace();
-            System.exit(-1);
-            return;
-        } catch (MalformedDocumentUrlException | EntryIdNotFoundException | MalformedFeedUrlException e) {
-            e.printStackTrace();
-        }*/
     }
 
 }
