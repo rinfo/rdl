@@ -3,9 +3,11 @@ package se.lagrummet.rinfo.base.feed.impl;
 import se.lagrummet.rinfo.base.feed.*;
 import se.lagrummet.rinfo.base.feed.exceptions.*;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.util.LinkedList;
@@ -25,14 +27,30 @@ public class CopyFeedImpl implements CopyFeed {
     }
 
     @Override
-    public void copy(ResourceLocator.Resource resource, String targetPath, Report report) throws FailedToReadFeedException, EntryIdNotFoundException, MalformedFeedUrlException, MalformedDocumentUrlException, MalformedURLException {
+    public Feed copy(ResourceLocator.Resource resource, String targetPath, Report report) throws FailedToReadFeedException, EntryIdNotFoundException, MalformedFeedUrlException, MalformedDocumentUrlException, IOException, ParserConfigurationException, TransformerException {
         Parser.FeedBuilder feedBuilder = parser.parse(resource, report);
         Feed feed = feedBuilder.toFeed();
 
         DownloadAndWriteToDisk downloadAndWriteToDisk = new DownloadAndWriteToDisk(extractContentList(feed), targetPath, report);
         downloadAndWriteToDisk.start();
         downloadAndWriteToDisk.waitUntilCompleted(120 * 60);
+
+        File atomFile = new File(targetPath+"/atom.index");
+        if (atomFile.exists())
+            atomFile.delete();
+        FileOutputStream fileOutputStream = new FileOutputStream(atomFile);
+
+        FeedWriter feedWriter = new FeedXmlBuilderImpl();
+        FeedWriterImpl writer = new FeedWriterImpl();
+        feedWriter.write(feed, writer);
+
+        writer.writeTo(fileOutputStream);
+
+        fileOutputStream.close();
+
         resource.end(report);
+
+        return feed;
     }
 
     Iterable<Feed.Content> extractContentList(Feed feed) {

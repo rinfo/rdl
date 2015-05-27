@@ -1,36 +1,36 @@
 package se.lagrummet.rinfo.base.feed.impl;
 
 import se.lagrummet.rinfo.base.feed.Feed;
-import se.lagrummet.rinfo.base.feed.FeedXmlBuilder;
+import se.lagrummet.rinfo.base.feed.FeedWriter;
 
 /**
  * Created by christian on 2015-05-27.
  */
-public class FeedXmlBuilderImpl implements FeedXmlBuilder {
+public class FeedXmlBuilderImpl implements FeedWriter {
     @Override
-    public void write(Feed feed, Taganizer taganizer) {
-        taganizer.createChildAndSetContent("id", feed.getId());
-        taganizer.createChildAndSetContent("fh.complete", "");
-        taganizer.createChildAndSetContent("title", feed.getTitle());
-        taganizer.createChildAndSetContent("updated", feed.getUpdated());
-        Taganizer author = taganizer.createChild("author");
+    public void write(Feed feed, Writer writer) {
+        writer.createChildAndSetContent("id", feed.getId());
+        writer.createChildAndSetContent("fh.complete", "");
+        writer.createChildAndSetContent("title", feed.getTitle());
+        writer.createChildAndSetContent("updated", feed.getUpdated());
+        Writer author = writer.createChild("author");
           author.createChildAndSetContent("name", feed.getAuthorName());
           author.createChildAndSetContent("uri", feed.getAuthorURI());
           author.createChildAndSetContent("email", feed.getAuthorEMail());
 
         for (Feed.Entry entry : feed.getEntries()) {
-            Taganizer entryTag = taganizer.createChild("entry");
+            Writer entryTag = writer.createChild("entry");
             entryTag.createChildAndSetContent("id", entry.getId());
             entryTag.createChildAndSetContent("updated", entry.getUpdated());
             entryTag.createChildAndSetContent("published", entry.getPublished());
-            taganizer.createChildAndSetContent("title", entry.getTitle());
-            taganizer.createChildAndSetContent("summary", entry.getSummary());
+            writer.createChildAndSetContent("title", entry.getTitle());
+            writer.createChildAndSetContent("summary", entry.getSummary());
 
             for (Feed.Content content : entry.getContentList()) {
                 switch (content.getContentKind()) {
                     case Source: {
-                        Taganizer contentTag = taganizer.createChild("content");
-                        contentTag.setAttribute("src", content.getDocumentUrl().toString());
+                        Writer contentTag = entryTag.createChild("content");
+                        contentTag.setAttribute("src", content.getDocumentUrl().getName());
                         contentTag.setAttribute("type", content.getType());
                         if (content.getMd5Sum()!=null)
                             contentTag.setAttribute("le:md5", content.getMd5Sum().toString());

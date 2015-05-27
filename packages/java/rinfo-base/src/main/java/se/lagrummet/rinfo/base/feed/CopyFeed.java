@@ -5,13 +5,15 @@ import se.lagrummet.rinfo.base.feed.exceptions.FailedToReadFeedException;
 import se.lagrummet.rinfo.base.feed.exceptions.MalformedDocumentUrlException;
 import se.lagrummet.rinfo.base.feed.exceptions.MalformedFeedUrlException;
 
-import java.net.MalformedURLException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
 
 /**
  * Created by christian on 5/21/15.
  */
 public interface CopyFeed  {
 
-    void copy(ResourceLocator.Resource resource, final String targetPath, Report report) throws FailedToReadFeedException, EntryIdNotFoundException, MalformedFeedUrlException, MalformedDocumentUrlException, MalformedURLException;
+    Feed copy(ResourceLocator.Resource resource, final String targetPath, Report report) throws FailedToReadFeedException, EntryIdNotFoundException, MalformedFeedUrlException, MalformedDocumentUrlException, IOException, ParserConfigurationException, TransformerException;
 
 }

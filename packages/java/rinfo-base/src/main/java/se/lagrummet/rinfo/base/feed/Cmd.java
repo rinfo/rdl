@@ -6,6 +6,9 @@ import se.lagrummet.rinfo.base.feed.exceptions.MalformedDocumentUrlException;
 import se.lagrummet.rinfo.base.feed.exceptions.MalformedFeedUrlException;
 import se.lagrummet.rinfo.base.feed.impl.*;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -38,7 +41,7 @@ public class Cmd {
                 copy(url);
             else
                 System.out.println("Unknown command '"+command+"'");
-        } catch (MalformedURLException | FailedToReadFeedException | MalformedDocumentUrlException | EntryIdNotFoundException | MalformedFeedUrlException e) {
+        } catch (ParserConfigurationException | TransformerException | IOException | FailedToReadFeedException | MalformedDocumentUrlException | EntryIdNotFoundException | MalformedFeedUrlException e) {
             e.printStackTrace();
             System.exit(-1);
             return;
@@ -46,13 +49,12 @@ public class Cmd {
         System.exit(0);
     }
 
-    private static void copy(String url) throws MalformedURLException, FailedToReadFeedException, EntryIdNotFoundException, MalformedFeedUrlException, MalformedDocumentUrlException {
+    private static void copy(String url) throws IOException, FailedToReadFeedException, EntryIdNotFoundException, MalformedFeedUrlException, MalformedDocumentUrlException, ParserConfigurationException, TransformerException {
         Report report = new ReportImpl();
         ResourceLocatorImpl resourceLocator = new ResourceLocatorImpl(new URL(url), report);
         Parser parser = new XmlParserImpl(resourceLocator);
         CopyFeed copyFeed = new CopyFeedImpl(resourceLocator, parser);
         copyFeed.copy(UrlResource.startFeed(url), ".", report);
-
         report.print();
     }
 
