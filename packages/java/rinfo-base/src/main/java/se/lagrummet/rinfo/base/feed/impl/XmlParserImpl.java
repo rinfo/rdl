@@ -14,6 +14,7 @@ import se.lagrummet.rinfo.base.feed.util.Utils;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -90,8 +91,12 @@ public class XmlParserImpl implements Parser {
                 this.notifyAll();
         }
 
-        protected void addNewSource(String url) {
+        protected void addNewSource(String baseUrl, String url) {
             addTask();
+            if (baseUrl!=null)
+                try {
+                    url = Utils.parse(new URL(baseUrl), url).toString();
+                } catch (MalformedURLException e) {e.printStackTrace();}
             UrlResource resource = UrlResource.feed(url);
             resource.start(report);
             resourceLocator.locate(resource, this);
@@ -113,6 +118,7 @@ public class XmlParserImpl implements Parser {
 
         private List<MyEntryBuilder> entryBuilders = new ArrayList<>();
         private String id;
+        private String title;
         private boolean complete;
         private Date updated;
         private String authorName;
@@ -124,6 +130,8 @@ public class XmlParserImpl implements Parser {
         }
 
         @Override public String getId() {return id;}
+        @Override public String getTitle() {return title;}
+
         @Override public boolean isComplete() {return complete;}
         @Override public Date getUpdated() {return updated;}
         @Override public String getAuthorName() {return authorName;}
@@ -138,10 +146,12 @@ public class XmlParserImpl implements Parser {
 
         @Override
         protected void processData(Document document, String url) throws ParseException, MalformedURLException {
+            System.out.println("se.lagrummet.rinfo.base.feed.impl.XmlParserImpl.MyFeedBuilder.processData URL="+url);
             if (document==null)
                 throw new NullPointerException("document is null!");
             XmlInterpreter interpreter = new XmlInterpreter(document);
             id = interpreter.getTagValue("id");
+            title = interpreter.getTagValue("title");
             complete = interpreter.tagExists("fh:complete");
             updated = interpreter.getTagValueAsDate("updated");
             authorName = interpreter.getTagValue("authorName");
@@ -150,7 +160,7 @@ public class XmlParserImpl implements Parser {
 
             for (XmlInterpreter link : interpreter.allNodes(LINK_NAME))
                 if (link.hasAttrValue("rel","prev-archive"))
-                    addNewSource(link.getAttrValue("href"));
+                    addNewSource(url, link.getAttrValue("href"));
 
             for (XmlInterpreter entry : interpreter.allNodes(ENTRY_NAME)) {
                 MyEntryBuilder myEntryBuilder = new MyEntryBuilder(url);
@@ -158,7 +168,7 @@ public class XmlParserImpl implements Parser {
                 entryBuilders.add(myEntryBuilder);
                 for (EntryContentBuilder entryContentBuilder : myEntryBuilder.getContents()) {
                     if (entryContentBuilder.isFeedOfFeed())
-                        addNewSource(entryContentBuilder.getSource());
+                        addNewSource(url, entryContentBuilder.getSource());
                 }
             }
         }

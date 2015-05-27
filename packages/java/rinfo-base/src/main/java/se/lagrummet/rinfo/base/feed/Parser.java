@@ -13,6 +13,7 @@ public interface Parser {
 
     interface FeedBuilder {
         String getId();
+        String getTitle();
         boolean isComplete();
         Date getUpdated();
         String getAuthorName();
@@ -21,6 +22,8 @@ public interface Parser {
         Iterable<EntryBuilder> getEntries();
 
         Feed toFeed();
+
+
     }
 
     interface EntryBuilder {

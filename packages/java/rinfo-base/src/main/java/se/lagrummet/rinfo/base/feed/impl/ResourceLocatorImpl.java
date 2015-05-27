@@ -35,7 +35,7 @@ public class ResourceLocatorImpl implements ResourceLocator {
 
     final int DEFAULT_BUFFER_SIZE = 1000;
 
-    BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(60000);
+    BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(100000);
     Executor executor = new ThreadPoolExecutor(100, 200, 20, TimeUnit.SECONDS, queue);
     private URL baseUrl;
     private Report report;

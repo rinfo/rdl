@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -71,8 +70,13 @@ public class CopyFeedImpl implements CopyFeed {
         public synchronized void start() {
             for (Feed.Content content : contents) {
                 if (content.getDocumentUrl()!=null) {
-                    remainingTasks++;
-                    new DownloadTask(content, report).copy();
+                    File file = new File(targetPath, content.getDocumentUrl().getName());
+                    if (!file.exists()) {
+                        remainingTasks++;
+                        new DownloadTask(content, file, report).copy();
+                    } else
+                        //content.asResource().intermediate(report, "File exists '"+file+"'! NOT downloading!");
+                        content.asResource().end(report);
                 }
             }
         }
@@ -89,10 +93,12 @@ public class CopyFeedImpl implements CopyFeed {
 
         class DownloadTask implements ResourceLocator.Reply{
             private Feed.Content content;
+            private File file;
             private Report report;
 
-            DownloadTask(Feed.Content content, Report report) {
+            DownloadTask(Feed.Content content, File file, Report report) {
                 this.content = content;
+                this.file = file;
                 this.report = report;
             }
 
@@ -106,9 +112,8 @@ public class CopyFeedImpl implements CopyFeed {
                     }
                 }
                 try {
-                    Path file = new File(targetPath, content.getDocumentUrl().getName()).toPath();
-                    System.out.println("se.lagrummet.rinfo.base.feed.impl.CopyFeedImpl.DownloadAndWriteToDisk.DownloadTask.ok file="+file);
-                    Files.copy(data.asInputStream(), file);
+                    System.out.println("Downloaded file file="+file);
+                    Files.copy(data.asInputStream(), file.toPath());
                     data.getResource().end(report);
                     countDownRemainingTasks();
                 } catch (FileAlreadyExistsException e) {
@@ -123,7 +128,7 @@ public class CopyFeedImpl implements CopyFeed {
 
             @Override
             public void failed(ResourceLocator.Failure failure, String comment) {
-                System.out.println("se.lagrummet.rinfo.base.feed.impl.CopyFeedImpl.DownloadAndWriteToDisk.failed "+failure+" "+comment);
+                System.out.println("Download failed "+failure+" "+comment);
                 countDownRemainingTasks();
             }
 

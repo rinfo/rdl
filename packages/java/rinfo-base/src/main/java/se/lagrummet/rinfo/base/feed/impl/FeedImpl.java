@@ -6,7 +6,10 @@ import se.lagrummet.rinfo.base.feed.Parser;
 import se.lagrummet.rinfo.base.feed.ResourceLocator;
 import se.lagrummet.rinfo.base.feed.type.DocumentUrl;
 import se.lagrummet.rinfo.base.feed.type.Md5Sum;
+import se.lagrummet.rinfo.base.feed.util.Utils;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,9 +22,17 @@ public class FeedImpl implements Feed, FeedBuilder {
     List<Entry> entries = new LinkedList<>();
     private String id;
     private Date updated;
+    private String title;
+    private String authorName;
+    private String authorURI;
+    private String authorEMail;
 
     @Override public String getId() {return id;}
     @Override public Date getUpdated() {return updated;}
+    @Override public String getTitle() {return title;}
+    @Override public String getAuthorName() {return authorName;}
+    @Override public String getAuthorURI() {return authorURI;}
+    @Override public String getAuthorEMail() {return authorEMail;}
 
     @Override public Iterable<Entry> getEntries() {return entries;}
 
@@ -37,6 +48,10 @@ public class FeedImpl implements Feed, FeedBuilder {
     public Feed build(Parser.FeedBuilder feedBuilder) {
         id = feedBuilder.getId();
         updated = feedBuilder.getUpdated();
+        title = feedBuilder.getTitle();
+        authorName = feedBuilder.getAuthorName();
+        authorURI = feedBuilder.getAuthorURI();
+        authorEMail = feedBuilder.getAuthorEMail();
         System.out.println("se.lagrummet.rinfo.base.feed.impl.FeedImpl.build id="+id);
         for (Parser.EntryBuilder entryBuilder : feedBuilder.getEntries()) {
             MyEntry entry = new MyEntry();
@@ -50,18 +65,30 @@ public class FeedImpl implements Feed, FeedBuilder {
         private String id;
         private Date updated;
         private List<Content> contents = new LinkedList<>();
+        private String baseUrl;
+        private String summary;
+        private String title;
+        private Date published;
 
         @Override public String getId() {return id;}
         @Override public Iterable<Content> getContentList() {return contents;}
+        @Override public Date getUpdated() {return updated;}
+
+        @Override public String getSummary() {return summary;}
+        @Override public String getTitle() {return title;}
+        @Override public Date getPublished() {return published;}
 
         public void build(Parser.EntryBuilder entryBuilder) {
             id = entryBuilder.getId();
-            System.out.println("se.lagrummet.rinfo.base.feed.impl.FeedImpl.MyEntry.build id="+id);
+            baseUrl = entryBuilder.getBaseUrl();
             updated = entryBuilder.getUpdated();
+            summary = entryBuilder.getSummary();
+            title = entryBuilder.getTitle();
+            published = entryBuilder.getPublished();
 
             for (Parser.EntryContentBuilder contentBuilder : entryBuilder.getContents()) {
                 MyContent content = new MyContent();
-                content.build(contentBuilder);
+                content.build(baseUrl, contentBuilder);
                 contents.add(content);
             }
         }
@@ -73,6 +100,7 @@ public class FeedImpl implements Feed, FeedBuilder {
         private Long length;
         private DocumentUrl documentUrl;
         private String type;
+        public MyContent() {}
 
         @Override public ContentKind getContentKind() {return contentKind;}
         @Override public Md5Sum getMd5Sum() {return md5Sum;}
@@ -89,7 +117,7 @@ public class FeedImpl implements Feed, FeedBuilder {
             return UrlResource.entry(documentUrl.toString(), length.intValue());
         }
 
-        public void build(Parser.EntryContentBuilder contentBuilder) {
+        public void build(String baseUrl, Parser.EntryContentBuilder contentBuilder) {
             contentKind = ContentKind.parse(contentBuilder.getType());
             md5Sum = Md5Sum.create(contentBuilder.getMd5SUM());
             try {
@@ -97,7 +125,20 @@ public class FeedImpl implements Feed, FeedBuilder {
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
-            documentUrl = contentBuilder.getSource()!=null?DocumentUrl.create(contentBuilder.getSource()):null;
+            if (contentBuilder.getSource()!=null) {
+                System.out.println("Found content "+contentBuilder.getSource()+" baseUrl="+baseUrl);
+                if (baseUrl!=null) {
+                    try {
+                        URL url = new URL(baseUrl);
+                        documentUrl = DocumentUrl.create(Utils.parse(url, contentBuilder.getSource()).toString());
+                    } catch (MalformedURLException e) {
+                        //todo handle this different?
+                        documentUrl = DocumentUrl.create(contentBuilder.getSource());
+                    }
+                } else
+                    documentUrl = DocumentUrl.create(contentBuilder.getSource());
+            } else
+                documentUrl = null;
             type = contentBuilder.getType();
         }
     }

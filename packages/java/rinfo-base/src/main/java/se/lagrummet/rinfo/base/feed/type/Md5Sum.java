@@ -30,7 +30,7 @@ public final class Md5Sum {
 
         Md5Sum md5Sum = (Md5Sum) o;
 
-        return !(md5sum != null ? !md5sum.equals(md5Sum.md5sum) : md5Sum.md5sum != null);
+        return !(md5sum != null ? !md5sum.equalsIgnoreCase(md5Sum.md5sum) : md5Sum.md5sum != null);
 
     }
 

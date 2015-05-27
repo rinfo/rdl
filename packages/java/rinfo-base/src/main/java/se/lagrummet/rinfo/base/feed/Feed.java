@@ -10,6 +10,8 @@ import java.util.Date;
  */
 public interface Feed {
 
+
+
     enum ContentKind { Source, FeedOfFeed, Unknown;
 
         public static ContentKind parse(String type) {
@@ -30,11 +32,19 @@ public interface Feed {
 
     Iterable<Entry> getEntries();
     String getId();
+    String getTitle();
     Date getUpdated();
+    String getAuthorName();
+    String getAuthorURI();
+    String getAuthorEMail();
 
     interface Entry {
         String getId();
         Iterable<Content> getContentList();
+        Date getUpdated();
+        Date getPublished();
+        String getTitle();
+        String getSummary();
     }
 
     interface Content {

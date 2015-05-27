@@ -32,29 +32,11 @@ public class Cmd {
         try {
             String command = params[0];
             String url = params[1];
-            if (command.equalsIgnoreCase("list")) {
-                Report report = new ReportImpl();
-                Parser parser = new XmlParserImpl(new ResourceLocatorImpl(new URL(url)));
-                Parser.FeedBuilder parse = parser.parse(UrlResource.startFeed(url), report);
-                System.out.println("*** Parse feed "+url+" ***");
-                System.out.println("Id: "+parse.getId());
-                System.out.println("Author uri: "+parse.getAuthorURI());
-                System.out.println("Entries: ");
-                int count = 0;
-                for (Parser.EntryBuilder entryBuilder : parse.getEntries()) {
-                    count++;
-                    System.out.println("  EntryId: "+entryBuilder.getId());
-                }
-                System.out.println("Found "+count+" entries in feed");
-                report.print();
-            } else if (command.equalsIgnoreCase("copy")) {
-                Report report = new ReportImpl();
-                ResourceLocatorImpl resourceLocator = new ResourceLocatorImpl(new URL(url));
-                Parser parser = new XmlParserImpl(resourceLocator);
-                CopyFeed copyFeed = new CopyFeedImpl(resourceLocator, parser);
-                copyFeed.copy(UrlResource.startFeed(url), ".", report);
-                report.print();
-            } else
+            if (command.equalsIgnoreCase("list"))
+                list(url);
+            else if (command.equalsIgnoreCase("copy"))
+                copy(url);
+            else
                 System.out.println("Unknown command '"+command+"'");
         } catch (MalformedURLException | FailedToReadFeedException | MalformedDocumentUrlException | EntryIdNotFoundException | MalformedFeedUrlException e) {
             e.printStackTrace();
@@ -62,6 +44,35 @@ public class Cmd {
             return;
         }
         System.exit(0);
+    }
+
+    private static void copy(String url) throws MalformedURLException, FailedToReadFeedException, EntryIdNotFoundException, MalformedFeedUrlException, MalformedDocumentUrlException {
+        Report report = new ReportImpl();
+        ResourceLocatorImpl resourceLocator = new ResourceLocatorImpl(new URL(url), report);
+        Parser parser = new XmlParserImpl(resourceLocator);
+        CopyFeed copyFeed = new CopyFeedImpl(resourceLocator, parser);
+        copyFeed.copy(UrlResource.startFeed(url), ".", report);
+
+        report.print();
+    }
+
+    private static void list(String url) throws MalformedURLException, FailedToReadFeedException {
+        Report report = new ReportImpl();
+        Parser parser = new XmlParserImpl(new ResourceLocatorImpl(new URL(url), report));
+        Parser.FeedBuilder parse = parser.parse(UrlResource.startFeed(url), report);
+
+        System.out.println("*** Parse feed "+url+" ***");
+        System.out.println("Id: "+parse.getId());
+        System.out.println("Author uri: "+parse.getAuthorURI());
+        System.out.println("Entries: ");
+        int count = 0;
+        for (Parser.EntryBuilder entryBuilder : parse.getEntries()) {
+            count++;
+            System.out.println("  EntryId: "+entryBuilder.getId());
+        }
+        System.out.println("Found "+count+" entries in feed");
+
+        report.print();
     }
 
 }
