@@ -18,28 +18,37 @@ import java.util.List;
  * Created by christian on 2015-05-27.
  */
 public class FeedWriterTest {
-    final String STATIC_XML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                                "<feed xmlns=\"http://www.w3.org/2005/Atom\" at=\"http://purl.org/atompub/tombstones/1.0\" fh=\"http://purl.org/syndication/history/1.0\" le=\"http://purl.org/atompub/link-extensions/1.0\">" +
-                                    "<id>http://myid.org/1.0</id>" +
-                                    "<fh.complete/>" +
-                                    "<title>MyTitle</title>" +
-                                    "<updated>1970-01-04T10:37:54</updated>" +
-                                    "<author>" +
-                                        "<name>MyAuthor</name>" +
-                                        "<uri>MyAuthorURI</uri>" +
-                                        "<email>MyAuthorEmail</email>" +
-                                    "</author>" +
-                                    "<entry>" +
-                                        "<id>987987</id>" +
-                                        "<updated>1970-01-01T01:39:03</updated>" +
-                                        "<published>1970-01-01T01:00:12</published>" +
-                                        "<content src=\"/home.pdf\" type=\"application/pdf\"/>" +
-                                        "<content src=\"/home.xhtml\" type=\"application/pdf\"/>" +
-                                    "</entry>" +
-                                    "<title>MyTitel</title>" +
-                                    "<summary>MySummary</summary>" +
-                                "</feed>";
-    final String STATIC_XML2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><feed xmlns=\"http://www.w3.org/2005/Atom\" at=\"http://purl.org/atompub/tombstones/1.0\" fh=\"http://purl.org/syndication/history/1.0\" le=\"http://purl.org/atompub/link-extensions/1.0\"><id>9873434</id><date>1970-01-03T18:03:54</date><child childname=\"Hubbe\"><version>1.0</version><grandchild><fh:age>100</fh:age><birth>1970-01-03T18:08:02</birth></grandchild></child></feed>";
+    final String STATIC_XML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><feed xmlns=\"http://www.w3.org/2005/Atom\" at=\"http://purl.org/atompub/tombstones/1.0\" fh=\"http://purl.org/syndication/history/1.0\" le=\"http://purl.org/atompub/link-extensions/1.0\">\n" +
+            "    <id>http://myid.org/1.0</id>\n" +
+            "    <fh.complete/>\n" +
+            "    <title>MyTitle</title>\n" +
+            "    <updated>1970-01-04T10:37:54</updated>\n" +
+            "    <author>\n" +
+            "        <name>MyAuthor</name>\n" +
+            "        <uri>MyAuthorURI</uri>\n" +
+            "        <email>MyAuthorEmail</email>\n" +
+            "    </author>\n" +
+            "    <entry>\n" +
+            "        <id>987987</id>\n" +
+            "        <updated>1970-01-01T01:39:03</updated>\n" +
+            "        <published>1970-01-01T01:00:12</published>\n" +
+            "        <content src=\"/home.pdf\" type=\"application/pdf\"/>\n" +
+            "        <content src=\"/home.xhtml\" type=\"application/pdf\"/>\n" +
+            "    </entry>\n" +
+            "    <title>MyTitel</title>\n" +
+            "    <summary>MySummary</summary>\n" +
+            "</feed>\n";
+    final String STATIC_XML2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><feed xmlns=\"http://www.w3.org/2005/Atom\" at=\"http://purl.org/atompub/tombstones/1.0\" fh=\"http://purl.org/syndication/history/1.0\" le=\"http://purl.org/atompub/link-extensions/1.0\">\n" +
+            "    <id>9873434</id>\n" +
+            "    <date>1970-01-03T18:03:54</date>\n" +
+            "    <child childname=\"Hubbe\">\n" +
+            "        <version>1.0</version>\n" +
+            "        <grandchild>\n" +
+            "            <fh:age>100</fh:age>\n" +
+            "            <birth>1970-01-03T18:08:02</birth>\n" +
+            "        </grandchild>\n" +
+            "    </child>\n" +
+            "</feed>\n";
 
     @Test
     public void writeXML() throws ParserConfigurationException, TransformerException {
@@ -50,6 +59,8 @@ public class FeedWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         writer.writeTo(outputStream);
+
+        //todo fix xmlns
         Assert.assertEquals(STATIC_XML1,new String(outputStream.toByteArray()));
     }
 
@@ -68,6 +79,7 @@ public class FeedWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         writer.writeTo(outputStream);
+        //todo fix xmlns
         Assert.assertEquals(STATIC_XML2, new String(outputStream.toByteArray()));
     }
 
