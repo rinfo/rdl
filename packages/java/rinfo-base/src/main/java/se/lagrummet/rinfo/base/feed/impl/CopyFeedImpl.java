@@ -35,7 +35,7 @@ public class CopyFeedImpl implements CopyFeed {
         downloadAndWriteToDisk.start();
         downloadAndWriteToDisk.waitUntilCompleted(120 * 60);
 
-        File atomFile = new File(targetPath+"/atom.index");
+        File atomFile = new File(targetPath+"/index.atom");
         if (atomFile.exists())
             atomFile.delete();
         FileOutputStream fileOutputStream = new FileOutputStream(atomFile);
@@ -48,7 +48,7 @@ public class CopyFeedImpl implements CopyFeed {
 
         fileOutputStream.close();
 
-        resource.end(report);
+        resource.intermediate(report, "Written atom file: " + atomFile);
 
         return feed;
     }

@@ -81,7 +81,8 @@ public class FeedWriterImpl implements FeedWriter.Writer {
 
     @Override
     public FeedWriter.Writer setContent(Date content) {
-        this.node.setTextContent(sdf.format(content));
+        if (content!=null)
+            this.node.setTextContent(sdf.format(content));
         return this;
     }
 
@@ -95,14 +96,18 @@ public class FeedWriterImpl implements FeedWriter.Writer {
 
     @Override
     public FeedWriter.Writer setAttribute(String name, Date value) {
-        Attr attribute = document.createAttribute(name);
-        attribute.setValue(sdf.format(value));
-        this.node.setAttributeNode(attribute);
+        if (value!=null) {
+            Attr attribute = document.createAttribute(name);
+            attribute.setValue(sdf.format(value));
+            this.node.setAttributeNode(attribute);
+        }
         return this;
     }
 
     @Override
     public FeedWriter.Writer createChild(String name) {
+        if (name==null)
+            throw new NullPointerException("name is null!");
         Element newElement = document.createElement(name);
         FeedWriterImpl taganizer = new FeedWriterImpl(document, newElement);
         node.appendChild(newElement);
@@ -119,7 +124,8 @@ public class FeedWriterImpl implements FeedWriter.Writer {
     @Override
     public FeedWriter.Writer createChildAndSetContent(String tagName, Date content) {
         FeedWriter.Writer child = createChild(tagName);
-        child.setContent(content);
+        if (content!=null)
+            child.setContent(content);
         return child;
     }
 
