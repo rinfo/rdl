@@ -15,7 +15,9 @@ import java.util.Date;
  * Created by christian on 5/25/15.
  */
 public class Utils {
-    private static SimpleDateFormat[] acceptedFormats = {new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX"),
+    private static SimpleDateFormat[] acceptedFormats = {
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"),
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX"),
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SX"),
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSX"),
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX"),
@@ -72,13 +74,16 @@ public class Utils {
         return new URL(Utils.calculateUrlRel(base)+feedUrl);
     }
 
-    public static void copyStream(InputStream in, OutputStream out, Md5Sum.Md5SumCalculator md5SumCalculator) throws IOException {
+    public static long copyStream(InputStream in, OutputStream out, Md5Sum.Md5SumCalculator md5SumCalculator) throws IOException {
+        long totalCopied = 0;
         byte[] buffer = new byte[1024];
         int len;
         while ((len = in.read(buffer)) != -1) {
             out.write(buffer, 0, len);
             md5SumCalculator.update(buffer, 0, len);
+            totalCopied += len;
         }
+        return totalCopied;
     }
 
     public static String extractFileName(String url) {
@@ -89,4 +94,10 @@ public class Utils {
     }
 
 
+    public static String replaceParamsInText(String text, Object[] params) {
+        for (int i = 0; i < params.length; i++) {
+            text = text.replaceAll("%"+(i+1), params[i] != null ? params[i].toString() : "");
+        }
+        return text;
+    }
 }

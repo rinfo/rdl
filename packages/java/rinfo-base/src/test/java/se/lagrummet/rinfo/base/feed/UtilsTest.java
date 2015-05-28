@@ -16,10 +16,11 @@ public class UtilsTest {
 
     @Test
     public void dateParserTest() throws ParseException {
-        Assert.assertEquals(1396429938000l, Utils.parseXMLDateTime("2014-04-02T09:12:18Z").getTime());
-        Assert.assertEquals(1399021878000l, Utils.parseXMLDateTime("2014-05-02T09:11:18Z").getTime());
-        Assert.assertEquals(1396113201000l, Utils.parseXMLDateTime("2014-03-21T16:27:38.693943000Z").getTime());
-        Assert.assertEquals(1395418099000l, Utils.parseXMLDateTime("2014-03-21T16:03:29.290000Z").getTime());
+        Assert.assertEquals(1432683034000l, Utils.parseXMLDateTime("2015-05-27T01:30:34").getTime());
+        Assert.assertEquals(1396422738000l, Utils.parseXMLDateTime("2014-04-02T09:12:18Z").getTime());
+        Assert.assertEquals(1399014678000l, Utils.parseXMLDateTime("2014-05-02T09:11:18Z").getTime());
+        Assert.assertEquals(1395415658000l, Utils.parseXMLDateTime("2014-03-21T16:27:38.693943000Z").getTime());
+        Assert.assertEquals(1395414209000l, Utils.parseXMLDateTime("2014-03-21T16:03:29.290000Z").getTime());
 
     }
 
@@ -35,5 +36,11 @@ public class UtilsTest {
         Assert.assertEquals("http://home.se/", Utils.calculateUrlRel(new URL("http://home.se")));
         Assert.assertEquals("http://home.se/mucka/", Utils.calculateUrlRel(new URL("http://home.se/mucka/mera?home=10")));
 
+    }
+
+    @Test
+    public void replaceParamsInText() {
+        Assert.assertEquals("Heluu vänligen på dig Gurra", Utils.replaceParamsInText("Heluu %1 på dig %2", new String[] {"vänligen", "Gurra"}));
+        Assert.assertEquals("Heluu orc på dig '' before orc", Utils.replaceParamsInText("Heluu %1 på dig '%2' before %1", new String[] {"orc", ""}));
     }
 }

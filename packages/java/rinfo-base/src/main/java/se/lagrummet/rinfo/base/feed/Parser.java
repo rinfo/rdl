@@ -20,10 +20,8 @@ public interface Parser {
         String getAuthorURI();
         String getAuthorEMail();
         Iterable<EntryBuilder> getEntries();
-
+        Iterable<DeletedEntryBuilder> getDeletedEntries();
         Feed toFeed();
-
-
     }
 
     interface EntryBuilder {
@@ -44,7 +42,11 @@ public interface Parser {
         String getLength();
 
         boolean isFeedOfFeed();
+        boolean isAlternate();
+    }
 
-
+    interface DeletedEntryBuilder {
+        String getEntryId();
+        Date getWhen();
     }
 }

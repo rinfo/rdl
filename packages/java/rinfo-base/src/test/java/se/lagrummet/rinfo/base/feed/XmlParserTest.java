@@ -70,6 +70,9 @@ public class XmlParserTest {
             reply.ok(new MyData(SIMPLE_NEXT_FEED, resource));
         }
 
+        @Override
+        public void printStatusOneLiner() {}
+
         private class MyData implements Data {
             private final String filename;
             private Resource resource;

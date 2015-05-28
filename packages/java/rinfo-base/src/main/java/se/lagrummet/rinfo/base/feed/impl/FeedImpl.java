@@ -1,9 +1,6 @@
 package se.lagrummet.rinfo.base.feed.impl;
 
-import se.lagrummet.rinfo.base.feed.Feed;
-import se.lagrummet.rinfo.base.feed.FeedBuilder;
-import se.lagrummet.rinfo.base.feed.Parser;
-import se.lagrummet.rinfo.base.feed.ResourceLocator;
+import se.lagrummet.rinfo.base.feed.*;
 import se.lagrummet.rinfo.base.feed.type.DocumentUrl;
 import se.lagrummet.rinfo.base.feed.type.Md5Sum;
 import se.lagrummet.rinfo.base.feed.util.Utils;
@@ -73,10 +70,14 @@ public class FeedImpl implements Feed, FeedBuilder {
         @Override public String getId() {return id;}
         @Override public Iterable<Content> getContentList() {return contents;}
         @Override public Date getUpdated() {return updated;}
-
         @Override public String getSummary() {return summary;}
         @Override public String getTitle() {return title;}
         @Override public Date getPublished() {return published;}
+
+        @Override
+        public boolean hasContent() {
+            return !contents.isEmpty();
+        }
 
         public void build(Parser.EntryBuilder entryBuilder) {
             id = entryBuilder.getId();
@@ -113,12 +114,12 @@ public class FeedImpl implements Feed, FeedBuilder {
             if (documentUrl==null)
                 throw new NullPointerException("documentUrl is null");
             if (length==null)
-                return UrlResource.entry(documentUrl.toString());
-            return UrlResource.entry(documentUrl.toString(), length.intValue());
+                return UrlResource.entry(documentUrl.toString(), md5Sum);
+            return UrlResource.entry(documentUrl.toString(), md5Sum, length.intValue());
         }
 
         public void build(String baseUrl, Parser.EntryContentBuilder contentBuilder) {
-            contentKind = ContentKind.parse(contentBuilder.getType());
+            contentKind = ContentKind.parse(contentBuilder.getType(), contentBuilder.isAlternate());
             md5Sum = Md5Sum.create(contentBuilder.getMd5SUM());
             try {
                 length = contentBuilder.getLength()!=null?Long.parseLong(contentBuilder.getLength()):null;
@@ -126,7 +127,7 @@ public class FeedImpl implements Feed, FeedBuilder {
                 e.printStackTrace();
             }
             if (contentBuilder.getSource()!=null) {
-                System.out.println("Found content "+contentBuilder.getSource()+" baseUrl="+baseUrl);
+                //System.out.println("Found content "+contentBuilder.getSource()+" baseUrl="+baseUrl);
                 if (baseUrl!=null) {
                     try {
                         URL url = new URL(baseUrl);

@@ -6,6 +6,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import se.lagrummet.rinfo.base.feed.Report;
 import se.lagrummet.rinfo.base.feed.ResourceLocator;
+import se.lagrummet.rinfo.base.feed.exceptions.MD5SumVerificationFailedException;
 import se.lagrummet.rinfo.base.feed.type.Md5Sum;
 import se.lagrummet.rinfo.base.feed.util.Utils;
 
@@ -13,6 +14,7 @@ import javax.net.ssl.*;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.net.SocketException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -35,10 +37,11 @@ public class ResourceLocatorImpl implements ResourceLocator {
 
     final int DEFAULT_BUFFER_SIZE = 1000;
 
-    BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(100000);
-    Executor executor = new ThreadPoolExecutor(100, 200, 20, TimeUnit.SECONDS, queue);
+    private BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(100000);
+    private ThreadPoolExecutor executor = new ThreadPoolExecutor(100, 200, 20, TimeUnit.SECONDS, queue);
     private URL baseUrl;
     private Report report;
+    private long totalCopied;
 
     public ResourceLocatorImpl(URL baseUrl, Report report) {
         this.report = report;
@@ -49,36 +52,67 @@ public class ResourceLocatorImpl implements ResourceLocator {
     @Override
     public void locate(final Resource resource, final Reply reply) {
         log.debug("resource={}", resource);
-        executor.execute(new MyRunner(reply, resource));
+        new MyRunner(reply, resource).enqueue();
+    }
+
+    @Override
+    public void printStatusOneLiner() {
+        System.out.println("Queue: "+queue.size()+" bytes copied: "+getTotalCopied()+" executor: "+executor);
+    }
+
+    private synchronized void addTotalCopied(long add) {
+        totalCopied += add;
+    }
+
+    private synchronized long getTotalCopied() {
+        return totalCopied;
     }
 
     private class MyRunner implements Runnable {
+        MyResourceWriter resourceWriter;
         private final Reply reply;
         private final Resource resource;
 
         public MyRunner(Reply reply, Resource resource) {
             this.reply = reply;
             this.resource = resource;
+            this.resourceWriter = new MyResourceWriter(DEFAULT_BUFFER_SIZE, reply, resource);
+            this.resource.configure(resourceWriter);
+        }
+
+        public void enqueue() {
+            executor.remove(this);
+            executor.execute(this);
+        }
+
+        public void retry(Exception e, String because) {
+            if (resourceWriter.shouldRetry()) {
+                resourceWriter.increaseRetryCount();
+                resource.intermediate(report, "retry");
+                System.out.println("se.lagrummet.rinfo.base.feed.impl.ResourceLocatorImpl.MyRunner.run " + because + " RETRY " + resourceWriter.retryCount + " of " + resource.getUrl());
+                enqueue();
+            } else {
+                resource.intermediate(report, "retry "+because+" FAILED");
+                resourceWriter.failed(e);
+            }
         }
 
         @Override
         public void run() {
-            MyResourceWriter resourceWriter = new MyResourceWriter(DEFAULT_BUFFER_SIZE, reply, resource);
-            resource.configure(resourceWriter);
-            boolean retry = true;
-            while (retry)
             try {
-                retry = false;
                 resourceWriter.download();
+            } catch (MD5SumVerificationFailedException e) {
+                retry(e, "MD5SUM diff");
+            } catch (FileNotFoundException e) {
+                retry(e, "File not found");
+            } catch (SocketException e) {
+                retry(e, e.getMessage());
             } catch (IOException e) {
-                if (resourceWriter.shouldRetry()) {
-                    resourceWriter.increaseRetryCount();
-                    retry = true;
-                    resource.intermediate(report, "retry");
-                } else {
-                    resource.intermediate(report, "retry FAILED");
-                    resourceWriter.failed(e);
-                }
+                retry(e, "IO Error");
+                e.printStackTrace();
+            } catch (Throwable e) {
+                e.printStackTrace();
+                resourceWriter.failed(e);
             }
         }
     }
@@ -114,10 +148,11 @@ public class ResourceLocatorImpl implements ResourceLocator {
                 buffer = new ByteArrayOutputStream(size);
                 OutputStream out = new BufferedOutputStream(buffer);
                 Md5Sum.Md5SumCalculator md5SumCalculator = Md5Sum.calculator();
-                Utils.copyStream(in, out, md5SumCalculator);
+                addTotalCopied( Utils.copyStream(in, out, md5SumCalculator) );
                 in.close();
                 out.close();
                 md5Sum = md5SumCalculator.create();
+                resource.verifyMd5Sum(md5Sum);
                 reply.ok(this);
             } finally {
                 long duration = System.currentTimeMillis() - start;
@@ -137,8 +172,9 @@ public class ResourceLocatorImpl implements ResourceLocator {
             retryCount++;
         }
 
-        public void failed(Exception e) {
+        public void failed(Throwable e) {
             reply.failed(Failure.ResourceWrite, e.getMessage());
+            System.out.println("se.lagrummet.rinfo.base.feed.impl.ResourceLocatorImpl.MyResourceWriter.failed e.message="+e.getMessage()+" class="+e.getClass().getName());
         }
     }
 
@@ -174,5 +210,6 @@ public class ResourceLocatorImpl implements ResourceLocator {
             e.printStackTrace();
         }
     }
+
 
 }

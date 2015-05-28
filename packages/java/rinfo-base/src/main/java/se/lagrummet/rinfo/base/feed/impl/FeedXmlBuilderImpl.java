@@ -2,13 +2,14 @@ package se.lagrummet.rinfo.base.feed.impl;
 
 import se.lagrummet.rinfo.base.feed.Feed;
 import se.lagrummet.rinfo.base.feed.FeedWriter;
+import se.lagrummet.rinfo.base.feed.Report;
 
 /**
  * Created by christian on 2015-05-27.
  */
 public class FeedXmlBuilderImpl implements FeedWriter {
     @Override
-    public void write(Feed feed, Writer writer) {
+    public void write(Feed feed, Writer writer, Report report) {
         writer.createChildAndSetContent("id", feed.getId());
         writer.createChildAndSetContent("fh.complete", "");
         writer.createChildAndSetContent("title", feed.getTitle());
@@ -19,22 +20,39 @@ public class FeedXmlBuilderImpl implements FeedWriter {
           author.createChildAndSetContent("email", feed.getAuthorEMail());
 
         for (Feed.Entry entry : feed.getEntries()) {
-            Writer entryTag = writer.createChild("entry");
-            entryTag.createChildAndSetContent("id", entry.getId());
-            entryTag.createChildAndSetContent("updated", entry.getUpdated());
-            entryTag.createChildAndSetContent("published", entry.getPublished());
-            writer.createChildAndSetContent("title", entry.getTitle());
-            writer.createChildAndSetContent("summary", entry.getSummary());
+            if (entry.hasContent()) {
+                Writer entryTag = writer.createChild("entry");
+                entryTag.createChildAndSetContent("id", entry.getId());
+                entryTag.createChildAndSetContent("updated", entry.getUpdated());
+                entryTag.createChildAndSetContent("published", entry.getPublished());
+                entryTag.createChildAndSetContent("title", entry.getTitle());
+                entryTag.createChildAndSetContent("summary", entry.getSummary());
 
-            for (Feed.Content content : entry.getContentList()) {
-                switch (content.getContentKind()) {
-                    case Source: {
-                        Writer contentTag = entryTag.createChild("content");
-                        contentTag.setAttribute("src", content.getDocumentUrl().getName());
-                        contentTag.setAttribute("type", content.getType());
-                        if (content.getMd5Sum()!=null)
-                            contentTag.setAttribute("le:md5", content.getMd5Sum().toString());
-                        break;
+                for (Feed.Content content : entry.getContentList()) {
+                    switch (content.getContentKind()) {
+                        case Source: {
+                            Writer contentTag = entryTag.createChild("content");
+                            contentTag.setAttribute("src", content.getDocumentUrl().getName());
+                            contentTag.setAttribute("type", content.getType());
+                            if (content.getMd5Sum()!=null)
+                                contentTag.setAttribute("le:md5", content.getMd5Sum().toString());
+                            if (content.getLength()!=null)
+                                contentTag.setAttribute("length", content.getLength().toString());
+                            break;
+                        }
+                        case Alternate: {
+                            Writer contentTag = entryTag.createChild("link");
+                            contentTag.setAttribute("rel", "alternate");
+                            contentTag.setAttribute("href", content.getDocumentUrl().getName());
+                            contentTag.setAttribute("type", content.getType());
+                            if (content.getMd5Sum()!=null)
+                                contentTag.setAttribute("le:md5", content.getMd5Sum().toString());
+                            if (content.getLength()!=null)
+                                contentTag.setAttribute("length", content.getLength().toString());
+                            break;
+                        }
+                        default:
+                            report.getReportItem(Report.Group.Entry, entry.getId()).warning("Unknown content %1", content.getDocumentUrl());
                     }
                 }
             }

@@ -42,13 +42,13 @@ public class CopyFeedImpl implements CopyFeed {
 
         FeedWriter feedWriter = new FeedXmlBuilderImpl();
         FeedWriterImpl writer = new FeedWriterImpl();
-        feedWriter.write(feed, writer);
+        feedWriter.write(feed, writer, report);
 
         writer.writeTo(fileOutputStream);
 
         fileOutputStream.close();
 
-        resource.intermediate(report, "Written atom file: " + atomFile);
+        resource.intermediate(report, "Written atom file: %!",atomFile);
 
         return feed;
     }
@@ -86,16 +86,22 @@ public class CopyFeedImpl implements CopyFeed {
         }
 
         public synchronized void start() {
+            boolean nothingDownloaded = true;
             for (Feed.Content content : contents) {
                 if (content.getDocumentUrl()!=null) {
                     File file = new File(targetPath, content.getDocumentUrl().getName());
                     if (!file.exists()) {
+                        nothingDownloaded = false;
                         remainingTasks++;
                         new DownloadTask(content, file, report).copy();
                     } else
-                        //content.asResource().intermediate(report, "File exists '"+file+"'! NOT downloading!");
+                        content.asResource().intermediate(report, "File exists '%1'! NOT downloading!", file);
                         content.asResource().end(report);
                 }
+            }
+            if (nothingDownloaded) {
+                completed = true;
+                notifyAll();
             }
         }
 
@@ -122,22 +128,22 @@ public class CopyFeedImpl implements CopyFeed {
 
             @Override
             public void ok(ResourceLocator.Data data) {
-                data.getResource().intermediate(report, "downloaded");
                 if (content.getMd5Sum()!=null && data.getMd5Sum()!=null) {
                     if (!content.getMd5Sum().equals(data.getMd5Sum())) {
-                        failed(ResourceLocator.Failure.Md5SumDiff, "feed md5 "+content.getMd5Sum()+" actual md5 "+data.getMd5Sum());
+                        data.getResource().intermediate(report, "Md5SumDiff expected %1 but was %2", content.getMd5Sum(), data.getMd5Sum());
+                        failed(ResourceLocator.Failure.Md5SumDiff, "feed md5 "+content.getMd5Sum()+" actual md5 "+data.getMd5Sum()+" of resource "+data.getResource().getUrl());
                         return;
                     }
                 }
                 try {
-                    System.out.println("Downloaded file file="+file);
+                    data.getResource().intermediate(report, "Downloading", file);
                     Files.copy(data.asInputStream(), file.toPath());
                     data.getResource().end(report);
                     countDownRemainingTasks();
                 } catch (FileAlreadyExistsException e) {
                     data.getResource().end(report);
                     countDownRemainingTasks();
-                    data.getResource().intermediate(report, "file already exists "+e.getFile());
+                    data.getResource().intermediate(report, "file already exists %1",e.getFile());
                 } catch (IOException e) {
                     failed(ResourceLocator.Failure.ResourceWrite, e.getMessage());
                     e.printStackTrace();

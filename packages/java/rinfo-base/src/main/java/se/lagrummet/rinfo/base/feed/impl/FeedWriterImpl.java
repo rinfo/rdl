@@ -56,9 +56,7 @@ public class FeedWriterImpl implements FeedWriter.Writer {
     }
 
     private void setAttributeNSValue(String name, String ns, String value) {
-        Attr rootXmlNs = document.createAttributeNS(name, ns);
-        node.setAttributeNode(rootXmlNs);
-        rootXmlNs.setValue(value);
+        node.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:"+ns, value);
     }
 
     private FeedWriterImpl(Document document, Element node) {

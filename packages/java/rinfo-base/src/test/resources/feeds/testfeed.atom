@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:at="http://purl.org/atompub/tombstones/1.0" xmlns:fh="http://purl.org/syndication/history/1.0" xmlns:le="http://purl.org/atompub/link-extensions/1.0">
+    <id>tag:vagledandeavgoranden.dom.se,2011:rinfo:feed</id>
+    <fh.complete/>
+    <title>Vägledande avgoranden</title>
+    <updated>2015-05-28T17:51:15</updated>
+    <author>
+        <name>Domstolsverket</name>
+        <uri>http://www.domstol.se/</uri>
+        <email>vagledandeavgoranden@dom.se</email>
+    </author>
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/rf/nja/2014/s_996</id>
+        <updated>2015-04-26T01:25:05</updated>
+        <published>2015-04-21T10:53:00</published>
+        <content le:md5="d8430e54f484e576ca9fa24d8aa94ea2" length="46949" src="/12067.html" type="text/html"/>
+        <link href="/12067-ref.rdf" rel="alternate" type="application/rdf+xml"/>
+    </entry>
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/dom/hd/t2021-13/2014-12-30</id>
+        <updated>2015-04-26T23:27:32</updated>
+        <published>2014-12-30T16:00:34</published>
+        <link href="/14757-kort.rdf" le:md5="f3851275a7fc5f19cee3c3e355665bb4" length="1731" rel="alternate" type="application/rdf+xml"/>
+        <title>NJA 2014 S. 996</title>
+        <summary>En arvinge får del av ett testamente på sådant sätt att klanderfristen börjar löpa endast om det klart framgår att testamentstagarens syfte är att delge testamentet. Så har inte ansett</summary>
+    </entry>
+    <entry>
+        <id>http://rinfo.lagrummet.se/publ/rf/nja/2014/s_1006</id>
+        <updated>2015-04-27T00:39:52</updated>
+        <published>2015-04-21T10:53:39</published>
+        <content le:md5="6bf0d0947b7274ca9e7138429c6b4814" length="80622" src="/12068.html" type="text/html"/>
+        <link href="/12068-ref.rdf" rel="alternate" type="application/rdf+xml"/>
+        <title>HD T2021-13</title>
+        <summary/>
+    </entry>
+</feed>

@@ -12,9 +12,9 @@ public interface Feed {
 
 
 
-    enum ContentKind { Source, FeedOfFeed, Unknown;
+    enum ContentKind { Source, Alternate, FeedOfFeed, Unknown;
 
-        public static ContentKind parse(String type) {
+        public static ContentKind parse(String type, boolean alternate) {
             if (type==null)
                 return Unknown;
             if (type.equalsIgnoreCase("application/xhtml+xml")
@@ -22,7 +22,7 @@ public interface Feed {
                     || type.equalsIgnoreCase("application/rdf+xml")
                     || type.equalsIgnoreCase("text/html")
                     )
-                return Feed.ContentKind.Source;
+                return alternate? ContentKind.Alternate : Feed.ContentKind.Source;
             if (type.equalsIgnoreCase("application/atom+xml;type=feed"))
                 return Feed.ContentKind.FeedOfFeed;
             return Feed.ContentKind.Unknown;
@@ -45,6 +45,7 @@ public interface Feed {
         Date getPublished();
         String getTitle();
         String getSummary();
+        boolean hasContent();
     }
 
     interface Content {

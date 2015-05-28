@@ -7,7 +7,7 @@ import java.util.Date;
  */
 public interface FeedWriter {
 
-    void write(Feed feed, Writer writer);
+    void write(Feed feed, Writer writer, Report report);
 
     interface Writer {
         Writer setContent(String content);

@@ -66,11 +66,13 @@ public class XmlParserImpl implements Parser {
                 completed();
                 data.getResource().end(report);
             } catch (ParseException | MalformedURLException | ParserConfigurationException | SAXException e) {
-                failure = ResourceLocator.Failure.Parse;
-                failureComment = e.getMessage();
+                e.printStackTrace();
+                failed(ResourceLocator.Failure.Parse, e.getMessage());
             } catch (IOException e) {
-                failure = ResourceLocator.Failure.Unknown;
-                failureComment = e.getMessage();
+                failed(ResourceLocator.Failure.Unknown,e.getMessage());
+            } catch (Throwable e) {
+                e.printStackTrace();
+                failed(ResourceLocator.Failure.Unknown,e.getMessage());
             }
         }
 
@@ -117,6 +119,7 @@ public class XmlParserImpl implements Parser {
     private class MyFeedBuilder extends AbstractReply implements FeedBuilder {
 
         private List<MyEntryBuilder> entryBuilders = new ArrayList<>();
+        private List<MyDeletedEntryBuilder> myDeletedEntriesBuilder = new ArrayList<>();
         private String id;
         private String title;
         private boolean complete;
@@ -137,7 +140,21 @@ public class XmlParserImpl implements Parser {
         @Override public String getAuthorName() {return authorName;}
         @Override public String getAuthorURI() {return authorUri;}
         @Override public String getAuthorEMail() {return authorEMail;}
-        @Override public Iterable<EntryBuilder> getEntries() {return new ArrayList<EntryBuilder>(entryBuilders);}
+        @Override public Iterable<EntryBuilder> getEntries() {
+            ArrayList<EntryBuilder> res = new ArrayList<EntryBuilder>(entryBuilders);
+            for (MyDeletedEntryBuilder myDeletedEntryBuilder : myDeletedEntriesBuilder) {
+                for (MyEntryBuilder myEntryBuilder : entryBuilders) {
+                    if (myEntryBuilder.getId().equals(myDeletedEntryBuilder.getEntryId())
+                            && myDeletedEntryBuilder.getWhen().after(myEntryBuilder.getUpdated())) {
+                        res.remove(myEntryBuilder);
+                        System.out.println("se.lagrummet.rinfo.base.feed.impl.XmlParserImpl.MyEntryBuilder.parse IGNORING "+myEntryBuilder.getId()+" because it was deleted afterwards");
+
+                    }
+                }
+            }
+            return res;
+        }
+        @Override public Iterable<DeletedEntryBuilder> getDeletedEntries() {return new ArrayList<DeletedEntryBuilder>(myDeletedEntriesBuilder);}
 
         @Override
         public Feed toFeed() {
@@ -154,9 +171,12 @@ public class XmlParserImpl implements Parser {
             title = interpreter.getTagValue("title");
             complete = interpreter.tagExists("fh:complete");
             updated = interpreter.getTagValueAsDate("updated");
-            authorName = interpreter.getTagValue("authorName");
-            authorUri = interpreter.getTagValue("authorUri");
-            authorEMail = interpreter.getTagValue("authorEMail");
+            XmlInterpreter author = interpreter.firstNode("author");
+            if (author!=null) {
+                authorName = author.getTagValue("Name");
+                authorUri = author.getTagValue("Uri");
+                authorEMail = author.getTagValue("EMail");
+            }
 
             for (XmlInterpreter link : interpreter.allNodes(LINK_NAME))
                 if (link.hasAttrValue("rel","prev-archive"))
@@ -170,6 +190,12 @@ public class XmlParserImpl implements Parser {
                     if (entryContentBuilder.isFeedOfFeed())
                         addNewSource(url, entryContentBuilder.getSource());
                 }
+            }
+
+            for (XmlInterpreter deletedEntry : interpreter.allNodes("at:deleted-entry")) {
+                MyDeletedEntryBuilder myDeletedEntryBuilder = new MyDeletedEntryBuilder();
+                myDeletedEntryBuilder.parse(deletedEntry);
+                myDeletedEntriesBuilder.add(myDeletedEntryBuilder);
             }
         }
     }
@@ -222,6 +248,7 @@ public class XmlParserImpl implements Parser {
     }
 
     private class MyEntryContentBuilder implements EntryContentBuilder {
+        private boolean alternate;
         private String md5Sum;
         private String type;
         private String source;
@@ -239,10 +266,12 @@ public class XmlParserImpl implements Parser {
             return getType()!=null && getType().equalsIgnoreCase("application/atom+xml;type=feed");
         }
 
+        @Override public boolean isAlternate() {return alternate;}
         @Override public String getType() {return type;}
         @Override public String getSource() {return source;}
 
         public void parseContents(XmlInterpreter content) {
+            alternate = false;
             md5Sum = content.getAttrValue("le:md5");
             type = content.getAttrValue("type");
             source = content.getAttrValue("src");
@@ -250,10 +279,26 @@ public class XmlParserImpl implements Parser {
         }
 
         public void parseLink(XmlInterpreter content) {
+            alternate = true;
             md5Sum = content.getAttrValue("le:md5");
             type = content.getAttrValue("type");
             source = content.getAttrValue("href");
             length = content.getAttrValue("length");
+        }
+    }
+
+    private class MyDeletedEntryBuilder implements DeletedEntryBuilder {
+        private String entryId;
+        private Date when;
+
+        @Override public String getEntryId() {return entryId;}
+        @Override public Date getWhen() {return when;}
+
+
+        public void parse(XmlInterpreter deletedEntry) {
+            entryId = deletedEntry.getAttrValue("ref");
+            when = deletedEntry.getAttrValueAsDate("when");
+            System.out.println("se.lagrummet.rinfo.base.feed.impl.XmlParserImpl.MyDeletedEntryBuilder.parse entryId="+entryId+" when="+when);
         }
     }
 
@@ -279,10 +324,32 @@ public class XmlParserImpl implements Parser {
             return result;
         }
 
+        public XmlInterpreter firstNode(String name) {
+            List<XmlInterpreter> result = new ArrayList<>();
+            NodeList entries = root.getChildNodes();
+            for (int i = 0; i < entries.getLength(); i++) {
+                Node entry = entries.item(i);
+                if (entry.getNodeName().equals(name))
+                    return new XmlInterpreter(entry);
+            }
+            return null;
+        }
+
         public String getAttrValue(String name) {
             try {
                 return root.getAttributes().getNamedItem(name).getTextContent();
             } catch (NullPointerException ignore) {
+                return null;
+            }
+        }
+
+        public Date getAttrValueAsDate(String name) {
+            try {
+                return Utils.parseXMLDateTime(root.getAttributes().getNamedItem(name).getTextContent());
+            } catch (NullPointerException ignore) {
+                return null;
+            } catch (ParseException e) {
+                e.printStackTrace();
                 return null;
             }
         }
@@ -332,7 +399,10 @@ public class XmlParserImpl implements Parser {
         }
 
         public Date getTagValueAsDate(String value) throws ParseException {
-            return Utils.parseXMLDateTime(getTagValue(value));
+            String tagValue = getTagValue(value);
+            if (tagValue==null || tagValue.equals(""))
+                return null;
+            return Utils.parseXMLDateTime(tagValue);
         }
     }
 

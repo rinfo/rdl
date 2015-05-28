@@ -2,6 +2,7 @@ package se.lagrummet.rinfo.base.feed;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import se.lagrummet.rinfo.base.feed.exceptions.MD5SumVerificationFailedException;
 import se.lagrummet.rinfo.base.feed.type.Md5Sum;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,11 +17,13 @@ public interface ResourceLocator {
     enum Failure {Timeout, Parse, ResourceWrite, Md5SumDiff, Unknown}
 
     void locate(Resource resource, Reply reply);
+    void printStatusOneLiner();
 
     interface Resource extends Report.Reporter {
         Integer size();
         void configure(ResourceWriter resourceWriter) ;
         String getUrl();
+        void verifyMd5Sum(Md5Sum md5Sum) throws MD5SumVerificationFailedException;
     }
 
     interface ResourceWriter {

@@ -14,11 +14,13 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.mockito.Mockito.mock;
+
 /**
  * Created by christian on 2015-05-27.
  */
 public class FeedWriterTest {
-    final String STATIC_XML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><feed xmlns=\"http://www.w3.org/2005/Atom\" at=\"http://purl.org/atompub/tombstones/1.0\" fh=\"http://purl.org/syndication/history/1.0\" le=\"http://purl.org/atompub/link-extensions/1.0\">\n" +
+    final String STATIC_XML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><feed xmlns=\"http://www.w3.org/2005/Atom\" xmlns:at=\"http://purl.org/atompub/tombstones/1.0\" xmlns:fh=\"http://purl.org/syndication/history/1.0\" xmlns:le=\"http://purl.org/atompub/link-extensions/1.0\">\n" +
             "    <id>http://myid.org/1.0</id>\n" +
             "    <fh.complete/>\n" +
             "    <title>MyTitle</title>\n" +
@@ -32,13 +34,13 @@ public class FeedWriterTest {
             "        <id>987987</id>\n" +
             "        <updated>1970-01-01T01:39:03</updated>\n" +
             "        <published>1970-01-01T01:00:12</published>\n" +
-            "        <content src=\"/home.pdf\" type=\"application/pdf\"/>\n" +
-            "        <content src=\"/home.xhtml\" type=\"application/pdf\"/>\n" +
+            "        <content length=\"79879\" src=\"/home.pdf\" type=\"application/pdf\"/>\n" +
+            "        <link href=\"/home.xhtml\" length=\"79879\" rel=\"alternate\" type=\"application/pdf\"/>\n" +
             "    </entry>\n" +
             "    <title>MyTitel</title>\n" +
             "    <summary>MySummary</summary>\n" +
             "</feed>\n";
-    final String STATIC_XML2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><feed xmlns=\"http://www.w3.org/2005/Atom\" at=\"http://purl.org/atompub/tombstones/1.0\" fh=\"http://purl.org/syndication/history/1.0\" le=\"http://purl.org/atompub/link-extensions/1.0\">\n" +
+    final String STATIC_XML2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><feed xmlns=\"http://www.w3.org/2005/Atom\" xmlns:at=\"http://purl.org/atompub/tombstones/1.0\" xmlns:fh=\"http://purl.org/syndication/history/1.0\" xmlns:le=\"http://purl.org/atompub/link-extensions/1.0\">\n" +
             "    <id>9873434</id>\n" +
             "    <date>1970-01-03T18:03:54</date>\n" +
             "    <child childname=\"Hubbe\">\n" +
@@ -50,12 +52,15 @@ public class FeedWriterTest {
             "    </child>\n" +
             "</feed>\n";
 
+//    <link rel="alternate" href="2014_1_grund.xhtml"
+//    type="application/rdf+xml" length="1439" le:md5="8EBAE651E1A9C934C17948F3E8ED4C60"/>
+
     @Test
     public void writeXML() throws ParserConfigurationException, TransformerException {
         FeedWriter feedWriter = new FeedXmlBuilderImpl();
         FeedWriterImpl writer = new FeedWriterImpl();
         Feed feed = new TestFeed();
-        feedWriter.write(feed, writer);
+        feedWriter.write(feed, writer, mock(Report.class));
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         writer.writeTo(outputStream);
@@ -96,7 +101,7 @@ public class FeedWriterTest {
             List<Entry> entries = new LinkedList<>();
             entries.add(new TestEntry("987987",new Date(2343987), new Date(12313), "MyTitel", "MySummary")
                     .addContent("http://myhome.se/home.pdf","application/pdf",null,79879l, ContentKind.Source)
-                    .addContent("/home.xhtml", "application/pdf", null, 79879l, ContentKind.Source)
+                    .addContent("/home.xhtml", "application/pdf", null, 79879l, ContentKind.Alternate)
             );
             return entries;
         }
@@ -124,6 +129,8 @@ public class FeedWriterTest {
         @Override public Date getPublished() {return published;}
         @Override public String getTitle() {return title;}
         @Override public String getSummary() {return summary;}
+        @Override public boolean hasContent() {return true;}
+
         @Override public Iterable<Feed.Content> getContentList() {return contents;}
 
         TestEntry addContent(final String url, final String type, final String md5Sum, final Long length, final Feed.ContentKind contentKind) {
