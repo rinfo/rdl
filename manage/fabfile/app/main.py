@@ -207,6 +207,38 @@ def collect_status():
 
 @task
 @roles('main')
+def copy_sfs_feed():
+    """ Copy SFS feed into directory /var/www/sfs
+
+    Prerequisite:
+        Correct configured apache virtual host pointing to /var/www/sfs
+        Correctly placed copyfeed.sh script eg '/home/rinf/copyfeed/copyfeed.sh'
+        Correctly installed jar to support copyfeed.sh eg compiled rinfo-base with all libraries included
+        Correct configured main to use the apache virtual host published feed
+    """
+    _needs_targetenv()
+    with cd("/var/www/sfs"):
+        sudo("/home/rinfo/copyfeed/copyfeed.sh copy http://dvsfs.ministry.se/SFS/Res/index.atom")
+
+
+@task
+@roles('main')
+def copy_va_feed():
+    """ Copy VA feed into directory /var/www/va
+
+    Prerequisite:
+        Correct configured apache virtual host pointing to /var/www/va
+        Correctly placed copyfeed.sh script eg '/home/rinf/copyfeed/copyfeed.sh'
+        Correctly installed jar to support copyfeed.sh eg compiled rinfo-base with all libraries included
+        Correct configured main to use the apache virtual host published feed
+    """
+    _needs_targetenv()
+    with cd("/var/www/va"):
+        sudo("/home/rinfo/copyfeed/copyfeed.sh copy https://www.vagledandeavgoranden.dom.se/lagrummet/atom/index.atom")
+
+
+@task
+@roles('main')
 def destroy_main_data(start_stop_tomcat=True):
     if not role_is_active('main'):
         return
