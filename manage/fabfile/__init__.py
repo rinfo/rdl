@@ -57,6 +57,7 @@ env.roledefs = {
     'regression': [],
     'skrapat': [],
     'collectreg': [],
+    'ci': [],
 }
 
 ##
@@ -66,6 +67,8 @@ import target
 import sysconf
 import server
 import testfeed
+import build
+import ci
 import app.main
 import app.admin
 import app.service

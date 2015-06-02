@@ -1,0 +1,40 @@
+from fabric.api import *
+
+@task
+def install_local_build_prerequisites():
+    install_gvm()
+
+
+@task
+def setup_groovy_version(version="2.4.0"):
+    gvm_select("groovy", version)
+
+
+@task
+def setup_grails_version(version="2.4.3"):
+    gvm_select("grails", version)
+
+
+
+def install_gvm():
+    local("curl -s get.gvmtool.net | bash")
+
+
+def local_os_install(name):
+    local("sudo apt-get install %s -y" % name)
+
+
+def gvm_install(name, version):
+    local("gvm i %s %s" % (name, version))
+
+
+def gvm_use(name, version):
+    local("gvm u %s %s"  % (name, version))
+
+
+def gvm_select(name, version):
+    try:
+        gvm_use(name, version)
+    except:
+        gvm_install(name, version)
+        gvm_use(name, version)
