@@ -24,6 +24,12 @@ def can_i_deploy():
 
 
 @task
+def ipaddr():
+    """Prints ip add of target system"""
+    run("ip addr")
+
+
+@task
 def list_dist():
     _needs_targetenv()
     run("ls -latr %(dist_dir)s/" % env)

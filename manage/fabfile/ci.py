@@ -1,15 +1,15 @@
 from fabric.api import *
 from fabric.contrib.files import exists
-from fabfile import server
-from fabfile.server import tar_and_ftp_push, clean_path, create_path
-from fabfile.util import get_value_from_password_store, PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, \
-    PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME
+from server import tar_and_ftp_push, clean_path, create_path
+from util import get_value_from_password_store, PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, \
+    PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, msg_sleep
+from server import ftp_fetch_and_untar
 
 BACKUP_FILE_LOCATION = "/var/lib/jenkins/thinbackup"
 
 @task
 @roles('ci')
-def bootstrap_ci():
+def bootstrap():
     server.bootstrap()
 
 
@@ -50,6 +50,7 @@ def install_jenkins():
     sudo("sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'")
     os_update()
     os_install("jenkins")
+    msg_sleep(20, "for Jenkins to start")
     install_plugins()
     thin_backup_install()
     add_jenkins_user_group()
@@ -98,12 +99,12 @@ def jenkins_cli_install_plugin(plugin_name):
 
 
 def install_plugins():
-    jenkins_cli_install_plugin("Git Plugin")
-    jenkins_cli_install_plugin("GitHub Plugin")
-    jenkins_cli_install_plugin("Throttle Concurrent Builds Plugin")
-    jenkins_cli_install_plugin("Parameterized Trigger Plugin")
-    jenkins_cli_install_plugin("Run Condition Plugin")
-    jenkins_cli_install_plugin("TextFinder plugin")
+    jenkins_cli_install_plugin("git")
+    jenkins_cli_install_plugin("github")
+    jenkins_cli_install_plugin("throttle-concurrents")
+    jenkins_cli_install_plugin("parameterized-trigger")
+    jenkins_cli_install_plugin("run-condition")
+    jenkins_cli_install_plugin("text-finder")
 
 
 def thin_backup_install():
@@ -121,10 +122,23 @@ def thin_backup_copy_to_ftp():
 
     create_path(tmp_thin_backup_tar_pack_path)
 
-    with cd("/var/lib/jenkins/thinbackup/")
+    #with cd("/var/lib/jenkins/thinbackup/")
     tar_and_ftp_push("jenkinsconfig", target_file_name, password, "/var/lib/jenkins/thinbackup/FULL*",
                      tmp_thin_backup_tar_pack_path, username)
+#def tar_and_ftp_push(snapshot_name, name, password, source_tar_path, target_path, username, test=False, md5sum=True):
 
     clean_path(tmp_thin_backup_tar_pack_path)
 
 
+@task
+@roles('ci')
+def thin_backup_restore_from_ftp(backup_file):
+    username = get_value_from_password_store(PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, "rinfo")
+    password = get_value_from_password_store(PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, "pwd")
+    tmp_thin_backup_tar_pack_path = "/tmp/thinbackup/"
+
+    create_path(tmp_thin_backup_tar_pack_path)
+    create_path("/var/lib/jenkins/thinbackup/")
+
+    ftp_fetch_and_untar("jenkinsconfig", backup_file, tmp_thin_backup_tar_pack_path, "/var/lib/jenkins/thinbackup/", username, password)
+    #def ftp_fetch_and_untar(snapshot_name, name, tmp_path, target_tar_unpack_path, username, password, test=False, is_local=False, md5sum=True):
