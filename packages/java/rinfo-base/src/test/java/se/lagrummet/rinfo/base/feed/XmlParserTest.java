@@ -47,7 +47,7 @@ public class XmlParserTest {
         Assert.assertEquals("http://rinfo.lagrummet.se/publ/dom/mmd/p8048-12/2013-01-10", iterator.next().getId());
         Assert.assertEquals("http://rinfo.lagrummet.se/publ/rf/mod/2013:5", iterator.next().getId());
         Assert.assertEquals("http://rinfo.lagrummet.se/publ/dom/hd/oe4581-12/2013-02-18", iterator.next().getId());
-        Assert.assertEquals("http://rinfo.lagrummet.se/publ/rf/nja/2013/s_75", iterator.next().getId());
+        //Assert.assertEquals("http://rinfo.lagrummet.se/publ/rf/nja/2013/s_75", iterator.next().getId());
         Assert.assertEquals("http://rinfo.lagrummet.se/publ/sfs/2014:1/konsolidering/2014-01-21", iterator.next().getId());
         Assert.assertEquals("http://rinfo.lagrummet.se/publ/sfs/2014:2/konsolidering/2014-02-15", iterator.next().getId());
         Assert.assertEquals("http://rinfo.lagrummet.se/publ/sfs/2014:1", iterator.next().getId());

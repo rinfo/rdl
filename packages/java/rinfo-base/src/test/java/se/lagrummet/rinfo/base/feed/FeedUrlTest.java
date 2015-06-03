@@ -23,8 +23,8 @@ public class FeedUrlTest {
         System.out.println(base.getQuery());
         System.out.println(base.getRef());
         System.out.println(base.getUserInfo());
-        Assert.assertEquals("http://base.se/sub/home.atom", FeedUrl.parse(base, "home.atom"));
-        Assert.assertEquals("http://base.se/home.atom", FeedUrl.parse(base, "/home.atom"));
-        Assert.assertEquals("http://new.os/home.atom", FeedUrl.parse(base, "http://new.os/home.atom"));
+        Assert.assertEquals("http://base.se/sub/home.atom", FeedUrl.parse(base, "home.atom").toString());
+        Assert.assertEquals("http://base.se/home.atom", FeedUrl.parse(base, "/home.atom").toString());
+        Assert.assertEquals("http://new.os/home.atom", FeedUrl.parse(base, "http://new.os/home.atom").toString());
     }
 }

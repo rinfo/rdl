@@ -79,6 +79,12 @@ public class FeedImpl implements Feed, FeedBuilder {
             return !contents.isEmpty();
         }
 
+        @Override
+        public boolean containsOnlyFeedOfFeed() {
+            return contents.size() == 1 && contents.get(0).getContentKind() == ContentKind.FeedOfFeed;
+
+        }
+
         public void build(Parser.EntryBuilder entryBuilder) {
             id = entryBuilder.getId();
             baseUrl = entryBuilder.getBaseUrl();

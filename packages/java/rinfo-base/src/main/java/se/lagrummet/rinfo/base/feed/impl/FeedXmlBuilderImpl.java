@@ -20,7 +20,7 @@ public class FeedXmlBuilderImpl implements FeedWriter {
           author.createChildAndSetContent("email", feed.getAuthorEMail());
 
         for (Feed.Entry entry : feed.getEntries()) {
-            if (entry.hasContent()) {
+            if (entry.hasContent() && !entry.containsOnlyFeedOfFeed()) {
                 Writer entryTag = writer.createChild("entry");
                 entryTag.createChildAndSetContent("id", entry.getId());
                 entryTag.createChildAndSetContent("updated", entry.getUpdated());

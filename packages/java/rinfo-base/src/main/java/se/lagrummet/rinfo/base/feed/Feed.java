@@ -46,6 +46,7 @@ public interface Feed {
         String getTitle();
         String getSummary();
         boolean hasContent();
+        boolean containsOnlyFeedOfFeed();
     }
 
     interface Content {
