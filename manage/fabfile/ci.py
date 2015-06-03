@@ -1,11 +1,13 @@
 from fabric.api import *
-from fabric.contrib.files import exists
+from fabric.contrib.files import exists, append
 from server import tar_and_ftp_push, clean_path, create_path
 from util import get_value_from_password_store, PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, \
     PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, msg_sleep
 from server import ftp_fetch_and_untar
 
 BACKUP_FILE_LOCATION = "/var/lib/jenkins/thinbackup"
+BACKUP_FTP_BACKUP_AREA = "jenkinsconfig_test"
+
 
 @task
 @roles('ci')
@@ -22,6 +24,8 @@ def install():
     install_git()
     install_maven()
     install_fabric()
+    #install_phantom()
+    #install_casperjs()
     install_jenkins()
 
 
@@ -47,10 +51,11 @@ def install_fabric():
 
 def install_jenkins():
     run("wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -")
-    sudo("sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'")
+    append("/etc/apt/sources.list.d/jenkins.list", "deb http://pkg.jenkins-ci.org/debian binary/", use_sudo=True)
+    #sudo("sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'")
     os_update()
     os_install("jenkins")
-    msg_sleep(20, "for Jenkins to start")
+    msg_sleep(60, "for Jenkins to start")
     install_plugins()
     thin_backup_install()
     add_jenkins_user_group()
@@ -114,31 +119,36 @@ def thin_backup_install():
 
 @task
 @roles('ci')
-def thin_backup_copy_to_ftp():
+def thin_backup_copy_to_ftp(is_local=False):
+    if not exists(BACKUP_FILE_LOCATION, use_sudo=True):
+        print "Nothing to backup. '/var/lib/jenkins/thinbackup/' is empty."
+        return
     username = get_value_from_password_store(PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, "rinfo")
     password = get_value_from_password_store(PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, "pwd")
-    target_file_name = "THIN_BACKUP_CI_%s" % env.datestamp
+    target_file_name = "FULL-%s" % env.datestamp
     tmp_thin_backup_tar_pack_path = "/tmp/thinbackup/"
 
-    create_path(tmp_thin_backup_tar_pack_path)
+    create_path(tmp_thin_backup_tar_pack_path, is_local=is_local)
 
-    #with cd("/var/lib/jenkins/thinbackup/")
-    tar_and_ftp_push("jenkinsconfig", target_file_name, password, "/var/lib/jenkins/thinbackup/FULL*",
-                     tmp_thin_backup_tar_pack_path, username)
-#def tar_and_ftp_push(snapshot_name, name, password, source_tar_path, target_path, username, test=False, md5sum=True):
+    tar_and_ftp_push(BACKUP_FTP_BACKUP_AREA, target_file_name, password, BACKUP_FILE_LOCATION,
+                     tmp_thin_backup_tar_pack_path, username, is_local=is_local)
 
-    clean_path(tmp_thin_backup_tar_pack_path)
+    clean_path(tmp_thin_backup_tar_pack_path, is_local=is_local)
 
 
 @task
 @roles('ci')
-def thin_backup_restore_from_ftp(backup_file):
+def thin_backup_restore_from_ftp(backup_file, is_local=False):
     username = get_value_from_password_store(PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, "rinfo")
     password = get_value_from_password_store(PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, "pwd")
     tmp_thin_backup_tar_pack_path = "/tmp/thinbackup/"
 
-    create_path(tmp_thin_backup_tar_pack_path)
-    create_path("/var/lib/jenkins/thinbackup/")
+    create_path(tmp_thin_backup_tar_pack_path, is_local=is_local)
+    create_path(BACKUP_FILE_LOCATION, is_local=is_local)
 
-    ftp_fetch_and_untar("jenkinsconfig", backup_file, tmp_thin_backup_tar_pack_path, "/var/lib/jenkins/thinbackup/", username, password)
-    #def ftp_fetch_and_untar(snapshot_name, name, tmp_path, target_tar_unpack_path, username, password, test=False, is_local=False, md5sum=True):
+    ftp_fetch_and_untar(BACKUP_FTP_BACKUP_AREA, backup_file, tmp_thin_backup_tar_pack_path,
+                        BACKUP_FILE_LOCATION, username, password, is_local=is_local)
+
+    clean_path(tmp_thin_backup_tar_pack_path, is_local=is_local)
+
+    print "Backup files in place. You need to got to jenkins 'ThinBackup' under menu 'Manage' and press restore"

@@ -657,6 +657,7 @@ def infrastructure():
     env.roledefs['demosource'] = ['testfeed.lagrummet.se']
     env.roledefs['collectreg'] = ['collectreg.lagrummet.se']
     env.roledefs['ci'] = ['ci.lagrummet.se']
+    #env.roledefs['ci-collector'] = ['ci-collector.lagrummet.se']
     env.roles = calculate_roles()
     # Manage
     env.mgr_workdir = "/home/%(user)s/mgr_work" % env
