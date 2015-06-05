@@ -1,4 +1,6 @@
 from fabric.api import *
+from genericpath import exists
+
 
 @task
 def install_local_build_prerequisites():
@@ -17,10 +19,10 @@ def setup_grails_version(version="2.4.3"):
     gvm_select("grails", version)
 
 
-
 def install_gvm():
-    local("curl -s get.gvmtool.net | bash")
-    local("source ~/.gvm/bin/gvm-init.sh")
+    if not exists("~/.gvm/bin/gvm-init.sh"):
+        local("curl -s get.gvmtool.net | bash")
+        local("source ~/.gvm/bin/gvm-init.sh")
 
 
 def local_os_install(name):

@@ -24,8 +24,8 @@ def install():
     install_git()
     install_maven()
     install_fabric()
-    #install_phantom()
-    #install_casperjs()
+    install_phantomjs()
+    install_casperjs()
     install_jenkins()
 
 
@@ -36,11 +36,23 @@ def install_prerequisites():
 
 
 def install_git():
-    os_install("git")
+    os_install("git git-flow")
 
 
 def install_java():
     os_install("openjdk-7-jre-headless openjdk-7-jdk")
+
+
+def install_phantomjs():
+    os_install("phantomjs")
+
+
+def install_casperjs():
+    sudo("wget https://github.com/n1k0/casperjs/zipball/1.1-beta3 > casperjs-1.1-beta3.zip")
+    with cd("/usr/local"):
+        sudo("sudo unzip ~/casperjs-1.1-beta3.zip")
+        sudo("sudo ln -s /usr/local/n1k0-casperjs-4f105a9 casperjs")
+        sudo("sudo ln -s /usr/local/casperjs/bin/casperjs casperjs")
 
 
 def install_fabric():
