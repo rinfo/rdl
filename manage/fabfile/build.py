@@ -20,7 +20,7 @@ def setup_grails_version(version="2.4.3"):
 
 
 def install_gvm():
-    if not exists("~/.gvm/bin/gvm-init.sh"):
+    if not exists("~/.gvm"):
         local("curl -s get.gvmtool.net | bash")
         local(". ~/.gvm/bin/gvm-init.sh")
 
