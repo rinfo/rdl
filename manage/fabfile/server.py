@@ -156,12 +156,18 @@ def ping_verify():
         print "Created report '%s'" % report_name
 
 
-def tar(filename, target_path, command='czvf', test=False):
-    with cd(target_path):
-        if test:
-            run('echo "Test file" > %s' % filename)
-        else:
-            run('tar %s %s *' % (command, filename))
+def tar(filename, target_path, command='czvf', test=False, is_local=False):
+    tar_cmd = 'tar %s %s *' % (command, filename)
+    if test:
+        print "Simulating tar command '%s'" % tar_cmd
+        return
+
+    if is_local:
+        with lcd(target_path):
+            local(tar_cmd)
+    else:
+        with cd(target_path):
+            run(tar_cmd)
 
 
 def untar(filename, target_path, command='xzvf', use_sudo=False, test=False, is_local=False):
@@ -181,12 +187,18 @@ def untar(filename, target_path, command='xzvf', use_sudo=False, test=False, is_
                 run(tar_cmd)
 
 
-def ftp_push(filename, ftp_address, username, password, test=False):
+def ftp_push(filename, ftp_address, username, password, test=False, is_local=True):
+    ftp_cmd = 'curl -T %s %s --user %s:%s --ftp-create-dirs' % (filename, ftp_address, username, password)
     if test:
-        print "ftp push %s to %s" % (filename, ftp_address)
+        print "Simulating command '%s'" % ftp_cmd
+        return
+
+    if is_local:
+        with hide('output','running'):
+            local(ftp_cmd)
     else:
         with hide('output','running'):
-            run('curl -T %s %s --user %s:%s --ftp-create-dirs' % (filename, ftp_address, username, password))
+            run(ftp_cmd)
 
 
 def ftp_fetch(filename, ftp_address, target_path, username, password, test=False, is_local=False):
@@ -206,16 +218,16 @@ def ftp_fetch(filename, ftp_address, target_path, username, password, test=False
 
 
 
-def tar_and_ftp_push(snapshot_name, name, password, source_tar_path, target_path, username, test=False, md5sum=True):
+def tar_and_ftp_push(snapshot_name, name, password, source_tar_path, target_path, username, test=False, md5sum=True, is_local=False):
     file_to_upload = '%s/%s.tar.gz' % (target_path, name)
-    tar(file_to_upload, source_tar_path, test=test)
+    tar(file_to_upload, source_tar_path, test=test, is_local=is_local)
     ftp_push(file_to_upload, '%s/%s/%s.tar.gz' % (env.ftp_server_url, snapshot_name, name), username, password,
-             test=test)
+             test=test, is_local=is_local)
     if md5sum:
         md5_file = '%s/%s.md5' % (target_path, name)
         run("md5sum %s > %s" % (file_to_upload, md5_file) )
         ftp_push(md5_file, '%s/%s/%s.md5' % (env.ftp_server_url, snapshot_name, name), username, password,
-                 test=test)
+                 test=test, is_local=is_local)
 
 
 

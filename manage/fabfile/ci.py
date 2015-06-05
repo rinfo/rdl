@@ -1,5 +1,6 @@
 from fabric.api import *
 from fabric.contrib.files import exists, append
+import os
 from server import tar_and_ftp_push, clean_path, create_path
 from util import get_value_from_password_store, PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, \
     PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, msg_sleep
@@ -131,10 +132,16 @@ def thin_backup_install():
 
 @task
 @roles('ci')
-def thin_backup_copy_to_ftp(is_local=False):
-    if not exists(BACKUP_FILE_LOCATION, use_sudo=True):
-        print "Nothing to backup. '/var/lib/jenkins/thinbackup/' is empty."
-        return
+def thin_backup_copy_to_ftp():
+    is_local = env.target == 'dev_unix'
+    if is_local:
+        if not os.path.exists(BACKUP_FILE_LOCATION):
+            print "Nothing to backup. '/var/lib/jenkins/thinbackup/' is empty."
+            return
+    else:
+        if not exists(BACKUP_FILE_LOCATION, use_sudo=True):
+            print "Nothing to backup. '/var/lib/jenkins/thinbackup/' is empty."
+            return
     username = get_value_from_password_store(PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, "rinfo")
     password = get_value_from_password_store(PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, "pwd")
     target_file_name = "FULL-%s" % env.datestamp
@@ -150,7 +157,8 @@ def thin_backup_copy_to_ftp(is_local=False):
 
 @task
 @roles('ci')
-def thin_backup_restore_from_ftp(backup_file, is_local=False):
+def thin_backup_restore_from_ftp(backup_file):
+    is_local = env.target == 'dev_unix'
     username = get_value_from_password_store(PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, "rinfo")
     password = get_value_from_password_store(PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, "pwd")
     tmp_thin_backup_tar_pack_path = "/tmp/thinbackup/"
