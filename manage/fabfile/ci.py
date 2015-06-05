@@ -51,15 +51,17 @@ def install_phantomjs():
 def install_casperjs():
     sudo("wget https://github.com/n1k0/casperjs/zipball/1.1-beta3 > casperjs-1.1-beta3.zip")
     with cd("/usr/local"):
-        sudo("sudo unzip ~/casperjs-1.1-beta3.zip")
-        sudo("sudo ln -s /usr/local/n1k0-casperjs-4f105a9 casperjs")
-        sudo("sudo ln -s /usr/local/casperjs/bin/casperjs casperjs")
+        sudo("unzip ~/casperjs-1.1-beta3.zip")
+        sudo("ln -s /usr/local/n1k0-casperjs-4f105a9 casperjs")
+        sudo("ln -s /usr/local/casperjs/bin/casperjs casperjs")
 
 
 def install_fabric():
     os_install("python-lxml")
-    sudo("sudo easy_install pip")
-    sudo("sudo pip install fabric")
+    sudo("easy_install pip")
+    sudo("pip install fabric==1.8.2")
+    sudo("pip install paramiko==1.10.1")
+
 
 
 def install_jenkins():
