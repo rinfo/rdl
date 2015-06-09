@@ -45,7 +45,11 @@ def install_java():
 
 
 def install_phantomjs():
-    os_install("phantomjs")
+    sudo("wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2")
+    with cd("/usr/local"):
+        sudo("tar jxf ~/phantomjs-1.9.7-linux-x86_64.tar.bz2")
+        sudo("ln -s /usr/local/phantomjs-1.9.7-linux-x86_64 phantomjs")
+        sudo("ln -s /usr/local/phantomjs/bin/phantomjs /bin/phantomjs")
 
 
 def install_casperjs():
@@ -119,6 +123,8 @@ def jenkins_cli_install_plugin(plugin_name):
 
 
 def install_plugins():
+    jenkins_cli_install_plugin("groovy")
+    jenkins_cli_install_plugin("grails")
     jenkins_cli_install_plugin("git")
     jenkins_cli_install_plugin("github")
     jenkins_cli_install_plugin("throttle-concurrents")
