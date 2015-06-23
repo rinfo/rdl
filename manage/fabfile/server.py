@@ -335,6 +335,22 @@ def take_snapshot_and_push_to_ftp(name='snapshot', username='', password='', tes
     finally:
         clean_path(tar_target_path, test=False)
 
+@task
+@roles('main')
+def take_experimental_snapshot_and_push_to_ftp(name='snapshot', username='', password='', test=False):
+    _needs_targetenv()
+
+    snapshot_name = calculate_stored_or_new_snapshot_name(name)
+    username = get_value_from_password_store(PASSWORD_FILE_FTP_USERNAME_PARAM_NAME, username)
+    password = get_value_from_password_store(PASSWORD_FILE_FTP_PASSWORD_PARAM_NAME, password)
+    tar_target_path = "%s/tmp/%s" % (env.mgr_workdir, name)
+    clean_path(tar_target_path, test=False)
+    create_path(tar_target_path, test=False)
+
+    tar_and_ftp_push(snapshot_name, 'depot', password, '/var/lib/jenkins/collect/export/', tar_target_path, username, test=test)
+    tar_and_ftp_push(snapshot_name, 'sesame', password, '/var/lib/jenkins/collect/export/sesame-repo/', tar_target_path, username, test=test)
+    tar_and_ftp_push(snapshot_name, 'elasticsearch', password, '/var/lib/jenkins/collect/export/elasticsearch/data', tar_target_path, username, test=test)
+
 @parallel
 @roles('main')
 def fetch_main_snapshot_from_ftp_and_install(snapshot_name, tar_target_path, username, password, test=False,
