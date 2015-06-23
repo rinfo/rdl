@@ -19,17 +19,6 @@
         "pattern": "(SFS)_(\\d{4})colon(\\d{1,})",
         "replacement": "$1 $2:$3"
       },
-      "NJA_id_map_back": {
-	    "type": "pattern_replace",
-		"pattern": "(NJA)_(\\d{4})_(sid|s)dot_(\\d{1,})",
-		"replacement": "$1 $2 $3. $4"
-	   },
-	   "NJA_sid_to_s": {
-		"type": "pattern_replace",
-		"preserve_original": 1,
-		"pattern": "(NJA)\\s+(\\d{4})\\s+sid\\.\\s+(\\d+)",
-		"replacement":"$1 $2 s. $3"
-		},
       "swedish_stop": {
         "type": "stop",
         "stopwords": "_swedish_"
@@ -59,13 +48,8 @@
       },
       "SFS_id_map": {
         "type": "pattern_replace",
-        "pattern": "(SFS)(\\s)?(\\d{4}):(\\d{1,})",
-        "replacement": "$1_$3colon$4"
-      },
-	  "NJA_id_map": {
-        "type": "pattern_replace",
-        "pattern": "(NJA)\\s+(\\d{4})\\s+(sid|s)\\.\\s+(\\d+)",
-        "replacement": "$1_$2_$3dot_$4"
+        "pattern": "(SFS)\\s(\\d{4}):(\\d{1,})",
+        "replacement": "$1_$2colon$3"
       },
       "break_out_malnummer": {
         "type": "pattern_replace",
@@ -86,11 +70,10 @@
         "tokenizer": "keyword",
         "filter": ["malnummer_without_leading_char","lowercase", "unique"]
       },
-      "swedish_with_sfs_nja_malnummer": {
+      "swedish_with_sfs_malnummer": {
         "tokenizer": "standard",
         "char_filter": [
           "SFS_id_map",
-          "NJA_id_map",
           "SFS_nr_id_map",
           "break_out_malnummer"
         ],
@@ -99,8 +82,6 @@
           "swedish_stemmer",
           "SFS_id_map_back",
           "SFS_nr_id_map_back",
-          "NJA_id_map_back",
-          "NJA_sid_to_s",
           "malnummer_replace_hypen",
           "malnummer_without_leading_char",
           "lowercase",
